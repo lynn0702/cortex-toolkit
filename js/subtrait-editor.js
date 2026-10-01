@@ -9,11 +9,18 @@ const SubtraitEditor = {
 	},
 
 	data() {
-		return {}
+		return {
+			confirmDelete: false,
+		};
+	},
+
+	watch: {
+		subtraitID() {
+			this.confirmDelete = false;
+		}
 	},
 
 	computed: {
-
 		subtrait() {
 			let s = this.traitSetID;
 			let t = this.traitID;
@@ -67,8 +74,11 @@ const SubtraitEditor = {
 
 			<div class="editor-button-container">
 				<div class="editor-button-container-inner">
-					<div class="editor-button editor-button-remove editor-button-secondary" @click.prevent="removeSubtrait">
+					<div v-if="!confirmDelete" class="editor-button editor-button-remove editor-button-secondary" @click.prevent="confirmDelete = true">
 						<span><i class="fas fa-trash"></i> Remove Subtrait</span>
+					</div>
+					<div v-else class="editor-button editor-button-remove editor-button-delete-confirm" @click.prevent="removeSubtrait">
+						<span><i class="fas fa-exclamation-triangle"></i> Confirm Remove?</span>
 					</div>
 				</div>
 			</div>
@@ -107,6 +117,7 @@ const SubtraitEditor = {
 		},
 
 		removeSubtrait() {
+			this.confirmDelete = false;
 			this.$emit( 'removeSubtrait', this.subtraitID );
 		},
 

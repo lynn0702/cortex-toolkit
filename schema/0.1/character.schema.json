@@ -48,8 +48,13 @@
 					"description": "The name of the trait."
 				},
 				"value": {
-					"type": "integer",
-					"description": "The die value of the trait. For example, `2` for d2, `6` for a d6, etc. For unrated traits, use `0`."
+					"type": [ "integer", "null" ],
+					"description": "The die value of the trait. For example, `2` for d2, `6` for a d6, etc. For unrated traits, use `0` or null."
+				},
+				"dice": {
+					"type": "array",
+					"description": "Array of die values for multi-die traits (e.g. [6, 6, 6] or [8, 8, 6, 4]).",
+					"items": { "type": "integer" }
 				},
 				"description": {
 					"type": "string",
@@ -121,6 +126,10 @@
 			"description": "Version of character.schema.json to use.",
 			"type": "string",
 			"enum": [ "0.1" ]
+		},
+		"isTemplate": {
+			"type": "boolean",
+			"description": "Whether this character represents a reusable template."
 		},
 		"id": {
 			"type": "string",

@@ -12,6 +12,7 @@ const TraitEditor = {
 		return {
 			scrollPosition: 'none',
 			anchorPosition: 'top',
+			confirmDelete:  false,
 		}
 	},
 
@@ -46,6 +47,18 @@ const TraitEditor = {
 			}
 		},
 
+		isListStyle() {
+			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'list' || this.traitSet?.custom?.cortexToolkit?.style?.body === 'notes';
+		},
+
+		isMultiDie() {
+			return Boolean(this.traitSet?.custom?.cortexToolkit?.multiDie) || (this.traitSet?.custom?.cortexToolkit?.style?.body === 'resources') || (Array.isArray(this.trait?.dice) && this.trait.dice.length > 1);
+		},
+
+		dice() {
+			return cortexFunctions.getTraitDice(this.trait);
+		},
+
 		description: {
 			get() {
 				return this.trait.description;
@@ -78,6 +91,57 @@ const TraitEditor = {
 			);
 		},
 
+		isAttributesTrait() {
+			const body = this.traitSet?.custom?.cortexToolkit?.style?.body;
+			return this.traitSet?.custom?.cortexToolkit?.location === 'attributes' || body === 'halo' || body === 'attributes';
+		},
+
+		isScaleDie: {
+			get() {
+				return Boolean(
+					this.trait?.custom?.isScale ||
+					(this.trait?.name && this.trait.name.trim().toLowerCase() === 'scale')
+				);
+			},
+			set( val ) {
+				if ( !this.trait.custom ) this.trait.custom = {};
+				this.trait.custom.isScale = val;
+				if ( val && (!this.trait.name || this.trait.name === 'New trait' || this.trait.name === 'New Attribute') ) {
+					this.setProperty( 'name', 'Scale' );
+				}
+				this.updateCharacter( this.character );
+			}
+		},
+
+		isStressSet() {
+			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'stress';
+		},
+
+		shouldShowStressD4() {
+			if ( !this.isStressSet ) return true;
+			const cfg = this.traitSet?.custom?.cortexToolkit?.stressConfig;
+			if ( cfg && typeof cfg.includeD4 === 'boolean' ) return cfg.includeD4;
+			return false;
+		},
+
+		shouldShowStressOut() {
+			if ( !this.isStressSet ) return false;
+			const cfg = this.traitSet?.custom?.cortexToolkit?.stressConfig;
+			if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
+			return true;
+		},
+
+		isOut() {
+			return Boolean( this.trait?.value > 12 || this.trait?.isOut === true );
+		},
+
+		availableValues() {
+			if ( this.isStressSet && !this.shouldShowStressD4 ) {
+				return [6, 8, 10, 12];
+			}
+			return [4, 6, 8, 10, 12];
+		},
+
 		cssClass() {
 
 			let cssClass = {
@@ -104,8 +168,22 @@ const TraitEditor = {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button @click.stop="selectElement([])"><i class="fas fa-times"></i></button>
-			<button class="editor-delete" @click.stop="removeTrait"><i class="fas fa-trash"></i></button>
+			<button type="button" @click.stop="selectElement([])"><i class="fas fa-times"></i></button>
+			<button type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait"><i class="fas fa-copy"></i></button>
+			<button
+				v-if="!confirmDelete"
+				type="button"
+				class="editor-delete"
+				@click.stop="confirmDelete = true"
+				title="Delete trait"
+			><i class="fas fa-trash"></i></button>
+			<button
+				v-else
+				type="button"
+				class="editor-delete editor-delete-confirm"
+				@click.stop="removeTrait"
+				title="Click again to confirm deletion"
+			><span>Confirm?</span></button>
 		</div>
 
 		<div class="editor-inner">
@@ -118,19 +196,75 @@ const TraitEditor = {
 						<input type="text" v-model="name" ref="inputName">
 					</div>
 
-					<div class="editor-field">
+					<!-- SCALE DIE TOGGLE FOR HALO ATTRIBUTES -->
+					<div class="editor-field" v-if="isAttributesTrait">
+						<div class="editor-toggles">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-is-scale'"
+									v-model="isScaleDie"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-is-scale'">
+									Scale Die (inset on arc, triggers Keep 3 in roller)
+								</label>
+							</div>
+						</div>
+					</div>
 
-						<label>Value</label>
+					<div class="editor-field" v-if="!isListStyle">
 
-						<ul class="editor-values">
+						<label>{{ isMultiDie ? 'Dice Pool' : 'Value' }}</label>
+
+						<!-- SINGLE DIE SELECTOR -->
+						<ul class="editor-values" v-if="!isMultiDie">
 							<li
-								v-for="value in [4,6,8,10,12]"
-								:class="{ 'active': value === trait.value }"
-								@click.stop="toggleTraitValue( value )"
+								v-for="val in availableValues"
+								:class="{ 'active': val === trait.value && !isOut }"
+								@click.stop="toggleTraitValue( val )"
 							>
-								<span class="c" v-html="getDieDisplayValue(value)"></span>
+								<span class="c" v-html="getDieDisplayValue(val)"></span>
+							</li>
+							<li
+								v-if="shouldShowStressOut"
+								class="editor-value-out"
+								:class="{ 'active': isOut }"
+								@click.stop="toggleOutValue"
+								title="Out"
+							>
+								<span>💥 OUT</span>
 							</li>
 						</ul>
+
+						<!-- MULTI DIE COUNTERS AND POOL LIST -->
+						<div class="editor-multidie-container" v-else>
+							<div class="editor-die-steppers">
+								<div v-for="size in [4,6,8,10,12]" :key="'stepper-' + size" class="die-stepper-item">
+									<span class="c">{{ getDieDisplayValue(size) }}</span>
+									<span class="stepper-label">d{{ size }}</span>
+									<div class="stepper-controls">
+										<button type="button" class="btn-step" @click.stop="removeDieFromTrait(size)" :disabled="getDieCount(size) === 0">-</button>
+										<span class="stepper-count">{{ getDieCount(size) }}</span>
+										<button type="button" class="btn-step" @click.stop="addDieToTrait(size)">+</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- CURRENT DICE IN POOL -->
+							<div class="multidie-active-list" v-if="dice.length > 0">
+								<label class="sub-label">Current Dice ({{ dice.length }}):</label>
+								<div class="multidie-chips">
+									<div v-for="(dieSize, dIdx) in dice" :key="dIdx" class="multidie-chip">
+										<span class="c">{{ getDieDisplayValue(dieSize) }}</span>
+										<span class="chip-text">d{{ dieSize }}</span>
+										<button type="button" class="btn-step-down" @click.stop="stepDownDieAtIndex(dIdx)" title="Step down die size">-2</button>
+										<button type="button" class="btn-remove-die" @click.stop="removeDieAtIndex(dIdx)" title="Remove die">×</button>
+									</div>
+								</div>
+							</div>
+						</div>
 
 					</div>
 
@@ -221,6 +355,7 @@ const TraitEditor = {
 
 		this.checkAnchorPosition();
 		this.checkScrollPosition();
+		window.addEventListener( 'resize', this.checkAnchorPosition );
 
 		if ( this.open ) {
 			this.focusFirstInput();
@@ -228,7 +363,21 @@ const TraitEditor = {
 
 	},
 
+	unmounted() {
+		window.removeEventListener( 'resize', this.checkAnchorPosition );
+	},
+
+	updated() {
+		if ( this.open ) {
+			this.checkAnchorPosition();
+		}
+	},
+
 	watch: {
+
+		traitID() {
+			this.confirmDelete = false;
+		},
 
 		character() {
 			this.checkAnchorPosition();
@@ -239,8 +388,20 @@ const TraitEditor = {
 		},
 		
 		open( isOpen, wasOpen ) {
+			this.confirmDelete = false;
 			if ( isOpen && !wasOpen ) {
 				this.focusFirstInput();
+				this.$nextTick(() => {
+					this.checkAnchorPosition();
+					setTimeout(() => {
+						this.checkAnchorPosition();
+					}, 220);
+				});
+			} else if ( !isOpen ) {
+				if ( this.$el ) {
+					this.$el.style.setProperty('--editor-shift-y', '0px');
+					this.$el.style.setProperty('--arrow-shift-y', '0px');
+				}
 			}
 		}
 
@@ -286,17 +447,100 @@ const TraitEditor = {
 
 		},
 
+		getDieCount( size ) {
+			return this.dice.filter( d => d === size ).length;
+		},
+
+		addDieToTrait( size ) {
+			const current = [ ...this.dice, size ].sort( (a, b) => b - a );
+			cortexFunctions.setTraitDice( this.trait, current );
+			this.updateCharacter( this.character );
+		},
+
+		removeDieFromTrait( size ) {
+			const current = [ ...this.dice ];
+			const idx = current.indexOf( size );
+			if ( idx !== -1 ) {
+				current.splice( idx, 1 );
+				cortexFunctions.setTraitDice( this.trait, current );
+				this.updateCharacter( this.character );
+			}
+		},
+
+		removeDieAtIndex( index ) {
+			const current = [ ...this.dice ];
+			if ( index >= 0 && index < current.length ) {
+				current.splice( index, 1 );
+				cortexFunctions.setTraitDice( this.trait, current );
+				this.updateCharacter( this.character );
+			}
+		},
+
+		stepDownDieAtIndex( index ) {
+			const current = [ ...this.dice ];
+			if ( index >= 0 && index < current.length ) {
+				const currentSize = current[index];
+				const sizes = [12, 10, 8, 6, 4];
+				const sIdx = sizes.indexOf( currentSize );
+				if ( sIdx !== -1 && sIdx < sizes.length - 1 ) {
+					current[index] = sizes[sIdx + 1];
+				} else {
+					// Stepping down past d4 removes it
+					current.splice( index, 1 );
+				}
+				current.sort( (a, b) => b - a );
+				cortexFunctions.setTraitDice( this.trait, current );
+				this.updateCharacter( this.character );
+			}
+		},
+
 		toggleTraitValue( value ) {
 
-			if ( value === this.trait.value ) {
+			if ( value === this.trait.value && !this.isOut ) {
 				value = null;
+				this.trait.isOut = false;
+				cortexFunctions.setTraitDice( this.trait, [] );
+			} else {
+				this.trait.isOut = false;
+				cortexFunctions.setTraitDice( this.trait, [ value ] );
 			}
 
-			this.setProperty( 'value', value );
+			this.updateCharacter( this.character );
+
+		},
+
+		toggleOutValue() {
+
+			if ( this.isOut ) {
+				this.trait.isOut = false;
+				this.trait.value = null;
+				cortexFunctions.setTraitDice( this.trait, [] );
+			} else {
+				this.trait.isOut = true;
+				this.trait.value = 14;
+				cortexFunctions.setTraitDice( this.trait, [ 14 ] );
+			}
+
+			this.updateCharacter( this.character );
+
+		},
+
+		duplicateTrait() {
+
+			let character = this.character;
+			let s = this.traitSetID;
+			let t = this.traitID;
+
+			let clone = JSON.parse( JSON.stringify( character.traitSets[s].traits[t] ) );
+			character.traitSets[s].traits.splice( t + 1, 0, clone );
+
+			this.updateCharacter( character );
+			this.selectElement([ 'trait', s, t + 1 ]);
 
 		},
 
 		removeTrait() {
+			this.confirmDelete = false;
 			this.$emit( 'removeTrait', this.traitSetID, this.traitID );
 		},
 
@@ -360,10 +604,11 @@ const TraitEditor = {
 		},
 
 		checkAnchorPosition() {
+			if ( !this.$el || !this.$el.parentElement ) return;
 			
-			let windowHeight = (window.innerHeight || html.clientHeight);
-			let traitPosition = this.$el.parentElement.getBoundingClientRect();
-			let traitMidpoint = traitPosition.top + (traitPosition.height / 2); 
+			let windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+			let parentRect = this.$el.parentElement.getBoundingClientRect();
+			let traitMidpoint = parentRect.top + (parentRect.height / 2); 
 
 			if ( traitMidpoint < (windowHeight / 2) ) {
 				this.anchorPosition = 'top';
@@ -371,6 +616,32 @@ const TraitEditor = {
 				this.anchorPosition = 'bottom';
 			}
 
+			this.$nextTick(() => {
+				if ( !this.$el ) return;
+				
+				this.$el.style.setProperty('--editor-shift-y', '0px');
+				this.$el.style.setProperty('--arrow-shift-y', '0px');
+
+				let rect = this.$el.getBoundingClientRect();
+				let pad = 16;
+				let shiftY = 0;
+
+				if ( rect.top < pad ) {
+					shiftY = pad - rect.top;
+				} else if ( rect.bottom > windowHeight - pad ) {
+					shiftY = (windowHeight - pad) - rect.bottom;
+				}
+
+				if ( Math.abs(shiftY) > 0.5 ) {
+					this.$el.style.setProperty('--editor-shift-y', `${shiftY}px`);
+					let arrowNaturalY = (this.anchorPosition === 'bottom') ? (rect.height - 16) : 16;
+					let targetArrowY = arrowNaturalY - shiftY;
+					let clampedArrowY = Math.max( 16, Math.min( rect.height - 16, targetArrowY ) );
+					let arrowShift = clampedArrowY - arrowNaturalY;
+					this.$el.style.setProperty('--arrow-shift-y', `${arrowShift}px`);
+				}
+				this.checkScrollPosition();
+			});
 		},
 
 		checkScrollPosition() {

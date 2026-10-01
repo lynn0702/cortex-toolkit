@@ -628,6 +628,31 @@
 			background-color: white;
 			padding: .1em;
 		}
+
+		.stress-out-badge {
+			position: relative;
+			background: white;
+			padding: 0.1em 0.35em;
+			font-family: var(--font-heading);
+			font-size: 0.72rem;
+			font-weight: 800;
+			letter-spacing: 0.04em;
+			color: var(--color-separator);
+			border: 1.5px solid var(--color-separator);
+			border-radius: 4px;
+			display: inline-flex;
+			align-items: center;
+			user-select: none;
+			white-space: nowrap;
+			cursor: default;
+
+			&.active {
+				color: white;
+				background: var(--color-primary);
+				border-color: var(--color-primary);
+				box-shadow: 0 0 6px rgba(197, 8, 82, 0.4);
+			}
+		}
 	}
 
 	.trait-description {
@@ -639,4 +664,216 @@
 		display: none;
 	}
 
+}
+
+// LIST STYLE
+.trait-set-style-list {
+
+	.trait-list {
+		display: flex;
+		flex-direction: column;
+		row-gap: 0.4rem;
+	}
+
+	.trait-inner {
+		display: flex;
+		flex-direction: column;
+		row-gap: 0.15rem;
+	}
+
+	.trait-title {
+		display: flex;
+		align-items: baseline;
+		column-gap: 0.4rem;
+		font-family: var(--font-primary);
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: #222;
+
+		.list-bullet {
+			color: var(--color-primary);
+			font-size: 1.1rem;
+			line-height: 1;
+		}
+	}
+
+	.trait-description {
+		font-size: 0.75rem;
+		color: #555;
+		padding-left: 1rem;
+		line-height: 1.35;
+	}
+
+	.trait-value,
+	.subtraits,
+	.trait-sfx {
+		display: none;
+	}
+
+}
+
+// NOTES STYLE
+.trait-set-style-notes {
+
+	.trait-notes-body {
+		padding: 0.6rem 0.8rem;
+		background: #fbfbfb;
+		border: 1px solid var(--color-separator);
+		border-radius: 6px;
+		font-size: 0.8rem;
+		line-height: 1.4;
+		color: #333;
+		cursor: pointer;
+		min-height: 3rem;
+
+		&:hover {
+			border-color: var(--color-interactive);
+		}
+
+		p {
+			margin: 0 0 0.35rem;
+			&:last-child { margin-bottom: 0; }
+		}
+
+		h1, h2, h3 {
+			margin: 0.35rem 0 0.2rem;
+			font-family: var(--font-heading);
+			color: var(--color-primary);
+		}
+		h1 { font-size: 0.95rem; }
+		h2 { font-size: 0.88rem; }
+		h3 { font-size: 0.82rem; }
+
+		ul {
+			margin: 0.2rem 0 0.35rem 1.1rem;
+			padding: 0;
+			li { margin-bottom: 0.15rem; }
+		}
+
+		blockquote {
+			margin: 0.35rem 0;
+			padding-left: 0.6rem;
+			border-left: 3px solid var(--color-primary);
+			font-style: italic;
+			color: #555;
+		}
+
+		code {
+			background: #eee;
+			padding: 0.1rem 0.3rem;
+			border-radius: 3px;
+			font-size: 0.85em;
+			font-family: monospace;
+		}
+
+		a {
+			color: var(--color-interactive);
+			text-decoration: underline;
+		}
+	}
+
+	.trait-list,
+	.preview-button-container {
+		display: none;
+	}
+
+}
+
+// MULTI-DIE TRAITS
+.multidie-value {
+	display: inline-flex !important;
+	align-items: center;
+	column-gap: 0.45rem;
+	flex-wrap: wrap;
+
+	.multidie-badge-wrap {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		column-gap: 0.2rem;
+
+		.c {
+			cursor: pointer;
+			transition: transform 0.12s;
+			&:hover {
+				transform: scale(1.15);
+			}
+		}
+
+		.die-play-controls {
+			display: inline-flex;
+			align-items: center;
+
+			.btn-play-spend {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: white;
+				border: 1px solid var(--color-separator);
+				border-radius: 3px;
+				color: var(--color-label);
+				font-size: 0.65rem;
+				line-height: 1;
+				cursor: pointer;
+				padding: 2px 4px;
+				transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s;
+				opacity: 1 !important;
+				filter: none !important;
+
+				&:hover {
+					color: var(--color-primary);
+					border-color: var(--color-primary);
+					transform: scale(1.1);
+				}
+			}
+		}
+
+		&.spent {
+			.c {
+				opacity: 0.35;
+				filter: grayscale(1);
+				position: relative;
+
+				&::after {
+					content: '';
+					position: absolute;
+					left: -2px;
+					right: -2px;
+					top: 50%;
+					height: 2px;
+					background: #777;
+					transform: rotate(-30deg);
+					pointer-events: none;
+				}
+			}
+
+			.die-play-controls .btn-play-spend {
+				opacity: 1 !important;
+				filter: none !important;
+				color: var(--color-interactive);
+				border-color: var(--color-interactive);
+				background: white;
+
+				&:hover {
+					background: var(--color-interactive);
+					color: white;
+				}
+			}
+		}
+	}
+}
+
+// PLAY MODE INTERACTIONS
+.submode-play {
+	.trait-set-style-stress .c,
+	.trait-set-style-stress .stress-out-badge,
+	.single-die-value .c.active,
+	.attribute-inner .c,
+	.subtrait-value .c.active {
+		cursor: pointer;
+		transition: transform 0.12s, color 0.15s;
+		&:hover {
+			transform: scale(1.15);
+		}
+	}
 }

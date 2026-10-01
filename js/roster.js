@@ -6,16 +6,19 @@ const Roster = {
 
 	data() {
 		return {
+			filterMode:        'all', // 'all', 'characters', 'templates'
 			showImportConfirm: false,
 			importQueue:       [],
 			importBuffer:      null,
+			showDeleteConfirm: false,
+			characterToDelete: null,
 		};
 	},
 
 	computed: {
 
 		charactersSorted() {
-			return this.characters.sort((a, b) => {
+			return [...this.characters].sort((a, b) => {
 
 				let aDate = Math.max( ( new Date(a.dateCreated)).getTime(), ( new Date(a.dateModified)).getTime(), ( new Date(a.dateTouched) ).getTime() );
 				let bDate = Math.max( ( new Date(b.dateCreated)).getTime(), ( new Date(b.dateModified)).getTime(), ( new Date(b.dateTouched) ).getTime() );
@@ -23,6 +26,25 @@ const Roster = {
 				return bDate - aDate;
 
 			});
+		},
+
+		templateCount() {
+			return this.characters.filter( c => !!c.isTemplate ).length;
+		},
+
+		characterCount() {
+			return this.characters.filter( c => !c.isTemplate ).length;
+		},
+
+		charactersFiltered() {
+			let sorted = this.charactersSorted;
+			if ( this.filterMode === 'templates' ) {
+				return sorted.filter( c => !!c.isTemplate );
+			}
+			if ( this.filterMode === 'characters' ) {
+				return sorted.filter( c => !c.isTemplate );
+			}
+			return sorted;
 		}
 
 	},
@@ -41,13 +63,39 @@ const Roster = {
 						<span><i class="fas fa-plus"></i> New Character</span>
 					</div>
 
+					<div class="roster-button roster-button-template"
+						@click.stop="createTemplate"
+					>
+						<span><i class="fas fa-bookmark"></i> New Template</span>
+					</div>
+
 					<div class="roster-button roster-button-import"
 						@click.stop="importStart"
 					>
-						<span><i class="fas fa-upload"></i> Import Character</span>
+						<span><i class="fas fa-upload"></i> Import</span>
+					</div>
+
+					<div class="roster-button roster-button-export"
+						@click.stop="exportAll"
+						v-if="characters.length > 0"
+					>
+						<span><i class="fas fa-file-export"></i> Export All</span>
 					</div>
 
 				</div>
+			</div>
+
+			<!-- FILTER TABS -->
+			<div class="roster-filter-tabs" v-if="characters.length > 0">
+				<button :class="{ active: filterMode === 'all' }" @click="filterMode = 'all'">
+					All <span class="tab-count">({{ characters.length }})</span>
+				</button>
+				<button :class="{ active: filterMode === 'characters' }" @click="filterMode = 'characters'">
+					Characters <span class="tab-count">({{ characterCount }})</span>
+				</button>
+				<button :class="{ active: filterMode === 'templates' }" @click="filterMode = 'templates'">
+					Templates <span class="tab-count">({{ templateCount }})</span>
+				</button>
 			</div>
 
 			<!-- CHARACTER LIST -->
@@ -55,25 +103,28 @@ const Roster = {
 
 				<transition-group appear>
 				<li class="roster-item"
-					v-for="character in charactersSorted" :key="character.id"
+					v-for="character in charactersFiltered" :key="character.id"
 				>
 
 					<div>
 
-						<div :class="'roster-item-portrait alignment-' + character.portrait.custom.cortexToolkit.alignment"
-							:style="'background-image: url(' + character.portrait.url + ');'"
+						<div :class="'roster-item-portrait alignment-' + (character.portrait?.custom?.cortexToolkit?.alignment || 'center')"
+							:style="'background-image: url(' + (character.portrait?.url || '') + ');'"
 							@click.stop="loadCharacter( character.id )"
 						>
-							<div class="roster-item-portrait-placeholder" v-if="!character.portrait.url.length"><i class="fas fa-user"></i></div>
+							<div class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length"><i class="fas fa-user"></i></div>
 						</div>
 
 					</div>
 
 					<div>
 
-						<h3 class="roster-item-name" v-text="character.name"
-							@click.stop="loadCharacter( character.id )"
-						></h3>
+						<div class="roster-item-title-row">
+							<h3 class="roster-item-name" v-text="character.name"
+								@click.stop="loadCharacter( character.id )"
+							></h3>
+							<span class="roster-badge-template" v-if="character.isTemplate"><i class="fas fa-bookmark"></i> Template</span>
+						</div>
 						
 						<div class="roster-description" v-text="character.description"></div>
 
@@ -85,11 +136,35 @@ const Roster = {
 						<div class="roster-item-button-container">
 							<div class="roster-item-button-container-inner">
 
+								<!-- USE TEMPLATE (IF TEMPLATE) -->
+								<div class="roster-item-button roster-button-use-template"
+									v-if="character.isTemplate"
+									@click.stop="createFromTemplate( character.id )"
+									title="Create a new character from this template"
+								>
+									<span><i class="fas fa-wand-magic-sparkles"></i> Use</span>
+								</div>
+
 								<!-- LOAD -->
 								<div class="roster-item-button"
 									@click.stop="loadCharacter( character.id )"
 								>
 									<span><i class="fas fa-eye"></i> Open</span>
+								</div>
+
+								<!-- DUPLICATE -->
+								<div class="roster-item-button roster-button-duplicate"
+									@click.stop="duplicateCharacter( character.id )"
+								>
+									<span><i class="fas fa-copy"></i> Duplicate</span>
+								</div>
+
+								<!-- TOGGLE TEMPLATE -->
+								<div class="roster-item-button roster-button-toggle-template"
+									@click.stop="toggleTemplate( character.id )"
+									:title="character.isTemplate ? 'Convert to regular character' : 'Save as template'"
+								>
+									<span><i :class="character.isTemplate ? 'fas fa-bookmark' : 'far fa-bookmark'"></i> {{ character.isTemplate ? 'Template' : 'Set Template' }}</span>
 								</div>
 
 								<!-- EXPORT -->
@@ -101,7 +176,7 @@ const Roster = {
 
 								<!-- DELETE -->
 								<div class="roster-item-button roster-button-delete"
-									@click.stop="deleteCharacter( character.id )"
+									@click.stop="promptDeleteCharacter( character )"
 								>
 									<span><i class="fas fa-trash"></i> Delete</span>
 								</div>
@@ -182,6 +257,31 @@ const Roster = {
 			</div>
 		</aside>
 		</transition>
+
+		<!-- DELETE CHARACTER CONFIRMATION MODAL -->
+		<transition>
+		<div class="modal-veil" v-show="showDeleteConfirm" @click.stop="cancelDeleteCharacter()"></div>
+		</transition>
+
+		<transition>
+		<aside class="modal modal-confirm" v-if="showDeleteConfirm && characterToDelete">
+			<div class="modal-close" @click.prevent="cancelDeleteCharacter()"><i class="fas fa-times"></i></div>
+			<div class="modal-inner">
+				<p>Are you sure you want to delete <strong>{{ characterToDelete.name && characterToDelete.name.length ? characterToDelete.name : 'this character' }}</strong>?</p>
+				<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
+				<div class="modal-button-container">
+					<div class="modal-button-container-inner">
+						<div class="modal-button modal-button-delete" @click.stop="confirmDeleteCharacter()">
+							<span><i class="fas fa-trash"></i> Delete</span>
+						</div>
+						<div class="modal-button modal-button-no" @click.stop="cancelDeleteCharacter()">
+							<span><i class="fas fa-times"></i> Cancel</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</aside>
+		</transition>
 		
 	</section>`,
 
@@ -191,16 +291,50 @@ const Roster = {
 			this.$emit('createCharacter');
 		},
 
+		createTemplate() {
+			this.$emit('createTemplate');
+		},
+
+		createFromTemplate( characterID ) {
+			this.$emit('createFromTemplate', characterID);
+		},
+
+		toggleTemplate( characterID ) {
+			this.$emit('toggleTemplate', characterID);
+		},
+
 		loadCharacter( characterID ) {
 			this.$emit('loadCharacter', characterID);
+		},
+
+		duplicateCharacter( characterID ) {
+			this.$emit('duplicateCharacter', characterID);
 		},
 
 		exportCharacter( characterID ) {
 			this.$emit('exportCharacter', characterID);
 		},
 
-		deleteCharacter( characterID ) {
-			this.$emit('deleteCharacter', characterID);
+		exportAll() {
+			this.$emit('exportAllCharacters');
+		},
+
+		promptDeleteCharacter( character ) {
+			this.characterToDelete = character;
+			this.showDeleteConfirm = true;
+		},
+
+		cancelDeleteCharacter() {
+			this.characterToDelete = null;
+			this.showDeleteConfirm = false;
+		},
+
+		confirmDeleteCharacter() {
+			if ( this.characterToDelete ) {
+				this.$emit('deleteCharacter', this.characterToDelete.id);
+			}
+			this.characterToDelete = null;
+			this.showDeleteConfirm = false;
 		},
 
 		importStart() {
@@ -220,11 +354,23 @@ const Roster = {
 				reader.readAsText(file);
 				reader.onload = () => {
 
-					let character = JSON.parse( reader.result );
-
-					this.importQueue.push( character );
-
-					this.importNextQueueItem();
+					try {
+						let data = JSON.parse( reader.result );
+						if ( Array.isArray(data) ) {
+							data.forEach( char => {
+								if ( char && char.id ) this.importQueue.push( char );
+							});
+						} else if ( data && data.characters && Array.isArray(data.characters) ) {
+							data.characters.forEach( char => {
+								if ( char && char.id ) this.importQueue.push( char );
+							});
+						} else if ( data && typeof data === 'object' && data.id ) {
+							this.importQueue.push( data );
+						}
+						this.importNextQueueItem();
+					} catch ( error ) {
+						console.error('Import parse error: ', error);
+					}
 
 				};
 				reader.onerror = (error) => {
@@ -287,24 +433,32 @@ const Roster = {
 			for (let i = 0; i < dateProperties.length; i++) {
 				const property = dateProperties[i];
 
-				if ( typeof property === 'number' ) {
+				if ( typeof character[property] === 'number' ) {
 					character[property] = ( new Date(character[property]) ).toISOString();
 				}
 				
 			}
 			
 			// Populate custom data sets for this app.
-			for (let i = 0; i < character.traitSets.length; i++) {
-				const traitSet = character.traitSets[i];
-
-				if ( !traitSet.custom.cortexToolkit ) {
-					traitSet.custom.cortexToolkit = structuredClone( cortexFunctions.defaultTraitSet.custom.cortexToolkit );
+			if ( Array.isArray( character.traitSets ) ) {
+				for (let i = 0; i < character.traitSets.length; i++) {
+					const traitSet = character.traitSets[i];
+					if ( !traitSet.custom ) traitSet.custom = {};
+					if ( !traitSet.custom.cortexToolkit ) {
+						traitSet.custom.cortexToolkit = structuredClone( cortexFunctions.defaultTraitSet.custom.cortexToolkit );
+					}
 				}
-				
+			} else {
+				character.traitSets = [];
 			}
 
-			if ( !character.portrait.custom.cortexToolkit ) {
-				character.portrait.custom.cortexToolkit = structuredClone( cortexFunctions.defaultCharacter.portrait.custom.cortexToolkit );
+			if ( !character.portrait ) {
+				character.portrait = structuredClone( cortexFunctions.defaultCharacter.portrait );
+			} else {
+				if ( !character.portrait.custom ) character.portrait.custom = {};
+				if ( !character.portrait.custom.cortexToolkit ) {
+					character.portrait.custom.cortexToolkit = structuredClone( cortexFunctions.defaultCharacter.portrait.custom.cortexToolkit );
+				}
 			}
 
 			this.$emit('importCharacter', character );

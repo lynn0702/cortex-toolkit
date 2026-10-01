@@ -37,11 +37,29 @@ const NameEditor = {
 				this.setCharacterProperty( 'pronouns', pronouns );
 			}
 		},
+
+		notes: {
+			get() {
+				return this.character.notes ?? '';
+			},
+			set( notes ) {
+				this.setCharacterProperty( 'notes', notes );
+			}
+		},
+
+		plotPoints: {
+			get() {
+				return Number( this.character.plotPoints ) || 0;
+			},
+			set( val ) {
+				this.setCharacterProperty( 'plotPoints', Math.max(0, Number(val) || 0) );
+			}
+		},
 		
 	},
 
 	/*html*/
-	template: `<aside :class="{ 'editor': true, 'editor-character': true, 'open': open, 'scrollable': false }" @click.stop="">
+	template: `<aside :class="{ 'editor': true, 'editor-character': true, 'open': open, 'scrollable': true }" @click.stop="">
 
 		<div class="editor-arrow"></div>
 
@@ -65,8 +83,18 @@ const NameEditor = {
 					</div>
 
 					<div class="editor-field">
+						<label>Plot Points (PP)</label>
+						<input type="number" min="0" v-model.number="plotPoints">
+					</div>
+
+					<div class="editor-field">
 						<label>Description</label>
 						<textarea v-model="description"></textarea>
+					</div>
+
+					<div class="editor-field">
+						<label>Notes (Markdown)</label>
+						<textarea v-model="notes" rows="4" placeholder="Character notes, backstory, equipment, or house rules in Markdown..."></textarea>
 					</div>
 
 				</div>

@@ -5,6 +5,7 @@ mix
 .disableNotifications()
 .combine([
 	'js/functions.js',
+	'js/cortex-pal.js',
 	'js/roster.js',
 	'js/character.js',
 	'js/name-editor.js',
@@ -13,6 +14,7 @@ mix
 	'js/subtrait-editor.js',
 	'js/sfx-editor.js',
 	'js/portrait-editor.js',
+	'js/dice-roller.js',
 	'js/app.js'
 ], 'js/app.min.js' )
 .sass( 'css/app.scss', 'css/app.min.css', { sassOptions: { outputStyle: 'expanded' }} );

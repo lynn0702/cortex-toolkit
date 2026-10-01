@@ -24,10 +24,52 @@
 	&.roster-button-delete {
 		--button-color: var(--color-primary);
 	}
+	&.roster-button-template {
+		--button-color: var(--color-interactive);
+	}
 	&.roster-button-export,
 	&.roster-button-import {
 		--button-color: var(--color-secondary);
 		color: black;
+	}
+}
+
+// FILTER TABS
+
+.roster-filter-tabs {
+	display: flex;
+	justify-content: center;
+	gap: 0.5rem;
+	margin-block: 1.25rem 0.5rem;
+
+	button {
+		background: transparent;
+		border: 1px solid var(--color-separator);
+		border-radius: 999px;
+		padding: 0.35rem 0.9rem;
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		font-weight: 700;
+		cursor: pointer;
+		color: var(--color-label);
+		transition: all 0.2s ease;
+
+		&:hover {
+			border-color: var(--color-interactive);
+			color: var(--color-interactive);
+		}
+
+		&.active {
+			background: var(--color-primary);
+			color: white;
+			border-color: var(--color-primary);
+		}
+
+		.tab-count {
+			opacity: 0.75;
+			font-weight: normal;
+			margin-left: 0.25rem;
+		}
 	}
 }
 
@@ -114,6 +156,13 @@
 	color: color-mix(in srgb, var(--color-interactive), transparent 80% );
 }
 
+.roster-item-title-row {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+}
+
 .roster-item-name {
 	margin: 0;
 	font-family: var(--font-heading);
@@ -125,6 +174,21 @@
 	line-height: 1.1;
 	text-transform: uppercase;
 	cursor: pointer;
+}
+
+.roster-badge-template {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.15rem 0.45rem;
+	background: var(--color-primary);
+	color: white;
+	border-radius: 4px;
+	font-size: 0.62rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .roster-description {
@@ -146,13 +210,34 @@
 	margin-block-start: .5rem;
 	> div {
 		justify-content: flex-start;
+		flex-wrap: wrap;
+		height: auto;
+		min-height: var(--button-container-height);
+		overflow: visible;
+		gap: 0.35rem;
 	}
 }
 
 .roster-item-button {
 	@extend %button;
+	display: inline-flex;
+	align-items: center;
+	padding: 0.45em 1.1em;
+	height: auto;
+	line-height: 1.2;
+	border-radius: 999px;
 	&.roster-button-delete {
 		--button-color: var(--color-primary);
+	}
+	&.roster-button-duplicate {
+		--button-color: var(--color-interactive);
+	}
+	&.roster-button-use-template {
+		--button-color: #2e7d32;
+	}
+	&.roster-button-toggle-template {
+		--button-color: var(--color-secondary);
+		color: black;
 	}
 	&.roster-button-export,
 	&.roster-button-import {
