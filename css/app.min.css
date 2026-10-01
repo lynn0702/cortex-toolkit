@@ -10917,7 +10917,7 @@ body {
 
 .roster {
   margin-inline: auto;
-  max-width: 36rem;
+  max-width: 44rem;
 }
 .roster.v-enter-active, .roster.v-leave-active {
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -10927,7 +10927,20 @@ body {
   transform: scale(0.95);
 }
 
+.roster-button-container > div {
+  justify-content: center;
+  flex-wrap: wrap;
+  height: auto;
+  min-height: var(--button-container-height);
+  overflow: visible;
+  gap: 0.5rem;
+}
+
 .roster-button {
+  padding: 0.5em 1.25em;
+  height: auto;
+  line-height: 1.2;
+  border-radius: 999px;
   --button-color: var(--color-interactive);
 }
 .roster-button.roster-button-delete, .roster-button.roster-button-delete-all {
