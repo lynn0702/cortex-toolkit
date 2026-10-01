@@ -11582,7 +11582,7 @@ body {
 }
 
 .portrait-inner {
-  display: inline-block;
+  display: block;
   width: 100%;
   aspect-ratio: 1/1;
   margin: 0 auto;
@@ -11598,7 +11598,7 @@ body {
 .portrait-circle {
   margin: 0;
   padding: 0;
-  display: inline-block;
+  display: block;
   border: 6px solid var(--color-primary);
   overflow: hidden;
   width: 100%;

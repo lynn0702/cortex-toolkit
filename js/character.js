@@ -251,7 +251,7 @@ const Character = {
 										@touchstart="startHaloDrag($event, 'traits')"
 										v-if="attributes.length >= 2"
 									>
-										<svg viewBox="0 0 84 84" width="84mm" height="84mm" style="overflow: visible; pointer-events: none;">
+										<svg viewBox="0 0 100 100" width="100%" height="100%" style="overflow: visible; pointer-events: none;">
 											<path :d="getAttributeCurvePath()" stroke="transparent" stroke-width="12mm" fill="transparent" vector-effect="non-scaling-stroke" style="pointer-events: stroke; cursor: grab;" />
 										</svg>
 
@@ -730,15 +730,16 @@ const Character = {
 		getAttributeCurvePath() {
 			if ( this.attributes.length < 2 ) return '';
 			const cfg = this.haloConfig;
-			const R = 42 + (cfg.arcDistance ?? 0);
-			const Xc = 42;
-			const Yc = 42;
+			const Xc = 50;
+			const Yc = 50;
+			const arcDistanceUnits = (cfg.arcDistance ?? 0) * (100 / 84);
+			const R = 50 + arcDistanceUnits;
 
 			const centerAngle = 90 + (cfg.arcAngle ?? -90);
 			const spreadFactor = (cfg.arcSpread ?? 100) / 100;
 			const totalSpan = 85 * spreadFactor;
 
-			const padAngle = (8 / R) * (180 / Math.PI);
+			const padAngle = (8 / (R * 0.84)) * (180 / Math.PI);
 			const startAngle = centerAngle - (totalSpan / 2) - padAngle;
 			const endAngle = centerAngle + (totalSpan / 2) + padAngle;
 
@@ -774,20 +775,23 @@ const Character = {
 		},
 
 		getAttributeStyle( a ) {
-
 			const cfg = this.haloConfig;
-			const Xc = 42;
-			const Yc = 42;
-			const R = 42 + (cfg.arcDistance ?? 0);
-
 			const angleDeg = this.getAttributeAngle( a );
 			const rad = angleDeg * Math.PI / 180;
+			const cos = Math.cos( rad );
+			const sin = Math.sin( rad );
+			const arcDistance = cfg.arcDistance ?? 0;
 
-			const x = Xc + R * Math.cos(rad);
-			const y = Yc + R * Math.sin(rad);
+			const percentX = ( 50 * cos ).toFixed( 4 );
+			const percentY = ( 50 * sin ).toFixed( 4 );
 
-			return `left: ${x}mm; top: ${y}mm;`;
+			if ( arcDistance !== 0 ) {
+				const mmX = ( arcDistance * cos ).toFixed( 4 );
+				const mmY = ( arcDistance * sin ).toFixed( 4 );
+				return `left: calc(50% + ${percentX}% + ${mmX}mm); top: calc(50% + ${percentY}% + ${mmY}mm);`;
+			}
 
+			return `left: calc(50% + ${percentX}%); top: calc(50% + ${percentY}%);`;
 		},
 
 		getAttributeNameStyle( a ) {
@@ -1277,15 +1281,19 @@ const Character = {
 
 		getScaleDieStyle() {
 			const cfg = this.haloConfig;
-			const Xc = 42;
-			const Yc = 42;
-			const R = 29 + (cfg.scaleDistance ?? 0);
+			const R_percent = (29 / 84) * 100;
 			const angleDeg = 90 + (cfg.scaleAngle ?? 0);
 			const rad = angleDeg * Math.PI / 180;
+			const cos = Math.cos( rad );
+			const sin = Math.sin( rad );
 
-			const x = Xc + R * Math.cos(rad) + (cfg.scaleDieX ?? 0);
-			const y = Yc + R * Math.sin(rad) + (cfg.scaleDieY ?? 0);
-			return `left: ${x}mm; top: ${y}mm;`;
+			const percentX = ( R_percent * cos ).toFixed( 4 );
+			const percentY = ( R_percent * sin ).toFixed( 4 );
+
+			const extraMmX = ( (cfg.scaleDistance ?? 0) * cos + (cfg.scaleDieX ?? 0) ).toFixed( 4 );
+			const extraMmY = ( (cfg.scaleDistance ?? 0) * sin + (cfg.scaleDieY ?? 0) ).toFixed( 4 );
+
+			return `left: calc(50% + ${percentX}% + ${extraMmX}mm); top: calc(50% + ${percentY}% + ${extraMmY}mm);`;
 		},
 
 		renderNotesText( text ) {
