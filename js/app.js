@@ -13,6 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
 				submode:            null,
 				editing:            null,
 				viewY:              null,
+				dicePool:           new cortexPal.DicePool(),
+				isRollerOpen:       false,
+				rollerPosition:     localStorage.getItem('cortexRollerPosition') || 'left',
+				mobileActiveView:   'sheet',
+				toastMessage:       null,
+				toastTimeout:       null,
+				history:            [],
+				historyIndex:       -1,
+				historyDebounceTimer: null,
+				isNavigatingHistory:false,
+				isHandlingHash:     false,
 			}
 		},
 
@@ -34,6 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
 				return this.characters[ this.characterIndex ];
 			},
 
+			canUndo() {
+				return this.mode === 'character' && this.historyIndex > 0;
+			},
+
+			canRedo() {
+				return this.mode === 'character' && this.historyIndex < this.history.length - 1;
+			},
+
 		},
 
 		/*html*/
@@ -44,20 +63,46 @@ document.addEventListener('DOMContentLoaded', () => {
 							<li @click.stop="setMode('roster', null)" :class="{ active: mode === 'roster' }"><div><span class="nav-icon"><i class="fas fa-users"></i></span></div></li>
 							<li @click.stop="setMode('character', 'edit')" :class="{ active: mode === 'character' && submode === 'edit', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-pencil"></i></span> <span class="nav-label">Create</span></div></li>
 							<li @click.stop="setMode('character', 'play')" :class="{ active: mode === 'character' && submode === 'play', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-dice"></i></span> <span class="nav-label">Play</span></div></li>
+							<li v-if="mode === 'character' && submode === 'play'" @click.stop="toggleRoller" :class="{ active: isRollerOpen }"><div><span class="nav-icon"><i class="fas fa-dice-d20"></i></span> <span class="nav-label">Roller ({{ dicePool.items.length }})</span></div></li>
 							<li @click.stop="setMode('character', 'print')" :class="{ active: mode === 'character' && submode === 'print', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-file"></i></span> <span class="nav-label">Share</span></div></li>
+							<li v-if="mode === 'character' && submode === 'edit'" @click.stop="undo" :class="{ disabled: !canUndo }" title="Undo (Ctrl+Z)"><div><span class="nav-icon"><i class="fas fa-undo"></i></span> <span class="nav-label">Undo</span></div></li>
+							<li v-if="mode === 'character' && submode === 'edit'" @click.stop="redo" :class="{ disabled: !canRedo }" title="Redo (Ctrl+Y)"><div><span class="nav-icon"><i class="fas fa-redo"></i></span> <span class="nav-label">Redo</span></div></li>
 						</ul>
 					</nav>
 				</div>
 			</header>
 
-			<aside class="sidebar">
+			<!-- DICE ROLLER SIDEBAR -->
+			<aside class="sidebar" :class="{ 'open': isRollerOpen && mode === 'character' && submode === 'play', 'mobile-visible': mobileActiveView === 'roller', 'position-right': rollerPosition === 'right' }">
 				<div class="sidebar-inner">
+					<dice-roller
+						v-if="mode === 'character' && submode === 'play'"
+						:open="isRollerOpen || mobileActiveView === 'roller'"
+						:pool="dicePool"
+						:position="rollerPosition"
+						@close="isRollerOpen = false; mobileActiveView = 'sheet'"
+						@togglePosition="toggleRollerPosition"
+						@addDie="addDieToRoller"
+						@removeDie="removeDieFromRoller"
+						@clearPool="clearDicePool"
+					></dice-roller>
 				</div>
 			</aside>
 
 			<main class="main" ref="main" @scroll="setViewY"
 				@click.stop="clearSelected"
+				:class="{ 'with-sidebar': isRollerOpen && mode === 'character' && submode === 'play', 'sidebar-right': rollerPosition === 'right', 'mobile-show-roller': mobileActiveView === 'roller' }"
 			>
+
+				<!-- MOBILE PLAY TABS -->
+				<div class="mobile-play-tabs" v-if="mode === 'character' && submode === 'play'">
+					<button :class="{ active: mobileActiveView === 'sheet' }" @click.stop="mobileActiveView = 'sheet'">
+						<i class="fas fa-id-card"></i> Sheet
+					</button>
+					<button :class="{ active: mobileActiveView === 'roller' }" @click.stop="mobileActiveView = 'roller'">
+						<i class="fas fa-dice"></i> Roller <span class="tab-badge" v-if="dicePool.items.length > 0">{{ dicePool.items.length }}</span>
+					</button>
+				</div>
 			
 				<!-- CHARACTER SHEET -->
 				<transition mode="out-in">
@@ -66,8 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
 						v-if="mode === 'roster'"
 						:characters="characters"
 						@createCharacter="createCharacter"
+						@createTemplate="createTemplate"
+						@createFromTemplate="createFromTemplate"
+						@toggleTemplate="toggleTemplate"
 						@loadCharacter="loadCharacter"
+						@duplicateCharacter="duplicateCharacter"
 						@exportCharacter="exportCharacter"
+						@exportAllCharacters="exportAllCharacters"
 						@deleteCharacter="deleteCharacter"
 						@importCharacter="importCharacter"
 					></roster>
@@ -81,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						@selectElement="selectElement"
 						@updateCharacter="updateCharacter"
 						@exportCharacter="exportCharacter"
+						@addDieToRoller="addDieToRoller"
 					></character>
 
 					<article class="about"
@@ -101,6 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			</main>
 
+			<!-- TOAST NOTIFICATION -->
+			<transition name="toast">
+				<div class="toast-notification" v-if="toastMessage">
+					<i class="fas fa-check-circle"></i> <span>{{ toastMessage }}</span>
+				</div>
+			</transition>
+
 			<footer class="footer">
 				<div class="footer-inner">
 
@@ -111,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					<nav class="footer-nav">
 						<ul>
 							<li @click.stop="setMode('about', null)" :class="{ active: mode === 'about' }"><div><span class="nav-icon"><i class="far fa-question-circle"></i></span></div></li>
-							<li><a href="https://github.com/kaelri/cortex-toolkit" target="_blank" title="View on GitHub"><div><span class="nav-icon"><i class="fab fa-github"></i></span></div></a></li>
+							<li><a href="https://github.com/lynn0702/cortex-toolkit" target="_blank" title="View on GitHub"><div><span class="nav-icon"><i class="fab fa-github"></i></span></div></a></li>
 						</ul>
 					</nav>
 
@@ -122,6 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			this.setViewY();
 			this.loadLocalData();
+			this.parseRouteHash();
+			window.addEventListener('hashchange', () => this.parseRouteHash());
+			window.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
 
 		},
 
@@ -141,10 +202,102 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			// VIEW
 
-			setMode( mode, submode ) {
+			setMode( mode, submode, updateHash = true ) {
 				if ( mode === 'character' && !this.character ) return;
 				this.mode    = mode;
 				this.submode = submode;
+				if ( mode === 'character' && submode === 'play' ) {
+					this.isRollerOpen = true;
+					this.mobileActiveView = 'sheet';
+				} else {
+					this.isRollerOpen = false;
+					this.mobileActiveView = 'sheet';
+				}
+				if ( updateHash ) {
+					this.updateRouteHash();
+				}
+			},
+
+			parseRouteHash() {
+				let hash = window.location.hash || '#/roster';
+				this.isHandlingHash = true;
+				let clean = hash.replace(/^#\/?/, '');
+				let parts = clean.split('/');
+				let primary = parts[0] || 'roster';
+
+				if ( primary === 'about' ) {
+					this.setMode('about', null, false);
+				} else if ( primary === 'character' ) {
+					let id = parts[1];
+					let sub = parts[2] || 'edit';
+					if ( sub !== 'edit' && sub !== 'play' && sub !== 'print' ) sub = 'edit';
+					let found = this.characters.find( c => c.id === id );
+					if ( found ) {
+						this.characterID = id;
+						this.setMode('character', sub, false);
+						this.initHistory();
+					} else {
+						this.setMode('roster', null, true);
+					}
+				} else {
+					this.setMode('roster', null, false);
+					if ( window.location.hash !== '#/roster' ) {
+						window.location.hash = '#/roster';
+					}
+				}
+				Vue.nextTick(() => { this.isHandlingHash = false; });
+			},
+
+			updateRouteHash() {
+				if ( this.isHandlingHash ) return;
+				let target = '#/roster';
+				if ( this.mode === 'about' ) {
+					target = '#/about';
+				} else if ( this.mode === 'character' && this.characterID ) {
+					target = `#/character/${this.characterID}/${this.submode || 'edit'}`;
+				}
+				if ( window.location.hash !== target ) {
+					window.location.hash = target;
+				}
+			},
+
+			toggleRoller() {
+				this.isRollerOpen = !this.isRollerOpen;
+				if ( this.isRollerOpen ) {
+					this.mobileActiveView = 'roller';
+				} else {
+					this.mobileActiveView = 'sheet';
+				}
+			},
+
+			toggleRollerPosition() {
+				this.rollerPosition = this.rollerPosition === 'left' ? 'right' : 'left';
+				localStorage.setItem('cortexRollerPosition', this.rollerPosition);
+			},
+
+			addDieToRoller( dieData ) {
+				this.dicePool.add( dieData );
+				const label = dieData.source ? dieData.source : `d${dieData.size}`;
+				this.showToast(`Added ${label} to dice pool`);
+			},
+
+			removeDieFromRoller( index ) {
+				this.dicePool.removeAt( index );
+			},
+
+			clearDicePool() {
+				this.dicePool.clear();
+			},
+
+			showToast( msg ) {
+				this.toastMessage = msg;
+				if ( this.toastTimeout ) {
+					clearTimeout( this.toastTimeout );
+				}
+				this.toastTimeout = setTimeout( () => {
+					this.toastMessage = null;
+					this.toastTimeout = null;
+				}, 2500 );
 			},
 
 			setViewY() {
@@ -152,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			},
 
 			setPageTitle() {
-				pageTitle = 'Cortex Toolkit';
+				let pageTitle = 'Cortex Toolkit';
 				if ( this.mode === 'character' && this.character && this.character.name.length ) {
 					pageTitle = `${this.character.name} - ${pageTitle}`;
 				}
@@ -161,11 +314,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			// DATA
 
-			createCharacter() {
+			createCharacter( isTemplate = false ) {
 
 				let character = structuredClone( cortexFunctions.defaultCharacter );
 
-				character.id = crypto.randomUUID();
+				character.id = cortexFunctions.generateUUID();
+				character.isTemplate = isTemplate;
+				if ( isTemplate ) {
+					character.name = 'New Template';
+				}
 
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
@@ -173,10 +330,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				this.characters.push( character );
 				this.characterID = character.id;
-				this.setMode( 'character', this.submode ?? 'edit' );
+				this.initHistory();
+				this.setMode( 'character', this.submode ?? 'edit', true );
 
 				this.saveLocalData();
 
+			},
+
+			createTemplate() {
+				this.createCharacter( true );
+			},
+
+			createFromTemplate( templateId ) {
+				let template = this.characters.find( c => c.id === templateId );
+				if ( !template ) return;
+
+				let character = JSON.parse( JSON.stringify( template ) );
+				character.id = cortexFunctions.generateUUID();
+				character.isTemplate = false;
+				character.name = template.name && template.name.length ? `${template.name} (Copy)` : 'New Character';
+				character.dateCreated  = ( new Date() ).toISOString();
+				character.dateModified = ( new Date() ).toISOString();
+				character.dateTouched  = ( new Date() ).toISOString();
+
+				this.characters.push( character );
+				this.characterID = character.id;
+				this.initHistory();
+				this.setMode( 'character', 'edit', true );
+
+				this.saveLocalData();
+				this.showToast('Created character from template');
+			},
+
+			toggleTemplate( characterId ) {
+				let character = this.characters.find( c => c.id === characterId );
+				if ( !character ) return;
+				character.isTemplate = !character.isTemplate;
+				character.dateModified = ( new Date() ).toISOString();
+				this.saveLocalData();
+				this.showToast( character.isTemplate ? 'Saved as template' : 'Converted to regular character' );
 			},
 
 			deleteCharacter( id ) {
@@ -184,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				let c = this.characters.findIndex( character => character.id === id );
 				if ( c === -1 ) return;
 
-				this.setMode( 'roster', null );
+				this.setMode( 'roster', null, true );
 				this.characterID = null;
 				this.characters.splice( c, 1 );
 				this.setPageTitle();
@@ -193,11 +385,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			},
 
+			duplicateCharacter( id ) {
+
+				let original = this.characters.find( character => character.id === id );
+				if ( !original ) return;
+
+				let character = JSON.parse( JSON.stringify( original ) );
+				character.id = cortexFunctions.generateUUID();
+				character.name = character.name && character.name.length ? `${character.name} (Copy)` : 'Copy';
+				character.dateCreated  = ( new Date() ).toISOString();
+				character.dateModified = ( new Date() ).toISOString();
+				character.dateTouched  = ( new Date() ).toISOString();
+
+				this.characters.push( character );
+				this.saveLocalData();
+
+			},
+
 			loadCharacter( id ) {
 
 				this.characterID = id;
-
-				this.setMode( 'character', this.submode ?? 'edit' );
+				this.initHistory();
+				this.setMode( 'character', this.submode ?? 'edit', true );
 
 				this.touchCharacter( id );
 				this.saveLocalData();
@@ -217,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				this.touchCharacter( character.id );
 				this.saveLocalData();
+				this.showToast(`Imported ${character.name || 'character'}`);
 
 			},
 
@@ -243,11 +453,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			exportAllCharacters() {
 
-				let uri = encodeURI("data:application/json;charset=utf-8," + JSON.stringify(this.characters))
+				let bundle = {
+					version: '0.1',
+					type: 'bundle',
+					dateExported: ( new Date() ).toISOString(),
+					count: this.characters.length,
+					characters: this.characters
+				};
+
+				let uri = encodeURI("data:application/json;charset=utf-8," + JSON.stringify(bundle, null, 2))
 				.replace(/#/g, '%23');
 
 				let timestamp = ( new Date() ).getTime();
-				let filename  = `CortexToolkitData_${timestamp}.json`;
+				let filename  = `Cortex_Characters_Bundle_${timestamp}.json`;
 
 				let link = document.createElement("a");
 				document.body.appendChild(link); // Required for Firefox
@@ -255,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				link.setAttribute('download', filename);
 				link.click();
 				link.remove();
+				this.showToast(`Exported ${this.characters.length} characters`);
 
 			},
 
@@ -272,7 +491,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				this.touchCharacter( character.id );
 				this.saveLocalData();
+				this.pushHistorySnapshot();
 
+			},
+
+			initHistory() {
+				if ( this.character ) {
+					this.history = [ JSON.stringify( this.character ) ];
+					this.historyIndex = 0;
+				} else {
+					this.history = [];
+					this.historyIndex = -1;
+				}
+			},
+
+			pushHistorySnapshot( immediate = false ) {
+				if ( this.isNavigatingHistory || !this.character ) return;
+
+				if ( this.historyDebounceTimer ) {
+					clearTimeout( this.historyDebounceTimer );
+					this.historyDebounceTimer = null;
+				}
+
+				const record = () => {
+					if ( this.isNavigatingHistory || !this.character ) return;
+					let snap = JSON.stringify( this.character );
+					if ( this.historyIndex >= 0 && this.history[this.historyIndex] === snap ) return;
+					if ( this.historyIndex < this.history.length - 1 ) {
+						this.history = this.history.slice( 0, this.historyIndex + 1 );
+					}
+					this.history.push( snap );
+					if ( this.history.length > 50 ) {
+						this.history.shift();
+					} else {
+						this.historyIndex++;
+					}
+				};
+
+				if ( immediate ) {
+					record();
+				} else {
+					this.historyDebounceTimer = setTimeout( record, 400 );
+				}
+			},
+
+			undo() {
+				if ( this.historyDebounceTimer ) {
+					clearTimeout( this.historyDebounceTimer );
+					this.historyDebounceTimer = null;
+					let snap = JSON.stringify( this.character );
+					if ( this.historyIndex >= 0 && this.history[this.historyIndex] !== snap ) {
+						if ( this.historyIndex < this.history.length - 1 ) {
+							this.history = this.history.slice( 0, this.historyIndex + 1 );
+						}
+						this.history.push( snap );
+						this.historyIndex++;
+					}
+				}
+				if ( !this.canUndo ) return;
+				this.isNavigatingHistory = true;
+				this.historyIndex--;
+				let restored = JSON.parse( this.history[this.historyIndex] );
+				this.characters[this.characterIndex] = restored;
+				this.saveLocalData();
+				this.showToast('Undo');
+				Vue.nextTick(() => { this.isNavigatingHistory = false; });
+			},
+
+			redo() {
+				if ( this.historyDebounceTimer ) {
+					clearTimeout( this.historyDebounceTimer );
+					this.historyDebounceTimer = null;
+				}
+				if ( !this.canRedo ) return;
+				this.isNavigatingHistory = true;
+				this.historyIndex++;
+				let restored = JSON.parse( this.history[this.historyIndex] );
+				this.characters[this.characterIndex] = restored;
+				this.saveLocalData();
+				this.showToast('Redo');
+				Vue.nextTick(() => { this.isNavigatingHistory = false; });
+			},
+
+			handleGlobalKeydown( event ) {
+				if ( this.mode !== 'character' || this.submode !== 'edit' ) return;
+				let target = event.target ? event.target.tagName : '';
+				if ( target === 'INPUT' || target === 'TEXTAREA' ) return;
+
+				if ( (event.ctrlKey || event.metaKey) && !event.shiftKey && event.key.toLowerCase() === 'z' ) {
+					event.preventDefault();
+					this.undo();
+				} else if ( ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') ||
+				            ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === 'z') ) {
+					event.preventDefault();
+					this.redo();
+				}
 			},
 
 			touchCharacter( id ) {
@@ -332,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			clearLocalData() {
 				localStorage.setItem('cortexToolkitData', null);
-				window.reload();
+				window.location.reload();
 			}
 
 		}
@@ -346,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	.component('trait-set-editor', TraitSetEditor )
 	.component('subtrait-editor',  SubtraitEditor )
 	.component('sfx-editor',       SfxEditor )
+	.component('dice-roller',      DiceRoller )
 	.mount('#cortex-toolkit');
 
 });
