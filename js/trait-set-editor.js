@@ -207,7 +207,7 @@ const TraitSetEditor = {
 		haloAngle: {
 			get() {
 				const cfg = this.traitSet?.custom?.cortexToolkit?.haloConfig;
-				return cfg?.arcAngle ?? ((cfg?.arcSlide ?? 0) * 3) ?? 0;
+				return cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
 			},
 			set( val ) {
 				this.setHaloConfig( 'arcAngle', Number(val) );
@@ -820,7 +820,7 @@ const TraitSetEditor = {
 			if ( !this.character.traitSets[s].custom.cortexToolkit ) this.character.traitSets[s].custom.cortexToolkit = {};
 			if ( !this.character.traitSets[s].custom.cortexToolkit.haloConfig ) {
 				this.character.traitSets[s].custom.cortexToolkit.haloConfig = {
-					arcAngle: 0,
+					arcAngle: -90,
 					arcSpread: 100,
 					arcDistance: 0,
 					scaleAngle: 0,
@@ -839,7 +839,7 @@ const TraitSetEditor = {
 			if ( !this.character.traitSets[s].custom ) this.character.traitSets[s].custom = {};
 			if ( !this.character.traitSets[s].custom.cortexToolkit ) this.character.traitSets[s].custom.cortexToolkit = {};
 			this.character.traitSets[s].custom.cortexToolkit.haloConfig = {
-				arcAngle: 0,
+				arcAngle: -90,
 				arcSpread: 100,
 				arcDistance: 0,
 				scaleAngle: 0,

@@ -123,7 +123,7 @@ const Character = {
 		haloConfig() {
 			const attrSet = this.haloTraitSet;
 			const cfg = attrSet?.custom?.cortexToolkit?.haloConfig;
-			const baseArcAngle = cfg?.arcAngle ?? ((cfg?.arcSlide ?? 0) * 3) ?? 0;
+			const baseArcAngle = cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
 			const baseScaleAngle = cfg?.scaleAngle ?? 0;
 			return {
 				arcAngle: this.dragArcAngle !== null ? this.dragArcAngle : baseArcAngle,
@@ -253,7 +253,6 @@ const Character = {
 									>
 										<svg viewBox="0 0 84 84" width="84mm" height="84mm" style="overflow: visible; pointer-events: none;">
 											<path :d="getAttributeCurvePath()" stroke="transparent" stroke-width="12mm" fill="transparent" vector-effect="non-scaling-stroke" style="pointer-events: stroke; cursor: grab;" />
-											<path :d="getAttributeCurvePath()" stroke="#C50852" stroke-width="0.5mm" fill="transparent" vector-effect="non-scaling-stroke" style="pointer-events: stroke; cursor: grab;" />
 										</svg>
 
 									</div>
@@ -731,11 +730,11 @@ const Character = {
 		getAttributeCurvePath() {
 			if ( this.attributes.length < 2 ) return '';
 			const cfg = this.haloConfig;
-			const R = 45 + (cfg.arcDistance ?? 0);
+			const R = 42 + (cfg.arcDistance ?? 0);
 			const Xc = 42;
 			const Yc = 42;
 
-			const centerAngle = 90 + (cfg.arcAngle ?? 0);
+			const centerAngle = 90 + (cfg.arcAngle ?? -90);
 			const spreadFactor = (cfg.arcSpread ?? 100) / 100;
 			const totalSpan = 85 * spreadFactor;
 
@@ -760,7 +759,7 @@ const Character = {
 
 		getAttributeAngle( a ) {
 			const cfg = this.haloConfig;
-			const centerAngle = 90 + (cfg.arcAngle ?? 0);
+			const centerAngle = 90 + (cfg.arcAngle ?? -90);
 			const spreadFactor = (cfg.arcSpread ?? 100) / 100;
 			const totalSpan = 85 * spreadFactor;
 
@@ -779,7 +778,7 @@ const Character = {
 			const cfg = this.haloConfig;
 			const Xc = 42;
 			const Yc = 42;
-			const R = 45 + (cfg.arcDistance ?? 0);
+			const R = 42 + (cfg.arcDistance ?? 0);
 
 			const angleDeg = this.getAttributeAngle( a );
 			const rad = angleDeg * Math.PI / 180;
@@ -1162,7 +1161,7 @@ const Character = {
 			const initialRad = Math.atan2( startY - centerY, startX - centerX );
 			const initialDeg = initialRad * 180 / Math.PI;
 
-			const startArcAngle = this.haloConfig.arcAngle ?? 0;
+			const startArcAngle = this.haloConfig.arcAngle ?? -90;
 			const startScaleAngle = this.haloConfig.scaleAngle ?? 0;
 
 			let hasMoved = false;
@@ -1240,7 +1239,7 @@ const Character = {
 				if ( !attrSet.custom.cortexToolkit ) attrSet.custom.cortexToolkit = {};
 				if ( !attrSet.custom.cortexToolkit.haloConfig ) {
 					attrSet.custom.cortexToolkit.haloConfig = {
-						arcAngle: 0,
+						arcAngle: -90,
 						arcSpread: 100,
 						arcDistance: 0,
 						scaleAngle: 0,

@@ -234,6 +234,15 @@ const cortexFunctions = {
 						'style': {
 							'header': 'attributes',
 							'body': 'attributes',
+						},
+						'haloConfig': {
+							'arcAngle': -90,
+							'arcSpread': 100,
+							'arcDistance': 0,
+							'scaleAngle': 0,
+							'scaleDistance': 0,
+							'scaleDieX': 0,
+							'scaleDieY': 0
 						}
 					}
 				},
