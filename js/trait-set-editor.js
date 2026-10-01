@@ -348,6 +348,19 @@ const TraitSetEditor = {
 			}
 		},
 
+		isChallengePool: {
+			get() {
+				return Boolean(
+					this.traitSet?.custom?.cortexToolkit?.isChallengePool ||
+					this.traitSet?.custom?.cortexToolkit?.challengePool
+				);
+			},
+			set( value ) {
+				this.setCustomProperty( 'isChallengePool', value );
+				this.setCustomProperty( 'challengePool', value );
+			}
+		},
+
 		notesContent: {
 			get() {
 				return this.traitSet?.custom?.cortexToolkit?.notes ?? ( this.traitSet?.description ?? '' );
@@ -551,11 +564,16 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- RATING OPTIONS -->
-					<div class="editor-field" v-if="styleBody !== 'stress' && styleBody !== 'list' && styleBody !== 'notes' && !isHalo">
+					<div class="editor-field" v-if="styleBody !== 'stress' && styleBody !== 'list' && styleBody !== 'notes'">
 						<label>Rating Options</label>
 						<div class="editor-toggles">
-							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
-							<div><label :for="'trait-set-' + traitSetID + '-multi-die'">Allow multiple dice per trait (e.g. 3d6 or Mob pool)</label></div>
+							<template v-if="!isHalo">
+								<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
+								<div><label :for="'trait-set-' + traitSetID + '-multi-die'">Allow multiple dice per trait (e.g. 3d6 or Mob pool)</label></div>
+							</template>
+
+							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-challenge-pool'" :true-value="true" :false-value="false" v-model="isChallengePool"></div>
+							<div><label :for="'trait-set-' + traitSetID + '-challenge-pool'">Challenge Pool (adds all dice at current rating to roller)</label></div>
 						</div>
 					</div>
 

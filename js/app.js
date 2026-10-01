@@ -277,7 +277,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			addDieToRoller( dieData ) {
 				this.dicePool.add( dieData );
-				const label = dieData.source ? dieData.source : `d${dieData.size}`;
+				let label;
+				if ( Array.isArray( dieData ) ) {
+					const poolName = dieData[0]?.source || 'Challenge Pool';
+					label = `${dieData.length} dice (${poolName})`;
+				} else {
+					label = dieData.source ? dieData.source : `d${dieData.size}`;
+				}
 				this.showToast(`Added ${label} to dice pool`);
 			},
 

@@ -77,6 +77,11 @@ const Character = {
 			return this.hasAttributesRing ? this.traitSets[this.attributesID] : null;
 		},
 
+		isHaloChallengePool() {
+			const ts = this.haloTraitSet;
+			return Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
+		},
+
 		haloNounSingular() {
 			const ts = this.haloTraitSet;
 			return ( ts?.nounSingular && ts.nounSingular.length ) ? ts.nounSingular : 'Attribute';
@@ -267,6 +272,7 @@ const Character = {
 											<div class="attribute-inner"
 												:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', attributesID, a]) }"
 												@click.stop="handleAttributeClick( attributesID, a, attribute )"
+												:title="submode === 'play' ? (isHaloChallengePool ? 'Challenge Pool: Click to add all dice to roller' : 'Click to add d' + attribute.value + ' to roller') : ''"
 											>
 
 												<span class="c"
@@ -367,13 +373,12 @@ const Character = {
 							<!-- ATTRIBUTES -->
 							<div :class="{ 'attributes': true, 'vertical': attributes.length > 5 }" v-if="pageLocation === 'right' && hasAttributesRing && attributesID > -1">
 
-								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE -->
+								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR CHALLENGE POOL (PLAY) -->
 								<transition appear>
 								<div class="preview-button-container"
-									v-show="submode === 'edit'"
 									v-if="pageLocation === 'right'"
 								>
-									<div class="preview-button-container-inner">
+									<div class="preview-button-container-inner" v-show="submode === 'edit'">
 										<div class="preview-button"
 											@click.stop="addTrait( attributesID )"
 										>
@@ -389,6 +394,14 @@ const Character = {
 											@click.stop="selectElement(['traitSet', attributesID])"
 										>
 											<span><i class="fas fa-cog"></i> Settings</span>
+										</div>
+									</div>
+									<div class="preview-button-container-inner" v-if="submode === 'play' && isHaloChallengePool && attributes.length > 0">
+										<div class="preview-button"
+											@click.stop="handleAttributeClick( attributesID, 0, attributes[0] )"
+											title="Add all Challenge Pool dice to roller"
+										>
+											<span><i class="fas fa-dice-d20"></i> Roll Challenge Pool ({{ attributes.length }} dice)</span>
 										</div>
 									</div>
 								</div>
@@ -998,10 +1011,43 @@ const Character = {
 			}
 		},
 
+		addTraitSetDiceToRoller( traitSet ) {
+			if ( !traitSet ) return;
+			const diceToAdd = [];
+			const poolName = traitSet.name || this.character.name || 'Challenge Pool';
+			for ( const tr of (traitSet.traits || []) ) {
+				if ( Array.isArray( tr.dice ) && tr.dice.length > 0 ) {
+					for ( const d of tr.dice ) {
+						if ( d > 0 ) {
+							diceToAdd.push({
+								size: d,
+								qty: 1,
+								source: tr.name || poolName
+							});
+						}
+					}
+				} else if ( tr.value && tr.value > 0 ) {
+					diceToAdd.push({
+						size: tr.value,
+						qty: 1,
+						source: tr.name || poolName
+					});
+				}
+			}
+			if ( diceToAdd.length > 0 ) {
+				this.$emit( 'addDieToRoller', diceToAdd );
+			}
+		},
+
 		handleDieClick( trait, dieSize, dIdx, traitSet, s, t ) {
 			if ( this.submode === 'play' ) {
 				if ( this.isDieSpent( trait, dIdx ) ) {
 					this.toggleDieSpentInPlay( s, t, dIdx );
+					return;
+				}
+				const isChallenge = Boolean( traitSet?.custom?.cortexToolkit?.isChallengePool || traitSet?.custom?.cortexToolkit?.challengePool );
+				if ( isChallenge ) {
+					this.addTraitSetDiceToRoller( traitSet );
 					return;
 				}
 				const isRes = this.isResourceTrait( traitSet, trait );
@@ -1020,6 +1066,11 @@ const Character = {
 		handleSingleDieClick( trait, value, traitSet, s, t ) {
 			if ( this.submode === 'play' ) {
 				if ( value ) {
+					const isChallenge = Boolean( traitSet?.custom?.cortexToolkit?.isChallengePool || traitSet?.custom?.cortexToolkit?.challengePool );
+					if ( isChallenge ) {
+						this.addTraitSetDiceToRoller( traitSet );
+						return;
+					}
 					const isRes = this.isResourceTrait( traitSet, trait );
 					this.$emit( 'addDieToRoller', {
 						size: value,
@@ -1037,12 +1088,31 @@ const Character = {
 		handleAttributeClick( attributesID, a, attribute ) {
 			if ( this.isHaloDragging ) return;
 			if ( this.submode === 'play' ) {
-				if ( attribute.value ) {
-					this.$emit( 'addDieToRoller', {
-						size: attribute.value,
-						qty: 1,
-						source: attribute.name
-					});
+				const ts = this.traitSets[attributesID];
+				const isChallenge = Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
+				if ( isChallenge ) {
+					const diceToAdd = [];
+					const poolName = (ts?.name && ts.name !== 'Attributes') ? ts.name : (this.character.name || 'Challenge Pool');
+					for ( const attr of this.attributes ) {
+						if ( attr.value && attr.value > 0 ) {
+							diceToAdd.push({
+								size: attr.value,
+								qty: 1,
+								source: attr.name || poolName
+							});
+						}
+					}
+					if ( diceToAdd.length > 0 ) {
+						this.$emit( 'addDieToRoller', diceToAdd );
+					}
+				} else {
+					if ( attribute.value ) {
+						this.$emit( 'addDieToRoller', {
+							size: attribute.value,
+							qty: 1,
+							source: attribute.name
+						});
+					}
 				}
 			} else {
 				this.selectElement([ 'trait', attributesID, a ]);
