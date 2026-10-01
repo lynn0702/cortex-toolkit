@@ -12,6 +12,7 @@ const Roster = {
 			importBuffer:      null,
 			showDeleteConfirm: false,
 			characterToDelete: null,
+			showDeleteAllConfirm: false,
 		};
 	},
 
@@ -80,6 +81,13 @@ const Roster = {
 						v-if="characters.length > 0"
 					>
 						<span><i class="fas fa-file-export"></i> Export All</span>
+					</div>
+
+					<div class="roster-button roster-button-delete-all"
+						@click.stop="showDeleteAllConfirm = true"
+						v-if="characters.length > 0"
+					>
+						<span><i class="fas fa-trash-alt"></i> Delete All</span>
 					</div>
 
 				</div>
@@ -282,6 +290,31 @@ const Roster = {
 			</div>
 		</aside>
 		</transition>
+
+		<!-- DELETE ALL CHARACTERS CONFIRMATION MODAL -->
+		<transition>
+		<div class="modal-veil" v-show="showDeleteAllConfirm" @click.stop="showDeleteAllConfirm = false"></div>
+		</transition>
+
+		<transition>
+		<aside class="modal modal-confirm" v-if="showDeleteAllConfirm">
+			<div class="modal-close" @click.prevent="showDeleteAllConfirm = false"><i class="fas fa-times"></i></div>
+			<div class="modal-inner">
+				<p>Are you sure you want to delete <strong>all {{ characters.length }} characters and templates</strong>?</p>
+				<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone. Consider exporting a backup first.</p>
+				<div class="modal-button-container">
+					<div class="modal-button-container-inner">
+						<div class="modal-button modal-button-delete" @click.stop="confirmDeleteAll()">
+							<span><i class="fas fa-trash-alt"></i> Delete All</span>
+						</div>
+						<div class="modal-button modal-button-no" @click.stop="showDeleteAllConfirm = false">
+							<span><i class="fas fa-times"></i> Cancel</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</aside>
+		</transition>
 		
 	</section>`,
 
@@ -335,6 +368,11 @@ const Roster = {
 			}
 			this.characterToDelete = null;
 			this.showDeleteConfirm = false;
+		},
+
+		confirmDeleteAll() {
+			this.showDeleteAllConfirm = false;
+			this.$emit('deleteAllCharacters');
 		},
 
 		importStart() {

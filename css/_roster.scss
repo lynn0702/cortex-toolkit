@@ -21,7 +21,8 @@
 .roster-button {
 	@extend %button;
 	--button-color: var(--color-interactive);
-	&.roster-button-delete {
+	&.roster-button-delete,
+	&.roster-button-delete-all {
 		--button-color: var(--color-primary);
 	}
 	&.roster-button-template {

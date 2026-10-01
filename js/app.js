@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						@exportCharacter="exportCharacter"
 						@exportAllCharacters="exportAllCharacters"
 						@deleteCharacter="deleteCharacter"
+						@deleteAllCharacters="deleteAllCharacters"
 						@importCharacter="importCharacter"
 					></roster>
 
@@ -388,6 +389,18 @@ document.addEventListener('DOMContentLoaded', () => {
 				this.setPageTitle();
 
 				this.saveLocalData();
+
+			},
+
+			deleteAllCharacters() {
+
+				const count = this.characters.length;
+				this.characters = [];
+				this.characterID = null;
+				this.setMode( 'roster', null, true );
+				this.setPageTitle();
+				this.saveLocalData();
+				this.showToast(`Deleted all ${count} characters`);
 
 			},
 

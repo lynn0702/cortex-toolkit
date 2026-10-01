@@ -10930,7 +10930,7 @@ body {
 .roster-button {
   --button-color: var(--color-interactive);
 }
-.roster-button.roster-button-delete {
+.roster-button.roster-button-delete, .roster-button.roster-button-delete-all {
   --button-color: var(--color-primary);
 }
 .roster-button.roster-button-template {
