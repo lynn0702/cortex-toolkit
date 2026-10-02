@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				toastTimeout:       null,
 				history:            [],
 				historyIndex:       -1,
-				historyDebounceTimer: null,
 				isNavigatingHistory:false,
 				isHandlingHash:     false,
 			}
@@ -46,7 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			},
 
 			canUndo() {
-				return this.mode === 'character' && this.historyIndex > 0;
+				if ( this.mode !== 'character' ) return false;
+				if ( this.historyIndex > 0 ) return true;
+				if ( this.character && this.historyIndex >= 0 ) {
+					return this.history[ this.historyIndex ] !== JSON.stringify( this.character );
+				}
+				return false;
 			},
 
 			canRedo() {
@@ -205,6 +209,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			setMode( mode, submode, updateHash = true ) {
 				if ( mode === 'character' && !this.character ) return;
+				if ( mode !== 'character' || submode !== 'edit' ) {
+					this.commitHistorySnapshot();
+					this.editing = [];
+				}
 				this.mode    = mode;
 				this.submode = submode;
 				if ( mode === 'character' && submode === 'play' ) {
@@ -510,7 +518,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				this.touchCharacter( character.id );
 				this.saveLocalData();
-				this.pushHistorySnapshot();
+				if ( !this.editing || !this.editing.length ) {
+					this.commitHistorySnapshot();
+				}
 
 			},
 
@@ -524,69 +534,51 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 			},
 
-			pushHistorySnapshot( immediate = false ) {
+			commitHistorySnapshot() {
 				if ( this.isNavigatingHistory || !this.character ) return;
-
-				if ( this.historyDebounceTimer ) {
-					clearTimeout( this.historyDebounceTimer );
-					this.historyDebounceTimer = null;
+				let snap = JSON.stringify( this.character );
+				if ( this.historyIndex >= 0 && this.history[this.historyIndex] === snap ) return;
+				if ( this.historyIndex < this.history.length - 1 ) {
+					this.history = this.history.slice( 0, this.historyIndex + 1 );
 				}
-
-				const record = () => {
-					if ( this.isNavigatingHistory || !this.character ) return;
-					let snap = JSON.stringify( this.character );
-					if ( this.historyIndex >= 0 && this.history[this.historyIndex] === snap ) return;
-					if ( this.historyIndex < this.history.length - 1 ) {
-						this.history = this.history.slice( 0, this.historyIndex + 1 );
-					}
-					this.history.push( snap );
-					if ( this.history.length > 50 ) {
-						this.history.shift();
-					} else {
-						this.historyIndex++;
-					}
-				};
-
-				if ( immediate ) {
-					record();
+				this.history.push( snap );
+				if ( this.history.length > 50 ) {
+					this.history.shift();
 				} else {
-					this.historyDebounceTimer = setTimeout( record, 400 );
+					this.historyIndex++;
+				}
+			},
+
+			validateEditing( character ) {
+				if ( !this.editing || !this.editing.length || !character ) return;
+				let [ type, s, t ] = this.editing;
+				if ( type === 'traitSet' && !character.traitSets?.[s] ) {
+					this.editing = [];
+				} else if ( type === 'trait' && !character.traitSets?.[s]?.traits?.[t] ) {
+					this.editing = [];
 				}
 			},
 
 			undo() {
-				if ( this.historyDebounceTimer ) {
-					clearTimeout( this.historyDebounceTimer );
-					this.historyDebounceTimer = null;
-					let snap = JSON.stringify( this.character );
-					if ( this.historyIndex >= 0 && this.history[this.historyIndex] !== snap ) {
-						if ( this.historyIndex < this.history.length - 1 ) {
-							this.history = this.history.slice( 0, this.historyIndex + 1 );
-						}
-						this.history.push( snap );
-						this.historyIndex++;
-					}
-				}
+				this.commitHistorySnapshot();
 				if ( !this.canUndo ) return;
 				this.isNavigatingHistory = true;
 				this.historyIndex--;
 				let restored = JSON.parse( this.history[this.historyIndex] );
 				this.characters[this.characterIndex] = restored;
+				this.validateEditing( restored );
 				this.saveLocalData();
 				this.showToast('Undo');
 				Vue.nextTick(() => { this.isNavigatingHistory = false; });
 			},
 
 			redo() {
-				if ( this.historyDebounceTimer ) {
-					clearTimeout( this.historyDebounceTimer );
-					this.historyDebounceTimer = null;
-				}
 				if ( !this.canRedo ) return;
 				this.isNavigatingHistory = true;
 				this.historyIndex++;
 				let restored = JSON.parse( this.history[this.historyIndex] );
 				this.characters[this.characterIndex] = restored;
+				this.validateEditing( restored );
 				this.saveLocalData();
 				this.showToast('Redo');
 				Vue.nextTick(() => { this.isNavigatingHistory = false; });
@@ -594,6 +586,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			handleGlobalKeydown( event ) {
 				if ( this.mode !== 'character' || this.submode !== 'edit' ) return;
+
+				if ( event.key === 'Escape' ) {
+					if ( this.editing && this.editing.length ) {
+						event.preventDefault();
+						if ( event.target && typeof event.target.blur === 'function' ) {
+							event.target.blur();
+						}
+						this.clearSelected();
+						return;
+					}
+				}
+
 				let target = event.target ? event.target.tagName : '';
 				if ( target === 'INPUT' || target === 'TEXTAREA' ) return;
 
@@ -623,12 +627,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			selectElement( selector ) {
 
+				let nextSelector = selector;
 				if ( cortexFunctions.arraysMatch( this.editing, selector ) ) {
-					this.editing = [];
-					return;
+					nextSelector = [];
 				}
 
-				this.editing = selector;
+				this.commitHistorySnapshot();
+				this.editing = nextSelector;
 
 			},
 
