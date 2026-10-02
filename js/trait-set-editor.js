@@ -321,10 +321,10 @@ const TraitSetEditor = {
 
 		includeD4: {
 			get() {
-				return Boolean( this.traitSet?.custom?.cortexToolkit?.stressConfig?.includeD4 );
+				return this.isRatingIncluded( 4 );
 			},
 			set( value ) {
-				this.setStressConfig( 'includeD4', value );
+				this.toggleRatingOption( 4 );
 			}
 		},
 
@@ -336,6 +336,38 @@ const TraitSetEditor = {
 			},
 			set( value ) {
 				this.setStressConfig( 'includeOut', value );
+			}
+		},
+
+		ratingScale: {
+			get() {
+				return cortexFunctions.getTraitSetRatings( this.traitSet );
+			},
+			set( scale ) {
+				let s = this.traitSetID;
+				if ( !this.character.traitSets[s].custom ) this.character.traitSets[s].custom = {};
+				if ( !this.character.traitSets[s].custom.cortexToolkit ) this.character.traitSets[s].custom.cortexToolkit = {};
+				this.character.traitSets[s].custom.cortexToolkit.ratingScale = scale;
+
+				if ( !this.character.traitSets[s].custom.cortexToolkit.stressConfig ) {
+					this.character.traitSets[s].custom.cortexToolkit.stressConfig = {};
+				}
+				this.character.traitSets[s].custom.cortexToolkit.stressConfig.includeD4 = scale.includes( 4 );
+
+				this.updateCharacter( JSON.parse( JSON.stringify( this.character ) ) );
+			}
+		},
+
+		subtraitRatingScale: {
+			get() {
+				return cortexFunctions.getSubtraitRatings( this.traitSet );
+			},
+			set( scale ) {
+				let s = this.traitSetID;
+				if ( !this.character.traitSets[s].custom ) this.character.traitSets[s].custom = {};
+				if ( !this.character.traitSets[s].custom.cortexToolkit ) this.character.traitSets[s].custom.cortexToolkit = {};
+				this.character.traitSets[s].custom.cortexToolkit.subtraitRatingScale = scale;
+				this.updateCharacter( JSON.parse( JSON.stringify( this.character ) ) );
 			}
 		},
 
@@ -553,19 +585,71 @@ const TraitSetEditor = {
 
 					<!-- STRESS OPTIONS -->
 					<div class="editor-field" v-if="styleBody === 'stress'">
-						<label>Stress Options</label>
+						<label>Stress Markers</label>
 						<div class="editor-toggles">
-							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-d4'" :true-value="true" :false-value="false" v-model="includeD4"></div>
-							<div><label :for="'trait-set-' + traitSetID + '-stress-d4'">Include d4 Stress</label></div>
-
 							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-out'" :true-value="true" :false-value="false" v-model="includeOut"></div>
 							<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Include 💥 Out Marker</label></div>
 						</div>
 					</div>
 
-					<!-- RATING OPTIONS -->
+					<!-- RATING SCALE (OPT IN/OUT OF RATINGS) -->
+					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes'">
+						<label>Rating Scale Options</label>
+						<div class="rating-scale-container">
+							<div class="rating-scale-chips">
+								<button
+									type="button"
+									v-for="size in [4, 6, 8, 10, 12]"
+									:key="size"
+									class="rating-scale-chip"
+									:class="{ active: isRatingIncluded(size) }"
+									@click.stop="toggleRatingOption(size)"
+									:title="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
+								>
+									<span class="c" v-html="getDieDisplayValue(size)"></span>
+									<span class="chip-label">d{{ size }}</span>
+								</button>
+							</div>
+							<div class="rating-scale-presets">
+								<span class="preset-label">Presets:</span>
+								<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('all')">All (d4–d12)</button>
+								<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('skills')">Skills (d4–d6)</button>
+								<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('specialties')">Specialties (d8–d12)</button>
+								<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('stress')">Stress (d6–d12)</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- SUB-TRAIT RATING SCALE -->
+					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes' && featureSubtraits">
+						<label>Sub-Trait Rating Scale (e.g. Specialties)</label>
+						<div class="rating-scale-container">
+							<div class="rating-scale-chips">
+								<button
+									type="button"
+									v-for="size in [4, 6, 8, 10, 12]"
+									:key="size"
+									class="rating-scale-chip"
+									:class="{ active: isSubtraitRatingIncluded(size) }"
+									@click.stop="toggleSubtraitRatingOption(size)"
+									:title="(isSubtraitRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
+								>
+									<span class="c" v-html="getDieDisplayValue(size)"></span>
+									<span class="chip-label">d{{ size }}</span>
+								</button>
+							</div>
+							<div class="rating-scale-presets">
+								<span class="preset-label">Presets:</span>
+								<button type="button" class="btn-scale-preset" @click.stop="setSubtraitRatingPreset('all')">All (d4–d12)</button>
+								<button type="button" class="btn-scale-preset" @click.stop="setSubtraitRatingPreset('specialties')">Specialties (d8–d12)</button>
+								<button type="button" class="btn-scale-preset" @click.stop="setSubtraitRatingPreset('skills')">Skills (d4–d6)</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- POOL & MULTI-DIE OPTIONS -->
 					<div class="editor-field" v-if="styleBody !== 'stress' && styleBody !== 'list' && styleBody !== 'notes'">
-						<label>Rating Options</label>
+						<label>Pool Options</label>
 						<div class="editor-toggles">
 							<template v-if="!isHalo">
 								<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
@@ -917,6 +1001,77 @@ const TraitSetEditor = {
 
 			this.updateCharacter( this.character );
 
+		},
+
+		isRatingIncluded( size ) {
+			return this.ratingScale.includes( size );
+		},
+
+		toggleRatingOption( size ) {
+			let current = [...this.ratingScale];
+			if ( current.includes( size ) ) {
+				if ( current.length > 1 ) {
+					current = current.filter( s => s !== size );
+				}
+			} else {
+				current.push( size );
+				current.sort( ( a, b ) => a - b );
+			}
+			this.ratingScale = current;
+		},
+
+		setRatingPreset( preset ) {
+			switch ( preset ) {
+				case 'skills':
+					this.ratingScale = [ 4, 6 ];
+					break;
+				case 'specialties':
+					this.ratingScale = [ 8, 10, 12 ];
+					break;
+				case 'stress':
+					this.ratingScale = [ 6, 8, 10, 12 ];
+					break;
+				case 'all':
+				default:
+					this.ratingScale = [ 4, 6, 8, 10, 12 ];
+					break;
+			}
+		},
+
+		isSubtraitRatingIncluded( size ) {
+			return this.subtraitRatingScale.includes( size );
+		},
+
+		toggleSubtraitRatingOption( size ) {
+			let current = [...this.subtraitRatingScale];
+			if ( current.includes( size ) ) {
+				if ( current.length > 1 ) {
+					current = current.filter( s => s !== size );
+				}
+			} else {
+				current.push( size );
+				current.sort( ( a, b ) => a - b );
+			}
+			this.subtraitRatingScale = current;
+		},
+
+		setSubtraitRatingPreset( preset ) {
+			switch ( preset ) {
+				case 'skills':
+					this.subtraitRatingScale = [ 4, 6 ];
+					break;
+				case 'specialties':
+					this.subtraitRatingScale = [ 8, 10, 12 ];
+					break;
+				case 'all':
+				default:
+					this.subtraitRatingScale = [ 4, 6, 8, 10, 12 ];
+					break;
+			}
+		},
+
+		getDieDisplayValue( value ) {
+			return cortexFunctions.getDieDisplayValue( value );
 		},
 
 		addEffect() {

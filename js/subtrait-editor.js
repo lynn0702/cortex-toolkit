@@ -50,6 +50,12 @@ const SubtraitEditor = {
 			}
 		},
 
+		availableValues() {
+			let s = this.traitSetID;
+			let traitSet = this.character.traitSets[s];
+			return cortexFunctions.getSubtraitRatings( traitSet );
+		},
+
 	},
 
 	/*html*/
@@ -64,7 +70,7 @@ const SubtraitEditor = {
 
 			<ul class="editor-values">
 				<li
-					v-for="value in [4,6,8,10,12]"
+					v-for="value in availableValues"
 					:class="{ 'active': value === subtrait.value }"
 					@click.stop="toggleSubtraitValue( value )"
 				>

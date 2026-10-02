@@ -31,6 +31,26 @@ const cortexFunctions = {
 		}
 	},
 
+	getTraitSetRatings: function( traitSet ) {
+		const custom = traitSet?.custom?.cortexToolkit;
+		if ( Array.isArray(custom?.ratingScale) && custom.ratingScale.length > 0 ) {
+			return [...custom.ratingScale].sort((a, b) => a - b);
+		}
+		// Backwards compatibility for Stress sets with includeD4: false
+		if ( custom?.style?.body === 'stress' && custom?.stressConfig?.includeD4 === false ) {
+			return [6, 8, 10, 12];
+		}
+		return [4, 6, 8, 10, 12];
+	},
+
+	getSubtraitRatings: function( traitSet ) {
+		const custom = traitSet?.custom?.cortexToolkit;
+		if ( Array.isArray(custom?.subtraitRatingScale) && custom.subtraitRatingScale.length > 0 ) {
+			return [...custom.subtraitRatingScale].sort((a, b) => a - b);
+		}
+		return [4, 6, 8, 10, 12];
+	},
+
 	getTraitDice: function( trait ) {
 		if ( !trait ) return [];
 		if ( Array.isArray(trait.dice) && trait.dice.length > 0 ) {

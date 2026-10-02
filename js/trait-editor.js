@@ -136,10 +136,7 @@ const TraitEditor = {
 		},
 
 		availableValues() {
-			if ( this.isStressSet && !this.shouldShowStressD4 ) {
-				return [6, 8, 10, 12];
-			}
-			return [4, 6, 8, 10, 12];
+			return cortexFunctions.getTraitSetRatings( this.traitSet );
 		},
 
 		cssClass() {
@@ -241,7 +238,7 @@ const TraitEditor = {
 						<!-- MULTI DIE COUNTERS AND POOL LIST -->
 						<div class="editor-multidie-container" v-else>
 							<div class="editor-die-steppers">
-								<div v-for="size in [4,6,8,10,12]" :key="'stepper-' + size" class="die-stepper-item">
+								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
 									<span class="c">{{ getDieDisplayValue(size) }}</span>
 									<span class="stepper-label">d{{ size }}</span>
 									<div class="stepper-controls">
@@ -575,6 +572,10 @@ const TraitEditor = {
 
 			let subtrait = structuredClone( cortexFunctions.defaultTrait );
 			subtrait.name = 'New subtrait';
+			const allowed = cortexFunctions.getSubtraitRatings( this.traitSet );
+			if ( allowed.length > 0 && !allowed.includes( subtrait.value ) ) {
+				subtrait.value = allowed[0];
+			}
 
 			let character = this.character;
 			let s = this.traitSetID;

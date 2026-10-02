@@ -483,11 +483,13 @@ const Character = {
 														
 															<!-- STRESS VALUE TRACK -->
 															<div class="trait-value stress-value" v-if="traitSet.custom.cortexToolkit.style.body === 'stress'">
-																<span v-if="shouldShowStressD4(traitSet)" :class="{ 'c': true, 'active': trait.value === 4 }" @click.stop="handleStressClick(s, t, 4)">4</span>
-																<span :class="{ 'c': true, 'active': trait.value === 6 }" @click.stop="handleStressClick(s, t, 6)">6</span>
-																<span :class="{ 'c': true, 'active': trait.value === 8 }" @click.stop="handleStressClick(s, t, 8)">8</span>
-																<span :class="{ 'c': true, 'active': trait.value === 10 }" @click.stop="handleStressClick(s, t, 10)">0</span>
-																<span :class="{ 'c': true, 'active': trait.value === 12 }" @click.stop="handleStressClick(s, t, 12)">2</span>
+																<span
+																	v-for="size in getTraitSetRatings(traitSet)"
+																	:key="size"
+																	:class="{ 'c': true, 'active': trait.value === size }"
+																	@click.stop="handleStressClick(s, t, size)"
+																	v-html="renderDieValue(size)"
+																></span>
 																<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': isStressOut(trait) }" @click.stop="handleStressOutClick(s, t)" title="Out">💥 OUT</span>
 															</div>
 
@@ -518,11 +520,12 @@ const Character = {
 
 															<!-- STANDARD SINGLE-DIE TRAIT -->
 															<div class="trait-value single-die-value" v-else @click.stop="handleSingleDieClick(trait, trait.value, traitSet, s, t)">
-																<span :class="{ 'c': true, 'active': trait.value === 4 }" >4</span>
-																<span :class="{ 'c': true, 'active': trait.value === 6 }" >6</span>
-																<span :class="{ 'c': true, 'active': trait.value === 8 }" >8</span>
-																<span :class="{ 'c': true, 'active': trait.value === 10 }">0</span>
-																<span :class="{ 'c': true, 'active': trait.value === 12 }">2</span>
+																<span
+																	v-for="size in getTraitSetRatings(traitSet)"
+																	:key="size"
+																	:class="{ 'c': true, 'active': trait.value === size }"
+																	v-html="renderDieValue(size)"
+																></span>
 															</div>
 
 														</h2>
@@ -541,11 +544,12 @@ const Character = {
 																></span>
 															
 																<div class="subtrait-value">
-																	<span :class="{ 'c': true, 'active': subtrait.value === 4 }" >4</span>
-																	<span :class="{ 'c': true, 'active': subtrait.value === 6 }" >6</span>
-																	<span :class="{ 'c': true, 'active': subtrait.value === 8 }" >8</span>
-																	<span :class="{ 'c': true, 'active': subtrait.value === 10 }">0</span>
-																	<span :class="{ 'c': true, 'active': subtrait.value === 12 }">2</span>
+																	<span
+																		v-for="size in getSubtraitRatings(traitSet)"
+																		:key="size"
+																		:class="{ 'c': true, 'active': subtrait.value === size }"
+																		v-html="renderDieValue(size)"
+																	></span>
 																</div>
 
 															</li>
@@ -873,6 +877,10 @@ const Character = {
 
 			let trait = structuredClone( cortexFunctions.defaultTrait );
 			trait.name = 'New ' + noun;
+			const allowed = this.getTraitSetRatings( traitSet );
+			if ( allowed.length > 0 && !allowed.includes( trait.value ) ) {
+				trait.value = allowed[0];
+			}
 
 			character.traitSets[traitSetID].traits.push(trait);
 
@@ -966,6 +974,14 @@ const Character = {
 				spentList.push( index );
 			}
 			this.updateCharacter( this.character );
+		},
+
+		getTraitSetRatings( traitSet ) {
+			return cortexFunctions.getTraitSetRatings( traitSet );
+		},
+
+		getSubtraitRatings( traitSet ) {
+			return cortexFunctions.getSubtraitRatings( traitSet );
 		},
 
 		shouldShowStressD4( traitSet ) {
