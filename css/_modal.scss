@@ -24,17 +24,19 @@
 
 .modal {
 	position: fixed;
-	top: 50%;
+	top: calc( var(--header-size) + 2rem );
 	left: 50%;
-	transform: translate(-50%, -50%) scale(1);
+	transform: translateX(-50%) scale(1);
 	width: 100%;
 	max-width: clamp( 0px, 100vw - 2rem, 36rem );
-	max-height: calc( 100vh - 2rem );
+	max-height: calc( 100vh - var(--header-size) - 4rem );
+	overflow-y: auto;
 	z-index: var(--z-modal);
-	background: hsla(0, 0%, 0%, 0.9);
-	backdrop-filter: blur(.5rem);
+	background: hsla(0, 0%, 0%, 0.95);
+	backdrop-filter: blur(.75rem);
+	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: .5rem;
-	box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5);
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 	font-size: 1rem;
 	color: white;
 	&.v-enter-active,
@@ -44,7 +46,7 @@
 	&.v-enter-from,
 	&.v-leave-to {
 		opacity: 0;
-		transform: translate(-50%, -50%) scale(.95);
+		transform: translateX(-50%) scale(.95);
 	}
 }
 

@@ -20,18 +20,18 @@ const TraitEditor = {
 
 		traitSet() {
 			let s = this.traitSetID;
-			return this.character.traitSets[s];
+			return this.character?.traitSets?.[s];
 		},
 
 		trait() {
 			let s = this.traitSetID;
 			let t = this.traitID;
-			return this.character.traitSets[s].traits[t];
+			return this.character?.traitSets?.[s]?.traits?.[t];
 		},
 
 		name: {
 			get() {
-				return this.trait.name;
+				return this.trait?.name ?? '';
 			},
 			set( name ) {
 				this.setProperty( 'name', name );
@@ -40,7 +40,7 @@ const TraitEditor = {
 
 		value: {
 			get() {
-				return this.trait.value;
+				return this.trait?.value ?? 4;
 			},
 			set( value ) {
 				this.setProperty( 'value', value );
@@ -48,7 +48,25 @@ const TraitEditor = {
 		},
 
 		isListStyle() {
-			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'list' || this.traitSet?.custom?.cortexToolkit?.style?.body === 'notes';
+			const b = this.traitSet?.custom?.cortexToolkit?.style?.body;
+			return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines';
+		},
+
+		isSessionRecordStyle() {
+			const b = this.traitSet?.custom?.cortexToolkit?.style?.body;
+			return b === 'session-record' || b === 'angled-lines';
+		},
+
+		sessionRecordChecked: {
+			get() {
+				return Boolean( this.trait?.custom?.checked || this.trait?.value );
+			},
+			set( val ) {
+				if ( !this.trait.custom ) this.trait.custom = {};
+				this.trait.custom.checked = Boolean( val );
+				this.trait.value = val ? 1 : 0;
+				this.updateCharacter( this.character );
+			}
 		},
 
 		isMultiDie() {
@@ -139,6 +157,29 @@ const TraitEditor = {
 			return cortexFunctions.getTraitSetRatings( this.traitSet );
 		},
 
+		hasAttachedStress() {
+			return Boolean( this.traitSet?.custom?.cortexToolkit?.attachedStress?.enabled );
+		},
+
+		attachedStressLabel() {
+			return this.traitSet?.custom?.cortexToolkit?.attachedStress?.label || 'Stress';
+		},
+
+		attachedStressScale() {
+			return this.traitSet?.custom?.cortexToolkit?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ];
+		},
+
+		attachedStressValue: {
+			get() {
+				return this.trait?.custom?.stress ?? this.trait?.stress ?? 0;
+			},
+			set( val ) {
+				if ( !this.trait.custom ) this.trait.custom = {};
+				this.trait.custom.stress = val;
+				this.updateCharacter( this.character );
+			}
+		},
+
 		cssClass() {
 
 			let cssClass = {
@@ -189,8 +230,26 @@ const TraitEditor = {
 				<div class="editor-fields">
 
 					<div class="editor-field">
-						<label>Trait Name</label>
-						<input type="text" v-model="name" ref="inputName">
+						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : 'Trait Name' }}</label>
+						<input type="text" v-model="name" ref="inputName" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : ''">
+					</div>
+
+					<!-- SESSION RECORD ROW CHECKBOX -->
+					<div class="editor-field" v-if="isSessionRecordStyle">
+						<div class="editor-toggles">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-session-checked'"
+									v-model="sessionRecordChecked"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-session-checked'">
+									Filled / Bubbled In
+								</label>
+							</div>
+						</div>
 					</div>
 
 					<!-- SCALE DIE TOGGLE FOR HALO ATTRIBUTES -->
@@ -263,6 +322,27 @@ const TraitEditor = {
 							</div>
 						</div>
 
+					</div>
+
+					<!-- ATTACHED STRESS SELECTOR -->
+					<div class="editor-field" v-if="hasAttachedStress">
+						<label>Attached {{ attachedStressLabel }}</label>
+						<ul class="editor-values">
+							<li
+								:class="{ 'active': attachedStressValue === 0 }"
+								@click.stop="setAttachedStress(0)"
+								title="No stress"
+							>
+								<span style="font-size: 0.75rem; font-weight: 700;">-</span>
+							</li>
+							<li
+								v-for="val in attachedStressScale"
+								:class="{ 'active': attachedStressValue === val }"
+								@click.stop="setAttachedStress(val)"
+							>
+								<span class="c" v-html="getDieDisplayValue(val)"></span>
+							</li>
+						</ul>
 					</div>
 
 					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description">
@@ -442,6 +522,18 @@ const TraitEditor = {
 
 			this.updateCharacter( character );
 
+		},
+
+		setAttachedStress( value ) {
+			let character = this.character;
+			let s = this.traitSetID;
+			let t = this.traitID;
+			if ( !character.traitSets[s].traits[t].custom ) {
+				character.traitSets[s].traits[t].custom = {};
+			}
+			const current = character.traitSets[s].traits[t].custom.stress ?? character.traitSets[s].traits[t].stress ?? 0;
+			character.traitSets[s].traits[t].custom.stress = ( current === value ) ? 0 : value;
+			this.updateCharacter( character );
 		},
 
 		getDieCount( size ) {

@@ -1,20 +1,24 @@
 // FONTS
 
 // Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Open+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500;1,700&family=Alegreya+Sans+SC:wght@400;500;800;900&display=block');
+
 
 // Cortex Icons
 @font-face {
 	font-family: 'cortex-icons';
-	src: url('../fonts/cortex-icons.woff') format('woff');
+	src: url('data:font/woff;charset=utf-8;base64,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') format('woff'),
+	     url('../fonts/cortex-icons.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
 }
 
-// Font Awesome Free
-$fa-font-path: '../fonts/fontawesome-free/webfonts';
-@import '../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
-@import '../node_modules/@fortawesome/fontawesome-free/scss/brands';
-@import '../node_modules/@fortawesome/fontawesome-free/scss/solid';
-@import '../node_modules/@fortawesome/fontawesome-free/scss/regular';
+// Font Awesome Free loaded via CDN in index.html
+// $fa-font-path: '../fonts/fontawesome-free/webfonts';
+// @import '../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
+// @import '../node_modules/@fortawesome/fontawesome-free/scss/brands';
+// @import '../node_modules/@fortawesome/fontawesome-free/scss/solid';
+// @import '../node_modules/@fortawesome/fontawesome-free/scss/regular';
 
 // VARIABLES
 
@@ -50,12 +54,12 @@ $fa-font-path: '../fonts/fontawesome-free/webfonts';
 	--z-editable-highlight:        700;
 	--z-editable-content:          800;
 	--z-frame:                     900;
-	--z-editor:                   1000;
-	--z-editor-scroll-indicator:  1100;
-	--z-editor-controls:          1200;
-	--z-modal-veil:               1300;
-	--z-modal:                    1400;
-	--z-modal-close:              1500;
+	--z-editor:                   2000;
+	--z-editor-scroll-indicator:  2100;
+	--z-editor-controls:          2200;
+	--z-modal-veil:              10000;
+	--z-modal:                   10100;
+	--z-modal-close:             10200;
 
 }
 
@@ -197,3 +201,5 @@ body {
 @import 'variants';
 @import 'editor';
 @import 'roller';
+@import 'spotlight-print';
+@import 'multi-character';

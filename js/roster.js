@@ -2,6 +2,10 @@ const Roster = {
 
 	props: {
 		characters: Array,
+		openCharacterIDs: {
+			type: Array,
+			default: () => []
+		},
 	},
 
 	data() {
@@ -13,6 +17,9 @@ const Roster = {
 			showDeleteConfirm: false,
 			characterToDelete: null,
 			showDeleteAllConfirm: false,
+			showSpotlightLibrary: false,
+			spotlightSearch: '',
+			spotlightFilter: 'all',
 		};
 	},
 
@@ -46,6 +53,29 @@ const Roster = {
 				return sorted.filter( c => !c.isTemplate );
 			}
 			return sorted;
+		},
+
+		spotlightTemplates() {
+			return typeof cortexSpotlightTemplates !== 'undefined' ? cortexSpotlightTemplates : [];
+		},
+
+		spotlightTemplatesFiltered() {
+			let list = this.spotlightTemplates;
+			if ( this.spotlightFilter === '1page' ) {
+				list = list.filter( t => t.pages === 1 );
+			} else if ( this.spotlightFilter === '2page' ) {
+				list = list.filter( t => t.pages >= 2 );
+			}
+			if ( this.spotlightSearch && this.spotlightSearch.trim().length ) {
+				let q = this.spotlightSearch.toLowerCase().trim();
+				list = list.filter( t => 
+					t.title.toLowerCase().includes(q) || 
+					(t.subtitle && t.subtitle.toLowerCase().includes(q)) || 
+					(t.genre && t.genre.toLowerCase().includes(q)) || 
+					(t.description && t.description.toLowerCase().includes(q)) 
+				);
+			}
+			return list;
 		}
 
 	},
@@ -64,10 +94,24 @@ const Roster = {
 						<span><i class="fas fa-plus"></i> New Character</span>
 					</div>
 
+					<div class="roster-button roster-button-resume"
+						@click.stop="$emit('resumeSession')"
+						v-if="openCharacterIDs && openCharacterIDs.length > 0"
+						title="Return to your open character sheets"
+					>
+						<span><i class="fas fa-play"></i> Play Session ({{ openCharacterIDs.length }})</span>
+					</div>
+
 					<div class="roster-button roster-button-template"
 						@click.stop="createTemplate"
 					>
 						<span><i class="fas fa-bookmark"></i> New Template</span>
+					</div>
+
+					<div class="roster-button roster-button-spotlight"
+						@click.stop="showSpotlightLibrary = true"
+					>
+						<span><i class="fas fa-layer-group"></i> Spotlight Library</span>
 					</div>
 
 					<div class="roster-button roster-button-import"
@@ -158,6 +202,15 @@ const Roster = {
 									@click.stop="loadCharacter( character.id )"
 								>
 									<span><i class="fas fa-eye"></i> Open</span>
+								</div>
+
+								<!-- OPEN ALONGSIDE -->
+								<div class="roster-item-button roster-button-alongside"
+									@click.stop="openAlongside( character.id )"
+									v-if="openCharacterIDs && openCharacterIDs.length > 0 && !openCharacterIDs.includes(character.id)"
+									title="Open alongside your current active session"
+								>
+									<span><i class="fas fa-columns"></i> Open Alongside</span>
 								</div>
 
 								<!-- DUPLICATE -->
@@ -315,10 +368,76 @@ const Roster = {
 			</div>
 		</aside>
 		</transition>
+
+		<!-- SPOTLIGHT TEMPLATE LIBRARY MODAL -->
+		<transition>
+		<div class="modal-veil" v-show="showSpotlightLibrary" @click.stop="showSpotlightLibrary = false"></div>
+		</transition>
+
+		<transition>
+		<aside class="modal modal-spotlight-library" v-if="showSpotlightLibrary">
+			<div class="modal-close" @click.prevent="showSpotlightLibrary = false"><i class="fas fa-times"></i></div>
+			<div class="modal-inner">
+				<div class="spotlight-library-header">
+					<h2><i class="fas fa-book-open"></i> Spotlight Templates Library</h2>
+					<p>Select a character sheet template from the official Spotlight collections. Create a new character, save to your templates, or print directly.</p>
+					
+					<div class="spotlight-search-row">
+						<div class="spotlight-search-input">
+							<i class="fas fa-search"></i>
+							<input type="text" v-model="spotlightSearch" placeholder="Search templates by name, genre, or mechanics...">
+						</div>
+						<div class="spotlight-filter-tabs">
+							<button type="button" :class="{ active: spotlightFilter === 'all' }" @click="spotlightFilter = 'all'">All ({{ spotlightTemplates.length }})</button>
+							<button type="button" :class="{ active: spotlightFilter === '1page' }" @click="spotlightFilter = '1page'">1 Page</button>
+							<button type="button" :class="{ active: spotlightFilter === '2page' }" @click="spotlightFilter = '2page'">2 Pages</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="spotlight-grid">
+					<div class="spotlight-card" v-for="tmpl in spotlightTemplatesFiltered" :key="tmpl.id">
+						<div class="spotlight-card-header">
+							<div class="spotlight-card-title-group">
+								<h3 class="spotlight-card-title">{{ tmpl.title }}</h3>
+								<div class="spotlight-card-subtitle">{{ tmpl.subtitle }}</div>
+							</div>
+							<div class="spotlight-card-badges">
+								<span class="badge-page-count" :class="{ 'multi-page': tmpl.pages > 1 }">
+									<i class="fas" :class="tmpl.pages > 1 ? 'fa-copy' : 'fa-file'"></i> {{ tmpl.pages }} Page{{ tmpl.pages > 1 ? 's' : '' }}
+								</span>
+								<span class="badge-genre">{{ tmpl.genre }}</span>
+							</div>
+						</div>
+						<p class="spotlight-card-desc">{{ tmpl.description }}</p>
+						<div class="spotlight-card-traits">
+							<span class="trait-tag" v-for="ts in (tmpl.character.traitSets || [])" :key="ts.name">{{ ts.name }}</span>
+						</div>
+						<div class="spotlight-card-actions">
+							<button type="button" class="btn-spotlight primary" @click="useSpotlight(tmpl, false, false)" title="Create an editable character">
+								<i class="fas fa-plus"></i> Character
+							</button>
+							<button type="button" class="btn-spotlight secondary" @click="useSpotlight(tmpl, true, false)" title="Save template to Roster">
+								<i class="fas fa-bookmark"></i> Template
+							</button>
+							<button type="button" class="btn-spotlight print" @click="useSpotlight(tmpl, false, true)" title="Open in Print Tab">
+								<i class="fas fa-print"></i> Print
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</aside>
+		</transition>
 		
 	</section>`,
 
 	methods: {
+
+		useSpotlight( tmpl, asTemplate = false, openPrint = false ) {
+			this.showSpotlightLibrary = false;
+			this.$emit('createFromSpotlight', tmpl, asTemplate, openPrint);
+		},
 
 		createCharacter() {
 			this.$emit('createCharacter');
@@ -338,6 +457,10 @@ const Roster = {
 
 		loadCharacter( characterID ) {
 			this.$emit('loadCharacter', characterID);
+		},
+
+		openAlongside( characterID ) {
+			this.$emit('openAlongside', characterID);
 		},
 
 		duplicateCharacter( characterID ) {

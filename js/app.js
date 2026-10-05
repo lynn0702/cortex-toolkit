@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				localData:          {},
 				characters:         [],
 				characterID:        null,
+				openCharacterIDs:   [],
+				playViewMode:       localStorage.getItem('cortexPlayViewMode') || 'split',
+				isAddCharacterModalOpen: false,
+				sessionCharacterSearch: '',
 				mode:               'roster',
 				submode:            null,
 				editing:            null,
@@ -57,6 +61,28 @@ document.addEventListener('DOMContentLoaded', () => {
 				return this.mode === 'character' && this.historyIndex < this.history.length - 1;
 			},
 
+			openCharacters() {
+				let list = [];
+				for ( let id of this.openCharacterIDs ) {
+					let found = this.characters.find( c => c.id === id );
+					if ( found ) list.push( found );
+				}
+				if ( !list.length && this.character ) {
+					return [ this.character ];
+				}
+				return list;
+			},
+
+			availableToOpen() {
+				let q = (this.sessionCharacterSearch || '').toLowerCase().trim();
+				return this.characters.filter( c => {
+					if ( c.isTemplate ) return false;
+					if ( this.openCharacterIDs.includes( c.id ) ) return false;
+					if ( q.length && !c.name?.toLowerCase().includes(q) && !c.game?.toLowerCase().includes(q) ) return false;
+					return true;
+				});
+			},
+
 		},
 
 		/*html*/
@@ -68,13 +94,69 @@ document.addEventListener('DOMContentLoaded', () => {
 							<li @click.stop="setMode('character', 'edit')" :class="{ active: mode === 'character' && submode === 'edit', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-pencil"></i></span> <span class="nav-label">Create</span></div></li>
 							<li @click.stop="setMode('character', 'play')" :class="{ active: mode === 'character' && submode === 'play', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-dice"></i></span> <span class="nav-label">Play</span></div></li>
 							<li v-if="mode === 'character' && submode === 'play'" @click.stop="toggleRoller" :class="{ active: isRollerOpen }"><div><span class="nav-icon"><i class="fas fa-dice-d20"></i></span> <span class="nav-label">Roller ({{ dicePool.items.length }})</span></div></li>
-							<li @click.stop="setMode('character', 'print')" :class="{ active: mode === 'character' && submode === 'print', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-file"></i></span> <span class="nav-label">Share</span></div></li>
+							<li @click.stop="setMode('character', 'print')" :class="{ active: mode === 'character' && submode === 'print', 'disabled': !character }"><div><span class="nav-icon"><i class="fas fa-print"></i></span> <span class="nav-label">Print</span></div></li>
 							<li v-if="mode === 'character' && submode === 'edit'" @click.stop="undo" :class="{ disabled: !canUndo }" title="Undo (Ctrl+Z)"><div><span class="nav-icon"><i class="fas fa-undo"></i></span> <span class="nav-label">Undo</span></div></li>
 							<li v-if="mode === 'character' && submode === 'edit'" @click.stop="redo" :class="{ disabled: !canRedo }" title="Redo (Ctrl+Y)"><div><span class="nav-icon"><i class="fas fa-redo"></i></span> <span class="nav-label">Redo</span></div></li>
 						</ul>
 					</nav>
 				</div>
 			</header>
+
+			<!-- SESSION / OPEN CHARACTERS BAR -->
+			<div class="session-nav" v-if="mode === 'character' && openCharacters.length > 0">
+				<div class="session-nav-inner">
+					<div class="session-tabs">
+						<div
+							v-for="c in openCharacters"
+							:key="c.id"
+							:class="['session-tab', { active: c.id === characterID }]"
+							@click.stop="focusCharacter(c.id)"
+							:title="'Switch to ' + (c.name || 'Character')"
+						>
+							<div class="session-tab-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + c.portrait.url + ')'"></div>
+							<div class="session-tab-icon" v-else><i class="fas fa-shield-alt"></i></div>
+							<span class="session-tab-name">{{ c.name || 'Unnamed' }}</span>
+							<button
+								type="button"
+								class="session-tab-close"
+								@click.stop="closeOpenCharacter(c.id)"
+								v-if="openCharacters.length > 1"
+								title="Close from session"
+							><i class="fas fa-times"></i></button>
+						</div>
+
+						<button
+							type="button"
+							class="btn-session-add"
+							@click.stop="isAddCharacterModalOpen = true"
+							title="Open another character alongside"
+						>
+							<i class="fas fa-plus"></i> <span>Open Sheet</span>
+						</button>
+					</div>
+
+					<div class="session-view-controls" v-if="submode === 'play' && openCharacters.length > 1">
+						<div class="session-view-segmented">
+							<button
+								type="button"
+								:class="{ active: playViewMode === 'split' }"
+								@click.stop="setPlayViewMode('split')"
+								title="Side-by-side view (all open characters)"
+							>
+								<i class="fas fa-columns"></i> Side-by-Side ({{ openCharacters.length }})
+							</button>
+							<button
+								type="button"
+								:class="{ active: playViewMode === 'tabs' }"
+								@click.stop="setPlayViewMode('tabs')"
+								title="Single sheet tabbed view"
+							>
+								<i class="fas fa-window-maximize"></i> Tabbed
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<!-- DICE ROLLER SIDEBAR -->
 			<aside class="sidebar" :class="{ 'open': isRollerOpen && mode === 'character' && submode === 'play', 'mobile-visible': mobileActiveView === 'roller', 'position-right': rollerPosition === 'right' }">
@@ -109,23 +191,85 @@ document.addEventListener('DOMContentLoaded', () => {
 				</div>
 			
 				<!-- CHARACTER SHEET -->
-				<transition mode="out-in">
-
-					<roster
+				<roster
 						v-if="mode === 'roster'"
 						:characters="characters"
+						:openCharacterIDs="openCharacterIDs"
 						@createCharacter="createCharacter"
 						@createTemplate="createTemplate"
 						@createFromTemplate="createFromTemplate"
 						@toggleTemplate="toggleTemplate"
 						@loadCharacter="loadCharacter"
+						@openAlongside="openAlongside"
+						@resumeSession="resumeSession"
 						@duplicateCharacter="duplicateCharacter"
 						@exportCharacter="exportCharacter"
 						@exportAllCharacters="exportAllCharacters"
 						@deleteCharacter="deleteCharacter"
 						@deleteAllCharacters="deleteAllCharacters"
 						@importCharacter="importCharacter"
+						@createFromSpotlight="createFromSpotlight"
 					></roster>
+
+					<!-- PLAY MODE: MULTI-CHARACTER SPLIT VIEW -->
+					<div
+						class="multi-character-workspace"
+						v-else-if="mode === 'character' && submode === 'play' && playViewMode === 'split' && openCharacters.length > 1"
+						key="multi-character-split"
+					>
+						<div
+							v-for="char in openCharacters"
+							:key="char.id"
+							class="multi-character-column"
+							:class="{ 'is-active-column': char.id === characterID }"
+						>
+							<div class="multi-character-banner">
+								<div class="banner-title-group" @click="focusCharacter(char.id)">
+									<span class="banner-avatar" v-if="char.portrait && char.portrait.url" :style="'background-image:url(' + char.portrait.url + ')'"></span>
+									<span class="banner-icon" v-else><i class="fas fa-shield-alt"></i></span>
+									<span class="banner-name">{{ char.name || 'Unnamed' }}</span>
+									<span class="banner-game" v-if="char.game">{{ char.game }}</span>
+								</div>
+								<div class="banner-actions">
+									<button
+										type="button"
+										class="btn-banner-action"
+										@click.stop="setModeForChar(char.id, 'edit')"
+										title="Edit this character"
+									>
+										<i class="fas fa-pencil"></i>
+									</button>
+									<button
+										type="button"
+										class="btn-banner-action"
+										@click.stop="setModeForChar(char.id, 'print')"
+										title="Print this character"
+									>
+										<i class="fas fa-print"></i>
+									</button>
+									<button
+										type="button"
+										class="btn-banner-action"
+										@click.stop="closeOpenCharacter(char.id)"
+										title="Close from session"
+									>
+										<i class="fas fa-times"></i>
+									</button>
+								</div>
+							</div>
+
+							<character
+								submode="play"
+								:character="char"
+								:editing="editing"
+								:viewY="viewY"
+								@selectElement="selectElement"
+								@updateCharacter="updateCharacter"
+								@exportCharacter="exportCharacter"
+								@addDieToRoller="addDieToRoller"
+							></character>
+						</div>
+					</div>
 
 					<character
 						v-else-if="mode === 'character' && character"
@@ -153,9 +297,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
 					</article>
 
-				</transition>
-
 			</main>
+
+			<!-- ADD CHARACTER TO SESSION MODAL -->
+			<transition>
+			<div class="modal-veil" v-show="isAddCharacterModalOpen" @click.stop="isAddCharacterModalOpen = false"></div>
+			</transition>
+
+			<transition>
+			<aside class="modal modal-session-add" v-if="isAddCharacterModalOpen">
+				<div class="modal-close" @click.prevent="isAddCharacterModalOpen = false"><i class="fas fa-times"></i></div>
+				<div class="modal-inner">
+					<div class="session-modal-header">
+						<h2><i class="fas fa-users"></i> Open Character in Session</h2>
+						<p>Select another character, titan mech, vehicle, or companion to open alongside your active sheet.</p>
+						<div class="session-modal-search">
+							<i class="fas fa-search"></i>
+							<input type="text" v-model="sessionCharacterSearch" placeholder="Filter characters...">
+						</div>
+					</div>
+
+					<div class="session-modal-list">
+						<div
+							v-for="c in availableToOpen"
+							:key="c.id"
+							class="session-modal-item"
+						>
+							<div class="session-item-info">
+								<div class="session-item-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + c.portrait.url + ')'"></div>
+								<div class="session-item-icon" v-else><i class="fas fa-shield-alt"></i></div>
+								<div class="session-item-text">
+									<div class="session-item-name">{{ c.name || 'Unnamed' }}</div>
+									<div class="session-item-sub">{{ c.game || c.description || 'Character' }}</div>
+								</div>
+							</div>
+							<button
+								type="button"
+								class="btn-session-open"
+								@click.stop="openAlongside(c.id)"
+							>
+								<i class="fas fa-columns"></i> Open Alongside
+							</button>
+						</div>
+
+						<div class="session-modal-empty" v-if="availableToOpen.length === 0">
+							<p>No additional characters available in your roster.</p>
+							<button type="button" class="btn-session-spotlight" @click.stop="isAddCharacterModalOpen = false; setMode('roster', null)">
+								<i class="fas fa-layer-group"></i> Go to Roster / Spotlight Library
+							</button>
+						</div>
+					</div>
+				</div>
+			</aside>
+			</transition>
 
 			<!-- TOAST NOTIFICATION -->
 			<transition name="toast">
@@ -185,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			this.setViewY();
 			this.loadLocalData();
+			this.loadOpenCharacterIDs();
 			this.parseRouteHash();
 			window.addEventListener('hashchange', () => this.parseRouteHash());
 			window.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
@@ -327,6 +522,85 @@ document.addEventListener('DOMContentLoaded', () => {
 				document.title = pageTitle;
 			},
 
+			// SESSION & MULTI-CHARACTER
+
+			saveOpenCharacterIDs() {
+				localStorage.setItem('cortexOpenCharacterIDs', JSON.stringify(this.openCharacterIDs));
+				localStorage.setItem('cortexPlayViewMode', this.playViewMode);
+			},
+
+			loadOpenCharacterIDs() {
+				let saved = localStorage.getItem('cortexOpenCharacterIDs');
+				if ( saved ) {
+					try {
+						let parsed = JSON.parse(saved);
+						if ( Array.isArray(parsed) ) {
+							this.openCharacterIDs = parsed.filter( id => this.characters.some( c => c.id === id ) );
+						}
+					} catch(e) {}
+				}
+				if ( this.characterID && !this.openCharacterIDs.includes(this.characterID) ) {
+					this.openCharacterIDs.push(this.characterID);
+				}
+			},
+
+			setPlayViewMode( mode ) {
+				this.playViewMode = mode;
+				this.saveOpenCharacterIDs();
+			},
+
+			focusCharacter( id ) {
+				if ( !this.openCharacterIDs.includes( id ) ) {
+					this.openCharacterIDs.push( id );
+				}
+				this.characterID = id;
+				this.initHistory();
+				this.setPageTitle();
+				this.updateRouteHash();
+				this.saveOpenCharacterIDs();
+			},
+
+			closeOpenCharacter( id ) {
+				this.openCharacterIDs = this.openCharacterIDs.filter( x => x !== id );
+				if ( this.characterID === id ) {
+					this.characterID = this.openCharacterIDs[0] || null;
+					if ( !this.characterID ) {
+						this.setMode('roster', null, true);
+					} else {
+						this.initHistory();
+						this.updateRouteHash();
+					}
+				}
+				this.saveOpenCharacterIDs();
+			},
+
+			openAlongside( id ) {
+				if ( !this.openCharacterIDs.includes( id ) ) {
+					this.openCharacterIDs.push( id );
+				}
+				this.characterID = id;
+				this.isAddCharacterModalOpen = false;
+				this.saveOpenCharacterIDs();
+				this.setMode('character', this.submode || 'play', true);
+				let char = this.characters.find( c => c.id === id );
+				this.showToast(`Opened ${char?.name || 'character'} in session`);
+			},
+
+			resumeSession() {
+				if ( !this.openCharacterIDs.length && this.characters.length ) {
+					this.openCharacterIDs = [ this.characters[0].id ];
+				}
+				if ( !this.characterID && this.openCharacterIDs.length ) {
+					this.characterID = this.openCharacterIDs[0];
+				}
+				this.setMode('character', 'play', true);
+			},
+
+			setModeForChar( charId, submode ) {
+				this.focusCharacter( charId );
+				this.setMode('character', submode, true);
+			},
+
 			// DATA
 
 			createCharacter( isTemplate = false ) {
@@ -345,6 +619,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				this.characters.push( character );
 				this.characterID = character.id;
+				if ( !this.openCharacterIDs.includes( character.id ) ) {
+					this.openCharacterIDs.push( character.id );
+				}
+				this.saveOpenCharacterIDs();
 				this.initHistory();
 				this.setMode( 'character', this.submode ?? 'edit', true );
 
@@ -363,18 +641,53 @@ document.addEventListener('DOMContentLoaded', () => {
 				let character = JSON.parse( JSON.stringify( template ) );
 				character.id = cortexFunctions.generateUUID();
 				character.isTemplate = false;
-				character.name = template.name && template.name.length ? `${template.name} (Copy)` : 'New Character';
+				character.name = '';
+				character.game = template.game || template.name || '';
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
 
 				this.characters.push( character );
 				this.characterID = character.id;
+				if ( !this.openCharacterIDs.includes( character.id ) ) {
+					this.openCharacterIDs.push( character.id );
+				}
+				this.saveOpenCharacterIDs();
 				this.initHistory();
 				this.setMode( 'character', 'edit', true );
 
 				this.saveLocalData();
 				this.showToast('Created character from template');
+			},
+
+			createFromSpotlight( spotlightItem, asTemplate = false, openPrint = false ) {
+				if ( !spotlightItem || !spotlightItem.character ) return;
+
+				let character = JSON.parse( JSON.stringify( spotlightItem.character ) );
+				character.id = cortexFunctions.generateUUID();
+				character.isTemplate = asTemplate;
+				character.name = asTemplate ? (spotlightItem.title ? spotlightItem.title.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '';
+				character.game = spotlightItem.spotlight || spotlightItem.title || '';
+				character.dateCreated  = ( new Date() ).toISOString();
+				character.dateModified = ( new Date() ).toISOString();
+				character.dateTouched  = ( new Date() ).toISOString();
+
+				this.characters.push( character );
+				this.characterID = character.id;
+				if ( !this.openCharacterIDs.includes( character.id ) ) {
+					this.openCharacterIDs.push( character.id );
+				}
+				this.saveOpenCharacterIDs();
+				this.initHistory();
+
+				if ( openPrint ) {
+					this.setMode( 'character', 'print', true );
+				} else {
+					this.setMode( 'character', 'edit', true );
+				}
+
+				this.saveLocalData();
+				this.showToast( asTemplate ? `Added "${spotlightItem.title}" to templates` : `Created character from "${spotlightItem.title}"` );
 			},
 
 			toggleTemplate( characterId ) {
@@ -388,14 +701,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			deleteCharacter( id ) {
 				
+				this.openCharacterIDs = this.openCharacterIDs.filter( x => x !== id );
+				this.saveOpenCharacterIDs();
+
 				let c = this.characters.findIndex( character => character.id === id );
 				if ( c === -1 ) return;
 
-				this.setMode( 'roster', null, true );
-				this.characterID = null;
 				this.characters.splice( c, 1 );
-				this.setPageTitle();
 
+				if ( this.characterID === id ) {
+					if ( this.openCharacterIDs.length ) {
+						this.characterID = this.openCharacterIDs[0];
+						this.initHistory();
+					} else {
+						this.characterID = null;
+						this.setMode( 'roster', null, true );
+					}
+				}
+
+				this.setPageTitle();
 				this.saveLocalData();
 
 			},
@@ -405,6 +729,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				const count = this.characters.length;
 				this.characters = [];
 				this.characterID = null;
+				this.openCharacterIDs = [];
+				this.saveOpenCharacterIDs();
 				this.setMode( 'roster', null, true );
 				this.setPageTitle();
 				this.saveLocalData();
@@ -431,11 +757,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			loadCharacter( id ) {
 
+				if ( !this.openCharacterIDs.includes( id ) ) {
+					this.openCharacterIDs.push( id );
+				}
 				this.characterID = id;
 				this.initHistory();
 				this.setMode( 'character', this.submode ?? 'edit', true );
 
 				this.touchCharacter( id );
+				this.saveOpenCharacterIDs();
 				this.saveLocalData();
 
 			},
@@ -653,6 +983,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				if ( localData['0.1'].characters ) {
 					this.characters = structuredClone( localData['0.1'].characters );
+					for ( let c of this.characters ) {
+						if ( c.isTemplate && c.name ) {
+							c.name = c.name.replace(/\s*\([^)]*\)/g, '').trim();
+						}
+						if ( !c.custom ) c.custom = {};
+						if ( !c.custom.cortexToolkit ) c.custom.cortexToolkit = {};
+						if ( !c.custom.cortexToolkit.columnAlignment ) {
+							c.custom.cortexToolkit.columnAlignment = 'top-base';
+						}
+						if ( !c.custom.cortexToolkit.columnOffsets ) {
+							c.custom.cortexToolkit.columnOffsets = { left: 0, center: 0, right: 0 };
+						}
+						if ( c.custom.cortexToolkit.columnAlignment !== 'custom' ) {
+							c.custom.cortexToolkit.columnOffsets.left = 0;
+							c.custom.cortexToolkit.columnOffsets.center = 0;
+							c.custom.cortexToolkit.columnOffsets.right = 0;
+						}
+					}
 				}
 
 			},

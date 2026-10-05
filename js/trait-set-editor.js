@@ -23,6 +23,9 @@ const TraitSetEditor = {
 				{ id: 'stress',               label: 'Stress' },
 				{ id: 'list',                 label: 'List (Unrated)' },
 				{ id: 'notes',                label: 'Notes (Text Area)' },
+				{ id: 'image',                label: 'Image (Illustration / Portrait)' },
+				{ id: 'pips',                 label: 'Pips / Track (e.g. XP)' },
+				{ id: 'session-record',       label: 'Session Record (Angled Lines / Leaf)' },
 			]
 		}
 	},
@@ -160,30 +163,79 @@ const TraitSetEditor = {
 			}
 		},
 
+		pageNumber: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.page ?? 1;
+			},
+			set( val ) {
+				if ( !this.traitSet.custom ) this.traitSet.custom = {};
+				if ( !this.traitSet.custom.cortexToolkit ) this.traitSet.custom.cortexToolkit = {};
+				this.traitSet.custom.cortexToolkit.page = val;
+				if ( val > 1 && (!this.character.custom?.cortexToolkit?.pageCount || this.character.custom.cortexToolkit.pageCount < val) ) {
+					if ( !this.character.custom ) this.character.custom = {};
+					if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
+					this.character.custom.cortexToolkit.pageCount = val;
+				}
+				this.updateCharacter();
+			}
+		},
+
+		characterColumnCount() {
+			return Number( this.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2;
+		},
+
 		columnLocation() {
-			return this.traitSet?.custom?.cortexToolkit?.location === 'right' ? 'right' : 'left';
+			let loc = this.traitSet?.custom?.cortexToolkit?.location;
+			if ( loc === 'center' && this.characterColumnCount === 3 ) return 'center';
+			return loc === 'right' ? 'right' : 'left';
+		},
+
+		characterColumnCount() {
+			return Number( this.character?.custom?.cortexToolkit?.columns ) || 3;
+		},
+
+		isFullWidthSpan: {
+			get() {
+				const span = this.traitSet?.custom?.cortexToolkit?.colSpan ?? this.traitSet?.custom?.cortexToolkit?.columnSpan;
+				return span === 'full' || Number(span) >= this.characterColumnCount;
+			},
+			set( val ) {
+				if ( val ) {
+					this.setCustomProperty( 'colSpan', 'full' );
+				} else {
+					this.setCustomProperty( 'colSpan', 1 );
+				}
+			}
+		},
+
+		colSpan: {
+			get() {
+				const span = this.traitSet?.custom?.cortexToolkit?.colSpan ?? this.traitSet?.custom?.cortexToolkit?.columnSpan;
+				if ( span === 'full' ) return this.characterColumnCount;
+				return Number( span ) || 1;
+			},
+			set( val ) {
+				this.setCustomProperty( 'colSpan', val === 'full' ? 'full' : Math.max(1, Number(val) || 1) );
+			}
+		},
+
+		headerRight: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.headerRight ?? '';
+			},
+			set( val ) {
+				this.setCustomProperty( 'headerRight', val );
+			}
 		},
 
 		canMoveUp() {
 			let s = this.traitSetID;
-			let col = this.columnLocation;
-			for (let i = s - 1; i >= 0; i--) {
-				if ( this.character.traitSets[i]?.custom?.cortexToolkit?.location === col ) {
-					return true;
-				}
-			}
-			return false;
+			return s > 0;
 		},
 
 		canMoveDown() {
 			let s = this.traitSetID;
-			let col = this.columnLocation;
-			for (let i = s + 1; i < this.character.traitSets.length; i++) {
-				if ( this.character.traitSets[i]?.custom?.cortexToolkit?.location === col ) {
-					return true;
-				}
-			}
-			return false;
+			return s < (this.character?.traitSets?.length - 1);
 		},
 
 		haloSpread: {
@@ -289,6 +341,42 @@ const TraitSetEditor = {
 				if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
 				this.character.custom.cortexToolkit.scale = val;
 				this.updateCharacter( this.character );
+			}
+		},
+
+		imageURL: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.imageConfig?.url ?? '';
+			},
+			set( val ) {
+				this.setImageConfig( 'url', val );
+			}
+		},
+
+		imageAlignment: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.imageConfig?.alignment ?? 'center';
+			},
+			set( val ) {
+				this.setImageConfig( 'alignment', val );
+			}
+		},
+
+		imageHeight: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.imageConfig?.height ?? 'auto';
+			},
+			set( val ) {
+				this.setImageConfig( 'height', val );
+			}
+		},
+
+		imageCaption: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.imageConfig?.caption ?? '';
+			},
+			set( val ) {
+				this.setImageConfig( 'caption', val );
 			}
 		},
 
@@ -402,6 +490,135 @@ const TraitSetEditor = {
 			}
 		},
 
+		reservedSlots: {
+			get() {
+				const val = this.traitSet?.custom?.cortexToolkit?.reservedSlots;
+				return (val !== undefined && val !== null && val !== '') ? Number(val) : '';
+			},
+			set( val ) {
+				const num = (val === '' || val === null || isNaN(val)) ? null : Math.max(0, parseInt(val, 10));
+				this.setCustomProperty( 'reservedSlots', num );
+			}
+		},
+
+		sharedHinder: {
+			get() {
+				return Boolean( this.traitSet?.custom?.cortexToolkit?.sharedHinder );
+			},
+			set( val ) {
+				this.setCustomProperty( 'sharedHinder', Boolean(val) );
+			}
+		},
+
+		sharedHinderText: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.sharedHinderText ?? '';
+			},
+			set( val ) {
+				this.setCustomProperty( 'sharedHinderText', val );
+			}
+		},
+
+		traitColumns: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.traitColumns ?? 1;
+			},
+			set( val ) {
+				this.setCustomProperty( 'traitColumns', parseInt(val, 10) || 1 );
+			}
+		},
+
+		hasAttachedStress: {
+			get() {
+				return Boolean( this.traitSet?.custom?.cortexToolkit?.attachedStress?.enabled );
+			},
+			set( val ) {
+				this.setAttachedStressProperty( 'enabled', Boolean(val) );
+			}
+		},
+
+		attachedStressLabel: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.attachedStress?.label ?? 'Stress';
+			},
+			set( val ) {
+				this.setAttachedStressProperty( 'label', val );
+			}
+		},
+
+		attachedStressScale: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.attachedStress?.scale ?? [4, 6, 8, 10, 12];
+			},
+			set( scale ) {
+				this.setAttachedStressProperty( 'scale', scale );
+			}
+		},
+
+		attachedStressOut: {
+			get() {
+				return Boolean( this.traitSet?.custom?.cortexToolkit?.attachedStress?.includeOut );
+			},
+			set( val ) {
+				this.setAttachedStressProperty( 'includeOut', Boolean(val) );
+			}
+		},
+
+		pipCount: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.pips?.count ?? 25;
+			},
+			set( val ) {
+				this.setPipProperty( 'count', Math.max( 1, parseInt(val, 10) || 25 ) );
+			}
+		},
+
+		pipsPerRow: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.pips?.perRow ?? 5;
+			},
+			set( val ) {
+				this.setPipProperty( 'perRow', Math.max( 1, parseInt(val, 10) || 5 ) );
+			}
+		},
+
+		pipsConnected: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.pips?.connected !== false;
+			},
+			set( val ) {
+				this.setPipProperty( 'connected', Boolean(val) );
+			}
+		},
+
+		pipsFilled: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.pips?.filled ?? 0;
+			},
+			set( val ) {
+				this.setPipProperty( 'filled', Math.max( 0, parseInt(val, 10) || 0 ) );
+			}
+		},
+
+		sessionRecordCount: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.sessionRecord?.count ??
+					this.traitSet?.custom?.cortexToolkit?.reservedSlots ??
+					(this.traitSet?.traits ? this.traitSet.traits.length : 0) ?? 20;
+			},
+			set( val ) {
+				const count = Math.max( 1, parseInt( val, 10 ) || 20 );
+				if ( !this.traitSet.custom ) this.traitSet.custom = {};
+				if ( !this.traitSet.custom.cortexToolkit ) this.traitSet.custom.cortexToolkit = {};
+				if ( !this.traitSet.custom.cortexToolkit.sessionRecord ) {
+					this.traitSet.custom.cortexToolkit.sessionRecord = {};
+				}
+				this.traitSet.custom.cortexToolkit.sessionRecord.count = count;
+				this.traitSet.custom.cortexToolkit.reservedSlots = count;
+				this.updateCharacter( this.character );
+			}
+		},
+
 		scrollable() {
 			return Boolean(
 				( this.traitSet?.custom?.cortexToolkit?.features?.sfx && (this.traitSet?.sfx?.length || 0) > 0 )
@@ -448,6 +665,11 @@ const TraitSetEditor = {
 					<div class="editor-field">
 						<label>Trait Set Name</label>
 						<input type="text" v-model="name" ref="inputName">
+					</div>
+
+					<div class="editor-field" v-if="!isHalo">
+						<label>Right Header Label (Optional)</label>
+						<input type="text" v-model="headerRight" placeholder="e.g. Character File">
 					</div>
 
 					<div class="editor-field">
@@ -546,7 +768,16 @@ const TraitSetEditor = {
 									:class="{ active: columnLocation === 'left' }"
 									@click.stop="setColumn('left')"
 								>
-									<i class="fas fa-arrow-left"></i> Left Column
+									<i class="fas fa-arrow-left" v-if="characterColumnCount === 2"></i> Left{{ characterColumnCount === 3 ? ' (Col 1)' : ' Column' }}
+								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									v-if="characterColumnCount === 3"
+									:class="{ active: columnLocation === 'center' }"
+									@click.stop="setColumn('center')"
+								>
+									Center (Col 2)
 								</button>
 								<button
 									type="button"
@@ -554,7 +785,7 @@ const TraitSetEditor = {
 									:class="{ active: columnLocation === 'right' }"
 									@click.stop="setColumn('right')"
 								>
-									Right Column <i class="fas fa-arrow-right"></i>
+									Right{{ characterColumnCount === 3 ? ' (Col 3)' : ' Column' }} <i class="fas fa-arrow-right" v-if="characterColumnCount === 2"></i>
 								</button>
 							</div>
 							<div class="editor-reorder-buttons">
@@ -578,6 +809,63 @@ const TraitSetEditor = {
 						</div>
 					</div>
 
+					<!-- COLUMN SPAN -->
+					<div class="editor-field" v-if="!isHalo">
+						<label>Column Span</label>
+						<div class="editor-button-group">
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: !isFullWidthSpan && colSpan === 1 }"
+								@click.stop="colSpan = 1"
+							>
+								1 Column
+							</button>
+							<button
+								type="button"
+								class="editor-group-btn"
+								v-if="characterColumnCount === 3"
+								:class="{ active: !isFullWidthSpan && colSpan === 2 }"
+								@click.stop="colSpan = 2"
+							>
+								Span 2 Cols
+							</button>
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: isFullWidthSpan }"
+								@click.stop="isFullWidthSpan = !isFullWidthSpan"
+							>
+								<i class="fas fa-arrows-alt-h"></i> Full Width Span
+							</button>
+						</div>
+					</div>
+
+					<!-- PAGE SELECTOR -->
+					<div class="editor-field" v-if="!isHalo">
+						<label>Page</label>
+						<div class="editor-position-controls">
+							<div class="editor-button-group">
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: pageNumber === 1 }"
+									@click.stop="pageNumber = 1"
+								>
+									<i class="fas fa-file"></i> Page 1
+								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: pageNumber === 2 }"
+									@click.stop="pageNumber = 2"
+								>
+									Page 2 <i class="fas fa-copy"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
 					<div class="editor-field">
 						<label>Description</label>
 						<textarea v-model="description"></textarea>
@@ -593,7 +881,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- RATING SCALE (OPT IN/OUT OF RATINGS) -->
-					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes'">
+					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label>Rating Scale Options</label>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
@@ -621,7 +909,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- SUB-TRAIT RATING SCALE -->
-					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes' && featureSubtraits">
+					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'session-record' && styleBody !== 'angled-lines' && featureSubtraits">
 						<label>Sub-Trait Rating Scale (e.g. Specialties)</label>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
@@ -648,7 +936,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- POOL & MULTI-DIE OPTIONS -->
-					<div class="editor-field" v-if="styleBody !== 'stress' && styleBody !== 'list' && styleBody !== 'notes'">
+					<div class="editor-field" v-if="styleBody !== 'stress' && styleBody !== 'list' && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label>Pool Options</label>
 						<div class="editor-toggles">
 							<template v-if="!isHalo">
@@ -661,18 +949,189 @@ const TraitSetEditor = {
 						</div>
 					</div>
 
+					<!-- IMAGE CONTENT -->
+					<div class="editor-field" v-if="styleBody === 'image'">
+						<label>Illustration / Image</label>
+						
+						<div class="image-set-preview" v-if="imageURL" style="margin-bottom: 0.5rem;">
+							<img :src="imageURL" style="max-height: 120px; border-radius: 4px; display: block; border: 1px solid #cbd5e1; margin-bottom: 0.5rem;">
+						</div>
+
+						<div class="editor-button-container" style="margin-bottom: 0.5rem;">
+							<div class="editor-button-container-inner">
+								<div class="editor-button" @click.prevent="uploadImageStart">
+									<span><i class="fas fa-upload"></i> {{ imageURL ? 'Replace' : 'Upload' }} Image</span>
+								</div>
+								<div class="editor-button" v-if="imageURL" style="background: #ef4444; color: #ffffff;" @click.prevent="removeImage" title="Remove image">
+									<span><i class="fas fa-trash-alt"></i> Remove</span>
+								</div>
+							</div>
+						</div>
+
+						<input type="file" ref="imageFileInput" style="display:none" @change="uploadImageProcess" accept="image/*">
+
+						<div style="margin-top: 0.5rem;">
+							<label style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
+							<input type="text" v-model.lazy="imageURL" placeholder="https://example.com/illustration.jpg">
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="styleBody === 'image'">
+						<label>Alignment / Focus</label>
+						<div class="editor-portrait-alignment">
+							<div @click.stop="imageAlignment = 'top-left'"      :class="{'active': imageAlignment === 'top-left' }"></div>
+							<div @click.stop="imageAlignment = 'top-center'"    :class="{'active': imageAlignment === 'top-center' }"></div>
+							<div @click.stop="imageAlignment = 'top-right'"     :class="{'active': imageAlignment === 'top-right' }"></div>
+							<div @click.stop="imageAlignment = 'center-left'"   :class="{'active': imageAlignment === 'center-left' }"></div>
+							<div @click.stop="imageAlignment = 'center'"        :class="{'active': imageAlignment === 'center' }"></div>
+							<div @click.stop="imageAlignment = 'center-right'"  :class="{'active': imageAlignment === 'center-right' }"></div>
+							<div @click.stop="imageAlignment = 'bottom-left'"   :class="{'active': imageAlignment === 'bottom-left' }"></div>
+							<div @click.stop="imageAlignment = 'bottom-center'" :class="{'active': imageAlignment === 'bottom-center' }"></div>
+							<div @click.stop="imageAlignment = 'bottom-right'"  :class="{'active': imageAlignment === 'bottom-right' }"></div>
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="styleBody === 'image'">
+						<label>Display Height</label>
+						<select v-model="imageHeight">
+							<option value="auto">Auto / Proportional</option>
+							<option value="120px">Small (120px)</option>
+							<option value="180px">Medium (180px)</option>
+							<option value="240px">Large (240px)</option>
+							<option value="320px">Extra Large (320px)</option>
+						</select>
+					</div>
+
+					<div class="editor-field" v-if="styleBody === 'image'">
+						<label>Caption</label>
+						<input type="text" v-model="imageCaption" placeholder="Optional image caption...">
+					</div>
+
 					<!-- NOTES CONTENT -->
 					<div class="editor-field" v-if="styleBody === 'notes'">
 						<label>Notes Content</label>
 						<textarea v-model="notesContent" placeholder="Enter notes or text here..." rows="6"></textarea>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes'">
+					<!-- DISTINCTIONS COMPACT SFX & SHARED HINDER -->
+					<div class="editor-field" v-if="styleBody === 'distinctions'">
+						<label>Distinctions Layout</label>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-shared-hinder'" v-model="sharedHinder">
+							<label :for="'trait-set-' + traitSetID + '-shared-hinder'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Use Shared Set-Level Hinder Banner (Compact SFX)</label>
+						</div>
+						<div v-if="sharedHinder" style="margin-top: 0.35rem;">
+							<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Hinder Banner Text</label>
+							<textarea v-model="sharedHinderText" placeholder="Gain a PP when you trade out your distinction's [d8] rating for a [d4]." rows="2"></textarea>
+							<span style="font-size: 0.65rem; color: #94a3b8; display: block; margin-top: 0.2rem;">Separate multiple rules with line breaks (e.g. Hinder and Shaken).</span>
+						</div>
+					</div>
+
+					<!-- COLUMNS WITHIN SET -->
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+						<label>Columns Within Set</label>
+						<select v-model.number="traitColumns">
+							<option :value="1">1 Column (Default)</option>
+							<option :value="2">2 Columns</option>
+							<option :value="3">3 Columns</option>
+						</select>
+					</div>
+
+					<!-- ATTACHED STRESS / TRACK -->
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+						<label>Attached Stress / Track</label>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" v-model="hasAttachedStress">
+							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Attached Stress to Traits</label>
+						</div>
+						<div v-if="hasAttachedStress" style="margin-top: 0.4rem; background: #0f172a; padding: 0.5rem; border-radius: 4px; border: 1px solid #334155;">
+							<div style="margin-bottom: 0.4rem;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Track Label</label>
+								<input type="text" v-model="attachedStressLabel" placeholder="Stress">
+							</div>
+							<div style="margin-bottom: 0.4rem;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Dice Rating Scale</label>
+								<div class="editor-scale-options" style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+									<button
+										v-for="d in [4, 6, 8, 10, 12]"
+										:key="d"
+										type="button"
+										class="btn-scale-step"
+										:class="{ active: attachedStressScale.includes(d) }"
+										@click.stop="toggleAttachedStressScale(d)"
+										style="padding: 0.2rem 0.45rem; font-size: 0.75rem;"
+									>
+										d{{ d }}
+									</button>
+								</div>
+							</div>
+							<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem;">
+								<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress-out'" v-model="attachedStressOut">
+								<label :for="'trait-set-' + traitSetID + '-attached-stress-out'" style="margin: 0; font-size: 0.75rem; color: #cbd5e1; cursor: pointer;">Include 💥 Out Marker</label>
+							</div>
+						</div>
+					</div>
+
+					<!-- PIPS TRACK SETTINGS -->
+					<div class="editor-field" v-if="styleBody === 'pips'">
+						<label>Pip Track Settings</label>
+						<div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Total Pips</label>
+								<input type="number" min="1" max="100" v-model.number="pipCount">
+							</div>
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Pips Per Row</label>
+								<input type="number" min="1" max="20" v-model.number="pipsPerRow">
+							</div>
+						</div>
+						<div style="margin-bottom: 0.5rem;">
+							<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Filled Pips (Play State)</label>
+							<input type="number" min="0" :max="pipCount" v-model.number="pipsFilled">
+						</div>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pips-connected'" v-model="pipsConnected">
+							<label :for="'trait-set-' + traitSetID + '-pips-connected'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connect Pips with Horizontal Line</label>
+						</div>
+					</div>
+
+					<!-- SESSION RECORD (ANGLED LINES / LEAF) SETTINGS -->
+					<div class="editor-field" v-if="styleBody === 'session-record' || styleBody === 'angled-lines'">
+						<label>Session Record Settings</label>
+						<div style="margin-bottom: 0.5rem;">
+							<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Total Rows / Bubbles</label>
+							<input type="number" min="1" max="40" v-model.number="sessionRecordCount">
+						</div>
+						<div class="rating-scale-presets" style="margin-bottom: 0.5rem;">
+							<span class="preset-label">Presets:</span>
+							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 10 }" @click.stop="sessionRecordCount = 10">10 Rows</button>
+							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 15 }" @click.stop="sessionRecordCount = 15">15 Rows</button>
+							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 20 }" @click.stop="sessionRecordCount = 20">20 Rows (Default)</button>
+						</div>
+						<div style="display: flex; gap: 0.5rem;">
+							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="clearAllSessionBubbles">
+								<i class="fas fa-undo"></i> Clear All Bubbles
+							</button>
+							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="fillAllSessionBubbles">
+								<i class="fas fa-check"></i> Fill All
+							</button>
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label>Singular Noun</label>
 						<input type="text" v-model="nounSingular" placeholder="Trait">
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+						<label><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
+						<input type="number" min="0" max="25" v-model.number="reservedSlots" placeholder="Automatic (matches current traits)">
+						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">
+							Total slots rendered on print version (or print preview). If current traits are fewer, blank write-in slots with die boxes are appended for pencil play.
+						</span>
+					</div>
+
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label>Trait Features</label>
 						<div class="editor-toggles">
 
@@ -1003,6 +1462,50 @@ const TraitSetEditor = {
 
 		},
 
+		setImageConfig( key, value ) {
+
+			let s = this.traitSetID;
+			if ( !this.character.traitSets[s].custom ) {
+				this.character.traitSets[s].custom = {};
+			}
+			if ( !this.character.traitSets[s].custom.cortexToolkit ) {
+				this.character.traitSets[s].custom.cortexToolkit = {};
+			}
+			if ( !this.character.traitSets[s].custom.cortexToolkit.imageConfig ) {
+				this.character.traitSets[s].custom.cortexToolkit.imageConfig = {};
+			}
+			this.character.traitSets[s].custom.cortexToolkit.imageConfig[ key ] = value;
+
+			this.updateCharacter( this.character );
+
+		},
+
+		uploadImageStart() {
+			if ( this.$refs.imageFileInput ) {
+				this.$refs.imageFileInput.click();
+			}
+		},
+
+		uploadImageProcess( event ) {
+			if ( !event.target.files || !event.target.files.length ) {
+				this.imageURL = '';
+				return;
+			}
+			let file = event.target.files[0];
+			let reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				this.imageURL = reader.result;
+			};
+			reader.onerror = (error) => {
+				console.error('Image upload error: ', error);
+			};
+		},
+
+		removeImage() {
+			this.imageURL = '';
+		},
+
 		isRatingIncluded( size ) {
 			return this.ratingScale.includes( size );
 		},
@@ -1103,6 +1606,65 @@ const TraitSetEditor = {
 			this.$emit( 'updateCharacter', character );
 		},
 
+		ensurePipStruct() {
+			let s = this.traitSetID;
+			if ( !this.character.traitSets[s].custom ) this.character.traitSets[s].custom = {};
+			if ( !this.character.traitSets[s].custom.cortexToolkit ) this.character.traitSets[s].custom.cortexToolkit = {};
+			if ( !this.character.traitSets[s].custom.cortexToolkit.pips ) {
+				this.character.traitSets[s].custom.cortexToolkit.pips = {
+					count: 25,
+					perRow: 5,
+					connected: true,
+					filled: 0
+				};
+			}
+		},
+
+		setPipProperty( key, value ) {
+			this.ensurePipStruct();
+			let s = this.traitSetID;
+			this.character.traitSets[s].custom.cortexToolkit.pips[ key ] = value;
+			this.updateCharacter( this.character );
+		},
+
+		ensureAttachedStressStruct() {
+			let s = this.traitSetID;
+			if ( !this.character.traitSets[s].custom ) this.character.traitSets[s].custom = {};
+			if ( !this.character.traitSets[s].custom.cortexToolkit ) this.character.traitSets[s].custom.cortexToolkit = {};
+			if ( !this.character.traitSets[s].custom.cortexToolkit.attachedStress ) {
+				this.character.traitSets[s].custom.cortexToolkit.attachedStress = {
+					enabled: false,
+					label: 'Stress',
+					scale: [ 4, 6, 8, 10, 12 ],
+					includeOut: false
+				};
+			}
+		},
+
+		setAttachedStressProperty( key, value ) {
+			this.ensureAttachedStressStruct();
+			let s = this.traitSetID;
+			this.character.traitSets[s].custom.cortexToolkit.attachedStress[ key ] = value;
+			this.updateCharacter( this.character );
+		},
+
+		toggleAttachedStressScale( dieSize ) {
+			this.ensureAttachedStressStruct();
+			let s = this.traitSetID;
+			let currentScale = [ ...(this.character.traitSets[s].custom.cortexToolkit.attachedStress.scale || [ 4, 6, 8, 10, 12 ]) ];
+			let idx = currentScale.indexOf( dieSize );
+			if ( idx > -1 ) {
+				if ( currentScale.length > 1 ) {
+					currentScale.splice( idx, 1 );
+				}
+			} else {
+				currentScale.push( dieSize );
+				currentScale.sort( ( a, b ) => a - b );
+			}
+			this.character.traitSets[s].custom.cortexToolkit.attachedStress.scale = currentScale;
+			this.updateCharacter( this.character );
+		},
+
 		checkAnchorPosition() {
 			if ( !this.$el || !this.$el.parentElement ) return;
 			
@@ -1167,6 +1729,40 @@ const TraitSetEditor = {
 			}
 
 			this.scrollPosition = 'middle';
+		},
+
+		clearAllSessionBubbles() {
+			if ( !this.traitSet || !this.traitSet.traits ) return;
+			this.traitSet.traits.forEach( t => {
+				if ( !t.custom ) t.custom = {};
+				t.custom.checked = false;
+				t.value = 0;
+			});
+			this.updateCharacter( this.character );
+		},
+
+		fillAllSessionBubbles() {
+			if ( !this.traitSet ) return;
+			const count = this.sessionRecordCount;
+			if ( !this.traitSet.traits ) this.traitSet.traits = [];
+			while ( this.traitSet.traits.length < count ) {
+				this.traitSet.traits.push({
+					name: '',
+					value: 0,
+					dice: [],
+					description: '',
+					traits: [],
+					sfx: [],
+					tags: [],
+					custom: {}
+				});
+			}
+			this.traitSet.traits.forEach( t => {
+				if ( !t.custom ) t.custom = {};
+				t.custom.checked = true;
+				t.value = 1;
+			});
+			this.updateCharacter( this.character );
 		},
 
 	}

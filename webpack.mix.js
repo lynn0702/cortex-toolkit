@@ -5,6 +5,7 @@ mix
 .disableNotifications()
 .combine([
 	'js/functions.js',
+	'js/templates.js',
 	'js/cortex-pal.js',
 	'js/roster.js',
 	'js/character.js',
@@ -17,4 +18,15 @@ mix
 	'js/dice-roller.js',
 	'js/app.js'
 ], 'js/app.min.js' )
-.sass( 'css/app.scss', 'css/app.min.css', { sassOptions: { outputStyle: 'expanded' }} );
+.sass( 'css/app.scss', 'css/app.min.css', { sassOptions: { outputStyle: mix.inProduction() ? 'compressed' : 'expanded' }} )
+.then(() => {
+	const fs = require('fs');
+	const cssPath = 'css/app.min.css';
+	if (fs.existsSync(cssPath)) {
+		let css = fs.readFileSync(cssPath, 'utf8');
+		if (css.charCodeAt(0) === 0xFEFF || css.includes('\uFEFF')) {
+			css = css.replace(/\uFEFF/g, '');
+			fs.writeFileSync(cssPath, css);
+		}
+	}
+});
