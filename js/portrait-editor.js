@@ -6,7 +6,9 @@ const PortraitEditor = {
 	},
 
 	data() {
-		return {}
+		return {
+			uploadError: ''
+		}
 	},
 
 	computed: {
@@ -107,7 +109,9 @@ const PortraitEditor = {
 							</div>
 						</div>
 
-						<input class="portrait-input" type="file" ref="inputFile" @change="uploadProcess">
+						<input class="portrait-input" type="file" ref="inputFile" @change="uploadProcess" accept="image/*">
+
+						<div class="editor-upload-error" v-if="uploadError">{{ uploadError }}</div>
 
 						<div style="margin-top: 0.5rem;">
 							<label style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
@@ -196,22 +200,24 @@ const PortraitEditor = {
 
 		uploadProcess( event ) {
 
+			this.uploadError = '';
+
 			if ( !event.target.files || !event.target.files.length ) {
 				this.setImageURL( '' );
 				this.setAlignment( 'center' );
 				return;
 			}
-			
-			let file = event.target.files[0];
 
-			let reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => {
-				this.setImageURL( reader.result );
-			};
-			reader.onerror = (error) => {
-				console.error('Portrait error: ', error);
-			};
+			cortexFunctions.processImageFile( event.target.files[0], 1024, 0.85 ).then(
+				( dataURL ) => {
+					this.setImageURL( dataURL );
+					event.target.value = null;
+				},
+				( error ) => {
+					this.uploadError = error?.message || 'Could not process that image.';
+					event.target.value = null;
+				}
+			);
 
 		},
 

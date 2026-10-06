@@ -301,7 +301,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "skills-specialties"
               },
               "multiDie": false,
               "stressConfig": {
@@ -336,14 +336,14 @@ const cortexSpotlightTemplates = [
             "cortexToolkit": {
               "features": {
                 "description": true,
-                "sfx": false,
+                "sfx": true,
                 "subtraits": false
               },
               "location": "right",
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "talents-table"
               },
               "multiDie": false,
               "stressConfig": {
@@ -351,7 +351,7 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 1
+              "reservedSlots": 4
             }
           }
         },
@@ -1171,13 +1171,231 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "name": "Standing & Badges",
-          "description": "Camp social standing and merit badges earned",
-          "nounSingular": "Standing & Badge",
-          "nounPlural": "Standing & Badges",
+          "name": "Standing",
+          "description": "Camp social standing with complication and bonus dice",
+          "nounSingular": "Standing",
+          "nounPlural": "Standings",
           "traits": [
             {
-              "name": "",
+              "name": "Camp Director",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Cool Kids",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Counselors",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Jocks",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Nature Nerds",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Staff",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": true
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "standing"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 6
+            }
+          }
+        },
+        {
+          "name": "Badges",
+          "description": "Merit badges earned at camp",
+          "nounSingular": "Badge",
+          "nounPlural": "Badges",
+          "traits": [
+            {
+              "name": "Investigation",
               "value": 0,
               "dice": [],
               "description": "",
@@ -1187,7 +1405,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Local Folklore",
               "value": 0,
               "dice": [],
               "description": "",
@@ -1197,7 +1415,137 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Baking",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Boating",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Campfire Cooking",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Camping",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Cryptid Identification",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Exploring Camp Bewilderwood",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fire Building",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fun with Physics",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Leather Working",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Plant Identification and Uses",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Reading Nature",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Story Telling",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Swimming",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Tracking",
               "value": 0,
               "dice": [],
               "description": "",
@@ -1212,7 +1560,7 @@ const cortexSpotlightTemplates = [
           "custom": {
             "cortexToolkit": {
               "features": {
-                "description": true,
+                "description": false,
                 "sfx": false,
                 "subtraits": false
               },
@@ -1220,7 +1568,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "badges-table"
               },
               "multiDie": false,
               "stressConfig": {
@@ -1228,10 +1576,11 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 16
             }
           }
         },
+
         {
           "name": "Signature Assets",
           "description": "Treasured camper keepsakes and scavenged relics",
@@ -1283,7 +1632,69 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 2
             }
           }
-        }
+        },
+        {
+          "name": "Talents",
+          "description": "Camper knacks and signature tricks",
+          "nounSingular": "Talent",
+          "nounPlural": "Talents",
+          "traits": [
+            {
+              "name": "Look, A Clue!",
+              "value": 0,
+              "dice": [],
+              "description": "When searching for information in a test...",
+              "traits": [],
+              "sfx": [
+                {
+                  "name": "",
+                  "description": "Gain a d8 asset, even on a failure. Counts as a second asset on a success.",
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "talents-table"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 2,
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+
       ],
       "player": "",
       "portrait": {
@@ -1480,15 +1891,15 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "resources-count"
               },
-              "multiDie": false,
+              "multiDie": true,
               "stressConfig": {
                 "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 6
             }
           }
         },
@@ -1696,7 +2107,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "skills-specialties"
               },
               "multiDie": false,
               "stressConfig": {
@@ -4498,7 +4909,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Skills & Specialties",
           "traits": [
             {
-              "name": "",
+              "name": "Animals",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4508,7 +4919,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Athletics",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4518,7 +4929,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Big Guns",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4528,7 +4939,220 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Covert",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Craft",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Creativity",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Drive",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Focus",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Guns",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "Pistol",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Rifles",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Shotguns",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Influence",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Knowledge",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Mechanic",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Melee",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "Knives",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Notice",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Operate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Pilot",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Survival",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Thrown",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "Grenades",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Treatment",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Unarmed",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4547,11 +5171,11 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": true
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "skills-specialties"
               },
               "multiDie": false,
               "stressConfig": {
@@ -4559,7 +5183,7 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 4
+              "reservedSlots": 20
             }
           }
         },
@@ -4599,7 +5223,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "right",
               "page": 1,
               "style": {
                 "header": "default",
@@ -4666,7 +5290,255 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 2
             }
           }
+        },
+        {
+          "name": "Stress",
+          "description": "Survivor stress and trauma",
+          "nounSingular": "Stress",
+          "nounPlural": "Stress",
+          "traits": [
+            {
+              "name": "Injured",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Isolated",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Sick",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Tired",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Upset",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "stress"
+              },
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "notes": "",
+              "reservedSlots": 5
+            }
+          }
+        },
+        {
+          "name": "Talents",
+          "description": "Survivor tricks and knacks",
+          "nounSingular": "Talent",
+          "nounPlural": "Talents",
+          "traits": [
+            {
+              "name": "Trick Shot",
+              "value": 0,
+              "dice": [],
+              "description": "When attacking another human...",
+              "traits": [],
+              "sfx": [
+                {
+                  "name": "",
+                  "description": "Double Guns or Big Guns.",
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Zombie Hunter",
+              "value": 0,
+              "dice": [],
+              "description": "When fighting a Rotter...",
+              "traits": [],
+              "sfx": [
+                {
+                  "name": "",
+                  "description": "Double your Melee or Unarmed skill for the test or contest.",
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "talents-table"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "name": "Growth Pool",
+          "description": "Survivor growth dice",
+          "nounSingular": "Growth Die",
+          "nounPlural": "Growth Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "growth-ladder"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 5
+            }
+          }
         }
+
       ],
       "player": "",
       "portrait": {
@@ -5585,7 +6457,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "skills-specialties"
               },
               "multiDie": false,
               "stressConfig": {

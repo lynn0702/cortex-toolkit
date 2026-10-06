@@ -16,6 +16,7 @@ const Character = {
 			printStyle: null,
 			printBlank: false,
 			designerPrintPreview: false,
+			showStyleGallery: false,
 		};
 	},
 
@@ -352,6 +353,9 @@ const Character = {
 				<button type="button" class="btn-toolbar-theme" :class="{ active: isSelected(['dice']) }" @click.stop="openDiceEditor" title="Visual Dice Appearance Editor">
 					<i class="fas fa-dice-d20"></i> Dice
 				</button>
+				<button type="button" class="btn-toolbar-theme" @click.stop="showStyleGallery = true" title="Browse trait set styles and add one to the sheet">
+					<i class="fas fa-plus"></i> Add Set
+				</button>
 			</div>
 
 			<div class="toolbar-group">
@@ -493,7 +497,7 @@ const Character = {
 									v-if="portrait?.url"
 									class="portrait-small-image"
 									:class="'portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'top-center')"
-									:style="'background-image: url(' + portrait.url + ');'"
+									:style="'background-image: url(' + safeImageUrl(portrait.url) + ');'"
 								></div>
 								<div v-else class="portrait-small-placeholder" @click.stop="submode === 'edit' ? selectElement(['name']) : null" title="Click to edit title or upload logo">
 									<span class="spotlight-game-tag" v-if="game">{{ game }}</span>
@@ -527,7 +531,7 @@ const Character = {
 									<div class="character-game-title" v-if="game" v-html="renderText(game)"></div>
 
 									<div class="title"
-										v-html="name"
+										{{ name }}
 									></div>
 
 									<div class="title-decoration">
@@ -540,7 +544,7 @@ const Character = {
 								<div class="character-meta">
 						
 									<div class="character-player" v-if="player && player.length">
-										<span class="meta-label">Player:</span> <span v-html="player"></span>
+										<span class="meta-label">Player:</span> <span>{{ player }}</span>
 									</div>
 
 									<div class="character-pronouns" v-if="pronouns.length">
@@ -594,7 +598,7 @@ const Character = {
 					<!-- PAGE 2+ HEADER -->
 					<header class="page-header page-2-header" v-if="pageIndex > 1">
 						<div class="page-2-header-inner">
-							<div class="page-2-title" v-html="name"></div>
+							<div class="page-2-title">{{ name }}</div>
 							<div class="page-2-badge">{{ game ? game + ' — ' : '' }}Page {{ pageIndex }} of {{ pageCount }}</div>
 						</div>
 					</header>
@@ -626,7 +630,7 @@ const Character = {
 										<div :class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
 											@click.stop="selectElement([ 'traitSet', s ])"
 										>
-											<div v-html="traitSet.name"></div>
+											<div>{{ traitSet.name }}</div>
 										</div>
 									</transition>
 
@@ -727,7 +731,9 @@ const Character = {
 												:key="'srec-' + item.index"
 												class="session-record-row"
 												:class="{ 'filled': item.isFilled, 'selected': isSelected(['trait', s, item.index]) }"
+												@click.stop="handleSessionLineClick(s, item.index)"
 											>
+												<rect x="20" :y="(55 + item.index * 28) - 14" width="232" height="28" fill="transparent" class="session-hit-area" />
 												<line
 													x1="30.5"
 													:y1="55 + item.index * 28"
@@ -758,6 +764,16 @@ const Character = {
 											</g>
 										</svg>
 
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addSessionRecordRow( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Row' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+
 										<transition name="editor" appear>
 											<trait-editor
 												v-if="editing && editing[0] === 'trait' && editing[1] === s"
@@ -771,6 +787,414 @@ const Character = {
 												@updateCharacter="updateCharacter"
 												@removeTrait="removeTrait"
 											></trait-editor>
+										</transition>
+									</div>
+
+									<!-- GROWTH LADDER (VERTICAL DICE TRACK, e.g. Safe Zone Growth Pool) -->
+									<div class="trait-growth-ladder" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'growth-ladder'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'growth-rung': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="growth-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="growth-name growth-blank" v-else-if="(printBlank || item.isPlaceholder) && item.trait.name"><span class="trait-blank-line"></span></span>
+													<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+														<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+															:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+															v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- DOSSIER FIELDS (STACKED LABELED BLOCKS, e.g. KitBash Forces) -->
+									<div class="trait-dossier" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'dossier-fields'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'dossier-field': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="dossier-label" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="dossier-label dossier-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="dossier-label" v-else>{{ item.trait.name || '' }}</span>
+													<span class="dossier-text" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
+													<span class="dossier-text dossier-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="dossier-text dossier-hint" v-else-if="submode === 'edit'">Click to add text...</span>
+													<span class="dossier-text" v-else></span>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+																		<!-- SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk) -->
+									<div class="trait-skills-branch" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'skills-specialties'">
+										<div class="skills-branch-head"><span>{{ getTraitSetLabel(traitSet, 'left') }}</span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></div>
+										<template v-for="(group, gi) in getBranchGroups(traitSet, getRenderedTraits(traitSet, s))" :key="gi">
+											<div :class="group.skillItem ? getTraitClasses(group.skillItem.trait) : {}" v-if="group.skillItem">
+												<div :class="{ 'trait-inner': true, 'selected': !group.skillItem.isPlaceholder && isSelected(['trait', s, group.skillItem.originalIndex]), 'trait-placeholder-slot': group.skillItem.isPlaceholder }" @click.stop="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null">
+													<div class="skill-branch-row">
+														<div class="skill-branch-skill">
+															<span class="trait-name" v-if="!printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.name">{{ group.skillItem.trait.name }}</span>
+															<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder"><span class="trait-blank-line"></span></span>
+															<span class="trait-name" v-else>{{ group.skillItem.trait.name || '' }}</span>
+															<div class="trait-value single-die-value" @click.stop="!printBlank && !group.skillItem.isPlaceholder ? handleSingleDieClick(group.skillItem.trait, group.skillItem.trait.value, traitSet, s, group.skillItem.originalIndex) : null">
+																<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																	:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size }"
+																	v-html="renderDieValueForPrint(size, !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size)"></span>
+															</div>
+														</div>
+														<div class="skill-branch-link" aria-hidden="true"></div>
+														<div class="skill-branch-specialties">
+															<template v-for="(entry, ei) in group.subs" :key="'sub-' + ei">
+																<div class="specialty-row" v-if="entry.kind === 'sub'"
+																	@click.stop="!printBlank && !group.skillItem.isPlaceholder ? handleSingleDieClick(entry.sub, entry.sub.value, traitSet, s, group.skillItem.originalIndex) : null">
+																	<span class="subtrait-name" v-if="!printBlank && entry.sub.name">{{ entry.sub.name }}</span>
+																	<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																	<div class="subtrait-value">
+																		<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
+																			:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.sub.value === size }"
+																			v-html="renderDieValueForPrint(size, !printBlank && entry.sub.value === size)"></span>
+																	</div>
+																</div>
+																<div class="specialty-row" v-if="entry.kind === 'flat'"
+																	@click.stop="!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null">
+																	<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{ entry.item.trait.name }}</span>
+																	<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																	<div class="subtrait-value">
+																		<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																			:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+																			v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
+																	</div>
+																	<transition name="editor" appear>
+																		<trait-editor
+																			:character="character"
+																			:open="isSelected(['trait', s, entry.item.originalIndex])"
+																			v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
+																			:traitSetID="s"
+																			:traitID="entry.item.originalIndex"
+																			:viewY="viewY"
+																			@selectElement="selectElement"
+																			@updateCharacter="updateCharacter"
+																			@removeTrait="removeTrait"
+																		></trait-editor>
+																	</transition>
+																</div>
+															</template>
+															<div class="specialty-row specialty-blank-row" v-if="printBlank && !group.subs.length">
+																<span class="subtrait-name"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																<div class="subtrait-value">
+																	<span v-for="size in getSubtraitRatings(traitSet)" :key="size" class="c" v-html="renderDieValueForPrint(size, false)"></span>
+																</div>
+															</div>
+															<div class="specialty-empty" v-if="!group.subs.length && !printBlank && !group.skillItem.isPlaceholder && submode === 'edit'">Select to add specialties</div>
+														</div>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!group.skillItem.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, group.skillItem.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, group.skillItem.originalIndex])"
+														:traitSetID="s"
+														:traitID="group.skillItem.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+											<div class="skill-branch-orphans" v-else>
+												<div class="skill-branch-row">
+													<div class="skill-branch-skill"></div>
+													<div class="skill-branch-link" aria-hidden="true"></div>
+													<div class="skill-branch-specialties">
+														<template v-for="(entry, ei) in group.subs" :key="'orph-' + ei">
+															<div class="specialty-row" v-if="entry.kind === 'flat'"
+																@click.stop="!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null">
+																<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{ entry.item.trait.name }}</span>
+																<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																<div class="subtrait-value">
+																	<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																		:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+																		v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
+																</div>
+																<transition name="editor" appear>
+																	<trait-editor
+																		:character="character"
+																		:open="isSelected(['trait', s, entry.item.originalIndex])"
+																		v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
+																		:traitSetID="s"
+																		:traitID="entry.item.originalIndex"
+																		:viewY="viewY"
+																		@selectElement="selectElement"
+																		@updateCharacter="updateCharacter"
+																		@removeTrait="removeTrait"
+																	></trait-editor>
+																</transition>
+															</div>
+														</template>
+													</div>
+												</div>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+									
+									<!-- TALENTS TABLE (TALENT / ACTIVATION / EFFECT) -->
+									<div class="trait-talents-table" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'talents-table'">
+										<div class="talents-head"><span>{{ getTraitSetLabel(traitSet, 'col1') }}</span><span>{{ getTraitSetLabel(traitSet, 'col2') }}</span><span>{{ getTraitSetLabel(traitSet, 'col3') }}</span></div>
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<div class="talent-row">
+														<span class="talent-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+														<span class="talent-name talent-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="talent-name" v-else>{{ item.trait.name || '' }}</span>
+														<span class="talent-activation" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
+														<span class="talent-activation talent-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="talent-activation" v-else></span>
+														<span class="talent-effect" v-if="!printBlank && !item.isPlaceholder && getTalentEffect(item.trait)" v-html="renderText(getTalentEffect(item.trait))"></span>
+														<span class="talent-effect talent-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="talent-effect" v-else></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- STANDING (STANDING DIE + COMPLICATION & BONUS DICE, e.g. Camp Bewilderwood) -->
+									<div class="trait-standing" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'standing'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<div class="standing-main">
+														<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+														<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+														<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+															<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+																v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+														</div>
+													</div>
+													<div class="standing-sub">
+														<span class="standing-sub-label" v-if="!printBlank && !item.isPlaceholder">{{ getSubtraitNameOr(item.trait, traitSet, 0) }}</span>
+                                                        <span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+														<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingComplication(item.trait)"
+															@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), getStandingComplication(item.trait).value, traitSet, s, item.originalIndex) : null">
+															<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
+																:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && getStandingComplication(item.trait).value === size }"
+																v-html="renderDieValueForPrint(size, !printBlank && getStandingComplication(item.trait).value === size)"></span>
+														</div>
+														<span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+														<span class="standing-sub-label" v-if="!printBlank && !item.isPlaceholder">{{ getSubtraitNameOr(item.trait, traitSet, 1) }}</span>
+                                                        <span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+														<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingBonus(item.trait)"
+															@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), getStandingBonus(item.trait).value, traitSet, s, item.originalIndex) : null">
+															<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
+																:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && getStandingBonus(item.trait).value === size }"
+																v-html="renderDieValueForPrint(size, !printBlank && getStandingBonus(item.trait).value === size)"></span>
+														</div>
+														<span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- BADGES / CHECKLIST TABLE (NAME + DIE PER ROW) -->
+									<div class="trait-badges-table" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'badges-table'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'badge-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="badge-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="badge-name badge-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="badge-name" v-else>{{ item.trait.name || '' }}</span>
+													<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+														<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+															:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+															v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- RESOURCES WITH DICE COUNT (RATING DIE + DICE 1-5, e.g. Cosa Nostra) -->
+									<div class="trait-resources-count" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'resources-count'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'resource-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+													<span class="resource-rating-label">{{ getTraitSetLabel(traitSet, 'rating') }}</span>
+													<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+														<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+															:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+															v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+													</div>
+													<span class="resource-count-label">{{ getTraitSetLabel(traitSet, 'dice') }}</span>
+													<div class="resource-count">
+														<span v-for="n in [1, 2, 3, 4, 5]" :key="n" class="count-pip"
+															:class="{ 'filled': !printBlank && !item.isPlaceholder && getResourceDiceCount(item.trait) >= n }"
+															@click.stop="submode === 'edit' && !printBlank && !item.isPlaceholder ? setResourceDiceCount(s, item.originalIndex, n) : null"
+															:title="submode === 'edit' && !item.isPlaceholder ? 'Set dice count to ' + n : ''">{{ n }}</span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
 										</transition>
 									</div>
 
@@ -799,7 +1223,7 @@ const Character = {
 																v-if="isSpotlightPrintStyle && traitSet?.custom?.cortexToolkit?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1"
 																v-html="renderDieValueForPrint(item.trait.value || 8, !printBlank && !item.isPlaceholder && item.trait.value > 0)"
 															></span>
-															<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name" v-html="item.trait.name"></span>
+															<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 															<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder">
 																<template v-if="item.trait.name && item.trait.name.endsWith(':') && !item.isPlaceholder">
 																	{{ item.trait.name }} <span class="trait-blank-line"></span>
@@ -811,7 +1235,7 @@ const Character = {
 																	<span class="trait-blank-line"></span>
 																</template>
 															</span>
-															<span class="trait-name" v-else v-html="item.trait.name || ''"></span>
+															<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 
 															<!-- STRESS VALUE TRACK -->
 															<div class="trait-value stress-value" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'stress'">
@@ -876,7 +1300,7 @@ const Character = {
 
 														<ul class="subtraits" v-if="traitSet?.custom?.cortexToolkit?.features?.subtraits && (item.trait.traits?.length || printBlank)">
 															<li class="subtrait" v-for="(subtrait, u) in (item.trait.traits?.length ? item.trait.traits : (printBlank ? [{ name: '', value: 0 }] : []))" :key="u" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
-																<span class="subtrait-name" v-if="!printBlank && subtrait.name" v-html="subtrait.name"></span>
+																<span class="subtrait-name" v-if="!printBlank && subtrait.name">{{ subtrait.name }}</span>
 																<span class="subtrait-name" v-else-if="printBlank">
 																	<span class="trait-blank-line subtrait-blank-line"></span>
 																</span>
@@ -940,7 +1364,7 @@ const Character = {
 																	></span>
 																</template>
 																<template v-else>
-																	<span class="trait-sfx-name" v-html="sfx.name || sfx"></span>:
+																	<span class="trait-sfx-name">{{ sfx.name || sfx }}</span>:
 																	<span class="trait-sfx-description" v-html="renderText(sfx.description || '')"></span>
 																</template>
 															</li>
@@ -983,7 +1407,7 @@ const Character = {
 
 									<ul class="sfx" v-if="traitSet?.custom?.cortexToolkit?.features?.sfx && traitSet?.sfx?.length">
 										<li v-for="(sfx, sfId) in traitSet.sfx" :key="sfId">
-											<span class="sfx-name" v-html="sfx.name"></span>:
+											<span class="sfx-name">{{ sfx.name }}</span>:
 											<span class="sfx-description" v-html="renderText(sfx.description)"></span>
 										</li>
 									</ul>
@@ -992,7 +1416,7 @@ const Character = {
 								<!-- RIGHT HEADER (OPTIONAL VERTICAL LABEL) -->
 								<div class="trait-set-header trait-set-header-right" v-if="traitSet?.custom?.cortexToolkit?.headerRight">
 									<div class="trait-set-header-inner">
-										<div v-html="traitSet.custom.cortexToolkit.headerRight"></div>
+										<div>{{ traitSet.custom.cortexToolkit.headerRight }}</div>
 									</div>
 								</div>
 							</div>
@@ -1012,8 +1436,8 @@ const Character = {
 							<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet('right', pageIndex, 1)">
 								<i class="fas fa-plus"></i> {{ columnCount === 3 ? 'Col 3' : 'Col 2' }} Set
 							</button>
-							<button type="button" class="btn-spotlight-add span-full-btn" @click.stop="addTraitSet('left', pageIndex, columnCount)">
-								<i class="fas fa-arrows-alt-h"></i> Full Width Set (Span {{ columnCount }})
+							<button type="button" class="btn-spotlight-add span-full-btn" @click.stop="addTraitSet('left', pageIndex, 'full')">
+								<i class="fas fa-arrows-alt-h"></i> Full Width Set
 							</button>
 						</div>
 					</div>
@@ -1035,7 +1459,7 @@ const Character = {
 									v-if="portrait?.url"
 									class="portrait-small-image"
 									:class="'portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'top-center')"
-									:style="'background-image: url(' + portrait.url + ');'"
+									:style="'background-image: url(' + safeImageUrl(portrait.url) + ');'"
 								></div>
 								<div v-else class="portrait-small-placeholder">
 									<i class="fas fa-user"></i>
@@ -1048,7 +1472,7 @@ const Character = {
 								<div :class="{ 'portrait-inner': true, 'selected': isSelected(['portrait']) }"
 									@click.stop="selectElement([ 'portrait' ])"
 								>
-									<div :class="'portrait-circle portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + (portrait?.url || '') + ');'">
+									<div :class="'portrait-circle portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(portrait?.url || '') + ');'">
 										<div class="portrait-placeholder" v-if="!portrait?.url?.length"><i class="fas fa-user"></i></div>
 									</div>
 								</div>
@@ -1092,7 +1516,7 @@ const Character = {
 
 												<div class="attribute-name"
 													:style="getAttributeNameStyle( a )"
-													v-html="attribute.name"
+													{{ attribute.name }}
 												></div>
 
 											</div>
@@ -1246,7 +1670,7 @@ const Character = {
 										<div :class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
 											@click.stop="selectElement([ 'traitSet', s ])"
 										>
-											<div v-html="traitSet.name"></div>
+											<div>{{ traitSet.name }}</div>
 										</div>
 									</transition>
 
@@ -1349,7 +1773,9 @@ const Character = {
 												:key="'srec-' + item.index"
 												class="session-record-row"
 												:class="{ 'filled': item.isFilled, 'selected': isSelected(['trait', s, item.index]) }"
+												@click.stop="handleSessionLineClick(s, item.index)"
 											>
+												<rect x="20" :y="(55 + item.index * 28) - 14" width="232" height="28" fill="transparent" class="session-hit-area" />
 												<line
 													x1="30.5"
 													:y1="55 + item.index * 28"
@@ -1380,6 +1806,16 @@ const Character = {
 											</g>
 										</svg>
 
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addSessionRecordRow( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Row' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+
 										<transition name="editor" appear>
 											<trait-editor
 												v-if="editing && editing[0] === 'trait' && editing[1] === s"
@@ -1393,6 +1829,414 @@ const Character = {
 												@updateCharacter="updateCharacter"
 												@removeTrait="removeTrait"
 											></trait-editor>
+										</transition>
+									</div>
+
+									<!-- GROWTH LADDER (VERTICAL DICE TRACK, e.g. Safe Zone Growth Pool) -->
+									<div class="trait-growth-ladder" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'growth-ladder'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'growth-rung': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="growth-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="growth-name growth-blank" v-else-if="(printBlank || item.isPlaceholder) && item.trait.name"><span class="trait-blank-line"></span></span>
+													<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+														<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+															:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+															v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- DOSSIER FIELDS (STACKED LABELED BLOCKS, e.g. KitBash Forces) -->
+									<div class="trait-dossier" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'dossier-fields'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'dossier-field': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="dossier-label" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="dossier-label dossier-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="dossier-label" v-else>{{ item.trait.name || '' }}</span>
+													<span class="dossier-text" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
+													<span class="dossier-text dossier-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="dossier-text dossier-hint" v-else-if="submode === 'edit'">Click to add text...</span>
+													<span class="dossier-text" v-else></span>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+																		<!-- SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk) -->
+									<div class="trait-skills-branch" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'skills-specialties'">
+										<div class="skills-branch-head"><span>{{ getTraitSetLabel(traitSet, 'left') }}</span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></div>
+										<template v-for="(group, gi) in getBranchGroups(traitSet, getRenderedTraits(traitSet, s))" :key="gi">
+											<div :class="group.skillItem ? getTraitClasses(group.skillItem.trait) : {}" v-if="group.skillItem">
+												<div :class="{ 'trait-inner': true, 'selected': !group.skillItem.isPlaceholder && isSelected(['trait', s, group.skillItem.originalIndex]), 'trait-placeholder-slot': group.skillItem.isPlaceholder }" @click.stop="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null">
+													<div class="skill-branch-row">
+														<div class="skill-branch-skill">
+															<span class="trait-name" v-if="!printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.name">{{ group.skillItem.trait.name }}</span>
+															<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder"><span class="trait-blank-line"></span></span>
+															<span class="trait-name" v-else>{{ group.skillItem.trait.name || '' }}</span>
+															<div class="trait-value single-die-value" @click.stop="!printBlank && !group.skillItem.isPlaceholder ? handleSingleDieClick(group.skillItem.trait, group.skillItem.trait.value, traitSet, s, group.skillItem.originalIndex) : null">
+																<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																	:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size }"
+																	v-html="renderDieValueForPrint(size, !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size)"></span>
+															</div>
+														</div>
+														<div class="skill-branch-link" aria-hidden="true"></div>
+														<div class="skill-branch-specialties">
+															<template v-for="(entry, ei) in group.subs" :key="'sub-' + ei">
+																<div class="specialty-row" v-if="entry.kind === 'sub'"
+																	@click.stop="!printBlank && !group.skillItem.isPlaceholder ? handleSingleDieClick(entry.sub, entry.sub.value, traitSet, s, group.skillItem.originalIndex) : null">
+																	<span class="subtrait-name" v-if="!printBlank && entry.sub.name">{{ entry.sub.name }}</span>
+																	<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																	<div class="subtrait-value">
+																		<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
+																			:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.sub.value === size }"
+																			v-html="renderDieValueForPrint(size, !printBlank && entry.sub.value === size)"></span>
+																	</div>
+																</div>
+																<div class="specialty-row" v-if="entry.kind === 'flat'"
+																	@click.stop="!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null">
+																	<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{ entry.item.trait.name }}</span>
+																	<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																	<div class="subtrait-value">
+																		<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																			:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+																			v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
+																	</div>
+																	<transition name="editor" appear>
+																		<trait-editor
+																			:character="character"
+																			:open="isSelected(['trait', s, entry.item.originalIndex])"
+																			v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
+																			:traitSetID="s"
+																			:traitID="entry.item.originalIndex"
+																			:viewY="viewY"
+																			@selectElement="selectElement"
+																			@updateCharacter="updateCharacter"
+																			@removeTrait="removeTrait"
+																		></trait-editor>
+																	</transition>
+																</div>
+															</template>
+															<div class="specialty-row specialty-blank-row" v-if="printBlank && !group.subs.length">
+																<span class="subtrait-name"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																<div class="subtrait-value">
+																	<span v-for="size in getSubtraitRatings(traitSet)" :key="size" class="c" v-html="renderDieValueForPrint(size, false)"></span>
+																</div>
+															</div>
+															<div class="specialty-empty" v-if="!group.subs.length && !printBlank && !group.skillItem.isPlaceholder && submode === 'edit'">Select to add specialties</div>
+														</div>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!group.skillItem.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, group.skillItem.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, group.skillItem.originalIndex])"
+														:traitSetID="s"
+														:traitID="group.skillItem.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+											<div class="skill-branch-orphans" v-else>
+												<div class="skill-branch-row">
+													<div class="skill-branch-skill"></div>
+													<div class="skill-branch-link" aria-hidden="true"></div>
+													<div class="skill-branch-specialties">
+														<template v-for="(entry, ei) in group.subs" :key="'orph-' + ei">
+															<div class="specialty-row" v-if="entry.kind === 'flat'"
+																@click.stop="!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null">
+																<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{ entry.item.trait.name }}</span>
+																<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
+																<div class="subtrait-value">
+																	<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																		:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+																		v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
+																</div>
+																<transition name="editor" appear>
+																	<trait-editor
+																		:character="character"
+																		:open="isSelected(['trait', s, entry.item.originalIndex])"
+																		v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
+																		:traitSetID="s"
+																		:traitID="entry.item.originalIndex"
+																		:viewY="viewY"
+																		@selectElement="selectElement"
+																		@updateCharacter="updateCharacter"
+																		@removeTrait="removeTrait"
+																	></trait-editor>
+																</transition>
+															</div>
+														</template>
+													</div>
+												</div>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+									
+									<!-- TALENTS TABLE (TALENT / ACTIVATION / EFFECT) -->
+									<div class="trait-talents-table" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'talents-table'">
+										<div class="talents-head"><span>{{ getTraitSetLabel(traitSet, 'col1') }}</span><span>{{ getTraitSetLabel(traitSet, 'col2') }}</span><span>{{ getTraitSetLabel(traitSet, 'col3') }}</span></div>
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<div class="talent-row">
+														<span class="talent-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+														<span class="talent-name talent-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="talent-name" v-else>{{ item.trait.name || '' }}</span>
+														<span class="talent-activation" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
+														<span class="talent-activation talent-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="talent-activation" v-else></span>
+														<span class="talent-effect" v-if="!printBlank && !item.isPlaceholder && getTalentEffect(item.trait)" v-html="renderText(getTalentEffect(item.trait))"></span>
+														<span class="talent-effect talent-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="talent-effect" v-else></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- STANDING (STANDING DIE + COMPLICATION & BONUS DICE, e.g. Camp Bewilderwood) -->
+									<div class="trait-standing" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'standing'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<div class="standing-main">
+														<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+														<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+														<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+														<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+															<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+																:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+																v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+														</div>
+													</div>
+													<div class="standing-sub">
+														<span class="standing-sub-label" v-if="!printBlank && !item.isPlaceholder">{{ getSubtraitNameOr(item.trait, traitSet, 0) }}</span>
+                                                        <span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+														<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingComplication(item.trait)"
+															@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), getStandingComplication(item.trait).value, traitSet, s, item.originalIndex) : null">
+															<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
+																:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && getStandingComplication(item.trait).value === size }"
+																v-html="renderDieValueForPrint(size, !printBlank && getStandingComplication(item.trait).value === size)"></span>
+														</div>
+														<span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+														<span class="standing-sub-label" v-if="!printBlank && !item.isPlaceholder">{{ getSubtraitNameOr(item.trait, traitSet, 1) }}</span>
+                                                        <span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+														<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingBonus(item.trait)"
+															@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), getStandingBonus(item.trait).value, traitSet, s, item.originalIndex) : null">
+															<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
+																:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && getStandingBonus(item.trait).value === size }"
+																v-html="renderDieValueForPrint(size, !printBlank && getStandingBonus(item.trait).value === size)"></span>
+														</div>
+														<span class="standing-sub-blank" v-else><span class="trait-blank-line subtrait-blank-line"></span></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- BADGES / CHECKLIST TABLE (NAME + DIE PER ROW) -->
+									<div class="trait-badges-table" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'badges-table'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'badge-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="badge-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="badge-name badge-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="badge-name" v-else>{{ item.trait.name || '' }}</span>
+													<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+														<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+															:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+															v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
+										</transition>
+									</div>
+
+									<!-- RESOURCES WITH DICE COUNT (RATING DIE + DICE 1-5, e.g. Cosa Nostra) -->
+									<div class="trait-resources-count" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'resources-count'">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+											<div :class="getTraitClasses(item.trait)">
+												<div :class="{ 'trait-inner': true, 'resource-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+													<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+													<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+													<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+													<span class="resource-rating-label">{{ getTraitSetLabel(traitSet, 'rating') }}</span>
+													<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+														<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
+															:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+															v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+													</div>
+													<span class="resource-count-label">{{ getTraitSetLabel(traitSet, 'dice') }}</span>
+													<div class="resource-count">
+														<span v-for="n in [1, 2, 3, 4, 5]" :key="n" class="count-pip"
+															:class="{ 'filled': !printBlank && !item.isPlaceholder && getResourceDiceCount(item.trait) >= n }"
+															@click.stop="submode === 'edit' && !printBlank && !item.isPlaceholder ? setResourceDiceCount(s, item.originalIndex, n) : null"
+															:title="submode === 'edit' && !item.isPlaceholder ? 'Set dice count to ' + n : ''">{{ n }}</span>
+													</div>
+												</div>
+												<transition name="editor" appear>
+													<trait-editor
+														v-if="!item.isPlaceholder"
+														:character="character"
+														:open="isSelected(['trait', s, item.originalIndex])"
+														v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
+														:traitSetID="s"
+														:traitID="item.originalIndex"
+														:viewY="viewY"
+														@selectElement="selectElement"
+														@updateCharacter="updateCharacter"
+														@removeTrait="removeTrait"
+													></trait-editor>
+												</transition>
+											</div>
+										</template>
+										<transition appear>
+											<div class="preview-button-container" v-show="submode === 'edit'">
+												<div class="preview-button-container-inner">
+													<div class="preview-button" @click.stop="addTrait( s )">
+														<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+													</div>
+												</div>
+											</div>
 										</transition>
 									</div>
 
@@ -1426,7 +2270,7 @@ const Character = {
 															></span>
 
 															<!-- TRAIT NAME -->
-															<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name" v-html="item.trait.name"></span>
+															<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 															<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder">
 																<template v-if="item.trait.name && item.trait.name.endsWith(':') && !item.isPlaceholder">
 																	{{ item.trait.name }} <span class="trait-blank-line"></span>
@@ -1438,7 +2282,7 @@ const Character = {
 																	<span class="trait-blank-line"></span>
 																</template>
 															</span>
-															<span class="trait-name" v-else v-html="item.trait.name || ''"></span>
+															<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 														
 															<!-- STRESS VALUE TRACK -->
 															<div class="trait-value stress-value" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'stress'">
@@ -1506,7 +2350,7 @@ const Character = {
 															<li class="subtrait" v-for="(subtrait, u) in (item.trait.traits?.length ? item.trait.traits : (printBlank ? [{ name: '', value: 0 }] : []))" :key="u" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
 
 																<span class="subtrait-name" v-if="!printBlank && subtrait.name"
-																	v-html="subtrait.name"
+																	{{ subtrait.name }}
 																></span>
 																<span class="subtrait-name" v-else-if="printBlank">
 																	<span class="trait-blank-line subtrait-blank-line"></span>
@@ -1553,7 +2397,7 @@ const Character = {
 																<template v-else>
 
 																	<span class="trait-sfx-name"
-																		v-html="sfx.name"
+																		{{ sfx.name }}
 																	></span>:
 
 																	<span class="trait-sfx-description"
@@ -1607,7 +2451,7 @@ const Character = {
 										<li v-for="(sfx, s) in traitSet.sfx">
 
 											<span class="sfx-name"
-												v-html="sfx.name"
+												{{ sfx.name }}
 											></span>:
 
 											<span class="sfx-description"
@@ -1650,6 +2494,16 @@ const Character = {
 				</div> <!-- .page-inner -->
 			</div> <!-- .page -->
 		</div> <!-- .pages -->
+
+		<style-gallery
+			v-if="submode === 'edit'"
+			:open="showStyleGallery"
+			:columnCount="columnCount"
+			:pageCount="pageCount"
+			:allowCenter="isSpotlightStyle && columnCount === 3"
+			@close="showStyleGallery = false"
+			@addGallerySet="addGallerySet"
+		></style-gallery>
 	</section>`,
 
 	methods: {
@@ -1879,6 +2733,11 @@ const Character = {
 			const bodyStyle = traitSet?.custom?.cortexToolkit?.style?.body || 'default';
 			classes[ 'trait-set-style-' + bodyStyle ] = true;
 
+			// Optional branched-Skills connectors.
+			if ( bodyStyle === 'skills-specialties' && traitSet?.custom?.cortexToolkit?.branchArrows === false ) {
+				classes[ 'hide-branch-arrows' ] = true;
+			}
+
 			if ( this.isSpotlightStyle ) {
 				const colSpan = Number(traitSet?.custom?.cortexToolkit?.colSpan ?? traitSet?.custom?.cortexToolkit?.columnSpan) || 1;
 				if ( colSpan >= this.columnCount || traitSet?.custom?.cortexToolkit?.colSpan === 'full' || traitSet?.custom?.cortexToolkit?.columnSpan === 'full' ) {
@@ -1968,30 +2827,6 @@ const Character = {
 			return sections;
 		},
 
-		getTraitSetGridStyle( traitSet ) {
-			if ( !this.isSpotlightStyle ) return {};
-			const colSpan = Number(traitSet?.custom?.cortexToolkit?.colSpan ?? traitSet?.custom?.cortexToolkit?.columnSpan) || 1;
-			const maxCols = this.columnCount;
-			if ( colSpan >= maxCols || traitSet?.custom?.cortexToolkit?.colSpan === 'full' || traitSet?.custom?.cortexToolkit?.columnSpan === 'full' ) {
-				return { gridColumn: '1 / -1' };
-			}
-			if ( colSpan === 2 && maxCols === 3 ) {
-				const loc = traitSet?.custom?.cortexToolkit?.location;
-				if ( loc === 'right' ) {
-					return { gridColumn: '2 / span 2' };
-				}
-				return { gridColumn: '1 / span 2' };
-			}
-			const loc = traitSet?.custom?.cortexToolkit?.location;
-			if ( maxCols === 3 ) {
-				if ( loc === 'center' || loc === 'middle' || loc === 2 ) return { gridColumn: '2' };
-				if ( loc === 'right' || loc === 3 ) return { gridColumn: '3' };
-				return { gridColumn: '1' };
-			}
-			if ( loc === 'right' || loc === 2 ) return { gridColumn: '2' };
-			return { gridColumn: '1' };
-		},
-
 		renderNameHtml( name ) {
 			if ( !name ) return '';
 			return cortexFunctions.renderText( name );
@@ -2036,11 +2871,10 @@ const Character = {
 		},
 
 		getImageSetGraphicStyle( traitSet ) {
-			const url = traitSet?.custom?.cortexToolkit?.imageConfig?.url;
+			const url = cortexFunctions.safeImageUrl( traitSet?.custom?.cortexToolkit?.imageConfig?.url );
 			if ( !url ) return {};
-			const escaped = url.replace(/"/g, '\\"');
 			return {
-				backgroundImage: `url("${escaped}")`,
+				backgroundImage: `url("${url}")`,
 				backgroundSize: 'cover',
 				backgroundRepeat: 'no-repeat'
 			};
@@ -2179,13 +3013,17 @@ const Character = {
 
 		// EDITING
 
-		addTraitSet( location, page = 1 ) {
+		addTraitSet( location, page = 1, span = 1 ) {
 
 			let character = this.character;
 
 			let traitSet = structuredClone( cortexFunctions.defaultTraitSet );
 			traitSet.custom.cortexToolkit.location = location ?? 'left';
 			traitSet.custom.cortexToolkit.page = page ?? 1;
+			if ( span === 'full' || Number(span) >= this.columnCount ) {
+				traitSet.custom.cortexToolkit.colSpan = 'full';
+				traitSet.custom.cortexToolkit.columnSpan = 'full';
+			}
 			traitSet.traits.push( structuredClone( cortexFunctions.defaultTrait ) );
 
 			character.traitSets.push( traitSet );
@@ -2208,6 +3046,51 @@ const Character = {
 			character.traitSets.splice(traitSetID, 1);
 
 			this.updateCharacter( character );
+
+		},
+
+		addGallerySet( styleEntry, location, page ) {
+
+			let character = this.character;
+			if ( !character || !styleEntry ) return;
+
+			const styleId = styleEntry.id || 'default';
+			let traitSet = structuredClone( cortexFunctions.defaultTraitSet );
+			const styleDefaults = cortexFunctions.defaultFeaturesForStyle( styleId );
+			traitSet.name = styleEntry.name || 'New trait set';
+			traitSet.nounSingular = styleEntry.sing || 'Trait';
+			traitSet.nounPlural = styleEntry.plur || 'Traits';
+			traitSet.custom.cortexToolkit.style = { header: styleId, body: styleId };
+			Object.assign( traitSet.custom.cortexToolkit.features, styleDefaults.features );
+			if ( styleDefaults.multiDie ) {
+				traitSet.custom.cortexToolkit.multiDie = true;
+			}
+			traitSet.custom.cortexToolkit.location = location ?? 'left';
+			traitSet.custom.cortexToolkit.page = page ?? 1;
+			if ( styleId === 'pips' ) {
+				traitSet.custom.cortexToolkit.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
+			}
+			if ( styleId === 'session-record' || styleId === 'angled-lines' ) {
+				traitSet.custom.cortexToolkit.sessionRecord = { count: 20 };
+				traitSet.custom.cortexToolkit.reservedSlots = 20;
+			}
+			if ( styleId !== 'pips' && styleId !== 'notes' && styleId !== 'image' &&
+			     styleId !== 'session-record' && styleId !== 'angled-lines' ) {
+				let blank = structuredClone( cortexFunctions.defaultTrait );
+				blank.name = '';
+				blank.value = 0;
+				blank.dice = [];
+				blank.description = '';
+				traitSet.traits.push( blank );
+			}
+
+			character.traitSets.push( traitSet );
+
+			this.updateCharacter( character );
+			this.showStyleGallery = false;
+
+			let newTraitSetID = character.traitSets.length - 1;
+			this.selectElement([ 'traitSet', newTraitSetID ]);
 
 		},
 		
@@ -2286,7 +3169,7 @@ const Character = {
 			if ( trait?.custom?.cortexToolkit?.isResource || trait?.isResource ) return true;
 			if ( !traitSet ) return false;
 			const body = traitSet?.custom?.cortexToolkit?.style?.body;
-			if ( body === 'resources' ) return true;
+			if ( body === 'resources' || body === 'resources-count' ) return true;
 			const name = ( traitSet?.name || '' ).trim().toLowerCase();
 			const nounSingular = ( traitSet?.nounSingular || '' ).trim().toLowerCase();
 			const nounPlural = ( traitSet?.nounPlural || '' ).trim().toLowerCase();
@@ -2324,6 +3207,107 @@ const Character = {
 
 		getSubtraitRatings( traitSet ) {
 			return cortexFunctions.getSubtraitRatings( traitSet );
+		},
+
+		// SPOTLIGHT PDF STYLES: Skills & Specialties, Talents, Standing, Badges, Resources w/ dice count.
+
+		getTalentEffect( trait ) {
+			const sfx = ( trait?.sfx || [] ).find( e => e !== 'hinder' );
+			if ( !sfx ) return '';
+			if ( typeof sfx === 'string' ) return sfx;
+			return sfx.description || sfx.name || '';
+		},
+
+		getStandingComplication( trait ) {
+			return trait?.traits?.[0] || null;
+		},
+
+		getStandingBonus( trait ) {
+			return trait?.traits?.[1] || null;
+		},
+
+		getResourceDiceCount( trait ) {
+			const dice = cortexFunctions.getTraitDice( trait );
+			return dice.length;
+		},
+
+		setResourceDiceCount( s, t, count ) {
+			const traitSet = this.character.traitSets[s];
+			const trait = traitSet?.traits?.[t];
+			if ( !trait ) return;
+			const clamped = Math.max( 1, Math.min( 5, Number(count) || 1 ) );
+			const ratings = this.getTraitSetRatings( traitSet );
+			const size = ( trait.value && trait.value > 0 ) ? trait.value : ( ratings[0] || 6 );
+			const dice = [];
+			for ( let i = 0; i < clamped; i++ ) dice.push( size );
+			cortexFunctions.setTraitDice( trait, dice );
+			this.updateCharacter( this.character );
+		},
+
+		// Generic trait-set label store. Styles read their named regions
+		// through this single getter; custom text lives in
+		// custom.cortexToolkit.labels and defaults in
+		// cortexFunctions.defaultTraitSetLabels. Missing keys render as ''.
+		getTraitSetLabel( traitSet, key ) {
+			const labels = traitSet?.custom?.cortexToolkit?.labels;
+			if ( labels && labels[ key ] !== undefined && labels[ key ] !== null && String( labels[ key ] ).length ) {
+				return labels[ key ];
+			}
+			const style = traitSet?.custom?.cortexToolkit?.style?.body;
+			return cortexFunctions.labelDefaultForStyle( style, key );
+		},
+
+		// Generic subtrait-name-or-default reader (standing rows pass the
+		// trait set so positional defaults resolve centrally).
+		getSubtraitNameOr( trait, traitSet, index ) {
+			const sub = trait?.traits?.[ index ];
+			if ( sub && sub.name && String( sub.name ).trim().length ) {
+				return sub.name;
+			}
+			const style = traitSet?.custom?.cortexToolkit?.style?.body;
+			return cortexFunctions.labelDefaultForStyle( style, 'slot' + index );
+		},
+
+		getBranchRole( trait ) {
+			return trait?.custom?.cortexToolkit?.branchRole === 'specialty' ? 'specialty' : 'skill';
+		},
+
+		// Groups rendered skill rows with their specialties. Specialties come
+		// from nested sub-traits AND from flat specialty-role traits linked to
+		// any skill via linkTo (original trait index). Unlinked flats collect
+		// in a trailing group under the right-hand heading.
+		getBranchGroups( traitSet, items ) {
+			const list = items || [];
+			const skills = list.filter( it => this.getBranchRole( it.trait ) !== 'specialty' );
+			const flats = list.filter( it => !it.isPlaceholder && this.getBranchRole( it.trait ) === 'specialty' );
+			const skillIdx = new Set( skills.filter( s => s.originalIndex !== null && s.originalIndex !== undefined ).map( s => s.originalIndex ) );
+			const groups = skills.map( skillItem => {
+				const sIdx = skillItem.originalIndex;
+				const nested = ( skillItem.trait?.traits || [] ).map( ( sub, u ) => ({ kind: 'sub', sub, u }) );
+				const linked = flats
+					.filter( f => f.trait?.custom?.cortexToolkit?.linkTo === sIdx )
+					.map( f => ({ kind: 'flat', item: f }) );
+				return { skillItem, subs: [ ...nested, ...linked ] };
+			});
+			const orphans = flats.filter( f => {
+				const lt = f.trait?.custom?.cortexToolkit?.linkTo;
+				return !( typeof lt === 'number' && skillIdx.has( lt ) );
+			}).map( f => ({ kind: 'flat', item: f }) );
+			if ( orphans.length ) {
+				groups.push({ skillItem: null, subs: orphans });
+			}
+			return groups;
+		},
+
+		handleBranchFlatClick( s, t, trait ) {
+			if ( this.submode === 'play' ) {
+				if ( trait?.value ) {
+					const traitSet = this.character.traitSets[s];
+					this.handleSingleDieClick( trait, trait.value, traitSet, s, t );
+				}
+			} else {
+				this.selectElement([ 'trait', s, t ]);
+			}
 		},
 
 		shouldShowStressD4( traitSet ) {
@@ -2669,9 +3653,15 @@ const Character = {
 		getWatermarkStyle( pageIndex ) {
 			const wm = this.character?.custom?.cortexToolkit?.watermark;
 			if ( !wm ) return '';
-			const opacity = wm.opacity !== undefined ? wm.opacity : 0.08;
-			const scale = wm.scale !== undefined ? wm.scale : 75;
-			return `background-image: url('${wm.url}'); opacity: ${opacity}; background-size: ${scale}%;`;
+			const url = cortexFunctions.safeImageUrl( wm.url );
+			if ( !url ) return '';
+			const opacity = Number( wm.opacity );
+			const scale = Number( wm.scale );
+			return `background-image: url('${url}'); opacity: ${isNaN(opacity) ? 0.08 : opacity}; background-size: ${isNaN(scale) ? 75 : scale}%;`;
+		},
+
+		safeImageUrl( url ) {
+			return cortexFunctions.safeImageUrl( url );
 		},
 
 		getPipConfig( traitSet ) {
@@ -2791,6 +3781,34 @@ const Character = {
 			this.ensureSessionRecordTrait( traitSetIndex, itemIndex );
 			this.updateCharacter( this.character );
 			this.selectElement([ 'trait', traitSetIndex, itemIndex ]);
+		},
+
+		addSessionRecordRow( traitSetIndex ) {
+			const ts = this.character.traitSets?.[ traitSetIndex ];
+			if ( !ts ) return;
+			if ( !ts.traits ) ts.traits = [];
+			ts.traits.push({
+				name: '',
+				value: 0,
+				dice: [],
+				description: '',
+				traits: [],
+				sfx: [],
+				tags: [],
+				custom: {}
+			});
+			if ( !ts.custom ) ts.custom = {};
+			if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
+			const ctk = ts.custom.cortexToolkit;
+			const needed = ts.traits.length;
+			if ( !ctk.sessionRecord ) ctk.sessionRecord = {};
+			if ( ( Number(ctk.sessionRecord.count) || 0 ) < needed ) {
+				ctk.sessionRecord.count = needed;
+			}
+			if ( ( Number(ctk.reservedSlots) || 0 ) < needed ) {
+				ctk.reservedSlots = needed;
+			}
+			this.updateCharacter( this.character );
 		},
 
 		getSharedHinderText( traitSet ) {

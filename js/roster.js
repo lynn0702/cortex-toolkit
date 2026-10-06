@@ -14,6 +14,7 @@ const Roster = {
 			showImportConfirm: false,
 			importQueue:       [],
 			importBuffer:      null,
+			importError:       '',
 			showDeleteConfirm: false,
 			characterToDelete: null,
 			showDeleteAllConfirm: false,
@@ -120,6 +121,8 @@ const Roster = {
 						<span><i class="fas fa-upload"></i> Import</span>
 					</div>
 
+					<div class="roster-import-error" v-if="importError">{{ importError }}</div>
+
 					<div class="roster-button roster-button-export"
 						@click.stop="exportAll"
 						v-if="characters.length > 0"
@@ -161,7 +164,7 @@ const Roster = {
 					<div>
 
 						<div :class="'roster-item-portrait alignment-' + (character.portrait?.custom?.cortexToolkit?.alignment || 'center')"
-							:style="'background-image: url(' + (character.portrait?.url || '') + ');'"
+							:style="'background-image: url(' + safeImageUrl(character.portrait?.url || '') + ');'"
 							@click.stop="loadCharacter( character.id )"
 						>
 							<div class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length"><i class="fas fa-user"></i></div>
@@ -434,6 +437,10 @@ const Roster = {
 
 	methods: {
 
+		safeImageUrl( url ) {
+			return cortexFunctions.safeImageUrl( url );
+		},
+
 		useSpotlight( tmpl, asTemplate = false, openPrint = false ) {
 			this.showSpotlightLibrary = false;
 			this.$emit('createFromSpotlight', tmpl, asTemplate, openPrint);
@@ -508,34 +515,49 @@ const Roster = {
 				return;
 			}
 
+			this.importError = '';
+
 			for (let i = 0; i < event.target.files.length; i++) {
 				const file = event.target.files[i];
-				
+
+				if ( file.size > 25 * 1024 * 1024 ) {
+					this.importError = '“' + file.name + '” is larger than 25 MB and was skipped.';
+					continue;
+				}
+
 				let reader = new FileReader();
 				reader.readAsText(file);
 				reader.onload = () => {
 
 					try {
 						let data = JSON.parse( reader.result );
+						let candidates = [];
 						if ( Array.isArray(data) ) {
-							data.forEach( char => {
-								if ( char && char.id ) this.importQueue.push( char );
-							});
+							candidates = data;
 						} else if ( data && data.characters && Array.isArray(data.characters) ) {
-							data.characters.forEach( char => {
-								if ( char && char.id ) this.importQueue.push( char );
-							});
+							candidates = data.characters;
 						} else if ( data && typeof data === 'object' && data.id ) {
-							this.importQueue.push( data );
+							candidates = [ data ];
+						}
+						let added = 0;
+						candidates.forEach( char => {
+							const clean = cortexFunctions.sanitizeImportedCharacter( char );
+							if ( clean ) {
+								this.importQueue.push( clean );
+								added++;
+							}
+						} );
+						if ( added < candidates.length ) {
+							this.importError = 'Skipped ' + ( candidates.length - added ) + ' invalid entr' + ( ( candidates.length - added ) === 1 ? 'y' : 'ies' ) + ' in “' + file.name + '”.';
 						}
 						this.importNextQueueItem();
 					} catch ( error ) {
-						console.error('Import parse error: ', error);
+						this.importError = 'Could not read “' + file.name + '” as a character file.';
 					}
 
 				};
 				reader.onerror = (error) => {
-					console.error('Import error: ', error);
+					this.importError = 'Could not read the selected file.';
 				};
 
 			}

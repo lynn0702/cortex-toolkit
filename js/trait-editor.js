@@ -49,7 +49,7 @@ const TraitEditor = {
 
 		isListStyle() {
 			const b = this.traitSet?.custom?.cortexToolkit?.style?.body;
-			return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines';
+			return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'talents-table' || b === 'dossier-fields';
 		},
 
 		isSessionRecordStyle() {
@@ -190,13 +190,81 @@ const TraitEditor = {
 
 			cssClass[ 'anchor-position-' + this.anchorPosition ] = true;
 
+			if ( this.parentIsFullWidth ) {
+				cssClass[ 'dock-' + this.editorDock ] = true;
+			}
+
 			if ( this.scrollable ) {
 				cssClass[ 'scroll-position-' + this.scrollPosition ] = true;
 			}
 
 			return cssClass;
 
-		}
+		},
+
+		parentColumnCount() {
+			return Number( this.character?.custom?.cortexToolkit?.columns ) || 2;
+		},
+
+		parentIsBranch() {
+			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'skills-specialties';
+		},
+
+		branchRole: {
+			get() {
+				return this.trait?.custom?.cortexToolkit?.branchRole === 'specialty' ? 'specialty' : 'skill';
+			},
+			set( val ) {
+				if ( !this.trait.custom ) this.trait.custom = {};
+				if ( !this.trait.custom.cortexToolkit ) this.trait.custom.cortexToolkit = {};
+				this.trait.custom.cortexToolkit.branchRole = val === 'specialty' ? 'specialty' : 'skill';
+				if ( val !== 'specialty' ) {
+					this.trait.custom.cortexToolkit.linkTo = null;
+				}
+				this.updateCharacter( this.character );
+			}
+		},
+
+		branchSkillOptions() {
+			const traits = this.traitSet?.traits || [];
+			const opts = [];
+			traits.forEach( ( tr, idx ) => {
+				if ( idx === this.traitID ) return;
+				if ( tr?.custom?.cortexToolkit?.branchRole === 'specialty' ) return;
+				opts.push({ index: idx, name: tr?.name?.length ? tr.name : ( 'Skill ' + ( idx + 1 ) ) });
+			});
+			return opts;
+		},
+
+		branchLink: {
+			get() {
+				const v = this.trait?.custom?.cortexToolkit?.linkTo;
+				return typeof v === 'number' ? v : null;
+			},
+			set( val ) {
+				if ( !this.trait.custom ) this.trait.custom = {};
+				if ( !this.trait.custom.cortexToolkit ) this.trait.custom.cortexToolkit = {};
+				this.trait.custom.cortexToolkit.linkTo = ( val === null || val === undefined || val === '' ) ? null : Number(val);
+				this.updateCharacter( this.character );
+			}
+		},
+
+		parentIsFullWidth() {
+			const span = this.traitSet?.custom?.cortexToolkit?.colSpan ?? this.traitSet?.custom?.cortexToolkit?.columnSpan;
+			return span === 'full' || Number(span) >= this.parentColumnCount;
+		},
+
+		editorDock: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left';
+			},
+			set( val ) {
+				if ( !this.traitSet.custom ) this.traitSet.custom = {};
+				if ( !this.traitSet.custom.cortexToolkit ) this.traitSet.custom.cortexToolkit = {};
+				this.traitSet.custom.cortexToolkit.editorDock = val === 'right' ? 'right' : 'left';
+				this.updateCharacter( this.character );
+			}
+		},
 
 	},
 
@@ -228,6 +296,18 @@ const TraitEditor = {
 			<div @scroll="checkScrollPosition">
 	
 				<div class="editor-fields">
+
+					<div class="editor-field" v-if="parentIsFullWidth">
+						<label>Panel Position</label>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'left' }" @click.stop="editorDock = 'left'">
+								<i class="fas fa-arrow-left"></i> Left
+							</button>
+							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'right' }" @click.stop="editorDock = 'right'">
+								Right <i class="fas fa-arrow-right"></i>
+							</button>
+						</div>
+					</div>
 
 					<div class="editor-field">
 						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : 'Trait Name' }}</label>
@@ -268,6 +348,27 @@ const TraitEditor = {
 								</label>
 							</div>
 						</div>
+					</div>
+
+					<div class="editor-field" v-if="parentIsBranch">
+						<label>Branch Role</label>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'skill' }" @click.stop="branchRole = 'skill'">
+								<i class="fas fa-arrow-right"></i> Skill (Left)
+							</button>
+							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'specialty' }" @click.stop="branchRole = 'specialty'">
+								Specialty (Right)
+							</button>
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
+						<label>Connects To Skill</label>
+						<select v-model="branchLink">
+							<option :value="null">Unlinked (general pool)</option>
+							<option v-for="opt in branchSkillOptions" :key="opt.index" :value="opt.index">{{ opt.name }}</option>
+						</select>
+						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Draws the connecting arrow from this specialty to any skill in the set.</span>
 					</div>
 
 					<div class="editor-field" v-if="!isListStyle">
@@ -492,7 +593,9 @@ const TraitEditor = {
 
 		async focusFirstInput() {
 			await Vue.nextTick();
-			this.$refs.inputName.focus();
+			if ( this.$refs.inputName ) {
+				this.$refs.inputName.focus( { preventScroll: true } );
+			}
 		},
  
 		setProperty( key, value ) {

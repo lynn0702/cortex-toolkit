@@ -1,21 +1,3 @@
-const GOOGLE_FONTS_CATALOG = [
-	{ name: 'Josefin Sans', label: 'Josefin Sans (Display Geometric)' },
-	{ name: 'Cinzel', label: 'Cinzel (Mythic / Classical Serif)' },
-	{ name: 'Montserrat', label: 'Montserrat (Clean / Modern Sans)' },
-	{ name: 'Orbitron', label: 'Orbitron (Sci-Fi / Futuristic)' },
-	{ name: 'Rajdhani', label: 'Rajdhani (Tech / Cyberpunk)' },
-	{ name: 'MedievalSharp', label: 'MedievalSharp (Fantasy)' },
-	{ name: 'Playfair Display', label: 'Playfair Display (Elegant Serif)' },
-	{ name: 'Oswald', label: 'Oswald (Condensed / Punchy)' },
-	{ name: 'Open Sans', label: 'Open Sans (Neutral / Readable)' },
-	{ name: 'Roboto', label: 'Roboto (Modern / Clean)' },
-	{ name: 'Lato', label: 'Lato (Warm / Balanced)' },
-	{ name: 'Inter', label: 'Inter (Precision UI)' },
-	{ name: 'Merriweather', label: 'Merriweather (Literary Serif)' },
-	{ name: 'Alegreya Sans SC', label: 'Alegreya Sans SC (Small Caps)' },
-	{ name: 'Bebas Neue', label: 'Bebas Neue (Heavy Headline)' }
-];
-
 const DICE_PRESETS = [
 	{
 		name: 'Classic Ink',
@@ -112,12 +94,13 @@ const NameEditor = {
 		}
 	},
 
-	data() {
+		data() {
 		return {
 			currentTab: 'sheet',
-			googleFontsCatalog: GOOGLE_FONTS_CATALOG,
+			fontPreview: { heading: '', primary: '', secondary: '' },
+			watermarkError: '',
+			fontUploadError: '',
 			dicePresets: DICE_PRESETS,
-			customGoogleFontInput: '',
 			presetColors: [
 				{ name: 'Cortex Sky', hex: '#0ea5e9' },
 				{ name: 'Crimson Ruby', hex: '#e11d48' },
@@ -227,10 +210,14 @@ const NameEditor = {
 
 		pageCount: {
 			get() {
-				return Number( this.character?.pages ) || 1;
+				return Math.max( 1, parseInt( this.character?.custom?.cortexToolkit?.pageCount, 10 ) || 1 );
 			},
 			set( count ) {
-				this.setCharacterProperty( 'pages', count );
+				if ( !this.character ) return;
+				if ( !this.character.custom ) this.character.custom = {};
+				if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
+				this.character.custom.cortexToolkit.pageCount = Math.max( 1, parseInt( count, 10 ) || 1 );
+				this.$emit( 'updateCharacter', this.character );
 			}
 		},
 
@@ -496,6 +483,8 @@ const NameEditor = {
 
 								<input type="file" ref="watermarkFileInput" style="display:none" @change="uploadWatermarkProcess" accept="image/*">
 
+								<div class="editor-upload-error" v-if="watermarkError">{{ watermarkError }}</div>
+
 								<div>
 									<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Image URL</label>
 									<input type="text" v-model.lazy="watermarkURL" placeholder="https://example.com/watermark.png">
@@ -588,54 +577,43 @@ const NameEditor = {
 							</div>
 						</div>
 
-						<!-- TYPOGRAPHY SELECTION -->
+						<!-- TYPOGRAPHY PICKERS WITH LIVE PREVIEW -->
 						<div class="editor-field">
 							<label>Heading Font</label>
-							<select v-model="headingFont" @change="onFontSelected(headingFont)">
-								<optgroup label="Curated Google Fonts">
-									<option v-for="f in googleFontsCatalog" :key="f.name" :value="f.name">{{ f.label }}</option>
-								</optgroup>
-								<optgroup label="Custom Uploaded Fonts" v-if="customFontsList.length">
-									<option v-for="cf in customFontsList" :key="cf" :value="cf">{{ cf }} (Custom)</option>
-								</optgroup>
-							</select>
+							<div class="font-picker-preview" :style="{ fontFamily: '\\'' + (fontPreview.heading || headingFont) + '\\', sans-serif' }">
+								<span class="font-picker-sample">Ag</span>
+								<span class="font-picker-name">{{ fontPreview.heading || headingFont }}</span>
+							</div>
+							<input type="text" :value="headingFont" @input="previewFont('heading', $event.target.value)" @change="headingFont = $event.target.value" placeholder="Type any Google Font family, e.g. Syne">
+							<div class="font-picker-custom" v-if="customFontsList.length">
+								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="headingFont = cf">{{ cf }} (Custom)</button>
+							</div>
 						</div>
 
 						<div class="editor-field">
 							<label>Body Font (Readability)</label>
-							<select v-model="primaryFont" @change="onFontSelected(primaryFont)">
-								<optgroup label="Curated Google Fonts">
-									<option v-for="f in googleFontsCatalog" :key="f.name" :value="f.name">{{ f.label }}</option>
-								</optgroup>
-								<optgroup label="Custom Uploaded Fonts" v-if="customFontsList.length">
-									<option v-for="cf in customFontsList" :key="cf" :value="cf">{{ cf }} (Custom)</option>
-								</optgroup>
-							</select>
+							<div class="font-picker-preview" :style="{ fontFamily: '\\'' + (fontPreview.primary || primaryFont) + '\\', sans-serif' }">
+								<span class="font-picker-sample">Ag</span>
+								<span class="font-picker-name">{{ fontPreview.primary || primaryFont }}</span>
+							</div>
+							<input type="text" :value="primaryFont" @input="previewFont('primary', $event.target.value)" @change="primaryFont = $event.target.value" placeholder="Type any Google Font family, e.g. Inter">
+							<div class="font-picker-custom" v-if="customFontsList.length">
+								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="primaryFont = cf">{{ cf }} (Custom)</button>
+							</div>
 						</div>
 
 						<div class="editor-field">
 							<label>Trait / Label Font</label>
-							<select v-model="secondaryFont" @change="onFontSelected(secondaryFont)">
-								<optgroup label="Curated Google Fonts">
-									<option v-for="f in googleFontsCatalog" :key="f.name" :value="f.name">{{ f.label }}</option>
-								</optgroup>
-								<optgroup label="Custom Uploaded Fonts" v-if="customFontsList.length">
-									<option v-for="cf in customFontsList" :key="cf" :value="cf">{{ cf }} (Custom)</option>
-								</optgroup>
-							</select>
-						</div>
-
-						<!-- PULL ANY GOOGLE FONT -->
-						<div class="editor-field" style="background: rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15);">
-							<label style="font-size: 0.75rem;"><i class="fab fa-google"></i> Pull Any Google Font</label>
-							<div style="display: flex; gap: 0.4rem; margin-top: 0.25rem;">
-								<input type="text" v-model="customGoogleFontInput" placeholder="e.g. Syne, Cinzel Decorative, Poppins" style="font-size: 0.8rem;">
-								<button type="button" class="editor-tab-btn" style="border: 1px solid rgba(255,255,255,0.25); white-space: nowrap;" @click.stop="pullGoogleFont">
-									Load
-								</button>
+							<div class="font-picker-preview" :style="{ fontFamily: '\\'' + (fontPreview.secondary || secondaryFont) + '\\', sans-serif' }">
+								<span class="font-picker-sample">Ag</span>
+								<span class="font-picker-name">{{ fontPreview.secondary || secondaryFont }}</span>
+							</div>
+							<input type="text" :value="secondaryFont" @input="previewFont('secondary', $event.target.value)" @change="secondaryFont = $event.target.value" placeholder="Type any Google Font family, e.g. Oswald">
+							<div class="font-picker-custom" v-if="customFontsList.length">
+								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="secondaryFont = cf">{{ cf }} (Custom)</button>
 							</div>
 							<span class="editor-field-hint" style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; display: block;">
-								Fetches any font family from fonts.google.com and sets it as the heading font.
+								Any family name from fonts.google.com works — it loads and previews as you type, and applies on Enter.
 							</span>
 						</div>
 
@@ -646,6 +624,7 @@ const NameEditor = {
 							<button type="button" class="editor-tab-btn" style="width: 100%; margin-top: 0.3rem; border: 1px solid rgba(255,255,255,0.25); text-align: center;" @click.stop="triggerFontUpload">
 								<i class="fas fa-upload"></i> Choose Font File (.woff2, .woff, .ttf)
 							</button>
+							<div class="editor-upload-error" v-if="fontUploadError">{{ fontUploadError }}</div>
 							<span class="editor-field-hint" style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; display: block;">
 								Uploaded fonts are embedded into the character JSON and available immediately.
 							</span>
@@ -804,7 +783,7 @@ const NameEditor = {
 		async focusFirstInput() {
 			await Vue.nextTick();
 			if ( this.$refs.inputName ) {
-				this.$refs.inputName.focus();
+				this.$refs.inputName.focus( { preventScroll: true } );
 			}
 		},
  
@@ -840,14 +819,19 @@ const NameEditor = {
 		},
 
 		uploadWatermarkProcess( event ) {
+			this.watermarkError = '';
 			if ( !event.target.files || !event.target.files.length ) return;
-			const file = event.target.files[0];
-			const reader = new FileReader();
-			reader.onload = () => {
-				this.watermarkURL = reader.result;
-				this.watermarkEnabled = true;
-			};
-			reader.readAsDataURL( file );
+			cortexFunctions.processImageFile( event.target.files[0], 1280, 0.8 ).then(
+				( dataURL ) => {
+					this.watermarkURL = dataURL;
+					this.watermarkEnabled = true;
+					event.target.value = null;
+				},
+				( error ) => {
+					this.watermarkError = error?.message || 'Could not process that image.';
+					event.target.value = null;
+				}
+			);
 		},
 
 		removeWatermark() {
@@ -880,20 +864,12 @@ const NameEditor = {
 			this.$emit( 'updateCharacter', this.character );
 		},
 
-		onFontSelected( fontName ) {
-			if ( typeof cortexFunctions !== 'undefined' && cortexFunctions.loadGoogleFont ) {
-				cortexFunctions.loadGoogleFont( fontName );
+		previewFont( target, fontName ) {
+			this.fontPreview[ target ] = fontName;
+			const clean = ( fontName || '' ).trim();
+			if ( clean && typeof cortexFunctions !== 'undefined' && cortexFunctions.loadGoogleFont ) {
+				cortexFunctions.loadGoogleFont( clean );
 			}
-		},
-
-		pullGoogleFont() {
-			const font = this.customGoogleFontInput?.trim();
-			if ( !font ) return;
-			if ( typeof cortexFunctions !== 'undefined' && cortexFunctions.loadGoogleFont ) {
-				cortexFunctions.loadGoogleFont( font );
-			}
-			this.headingFont = font;
-			this.customGoogleFontInput = '';
 		},
 
 		triggerFontUpload() {
@@ -903,6 +879,12 @@ const NameEditor = {
 		handleFontUpload( event ) {
 			const file = event.target.files?.[0];
 			if ( !file ) return;
+			this.fontUploadError = '';
+			if ( file.size > 2 * 1024 * 1024 ) {
+				this.fontUploadError = 'Font files must be under 2 MB.';
+				event.target.value = null;
+				return;
+			}
 			const fontName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, ' ').trim();
 			const reader = new FileReader();
 			reader.onload = (e) => {
@@ -957,10 +939,6 @@ const NameEditor = {
 		updateCharacter( character ) {
 			this.$emit( 'updateCharacter', character );
 		},
-
-		doNothing() {
-			// This is intentional! 
-		}
 
 	}
 

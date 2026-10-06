@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				characters:         [],
 				characterID:        null,
 				openCharacterIDs:   [],
-				playViewMode:       localStorage.getItem('cortexPlayViewMode') || 'split',
+				playViewMode:       'split',
 				isAddCharacterModalOpen: false,
 				sessionCharacterSearch: '',
 				mode:               'roster',
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				viewY:              null,
 				dicePool:           new cortexPal.DicePool(),
 				isRollerOpen:       false,
-				rollerPosition:     localStorage.getItem('cortexRollerPosition') || 'left',
+				rollerPosition:     'left',
 				mobileActiveView:   'sheet',
 				toastMessage:       null,
 				toastTimeout:       null,
@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				historyIndex:       -1,
 				isNavigatingHistory:false,
 				isHandlingHash:     false,
+				storeReady:         false,
+				storeError:         null,
 			}
 		},
 
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							@click.stop="focusCharacter(c.id)"
 							:title="'Switch to ' + (c.name || 'Character')"
 						>
-							<div class="session-tab-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + c.portrait.url + ')'"></div>
+							<div class="session-tab-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"></div>
 							<div class="session-tab-icon" v-else><i class="fas fa-shield-alt"></i></div>
 							<span class="session-tab-name">{{ c.name || 'Unnamed' }}</span>
 							<button
@@ -225,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						>
 							<div class="multi-character-banner">
 								<div class="banner-title-group" @click="focusCharacter(char.id)">
-									<span class="banner-avatar" v-if="char.portrait && char.portrait.url" :style="'background-image:url(' + char.portrait.url + ')'"></span>
+									<span class="banner-avatar" v-if="char.portrait && char.portrait.url" :style="'background-image:url(' + safeImageUrl(char.portrait.url) + ')'"></span>
 									<span class="banner-icon" v-else><i class="fas fa-shield-alt"></i></span>
 									<span class="banner-name">{{ char.name || 'Unnamed' }}</span>
 									<span class="banner-game" v-if="char.game">{{ char.game }}</span>
@@ -324,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
 							class="session-modal-item"
 						>
 							<div class="session-item-info">
-								<div class="session-item-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + c.portrait.url + ')'"></div>
+								<div class="session-item-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"></div>
 								<div class="session-item-icon" v-else><i class="fas fa-shield-alt"></i></div>
 								<div class="session-item-text">
 									<div class="session-item-name">{{ c.name || 'Unnamed' }}</div>
@@ -375,11 +377,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				</div>
 			</footer>`,
 		
-		mounted() {
+		async mounted() {
 
 			this.setViewY();
-			this.loadLocalData();
-			this.loadOpenCharacterIDs();
+			await this.bootFromStorage();
 			this.parseRouteHash();
 			window.addEventListener('hashchange', () => this.parseRouteHash());
 			window.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
@@ -476,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			toggleRollerPosition() {
 				this.rollerPosition = this.rollerPosition === 'left' ? 'right' : 'left';
-				localStorage.setItem('cortexRollerPosition', this.rollerPosition);
+				this.persist();
 			},
 
 			addDieToRoller( dieData ) {
@@ -510,6 +511,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				}, 2500 );
 			},
 
+			safeImageUrl( url ) {
+				return cortexFunctions.safeImageUrl( url );
+			},
+
 			setViewY() {
 				this.viewY = this.$refs.main.scrollTop;
 			},
@@ -525,23 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			// SESSION & MULTI-CHARACTER
 
 			saveOpenCharacterIDs() {
-				localStorage.setItem('cortexOpenCharacterIDs', JSON.stringify(this.openCharacterIDs));
-				localStorage.setItem('cortexPlayViewMode', this.playViewMode);
-			},
-
-			loadOpenCharacterIDs() {
-				let saved = localStorage.getItem('cortexOpenCharacterIDs');
-				if ( saved ) {
-					try {
-						let parsed = JSON.parse(saved);
-						if ( Array.isArray(parsed) ) {
-							this.openCharacterIDs = parsed.filter( id => this.characters.some( c => c.id === id ) );
-						}
-					} catch(e) {}
-				}
-				if ( this.characterID && !this.openCharacterIDs.includes(this.characterID) ) {
-					this.openCharacterIDs.push(this.characterID);
-				}
+				this.persist();
 			},
 
 			setPlayViewMode( mode ) {
@@ -971,53 +960,73 @@ document.addEventListener('DOMContentLoaded', () => {
 				this.selectElement([]);
 			},
 
-			loadLocalData() {
+			async bootFromStorage() {
 
-				let localJSON = localStorage.getItem('cortexToolkitData');
-				if ( !localJSON || !localJSON.length ) return;
+				this.storeReady = false;
+				this.storeError = null;
 
-				let localData = JSON.parse(localJSON);
-				if ( !localData || !localData['0.1'] ) return;
-
-				this.localData = localData;
-
-				if ( localData['0.1'].characters ) {
-					this.characters = structuredClone( localData['0.1'].characters );
-					for ( let c of this.characters ) {
-						if ( c.isTemplate && c.name ) {
-							c.name = c.name.replace(/\s*\([^)]*\)/g, '').trim();
-						}
-						if ( !c.custom ) c.custom = {};
-						if ( !c.custom.cortexToolkit ) c.custom.cortexToolkit = {};
-						if ( !c.custom.cortexToolkit.columnAlignment ) {
-							c.custom.cortexToolkit.columnAlignment = 'top-base';
-						}
-						if ( !c.custom.cortexToolkit.columnOffsets ) {
-							c.custom.cortexToolkit.columnOffsets = { left: 0, center: 0, right: 0 };
-						}
-						if ( c.custom.cortexToolkit.columnAlignment !== 'custom' ) {
-							c.custom.cortexToolkit.columnOffsets.left = 0;
-							c.custom.cortexToolkit.columnOffsets.center = 0;
-							c.custom.cortexToolkit.columnOffsets.right = 0;
-						}
+				try {
+					const stored = await cortexStorage.load();
+					this.characters = stored.characters || [];
+					this.playViewMode = stored.playViewMode || 'split';
+					this.rollerPosition = stored.rollerPosition || 'left';
+					this.openCharacterIDs = ( stored.openCharacterIDs || [] ).filter(
+						id => this.characters.some( c => c.id === id )
+					);
+					if ( this.characterID && !this.openCharacterIDs.includes( this.characterID ) ) {
+						this.openCharacterIDs.push( this.characterID );
 					}
+					if ( stored.loadError ) {
+						this.storeError = stored.loadError;
+						this.showToast( 'Saved data was damaged — starting fresh. Export backups regularly.' );
+					} else if ( stored.migrationError ) {
+						this.showToast( 'Migrated your data, but the old copy could not be removed.' );
+					} else if ( stored.migrated ) {
+						this.showToast( 'Library upgraded to the new local database.' );
+					}
+				} catch ( err ) {
+					this.storeError = err;
+					this.showToast( 'Could not open the local library — starting empty.' );
 				}
+
+				this.storeReady = true;
+				cortexStorage.requestPersistence();
+
+			},
+
+			persist() {
+
+				let plain;
+				try {
+					plain = JSON.parse( JSON.stringify( {
+						characters: this.characters,
+						openCharacterIDs: this.openCharacterIDs,
+						playViewMode: this.playViewMode,
+						rollerPosition: this.rollerPosition,
+					} ) );
+				} catch ( err ) {
+					this.showToast( 'Could not save changes.' );
+					return;
+				}
+
+				cortexStorage.save( plain ).catch( ( err ) => {
+					if ( err && ( err.name === 'QuotaExceededError' || err.code === 22 ) ) {
+						this.showToast( 'Local storage is full — export a backup, then remove large images.' );
+					} else {
+						this.showToast( 'Could not save changes. Export a backup to be safe.' );
+					}
+				} );
 
 			},
 
 			saveLocalData() {
-
-				this.localData['0.1'] = {
-					characters: this.characters,
-				}
-
-				localStorage.setItem('cortexToolkitData', JSON.stringify(this.localData));
-
+				this.persist();
 			},
 
 			clearLocalData() {
-				localStorage.setItem('cortexToolkitData', null);
-				window.location.reload();
+				cortexStorage.clear().finally( () => {
+					window.location.reload();
+				} );
 			}
 
 		}
@@ -1032,6 +1041,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	.component('subtrait-editor',  SubtraitEditor )
 	.component('sfx-editor',       SfxEditor )
 	.component('dice-roller',      DiceRoller )
+	.component('style-gallery',    StyleGallery )
 	.mount('#cortex-toolkit');
 
 });

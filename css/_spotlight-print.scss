@@ -566,9 +566,10 @@
 				margin-top: 0 !important;
 			}
 
-			&:has(.editor:not([style*="display: none"])) {
-				z-index: 100;
-			}
+			// NOTE: no z-index here. The open .editor carries z-index
+			// var(--z-editor) itself so it paints above the sticky
+			// edit/print toolbars. Raising the column/trait-set would
+			// create a stacking context that traps the editor below them.
 		}
 
 		.spotlight-column > .trait-set:first-child {
@@ -632,9 +633,8 @@
 		position: relative;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
-		&:has(.editor:not([style*="display: none"])) {
-			z-index: 100;
-		}
+		// NOTE: no z-index here (see above) so an open .editor paints
+		// above the sticky edit/print toolbars instead of sliding under them.
 
 		.trait-set-header {
 			width: 1.9rem;

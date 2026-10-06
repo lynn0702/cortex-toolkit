@@ -60,17 +60,23 @@
 	}
 
 	.spotlight-full-column & {
-		left: 50% !important;
+		left: 0 !important;
 		right: auto !important;
-		transform: translateX(-50%) !important;
-		--animation-offset-x: 0 !important;
-		--animation-offset-y: -1rem !important;
-		transform-origin: top center;
+		transform: none !important;
+		--animation-offset-x: -1rem !important;
+		--animation-offset-y: 0 !important;
+		transform-origin: top left;
 		&.anchor-position-top {
 			top: 1rem !important;
 		}
 		&.anchor-position-bottom {
 			bottom: 1rem !important;
+		}
+		&.dock-right {
+			left: auto !important;
+			right: 0 !important;
+			--animation-offset-x: 1rem !important;
+			transform-origin: top right;
 		}
 	}
 
@@ -81,14 +87,16 @@
 	}
 
 	// Sidecar / off-canvas docking on wide viewports (renders in empty space left/right)
-	@media (min-width: 1380px) {
+	// The open editor is position:fixed into the page gutter so it never
+	// covers the sheet, and its own z-index keeps it above the sticky
+	// edit/print toolbars. The breakpoint guarantees the gutter actually
+	// fits a 21rem panel: (100vw - page-width) / 2 >= ~23rem.
+	@media (min-width: 1560px) {
 		position: fixed !important;
-		top: calc(var(--header-size) + 1.25rem) !important;
+		top: calc(var(--header-size) + 3.5rem) !important;
 		bottom: auto !important;
-		left: auto !important;
-		right: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
 		width: 21rem !important;
-		max-height: calc(100vh - var(--header-size) - 2.5rem) !important;
+		max-height: calc(100vh - var(--header-size) - 4.5rem) !important;
 		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
 		transform: none !important;
 		z-index: var(--z-editor) !important;
@@ -97,14 +105,57 @@
 			display: none !important;
 		}
 
+		// Default: dock in the LEFT gutter (trait sets in left/center columns).
+		left: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
+		right: auto !important;
+
 		&.dock-left {
-			right: auto !important;
 			left: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
+			right: auto !important;
 		}
 
-		.column-right &:not(.dock-right) {
-			right: auto !important;
-			left: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
+		&.dock-right {
+			right: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
+			left: auto !important;
+		}
+
+		// Same-side docking: right-column trait sets use the right gutter.
+		.column-right &:not(.dock-left) {
+			right: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
+			left: auto !important;
+		}
+
+		// Full-width trait sets: honor the editor's dock toggle in the gutter too.
+		.spotlight-full-column &.dock-right {
+			left: auto !important;
+			right: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem)) !important;
+		}
+
+		.editor-inner {
+			max-height: calc(100vh - var(--header-size) - 7rem) !important;
+		}
+	}
+
+	// Narrow / mobile viewports: dock the editor as a bottom sheet so it
+	// never runs off-screen and stays clear of the sticky toolbars.
+	@media (max-width: 768px) {
+		position: fixed !important;
+		left: 0.75rem !important;
+		right: 0.75rem !important;
+		top: auto !important;
+		bottom: 0.75rem !important;
+		width: auto !important;
+		max-height: 72vh !important;
+		transform: none !important;
+		z-index: var(--z-editor) !important;
+		box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+
+		.editor-arrow {
+			display: none !important;
+		}
+
+		.editor-inner {
+			max-height: calc(72vh - 3rem) !important;
 		}
 	}
 
@@ -906,6 +957,49 @@
 	border-radius: 4px;
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	margin-top: 0.4rem;
+}
+
+// FONT PICKER WITH LIVE PREVIEW
+
+.font-picker-preview {
+	display: flex;
+	align-items: baseline;
+	gap: 0.6rem;
+	background: rgba(0, 0, 0, 0.45);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	border-radius: 4px;
+	padding: 0.45rem 0.65rem;
+	margin-bottom: 0.4rem;
+	overflow: hidden;
+
+	.font-picker-sample {
+		font-size: 1.6rem;
+		line-height: 1;
+		color: #ffffff;
+		flex-shrink: 0;
+	}
+
+	.font-picker-name {
+		font-size: 0.75rem;
+		color: #cbd5e1;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.font-picker-custom {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+	margin-top: 0.4rem;
+}
+
+.editor-upload-error {
+	font-size: 0.72rem;
+	color: #fca5a5;
+	margin-top: 0.35rem;
+	line-height: 1.35;
 }
 
 

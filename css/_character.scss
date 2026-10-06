@@ -1011,11 +1011,29 @@
 	user-select: none;
 	cursor: pointer;
 
+	.session-edit-hint {
+		@extend %no-print;
+		font-size: 0.68rem;
+		font-style: italic;
+		color: var(--color-label);
+		text-align: center;
+		padding: 0.3rem 0 0.1rem;
+		pointer-events: none;
+	}
+
 	.session-record-svg {
 		width: 100%;
 		height: auto;
 		display: block;
 		overflow: visible;
+
+		.session-hit-area {
+			fill: transparent;
+			pointer-events: all;
+			.submode-edit & {
+				cursor: pointer;
+			}
+		}
 
 		.session-spine {
 			stroke: #000000;

@@ -863,6 +863,450 @@
 	}
 }
 
+// SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk)
+.trait-set-style-skills-specialties {
+
+	.skills-branch-head {
+		display: grid;
+		grid-template-columns: 1fr 2rem 1.4fr;
+		font-family: var(--font-secondary);
+		font-size: .7rem;
+		font-weight: 800;
+		letter-spacing: .08em;
+		text-transform: uppercase;
+		color: var(--color-primary);
+		margin-bottom: .35rem;
+		padding-bottom: .3rem;
+		border-bottom: 2px solid var(--color-primary);
+		span:last-child { text-align: left; }
+	}
+
+	.skill-branch-row {
+		display: grid;
+		grid-template-columns: 1fr 2rem 1.4fr;
+		align-items: stretch;
+		column-gap: 0;
+		padding: .4rem 0;
+		border-bottom: 1px solid var(--color-separator);
+	}
+
+	.skill-branch-skill {
+		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
+		border-radius: .25rem;
+		padding: .3rem .45rem;
+		background: white;
+		.trait-name {
+			display: block;
+			font-family: var(--font-secondary);
+			font-weight: 700;
+			font-size: .8rem;
+			text-transform: uppercase;
+			color: black;
+			margin-bottom: .2rem;
+		}
+		.trait-value {
+			position: relative;
+			top: -.1em;
+			.c:not(.active) { color: var(--color-separator); }
+		}
+	}
+
+	.skill-branch-link {
+		position: relative;
+		&::before {
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: .5rem;
+			bottom: .5rem;
+			width: 2px;
+			background: var(--color-primary);
+			transform: translateX(-50%);
+		}
+	}
+
+	.skill-branch-specialties {
+		display: flex;
+		flex-direction: column;
+		row-gap: .3rem;
+		padding-left: .6rem;
+		border-left: none;
+	}
+
+	.specialty-row {
+		display: flex;
+		align-items: center;
+		column-gap: .4rem;
+		cursor: pointer;
+		position: relative;
+		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
+		border-radius: .25rem;
+		padding: .25rem .45rem;
+		background: white;
+		&::before {
+			content: '';
+			position: absolute;
+			left: -.6rem;
+			top: 50%;
+			width: .42rem;
+			height: 2px;
+			background: var(--color-primary);
+			transform: translateY(-50%);
+		}
+		&::after {
+			content: '';
+			position: absolute;
+			left: -.18rem;
+			top: 50%;
+			transform: translateY(-50%);
+			border-left: .3rem solid var(--color-primary);
+			border-top: .22rem solid transparent;
+			border-bottom: .22rem solid transparent;
+		}
+	}
+
+	&.hide-branch-arrows {
+		.skill-branch-link::before,
+		.specialty-row::before,
+		.specialty-row::after {
+			display: none;
+		}
+		.skill-branch-specialties {
+			padding-left: 0;
+		}
+	}
+
+	.subtrait-name {
+		flex: 1 1 auto;
+		font-size: .78rem;
+		color: black;
+	}
+
+	.subtrait-value {
+		margin-left: auto;
+		position: relative;
+		top: -.1em;
+		white-space: nowrap;
+		.c {
+			font-size: .917rem;
+			&:not(.active) { color: var(--color-separator); }
+		}
+	}
+
+	.specialty-empty {
+		font-size: .7rem;
+		font-style: italic;
+		color: var(--color-label);
+	}
+}
+
+// TALENTS TABLE (TALENT / ACTIVATION / EFFECT)
+.trait-set-style-talents-table {
+
+	.trait-talents-table {
+		border: 1px solid var(--color-primary);
+		border-radius: .25rem;
+		overflow: hidden;
+	}
+
+	.talents-head {
+		display: grid;
+		grid-template-columns: 1fr 1.2fr 1.4fr;
+		column-gap: 0;
+		background: var(--color-primary);
+		color: white;
+		font-family: var(--font-secondary);
+		font-size: .68rem;
+		font-weight: 800;
+		letter-spacing: .08em;
+		text-transform: uppercase;
+		span { padding: .3rem .5rem; }
+	}
+
+	.talent-row {
+		display: grid;
+		grid-template-columns: 1fr 1.2fr 1.4fr;
+		column-gap: 0;
+		align-items: start;
+		border-top: 1px solid var(--color-separator);
+		background: white;
+		span { padding: .3rem .5rem; }
+		span + span { border-left: 1px solid var(--color-separator); }
+	}
+
+	.talent-name {
+		font-weight: 700;
+		font-size: .78rem;
+		text-transform: uppercase;
+		color: black;
+	}
+
+	.talent-activation,
+	.talent-effect {
+		font-size: .72rem;
+		line-height: 1.3;
+		color: #333;
+	}
+}
+
+// STANDING (STANDING DIE + COMPLICATION & BONUS DICE)
+.trait-set-style-standing {
+
+	.standing-main {
+		display: flex;
+		align-items: center;
+		column-gap: .5rem;
+		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
+		border-radius: .25rem;
+		padding: .3rem .5rem;
+		background: white;
+		.trait-name {
+			font-family: var(--font-secondary);
+			font-weight: 700;
+			font-size: .82rem;
+			text-transform: uppercase;
+			color: black;
+		}
+		.trait-value {
+			margin-left: auto;
+			position: relative;
+			top: -.1em;
+			white-space: nowrap;
+			.c:not(.active) { color: var(--color-separator); }
+		}
+	}
+
+	.standing-sub {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		column-gap: .45rem;
+		row-gap: .3rem;
+		margin-top: .3rem;
+		padding: .3rem .5rem;
+		background: color-mix(in srgb, var(--color-secondary), transparent 55%);
+		border-radius: .25rem;
+		min-width: 0;
+	}
+
+	.standing-sub-label {
+		font-family: var(--font-secondary);
+		font-size: .62rem;
+		font-weight: 800;
+		letter-spacing: .06em;
+		color: var(--color-primary);
+		white-space: nowrap;
+	}
+
+	.subtrait-value {
+		position: relative;
+		top: -.1em;
+		white-space: nowrap;
+		.c {
+			font-size: .917rem;
+			&:not(.active) { color: var(--color-separator); }
+		}
+	}
+
+	.standing-sub .subtrait-value {
+		display: flex;
+		flex-wrap: wrap;
+		gap: .15rem;
+		min-width: 0;
+		white-space: normal;
+	}
+}
+
+// BADGES / CHECKLIST TABLE
+.trait-set-style-badges-table {
+
+	.trait-badges-table {
+		border: 1px solid var(--color-primary);
+		border-radius: .25rem;
+		overflow: hidden;
+		background: white;
+	}
+
+	.badge-row {
+		display: flex;
+		align-items: center;
+		column-gap: .5rem;
+		padding: .3rem .5rem;
+		border-top: 1px solid var(--color-separator);
+		&:first-child { border-top: none; }
+	}
+
+	.badge-name {
+		flex: 1;
+		font-size: .82rem;
+		font-weight: 600;
+		color: #222;
+	}
+
+	.trait-value {
+		position: relative;
+		top: -.1em;
+		white-space: nowrap;
+		.c:not(.active) { color: var(--color-separator); }
+	}
+}
+
+// RESOURCES WITH DICE COUNT (RATING + DICE 1-5)
+.trait-set-style-resources-count {
+
+	.resource-row {
+		display: flex;
+		align-items: center;
+		column-gap: .45rem;
+		flex-wrap: wrap;
+		padding: .35rem 0;
+		border-bottom: 1px dashed var(--color-separator);
+	}
+
+	.trait-name {
+		flex: 1 1 8rem;
+		font-size: .8rem;
+		color: black;
+	}
+
+	.resource-rating-label,
+	.resource-count-label {
+		font-family: var(--font-secondary);
+		font-size: .62rem;
+		font-weight: 800;
+		letter-spacing: .06em;
+		color: var(--color-primary);
+		white-space: nowrap;
+	}
+
+	.trait-value {
+		position: relative;
+		top: -.1em;
+		white-space: nowrap;
+		.c:not(.active) { color: var(--color-separator); }
+	}
+
+	.resource-count {
+		display: inline-flex;
+		align-items: center;
+		column-gap: .25rem;
+	}
+
+	.count-pip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.3rem;
+		height: 1.3rem;
+		border: 1.5px solid var(--color-primary);
+		border-radius: 50%;
+		font-size: .68rem;
+		font-weight: 800;
+		color: var(--color-primary);
+		background: white;
+		cursor: default;
+		user-select: none;
+		.submode-edit & {
+			cursor: pointer;
+		}
+		&.filled {
+			background: var(--color-primary);
+			color: white;
+		}
+	}
+}
+
+// GROWTH LADDER (VERTICAL DICE TRACK)
+.trait-set-style-growth-ladder {
+
+	.trait-growth-ladder {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+		&::before {
+			content: '';
+			position: absolute;
+			top: 1rem;
+			bottom: 1rem;
+			width: 2px;
+			background: var(--color-primary);
+		}
+	}
+
+	.growth-rung {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		row-gap: .15rem;
+		padding: .35rem 1rem;
+		background: white;
+		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
+		border-radius: .25rem;
+	}
+
+	.growth-name {
+		font-family: var(--font-secondary);
+		font-size: .68rem;
+		font-weight: 800;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		color: black;
+	}
+
+	.trait-value {
+		position: relative;
+		top: -.1em;
+		white-space: nowrap;
+		.c {
+			font-size: 1.2rem;
+			&:not(.active) { color: var(--color-separator); }
+		}
+	}
+}
+
+// DOSSIER FIELDS (STACKED LABELED BLOCKS)
+.trait-set-style-dossier-fields {
+
+	.trait-dossier {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.dossier-field {
+		padding: .35rem .5rem;
+		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
+		border-radius: .25rem;
+		margin-bottom: .35rem;
+		background: white;
+	}
+
+	.dossier-label {
+		display: block;
+		font-family: var(--font-secondary);
+		font-size: .72rem;
+		font-weight: 800;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		color: var(--color-primary);
+		margin-bottom: .15rem;
+	}
+
+	.dossier-text {
+		display: block;
+		font-size: .76rem;
+		line-height: 1.35;
+		color: #222;
+	}
+
+	.dossier-hint {
+		font-style: italic;
+		color: var(--color-label);
+		font-size: .72rem;
+	}
+}
+
 // PLAY MODE INTERACTIONS
 .submode-play {
 	.trait-set-style-stress .c,

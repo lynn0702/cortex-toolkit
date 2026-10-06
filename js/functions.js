@@ -142,6 +142,38 @@ const cortexFunctions = {
 		return [4, 6, 8, 10, 12];
 	},
 
+	// Feature + multi-die defaults seeded when a trait-set style is chosen.
+	// Used by the trait set editor and the style gallery alike.
+	defaultFeaturesForStyle: function( style ) {
+		const map = {
+			'talents-table':      { features: { description: true,  sfx: true,  subtraits: false }, multiDie: false },
+			'standing':           { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
+			'skills-specialties': { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
+			'badges-table':       { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
+			'resources-count':    { features: { description: false, sfx: false, subtraits: false }, multiDie: true  },
+			'growth-ladder':      { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
+			'dossier-fields':     { features: { description: true,  sfx: false, subtraits: false }, multiDie: false },
+		};
+		if ( map[ style ] ) return map[ style ];
+		return { features: { description: false, sfx: false, subtraits: false }, multiDie: false };
+	},
+
+	// Central registry of default labels for trait-set style regions.
+	// Custom labels live in custom.cortexToolkit.labels under the same keys;
+	// anything absent here (or unset there) renders as ''.
+	defaultTraitSetLabels: {
+		'skills-specialties': { left: 'SKILL', right: 'SPECIALTIES' },
+		'talents-table':      { col1: 'TALENT', col2: 'ACTIVATION', col3: 'EFFECT' },
+		'resources-count':    { rating: 'RATING', dice: '/ DICE' },
+		'standing':           { slot0: 'COMPLICATION', slot1: 'BONUS' },
+	},
+
+	labelDefaultForStyle: function( style, key ) {
+		const map = this.defaultTraitSetLabels[ style ];
+		if ( map && map[ key ] !== undefined ) return map[ key ];
+		return '';
+	},
+
 	getTraitDice: function( trait ) {
 		if ( !trait ) return [];
 		if ( Array.isArray(trait.dice) && trait.dice.length > 0 ) {
@@ -169,9 +201,99 @@ const cortexFunctions = {
 		return this.renderInlineMarkdown( text ).replace( /\n/g, '<br>' );
 	},
 
+	escapeHtml: function( text ) {
+		if ( text === null || text === undefined ) return '';
+		return String( text )
+			.replace( /&/g, '&amp;' )
+			.replace( /</g, '&lt;' )
+			.replace( />/g, '&gt;' )
+			.replace( /"/g, '&quot;' )
+			.replace( /'/g, '&#39;' );
+	},
+
+	// Only these URL schemes are safe to render (links and images).
+	isSafeUrl: function( url, allowDataImage ) {
+		if ( !url || typeof url !== 'string' ) return false;
+		const clean = url.trim();
+		if ( /^(https?:\/\/|\/|#)/i.test( clean ) ) return true;
+		if ( /^mailto:/i.test( clean ) ) return true;
+		if ( allowDataImage && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp|avif);base64,/i.test( clean ) ) return true;
+		if ( allowDataImage && /^blob:/i.test( clean ) ) return true;
+		return false;
+	},
+
+	// Returns a URL safe for CSS url(...) / background bindings, else ''.
+	safeImageUrl: function( url ) {
+		if ( !url || typeof url !== 'string' ) return '';
+		return this.isSafeUrl( url, true ) ? url : '';
+	},
+
+	// Downscales an uploaded image to a data URL (caps localStorage/IDB bloat).
+	processImageFile: function( file, maxDimension, quality ) {
+		maxDimension = maxDimension || 1024;
+		quality = ( quality === undefined || quality === null ) ? 0.85 : quality;
+		return new Promise( ( resolve, reject ) => {
+			if ( !file ) return reject( new Error( 'No file provided.' ) );
+			if ( file.type && file.type.indexOf( 'image/' ) !== 0 ) {
+				return reject( new Error( 'That file is not an image.' ) );
+			}
+			if ( file.size > 8 * 1024 * 1024 ) {
+				return reject( new Error( 'Image is larger than 8 MB.' ) );
+			}
+			const reader = new FileReader();
+			reader.onerror = () => reject( new Error( 'Could not read that file.' ) );
+			reader.onload = () => {
+				const img = new Image();
+				img.onerror = () => reject( new Error( 'Could not decode that image.' ) );
+				img.onload = () => {
+					try {
+						let w = img.naturalWidth || img.width;
+						let h = img.naturalHeight || img.height;
+						const scale = Math.min( 1, maxDimension / Math.max( w, h, 1 ) );
+						w = Math.max( 1, Math.round( w * scale ) );
+						h = Math.max( 1, Math.round( h * scale ) );
+						const canvas = document.createElement( 'canvas' );
+						canvas.width = w;
+						canvas.height = h;
+						canvas.getContext( '2d' ).drawImage( img, 0, 0, w, h );
+						resolve( canvas.toDataURL( 'image/jpeg', quality ) );
+					} catch ( e ) {
+						reject( e );
+					}
+				};
+				img.src = reader.result;
+			};
+			reader.readAsDataURL( file );
+		});
+	},
+
+	// Minimal shape check + normalization for imported characters.
+	sanitizeImportedCharacter: function( data ) {
+		if ( !data || typeof data !== 'object' || Array.isArray( data ) ) return null;
+		if ( typeof data.id !== 'string' || !data.id.length ) return null;
+		const clean = JSON.parse( JSON.stringify( data ) );
+		if ( !Array.isArray( clean.traitSets ) ) clean.traitSets = [];
+		clean.traitSets.forEach( ts => {
+			if ( !ts || typeof ts !== 'object' ) return;
+			if ( !Array.isArray( ts.traits ) ) ts.traits = [];
+			if ( !ts.custom || typeof ts.custom !== 'object' ) ts.custom = {};
+			ts.traits.forEach( tr => {
+				if ( !tr || typeof tr !== 'object' ) return;
+				if ( typeof tr.name !== 'string' ) tr.name = '';
+				if ( !Array.isArray( tr.dice ) ) tr.dice = [];
+				if ( !Array.isArray( tr.traits ) ) tr.traits = [];
+				if ( !Array.isArray( tr.sfx ) ) tr.sfx = [];
+				if ( !tr.custom || typeof tr.custom !== 'object' ) tr.custom = {};
+			});
+		});
+		if ( typeof clean.name !== 'string' ) clean.name = '';
+		return clean;
+	},
+
 	renderInlineMarkdown: function( text ) {
 		if ( !text || typeof text !== 'string' ) return '';
-		let str = text;
+		// Escape user HTML first: everything below re-adds only our own safe tags.
+		let str = this.escapeHtml( text );
 		// Dice tokens
 		str = str.replace( /\bd(4|6|8)\b/gi, '<span class="c">$1</span>' );
 		str = str.replace( /\bd10\b/gi, '<span class="c">0</span>' );
@@ -186,9 +308,48 @@ const cortexFunctions = {
 		str = str.replace( /_([^_]+)_/g, '<em>$1</em>' );
 		// Inline code: `code`
 		str = str.replace( /`([^`]+)`/g, '<code>$1</code>' );
-		// Links: [label](url)
-		str = str.replace( /\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>' );
+		// Links: [label](url) — safe schemes only, otherwise plain label text.
+		// Balanced-paren scanner so URLs containing (...) survive intact.
+		str = this.renderMarkdownLinks( str );
 		return str;
+	},
+
+	renderMarkdownLinks: function( str ) {
+		let out = '';
+		let i = 0;
+		while ( i < str.length ) {
+			const open = str.indexOf( '[', i );
+			if ( open === -1 ) {
+				out += str.slice( i );
+				break;
+			}
+			const closeLabel = str.indexOf( '](', open );
+			if ( closeLabel === -1 ) {
+				out += str.slice( i );
+				break;
+			}
+			let depth = 1;
+			let j = closeLabel + 2;
+			while ( j < str.length && depth > 0 ) {
+				if ( str[j] === '(' ) depth++;
+				else if ( str[j] === ')' ) depth--;
+				j++;
+			}
+			if ( depth !== 0 ) {
+				out += str.slice( i, closeLabel + 2 );
+				i = closeLabel + 2;
+				continue;
+			}
+			const label = str.slice( open + 1, closeLabel );
+			const url = str.slice( closeLabel + 2, j - 1 );
+			const clean = String( url ).trim().replace( /&quot;/g, '"' ).replace( /&#39;/g, "'" );
+			out += str.slice( i, open );
+			out += this.isSafeUrl( clean, false )
+				? '<a href="' + this.escapeHtml( clean ) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>'
+				: label;
+			i = j;
+		}
+		return out;
 	},
 
 	renderMarkdown: function( text ) {

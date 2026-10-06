@@ -12,6 +12,7 @@ const TraitSetEditor = {
 			scrollPosition:    'none',
 			anchorPosition:    'top',
 			showDeleteConfirm: false,
+			uploadError:       '',
 			styleOptions: [
 				{ id: 'default',              label: 'Default' },
 				{ id: 'halo',                 label: 'Portrait Halo' },
@@ -20,6 +21,13 @@ const TraitSetEditor = {
 				{ id: 'distinctions',         label: 'Distinctions' },
 				{ id: 'assets',               label: 'Assets' },
 				{ id: 'resources',            label: 'Resources' },
+				{ id: 'resources-count',      label: 'Resources (Rating + Dice Count)' },
+				{ id: 'skills-specialties',   label: 'Skills & Specialties (Branched)' },
+				{ id: 'standing',             label: 'Standing (Complication & Bonus Dice)' },
+				{ id: 'badges-table',         label: 'Badges / Checklist Table' },
+				{ id: 'talents-table',        label: 'Talents Table (Talent / Activation / Effect)' },
+				{ id: 'growth-ladder',        label: 'Growth Ladder (Vertical Dice, e.g. Growth Pool)' },
+				{ id: 'dossier-fields',       label: 'Dossier Fields (Labeled Blocks, e.g. Forces)' },
 				{ id: 'stress',               label: 'Stress' },
 				{ id: 'list',                 label: 'List (Unrated)' },
 				{ id: 'notes',                label: 'Notes (Text Area)' },
@@ -134,6 +142,15 @@ const TraitSetEditor = {
 						this.traitSet.custom.cortexToolkit.location = 'right';
 					}
 					this.traitSet.custom.cortexToolkit.attributesRing = false;
+					// Spotlight PDF styles: seed the feature flags their layouts need.
+					if ( !this.traitSet.custom.cortexToolkit.features ) {
+						this.traitSet.custom.cortexToolkit.features = { description: false, sfx: false, subtraits: false };
+					}
+					const styleDefaults = cortexFunctions.defaultFeaturesForStyle( value );
+					Object.assign( this.traitSet.custom.cortexToolkit.features, styleDefaults.features );
+					if ( styleDefaults.multiDie ) {
+						this.traitSet.custom.cortexToolkit.multiDie = true;
+					}
 				}
 				this.updateCharacter( this.character );
 			}
@@ -180,10 +197,6 @@ const TraitSetEditor = {
 			}
 		},
 
-		characterColumnCount() {
-			return Number( this.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2;
-		},
-
 		columnLocation() {
 			let loc = this.traitSet?.custom?.cortexToolkit?.location;
 			if ( loc === 'center' && this.characterColumnCount === 3 ) return 'center';
@@ -191,7 +204,7 @@ const TraitSetEditor = {
 		},
 
 		characterColumnCount() {
-			return Number( this.character?.custom?.cortexToolkit?.columns ) || 3;
+			return Number( this.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2;
 		},
 
 		isFullWidthSpan: {
@@ -273,15 +286,6 @@ const TraitSetEditor = {
 			if ( a === 90 ) return '+90° (Left)';
 			if ( a === 180 || a === -180 ) return '180° (Top)';
 			return (a > 0 ? '+' + a : a) + '°';
-		},
-
-		haloSlide: {
-			get() {
-				return this.traitSet?.custom?.cortexToolkit?.haloConfig?.arcSlide ?? 0;
-			},
-			set( val ) {
-				this.setHaloConfig( 'arcSlide', Number(val) );
-			}
 		},
 
 		scaleAngle: {
@@ -626,6 +630,58 @@ const TraitSetEditor = {
 			);
 		},
 
+		// Styles sampled from the official Spotlight character sheet PDFs.
+		// Talents rows and dossier fields carry no dice.
+		needsDiceUI() {
+			return this.styleBody !== 'talents-table' && this.styleBody !== 'dossier-fields';
+		},
+
+		// Fixed-layout styles manage their own internal columns.
+		allowsTraitColumns() {
+			return ![ 'skills-specialties', 'talents-table', 'standing', 'badges-table', 'resources-count', 'growth-ladder', 'dossier-fields' ].includes( this.styleBody );
+		},
+
+		styleHint() {
+			switch ( this.styleBody ) {
+				case 'skills-specialties':
+					return 'Branched Skills layout (Alien Us, Safe Zone, SolarPunk): each skill die links to its specialties. Enable Sub-Traits below; each sub-trait is a specialty of its skill.';
+				case 'talents-table':
+					return 'Talents table (Talent | Activation | Effect). Trait name = Talent, description = Activation, first SFX = Effect. No dice on this style.';
+				case 'standing':
+					return 'Standing rows (Camp Bewilderwood): standing die plus Complication and Bonus dice. Enable Sub-Traits below; each sub-trait’s name becomes its row label (Complication, then Bonus).';
+				case 'badges-table':
+					return 'Checklist table (name + die per row). Rating scale sets the dice offered for each row.';
+				case 'resources-count':
+					return 'Syndicate-style resources (Cosa Nostra): a rating die plus a dice-count track. Enable multiple dice per trait below; the number of dice is the count.';
+				case 'growth-ladder':
+					return 'Vertical die ladder (Safe Zone Growth Pool): one die per row, d4 at top through d12. Rating scale sets which dice appear.';
+				case 'dossier-fields':
+					return 'Dossier blocks (KitBash Forces): stacked labeled fields. Trait name = field label, description = field text.';
+				default:
+					return '';
+			}
+		},
+
+		editorDock: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left';
+			},
+			set( val ) {
+				this.setCustomProperty( 'editorDock', val === 'right' ? 'right' : 'left' );
+			}
+		},
+
+		// Branched Skills connectors (per-specialty arrows) are optional.
+		branchArrows: {
+			get() {
+				const v = this.traitSet?.custom?.cortexToolkit?.branchArrows;
+				return v !== false;
+			},
+			set( val ) {
+				this.setCustomProperty( 'branchArrows', Boolean(val) );
+			}
+		},
+
 		cssClass() {
 
 			let cssClass = {
@@ -635,6 +691,10 @@ const TraitSetEditor = {
 			}
 
 			cssClass[ 'anchor-position-' + this.anchorPosition ] = true;
+
+			if ( this.isFullWidthSpan ) {
+				cssClass[ 'dock-' + this.editorDock ] = true;
+			}
 
 			if ( this.scrollable ) {
 				cssClass[ 'scroll-position-' + this.scrollPosition ] = true;
@@ -677,6 +737,45 @@ const TraitSetEditor = {
 						<select v-model="styleBody">
 							<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">{{ option.label }}</option>
 						</select>
+						<span class="editor-field-hint" v-if="styleHint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">{{ styleHint }}</span>
+						<div class="editor-checkbox-row" v-if="styleBody === 'skills-specialties'" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-branch-arrows'" v-model="branchArrows">
+							<label :for="'trait-set-' + traitSetID + '-branch-arrows'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Show connecting arrows</label>
+						</div>
+						<div v-if="styleBody === 'skills-specialties'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Left Heading</label>
+								<input type="text" :value="styleLabel('left')" @change="setStyleLabel('left', $event.target.value)" :placeholder="styleLabel('left')">
+							</div>
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Right Heading</label>
+								<input type="text" :value="styleLabel('right')" @change="setStyleLabel('right', $event.target.value)" :placeholder="styleLabel('right')">
+							</div>
+						</div>
+						<div v-if="styleBody === 'talents-table'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 1</label>
+								<input type="text" :value="styleLabel('col1')" @change="setStyleLabel('col1', $event.target.value)" :placeholder="styleLabel('col1')">
+							</div>
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 2</label>
+								<input type="text" :value="styleLabel('col2')" @change="setStyleLabel('col2', $event.target.value)" :placeholder="styleLabel('col2')">
+							</div>
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 3</label>
+								<input type="text" :value="styleLabel('col3')" @change="setStyleLabel('col3', $event.target.value)" :placeholder="styleLabel('col3')">
+							</div>
+						</div>
+						<div v-if="styleBody === 'resources-count'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Rating Label</label>
+								<input type="text" :value="styleLabel('rating')" @change="setStyleLabel('rating', $event.target.value)" :placeholder="styleLabel('rating')">
+							</div>
+							<div style="flex: 1;">
+								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Count Label</label>
+								<input type="text" :value="styleLabel('dice')" @change="setStyleLabel('dice', $event.target.value)" :placeholder="styleLabel('dice')">
+							</div>
+						</div>
 					</div>
 
 					<!-- HALO & SCALE DIE POSITIONING CONTROLS -->
@@ -841,6 +940,31 @@ const TraitSetEditor = {
 						</div>
 					</div>
 
+					<!-- PANEL POSITION (FULL-WIDTH SETS) -->
+					<div class="editor-field" v-if="isFullWidthSpan">
+						<label>Panel Position</label>
+
+						<div class="editor-button-group">
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: editorDock === 'left' }"
+								@click.stop="editorDock = 'left'"
+							>
+								<i class="fas fa-arrow-left"></i> Left
+							</button>
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: editorDock === 'right' }"
+								@click.stop="editorDock = 'right'"
+							>
+								Right <i class="fas fa-arrow-right"></i>
+							</button>
+						</div>
+						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Full-width sets start a new row — sets after this one flow below it.</span>
+					</div>
+
 					<!-- PAGE SELECTOR -->
 					<div class="editor-field" v-if="!isHalo">
 						<label>Page</label>
@@ -881,7 +1005,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- RATING SCALE (OPT IN/OUT OF RATINGS) -->
-					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="needsDiceUI">
 						<label>Rating Scale Options</label>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
@@ -909,7 +1033,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- SUB-TRAIT RATING SCALE -->
-					<div class="editor-field" v-if="styleBody !== 'list' && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'session-record' && styleBody !== 'angled-lines' && featureSubtraits">
+					<div class="editor-field" v-if="needsDiceUI && featureSubtraits">
 						<label>Sub-Trait Rating Scale (e.g. Specialties)</label>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
@@ -936,7 +1060,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- POOL & MULTI-DIE OPTIONS -->
-					<div class="editor-field" v-if="styleBody !== 'stress' && styleBody !== 'list' && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="needsDiceUI">
 						<label>Pool Options</label>
 						<div class="editor-toggles">
 							<template v-if="!isHalo">
@@ -969,6 +1093,8 @@ const TraitSetEditor = {
 						</div>
 
 						<input type="file" ref="imageFileInput" style="display:none" @change="uploadImageProcess" accept="image/*">
+
+						<div class="editor-upload-error" v-if="uploadError">{{ uploadError }}</div>
 
 						<div style="margin-top: 0.5rem;">
 							<label style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
@@ -1028,7 +1154,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- COLUMNS WITHIN SET -->
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label>Columns Within Set</label>
 						<select v-model.number="traitColumns">
 							<option :value="1">1 Column (Default)</option>
@@ -1038,7 +1164,7 @@ const TraitSetEditor = {
 					</div>
 
 					<!-- ATTACHED STRESS / TRACK -->
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label>Attached Stress / Track</label>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" v-model="hasAttachedStress">
@@ -1269,7 +1395,9 @@ const TraitSetEditor = {
 
 		async focusFirstInput() {
 			await Vue.nextTick();
-			this.$refs.inputName.focus();
+			if ( this.$refs.inputName ) {
+				this.$refs.inputName.focus( { preventScroll: true } );
+			}
 		},
  
 		setProperty( key, value ) {
@@ -1444,6 +1572,36 @@ const TraitSetEditor = {
 
 		},
 
+		// Generic trait-set label store: one flat dictionary for every
+		// style's named regions; defaults resolve centrally per style.
+		// Inputs bind :value/@change (and placeholder) to it.
+		styleLabel( key ) {
+			const labels = this.traitSet?.custom?.cortexToolkit?.labels;
+			if ( labels && labels[ key ] !== undefined && labels[ key ] !== null && String( labels[ key ] ).length ) {
+				return labels[ key ];
+			}
+			return cortexFunctions.labelDefaultForStyle( this.styleBody, key );
+		},
+
+		setStyleLabel( key, value ) {
+
+			let s = this.traitSetID;
+			if ( !this.character.traitSets[s].custom ) {
+				this.character.traitSets[s].custom = {};
+			}
+			if ( !this.character.traitSets[s].custom.cortexToolkit ) {
+				this.character.traitSets[s].custom.cortexToolkit = {};
+			}
+			if ( !this.character.traitSets[s].custom.cortexToolkit.labels ||
+			     typeof this.character.traitSets[s].custom.cortexToolkit.labels !== 'object' ) {
+				this.character.traitSets[s].custom.cortexToolkit.labels = {};
+			}
+			this.character.traitSets[s].custom.cortexToolkit.labels[ key ] = value;
+
+			this.updateCharacter( this.character );
+
+		},
+
 		setStressConfig( key, value ) {
 
 			let s = this.traitSetID;
@@ -1487,19 +1645,21 @@ const TraitSetEditor = {
 		},
 
 		uploadImageProcess( event ) {
+			this.uploadError = '';
 			if ( !event.target.files || !event.target.files.length ) {
 				this.imageURL = '';
 				return;
 			}
-			let file = event.target.files[0];
-			let reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => {
-				this.imageURL = reader.result;
-			};
-			reader.onerror = (error) => {
-				console.error('Image upload error: ', error);
-			};
+			cortexFunctions.processImageFile( event.target.files[0], 1280, 0.85 ).then(
+				( dataURL ) => {
+					this.imageURL = dataURL;
+					event.target.value = null;
+				},
+				( error ) => {
+					this.uploadError = error?.message || 'Could not process that image.';
+					event.target.value = null;
+				}
+			);
 		},
 
 		removeImage() {
