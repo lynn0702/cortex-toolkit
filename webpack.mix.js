@@ -6,7 +6,6 @@ mix
 .combine([
 	'js/functions.js',
 	'js/storage.js',
-	'js/templates.js',
 	'js/cortex-pal.js',
 	'js/roster.js',
 	'js/character.js',
@@ -20,6 +19,9 @@ mix
 	'js/style-gallery.js',
 	'js/app.js'
 ], 'js/app.min.js' )
+.combine([
+	'js/templates.js',
+], 'js/templates.bundle.js' )
 .sass( 'css/app.scss', 'css/app.min.css', { sassOptions: { outputStyle: mix.inProduction() ? 'compressed' : 'expanded' }} )
 .then(() => {
 	const fs = require('fs');

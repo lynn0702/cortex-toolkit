@@ -15,6 +15,8 @@ const Roster = {
 			importQueue:       [],
 			importBuffer:      null,
 			importError:       '',
+			spotlightLoading:  false,
+			spotlightError:    '',
 			showDeleteConfirm: false,
 			characterToDelete: null,
 			showDeleteAllConfirm: false,
@@ -57,7 +59,9 @@ const Roster = {
 		},
 
 		spotlightTemplates() {
-			return typeof cortexSpotlightTemplates !== 'undefined' ? cortexSpotlightTemplates : [];
+			if ( typeof cortexSpotlightTemplates !== 'undefined' ) return cortexSpotlightTemplates;
+			this.loadSpotlightTemplates();
+			return [];
 		},
 
 		spotlightTemplatesFiltered() {
@@ -110,7 +114,7 @@ const Roster = {
 					</div>
 
 					<div class="roster-button roster-button-spotlight"
-						@click.stop="showSpotlightLibrary = true"
+						@click.stop="openSpotlightLibrary"
 					>
 						<span><i class="fas fa-layer-group"></i> Spotlight Library</span>
 					</div>
@@ -399,6 +403,10 @@ const Roster = {
 				</div>
 
 				<div class="spotlight-grid">
+					<div class="spotlight-loading" v-if="spotlightLoading">
+						<i class="fas fa-circle-notch fa-spin"></i> Loading Spotlight library…
+					</div>
+					<div class="roster-import-error" v-if="spotlightError">{{ spotlightError }}</div>
 					<div class="spotlight-card" v-for="tmpl in spotlightTemplatesFiltered" :key="tmpl.id">
 						<div class="spotlight-card-header">
 							<div class="spotlight-card-title-group">
@@ -439,6 +447,28 @@ const Roster = {
 
 		safeImageUrl( url ) {
 			return cortexFunctions.safeImageUrl( url );
+		},
+
+		openSpotlightLibrary() {
+			this.showSpotlightLibrary = true;
+			this.loadSpotlightTemplates();
+		},
+
+		loadSpotlightTemplates() {
+			if ( typeof cortexSpotlightTemplates !== 'undefined' || this.spotlightLoading ) return;
+			this.spotlightLoading = true;
+			this.spotlightError = '';
+			const script = document.createElement( 'script' );
+			script.src = 'js/templates.bundle.js?v=33';
+			script.onload = () => {
+				this.spotlightLoading = false;
+				this.$forceUpdate();
+			};
+			script.onerror = () => {
+				this.spotlightLoading = false;
+				this.spotlightError = 'Could not load the Spotlight library. Check your connection and try again.';
+			};
+			document.head.appendChild( script );
 		},
 
 		useSpotlight( tmpl, asTemplate = false, openPrint = false ) {

@@ -1447,6 +1447,18 @@
 		padding-top: 0.5rem;
 	}
 
+	.spotlight-loading {
+		grid-column: 1 / -1;
+		text-align: center;
+		padding: 2rem 1rem;
+		color: #64748b;
+		font-size: 0.9rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+	}
+
 	.spotlight-card {
 		background: #ffffff;
 		border: 1px solid #e2e8f0;

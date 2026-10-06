@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				<div class="footer-inner">
 
 					<div class="footer-colophon">
-						<a href="https://www.cortexrpg.com" target="_blank"><img src="images/cortex_prime_logo_light_background.png"></a>
+						<a href="https://www.cortexrpg.com" target="_blank"><picture><source srcset="images/cortex_prime_logo_light_background.webp" type="image/webp"><img src="images/cortex_prime_logo_light_background.png" alt="Cortex Prime"></picture></a>
 					</div>
 
 					<nav class="footer-nav">
