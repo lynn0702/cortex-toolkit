@@ -71,10 +71,15 @@
 		box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.1);
 	}
 	@media print {
+		width: 100% !important;
+		max-width: 100% !important;
+		height: auto !important;
+		overflow: visible !important;
 		border: 0 !important;
 		border-radius: 0 !important;
 		box-shadow: none !important;
-		margin-top: 0 !important;
+		margin: 0 !important;
+		padding: 0 !important;
 	}
 }
 
@@ -84,6 +89,7 @@
 	font-weight: 400;
 	transition: padding .2s;
 	padding-top: 2rem;
+	position: relative;
 	@include print {
 		position: absolute;
 		z-index: var(--z-page);
@@ -94,6 +100,33 @@
 		padding: var(--page-margin);
 		background: white;
 	}
+	@media print {
+		position: relative !important;
+		left: auto !important;
+		top: auto !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		height: auto !important;
+		min-height: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		overflow: visible !important;
+		border: none !important;
+		box-shadow: none !important;
+		border-radius: 0 !important;
+		break-inside: avoid !important;
+		page-break-inside: avoid !important;
+
+		&:not(:last-child) {
+			break-after: page !important;
+			page-break-after: always !important;
+		}
+
+		&:last-child {
+			break-after: auto !important;
+			page-break-after: auto !important;
+		}
+	}
 }
 
 .page-inner {
@@ -101,6 +134,30 @@
 	margin-inline: auto;
 	width: calc( var(--page-width) - 2 * var(--page-margin) );
 	max-width: 100%;
+	@media print {
+		width: 100% !important;
+		max-width: 100% !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+}
+
+// BACKGROUND WATERMARK (VISIBLE IN EDIT, PLAY AND PRINT; NOTE: NO
+// Z-INDEX HERE SO OPEN EDITORS KEEP PAINTING ABOVE THE TOOLBARS)
+
+.page-watermark {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	pointer-events: none;
+	z-index: 0;
+	background-repeat: no-repeat;
+	background-position: center 50%;
+	background-size: 75%;
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
 }
 
 .columns {
@@ -142,6 +199,19 @@
 .columns > * {
 	padding-top: 0 !important;
 	margin-top: 0 !important;
+}
+
+// CLASSIC FULL-WIDTH SETS (FULL ROW BELOW THE COLUMNS)
+
+.classic-full-band {
+	display: flex;
+	flex-direction: column;
+	row-gap: 1.5rem;
+	margin-top: 1.5rem;
+
+	> * {
+		min-width: 0;
+	}
 }
 
 .columns > * > .trait-set:first-child,
@@ -400,6 +470,10 @@
 
 // TRAITS
 
+.trait-set {
+	position: relative;
+}
+
 .trait-set-header {
 	position: relative;
 }
@@ -580,32 +654,9 @@
 	pointer-events: none;
 }
 
-.attribute-curve {
-	display: block;
-	position: absolute;
-	z-index: var(--z-attributes-curve);
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-	svg {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		margin: 0;
-		padding: 0;
-		overflow: visible;
-		pointer-events: none;
-	}
-}
-
 .submode-edit {
 	.attribute,
-	.scale-die,
-	.attribute-curve path {
+	.scale-die {
 		cursor: grab;
 		&:active {
 			cursor: grabbing;
@@ -661,60 +712,30 @@
 	height: 100%;
 	line-height: 1;
 	text-align: center;
+	// White numeral fill, see die-backing in app.scss
+	@include die-backing;
 }
 
-.attribute-inner .c:before {
-	position: absolute;
-	content: " ";
-	width: 5.6mm;
-	height: 5.6mm;
-	background: white;
-	left: 50%;
-	top: 52%;
-	z-index: -1;
-	transform: translate(-50%, -50%);
-	clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
+// Unrated attribute slot: no white backing blob, just a dashed empty ring.
+.attribute-inner .c.die-empty {
+	&:before {
+		display: none;
+	}
+	&:after {
+		position: absolute;
+		content: " ";
+		width: 5.6mm;
+		height: 5.6mm;
+		left: 50%;
+		top: 52%;
+		transform: translate(-50%, -50%);
+		border: 0.7mm dashed var(--color-primary);
+		border-radius: 50%;
+		opacity: 0.75;
+		box-sizing: border-box;
+	}
 }
 
-.attribute-inner .c.die-4:before {
-	width: 5.2mm;
-	height: 5.2mm;
-	top: 52%;
-	border-radius: 0;
-	clip-path: polygon(4% 15%, 96% 15%, 50% 96%);
-}
-
-.attribute-inner .c.die-6:before {
-	width: 4.6mm;
-	height: 4.6mm;
-	top: 52%;
-	border-radius: 2px;
-	clip-path: inset(0 round 2px);
-}
-
-.attribute-inner .c.die-8:before {
-	width: 5.6mm;
-	height: 5.6mm;
-	top: 52%;
-	border-radius: 0;
-	clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
-}
-
-.attribute-inner .c.die-10:before {
-	width: 5.2mm;
-	height: 5.4mm;
-	top: 52%;
-	border-radius: 0;
-	clip-path: polygon(50% 2%, 98% 26%, 98% 74%, 50% 98%, 2% 74%, 2% 26%);
-}
-
-.attribute-inner .c.die-12:before {
-	width: 5.2mm;
-	height: 5.2mm;
-	top: 52%;
-	border-radius: 50%;
-	clip-path: circle(48% at 50% 50%);
-}
 
 .attribute-name {
 	font-family: var(--font-secondary);
@@ -775,58 +796,8 @@
 			transition: transform 0.12s;
 			position: relative;
 
-			&:before {
-				position: absolute;
-				content: " ";
-				width: 5.6mm;
-				height: 5.6mm;
-				background: white;
-				left: 50%;
-				top: 52%;
-				z-index: -1;
-				transform: translate(-50%, -50%);
-				clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
-			}
-
-			&.die-4:before {
-				width: 5.2mm;
-				height: 5.2mm;
-				top: 52%;
-				border-radius: 0;
-				clip-path: polygon(4% 15%, 96% 15%, 50% 96%);
-			}
-
-			&.die-6:before {
-				width: 4.6mm;
-				height: 4.6mm;
-				top: 52%;
-				border-radius: 2px;
-				clip-path: inset(0 round 2px);
-			}
-
-			&.die-8:before {
-				width: 5.6mm;
-				height: 5.6mm;
-				top: 52%;
-				border-radius: 0;
-				clip-path: polygon(50% 2%, 98% 50%, 50% 98%, 2% 50%);
-			}
-
-			&.die-10:before {
-				width: 5.2mm;
-				height: 5.4mm;
-				top: 52%;
-				border-radius: 0;
-				clip-path: polygon(50% 2%, 98% 26%, 98% 74%, 50% 98%, 2% 74%, 2% 26%);
-			}
-
-			&.die-12:before {
-				width: 5.2mm;
-				height: 5.2mm;
-				top: 52%;
-				border-radius: 50%;
-				clip-path: circle(48% at 50% 50%);
-			}
+			// White numeral fill, see die-backing in app.scss
+			@include die-backing;
 		}
 
 		.scale-name {

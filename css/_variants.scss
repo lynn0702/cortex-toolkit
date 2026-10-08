@@ -56,6 +56,93 @@
 		b, strong {
 			font-weight: 800;
 		}
+
+		&.trait-title-statement {
+			display: flex;
+			align-items: center;
+			gap: 0.35rem;
+
+			.statement-pip {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				min-width: 10px;
+				min-height: 10px;
+				border-radius: 50%;
+				border: 1.5px solid #000000;
+				background-color: #ffffff;
+				cursor: pointer;
+				user-select: none;
+				box-sizing: border-box;
+				flex-shrink: 0;
+				margin: 0 0.1rem;
+				transition: background-color 0.12s ease, transform 0.1s ease;
+				print-color-adjust: exact;
+				-webkit-print-color-adjust: exact;
+
+				&:hover {
+					transform: scale(1.2);
+				}
+
+				&.questioned {
+					background-color: #000000;
+				}
+			}
+
+			.trait-statement-box {
+				flex: 1 1 auto;
+				min-width: 0;
+				border: 1px solid var(--color-separator);
+				border-radius: 2px;
+				padding: 0.15rem 0.35rem;
+				font-size: 0.72rem;
+				font-style: italic;
+				color: #333333;
+				background: #ffffff;
+			}
+		}
+
+		&.trait-title-stacked {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 0.25rem;
+
+			.trait-value {
+				top: 0;
+				justify-content: center;
+			}
+		}
+	}
+
+	.trait-asset-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+
+		.trait-value {
+			top: 0;
+		}
+
+		.trait-asset-box {
+			border: 1px solid var(--color-primary);
+			border-radius: 2px;
+			padding: 0.3rem 0.5rem;
+			background: #ffffff;
+			min-height: 2.2rem;
+
+			.trait-asset-name {
+				font-weight: 700;
+				font-size: 0.75rem;
+			}
+
+			.trait-asset-desc {
+				font-size: 0.68rem;
+				color: #555555;
+				margin-top: 0.1rem;
+			}
+		}
 	}	
 	&.trait-set-has-feature-sfx .trait-title,
 	&.trait-set-has-feature-subtraits .trait-title,
@@ -153,6 +240,13 @@
 		}
 	}
 
+}
+
+// PORTRAIT HALO (FALLBACK LIST RENDERING -- USED WHENEVER THE RING
+// ITSELF DOES NOT ENGAGE, E.G. SPOTLIGHT MODE OR A MISSING PORTRAIT)
+.trait-set-style-halo,
+.trait-set-style-attributes {
+	@extend .trait-set-style-default;
 }
 
 .trait-set-style-distinctions {
@@ -865,6 +959,8 @@
 
 // SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk)
 .trait-set-style-skills-specialties {
+	@extend .trait-set-style-default;
+
 
 	.skills-branch-head {
 		display: grid;
@@ -1002,11 +1098,11 @@
 
 // TALENTS TABLE (TALENT / ACTIVATION / EFFECT)
 .trait-set-style-talents-table {
+	@extend .trait-set-style-default;
 
 	.trait-talents-table {
 		border: 1px solid var(--color-primary);
 		border-radius: .25rem;
-		overflow: hidden;
 	}
 
 	.talents-head {
@@ -1027,10 +1123,14 @@
 		display: grid;
 		grid-template-columns: 1fr 1.2fr 1.4fr;
 		column-gap: 0;
-		align-items: start;
+		align-items: stretch;
+		min-height: 3.5rem;
 		border-top: 1px solid var(--color-separator);
 		background: white;
-		span { padding: .3rem .5rem; }
+		span {
+			padding: .3rem .5rem;
+			box-sizing: border-box;
+		}
 		span + span { border-left: 1px solid var(--color-separator); }
 	}
 
@@ -1051,6 +1151,101 @@
 
 // STANDING (STANDING DIE + COMPLICATION & BONUS DICE)
 .trait-set-style-standing {
+	@extend .trait-set-style-default;
+
+	.standing-row-wrap {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		width: 100%;
+	}
+
+	.standing-header-row {
+		display: flex;
+		gap: 0.4rem;
+		align-items: stretch;
+
+		.standing-name-box {
+			border: 1px solid var(--color-primary);
+			border-radius: 2px;
+			padding: 0.2rem 0.4rem;
+			font-family: var(--font-secondary);
+			font-weight: 700;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			background: #ffffff;
+			flex: 0 0 38%;
+			max-width: 38%;
+			display: flex;
+			align-items: center;
+		}
+
+		.standing-statement-box {
+			border: 1px solid var(--color-primary);
+			border-radius: 2px;
+			padding: 0.2rem 0.4rem;
+			font-size: 0.72rem;
+			font-style: italic;
+			background: #ffffff;
+			flex: 1 1 auto;
+			min-width: 0;
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.standing-dice-row {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 0.4rem;
+
+		.standing-main-dice {
+			position: relative;
+			top: -.1em;
+			white-space: nowrap;
+			.c:not(.active) { color: var(--color-separator); }
+		}
+
+		.standing-sub-group {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			gap: 0.2rem;
+
+			.standing-sub-row {
+				display: inline-flex;
+				align-items: center;
+				justify-content: flex-end;
+				gap: 0.35rem;
+				width: 100%;
+			}
+
+			.standing-sub-label {
+				font-family: var(--font-secondary);
+				font-size: 0.62rem;
+				font-weight: 800;
+				letter-spacing: 0.06em;
+				color: var(--color-primary);
+				text-transform: uppercase;
+				white-space: nowrap;
+				text-align: right;
+			}
+
+			.subtrait-value {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.15rem;
+				position: relative;
+				top: -.1em;
+				flex-shrink: 0;
+				.c {
+					display: inline-flex;
+					&:not(.active) { color: var(--color-separator); }
+				}
+			}
+		}
+	}
 
 	.standing-main {
 		display: flex;
@@ -1119,12 +1314,26 @@
 
 // BADGES / CHECKLIST TABLE
 .trait-set-style-badges-table {
+	@extend .trait-set-style-default;
 
 	.trait-badges-table {
 		border: 1px solid var(--color-primary);
 		border-radius: .25rem;
-		overflow: hidden;
 		background: white;
+	}
+
+	.badges-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		padding: 0.3rem 0.5rem;
+		border-bottom: 1px solid var(--color-primary);
+		font-family: var(--font-secondary);
+		font-weight: 800;
+		font-size: 0.78rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-primary);
 	}
 
 	.badge-row {
@@ -1143,6 +1352,21 @@
 		color: #222;
 	}
 
+	.badge-counter-box {
+		border: 1px solid var(--color-primary);
+		border-radius: 2px;
+		min-width: 1.5rem;
+		height: 1.35rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 700;
+		font-size: 0.75rem;
+		background: #ffffff;
+		margin-left: 0.35rem;
+		flex-shrink: 0;
+	}
+
 	.trait-value {
 		position: relative;
 		top: -.1em;
@@ -1153,6 +1377,8 @@
 
 // RESOURCES WITH DICE COUNT (RATING + DICE 1-5)
 .trait-set-style-resources-count {
+	@extend .trait-set-style-default;
+
 
 	.resource-row {
 		display: flex;
@@ -1218,6 +1444,8 @@
 
 // GROWTH LADDER (VERTICAL DICE TRACK)
 .trait-set-style-growth-ladder {
+	@extend .trait-set-style-default;
+
 
 	.trait-growth-ladder {
 		display: flex;
@@ -1268,6 +1496,8 @@
 
 // DOSSIER FIELDS (STACKED LABELED BLOCKS)
 .trait-set-style-dossier-fields {
+	@extend .trait-set-style-default;
+
 
 	.trait-dossier {
 		display: flex;

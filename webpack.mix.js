@@ -15,6 +15,7 @@ mix
 	'js/subtrait-editor.js',
 	'js/sfx-editor.js',
 	'js/portrait-editor.js',
+	'js/trait-set-block.js',
 	'js/dice-roller.js',
 	'js/style-gallery.js',
 	'js/app.js'

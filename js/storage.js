@@ -23,6 +23,35 @@ const cortexStorage = {
 	_dbPromise: null,
 	_useIDB: ( typeof indexedDB !== 'undefined' ),
 
+	// Sheet-template registry (entry shape, same as the spotlight library:
+	// { id (static), title, ..., character: {...} }). Stored separately from
+	// characters; imports upsert by static id so re-imports replace instead
+	// of duplicating. Built-ins resolve live from the bundle and are never
+	// stored here.
+	normalizeTemplates( templates ) {
+		if ( !Array.isArray( templates ) ) return [];
+		const seen = new Set();
+		const out = [];
+		for ( const t of templates ) {
+			if ( !t || typeof t !== 'object' || typeof t.id !== 'string' || !t.id.length ) continue;
+			if ( !t.character || typeof t.character !== 'object' || !Array.isArray( t.character.traitSets ) ) continue;
+			if ( seen.has( t.id ) ) continue;
+			seen.add( t.id );
+			out.push( t );
+		}
+		return out;
+	},
+
+	upsertTemplate( templates, entry ) {
+		const list = this.normalizeTemplates( templates );
+		if ( !entry || typeof entry.id !== 'string' || !entry.id.length ) return list;
+		const i = list.findIndex( t => t.id === entry.id );
+		const clean = JSON.parse( JSON.stringify( entry ) );
+		if ( i === -1 ) list.push( clean );
+		else list[i] = clean;
+		return list;
+	},
+
 	openDB() {
 		if ( !this._useIDB ) return Promise.reject( new Error( 'IndexedDB unavailable.' ) );
 		if ( !this._dbPromise ) {
@@ -75,9 +104,23 @@ const cortexStorage = {
 				c.custom.cortexToolkit.columnOffsets.center = 0;
 				c.custom.cortexToolkit.columnOffsets.right = 0;
 			}
+			if ( c.portrait?.url ) {
+				const pUrl = c.portrait.url;
+				if ( pUrl.includes( 'camp_bewilderwood_logo' ) || pUrl.includes( 'cosa_nostra_logo' ) || pUrl.includes( 'brighter_stars_logo' ) ) {
+					c.portrait.url = '';
+				}
+			}
+
 			if ( Array.isArray( c.traitSets ) ) {
 				c.traitSets.forEach( ( ts ) => {
 					const ctk = ts?.custom?.cortexToolkit;
+					// Normalize Distinctions with 'none' ratingPosition to 'inline'
+					if ( (ts.custom?.cortexToolkit?.style?.body === 'distinctions' || ts.name?.toLowerCase() === 'distinctions') &&
+						(ts.ratingPosition === 'none' || ctk?.ratingPosition === 'none') ) {
+						ts.ratingPosition = 'inline';
+						if ( ctk ) ctk.ratingPosition = 'inline';
+					}
+
 					if ( !ctk || typeof ctk !== 'object' ) return;
 					// Fold legacy per-style label maps into the unified labels store.
 					const folded = {};
@@ -180,6 +223,7 @@ const cortexStorage = {
 						openCharacterIDs: Array.isArray( record.openCharacterIDs ) ? record.openCharacterIDs : [],
 						playViewMode: record.playViewMode === 'tabs' ? 'tabs' : 'split',
 						rollerPosition: record.rollerPosition === 'right' ? 'right' : 'left',
+						templates: this.normalizeTemplates( record.templates ),
 						migrated: false,
 					};
 				}
@@ -189,10 +233,11 @@ const cortexStorage = {
 		}
 		const legacy = this.readLegacy();
 		if ( legacy.error ) {
-			return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', loadError: legacy.error, migrated: false };
+			return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], loadError: legacy.error, migrated: false };
 		}
 		if ( legacy.state ) {
 			const state = legacy.state;
+			state.templates = [];
 			try {
 				await this.save( state );
 				this.clearLegacy();
@@ -203,7 +248,7 @@ const cortexStorage = {
 			}
 			return state;
 		}
-		return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', migrated: false };
+		return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], migrated: false };
 	},
 
 	async save( state ) {
@@ -214,6 +259,7 @@ const cortexStorage = {
 			openCharacterIDs: state.openCharacterIDs || [],
 			playViewMode: state.playViewMode || 'split',
 			rollerPosition: state.rollerPosition || 'left',
+			templates: this.normalizeTemplates( state.templates ),
 		};
 		if ( this._useIDB ) {
 			const db = await this.openDB();

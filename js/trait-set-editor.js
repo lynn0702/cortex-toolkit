@@ -207,10 +207,19 @@ const TraitSetEditor = {
 			return Number( this.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2;
 		},
 
+		// Track count for THIS set's page (page 2 may override via columnsPage2).
+		setTrackCount() {
+			if ( ( this.traitSet?.custom?.cortexToolkit?.page ?? 1 ) === 2 ) {
+				const override = Number( this.character?.custom?.cortexToolkit?.columnsPage2 );
+				if ( override === 2 || override === 3 ) return override;
+			}
+			return this.characterColumnCount;
+		},
+
 		isFullWidthSpan: {
 			get() {
 				const span = this.traitSet?.custom?.cortexToolkit?.colSpan ?? this.traitSet?.custom?.cortexToolkit?.columnSpan;
-				return span === 'full' || Number(span) >= this.characterColumnCount;
+				return span === 'full' || Number(span) >= this.setTrackCount;
 			},
 			set( val ) {
 				if ( val ) {
@@ -224,11 +233,40 @@ const TraitSetEditor = {
 		colSpan: {
 			get() {
 				const span = this.traitSet?.custom?.cortexToolkit?.colSpan ?? this.traitSet?.custom?.cortexToolkit?.columnSpan;
-				if ( span === 'full' ) return this.characterColumnCount;
+				if ( span === 'full' ) return this.setTrackCount;
 				return Number( span ) || 1;
 			},
 			set( val ) {
 				this.setCustomProperty( 'colSpan', val === 'full' ? 'full' : Math.max(1, Number(val) || 1) );
+			}
+		},
+
+		// Starts a fresh row band before this set so consecutive bands can
+		// carry different column shares (e.g. 66/34 above 40/60).
+		rowBreak: {
+			get() {
+				return this.traitSet?.custom?.cortexToolkit?.rowBreak === true;
+			},
+			set( val ) {
+				this.setCustomProperty( 'rowBreak', val ? true : null );
+			}
+		},
+
+		// Column width share for Spotlight rows (percent of the row this
+		// set's column takes; unset/null = equal share). Mates in the other
+		// column(s) flex to fill whatever is left, forming a row band.
+		colWidth: {
+			get() {
+				const w = Number( this.traitSet?.custom?.cortexToolkit?.colWidth );
+				return ( w >= 10 && w <= 90 ) ? Math.round( w ) : null;
+			},
+			set( val ) {
+				if ( val === null || val === undefined || val === '' ) {
+					this.setCustomProperty( 'colWidth', null );
+					return;
+				}
+				const w = Math.min( 90, Math.max( 10, Math.round( Number( val ) || 50 ) ) );
+				this.setCustomProperty( 'colWidth', w );
 			}
 		},
 
@@ -242,13 +280,17 @@ const TraitSetEditor = {
 		},
 
 		canMoveUp() {
-			let s = this.traitSetID;
-			return s > 0;
+			return this.findMoveTarget( -1 ) !== -1;
 		},
 
 		canMoveDown() {
-			let s = this.traitSetID;
-			return s < (this.character?.traitSets?.length - 1);
+			return this.findMoveTarget( 1 ) !== -1;
+		},
+
+		isSpotlightSheet() {
+			const explicit = this.character?.custom?.cortexToolkit?.sheetStyle;
+			if ( explicit ) return explicit === 'spotlight';
+			return this.character?.custom?.cortexToolkit?.style?.hasAttributes === false;
 		},
 
 		haloSpread: {
@@ -568,6 +610,56 @@ const TraitSetEditor = {
 			}
 		},
 
+		ratingPosition: {
+			get() {
+				return this.traitSet?.ratingPosition || this.traitSet?.custom?.cortexToolkit?.ratingPosition || 'inline';
+			},
+			set( val ) {
+				this.setProperty( 'ratingPosition', val );
+				this.setCustomProperty( 'ratingPosition', val );
+			}
+		},
+
+		isStatementSet: {
+			get() {
+				return Boolean( this.traitSet?.statement ?? this.traitSet?.custom?.cortexToolkit?.statement );
+			},
+			set( val ) {
+				this.setProperty( 'statement', Boolean(val) );
+				this.setCustomProperty( 'statement', Boolean(val) );
+			}
+		},
+
+		hasQuestionedPip: {
+			get() {
+				return Boolean( this.traitSet?.hasQuestionedPip ?? this.traitSet?.custom?.cortexToolkit?.hasQuestionedPip );
+			},
+			set( val ) {
+				this.setProperty( 'hasQuestionedPip', Boolean(val) );
+				this.setCustomProperty( 'hasQuestionedPip', Boolean(val) );
+			}
+		},
+
+		hasCounterColumn: {
+			get() {
+				return Boolean( this.traitSet?.hasCounterColumn ?? this.traitSet?.custom?.cortexToolkit?.hasCounterColumn );
+			},
+			set( val ) {
+				this.setProperty( 'hasCounterColumn', Boolean(val) );
+				this.setCustomProperty( 'hasCounterColumn', Boolean(val) );
+			}
+		},
+
+		counterLabel: {
+			get() {
+				return this.traitSet?.counterLabel || this.traitSet?.custom?.cortexToolkit?.counterLabel || 'XP';
+			},
+			set( val ) {
+				this.setProperty( 'counterLabel', val );
+				this.setCustomProperty( 'counterLabel', val );
+			}
+		},
+
 		pipCount: {
 			get() {
 				return this.traitSet?.custom?.cortexToolkit?.pips?.count ?? 25;
@@ -624,10 +716,7 @@ const TraitSetEditor = {
 		},
 
 		scrollable() {
-			return Boolean(
-				( this.traitSet?.custom?.cortexToolkit?.features?.sfx && (this.traitSet?.sfx?.length || 0) > 0 )
-				|| this.isHalo
-			);
+			return true;
 		},
 
 		// Styles sampled from the official Spotlight character sheet PDFs.
@@ -737,7 +826,6 @@ const TraitSetEditor = {
 						<select v-model="styleBody">
 							<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">{{ option.label }}</option>
 						</select>
-						<span class="editor-field-hint" v-if="styleHint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">{{ styleHint }}</span>
 						<div class="editor-checkbox-row" v-if="styleBody === 'skills-specialties'" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-branch-arrows'" v-model="branchArrows">
 							<label :for="'trait-set-' + traitSetID + '-branch-arrows'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Show connecting arrows</label>
@@ -923,9 +1011,10 @@ const TraitSetEditor = {
 							<button
 								type="button"
 								class="editor-group-btn"
-								v-if="characterColumnCount === 3"
+								v-if="setTrackCount === 3"
 								:class="{ active: !isFullWidthSpan && colSpan === 2 }"
 								@click.stop="colSpan = 2"
+								title="Span two of the three columns (e.g. a wide set beside a narrow one)"
 							>
 								Span 2 Cols
 							</button>
@@ -936,6 +1025,66 @@ const TraitSetEditor = {
 								@click.stop="isFullWidthSpan = !isFullWidthSpan"
 							>
 								<i class="fas fa-arrows-alt-h"></i> Full Width Span
+							</button>
+						</div>
+					</div>
+
+					<!-- COLUMN WIDTH (SPOTLIGHT ROWS) -->
+					<div class="editor-field" v-if="!isHalo && !isFullWidthSpan && isSpotlightSheet">
+						<label>Column Width — Row Share</label>
+						<div class="editor-button-group">
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: colWidth === null }"
+								@click.stop="colWidth = null"
+								title="Share the row equally with the other column(s)"
+							>
+								Equal
+							</button>
+							<button
+								v-for="w in [25, 33, 50, 66, 75]"
+								:key="'colw-' + w"
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: colWidth === w }"
+								@click.stop="colWidth = (colWidth === w ? null : w)"
+								:title="'Take ' + w + '% of the row; the other column(s) share the rest'"
+							>
+								{{ w }}%
+							</button>
+						</div>
+						<div class="slider-row" style="margin-top: 0.4rem;">
+							<div class="slider-header">
+								<span>Fine tune</span>
+								<span class="slider-val">{{ colWidth === null ? 'Equal' : colWidth + '%' }}</span>
+							</div>
+							<input type="range" min="10" max="90" step="1" :value="colWidth || 50" @input.stop="colWidth = Number($event.target.value)" @click.stop title="Exact column width percent">
+						</div>
+						<div class="editor-hint">Set 66% here and the other column takes ~33%, forming a row band like the source sheets.</div>
+					</div>
+
+					<!-- ROW BREAK (SPOTLIGHT BANDS) -->
+					<div class="editor-field" v-if="!isHalo && !isFullWidthSpan && isSpotlightSheet">
+						<label>Row Band</label>
+						<div class="editor-button-group">
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: !rowBreak }"
+								@click.stop="rowBreak = false"
+								title="Keep flowing in the current row band"
+							>
+								Continue band
+							</button>
+							<button
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: rowBreak }"
+								@click.stop="rowBreak = true"
+								title="Start a fresh row band here, so this band can use different column shares"
+							>
+								<i class="fas fa-grip-lines"></i> New band
 							</button>
 						</div>
 					</div>
@@ -962,7 +1111,6 @@ const TraitSetEditor = {
 								Right <i class="fas fa-arrow-right"></i>
 							</button>
 						</div>
-						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Full-width sets start a new row — sets after this one flow below it.</span>
 					</div>
 
 					<!-- PAGE SELECTOR -->
@@ -1149,7 +1297,6 @@ const TraitSetEditor = {
 						<div v-if="sharedHinder" style="margin-top: 0.35rem;">
 							<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Hinder Banner Text</label>
 							<textarea v-model="sharedHinderText" placeholder="Gain a PP when you trade out your distinction's [d8] rating for a [d4]." rows="2"></textarea>
-							<span style="font-size: 0.65rem; color: #94a3b8; display: block; margin-top: 0.2rem;">Separate multiple rules with line breaks (e.g. Hinder and Shaken).</span>
 						</div>
 					</div>
 
@@ -1252,9 +1399,6 @@ const TraitSetEditor = {
 					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
 						<input type="number" min="0" max="25" v-model.number="reservedSlots" placeholder="Automatic (matches current traits)">
-						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">
-							Total slots rendered on print version (or print preview). If current traits are fewer, blank write-in slots with die boxes are appended for pencil play.
-						</span>
 					</div>
 
 					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
@@ -1270,6 +1414,43 @@ const TraitSetEditor = {
 							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-feature-sfx'" :true-value="true" :false-value="false" v-model="featureSFX"></div>
 							<div><label :for="'trait-set-' + traitSetID + '-feature-sfx'">SFX</label></div>
 
+						</div>
+					</div>
+
+					<!-- RATING POSITION -->
+					<div class="editor-field" v-if="needsDiceUI && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+						<label>Rating Position</label>
+						<select v-model="ratingPosition">
+							<option value="inline">Inline with Name (Default)</option>
+							<option value="above">Above Name / Box (e.g. Signature Assets)</option>
+							<option value="below">Below Name (Centered, e.g. Attributes)</option>
+							<option value="none">None (Hide Trait Dice, e.g. Distinctions)</option>
+						</select>
+					</div>
+
+					<!-- STATEMENT MODE -->
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines' && styleBody !== 'talents-table' && styleBody !== 'standing'">
+						<label>Statement Mode (e.g. Values)</label>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" v-model="isStatementSet">
+							<label :for="'trait-set-' + traitSetID + '-statement-mode'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Statement Field on Traits</label>
+						</div>
+						<div class="editor-checkbox-row" v-if="isStatementSet" style="display: flex; align-items: center; gap: 0.4rem; margin-left: 1.25rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-questioned-pip'" v-model="hasQuestionedPip">
+							<label :for="'trait-set-' + traitSetID + '-questioned-pip'" style="margin: 0; font-size: 0.75rem; cursor: pointer;">Questioned</label>
+						</div>
+					</div>
+
+					<!-- COUNTER COLUMN (e.g. BADGES XP) -->
+					<div class="editor-field" v-if="styleBody === 'badges-table' || styleBody === 'default' || styleBody === 'list'">
+						<label>Counter Column (e.g. Badges XP)</label>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-counter-col'" v-model="hasCounterColumn">
+							<label :for="'trait-set-' + traitSetID + '-counter-col'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Counter / XP Column</label>
+						</div>
+						<div v-if="hasCounterColumn" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem;">
+							<label style="font-size: 0.75rem; color: #64748b; margin: 0;">Header Label:</label>
+							<input type="text" v-model="counterLabel" placeholder="XP" style="width: 5rem;">
 						</div>
 					</div>
 
@@ -1445,14 +1626,7 @@ const TraitSetEditor = {
 
 		moveTraitSetUp() {
 			let s = this.traitSetID;
-			let col = this.columnLocation;
-			let targetIdx = -1;
-			for (let i = s - 1; i >= 0; i--) {
-				if ( this.character.traitSets[i]?.custom?.cortexToolkit?.location === col ) {
-					targetIdx = i;
-					break;
-				}
-			}
+			let targetIdx = this.findMoveTarget( -1 );
 			if ( targetIdx === -1 ) return;
 
 			let character = this.character;
@@ -1466,14 +1640,7 @@ const TraitSetEditor = {
 
 		moveTraitSetDown() {
 			let s = this.traitSetID;
-			let col = this.columnLocation;
-			let targetIdx = -1;
-			for (let i = s + 1; i < this.character.traitSets.length; i++) {
-				if ( this.character.traitSets[i]?.custom?.cortexToolkit?.location === col ) {
-					targetIdx = i;
-					break;
-				}
-			}
+			let targetIdx = this.findMoveTarget( 1 );
 			if ( targetIdx === -1 ) return;
 
 			let character = this.character;
@@ -1483,6 +1650,47 @@ const TraitSetEditor = {
 
 			this.updateCharacter( character );
 			this.selectElement([ 'traitSet', targetIdx ]);
+		},
+
+		isFullWidthSetByIndex( idx ) {
+			if ( !this.isSpotlightSheet ) return false;
+			const ctk = this.character?.traitSets?.[ idx ]?.custom?.cortexToolkit;
+			const span = ctk?.colSpan ?? ctk?.columnSpan;
+			return span === 'full' || Number( span ) >= this.characterColumnCount;
+		},
+
+		pageOfSet( idx ) {
+			const page = this.character?.traitSets?.[ idx ]?.custom?.cortexToolkit?.page;
+			return page === undefined || page === null ? 1 : page;
+		},
+
+		columnOfSet( idx ) {
+			const loc = this.character?.traitSets?.[ idx ]?.custom?.cortexToolkit?.location;
+			if ( loc === 'center' && this.characterColumnCount === 3 ) return 'center';
+			return loc === 'right' ? 'right' : 'left';
+		},
+
+		// Reorder target for Move Up (-1) / Move Down (+1). Full-width sets
+		// are row breaks: column sets can never cross them (or pages), and a
+		// full-width set moves one adjacent step so breaks stay deliberate.
+		findMoveTarget( dir ) {
+			const sets = this.character?.traitSets || [];
+			const s = this.traitSetID;
+			if ( s === null || s === undefined || s < 0 || s >= sets.length ) return -1;
+			const selfPage = this.pageOfSet( s );
+			if ( this.isFullWidthSetByIndex( s ) ) {
+				const n = s + dir;
+				if ( n < 0 || n >= sets.length ) return -1;
+				if ( this.pageOfSet( n ) !== selfPage ) return -1;
+				return n;
+			}
+			const col = this.columnOfSet( s );
+			for ( let i = s + dir; i >= 0 && i < sets.length; i += dir ) {
+				if ( this.pageOfSet( i ) !== selfPage ) return -1;
+				if ( this.isFullWidthSetByIndex( i ) ) return -1;
+				if ( this.columnOfSet( i ) === col ) return i;
+			}
+			return -1;
 		},
 
 		setHaloConfig( key, value ) {

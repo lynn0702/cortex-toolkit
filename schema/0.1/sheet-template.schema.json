@@ -1,0 +1,53 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://cortex.engard.me/schema/0.1/sheet-template.schema.json",
+	"title": "Cortex Prime sheet template",
+	"description": "A reusable sheet layout: same shape as a character entry ({ id (static), title, ..., character: {...} }). Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.",
+	"type" : "object",
+	"properties": {
+		"$schema": {
+			"description": "JSON schema URI for sheet-template.schema.json.",
+			"type": "string"
+		},
+		"id": {
+			"type": "string",
+			"description": "Static template identifier. Assigned once, never regenerated; imports replace the same id instead of duplicating."
+		},
+		"title": {
+			"type": "string",
+			"description": "Human-readable template title."
+		},
+		"subtitle": {
+			"type": "string"
+		},
+		"spotlight": {
+			"type": "string"
+		},
+		"variant": {
+			"type": "string"
+		},
+		"pages": {
+			"type": "integer"
+		},
+		"genre": {
+			"type": "string"
+		},
+		"description": {
+			"type": "string"
+		},
+		"version": {
+			"description": "Template format version.",
+			"type": "integer"
+		},
+		"updatedAt": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"character": {
+			"description": "Character-shaped blank carrying the layout (custom.cortexToolkit at sheet and set level) plus blank traits.",
+			"type": "object"
+		}
+	},
+	"required": [ "id", "character" ],
+	"additionalProperties": true
+}

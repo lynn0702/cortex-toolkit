@@ -26,7 +26,7 @@
 	
 	--page-width:    210mm;
 	--page-height:   297.1mm;
-	--page-margin:   1.9cm;
+	--page-margin:   10mm;
 	--header-size:   3rem;
 	// --sidebar-size:  6rem;
 	--sidebar-size:  0px;
@@ -72,8 +72,8 @@
 }
 
 @page {
-	size: A4;
-	margin: 0;
+	size: portrait;
+	margin: 8mm;
 }
 
 // GLOBAL
@@ -82,8 +82,9 @@ body,
 html {
 	font-size: 16px;
 	@media print {
-		width: var(--page-width);
-		height: var(--page-height);
+		width: 100% !important;
+		height: auto !important;
+		background: #ffffff !important;
 	}
 }
 
@@ -110,6 +111,59 @@ body {
 	font-style: normal;
 	position: relative;
 	color: var(--color-primary);
+}
+
+// DIE FACE BACKING
+//
+// The cortex-icons die glyphs are a solid shape with the numerals cut out, so
+// sitting on top of a portrait / ring the numerals would show whatever is
+// behind them. A white :before backing fills those cut-outs.
+//
+// The backing must NEVER be visible outside the die outline. Previously it was
+// sized in mm and nudged to "top: 52%", which ignored where the font actually
+// draws the glyph (≈0.15em below the line-box centre), so white slivers poked
+// out around every die and clipped the halo ring.
+//
+// Instead, the backing covers only the bounding box of the numeral cut-outs,
+// in em (so it scales with any font-size), positioned from the real glyph
+// geometry. That box sits fully inside the solid die outline, so it can only
+// ever show through the numerals themselves.
+//
+// Geometry measured from fonts/cortex-icons.woff (unitsPerEm 1024,
+// ascent 960 / descent 64). Values: die, dx, dy, width, height — offsets are
+// from the centre of the glyph's line box (line-height: 1). If the icon font
+// is ever regenerated, re-measure these.
+$die-backings:
+	4   -0.0161em  0.0747em  0.2607em  0.3564em,
+	6    0.0010em  0.1680em  0.2891em  0.4297em,
+	8   -0.0078em  0.1504em  0.2852em  0.4336em,
+	10  -0.0313em  0.1563em  0.5293em  0.4336em,
+	12  -0.0181em  0.1504em  0.5322em  0.4414em;
+
+// Apply to a `.c` element whose box is centred on its glyph's line box
+// (e.g. display:block + line-height:1, or a flex box centring the text).
+@mixin die-backing {
+	&:before {
+		position: absolute;
+		content: " ";
+		background: white;
+		z-index: -1;
+		pointer-events: none;
+		// Default (no die-N class) matches the d8 glyph
+		left: calc(50% + -0.0078em);
+		top: calc(50% + 0.1504em);
+		width: 0.2852em;
+		height: 0.4336em;
+		transform: translate(-50%, -50%);
+	}
+	@each $die, $dx, $dy, $w, $h in $die-backings {
+		&.die-#{$die}:before {
+			left: calc(50% + #{$dx});
+			top: calc(50% + #{$dy});
+			width: $w;
+			height: $h;
+		}
+	}
 }
 
 // PLOT POINTS

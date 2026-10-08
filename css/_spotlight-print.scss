@@ -123,8 +123,22 @@
 	max-width: 100%;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
+	gap: 0.5rem;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+// Designer Print View mirrors the printed page: no on-sheet edit buttons
+// (+ Trait, + Attribute, Scale Die, etc.) — you can't click paper.
+.character-sheet.designer-print-preview,
+.character-sheet.submode-print {
+	.preview-button-container,
+	.spotlight-add-set-bar,
+	.spotlight-add-portrait-link,
+	.btn-spotlight-add,
+	.btn-remove-header-portrait {
+		display: none !important;
+	}
 }
 
 // MULTI-PAGE & PRINT LAYOUT
@@ -419,15 +433,44 @@
 			position: relative;
 			cursor: pointer;
 			box-sizing: border-box;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+
+			&.has-image {
+				background: transparent;
+				border: none;
+			}
 
 			.portrait-small-image {
 				width: 100%;
 				height: 100%;
 				min-height: 100px;
 				max-height: 130px;
+				object-fit: contain;
+				display: block;
 				background-size: contain;
 				background-repeat: no-repeat;
 				background-position: center;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+
+				&.portrait-alignment-top-center,
+				&.portrait-alignment-top-left,
+				&.portrait-alignment-top-right {
+					object-position: top center;
+				}
+
+				&.portrait-alignment-center,
+				&.portrait-alignment-center-left,
+				&.portrait-alignment-center-right {
+					object-position: center center;
+				}
+
+				&.portrait-alignment-bottom-center,
+				&.portrait-alignment-bottom-left,
+				&.portrait-alignment-bottom-right {
+					object-position: bottom center;
+				}
 			}
 
 			.portrait-small-placeholder {
@@ -438,6 +481,10 @@
 				padding: 0.25rem;
 				text-align: center;
 				color: #94a3b8;
+				width: 100%;
+				height: 100%;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
 
 				.spotlight-game-tag {
 					font-size: 0.65rem;
@@ -446,6 +493,8 @@
 					color: #f8fafc;
 					letter-spacing: 0.05em;
 					line-height: 1.1;
+					-webkit-print-color-adjust: exact;
+					print-color-adjust: exact;
 				}
 
 				.spotlight-logo-icon {
@@ -523,18 +572,47 @@
 		}
 	}
 
-	// COLUMNS IN SPOTLIGHT (FLEX COLUMNS WITH INDEPENDENT VERTICAL STACKING)
+	// COLUMNS IN SPOTLIGHT (GRID BANDS)
+	// BLOCK BUILDING: sets tile edge-to-edge like the source sheets — no
+	// gutters. Each band section is a grid: sets carry explicit placement
+	// (grid-row/column from the renderer) with per-band track shares, so a
+	// 66% set leaves ~33% for its mate. Shared 2px trait-set borders
+	// collapse into a single line via inline -2px overlaps on non-leading
+	// items; consecutive band sections collapse the same way.
 	.columns.spotlight-columns {
 		display: flex;
 		flex-direction: row;
-		gap: 0.85rem;
+		gap: 0;
 		align-items: flex-start;
 		width: 100%;
-		margin-bottom: 0.85rem;
+		margin-bottom: 0;
 
 		&.spotlight-full-width {
 			display: block;
 			width: 100%;
+		}
+
+		&.spotlight-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0;
+			align-items: stretch;
+			align-content: start;
+
+			&.columns-3 {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+
+			> .trait-set {
+				min-width: 0;
+				width: auto;
+				margin-bottom: 0;
+				break-inside: avoid;
+			}
+		}
+
+		& + .columns.spotlight-columns {
+			margin-top: -2px;
 		}
 
 		.spotlight-column {
@@ -542,7 +620,7 @@
 			min-width: 0;
 			display: flex;
 			flex-direction: column;
-			gap: 0.85rem;
+			gap: 0;
 			position: relative;
 			padding-top: 0 !important;
 			margin-top: 0 !important;
@@ -730,6 +808,140 @@
 					min-width: 0;
 					display: inline-flex;
 					align-items: baseline;
+				}
+			}
+
+			&.trait-title-statement {
+				align-items: center;
+				gap: 0.35rem;
+
+				.trait-name {
+					flex: 0 0 auto;
+					font-weight: 800;
+					letter-spacing: 0.05em;
+				}
+
+				.statement-pip {
+					display: inline-block;
+					width: 10px;
+					height: 10px;
+					min-width: 10px;
+					min-height: 10px;
+					border-radius: 50%;
+					border: 1.5px solid #000000;
+					background-color: #ffffff;
+					cursor: pointer;
+					user-select: none;
+					box-sizing: border-box;
+					flex-shrink: 0;
+					margin: 0 0.15rem;
+					transition: background-color 0.12s ease, transform 0.1s ease;
+					print-color-adjust: exact;
+					-webkit-print-color-adjust: exact;
+
+					&:hover {
+						transform: scale(1.2);
+					}
+
+					&.questioned {
+						background-color: #000000;
+					}
+				}
+
+				.trait-statement-box {
+					flex: 1 1 auto;
+					min-width: 0;
+					border: 1.5px solid #000000;
+					border-radius: 2px;
+					padding: 0.15rem 0.45rem;
+					font-size: 0.65rem;
+					line-height: 1.25;
+					color: #1e293b;
+					background: #ffffff;
+					min-height: 1.35rem;
+					display: flex;
+					align-items: center;
+					box-sizing: border-box;
+					text-transform: none;
+					font-weight: 400;
+					font-family: var(--font-primary);
+
+					.trait-statement-text {
+						overflow-wrap: break-word;
+						text-transform: none;
+						font-weight: 400;
+					}
+
+					.trait-statement-hint {
+						color: #94a3b8;
+						font-style: italic;
+					}
+				}
+			}
+
+			&.trait-title-stacked {
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				gap: 0.25rem;
+
+				.trait-name {
+					text-align: center;
+					width: 100%;
+					font-size: 0.75rem;
+					font-weight: 800;
+					letter-spacing: 0.05em;
+				}
+
+				.trait-value {
+					justify-content: center;
+					width: 100%;
+				}
+			}
+		}
+
+		.trait-asset-card {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			width: 100%;
+
+			.trait-value {
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+			}
+
+			.trait-asset-box {
+				border: 1.5px solid #000000;
+				border-radius: 2px;
+				padding: 0.35rem 0.5rem;
+				min-height: 2.3rem;
+				box-sizing: border-box;
+				background: #ffffff;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				.trait-asset-name {
+					font-weight: 800;
+					font-size: 0.72rem;
+					color: #0f172a;
+					line-height: 1.2;
+				}
+
+				.trait-asset-desc {
+					font-size: 0.62rem;
+					color: #334155;
+					line-height: 1.2;
+					margin-top: 0.1rem;
+				}
+
+				.trait-asset-hint {
+					font-size: 0.65rem;
+					color: #94a3b8;
+					font-style: italic;
 				}
 			}
 		}
@@ -999,6 +1211,243 @@
 				&:hover {
 					color: #0284c7;
 				}
+			}
+		}
+	}
+
+	// DISTINCTIONS BORDERED TITLE
+	.trait-set-style-distinctions {
+		.trait {
+			border-bottom: none;
+			margin-bottom: 0.45rem;
+			padding-bottom: 0;
+
+			.trait-title {
+				border: 1.5px solid #000000;
+				border-radius: 2px;
+				padding: 0.25rem 0.5rem;
+				background: #ffffff;
+				box-sizing: border-box;
+				min-height: 1.45rem;
+				align-items: center;
+
+				.trait-name {
+					font-weight: 800;
+					font-size: 0.72rem;
+					letter-spacing: 0.05em;
+					color: #000000;
+				}
+			}
+		}
+	}
+
+	// STANDING (CAMP BEWILDERWOOD)
+	.trait-standing {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+
+		.standing-row-wrap {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			width: 100%;
+
+			.standing-header-row {
+				display: flex;
+				align-items: stretch;
+				gap: 0.4rem;
+				width: 100%;
+
+				.standing-name-box {
+					border: 1.5px solid #000000;
+					border-radius: 2px;
+					padding: 0.2rem 0.45rem;
+					font-size: 0.72rem;
+					font-weight: 800;
+					text-transform: uppercase;
+					color: #0f172a;
+					background: #ffffff;
+					flex: 0 0 38%;
+					max-width: 38%;
+					min-height: 1.35rem;
+					display: flex;
+					align-items: center;
+					box-sizing: border-box;
+
+					.standing-placeholder-hint {
+						color: #94a3b8;
+						font-style: italic;
+					}
+					.standing-blank-line {
+						width: 100%;
+						border-bottom: 1px solid #000000;
+						height: 0.65rem;
+					}
+				}
+
+				.standing-statement-box {
+					border: 1.5px solid #000000;
+					border-radius: 2px;
+					padding: 0.2rem 0.45rem;
+					font-size: 0.65rem;
+					color: #1e293b;
+					background: #ffffff;
+					flex: 1 1 auto;
+					min-width: 0;
+					min-height: 1.35rem;
+					display: flex;
+					align-items: center;
+					box-sizing: border-box;
+					text-transform: none;
+					font-weight: 400;
+					font-family: var(--font-primary);
+
+					.standing-statement-text {
+						text-transform: none;
+						font-weight: 400;
+					}
+
+					.standing-placeholder-hint {
+						color: #94a3b8;
+						font-style: italic;
+					}
+					.standing-blank-line {
+						width: 100%;
+						border-bottom: 1px solid #000000;
+						height: 0.65rem;
+					}
+				}
+			}
+
+			.standing-dice-row {
+				display: flex;
+				align-items: flex-start;
+				justify-content: space-between;
+				gap: 0.2rem;
+				width: 100%;
+				box-sizing: border-box;
+
+				.standing-main-dice {
+					display: inline-flex;
+					align-items: center;
+					gap: 0.1rem;
+					flex-shrink: 0;
+					padding-top: 0.05rem;
+
+					svg {
+						width: 1.15rem !important;
+						height: 1.15rem !important;
+					}
+				}
+
+				.standing-sub-group {
+					display: flex;
+					flex-direction: column;
+					align-items: flex-end;
+					gap: 0.15rem;
+					font-size: 0.58rem;
+					font-weight: 800;
+					letter-spacing: 0.03em;
+					color: #000000;
+					white-space: nowrap;
+					flex-shrink: 0;
+
+					.standing-sub-row {
+						display: inline-flex;
+						align-items: center;
+						justify-content: flex-end;
+						gap: 0.2rem;
+						width: 100%;
+					}
+
+					.standing-sub-label {
+						text-transform: uppercase;
+						text-align: right;
+					}
+
+					.subtrait-value {
+						display: inline-flex;
+						align-items: center;
+						gap: 0.1rem;
+						flex-shrink: 0;
+
+						.c {
+							display: inline-flex;
+						}
+
+						svg {
+							width: 1.15rem !important;
+							height: 1.15rem !important;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// BADGES / CHECKLIST TABLE (CAMP BEWILDERWOOD)
+	.trait-badges-table {
+		border: 1.5px solid #000000;
+		border-radius: 2px;
+		background: #ffffff;
+
+		.badges-head {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			padding: 0.25rem 0.5rem;
+			border-bottom: 1.5px solid #000000;
+			font-family: var(--font-secondary);
+			font-weight: 900;
+			font-size: 0.75rem;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: #000000;
+		}
+
+		.badge-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.4rem;
+			padding: 0.2rem 0.45rem;
+			border-bottom: 1px solid #e2e8f0;
+
+			&:last-child {
+				border-bottom: none;
+			}
+
+			.badge-name {
+				flex: 1 1 auto;
+				font-size: 0.7rem;
+				font-weight: 700;
+				color: #0f172a;
+				min-width: 0;
+
+				&.badge-blank .trait-blank-line {
+					width: 100%;
+					border-bottom: 1px solid #000000;
+					height: 0.65rem;
+					display: block;
+				}
+			}
+
+			.badge-counter-box {
+				border: 1.5px solid #000000;
+				border-radius: 2px;
+				min-width: 1.5rem;
+				height: 1.35rem;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: 800;
+				font-size: 0.72rem;
+				color: #000000;
+				background: #ffffff;
+				box-sizing: border-box;
+				margin-left: 0.35rem;
+				flex-shrink: 0;
 			}
 		}
 	}
@@ -1288,8 +1737,32 @@
 
 // REAL MEDIA PRINT RULES
 @media print {
-	.print-toolbar {
+	.print-toolbar,
+	.edit-toolbar,
+	.session-nav,
+	.session-nav *,
+	.header,
+	.footer,
+	.footer-nav,
+	.nav-mode,
+	.designer-print-banner,
+	.preview-button-container,
+	.spotlight-add-set-bar,
+	.spotlight-add-portrait-link,
+	.btn-spotlight-add,
+	.btn-remove-header-portrait,
+	.spotlight-add-hint {
 		display: none !important;
+		height: 0 !important;
+		min-height: 0 !important;
+		max-height: 0 !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		border: none !important;
+		visibility: hidden !important;
+		overflow: hidden !important;
+		position: absolute !important;
+		top: -9999px !important;
 	}
 
 	body, html {
@@ -1298,35 +1771,110 @@
 		padding: 0 !important;
 		width: 100% !important;
 		height: auto !important;
+		min-height: 0 !important;
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+	}
+
+	.main {
+		padding: 0 !important;
+		margin: 0 !important;
+		top: 0 !important;
+		left: 0 !important;
+		min-height: 0 !important;
+		height: auto !important;
 	}
 
 	.character-sheet {
 		padding: 0 !important;
 		margin: 0 !important;
 		background: #ffffff !important;
+		width: 100% !important;
+		min-height: 0 !important;
+		height: auto !important;
+
+		.spotlight-header-portrait-box {
+			-webkit-print-color-adjust: exact !important;
+			print-color-adjust: exact !important;
+
+			&.has-image {
+				background: transparent !important;
+				border: none !important;
+			}
+
+			&:not(.has-image) {
+				border: 1.5px solid #000000 !important;
+				background: #ffffff !important;
+
+				.portrait-small-placeholder {
+					background: #ffffff !important;
+					color: #000000 !important;
+
+					.spotlight-game-tag {
+						color: #000000 !important;
+						font-weight: 900 !important;
+					}
+					.spotlight-logo-icon {
+						color: #000000 !important;
+					}
+				}
+			}
+
+			.portrait-small-image {
+				display: block !important;
+				width: 100% !important;
+				height: 100% !important;
+				max-height: 130px !important;
+				object-fit: contain !important;
+				-webkit-print-color-adjust: exact !important;
+				print-color-adjust: exact !important;
+			}
+		}
 
 		.pages {
 			width: 100% !important;
+			max-width: 100% !important;
 			margin: 0 !important;
 			padding: 0 !important;
 			gap: 0 !important;
 			border: none !important;
 			box-shadow: none !important;
+			height: auto !important;
+			overflow: visible !important;
 		}
 
 		.page {
 			width: 100% !important;
-			min-height: 100vh !important;
-			height: 100vh !important;
+			max-width: 100% !important;
+			height: auto !important;
+			min-height: 0 !important;
 			margin: 0 !important;
-			padding: var(--page-margin) !important;
+			padding: 0 !important;
 			border: none !important;
 			box-shadow: none !important;
 			border-radius: 0 !important;
-			page-break-after: always !important;
-			break-after: page !important;
+			overflow: visible !important;
+			position: relative !important;
 			page-break-inside: avoid !important;
 			break-inside: avoid !important;
+			box-sizing: border-box !important;
+
+			&:not(:last-child) {
+				page-break-after: always !important;
+				break-after: page !important;
+			}
+
+			&:last-child {
+				page-break-after: auto !important;
+				break-after: auto !important;
+			}
+		}
+
+		.page-inner {
+			width: 100% !important;
+			max-width: 100% !important;
+			margin: 0 !important;
+			padding: 0 !important;
 			box-sizing: border-box !important;
 		}
 	}

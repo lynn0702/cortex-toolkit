@@ -568,15 +568,34 @@ const Roster = {
 							candidates = data.characters;
 						} else if ( data && typeof data === 'object' && data.id ) {
 							candidates = [ data ];
+						} else if ( data && data.data && typeof data.data === 'object' ) {
+							// Upstream envelope (e.g. { version: 2, data: {...} }):
+							// sanitizeImportedCharacter unwraps + mints a fresh
+							// UUID when needed, so this imports as new.
+							candidates = Array.isArray( data.data ) ? data.data : [ data.data ];
+						}
+						if ( !candidates.length ) {
+							this.importError = 'No characters found in “' + file.name + '”.';
 						}
 						let added = 0;
+						let templatesAdded = 0;
 						candidates.forEach( char => {
+							// Standalone layout template files reuse the
+							// spotlight entry shape; they upsert by static id
+							// (replace, never duplicate) instead of importing
+							// as characters.
+							if ( cortexFunctions.isSheetTemplateFile( char ) ) {
+								this.$emit( 'importSheetTemplate', char );
+								templatesAdded++;
+								return;
+							}
 							const clean = cortexFunctions.sanitizeImportedCharacter( char );
 							if ( clean ) {
 								this.importQueue.push( clean );
 								added++;
 							}
 						} );
+						candidates = candidates.filter( c => !cortexFunctions.isSheetTemplateFile( c ) );
 						if ( added < candidates.length ) {
 							this.importError = 'Skipped ' + ( candidates.length - added ) + ' invalid entr' + ( ( candidates.length - added ) === 1 ? 'y' : 'ies' ) + ' in “' + file.name + '”.';
 						}

@@ -8,7 +8,7 @@ const DICE_PRESETS = [
 		numeralColor: '#000000',
 		borderColor: '#000000',
 		borderWidth: 1.7,
-		unfilledBackground: '#ffffff',
+		unfilledBackground: 'none',
 		unfilledNumeral: '#000000',
 		unfilledBorder: '#000000'
 	},
@@ -21,9 +21,9 @@ const DICE_PRESETS = [
 		numeralColor: '#ffffff',
 		borderColor: '#ffffff',
 		borderWidth: 1.7,
-		unfilledBackground: '#1e293b',
-		unfilledNumeral: '#94a3b8',
-		unfilledBorder: '#64748b'
+		unfilledBackground: 'none',
+		unfilledNumeral: '#334155',
+		unfilledBorder: '#334155'
 	},
 	{
 		name: 'Cyberpunk Neon',
@@ -35,8 +35,8 @@ const DICE_PRESETS = [
 		numeralColor: '#ffffff',
 		borderColor: '#06b6d4',
 		borderWidth: 2,
-		unfilledBackground: '#0f172a',
-		unfilledNumeral: '#38bdf8',
+		unfilledBackground: 'none',
+		unfilledNumeral: '#0284c7',
 		unfilledBorder: '#0284c7'
 	},
 	{
@@ -49,8 +49,8 @@ const DICE_PRESETS = [
 		numeralColor: '#ffffff',
 		borderColor: '#f59e0b',
 		borderWidth: 1.8,
-		unfilledBackground: '#451a03',
-		unfilledNumeral: '#fbbf24',
+		unfilledBackground: 'none',
+		unfilledNumeral: '#d97706',
 		unfilledBorder: '#d97706'
 	},
 	{
@@ -63,8 +63,8 @@ const DICE_PRESETS = [
 		numeralColor: '#ffffff',
 		borderColor: '#c084fc',
 		borderWidth: 1.8,
-		unfilledBackground: '#1e1b4b',
-		unfilledNumeral: '#a78bfa',
+		unfilledBackground: 'none',
+		unfilledNumeral: '#7c3aed',
 		unfilledBorder: '#7c3aed'
 	},
 	{
@@ -77,8 +77,8 @@ const DICE_PRESETS = [
 		numeralColor: '#ffffff',
 		borderColor: '#34d399',
 		borderWidth: 1.8,
-		unfilledBackground: '#064e3b',
-		unfilledNumeral: '#6ee7b7',
+		unfilledBackground: 'none',
+		unfilledNumeral: '#059669',
 		unfilledBorder: '#059669'
 	}
 ];
@@ -234,6 +234,32 @@ const NameEditor = {
 			}
 		},
 
+		// Per-page override: page 2 may run a different column grid.
+		// Null/0 = same as page 1.
+		columnsPage2: {
+			get() {
+				const v = Number( this.character?.custom?.cortexToolkit?.columnsPage2 );
+				return ( v === 2 || v === 3 ) ? v : 0;
+			},
+			set( count ) {
+				if ( !this.character ) return;
+				if ( !this.character.custom ) this.character.custom = {};
+				if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
+				if ( count === 2 || count === 3 ) this.character.custom.cortexToolkit.columnsPage2 = count;
+				else delete this.character.custom.cortexToolkit.columnsPage2;
+				this.$emit('updateCharacter', this.character);
+			}
+		},
+
+		// Static id of the sheet template this character's layout resolves
+		// against (values not set locally fall through to the template).
+		sheetTemplateId() {
+			const t = this.character?.sheet?.template;
+			if ( !t ) return '';
+			if ( typeof t === 'string' ) return t;
+			return t.id || '';
+		},
+
 		pageJustification: {
 			get() {
 				return this.character?.custom?.cortexToolkit?.pageJustification || 'top-base';
@@ -315,7 +341,7 @@ const NameEditor = {
 					numeralColor: '#000000',
 					borderColor: '#000000',
 					borderWidth: 1.7,
-					unfilledBackground: '#ffffff',
+					unfilledBackground: 'none',
 					unfilledNumeral: '#000000',
 					unfilledBorder: '#000000'
 				};
@@ -457,6 +483,24 @@ const NameEditor = {
 							</select>
 						</div>
 
+						<div class="editor-field">
+							<label>Layout Template</label>
+							<div style="font-size: 0.75rem; opacity: 0.85; margin-bottom: 0.4rem;">
+								<span v-if="sheetTemplateId">Resolves against <strong>{{ sheetTemplateId }}</strong> — values you haven't changed come from the template, keeping this file clean.</span>
+								<span v-else>Inline layout (no template) — everything is stored on this character.</span>
+							</div>
+							<div class="editor-button-container">
+								<div class="editor-button-container-inner">
+									<div class="editor-button" @click.stop="$emit('saveSheetTemplate')">
+										<span><i class="fas fa-bookmark"></i> Save Layout as Template</span>
+									</div>
+									<div class="editor-button" @click.stop="$emit('exportSheetTemplate')">
+										<span><i class="fas fa-download"></i> Export Layout File</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
 						<!-- WATERMARK CONFIGURATION -->
 						<div class="editor-field">
 							<label>Watermark Image</label>
@@ -550,6 +594,18 @@ const NameEditor = {
 								<option :value="2">2 Pages</option>
 							</select>
 						</div>
+
+						<div class="editor-field" v-if="pageCount > 1">
+							<label>Page 2 Columns</label>
+							<select v-model.number="columnsPage2">
+								<option :value="0">Same as page 1 ({{ columnCount }})</option>
+								<option :value="2">2 Columns</option>
+								<option :value="3">3 Columns</option>
+							</select>
+							<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem; display: block;">
+								Lets page 2 run a different grid — e.g. 2-column sheets with a 3-across power set page.
+							</span>
+						</div>
 					</template>
 
 					<!-- ================= TAB 3: THEME & FONTS ================= -->
@@ -634,12 +690,12 @@ const NameEditor = {
 					<!-- ================= TAB 4: VISUAL DICE EDITOR ================= -->
 					<template v-else-if="currentTab === 'dice'">
 						<!-- LIVE SVG PREVIEW OF ALL 5 DICE -->
-						<div class="editor-field" style="text-align: center; background: rgba(0,0,0,0.5); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
-							<label style="font-size: 0.75rem; color: #cbd5e1; margin-bottom: 0.4rem; display: block;">Live Dice Appearance Preview</label>
+						<div class="editor-field" style="text-align: center; background: #ffffff; padding: 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
+							<label style="font-size: 0.75rem; color: #1e293b; margin-bottom: 0.4rem; display: block; font-weight: 700;">Live Dice Appearance Preview</label>
 							<div style="display: flex; justify-content: center; gap: 0.6rem; align-items: center; margin-bottom: 0.5rem;">
 								<span v-for="d in [4, 6, 8, 10, 12]" :key="'filled-' + d" v-html="renderDicePreview(d, true)" :title="'d' + d + ' (Active / Filled)'"></span>
 							</div>
-							<div style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.2rem;">Unfilled / Reserved Slots Preview:</div>
+							<div style="font-size: 0.68rem; color: #64748b; margin-top: 0.2rem; font-weight: 600;">Unfilled / Reserved Slots Preview:</div>
 							<div style="display: flex; justify-content: center; gap: 0.6rem; align-items: center; margin-top: 0.3rem;">
 								<span v-for="d in [4, 6, 8, 10, 12]" :key="'unfilled-' + d" v-html="renderDicePreview(d, false)" :title="'d' + d + ' (Unfilled / Inactive)'"></span>
 							</div>
@@ -922,7 +978,7 @@ const NameEditor = {
 				numeralColor: '#000000',
 				borderColor: '#000000',
 				borderWidth: 1.7,
-				unfilledBackground: '#ffffff',
+				unfilledBackground: 'none',
 				unfilledNumeral: '#000000',
 				unfilledBorder: '#000000'
 			};

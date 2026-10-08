@@ -41,6 +41,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Core alien background, job, and personality",
           "nounSingular": "Distinction",
@@ -110,6 +111,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "values",
           "name": "Values",
           "description": "Alien worldview versus human conditioning",
           "nounSingular": "Value",
@@ -212,6 +214,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Core baseline d6 skills with branching d8+ specialties",
           "nounSingular": "Skills & Specialtie",
@@ -314,6 +317,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "talents",
           "name": "Talents",
           "description": "Specialized alien abilities and tech modules",
           "nounSingular": "Talent",
@@ -356,6 +360,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets-tech",
           "name": "Signature Assets / Tech",
           "description": "Alien equipment and concealed devices",
           "nounSingular": "Signature Assets / Tech",
@@ -418,6 +423,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "relationships",
           "name": "Relationships",
           "description": "Connections to human contacts, superiors, and rivals",
           "nounSingular": "Relationship",
@@ -480,6 +486,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "session-record",
           "name": "Session Record",
           "description": "Session track and progression log",
           "nounSingular": "Milestone",
@@ -557,7 +564,7 @@ const cortexSpotlightTemplates = [
           "columns": 2,
           "watermark": {
             "enabled": true,
-            "url": "images/brighter_stars_logo.png",
+            "url": "images/cortex_prime_logo_light_transparent.png",
             "opacity": 0.08,
             "scale": 70,
             "page": "all"
@@ -572,6 +579,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Crew role, quality, and personal drive",
           "nounSingular": "Distinction",
@@ -636,6 +644,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "values",
           "name": "Values",
           "description": "Guiding philosophies paired with personal statements",
           "nounSingular": "Value",
@@ -718,6 +727,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "relationships",
           "name": "Relationships",
           "description": "Crew connections and ties to shipmates",
           "nounSingular": "Relationship",
@@ -780,6 +790,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Specialized starship equipment and personal gear",
           "nounSingular": "Signature Asset",
@@ -832,6 +843,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "milestones",
           "name": "Milestones",
           "description": "",
           "nounSingular": "Milestone",
@@ -863,6 +875,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "xp",
           "name": "XP",
           "description": "Experience points bubble track",
           "nounSingular": "XP",
@@ -937,7 +950,7 @@ const cortexSpotlightTemplates = [
           "columns": 2,
           "watermark": {
             "enabled": true,
-            "url": "images/camp_bewilderwood_logo.png",
+            "url": "images/cortex_prime_logo_light_transparent.png",
             "opacity": 0.08,
             "scale": 70,
             "page": "all"
@@ -952,38 +965,58 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Camp background, camper reputation, and hidden destiny",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
+          "ratingPosition": "inline",
           "traits": [
             {
-              "name": "Heritage:",
-              "value": 0,
+              "name": "HERITAGE:",
+              "value": 8,
               "dice": [],
               "description": "",
+              "statement": "",
               "traits": [],
-              "sfx": [],
+              "sfx": [
+                {
+                  "name": "Heritage",
+                  "description": "Spend a PP to step up an attribute when you connect to your heritage."
+                }
+              ],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Reputation:",
-              "value": 0,
+              "name": "DESTINY:",
+              "value": 8,
               "dice": [],
               "description": "",
+              "statement": "",
               "traits": [],
-              "sfx": [],
+              "sfx": [
+                {
+                  "name": "Destiny",
+                  "description": "Spend a PP to reroll your dice when you embrace your destiny."
+                }
+              ],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Destiny:",
-              "value": 0,
+              "name": "CAMP REPUTATION:",
+              "value": 8,
               "dice": [],
               "description": "",
+              "statement": "",
               "traits": [],
-              "sfx": [],
+              "sfx": [
+                {
+                  "name": "Camp Reputation",
+                  "description": "Spend a PP to create a d8 asset linked to the thing you're known for."
+                }
+              ],
               "tags": [],
               "custom": {}
             }
@@ -1003,8 +1036,9 @@ const cortexSpotlightTemplates = [
                 "header": "distinctions",
                 "body": "distinctions"
               },
+              "ratingPosition": "inline",
               "sharedHinder": true,
-              "sharedHinderText": "Gain a PP when you trade out your distinction's ⬡8 rating for a ▽4.",
+              "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
               "multiDie": false,
               "stressConfig": {
                 "includeD4": false,
@@ -1016,56 +1050,70 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "values",
           "name": "Values",
           "description": "Camper ideals and loyalties",
           "nounSingular": "Value",
           "nounPlural": "Values",
+          "statement": true,
+          "hasQuestionedPip": true,
+          "ratingPosition": "inline",
           "traits": [
             {
-              "name": "Adventure",
+              "name": "Bravery",
               "value": 0,
               "dice": [],
-              "description": "",
+              "statement": "I'll try anything once.",
+              "description": "I'll try anything once.",
+              "questioned": false,
               "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Harmony",
+              "name": "Community",
               "value": 0,
               "dice": [],
-              "description": "",
+              "statement": "Your issue isn't my problem.",
+              "description": "Your issue isn't my problem.",
+              "questioned": false,
               "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Loyalty",
+              "name": "Curiosity",
               "value": 0,
               "dice": [],
-              "description": "",
+              "statement": "I'm not afraid to look!",
+              "description": "I'm not afraid to look!",
+              "questioned": false,
               "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Mystery",
+              "name": "Friendship",
               "value": 0,
               "dice": [],
-              "description": "",
+              "statement": "No friend left behind?",
+              "description": "No friend left behind?",
+              "questioned": false,
               "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Wonder",
+              "name": "Mischief",
               "value": 0,
               "dice": [],
-              "description": "",
+              "statement": "What's the point if you aren't having fun?",
+              "description": "What's the point if you aren't having fun?",
+              "questioned": false,
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -1087,6 +1135,16 @@ const cortexSpotlightTemplates = [
                 "header": "default",
                 "body": "default"
               },
+              "statement": true,
+              "hasQuestionedPip": true,
+              "ratingPosition": "inline",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
               "multiDie": false,
               "stressConfig": {
                 "includeD4": false,
@@ -1098,13 +1156,329 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "standing",
+          "name": "Standing",
+          "description": "Camp social standing with complication and bonus dice",
+          "nounSingular": "Standing",
+          "nounPlural": "Standings",
+          "statement": true,
+          "ratingPosition": "inline",
+          "traits": [
+            {
+              "name": "Camp Director",
+              "value": 0,
+              "dice": [],
+              "statement": "Nothing gets by him.",
+              "description": "Nothing gets by him.",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Cool Kids",
+              "value": 0,
+              "dice": [],
+              "statement": "Who defines 'cool' anyway?",
+              "description": "Who defines 'cool' anyway?",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Counselors",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Jocks",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Nature Nerds",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Staff",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": true
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "standing"
+              },
+              "ratingPosition": "inline",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "subtraitRatingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 6
+            }
+          }
+        },
+        {
+          "id": "signature-assets",
+          "name": "Signature Assets",
+          "description": "Treasured camper keepsakes and scavenged relics",
+          "nounSingular": "Signature Asset",
+          "nounPlural": "Signature Assets",
+          "ratingPosition": "above",
+          "traits": [
+            {
+              "name": "Grampa's Trusty Multitool",
+              "value": 0,
+              "dice": [],
+              "statement": "(with spork attachment)",
+              "description": "(with spork attachment)",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "ratingPosition": "above",
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "attributes",
           "name": "Attributes",
           "description": "Core camper capability ratings",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
+          "ratingPosition": "below",
           "traits": [
             {
-              "name": "Bravery",
+              "name": "Mental",
               "value": 0,
               "dice": [],
               "description": "",
@@ -1114,7 +1488,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Mischief",
+              "name": "Physical",
               "value": 0,
               "dice": [],
               "description": "",
@@ -1124,17 +1498,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Heart",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Smarts",
+              "name": "Social",
               "value": 0,
               "dice": [],
               "description": "",
@@ -1159,240 +1523,32 @@ const cortexSpotlightTemplates = [
                 "header": "default",
                 "body": "default"
               },
+              "ratingPosition": "below",
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
               "multiDie": false,
               "stressConfig": {
                 "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 4,
+              "reservedSlots": 3,
               "attributesRing": false
             }
           }
         },
         {
-          "name": "Standing",
-          "description": "Camp social standing with complication and bonus dice",
-          "nounSingular": "Standing",
-          "nounPlural": "Standings",
-          "traits": [
-            {
-              "name": "Camp Director",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Cool Kids",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Counselors",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Jocks",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Nature Nerds",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Staff",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": false,
-                "sfx": false,
-                "subtraits": true
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "standing"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 6
-            }
-          }
-        },
-        {
+          "id": "badges",
           "name": "Badges",
           "description": "Merit badges earned at camp",
           "nounSingular": "Badge",
           "nounPlural": "Badges",
+          "hasCounterColumn": true,
+          "counterLabel": "XP",
           "traits": [
             {
               "name": "Investigation",
@@ -1570,6 +1726,14 @@ const cortexSpotlightTemplates = [
                 "header": "default",
                 "body": "badges-table"
               },
+              "hasCounterColumn": true,
+              "counterLabel": "XP",
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
               "multiDie": false,
               "stressConfig": {
                 "includeD4": false,
@@ -1580,79 +1744,20 @@ const cortexSpotlightTemplates = [
             }
           }
         },
-
         {
-          "name": "Signature Assets",
-          "description": "Treasured camper keepsakes and scavenged relics",
-          "nounSingular": "Signature Asset",
-          "nounPlural": "Signature Assets",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 2
-            }
-          }
-        },
-        {
+          "id": "talents",
           "name": "Talents",
           "description": "Camper knacks and signature tricks",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
           "traits": [
             {
-              "name": "Look, A Clue!",
+              "name": "",
               "value": 0,
               "dice": [],
-              "description": "When searching for information in a test...",
+              "description": "",
               "traits": [],
-              "sfx": [
-                {
-                  "name": "",
-                  "description": "Gain a d8 asset, even on a failure. Counts as a second asset on a success.",
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
@@ -1693,8 +1798,7 @@ const cortexSpotlightTemplates = [
               "columnSpan": "full"
             }
           }
-        },
-
+        }
       ],
       "player": "",
       "portrait": {
@@ -1740,7 +1844,7 @@ const cortexSpotlightTemplates = [
           "hasNickname": true,
           "watermark": {
             "enabled": true,
-            "url": "images/cosa_nostra_logo.png",
+            "url": "images/cortex_prime_logo_light_transparent.png",
             "opacity": 0.08,
             "scale": 70,
             "page": "all"
@@ -1755,6 +1859,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
           "nounSingular": "Distinction",
@@ -1842,6 +1947,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "resources",
           "name": "Resources",
           "description": "Syndicate operational pools and assets",
           "nounSingular": "Resource",
@@ -1904,6 +2010,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "drives",
           "name": "Drives",
           "description": "Gain a PP when you use a drive rated at ▽4.",
           "nounSingular": "Drive",
@@ -1986,6 +2093,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Personal weapons, vehicles, and syndicate perks",
           "nounSingular": "Signature Asset",
@@ -2038,6 +2146,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "roles-specialties",
           "name": "Roles & Specialties",
           "description": "Syndicate roles with specialized criminal expertise",
           "nounSingular": "Roles & Specialtie",
@@ -2120,6 +2229,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "session-record",
           "name": "Session Record",
           "description": "Session tracking and milestone progression",
           "nounSingular": "Milestone",
@@ -2150,6 +2260,1467 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 20
+            }
+          }
+        }
+      ],
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "spotlight-eidolon-alpha",
+    "title": "Eidolon Alpha",
+    "subtitle": "Mythic Summoners & Living Eidolons",
+    "spotlight": "Eidolon Alpha",
+    "variant": "Character File",
+    "pages": 1,
+    "genre": "Fantasy / Summoning / Mythic",
+    "description": "Vessels of ancient endarchs who manifest living eidolons. Features Roles (Warrior, Priest, Scout, Other), Attributes with Highlight and Stress (Courage, Grace, Guile, Reason, Vigor), Endarch, Role and Freeform Distinctions with Hinder, Endarch SFX with the Summon rite, a Summoned Eidolon power block, and an XP track.",
+    "character": {
+      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
+      "version": "0.1",
+      "id": "template-spotlight-eidolon-alpha",
+      "isTemplate": true,
+      "name": "",
+      "game": "Eidolon Alpha",
+      "description": "",
+      "pronouns": "",
+      "plotPoints": 1,
+      "notes": "",
+      "custom": {
+        "cortexToolkit": {
+          "pageCount": 1,
+          "spotlight": "Eidolon Alpha",
+          "style": {
+            "hasAttributes": false
+          },
+          "sheetStyle": "spotlight",
+          "columns": 2,
+          "columnAlignment": "top-base",
+          "columnOffsets": {
+            "left": 0,
+            "center": 0,
+            "right": 0
+          }
+        }
+      },
+      "traitSets": [
+        {
+          "id": "roles",
+          "name": "Roles",
+          "description": "Prime vocations and endarch callings",
+          "nounSingular": "Role",
+          "nounPlural": "Roles",
+          "traits": [
+            {
+              "name": "Warrior",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Priest",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Scout",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Other",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 4
+            }
+          }
+        },
+        {
+          "id": "attributes",
+          "name": "Attributes",
+          "description": "Elemental selfhood with highlight circles and stress",
+          "nounSingular": "Attribute",
+          "nounPlural": "Attributes",
+          "traits": [
+            {
+              "name": "Courage",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Grace",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Guile",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Reason",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Vigor",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "HIGHLIGHT: Check one Highlight circle per Attribute.\nSTRESS per Attribute: [4] [6] [8] [10] [12] + OUT",
+              "reservedSlots": 5,
+              "attributesRing": false
+            }
+          }
+        },
+        {
+          "id": "role-freeform-distinctions",
+          "name": "Role & Freeform Distinctions",
+          "description": "Chosen calling and personal definition",
+          "nounSingular": "Role & Freeform Distinction",
+          "nounPlural": "Role & Freeform Distinctions",
+          "traits": [
+            {
+              "name": "Role Distinction:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Freeform Distinction:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "Hinder: Gain a PP when you switch out this distinction’s d8 rating for a d4.",
+              "reservedSlots": 2
+            }
+          }
+        },
+        {
+          "id": "endarch-distinction",
+          "name": "Endarch Distinction",
+          "description": "Ancestral endarch patron and its three bound powers",
+          "nounSingular": "Endarch Distinction",
+          "nounPlural": "Endarch Distinctions",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [
+                {
+                  "name": "Power 1",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Power 2",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Power 3",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": true
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "Hinder: Gain a PP when you switch out your endarch distinction’s rating of d8 for a d4.",
+              "reservedSlots": 1
+            }
+          }
+        },
+        {
+          "id": "endarch-sfx",
+          "name": "Endarch SFX",
+          "description": "Endarch triggers, the summoning rite, and custom SFX",
+          "nounSingular": "Endarch SFX",
+          "nounPlural": "Endarch SFXs",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "HINDER: Gain a PP when you switch out your endarch distinction’s rating of d8 for a d4.\nSUMMON: Shut down this endarch distinction to summon your Eidolon on your next turn.",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "summoned-eidolon",
+          "name": "Summoned Eidolon",
+          "description": "Manifested eidolon form: base trait, scale, powers, highlights",
+          "nounSingular": "Summoned Eidolon",
+          "nounPlural": "Summoned Eidolons",
+          "traits": [
+            {
+              "name": "Eidolon Power 1",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Eidolon Power 2",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Eidolon Power 3",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Highlight Attribute 1",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Highlight Attribute 2",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "BASE TRAIT: d10 d10 or d4 d4 • SCALE: d8\nPOWERS start at d12 • HIGHLIGHT ATTRIBUTES start at d12",
+              "reservedSlots": 5
+            }
+          }
+        },
+        {
+          "id": "xp",
+          "name": "XP",
+          "description": "Experience points bubble track",
+          "nounSingular": "XP",
+          "nounPlural": "XP",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "pips"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 0,
+              "pips": {
+                "count": 18,
+                "perRow": 6,
+                "connected": true,
+                "filled": 0
+              }
+            }
+          }
+        }
+      ],
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "spotlight-hammerheads-character",
+    "title": "Hammerheads",
+    "subtitle": "Disaster Response & Rescue Pilots",
+    "spotlight": "Hammerheads",
+    "variant": "Character File",
+    "pages": 2,
+    "genre": "Action / Rescue / Drama",
+    "description": "Hammerhead rescue pilots who run toward the crisis. Features Attributes with Stress (Physical, Mental, Social), 14 Training Packages, three Distinctions with Hinder and crisis-pool SFX, seven Relationships, an XP track, and page 2 Crisis Pools. Pair with the Hammerheads Vehicle File template.",
+    "character": {
+      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
+      "version": "0.1",
+      "id": "template-spotlight-hammerheads-character",
+      "isTemplate": true,
+      "name": "",
+      "game": "Hammerheads",
+      "description": "",
+      "pronouns": "",
+      "plotPoints": 1,
+      "notes": "",
+      "custom": {
+        "cortexToolkit": {
+          "pageCount": 2,
+          "spotlight": "Hammerheads",
+          "style": {
+            "hasAttributes": false
+          },
+          "sheetStyle": "spotlight",
+          "columns": 2,
+          "columnAlignment": "top-base",
+          "columnOffsets": {
+            "left": 0,
+            "center": 0,
+            "right": 0
+          }
+        }
+      },
+      "traitSets": [
+        {
+          "id": "attributes",
+          "name": "Attributes",
+          "description": "Body, mind, and presence under pressure",
+          "nounSingular": "Attribute",
+          "nounPlural": "Attributes",
+          "traits": [
+            {
+              "name": "Physical",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Mental",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Social",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "STRESS per Attribute: [4] [6] [8] [10] [12]",
+              "reservedSlots": 3,
+              "attributesRing": false
+            }
+          }
+        },
+        {
+          "id": "training-packages",
+          "name": "Training Packages",
+          "description": "Rescue disciplines and vehicle qualifications",
+          "nounSingular": "Training Package",
+          "nounPlural": "Training Packages",
+          "traits": [
+            {
+              "name": "Crowd Control",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Emergency Medical",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Firefighting",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Hammerhead Pilot",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "HAZMAT",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "High-Altitude Recovery",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Legal Specialist",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Logistics",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Marine Recovery",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Network Specialist",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Mechanic",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Tactical Response",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Technical Analyst",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Urban Recovery",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 14
+            }
+          }
+        },
+        {
+          "id": "distinctions",
+          "name": "Distinctions",
+          "description": "Origin, true nature, and defining quirk",
+          "nounSingular": "Distinction",
+          "nounPlural": "Distinctions",
+          "traits": [
+            {
+              "name": "Your Life Before:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Your Approach/Attitude:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Your Quirk/Quality:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "HINDER (each): Gain a PP when you switch out your distinction’s rating of d8 for a d4.\nLIFE BEFORE: Spend a PP to step up an attribute when you connect to your old life. / Add d6 to the crisis pool to double your attribute die when you connect to your old life.\nTRUE NATURE: Spend a PP to reroll your dice when you align with your true nature. / Add d6 to the crisis pool to step up your training package die when you align with your true nature.\nQUIRK: Spend a PP to double your relationship die when your assistance embraces your quirk or quality. / Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "relationships",
+          "name": "Relationships",
+          "description": "Crew bonds, debts, and troublemakers",
+          "nounSingular": "Relationship",
+          "nounPlural": "Relationships",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "saved my life",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "owes me big",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "is a troublemaker",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "knows their stuff",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "is a liability",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "is dependable",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "is good for a laugh",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 7
+            }
+          }
+        },
+        {
+          "id": "xp",
+          "name": "XP",
+          "description": "Experience points bubble track",
+          "nounSingular": "XP",
+          "nounPlural": "XP",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "pips"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 0,
+              "pips": {
+                "count": 15,
+                "perRow": 5,
+                "connected": true,
+                "filled": 0
+              }
+            }
+          }
+        },
+        {
+          "id": "crisis-pools",
+          "name": "Crisis Pools",
+          "description": "Threat clocks and escalating disaster pools",
+          "nounSingular": "Crisis Pool",
+          "nounPlural": "Crisis Pools",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "Write the name of the crisis pool in each quadrant, then write the number for its initial die rating above the appropriate dice icons. Place the dice for each crisis pool in the large blank area.\nINITIAL RATING: [6] [8] [10] [12]",
+              "reservedSlots": 4
+            }
+          }
+        }
+      ],
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "spotlight-hammerheads-vehicle",
+    "title": "Hammerheads - Vehicle File",
+    "subtitle": "Rescue Craft & Fleet Support",
+    "spotlight": "Hammerheads",
+    "variant": "Vehicle File",
+    "pages": 1,
+    "genre": "Action / Rescue / Vehicles",
+    "description": "The three Hammerhead rescue craft and their fleet support web. Features Hammerhead Attributes (Systems/Engines/Frame for Hammerheads One, Two, and Three with fixed starting ratings), three Vehicle Distinctions with shared Hinder, and six multi-die Resource Pools (Unassigned, Tactical, Medical, IT/Network, Food/Shelter, Land/Sea/Air).",
+    "character": {
+      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
+      "version": "0.1",
+      "id": "template-spotlight-hammerheads-vehicle",
+      "isTemplate": true,
+      "name": "",
+      "game": "Hammerheads",
+      "description": "",
+      "pronouns": "",
+      "plotPoints": 1,
+      "notes": "",
+      "custom": {
+        "cortexToolkit": {
+          "pageCount": 1,
+          "spotlight": "Hammerheads",
+          "style": {
+            "hasAttributes": false
+          },
+          "sheetStyle": "spotlight",
+          "columns": 2,
+          "columnAlignment": "top-base",
+          "columnOffsets": {
+            "left": 0,
+            "center": 0,
+            "right": 0
+          }
+        }
+      },
+      "traitSets": [
+        {
+          "id": "hammerhead-attributes",
+          "name": "Hammerhead Attributes",
+          "description": "Rescue craft airframes, systems, and handling",
+          "nounSingular": "Hammerhead Attribute",
+          "nounPlural": "Hammerhead Attributes",
+          "traits": [
+            {
+              "name": "Hammerhead One",
+              "value": 0,
+              "dice": [],
+              "description": "More agile, possesses more precise sensors and instruments.",
+              "traits": [
+                {
+                  "name": "Systems",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Engines",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Frame",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Hammerhead Two",
+              "value": 0,
+              "dice": [],
+              "description": "Faster, more power and range.",
+              "traits": [
+                {
+                  "name": "Systems",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Engines",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Frame",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Hammerhead Three",
+              "value": 0,
+              "dice": [],
+              "description": "Bigger, tougher, and more rugged.",
+              "traits": [
+                {
+                  "name": "Systems",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Engines",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Frame",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": true
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "STARTING RATINGS — One: Systems d10, Engines d8, Frame d8 • Two: Systems d8, Engines d10, Frame d8 • Three: Systems d8, Engines d8, Frame d10",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "vehicle-distinctions",
+          "name": "Vehicle Distinctions",
+          "description": "Factory blessings and fleet reputation",
+          "nounSingular": "Vehicle Distinction",
+          "nounPlural": "Vehicle Distinctions",
+          "traits": [
+            {
+              "name": "Resource Support Vehicle",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Top of the Line",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Broad-Spectrum Sensors",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3,
+              "sharedHinder": true,
+              "sharedHinderText": "Gain a PP when you trade out your distinction’s ⬡ 8 rating for a ▽ 4."
+            }
+          }
+        },
+        {
+          "id": "resource-pools",
+          "name": "Resource Pools",
+          "description": "Staged supplies, support teams, and fleet backup",
+          "nounSingular": "Resource Pool",
+          "nounPlural": "Resource Pools",
+          "traits": [
+            {
+              "name": "Unassigned Resources",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Tactical Support",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Medical Supplies",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "IT/Network Support",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Food/Shelter",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Land/Sea/Air Support",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "resources-count"
+              },
+              "multiDie": true,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "STARTING DICE (all d6): Unassigned x7 • Tactical x4 • Medical x4 • IT/Network x4 • Food/Shelter x4 • Land/Sea/Air x4",
+              "reservedSlots": 6
             }
           }
         }
@@ -2205,6 +3776,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "attributes",
           "name": "Attributes",
           "description": "Core capabilities coupled with dynastic stress tracks",
           "nounSingular": "Attribute",
@@ -2268,6 +3840,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Bloodline heritage, archetype, and personal stance",
           "nounSingular": "Distinction",
@@ -2336,6 +3909,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "inherited-abilities",
           "name": "Inherited Abilities",
           "description": "Powers granted by bloodline and relics",
           "nounSingular": "Inherited Abilitie",
@@ -2398,6 +3972,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills",
           "name": "Skills",
           "description": "Training and mundane competencies",
           "nounSingular": "Skill",
@@ -2500,6 +4075,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "heirlooms-milestones",
           "name": "Heirlooms & Milestones",
           "description": "Ancestral artifacts and legacy milestones",
           "nounSingular": "Heirlooms & Milestone",
@@ -2593,6 +4169,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "first-five-branches",
           "name": "First Five Branches",
           "description": "Core genealogical branches and direct ancestral forebears",
           "nounSingular": "First Five Branche",
@@ -2675,6 +4252,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "wild-card-branches",
           "name": "Wild Card Branches",
           "description": "Distant relatives, rogues, and unexpected prodigies",
           "nounSingular": "Wild Card Branche",
@@ -2727,6 +4305,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "generational-gmc-roster",
           "name": "Generational GMC Roster",
           "description": "Key GMC relatives categorized by generation",
           "nounSingular": "Generational GMC Roster",
@@ -2840,6 +4419,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "affiliations",
           "name": "Affiliations",
           "description": "Operating mode ratings",
           "nounSingular": "Affiliation",
@@ -2902,6 +4482,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Origin, motivation, and crime-fighting persona",
           "nounSingular": "Distinction",
@@ -2970,6 +4551,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "power-set",
           "name": "Power Set",
           "description": "Modular powers, SFX triggers, and shutdown limits",
           "nounSingular": "Power Set",
@@ -3032,6 +4614,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "specialties",
           "name": "Specialties",
           "description": "Master and expert professional skills",
           "nounSingular": "Specialtie",
@@ -3094,6 +4677,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Heroic gear and vehicles",
           "nounSingular": "Signature Asset",
@@ -3187,6 +4771,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "team-distinctions",
           "name": "Team Distinctions",
           "description": "Alliance motto, reputation, and public mandate",
           "nounSingular": "Team Distinction",
@@ -3255,6 +4840,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "headquarters-resources",
           "name": "Headquarters Resources",
           "description": "Bases, communications, and logistical assets",
           "nounSingular": "Headquarters Resource",
@@ -3327,6 +4913,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "active-roster-notes",
           "name": "Active Roster & Notes",
           "description": "Member status and priority alert codes",
           "nounSingular": "Active Roster & Note",
@@ -3409,6 +4996,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Coastal heritage, town role, and personal quirk",
           "nounSingular": "Distinction",
@@ -3477,6 +5065,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "emotional-attributes-stress",
           "name": "Emotional Attributes & Stress",
           "description": "Core emotional drives with corresponding stress tracks",
           "nounSingular": "Emotional Attributes & Stres",
@@ -3560,6 +5149,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "town-relationships",
           "name": "Town Relationships",
           "description": "Bonds and rivalries with local residents",
           "nounSingular": "Town Relationship",
@@ -3622,6 +5212,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets-curios",
           "name": "Signature Assets & Curios",
           "description": "Heirlooms and keepsakes from the misty coast",
           "nounSingular": "Signature Assets & Curio",
@@ -3725,6 +5316,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Occult lineage, taboo practice, and philosophical motivation",
           "nounSingular": "Distinction",
@@ -3793,6 +5385,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "affiliations",
           "name": "Affiliations",
           "description": "Operating configuration dice",
           "nounSingular": "Affiliation",
@@ -3855,6 +5448,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "roles-specialties",
           "name": "Roles & Specialties",
           "description": "Dark magical callings and practices",
           "nounSingular": "Roles & Specialtie",
@@ -3937,6 +5531,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "necromantic-arts",
           "name": "Necromantic Arts",
           "description": "Forbidden spells, rites, and soul pacts",
           "nounSingular": "Necromantic Art",
@@ -3999,6 +5594,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Occult relics, grimoires, and dark instruments",
           "nounSingular": "Signature Asset",
@@ -4102,6 +5698,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "values",
           "name": "Values",
           "description": "Enduring principles of the golden era",
           "nounSingular": "Value",
@@ -4194,6 +5791,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Past glory, modern civilian life, and the call to return",
           "nounSingular": "Distinction",
@@ -4262,6 +5860,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
           "nounSingular": "Skills & Specialtie",
@@ -4334,6 +5933,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "vintage-resources-assets",
           "name": "Vintage Resources & Assets",
           "description": "Stashed tech, vintage vehicles, and old connections",
           "nounSingular": "Vintage Resources & Asset",
@@ -4437,6 +6037,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "values",
           "name": "Values",
           "description": "The aviator's code and sky ethics",
           "nounSingular": "Value",
@@ -4529,6 +6130,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Aerial legend, grounded civilian, and final takeoff",
           "nounSingular": "Distinction",
@@ -4597,6 +6199,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Flight and tactical skills with veteran specialties",
           "nounSingular": "Skills & Specialtie",
@@ -4669,6 +6272,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "vintage-plane-signature-assets",
           "name": "Vintage Plane & Signature Assets",
           "description": "Custom aircraft and aviator gear",
           "nounSingular": "Vintage Plane & Signature Asset",
@@ -4772,6 +6376,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "attributes",
           "name": "Attributes",
           "description": "Core survival attributes",
           "nounSingular": "Attribute",
@@ -4835,6 +6440,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Pre-fall career, colony specialty, and survivor trauma",
           "nounSingular": "Distinction",
@@ -4903,6 +6509,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Practical survival disciplines with specialized traits",
           "nounSingular": "Skills & Specialtie",
@@ -5188,6 +6795,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "relationships",
           "name": "Relationships",
           "description": "Ties to fellow survivors in the camp",
           "nounSingular": "Relationship",
@@ -5240,6 +6848,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Salvaged survival gear and weapons",
           "nounSingular": "Signature Asset",
@@ -5292,6 +6901,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "stress",
           "name": "Stress",
           "description": "Survivor stress and trauma",
           "nounSingular": "Stress",
@@ -5381,6 +6991,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "talents",
           "name": "Talents",
           "description": "Survivor tricks and knacks",
           "nounSingular": "Talent",
@@ -5457,6 +7068,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "growth-pool",
           "name": "Growth Pool",
           "description": "Survivor growth dice",
           "nounSingular": "Growth Die",
@@ -5538,7 +7150,6 @@ const cortexSpotlightTemplates = [
             }
           }
         }
-
       ],
       "player": "",
       "portrait": {
@@ -5591,6 +7202,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "essential-stockpiles",
           "name": "Essential Stockpiles",
           "description": "Vital supplies necessary for day-to-day survival",
           "nounSingular": "Essential Stockpile",
@@ -5673,6 +7285,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "non-essential-stockpiles",
           "name": "Non-Essential Stockpiles",
           "description": "Barter goods, materials, and morale supplies",
           "nounSingular": "Non-Essential Stockpile",
@@ -5735,6 +7348,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "colony-infrastructure",
           "name": "Colony Infrastructure",
           "description": "Fortifications, buildings, and community facilities",
           "nounSingular": "Colony Infrastructure",
@@ -5797,6 +7411,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "projects-crisis-threats",
           "name": "Projects & Crisis Threats",
           "description": "Underway community builds and impending dangers",
           "nounSingular": "Projects & Crisis Threat",
@@ -5879,6 +7494,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Cover identity, espionage specialization, and personal objective",
           "nounSingular": "Distinction",
@@ -5947,6 +7563,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "affiliations",
           "name": "Affiliations",
           "description": "Operational deployment modes",
           "nounSingular": "Affiliation",
@@ -6009,6 +7626,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "attributes-stress",
           "name": "Attributes & Stress",
           "description": "Core operative capabilities and physical resilience",
           "nounSingular": "Attributes & Stres",
@@ -6092,6 +7710,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Black-ops competencies and weapon proficiencies",
           "nounSingular": "Skills & Specialtie",
@@ -6154,6 +7773,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets-gifts",
           "name": "Signature Assets & Gifts",
           "description": "Classified spy gear and experimental equipment",
           "nounSingular": "Signature Assets & Gift",
@@ -6257,6 +7877,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "attributes",
           "name": "Attributes",
           "description": "SolarPunk holistic community attributes",
           "nounSingular": "Attribute",
@@ -6340,6 +7961,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Ecological calling, technical specialty, and philosophy",
           "nounSingular": "Distinction",
@@ -6408,6 +8030,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Ecological competencies and craft specialties",
           "nounSingular": "Skills & Specialtie",
@@ -6470,6 +8093,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Sustainable tech, tools, and eco-cyberware",
           "nounSingular": "Signature Asset",
@@ -6573,6 +8197,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "commune-attributes",
           "name": "Commune Attributes",
           "description": "Collective settlement strengths",
           "nounSingular": "Commune Attribute",
@@ -6656,6 +8281,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "commune-distinctions",
           "name": "Commune Distinctions",
           "description": "Settlement history, geography, and values",
           "nounSingular": "Commune Distinction",
@@ -6724,6 +8350,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "the-commons",
           "name": "The Commons",
           "description": "Shared public resources and community production",
           "nounSingular": "The Common",
@@ -6837,6 +8464,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Origin of the magical calamity and personal burden",
           "nounSingular": "Distinction",
@@ -6905,6 +8533,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "values",
           "name": "Values",
           "description": "Guiding passions driving the spellcaught",
           "nounSingular": "Value",
@@ -6987,6 +8616,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "affiliations",
           "name": "Affiliations",
           "description": "Operating spellcraft configuration",
           "nounSingular": "Affiliation",
@@ -7049,6 +8679,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "arcane-crafts-sfx",
           "name": "Arcane Crafts & SFX",
           "description": "Mutated magical expressions and spellcasting disciplines",
           "nounSingular": "Arcane Crafts & SFX",
@@ -7162,6 +8793,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "attributes",
           "name": "Attributes",
           "description": "Core attributes",
           "nounSingular": "Attribute",
@@ -7225,6 +8857,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Town roots, encounter with the abnormal, and ruin",
           "nounSingular": "Distinction",
@@ -7293,6 +8926,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "roles",
           "name": "Roles",
           "description": "Town archetypes and societal roles",
           "nounSingular": "Role",
@@ -7375,6 +9009,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "relationships-strange-die",
           "name": "Relationships & Strange Die",
           "description": "Bonds and the creeping town phenomenon",
           "nounSingular": "Relationships & Strange Die",
@@ -7488,6 +9123,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Multiversal origin, champion archetype, and fatal flaw",
           "nounSingular": "Distinction",
@@ -7556,6 +9192,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Artifacts and multiversal gear",
           "nounSingular": "Signature Asset",
@@ -7608,6 +9245,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "attributes",
           "name": "Attributes",
           "description": "Core hero ratings with Willpower",
           "nounSingular": "Attribute",
@@ -7681,6 +9319,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Multiverse capabilities and technical proficiencies",
           "nounSingular": "Skills & Specialtie",
@@ -7773,6 +9412,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "power-set-1",
           "name": "Power Set 1",
           "description": "Harnessing stellar rays and particle storms",
           "nounSingular": "Power Set",
@@ -7835,6 +9475,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "power-set-2",
           "name": "Power Set 2",
           "description": "Manipulating local temporal acceleration and deceleration",
           "nounSingular": "Power Set",
@@ -7887,6 +9528,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "power-set-3",
           "name": "Power Set 3",
           "description": "Passing through solid barriers and cloaking presence",
           "nounSingular": "Power Set",
@@ -7939,6 +9581,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "talents-growth-options",
           "name": "Talents & Growth Options",
           "description": "Session record and leveling advancement options",
           "nounSingular": "Talents & Growth Option",
@@ -8021,6 +9664,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "handler-attributes",
           "name": "Handler Attributes",
           "description": "Neural synchronization and physical capabilities",
           "nounSingular": "Handler Attribute",
@@ -8094,6 +9738,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "distinctions",
           "name": "Distinctions",
           "description": "Pilot background, drift specialty, and combat scars",
           "nounSingular": "Distinction",
@@ -8162,6 +9807,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "roles",
           "name": "Roles",
           "description": "Combat roles and tactical responsibilities",
           "nounSingular": "Role",
@@ -8234,6 +9880,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Handler cockpit gear and neural suits",
           "nounSingular": "Signature Asset",
@@ -8337,6 +9984,7 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
+          "id": "titan-attributes-stress",
           "name": "Titan Attributes & Stress",
           "description": "Heavy mechanized systems with stress tracks",
           "nounSingular": "Titan Attributes & Stres",
@@ -8410,6 +10058,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "titan-distinctions",
           "name": "Titan Distinctions",
           "description": "Chassis archetype, reactor model, and weapon loadout",
           "nounSingular": "Titan Distinction",
@@ -8478,6 +10127,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "power-set",
           "name": "Power Set",
           "description": "Colossal kaiju-annihilation weaponry",
           "nounSingular": "Power Set",
@@ -8536,6 +10186,641 @@ const cortexSpotlightTemplates = [
               },
               "notes": "SFX:\n\nLIMIT:",
               "reservedSlots": 3
+            }
+          }
+        }
+      ],
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "spotlight-trace-20",
+    "title": "TRACE 2.0",
+    "subtitle": "Civic Paranormal Investigation",
+    "spotlight": "TRACE 2.0",
+    "variant": "Character File",
+    "pages": 1,
+    "genre": "Mystery / Procedural / Urban Fantasy",
+    "description": "Investigators of the City of Cortez probing the strange and uncanny. Features Affiliations (Solo, Partner, Squad), Roles (Forensics through Technology), multi-die Resources, Distinctions with Hinder, six Talents, five Stress tracks (Afraid, Angry, Anxious, Exhausted, Injured), and a Growth Pool.",
+    "character": {
+      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
+      "version": "0.1",
+      "id": "template-spotlight-trace-20",
+      "isTemplate": true,
+      "name": "",
+      "game": "TRACE 2.0",
+      "description": "",
+      "pronouns": "",
+      "plotPoints": 1,
+      "notes": "",
+      "custom": {
+        "cortexToolkit": {
+          "pageCount": 1,
+          "spotlight": "TRACE 2.0",
+          "style": {
+            "hasAttributes": false
+          },
+          "sheetStyle": "spotlight",
+          "columns": 2,
+          "columnAlignment": "top-base",
+          "columnOffsets": {
+            "left": 0,
+            "center": 0,
+            "right": 0
+          }
+        }
+      },
+      "traitSets": [
+        {
+          "id": "affiliations",
+          "name": "Affiliations",
+          "description": "Team configuration ratings",
+          "nounSingular": "Affiliation",
+          "nounPlural": "Affiliations",
+          "traits": [
+            {
+              "name": "Solo",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Partner",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Squad",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "roles",
+          "name": "Roles",
+          "description": "Civic investigation disciplines",
+          "nounSingular": "Role",
+          "nounPlural": "Roles",
+          "traits": [
+            {
+              "name": "Forensics",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Investigation",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Legal",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Medicine",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Psychology",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Tactics",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Technology",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 7
+            }
+          }
+        },
+        {
+          "id": "resources",
+          "name": "Resources",
+          "description": "Civic assets, contacts, and backup",
+          "nounSingular": "Resource",
+          "nounPlural": "Resources",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "resources-count"
+              },
+              "multiDie": true,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "STARTING DICE: d10 d10 • d8 d8 • d6 d6 • d6 d6 (remainder blank)",
+              "reservedSlots": 8
+            }
+          }
+        },
+        {
+          "id": "distinctions",
+          "name": "Distinctions",
+          "description": "Defining history, drive, and complication",
+          "nounSingular": "Distinction",
+          "nounPlural": "Distinctions",
+          "traits": [
+            {
+              "name": "Distinction #1:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Distinction #2:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Distinction #3:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "talents",
+          "name": "Talents",
+          "description": "Training tricks and case-cracking knacks",
+          "nounSingular": "Talent",
+          "nounPlural": "Talents",
+          "traits": [
+            {
+              "name": "Talent #1:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Talent #2:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Talent #3:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Talent #4:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Talent #5:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Talent #6:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 6
+            }
+          }
+        },
+        {
+          "id": "stress",
+          "name": "Stress",
+          "description": "Emotional and physical pressure tracks",
+          "nounSingular": "Stress",
+          "nounPlural": "Stress",
+          "traits": [
+            {
+              "name": "Afraid",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Angry",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Anxious",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Exhausted",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Injured",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "stress"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "notes": "",
+              "reservedSlots": 5,
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
+          }
+        },
+        {
+          "id": "growth-pool",
+          "name": "Growth Pool",
+          "description": "Civic growth dice (Base d6 d6)",
+          "nounSingular": "Growth Die",
+          "nounPlural": "Growth Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "growth-ladder"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 2
             }
           }
         }

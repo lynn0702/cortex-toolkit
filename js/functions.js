@@ -60,7 +60,7 @@ const cortexFunctions = {
 		const cls = `diecon diecon-d${s} ${filledClass} ${extraClass}`.trim();
 
 		const cfg = diceConfig || (typeof window !== 'undefined' ? window.__cortexActiveDiceConfig : null);
-		let fill = isFilled ? '#000000' : '#ffffff';
+		let fill = isFilled ? '#000000' : 'none';
 		let stroke = '#000000';
 		let textFill = isFilled ? '#ffffff' : '#000000';
 		let strokeWidth = 1.7;
@@ -85,9 +85,19 @@ const cortexFunctions = {
 					fill = cfg.backgroundColor1 || cfg.background || '#000000';
 				}
 			} else {
-				fill = cfg.unfilledBackground || '#ffffff';
-				stroke = cfg.unfilledBorder || '#000000';
-				textFill = cfg.unfilledNumeral || '#000000';
+				// Unset / unfilled dice: must remain unfilled (transparent) and only show border outline + numeral
+				fill = 'none';
+				stroke = (cfg.unfilledBorder && cfg.unfilledBorder !== 'none') ? cfg.unfilledBorder : (cfg.borderColor || '#000000');
+				if ( stroke.toLowerCase() === '#ffffff' || stroke.toLowerCase() === '#fff' ) {
+					stroke = '#334155';
+				}
+				textFill = stroke;
+			}
+		} else {
+			if ( !isFilled ) {
+				fill = 'none';
+				stroke = '#000000';
+				textFill = '#000000';
 			}
 		}
 
@@ -212,20 +222,32 @@ const cortexFunctions = {
 	},
 
 	// Only these URL schemes are safe to render (links and images).
+	// Scheme-less URLs (relative paths, fragments) cannot execute script
+	// and are always allowed here.
 	isSafeUrl: function( url, allowDataImage ) {
 		if ( !url || typeof url !== 'string' ) return false;
-		const clean = url.trim();
-		if ( /^(https?:\/\/|\/|#)/i.test( clean ) ) return true;
-		if ( /^mailto:/i.test( clean ) ) return true;
-		if ( allowDataImage && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp|avif);base64,/i.test( clean ) ) return true;
-		if ( allowDataImage && /^blob:/i.test( clean ) ) return true;
+		// Browsers strip ASCII tab/newline from URLs before parsing, so an
+		// attacker could smuggle a scheme past a naive check. Strip first.
+		const clean = url.replace( /[\t\n\r]/g, '' ).trim();
+		if ( !clean.length ) return false;
+		const scheme = clean.match( /^([a-zA-Z][a-zA-Z0-9+.-]*):/ );
+		if ( !scheme ) return true;
+		const s = scheme[1].toLowerCase();
+		if ( s === 'http' || s === 'https' || s === 'mailto' ) return true;
+		if ( allowDataImage && s === 'data' && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp|avif);base64,/i.test( clean ) ) return true;
+		if ( allowDataImage && s === 'blob' ) return true;
 		return false;
 	},
 
 	// Returns a URL safe for CSS url(...) / background bindings, else ''.
+	// On top of the scheme check this rejects whitespace, quotes, parens
+	// and angle brackets, which could otherwise break out of the url()
+	// token (quoted or not) into arbitrary CSS.
 	safeImageUrl: function( url ) {
 		if ( !url || typeof url !== 'string' ) return '';
-		return this.isSafeUrl( url, true ) ? url : '';
+		const clean = url.trim();
+		if ( !clean.length || /[\s'"()\\<>`]/.test( clean ) ) return '';
+		return this.isSafeUrl( clean, true ) ? clean : '';
 	},
 
 	// Downscales an uploaded image to a data URL (caps localStorage/IDB bloat).
@@ -268,10 +290,24 @@ const cortexFunctions = {
 	},
 
 	// Minimal shape check + normalization for imported characters.
+	// Also unwraps upstream envelopes such as { version: 2, data: {...} }:
+	// the inner payload is imported as a NEW character (fresh UUID when the
+	// inner payload has none, so it can never overwrite an existing entry
+	// by accident). Unknown inner shapes are still safely defaulted below.
 	sanitizeImportedCharacter: function( data ) {
 		if ( !data || typeof data !== 'object' || Array.isArray( data ) ) return null;
-		if ( typeof data.id !== 'string' || !data.id.length ) return null;
-		const clean = JSON.parse( JSON.stringify( data ) );
+		let inner = data;
+		let unwrapped = false;
+		if ( ( typeof inner.id !== 'string' || !inner.id.length ) && inner.data && typeof inner.data === 'object' && !Array.isArray( inner.data ) ) {
+			inner = inner.data;
+			unwrapped = true;
+		}
+		if ( ( typeof inner.id !== 'string' || !inner.id.length ) ) {
+			if ( !unwrapped ) return null;
+			inner = Object.assign( {}, inner );
+			inner.id = this.generateUUID();
+		}
+		const clean = JSON.parse( JSON.stringify( inner ) );
 		if ( !Array.isArray( clean.traitSets ) ) clean.traitSets = [];
 		clean.traitSets.forEach( ts => {
 			if ( !ts || typeof ts !== 'object' ) return;
@@ -287,6 +323,186 @@ const cortexFunctions = {
 			});
 		});
 		if ( typeof clean.name !== 'string' ) clean.name = '';
+		this.ensureTraitSetIds( clean );
+		return clean;
+	},
+
+	// ---------- Sheet template layer (layout/data split) ----------
+	// A sheet template is a character-shaped blank (same shape as a
+	// character: { id, title, ..., character: {...} }, exactly like the
+	// spotlight library entries). The character keeps the same shape but
+	// sparse: any layout value it doesn't set resolves from its template
+	// (sheet.template.id). Resolution materializes at load (merge) and
+	// prunes at persist/export (strip), so the renderer reads full inline
+	// layout untouched while stored/exported JSON stays hand-editable.
+	// Template ids are static strings so imports dedupe instead of
+	// duplicating. Join key between the two shapes: stable trait-set ids.
+
+	TEMPLATE_FORMAT_VERSION: 1,
+
+	TEMPLATE_SCHEMA_URL: 'https://cortex.engard.me/schema/0.1/sheet-template.schema.json',
+
+	deepEqual: function( a, b ) {
+		if ( a === b ) return true;
+		if ( typeof a !== typeof b || a === null || b === null || a === undefined || b === undefined ) return false;
+		if ( Array.isArray( a ) !== Array.isArray( b ) ) return false;
+		if ( Array.isArray( a ) ) {
+			if ( a.length !== b.length ) return false;
+			for ( let i = 0; i < a.length; i++ ) {
+				if ( !this.deepEqual( a[i], b[i] ) ) return false;
+			}
+			return true;
+		}
+		if ( typeof a === 'object' ) {
+			const ka = Object.keys( a ), kb = Object.keys( b );
+			if ( ka.length !== kb.length ) return false;
+			for ( const k of ka ) {
+				if ( !Object.prototype.hasOwnProperty.call( b, k ) || !this.deepEqual( a[k], b[k] ) ) return false;
+			}
+			return true;
+		}
+		return false;
+	},
+
+	slugifySetId: function( name, taken ) {
+		let base = String( name || '' ).toLowerCase().replace( /[^a-z0-9]+/g, '-' ).replace( /^-+|-+$/g, '' ).slice( 0, 40 ) || 'set';
+		let id = base, i = 2;
+		while ( taken.has( id ) ) id = base + '-' + ( i++ );
+		taken.add( id );
+		return id;
+	},
+
+	// Stable per-set ids are the join key between a character and its sheet
+	// template. Slugs stay readable in raw JSON; uniqueness is per character.
+	ensureTraitSetIds: function( character ) {
+		if ( !character || !Array.isArray( character.traitSets ) ) return character;
+		const taken = new Set();
+		character.traitSets.forEach( ts => {
+			if ( ts && typeof ts.id === 'string' && ts.id.length ) taken.add( ts.id );
+		} );
+		character.traitSets.forEach( ts => {
+			if ( ts && ( typeof ts.id !== 'string' || !ts.id.length ) ) {
+				ts.id = this.slugifySetId( ts.name, taken );
+			}
+		} );
+		return character;
+	},
+
+	findSpotlightTemplate: function( id ) {
+		if ( !id || typeof cortexSpotlightTemplates === 'undefined' ) return null;
+		return cortexSpotlightTemplates.find( t => t.id === id ) || null;
+	},
+
+	// A standalone template file/entry: same shape as the spotlight
+	// library ({ id (static), title, ..., character: {...} }).
+	isSheetTemplateFile: function( data ) {
+		return Boolean( data && typeof data === 'object' && !Array.isArray( data ) &&
+			typeof data.id === 'string' && data.id.length &&
+			data.character && typeof data.character === 'object' &&
+			Array.isArray( data.character.traitSets ) );
+	},
+
+	findTemplateCharacter: function( templateEntry ) {
+		return templateEntry && templateEntry.character ? templateEntry.character : null;
+	},
+
+	// Layout-bearing subtrees of a character-shaped object, keyed for merge:
+	// sheet-level custom.cortexToolkit plus per-set custom.cortexToolkit by
+	// stable set id. Everything else in the shape is game data.
+	templateBaseFor: function( templateEntry ) {
+		const base = this.findTemplateCharacter( templateEntry );
+		if ( !base ) return null;
+		const sets = {};
+		( base.traitSets || [] ).forEach( ts => {
+			if ( ts && ts.id ) sets[ts.id] = ts.custom?.cortexToolkit || {};
+		} );
+		return { sheet: base.custom?.cortexToolkit || {}, sets: sets };
+	},
+
+	// Snapshot a character into a standalone template entry (static id
+	// assigned once at creation, never regenerated). Same shape as the
+	// spotlight library so all tooling applies unchanged.
+	extractSheetTemplate: function( character, meta ) {
+		this.ensureTraitSetIds( character );
+		const id = meta && meta.id ? String( meta.id ) : ( 'custom-' + this.generateUUID().slice( 0, 8 ) );
+		const snapshot = JSON.parse( JSON.stringify( character ) );
+		delete snapshot.sheet;
+		snapshot.isTemplate = true;
+		snapshot.name = '';
+		if ( snapshot.custom && snapshot.custom.cortexToolkit ) {
+			delete snapshot.custom.cortexToolkit.nickname; // Character data, not layout.
+		}
+		return {
+			'$schema': this.TEMPLATE_SCHEMA_URL,
+			id: id,
+			title: ( meta && meta.title ) || character?.game || 'Custom Layout',
+			version: this.TEMPLATE_FORMAT_VERSION,
+			updatedAt: new Date().toISOString(),
+			character: snapshot
+		};
+	},
+
+	// Prune a (cloned) character down to its overrides: drop every inline
+	// layout value identical to the template base. Custom sets (unknown to
+	// the template) keep their full inline layout. No template → untouched.
+	stripCharacterToDeltas: function( character, templateEntry ) {
+		const base = this.templateBaseFor( templateEntry );
+		if ( !base ) return JSON.parse( JSON.stringify( character ) );
+		const clean = JSON.parse( JSON.stringify( character ) );
+		const ctk = clean.custom && clean.custom.cortexToolkit;
+		if ( ctk ) {
+			Object.keys( base.sheet ).forEach( k => {
+				if ( k === 'nickname' ) return; // Character data, not layout.
+				if ( this.deepEqual( ctk[k], base.sheet[k] ) ) delete ctk[k];
+			} );
+			if ( !Object.keys( ctk ).length ) delete clean.custom.cortexToolkit;
+		}
+		( clean.traitSets || [] ).forEach( ts => {
+			const sctk = ts && ts.custom && ts.custom.cortexToolkit;
+			if ( !sctk ) return;
+			const bset = ts.id ? ( base.sets || {} )[ts.id] : null;
+			if ( !bset ) return; // Custom set: keep its full inline layout.
+			Object.keys( bset ).forEach( k => {
+				if ( this.deepEqual( sctk[k], bset[k] ) ) delete sctk[k];
+			} );
+			if ( !Object.keys( sctk ).length ) delete ts.custom.cortexToolkit;
+			if ( ts.custom && !Object.keys( ts.custom ).length ) delete ts.custom;
+		} );
+		if ( clean.custom && !Object.keys( clean.custom ).length ) delete clean.custom;
+		return clean;
+	},
+
+	// Resolve a sparse character against its template: every layout value
+	// not set locally falls through to the template base. Live form keeps
+	// a bare { id } reference in sheet.template.
+	mergeTemplateIntoCharacter: function( charData, templateEntry ) {
+		const base = this.templateBaseFor( templateEntry );
+		if ( !base ) return JSON.parse( JSON.stringify( charData ) );
+		const clean = JSON.parse( JSON.stringify( charData ) );
+		this.ensureTraitSetIds( clean );
+		if ( !clean.custom || typeof clean.custom !== 'object' ) clean.custom = {};
+		const liveNick = clean.custom.cortexToolkit?.nickname;
+		clean.custom.cortexToolkit = Object.assign( {}, base.sheet || {}, clean.custom.cortexToolkit || {} );
+		if ( liveNick !== undefined ) clean.custom.cortexToolkit.nickname = liveNick;
+		( clean.traitSets || [] ).forEach( ts => {
+			if ( !ts || typeof ts !== 'object' ) return;
+			const bset = ts.id ? ( base.sets || {} )[ts.id] : null;
+			if ( !bset ) return;
+			if ( !ts.custom || typeof ts.custom !== 'object' ) ts.custom = {};
+			ts.custom.cortexToolkit = Object.assign( {}, bset, ts.custom.cortexToolkit || {} );
+		} );
+		if ( templateEntry.id ) clean.sheet = { template: { id: templateEntry.id } };
+		return clean;
+	},
+
+	// Export form: sparse character (overrides only) + embedded full
+	// template object, so the file is self-contained and hand-editable.
+	// Without a resolvable template the character exports exactly as today.
+	stripCharacterForExport: function( character, templateEntry ) {
+		const clean = this.stripCharacterToDeltas( character, templateEntry );
+		if ( templateEntry && templateEntry.id ) {
+			clean.sheet = { template: JSON.parse( JSON.stringify( templateEntry ) ) };
+		}
 		return clean;
 	},
 

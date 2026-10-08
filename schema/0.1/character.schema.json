@@ -8,6 +8,10 @@
 		"traitSet": {
 			"type": "object",
 			"properties": {
+				"id": {
+					"type": "string",
+					"description": "Stable identifier joining this set to its sheet template layout. Assigned once and never regenerated."
+				},
 				"name": {
 					"type": "string",
 					"description": "The name of the trait set."
@@ -34,6 +38,27 @@
 					"description": "Any SFX attached directly to this trait set.",
 					"items": { "$ref": "#/$defs/sfx" }
 				},
+				"ratingPosition": {
+					"type": "string",
+					"enum": [ "inline", "above", "below", "none" ],
+					"description": "Placement of trait rating dice relative to trait labels."
+				},
+				"statement": {
+					"type": "boolean",
+					"description": "Whether traits in this set feature a statement box alongside the trait name."
+				},
+				"hasQuestionedPip": {
+					"type": "boolean",
+					"description": "Whether statement traits feature a toggleable questioned pip."
+				},
+				"hasCounterColumn": {
+					"type": "boolean",
+					"description": "Whether this trait set renders a secondary counter column (e.g. Badges XP)."
+				},
+				"counterLabel": {
+					"type": "string",
+					"description": "Label for the secondary counter column header, e.g. 'XP'."
+				},
 				"tags": { "$ref": "#/$defs/tags" },
 				"custom": { "$ref": "#/$defs/custom" }
 			},
@@ -59,6 +84,27 @@
 				"description": {
 					"type": "string",
 					"description": "A description of the trait, or the trait statement."
+				},
+				"statement": {
+					"type": "string",
+					"description": "The trait statement (synonym for description)."
+				},
+				"questioned": {
+					"type": "boolean",
+					"description": "Whether this trait statement is questioned or challenged."
+				},
+				"xp": {
+					"type": [ "integer", "string", "null" ],
+					"description": "XP or numeral counter value for this trait."
+				},
+				"counter": {
+					"type": [ "integer", "string", "null" ],
+					"description": "Alternative counter value for this trait."
+				},
+				"ratingPosition": {
+					"type": "string",
+					"enum": [ "inline", "above", "below", "none" ],
+					"description": "Override for rating dice placement on this trait."
 				},
 				"traits": {
 					"type": "array",
@@ -198,6 +244,23 @@
 				"custom": { "$ref": "#/$defs/custom" }
 			},
 			"required": [ "url", "alt", "tags", "custom" ],
+			"additionalProperties": false
+		},
+		"sheet": {
+			"type": "object",
+			"description": "Layout resolution: template names the sheet template whose values fill in anything not set locally (live: bare { id }; file export: full embedded template object).",
+			"properties": {
+				"template": {
+					"type": "object",
+					"description": "Sheet template reference (live) or embedded template object (export).",
+					"properties": {
+						"id": { "type": "string" }
+					},
+					"required": [ "id" ],
+					"additionalProperties": true
+				}
+			},
+			"required": [ "template" ],
 			"additionalProperties": false
 		},
 		"plotPoints": {

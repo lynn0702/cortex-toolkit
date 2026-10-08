@@ -1,6 +1,20 @@
 // MULTI-CHARACTER SESSION AND WORKSPACE STYLES
 
 .session-nav {
+	@extend %no-print;
+	@media print {
+		display: none !important;
+		height: 0 !important;
+		min-height: 0 !important;
+		max-height: 0 !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		border: none !important;
+		visibility: hidden !important;
+		overflow: hidden !important;
+		position: absolute !important;
+		top: -9999px !important;
+	}
 	position: sticky;
 	top: var(--header-size);
 	z-index: 850;
@@ -286,6 +300,7 @@
 
 // ADD CHARACTER TO SESSION MODAL
 .modal-session-add {
+	@extend %no-print;
 	max-width: 580px !important;
 	width: 90vw !important;
 	background: #ffffff !important;

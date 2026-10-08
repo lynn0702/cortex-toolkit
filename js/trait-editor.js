@@ -35,6 +35,12 @@ const TraitEditor = {
 			},
 			set( name ) {
 				this.setProperty( 'name', name );
+				if ( this.isTalentsTable && Array.isArray( this.trait?.sfx ) ) {
+					const sfx = this.trait.sfx.find( e => e !== 'hinder' );
+					if ( sfx && typeof sfx === 'object' ) {
+						sfx.name = name;
+					}
+				}
 			}
 		},
 
@@ -50,6 +56,52 @@ const TraitEditor = {
 		isListStyle() {
 			const b = this.traitSet?.custom?.cortexToolkit?.style?.body;
 			return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'talents-table' || b === 'dossier-fields';
+		},
+
+		isStatementSet() {
+			return Boolean( this.traitSet?.custom?.cortexToolkit?.statement || this.traitSet?.statement );
+		},
+
+		hasQuestionedPip() {
+			return Boolean( this.traitSet?.custom?.cortexToolkit?.hasQuestionedPip || this.traitSet?.hasQuestionedPip );
+		},
+
+		isQuestioned: {
+			get() {
+				return Boolean( this.trait?.questioned ?? this.trait?.custom?.questioned );
+			},
+			set( val ) {
+				this.setProperty( 'questioned', Boolean( val ) );
+				if ( !this.trait.custom ) this.trait.custom = {};
+				this.trait.custom.questioned = Boolean( val );
+				this.updateCharacter( this.character );
+			}
+		},
+
+		hasCounterColumn() {
+			return Boolean( this.traitSet?.hasCounterColumn ?? this.traitSet?.custom?.cortexToolkit?.hasCounterColumn );
+		},
+
+		counterLabel() {
+			return this.traitSet?.counterLabel || this.traitSet?.custom?.cortexToolkit?.counterLabel || 'XP';
+		},
+
+		counterValue: {
+			get() {
+				return this.trait?.xp ?? this.trait?.counter ?? this.trait?.custom?.xp ?? this.trait?.custom?.counter ?? '';
+			},
+			set( val ) {
+				this.setProperty( 'xp', val );
+				this.setProperty( 'counter', val );
+				if ( !this.trait.custom ) this.trait.custom = {};
+				this.trait.custom.counter = val;
+				this.trait.custom.xp = val;
+				this.updateCharacter( this.character );
+			}
+		},
+
+		isStandingStyle() {
+			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'standing';
 		},
 
 		isSessionRecordStyle() {
@@ -79,10 +131,11 @@ const TraitEditor = {
 
 		description: {
 			get() {
-				return this.trait.description;
+				return this.trait?.statement ?? this.trait?.description ?? '';
 			},
 			set( description ) {
 				this.setProperty( 'description', description );
+				this.setProperty( 'statement', description );
 			}
 		},
 
@@ -103,10 +156,77 @@ const TraitEditor = {
 
 		scrollable() {
 			return Boolean(
-				( this.traitSet.custom.cortexToolkit.features.sfx && this.editableSFX.length > 0 )
+				( this.traitSet.custom.cortexToolkit.features.sfx && this.editableSFX.length > 0 && !this.isTalentsTable )
 				||
 				( this.traitSet.custom.cortexToolkit.features.subtraits && this.trait.traits.length > 0 )
 			);
+		},
+
+		isTalentsTable() {
+			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'talents-table';
+		},
+
+		talentCol1Label() {
+			const labels = this.traitSet?.custom?.cortexToolkit?.labels;
+			if ( labels && labels.col1 ) return labels.col1;
+			return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col1' ) : 'TALENT' ) || 'TALENT';
+		},
+
+		talentCol2Label() {
+			const labels = this.traitSet?.custom?.cortexToolkit?.labels;
+			if ( labels && labels.col2 ) return labels.col2;
+			return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col2' ) : 'ACTIVATION' ) || 'ACTIVATION';
+		},
+
+		talentCol3Label() {
+			const labels = this.traitSet?.custom?.cortexToolkit?.labels;
+			if ( labels && labels.col3 ) return labels.col3;
+			return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col3' ) : 'EFFECT' ) || 'EFFECT';
+		},
+
+		talentEffect: {
+			get() {
+				const sfx = ( this.trait?.sfx || [] ).find( e => e !== 'hinder' );
+				if ( !sfx ) return '';
+				if ( typeof sfx === 'string' ) return sfx;
+				return sfx.description || sfx.name || '';
+			},
+			set( val ) {
+				if ( !Array.isArray( this.trait.sfx ) ) {
+					this.trait.sfx = [];
+				}
+				let sfxIndex = this.trait.sfx.findIndex( e => e !== 'hinder' );
+				if ( sfxIndex === -1 ) {
+					this.trait.sfx.push({
+						name: this.trait.name || '',
+						description: val,
+						tags: [],
+						custom: {}
+					});
+				} else {
+					if ( typeof this.trait.sfx[sfxIndex] === 'string' ) {
+						this.trait.sfx[sfxIndex] = {
+							name: this.trait.name || '',
+							description: val,
+							tags: [],
+							custom: {}
+						};
+					} else {
+						this.trait.sfx[sfxIndex].description = val;
+						this.trait.sfx[sfxIndex].name = this.trait.name || '';
+					}
+				}
+				this.updateCharacter( this.character );
+			}
+		},
+
+		canHinderTrait() {
+			if ( this.isListStyle || this.isTalentsTable ) return false;
+			const body = this.traitSet?.custom?.cortexToolkit?.style?.body;
+			if ( body === 'talents-table' || body === 'list' || body === 'notes' || body === 'dossier-fields' || body === 'session-record' ) {
+				return false;
+			}
+			return Boolean( this.trait?.value > 0 || ( Array.isArray(this.trait?.dice) && this.trait.dice.length > 0 ) );
 		},
 
 		isAttributesTrait() {
@@ -309,9 +429,56 @@ const TraitEditor = {
 						</div>
 					</div>
 
-					<div class="editor-field">
-						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : 'Trait Name' }}</label>
-						<input type="text" v-model="name" ref="inputName" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : ''">
+					<template v-if="isTalentsTable">
+						<div class="editor-field">
+							<label>{{ talentCol1Label }}</label>
+							<input type="text" v-model="name" ref="inputName" placeholder="e.g. Look, A Clue!">
+						</div>
+
+						<div class="editor-field">
+							<label>{{ talentCol2Label }}</label>
+							<textarea v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
+						</div>
+
+						<div class="editor-field">
+							<label>{{ talentCol3Label }}</label>
+							<textarea v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
+						</div>
+					</template>
+
+					<div class="editor-field" v-else>
+						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isStandingStyle ? 'Standing Name' : 'Trait Name') }}</label>
+						<input type="text" v-model="name" ref="inputName" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isStandingStyle ? 'e.g. Camp Director' : '')">
+					</div>
+
+					<!-- STATEMENT FIELD -->
+					<div class="editor-field" v-if="isStatementSet || isStandingStyle">
+						<label>Statement</label>
+						<textarea v-model="description" rows="2" placeholder="e.g. I'll try anything once."></textarea>
+					</div>
+
+					<!-- QUESTIONED PIP TOGGLE -->
+					<div class="editor-field" v-if="isStatementSet && hasQuestionedPip">
+						<div class="editor-toggles">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-questioned'"
+									v-model="isQuestioned"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-questioned'">
+									Questioned
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<!-- COUNTER / XP FIELD -->
+					<div class="editor-field" v-if="hasCounterColumn">
+						<label>{{ counterLabel }}</label>
+						<input type="text" v-model="counterValue" :placeholder="counterLabel">
 					</div>
 
 					<!-- SESSION RECORD ROW CHECKBOX -->
@@ -446,7 +613,7 @@ const TraitEditor = {
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description">
+					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description && !isTalentsTable && !isStatementSet && !isStandingStyle">
 						<label>Description</label>
 						<textarea v-model="description"></textarea>
 					</div>
@@ -484,11 +651,11 @@ const TraitEditor = {
 					</div>
 
 					<!-- SFX -->
-					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.sfx">
+					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.sfx && !isTalentsTable">
 
 						<label>SFX</label>
 
-						<div class="editor-field">
+						<div class="editor-field" v-if="canHinderTrait">
 							<div class="editor-toggles">
 								<div><input type="checkbox" :id="'trait-' + traitSetID + '-' + traitID + '-hinder'" :true-value="true" :false-value="false" v-model="hinder"></div>
 								<div><label :for="'trait-' + traitSetID + '-' + traitID + '-hinder'">Can Hinder</label></div>

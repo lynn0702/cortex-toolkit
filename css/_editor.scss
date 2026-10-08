@@ -352,6 +352,13 @@
 	}
 }
 
+.editor-hint {
+	font-size: 0.72rem;
+	line-height: 1.35;
+	opacity: 0.75;
+	margin-top: 0.3rem;
+}
+
 .editor-values {
 	list-style: none;
 	padding: 0;
@@ -543,12 +550,28 @@
 	&:has(.editor-button-secondary) {
 		--button-container-height: 1.5em;
 	}
+
+	// Inside editors the panel is narrow: let buttons wrap instead of
+	// clipping past the panel edge.
+	> div {
+		flex-wrap: wrap;
+		height: auto;
+		min-height: var(--button-container-height);
+		row-gap: .5em;
+		overflow: visible;
+	}
 }
 
 .editor-button {
 	@extend %button;
 	&.editor-button-remove {
 		--button-color: var(--color-primary);
+	}
+	.editor-button-container & {
+		padding-inline: 1.25em;
+		white-space: normal;
+		text-align: center;
+		line-height: 1.25;
 	}
 }
 

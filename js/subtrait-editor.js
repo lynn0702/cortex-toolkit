@@ -53,7 +53,13 @@ const SubtraitEditor = {
 		availableValues() {
 			let s = this.traitSetID;
 			let traitSet = this.character.traitSets[s];
-			return cortexFunctions.getSubtraitRatings( traitSet );
+			let ratings = cortexFunctions.getSubtraitRatings( traitSet );
+			if ( traitSet?.custom?.cortexToolkit?.style?.body === 'standing' && this.subtrait?.name && this.subtrait.name.toUpperCase().includes('BONUS') ) {
+				if ( Array.isArray(ratings) && ratings.length === 5 && ratings[0] === 4 ) {
+					return ratings.filter( size => size >= 6 );
+				}
+			}
+			return ratings;
 		},
 
 	},

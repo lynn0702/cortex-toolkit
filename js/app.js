@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				characters:         [],
 				characterID:        null,
 				openCharacterIDs:   [],
+				sheetTemplates:     [],
 				playViewMode:       'split',
 				isAddCharacterModalOpen: false,
 				sessionCharacterSearch: '',
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				isHandlingHash:     false,
 				storeReady:         false,
 				storeError:         null,
+				mouseDownInsideEditor: false,
 			}
 		},
 
@@ -105,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			</header>
 
 			<!-- SESSION / OPEN CHARACTERS BAR -->
-			<div class="session-nav" v-if="mode === 'character' && openCharacters.length > 0">
+			<div class="session-nav" v-if="mode === 'character' && submode !== 'print' && openCharacters.length > 0">
 				<div class="session-nav-inner">
 					<div class="session-tabs">
 						<div
@@ -178,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			</aside>
 
 			<main class="main" ref="main" @scroll="setViewY"
-				@click.stop="clearSelected"
+				@click.stop="handleMainClick"
 				:class="{ 'with-sidebar': isRollerOpen && mode === 'character' && submode === 'play', 'sidebar-right': rollerPosition === 'right', 'mobile-show-roller': mobileActiveView === 'roller' }"
 			>
 
@@ -210,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						@deleteCharacter="deleteCharacter"
 						@deleteAllCharacters="deleteAllCharacters"
 						@importCharacter="importCharacter"
+						@importSheetTemplate="importSheetTemplate"
 						@createFromSpotlight="createFromSpotlight"
 					></roster>
 
@@ -265,12 +268,14 @@ document.addEventListener('DOMContentLoaded', () => {
 								:character="char"
 								:editing="editing"
 								:viewY="viewY"
-								@selectElement="selectElement"
-								@updateCharacter="updateCharacter"
-								@exportCharacter="exportCharacter"
-								@addDieToRoller="addDieToRoller"
-							></character>
-						</div>
+							@selectElement="selectElement"
+							@updateCharacter="updateCharacter"
+							@exportCharacter="exportCharacter"
+							@saveSheetTemplate="saveSheetTemplate"
+							@exportSheetTemplate="exportSheetTemplate"
+							@addDieToRoller="addDieToRoller"
+						></character>
+					</div>
 					</div>
 
 					<character
@@ -282,6 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						@selectElement="selectElement"
 						@updateCharacter="updateCharacter"
 						@exportCharacter="exportCharacter"
+						@saveSheetTemplate="saveSheetTemplate"
+						@exportSheetTemplate="exportSheetTemplate"
 						@addDieToRoller="addDieToRoller"
 					></character>
 
@@ -384,6 +391,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			this.parseRouteHash();
 			window.addEventListener('hashchange', () => this.parseRouteHash());
 			window.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
+			window.addEventListener('pointerdown', (e) => this.handleGlobalPointerDown(e), true);
+			window.addEventListener('mousedown', (e) => this.handleGlobalPointerDown(e), true);
+			window.addEventListener('pointerup', () => {
+				setTimeout(() => { this.mouseDownInsideEditor = false; }, 120);
+			});
+			window.addEventListener('mouseup', () => {
+				setTimeout(() => { this.mouseDownInsideEditor = false; }, 120);
+			});
 
 		},
 
@@ -513,6 +528,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			safeImageUrl( url ) {
 				return cortexFunctions.safeImageUrl( url );
+			},
+
+			// ---------- Sheet template layer ----------
+			// Templates resolve store-first, then the built-in spotlight
+			// library. Static ids dedupe: re-imports replace, never append.
+
+			ensureSpotlightTemplates() {
+				if ( typeof cortexSpotlightTemplates !== 'undefined' ) return Promise.resolve( true );
+				if ( this._spotlightLoading ) return this._spotlightLoading;
+				this._spotlightLoading = new Promise( ( resolve ) => {
+					const script = document.createElement( 'script' );
+					script.src = 'js/templates.bundle.js?v=33';
+					script.onload = () => resolve( true );
+					script.onerror = () => resolve( false );
+					document.head.appendChild( script );
+				} );
+				return this._spotlightLoading;
+			},
+
+			resolveTemplateEntry( id ) {
+				if ( !id ) return null;
+				const stored = ( this.sheetTemplates || [] ).find( t => t.id === id );
+				if ( stored ) return stored;
+				return cortexFunctions.findSpotlightTemplate( id );
+			},
+
+			// Normalize one stored character: stable set ids, sheet.template
+			// forms (full embed → upsert + collapse to { id }), then merge
+			// layout values not set locally from the template base.
+			resolveStoredCharacter( c ) {
+				if ( !c || typeof c !== 'object' ) return c;
+				cortexFunctions.ensureTraitSetIds( c );
+				let ref = null;
+				const t = c.sheet && c.sheet.template;
+				if ( typeof t === 'string' && t.length ) {
+					ref = t;
+					c.sheet = { template: { id: t } };
+				} else if ( t && typeof t === 'object' ) {
+					if ( t.character && t.id ) {
+						this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, t );
+						ref = t.id;
+						c.sheet = { template: { id: t.id } };
+					} else if ( t.id ) {
+						ref = t.id;
+						c.sheet = { template: { id: t.id } };
+					}
+				}
+				if ( ref ) {
+					const entry = this.resolveTemplateEntry( ref );
+					if ( entry ) return cortexFunctions.mergeTemplateIntoCharacter( c, entry );
+				}
+				return c;
 			},
 
 			setViewY() {
@@ -657,6 +724,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				character.isTemplate = asTemplate;
 				character.name = asTemplate ? (spotlightItem.title ? spotlightItem.title.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '';
 				character.game = spotlightItem.spotlight || spotlightItem.title || '';
+				cortexFunctions.ensureTraitSetIds( character );
+				character.sheet = { template: { id: spotlightItem.id } };
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
@@ -759,34 +828,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			},
 
+			importSheetTemplate( entry ) {
+				if ( !entry || !entry.id ) return;
+				this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, entry );
+				this.saveLocalData();
+				this.showToast( `Saved layout template “${entry.title || entry.id}”` );
+			},
+
 			importCharacter( character ) {
 
-				// Save new character.
-				let c = this.characters.findIndex( existingCharacter => existingCharacter.id === character.id );
-
-				if ( c !== -1 ) {
-					this.characters[c] = character;
-				} else {
-					this.characters.push( character );
+				// Embedded template travels with the file: upsert by static
+				// id (replace, never duplicate), then resolve sparse layout.
+				let incoming = character;
+				const tref = incoming && incoming.sheet && incoming.sheet.template;
+				if ( tref && typeof tref === 'object' ) {
+					if ( tref.character && tref.id ) {
+						this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, tref );
+						incoming = cortexFunctions.mergeTemplateIntoCharacter( incoming, tref );
+					} else if ( tref.id ) {
+						const entry = this.resolveTemplateEntry( tref.id );
+						if ( entry ) incoming = cortexFunctions.mergeTemplateIntoCharacter( incoming, entry );
+					}
 				}
 
-				this.touchCharacter( character.id );
+				// Save new character.
+				let c = this.characters.findIndex( existingCharacter => existingCharacter.id === incoming.id );
+
+				if ( c !== -1 ) {
+					this.characters[c] = incoming;
+				} else {
+					this.characters.push( incoming );
+				}
+
+				this.touchCharacter( incoming.id );
 				this.saveLocalData();
-				this.showToast(`Imported ${character.name || 'character'}`);
+				this.showToast(`Imported ${incoming.name || 'character'}`);
 
 			},
 
-			exportCharacter( id ) {
-
-				let character = this.characters.find( character => character.id === id );
-
-				let uri = encodeURI("data:application/json;charset=utf-8," + JSON.stringify(character, null, 2))
+			downloadJson( filename, payload ) {
+				let uri = encodeURI("data:application/json;charset=utf-8," + JSON.stringify(payload, null, 2))
 				.replace(/#/g, '%23');
-
-				let name = character.name.length ? character.name : 'Name';
-				let timestamp = ( new Date(character.dateModified) ).getTime();
-				name = name.replaceAll( /\s+/g, '_' );
-				let filename = `${name}_${timestamp}.cortex.json`;
 
 				let link = document.createElement("a");
 				document.body.appendChild(link); // Required for Firefox
@@ -794,32 +876,92 @@ document.addEventListener('DOMContentLoaded', () => {
 				link.setAttribute('download', filename);
 				link.click();
 				link.remove();
+			},
+
+			sheetTemplateForExport( character ) {
+				if ( !character ) return null;
+				const t = character.sheet && character.sheet.template;
+				const ref = t ? ( typeof t === 'string' ? t : t.id ) : null;
+				if ( !ref ) return null;
+				if ( t && typeof t === 'object' && t.character ) return t;
+				return this.resolveTemplateEntry( ref );
+			},
+
+			async exportCharacter( id ) {
+
+				let character = this.characters.find( character => character.id === id );
+				if ( !character ) return;
+
+				await this.ensureSpotlightTemplates();
+				const entry = this.sheetTemplateForExport( character );
+				const out = entry
+					? cortexFunctions.stripCharacterForExport( character, entry )
+					: JSON.parse( JSON.stringify( character ) );
+
+				let name = ( out.name && out.name.length ) ? out.name : 'Name';
+				let timestamp = ( new Date(out.dateModified) ).getTime();
+				name = name.replaceAll( /\s+/g, '_' );
+				let filename = `${name}_${timestamp}.cortex.json`;
+
+				this.downloadJson( filename, out );
 
 			},
 
-			exportAllCharacters() {
+			saveSheetTemplate() {
+				const character = this.character;
+				if ( !character ) return;
+				const currentRef = character.sheet && character.sheet.template
+					? ( typeof character.sheet.template === 'string' ? character.sheet.template : character.sheet.template.id )
+					: null;
+				// Re-saving a custom template updates it in place; forking
+				// off a built-in (or nothing) mints a fresh static id once.
+				const reuse = currentRef && !cortexFunctions.findSpotlightTemplate( currentRef ) ? currentRef : null;
+				const entry = cortexFunctions.extractSheetTemplate(
+					character,
+					{
+						id: reuse || undefined,
+						title: ( ( character.game || character.name || 'Custom' ) + ' Layout' )
+					}
+				);
+				this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, entry );
+				character.sheet = { template: { id: entry.id } };
+				this.saveLocalData();
+				this.showToast( `Saved layout as reusable template` );
+			},
+
+			exportSheetTemplate() {
+				const character = this.character;
+				if ( !character ) return;
+				const ref = character.sheet && character.sheet.template
+					? ( typeof character.sheet.template === 'string' ? character.sheet.template : character.sheet.template.id )
+					: null;
+				let entry = ref ? this.resolveTemplateEntry( ref ) : null;
+				if ( !entry ) entry = cortexFunctions.extractSheetTemplate( character, { title: ( character.game || character.name || 'Custom' ) + ' Layout' } );
+				const slug = String( entry.title || entry.id || 'template' ).replace( /\s+/g, '_' );
+				this.downloadJson( `${slug}.cortex-template.json`, entry );
+			},
+
+			async exportAllCharacters() {
+
+				await this.ensureSpotlightTemplates();
+				const out = ( this.characters || [] ).map( c => {
+					const entry = this.sheetTemplateForExport( c );
+					return entry ? cortexFunctions.stripCharacterForExport( c, entry ) : JSON.parse( JSON.stringify( c ) );
+				} );
 
 				let bundle = {
 					version: '0.1',
 					type: 'bundle',
 					dateExported: ( new Date() ).toISOString(),
-					count: this.characters.length,
-					characters: this.characters
+					count: out.length,
+					characters: out
 				};
-
-				let uri = encodeURI("data:application/json;charset=utf-8," + JSON.stringify(bundle, null, 2))
-				.replace(/#/g, '%23');
 
 				let timestamp = ( new Date() ).getTime();
 				let filename  = `Cortex_Characters_Bundle_${timestamp}.json`;
 
-				let link = document.createElement("a");
-				document.body.appendChild(link); // Required for Firefox
-				link.setAttribute('href', uri);
-				link.setAttribute('download', filename);
-				link.click();
-				link.remove();
-				this.showToast(`Exported ${this.characters.length} characters`);
+				this.downloadJson( filename, bundle );
+				this.showToast(`Exported ${out.length} characters`);
 
 			},
 
@@ -956,6 +1098,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			},
 
+			handleGlobalPointerDown( event ) {
+				this.mouseDownInsideEditor = Boolean(
+					event && event.target && event.target.closest && event.target.closest( '.editor, .modal, .sidebar' )
+				);
+			},
+
+			handleMainClick( event ) {
+				if ( this.mouseDownInsideEditor ) {
+					return;
+				}
+				if ( event && event.target && event.target.closest && event.target.closest( '.editor, .modal, .sidebar' ) ) {
+					return;
+				}
+				const selection = window.getSelection ? window.getSelection() : null;
+				if ( selection && !selection.isCollapsed && selection.toString().trim().length > 0 ) {
+					return;
+				}
+				this.clearSelected();
+			},
+
 			clearSelected() {
 				this.selectElement([]);
 			},
@@ -967,7 +1129,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				try {
 					const stored = await cortexStorage.load();
-					this.characters = stored.characters || [];
+					this.sheetTemplates = cortexStorage.normalizeTemplates( stored.templates );
+					await this.ensureSpotlightTemplates();
+					this.characters = ( stored.characters || [] ).map( c => this.resolveStoredCharacter( c ) );
 					this.playViewMode = stored.playViewMode || 'split';
 					this.rollerPosition = stored.rollerPosition || 'left';
 					this.openCharacterIDs = ( stored.openCharacterIDs || [] ).filter(
@@ -994,15 +1158,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			},
 
-			persist() {
+			async persist() {
 
 				let plain;
 				try {
+					await this.ensureSpotlightTemplates();
+					const sparse = ( this.characters || [] ).map( c => {
+						const t = c.sheet && c.sheet.template;
+						const ref = t ? ( typeof t === 'string' ? t : t.id ) : null;
+						const entry = ref ? this.resolveTemplateEntry( ref ) : null;
+						const out = entry
+							? cortexFunctions.stripCharacterToDeltas( c, entry )
+							: JSON.parse( JSON.stringify( c ) );
+						// Storage form keeps a bare { id } reference — the
+						// full template object lives in the template store
+						// (embedded only on file export).
+						if ( ref ) out.sheet = { template: { id: ref } };
+						else if ( out.sheet && out.sheet.template && out.sheet.template.character ) {
+							out.sheet = { template: { id: out.sheet.template.id } };
+						}
+						return out;
+					} );
 					plain = JSON.parse( JSON.stringify( {
-						characters: this.characters,
+						characters: sparse,
 						openCharacterIDs: this.openCharacterIDs,
 						playViewMode: this.playViewMode,
 						rollerPosition: this.rollerPosition,
+						templates: this.sheetTemplates,
 					} ) );
 				} catch ( err ) {
 					this.showToast( 'Could not save changes.' );
@@ -1038,6 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	.component('portrait-editor',  PortraitEditor )
 	.component('trait-editor',     TraitEditor )
 	.component('trait-set-editor', TraitSetEditor )
+	.component('trait-set-block',  TraitSetBlock )
 	.component('subtrait-editor',  SubtraitEditor )
 	.component('sfx-editor',       SfxEditor )
 	.component('dice-roller',      DiceRoller )
