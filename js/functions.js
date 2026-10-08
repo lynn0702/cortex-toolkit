@@ -308,21 +308,27 @@ const cortexFunctions = {
 			inner.id = this.generateUUID();
 		}
 		const clean = JSON.parse( JSON.stringify( inner ) );
-		if ( !Array.isArray( clean.traitSets ) ) clean.traitSets = [];
-		clean.traitSets.forEach( ts => {
-			if ( !ts || typeof ts !== 'object' ) return;
-			if ( !Array.isArray( ts.traits ) ) ts.traits = [];
-			if ( !ts.custom || typeof ts.custom !== 'object' ) ts.custom = {};
-			ts.traits.forEach( tr => {
-				if ( !tr || typeof tr !== 'object' ) return;
-				if ( typeof tr.name !== 'string' ) tr.name = '';
-				if ( !Array.isArray( tr.dice ) ) tr.dice = [];
-				if ( !Array.isArray( tr.traits ) ) tr.traits = [];
-				if ( !Array.isArray( tr.sfx ) ) tr.sfx = [];
-				if ( !tr.custom || typeof tr.custom !== 'object' ) tr.custom = {};
-			});
-		});
-		if ( typeof clean.name !== 'string' ) clean.name = '';
+		// D5: import must not materialize defaults — missing lists/objects
+		// inherit from the template at merge; the renderer treats absence
+		// as empty. Only identity (set ids) is ensured below.
+		// D8: no duplicate non-blank trait/subtrait names (ambiguous join).
+		// Blank slots are positional and exempt.
+		const dupes = ( traits ) => {
+			if ( !Array.isArray( traits ) ) return false;
+			const seen = new Set();
+			for ( const tr of traits ) {
+				if ( !tr || typeof tr !== 'object' ) continue;
+				if ( typeof tr.name === 'string' && tr.name.length ) {
+					if ( seen.has( tr.name ) ) return true;
+					seen.add( tr.name );
+				}
+				if ( dupes( tr.traits ) ) return true;
+			}
+			return false;
+		};
+		for ( const ts of ( Array.isArray( clean.traitSets ) ? clean.traitSets : [] ) ) {
+			if ( ts && dupes( ts.traits ) ) return null;
+		}
 		this.ensureTraitSetIds( clean );
 		return clean;
 	},
@@ -372,6 +378,47 @@ const cortexFunctions = {
 		return id;
 	},
 
+	// App-local instance ids for traits/subtraits (D10): stable Vue :keys
+	// and rename-proof preference keys. Stored at rest (IndexedDB), NEVER
+	// exported (stripped with the layout deltas). Assigned at creation and
+	// import; load fills gaps only — existing ids are never rewritten.
+	assignLids: function( character ) {
+		if ( !character || !Array.isArray( character.traitSets ) ) return character;
+		const lid = () => ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' )
+			? crypto.randomUUID()
+			: ( 'lid-' + Math.random().toString( 36 ).slice( 2 ) + Date.now().toString( 36 ) );
+		const walk = ( traits ) => {
+			if ( !Array.isArray( traits ) ) return;
+			traits.forEach( tr => {
+				if ( !tr || typeof tr !== 'object' ) return;
+				if ( typeof tr._lid !== 'string' || !tr._lid.length ) tr._lid = lid();
+				walk( tr.traits );
+			} );
+		};
+		character.traitSets.forEach( ts => { if ( ts ) walk( ts.traits ); } );
+		return character;
+	},
+
+	// Strip app-local and forbidden-below-set keys for export: _lid
+	// everywhere below set level, plus any stray trait-level `id` (D1).
+	// Set-level ids are the join key and are always kept.
+	stripInternalIds: function( node ) {
+		const walkTraits = ( traits ) => {
+			if ( !Array.isArray( traits ) ) return;
+			traits.forEach( tr => {
+				if ( !tr || typeof tr !== 'object' ) return;
+				delete tr._lid;
+				delete tr.id;
+				walkTraits( tr.traits );
+			} );
+		};
+		if ( !node || typeof node !== 'object' ) return;
+		if ( Array.isArray( node.traitSets ) ) {
+			node.traitSets.forEach( ts => { if ( ts ) walkTraits( ts.traits ); } );
+		}
+		if ( Array.isArray( node.traits ) ) walkTraits( node.traits );
+	},
+
 	// Stable per-set ids are the join key between a character and its sheet
 	// template. Slugs stay readable in raw JSON; uniqueness is per character.
 	ensureTraitSetIds: function( character ) {
@@ -393,6 +440,133 @@ const cortexFunctions = {
 		return cortexSpotlightTemplates.find( t => t.id === id ) || null;
 	},
 
+	// Resolve the template entry for a character: live store array first
+	// (passed in by editors via $root), then the built-in library.
+	resolveTemplateFor: function( character, storeTemplates ) {
+		const t = character && character.sheet && character.sheet.template;
+		const id = t ? ( typeof t === 'string' ? t : t.id ) : null;
+		if ( !id ) return null;
+		const ver = ( t && typeof t === 'object' && t.version ) || null;
+		if ( Array.isArray( storeTemplates ) ) {
+			const pool = storeTemplates.filter( x => x && x.id === id );
+			if ( pool.length ) {
+				if ( ver ) {
+					const exact = pool.find( x => ( x.version || 1 ) === ver );
+					if ( exact ) return exact;
+				}
+				pool.sort( ( a, b ) => ( ( b.version || 1 ) - ( a.version || 1 ) ) );
+				return pool[0];
+			}
+		}
+		return this.findSpotlightTemplate( id );
+	},
+
+	templateSetById: function( templateEntry, setId ) {
+		const ch = this.findTemplateCharacter( templateEntry );
+		if ( !ch || !Array.isArray( ch.traitSets ) ) return null;
+		return ch.traitSets.find( ts => ts && ts.id === setId ) || null;
+	},
+
+	// D19 removal core: drop the trait from the live sheet and remember its
+	// name on the parent set's removedTraits (no confirmation — explicit and
+	// reversible via restore). Returns true when a template-inherited trait
+	// was removed (plain deletes return false and splice only).
+	removeTraitFromSheet: function( character, templateEntry, s, t ) {
+		const ts = character && character.traitSets ? character.traitSets[s] : null;
+		const tr = ts && Array.isArray( ts.traits ) ? ts.traits[t] : null;
+		if ( !tr ) return false;
+		let inherited = false;
+		if ( tr.name && templateEntry && ts && ts.id ) {
+			const base = this.templateSetById( templateEntry, ts.id );
+			inherited = Boolean( base && Array.isArray( base.traits ) &&
+				base.traits.some( b => b && b.name === tr.name ) );
+			if ( inherited ) {
+				if ( !Array.isArray( ts.removedTraits ) ) ts.removedTraits = [];
+				if ( !ts.removedTraits.includes( tr.name ) ) ts.removedTraits.push( tr.name );
+			}
+		}
+		ts.traits.splice( t, 1 );
+		return inherited;
+	},
+
+	// Subtrait removal: same, against the parent trait's removedTraits.
+	removeSubtraitFromSheet: function( character, templateEntry, s, t, u ) {
+		const ts = character && character.traitSets ? character.traitSets[s] : null;
+		const tr = ts && Array.isArray( ts.traits ) ? ts.traits[t] : null;
+		const st = tr && Array.isArray( tr.traits ) ? tr.traits[u] : null;
+		if ( !st ) return false;
+		let inherited = false;
+		if ( st.name && templateEntry && ts && ts.id && tr && tr.name ) {
+			const base = this.templateSetById( templateEntry, ts.id );
+			const btr = base && Array.isArray( base.traits )
+				? base.traits.find( b => b && b.name === tr.name ) : null;
+			inherited = Boolean( btr && Array.isArray( btr.traits ) &&
+				btr.traits.some( b => b && b.name === st.name ) );
+			if ( inherited ) {
+				if ( !Array.isArray( tr.removedTraits ) ) tr.removedTraits = [];
+				if ( !tr.removedTraits.includes( st.name ) ) tr.removedTraits.push( st.name );
+			}
+		}
+		tr.traits.splice( u, 1 );
+		return inherited;
+	},
+
+	// Template traits (by name) not currently on the live sheet, including
+	// removed ones — the restore menu (D19). Editor maintains the invariant:
+	// restoring clears the name from removedTraits (D6).
+	restorableTraits: function( character, templateEntry, s ) {
+		const ts = character && character.traitSets ? character.traitSets[s] : null;
+		if ( !ts ) return [];
+		const base = ( ts.id && templateEntry ) ? this.templateSetById( templateEntry, ts.id ) : null;
+		if ( !base || !Array.isArray( base.traits ) ) return [];
+		const live = new Set(
+			( Array.isArray( ts.traits ) ? ts.traits : [] )
+				.filter( x => x && typeof x.name === 'string' && x.name.length )
+				.map( x => x.name )
+		);
+		return base.traits
+			.filter( b => b && typeof b.name === 'string' && b.name.length && !live.has( b.name ) )
+			.map( b => b.name );
+	},
+
+	restoreTraitOnSheet: function( character, templateEntry, s, name ) {
+		const ts = character && character.traitSets ? character.traitSets[s] : null;
+		if ( !ts || !name ) return false;
+		if ( Array.isArray( ts.removedTraits ) ) {
+			ts.removedTraits = ts.removedTraits.filter( n => n !== name );
+		}
+		if ( !Array.isArray( ts.traits ) ) ts.traits = [];
+		if ( ts.traits.some( x => x && x.name === name ) ) return true;
+		const base = ( ts.id && templateEntry ) ? this.templateSetById( templateEntry, ts.id ) : null;
+		const btrait = base && Array.isArray( base.traits ) ? base.traits.find( b => b && b.name === name ) : null;
+		if ( btrait ) {
+			const clone = JSON.parse( JSON.stringify( btrait ) );
+			delete clone._lid;
+			delete clone.id;
+			ts.traits.push( clone );
+			this.assignLids( character );
+			return true;
+		}
+		return false;
+	},
+
+	// Set-level removal analog (brief: removedSets similarly needed).
+	// Template-derived sets are remembered by id; custom sets just splice.
+	removeTraitSetFromSheet: function( character, templateEntry, s ) {
+		const ts = character && character.traitSets ? character.traitSets[s] : null;
+		if ( !ts ) return false;
+		let inherited = false;
+		if ( ts.id && templateEntry ) {
+			inherited = Boolean( this.templateSetById( templateEntry, ts.id ) );
+			if ( inherited ) {
+				if ( !Array.isArray( character.removedSets ) ) character.removedSets = [];
+				if ( !character.removedSets.includes( ts.id ) ) character.removedSets.push( ts.id );
+			}
+		}
+		character.traitSets.splice( s, 1 );
+		return inherited;
+	},
+
 	// A standalone template file/entry: same shape as the spotlight
 	// library ({ id (static), title, ..., character: {...} }).
 	isSheetTemplateFile: function( data ) {
@@ -406,17 +580,267 @@ const cortexFunctions = {
 		return templateEntry && templateEntry.character ? templateEntry.character : null;
 	},
 
-	// Layout-bearing subtrees of a character-shaped object, keyed for merge:
-	// sheet-level custom.cortexToolkit plus per-set custom.cortexToolkit by
-	// stable set id. Everything else in the shape is game data.
-	templateBaseFor: function( templateEntry ) {
-		const base = this.findTemplateCharacter( templateEntry );
-		if ( !base ) return null;
-		const sets = {};
-		( base.traitSets || [] ).forEach( ts => {
-			if ( ts && ts.id ) sets[ts.id] = ts.custom?.cortexToolkit || {};
+	// Preference export/import (brief D18): arrangement travels in the file
+	// in name-keyed form (stable across _lid regeneration); live prefs stay
+	// _lid-keyed. Blank slots export as '' and resolve positionally.
+	prefsForExport: function( prefsEntry, character ) {
+		if ( !prefsEntry || typeof prefsEntry !== 'object' ) return null;
+		const out = {};
+		if ( Array.isArray( prefsEntry.setOrder ) && prefsEntry.setOrder.length ) {
+			out.setOrder = prefsEntry.setOrder.slice();
+		}
+		if ( prefsEntry.traitOrders && typeof prefsEntry.traitOrders === 'object' ) {
+			const bySet = {};
+			( character && Array.isArray( character.traitSets ) ? character.traitSets : [] ).forEach( ts => {
+				if ( !ts || !ts.id || !Array.isArray( ts.traits ) ) return;
+				const lids = prefsEntry.traitOrders[ts.id];
+				if ( !Array.isArray( lids ) || !lids.length ) return;
+				const byLid = new Map();
+				ts.traits.forEach( tr => {
+					if ( tr && tr._lid && !byLid.has( tr._lid ) ) byLid.set( tr._lid, tr );
+				} );
+				const names = [];
+				lids.forEach( lid => {
+					const tr = byLid.get( lid );
+					if ( tr ) names.push( typeof tr.name === 'string' ? tr.name : '' );
+				} );
+				if ( names.length ) bySet[ts.id] = names;
+			} );
+			if ( Object.keys( bySet ).length ) out.traitOrders = bySet;
+		}
+		if ( prefsEntry.declinedTemplateVersions && typeof prefsEntry.declinedTemplateVersions === 'object' ) {
+			out.declinedTemplateVersions = JSON.parse( JSON.stringify( prefsEntry.declinedTemplateVersions ) );
+		}
+		return Object.keys( out ).length ? out : null;
+	},
+
+	// Convert file (name-keyed) prefs back to live (_lid-keyed) form against
+	// a merged character. Unresolvable entries are dropped (D12 limits).
+	prefsFromImport: function( filePrefs, character ) {
+		if ( !filePrefs || typeof filePrefs !== 'object' ) return null;
+		const out = {};
+		if ( Array.isArray( filePrefs.setOrder ) && filePrefs.setOrder.length ) {
+			out.setOrder = filePrefs.setOrder.filter( x => typeof x === 'string' );
+		}
+		if ( filePrefs.traitOrders && typeof filePrefs.traitOrders === 'object' ) {
+			out.traitOrders = {};
+			( character && Array.isArray( character.traitSets ) ? character.traitSets : [] ).forEach( ts => {
+				if ( !ts || !ts.id || !Array.isArray( ts.traits ) ) return;
+				const names = filePrefs.traitOrders[ts.id];
+				if ( !Array.isArray( names ) || !names.length ) return;
+				const pool = ts.traits.slice();
+				const take = ( pred ) => {
+					for ( let i = 0; i < pool.length; i++ ) {
+						if ( pred( pool[i] ) ) return pool.splice( i, 1 )[0];
+					}
+					return null;
+				};
+				const lids = [];
+				names.forEach( nm => {
+					let tr = null;
+					if ( typeof nm === 'string' && nm.length ) tr = take( t => t && t.name === nm && t._lid );
+					else tr = take( t => t && !( typeof t.name === 'string' && t.name.length ) && t._lid );
+					if ( tr && tr._lid ) lids.push( tr._lid );
+				} );
+				if ( lids.length ) out.traitOrders[ts.id] = lids;
+			} );
+			if ( !Object.keys( out.traitOrders ).length ) delete out.traitOrders;
+		}
+		if ( filePrefs.declinedTemplateVersions && typeof filePrefs.declinedTemplateVersions === 'object' ) {
+			out.declinedTemplateVersions = {};
+			for ( const k of Object.keys( filePrefs.declinedTemplateVersions ) ) {
+				if ( typeof filePrefs.declinedTemplateVersions[k] === 'number' ) {
+					out.declinedTemplateVersions[k] = filePrefs.declinedTemplateVersions[k];
+				}
+			}
+			if ( !Object.keys( out.declinedTemplateVersions ).length ) delete out.declinedTemplateVersions;
+		}
+		return Object.keys( out ).length ? out : null;
+	},
+
+	isBlankName: function( name ) {
+		return !( typeof name === 'string' && name.length );
+	},
+
+	// Deep equality ignoring app-local _lid keys (internal ids live at rest
+	// only and must never block delta pruning).
+	deepEqualClean: function( a, b ) {
+		const strip = ( v ) => {
+			if ( Array.isArray( v ) ) return v.map( strip );
+			if ( v && typeof v === 'object' ) {
+				const o = {};
+				for ( const k of Object.keys( v ) ) {
+					if ( k === '_lid' ) continue;
+					o[k] = strip( v[k] );
+				}
+				return o;
+			}
+			return v;
+		};
+		return this.deepEqual( strip( a ), strip( b ) );
+	},
+
+	unionArrays: function( baseArr, overArr ) {
+		if ( !Array.isArray( overArr ) || !overArr.length ) return [];
+		const out = [];
+		const push = ( v ) => {
+			if ( !out.some( e => this.deepEqualClean( e, v ) ) ) out.push( JSON.parse( JSON.stringify( v ) ) );
+		};
+		( Array.isArray( baseArr ) ? baseArr : [] ).forEach( push );
+		overArr.forEach( push );
+		return out;
+	},
+
+	findTraitByName: function( list, name ) {
+		if ( !Array.isArray( list ) || this.isBlankName( name ) ) return -1;
+		for ( let j = 0; j < list.length; j++ ) {
+			const o = list[j];
+			if ( o && typeof o === 'object' && o.name === name ) return j;
+		}
+		return -1;
+	},
+
+	// Array merge for traits/subtraits (brief D4): join by name (template
+	// order wins, overrides replace in place); blank slots join
+	// positionally; character-only names append; template-only names are
+	// inherited unless listed in removedNames. Rename unlinks by design
+	// (old name reappears as inherited — D7).
+	mergeTraitArrays: function( tBase, tOver, removedNames ) {
+		const base = Array.isArray( tBase ) ? tBase : [];
+		const over = Array.isArray( tOver ) ? tOver : [];
+		if ( !over.length && base.length ) return []; // Present-but-empty clears.
+		const rem = new Set( ( removedNames || [] ).filter( n => typeof n === 'string' && n.length ) );
+		const consumed = new Set();
+		const result = [];
+		const mergeOne = ( b, o ) => {
+			const c = JSON.parse( JSON.stringify( b ) );
+			this.applyOverrides( c, o );
+			return c;
+		};
+		// Blank slots fill positionally from index-aligned overrides (the
+		// pruner preserves live shape, so sparse arrays stay index-aligned).
+		// An override whose name matches a base trait elsewhere is left for
+		// the name-join. Hand-compacted arrays (deleted stubs) reinterpret
+		// positionally — documented; the pruner never emits that shape.
+		for ( let i = 0; i < base.length; i++ ) {
+			const b = base[i];
+			if ( !b || typeof b !== 'object' ) { result.push( JSON.parse( JSON.stringify( b ) ) ); continue; }
+			if ( !this.isBlankName( b.name ) && rem.has( b.name ) ) continue; // D6 removal wins.
+			let m = -1;
+			if ( !this.isBlankName( b.name ) ) {
+				for ( let j = 0; j < over.length; j++ ) {
+					if ( consumed.has( j ) ) continue;
+					const o = over[j];
+					if ( o && typeof o === 'object' && o.name === b.name ) { m = j; break; }
+				}
+			} else if ( i < over.length && !consumed.has( i ) ) {
+				const o = over[i];
+				if ( o && typeof o === 'object' ) {
+					if ( this.isBlankName( o.name ) ) m = i;
+					else if ( this.findTraitByName( base, o.name ) === -1 ) m = i; // positional slot fill
+				}
+			}
+			if ( m >= 0 ) { consumed.add( m ); result.push( mergeOne( b, over[m] ) ); }
+			else result.push( JSON.parse( JSON.stringify( b ) ) );
+		}
+		for ( let j = 0; j < over.length; j++ ) {
+			if ( consumed.has( j ) ) continue;
+			const o = over[j];
+			if ( !o || typeof o !== 'object' ) { result.push( JSON.parse( JSON.stringify( o ) ) ); continue; }
+			if ( !this.isBlankName( o.name ) ) {
+				if ( this.findTraitByName( base, o.name ) === -1 ) result.push( JSON.parse( JSON.stringify( o ) ) );
+			} else if ( j >= base.length ) {
+				result.push( JSON.parse( JSON.stringify( o ) ) ); // genuinely extra blank slot
+			}
+		}
+		return result;
+	},
+
+	// Set arrays join by stable id (D2). Template-only ids are inherited
+	// (so template additions propagate); character-only ids append; ids in
+	// removedSetIds stay deleted (set-level removal analog of D6).
+	mergeSetArrays: function( bSets, oSets, removedSetIds ) {
+		const base = Array.isArray( bSets ) ? bSets : [];
+		const over = Array.isArray( oSets ) ? oSets : [];
+		if ( !over.length && base.length ) return []; // Present-but-empty clears.
+		const rem = new Set( ( removedSetIds || [] ).filter( x => typeof x === 'string' && x.length ) );
+		const byId = new Map();
+		over.forEach( ( o, j ) => {
+			if ( o && typeof o === 'object' && typeof o.id === 'string' && o.id.length && !byId.has( o.id ) ) byId.set( o.id, j );
 		} );
-		return { sheet: base.custom?.cortexToolkit || {}, sets: sets };
+		const consumed = new Set();
+		const result = [];
+		for ( const b of base ) {
+			if ( !b || typeof b !== 'object' ) { result.push( JSON.parse( JSON.stringify( b ) ) ); continue; }
+			if ( typeof b.id === 'string' && b.id.length && rem.has( b.id ) ) continue;
+			const j = ( typeof b.id === 'string' && b.id.length && byId.has( b.id ) ) ? byId.get( b.id ) : -1;
+			if ( j >= 0 ) {
+				consumed.add( j );
+				const c = JSON.parse( JSON.stringify( b ) );
+				this.applyOverrides( c, over[j] );
+				result.push( c );
+			} else {
+				result.push( JSON.parse( JSON.stringify( b ) ) );
+			}
+		}
+		over.forEach( ( o, j ) => {
+			if ( !consumed.has( j ) ) result.push( JSON.parse( JSON.stringify( o ) ) );
+		} );
+		return result;
+	},
+
+	// Three-state recursive merge (brief D3): absent inherits, null clears,
+	// values win. Mutates base (callers pass a clone). The `sheet` link
+	// never participates (D9); removedTraits/removedSets are character-local
+	// and replace wholesale (D6).
+	applyOverrides: function( base, over ) {
+		if ( !over || typeof over !== 'object' || Array.isArray( over ) ) return base;
+		if ( !base || typeof base !== 'object' || Array.isArray( base ) ) return base;
+		// Removals apply even when the array itself is absent from the
+		// overlay (fully pruned): a missing array with a removal list means
+		// "everything except these", not "everything".
+		if ( !Array.isArray( over.traitSets ) && Array.isArray( over.removedSets ) && over.removedSets.length && Array.isArray( base.traitSets ) ) {
+			base.traitSets = base.traitSets.filter( ts => !( ts && ts.id && over.removedSets.includes( ts.id ) ) );
+		}
+		if ( !Array.isArray( over.traits ) && Array.isArray( over.removedTraits ) && over.removedTraits.length && Array.isArray( base.traits ) ) {
+			base.traits = base.traits.filter( tr => !( tr && tr.name && over.removedTraits.includes( tr.name ) ) );
+		}
+		for ( const key of Object.keys( over ) ) {
+			if ( key === 'sheet' ) continue;
+			const val = over[key];
+			if ( val === null ) { base[key] = null; continue; }
+			if ( key === 'removedTraits' || key === 'removedSets' ) {
+				base[key] = JSON.parse( JSON.stringify( val ) );
+				continue;
+			}
+			const bval = base[key];
+			if ( key === 'traitSets' && Array.isArray( val ) && Array.isArray( bval ) ) {
+				base[key] = this.mergeSetArrays( bval, val, over.removedSets || [] );
+			} else if ( key === 'traits' && Array.isArray( val ) && Array.isArray( bval ) ) {
+				base[key] = this.mergeTraitArrays( bval, val, over.removedTraits || [] );
+			} else if ( ( key === 'sfx' || key === 'tags' ) && Array.isArray( val ) && Array.isArray( bval ) ) {
+				base[key] = val.length ? this.unionArrays( bval, val ) : [];
+			} else if ( val && typeof val === 'object' && !Array.isArray( val ) && bval && typeof bval === 'object' && !Array.isArray( bval ) ) {
+				this.applyOverrides( bval, val );
+			} else {
+				base[key] = JSON.parse( JSON.stringify( val ) );
+			}
+		}
+		return base;
+	},
+
+	// Full merge: character sparse overlay onto template base (brief merge
+	// pseudocode). No template → character as-is (D9/D17). Live form keeps
+	// a pinned { id, version } reference in sheet.template.
+	mergeTemplateIntoCharacter: function( charData, templateEntry ) {
+		const base = this.findTemplateCharacter( templateEntry );
+		if ( !base ) return JSON.parse( JSON.stringify( charData ) );
+		const out = this.applyOverrides( JSON.parse( JSON.stringify( base ) ), charData || {} );
+		if ( templateEntry.id ) {
+			out.sheet = { template: { id: templateEntry.id, version: templateEntry.version || 1 } };
+		}
+		this.ensureTraitSetIds( out );
+		return out;
 	},
 
 	// Snapshot a character into a standalone template entry (static id
@@ -432,67 +856,154 @@ const cortexFunctions = {
 		if ( snapshot.custom && snapshot.custom.cortexToolkit ) {
 			delete snapshot.custom.cortexToolkit.nickname; // Character data, not layout.
 		}
+		// Templates must never carry removals or internal ids: removals are
+		// character-local (they would otherwise infect every character) and
+		// _lid is app-local bookkeeping. Blank slots (reserved print rows)
+		// are structural and are always kept.
+		const cleanNode = ( node ) => {
+			if ( Array.isArray( node ) ) { node.forEach( cleanNode ); return; }
+			if ( !node || typeof node !== 'object' ) return;
+			delete node.removedTraits;
+			delete node.removedSets;
+			delete node._lid;
+			if ( Array.isArray( node.traitSets ) ) node.traitSets.forEach( cleanNode );
+			if ( Array.isArray( node.traits ) ) node.traits.forEach( cleanNode );
+		};
+		cleanNode( snapshot );
 		return {
 			'$schema': this.TEMPLATE_SCHEMA_URL,
 			id: id,
 			title: ( meta && meta.title ) || character?.game || 'Custom Layout',
-			version: this.TEMPLATE_FORMAT_VERSION,
+			version: ( meta && typeof meta.version === 'number' ) ? meta.version : this.TEMPLATE_FORMAT_VERSION,
 			updatedAt: new Date().toISOString(),
 			character: snapshot
 		};
 	},
 
-	// Prune a (cloned) character down to its overrides: drop every inline
-	// layout value identical to the template base. Custom sets (unknown to
-	// the template) keep their full inline layout. No template → untouched.
-	stripCharacterToDeltas: function( character, templateEntry ) {
-		const base = this.templateBaseFor( templateEntry );
-		if ( !base ) return JSON.parse( JSON.stringify( character ) );
-		const clean = JSON.parse( JSON.stringify( character ) );
-		const ctk = clean.custom && clean.custom.cortexToolkit;
-		if ( ctk ) {
-			Object.keys( base.sheet ).forEach( k => {
-				if ( k === 'nickname' ) return; // Character data, not layout.
-				if ( this.deepEqual( ctk[k], base.sheet[k] ) ) delete ctk[k];
-			} );
-			if ( !Object.keys( ctk ).length ) delete clean.custom.cortexToolkit;
+	// Pruner: inverse of the merge. Drops every value deep-equal to the
+	// template base (ignoring _lid), leaving sparse overrides. Explicit
+	// nulls that differ are overrides and are KEPT. Join keys (set id,
+	// trait/subtrait name) are always kept. removedTraits/removedSets and
+	// the sheet link are character-local and never pruned. Blank traits
+	// survive only where they hold alignment (leading/interior) — trailing
+	// fully-inherited blanks are dropped.
+	pruneValue: function( bval, oval, removed ) {
+		if ( this.deepEqualClean( bval, oval ) ) return { drop: true };
+		if ( oval === null || oval === undefined ) {
+			return ( bval === null || bval === undefined ) ? { drop: true } : { keep: null };
 		}
-		( clean.traitSets || [] ).forEach( ts => {
-			const sctk = ts && ts.custom && ts.custom.cortexToolkit;
-			if ( !sctk ) return;
-			const bset = ts.id ? ( base.sets || {} )[ts.id] : null;
-			if ( !bset ) return; // Custom set: keep its full inline layout.
-			Object.keys( bset ).forEach( k => {
-				if ( this.deepEqual( sctk[k], bset[k] ) ) delete sctk[k];
-			} );
-			if ( !Object.keys( sctk ).length ) delete ts.custom.cortexToolkit;
-			if ( ts.custom && !Object.keys( ts.custom ).length ) delete ts.custom;
-		} );
-		if ( clean.custom && !Object.keys( clean.custom ).length ) delete clean.custom;
-		return clean;
+		if ( oval && typeof oval === 'object' && !Array.isArray( oval ) &&
+		     bval && typeof bval === 'object' && !Array.isArray( bval ) ) {
+			const out = {};
+			for ( const k of Object.keys( oval ) ) {
+				if ( k === 'sheet' || k === 'removedTraits' || k === 'removedSets' || k === 'id' || k === 'name' ) {
+					out[k] = JSON.parse( JSON.stringify( oval[k] ) );
+					continue;
+				}
+				if ( k === 'traitSets' && Array.isArray( oval[k] ) && Array.isArray( bval[k] ) ) {
+					const s = this.pruneSetArrays( bval[k], oval[k] );
+					if ( s.length ) out[k] = s;
+					else if ( oval[k].length === 0 && bval[k].length > 0 ) out[k] = [];
+					// else: fully inherited → dropped (absent = inherit whole)
+					continue;
+				}
+				if ( k === 'traits' && Array.isArray( oval[k] ) && Array.isArray( bval[k] ) ) {
+					const t = this.pruneTraitArrays( bval[k], oval[k], oval.removedTraits );
+					if ( t.length ) out[k] = t;
+					else if ( oval[k].length === 0 && bval[k].length > 0 ) out[k] = [];
+					continue;
+				}
+				if ( ( k === 'sfx' || k === 'tags' ) && Array.isArray( oval[k] ) && Array.isArray( bval[k] ) ) {
+					const kept = oval[k].filter( el => !bval[k].some( be => this.deepEqualClean( be, el ) ) );
+					if ( kept.length ) out[k] = kept;
+					else if ( oval[k].length === 0 && bval[k].length > 0 ) out[k] = [];
+					continue;
+				}
+				const r = this.pruneValue( bval[k], oval[k], null );
+				if ( !r.drop ) out[k] = r.keep;
+			}
+			if ( !Object.keys( out ).length ) return { drop: true };
+			if ( Object.keys( out ).every( kk => kk === 'id' || kk === 'name' ) ) return { drop: true };
+			return { keep: out };
+		}
+		return { keep: JSON.parse( JSON.stringify( oval ) ) };
 	},
 
-	// Resolve a sparse character against its template: every layout value
-	// not set locally falls through to the template base. Live form keeps
-	// a bare { id } reference in sheet.template.
-	mergeTemplateIntoCharacter: function( charData, templateEntry ) {
-		const base = this.templateBaseFor( templateEntry );
-		if ( !base ) return JSON.parse( JSON.stringify( charData ) );
-		const clean = JSON.parse( JSON.stringify( charData ) );
-		this.ensureTraitSetIds( clean );
-		if ( !clean.custom || typeof clean.custom !== 'object' ) clean.custom = {};
-		const liveNick = clean.custom.cortexToolkit?.nickname;
-		clean.custom.cortexToolkit = Object.assign( {}, base.sheet || {}, clean.custom.cortexToolkit || {} );
-		if ( liveNick !== undefined ) clean.custom.cortexToolkit.nickname = liveNick;
-		( clean.traitSets || [] ).forEach( ts => {
-			if ( !ts || typeof ts !== 'object' ) return;
-			const bset = ts.id ? ( base.sets || {} )[ts.id] : null;
-			if ( !bset ) return;
-			if ( !ts.custom || typeof ts.custom !== 'object' ) ts.custom = {};
-			ts.custom.cortexToolkit = Object.assign( {}, bset, ts.custom.cortexToolkit || {} );
+	pruneTraitArrays: function( bTraits, oTraits, removed ) {
+		const base = Array.isArray( bTraits ) ? bTraits : [];
+		const over = Array.isArray( oTraits ) ? oTraits : [];
+		void removed;
+		const sparse = [];
+		const baseByName = new Map();
+		base.forEach( b => {
+			if ( b && typeof b === 'object' && !this.isBlankName( b.name ) && !baseByName.has( b.name ) ) baseByName.set( b.name, b );
 		} );
-		if ( templateEntry.id ) clean.sheet = { template: { id: templateEntry.id } };
-		return clean;
+		over.forEach( ( o, i ) => {
+			if ( !o || typeof o !== 'object' ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; }
+			if ( !this.isBlankName( o.name ) ) {
+				const b = baseByName.get( o.name );
+				if ( !b ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; } // char-only
+				// Shape-preserving: fully-inherited named traits stay as
+				// {name} stubs so live indices survive the round-trip.
+				const r = this.pruneValue( b, o, null );
+				const pruned = r.drop ? { name: o.name } : r.keep;
+				pruned.name = o.name;
+				sparse.push( pruned );
+			} else {
+				// Blank traits are positional print slots: always kept so
+				// index alignment (and reserved print rows) survives the
+				// round-trip. Fully-inherited ones prune to a bare stub.
+				const b = ( i < base.length && base[i] && typeof base[i] === 'object' && this.isBlankName( base[i].name ) ) ? base[i] : null;
+				if ( !b ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; } // extra blank slot
+				const r = this.pruneValue( b, o, null );
+				sparse.push( r.drop ? { name: ( typeof o.name === 'string' ? o.name : '' ) } : r.keep );
+			}
+		} );
+		return sparse;
+	},
+
+	pruneSetArrays: function( bSets, oSets ) {
+		const base = Array.isArray( bSets ) ? bSets : [];
+		const over = Array.isArray( oSets ) ? oSets : [];
+		const baseById = new Map();
+		base.forEach( b => {
+			if ( b && typeof b === 'object' && typeof b.id === 'string' && b.id.length && !baseById.has( b.id ) ) baseById.set( b.id, b );
+		} );
+		const sparse = [];
+		// Recursively bare = join keys + name-only stubs all the way down.
+		// Fully-inherited subtrees drop entirely (absent = inherit whole).
+		const bare = ( t ) => {
+			if ( !t || typeof t !== 'object' ) return true;
+			if ( Array.isArray( t ) ) return t.every( bare );
+			return Object.keys( t ).every( k => {
+				if ( k === 'id' || k === 'name' ) return true;
+				if ( k === 'traits' && Array.isArray( t[k] ) ) return t[k].every( bare );
+				return false;
+			} );
+		};
+		const stubOnly = ( p ) => bare( p );
+		over.forEach( o => {
+			if ( !o || typeof o !== 'object' ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; }
+			const b = ( typeof o.id === 'string' && o.id.length ) ? baseById.get( o.id ) : null;
+			if ( !b ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; } // custom set: whole
+			const r = this.pruneValue( b, o, null );
+			const pruned = r.drop ? { id: o.id } : r.keep;
+			pruned.id = o.id;
+			// Fully-inherited sets (join keys + bare name stubs only) drop
+			// entirely — absent means inherit whole. Arrangement order lives
+			// in the preference layer, not here.
+			if ( !stubOnly( pruned ) ) sparse.push( pruned );
+		} );
+		return sparse;
+	},
+
+	// Strip a (cloned) character to its sparse overlay against a template
+	// entry's character base.
+	stripCharacterToDeltas: function( character, templateEntry ) {
+		const base = this.findTemplateCharacter( templateEntry );
+		if ( !base ) return JSON.parse( JSON.stringify( character ) );
+	 const r = this.pruneValue( base, JSON.parse( JSON.stringify( character ) ), null );
+		return r.drop ? {} : r.keep;
 	},
 
 	// Export form: sparse character (overrides only) + embedded full
@@ -500,6 +1011,7 @@ const cortexFunctions = {
 	// Without a resolvable template the character exports exactly as today.
 	stripCharacterForExport: function( character, templateEntry ) {
 		const clean = this.stripCharacterToDeltas( character, templateEntry );
+		this.stripInternalIds( clean );
 		if ( templateEntry && templateEntry.id ) {
 			clean.sheet = { template: JSON.parse( JSON.stringify( templateEntry ) ) };
 		}
@@ -869,4 +1381,8 @@ const cortexFunctions = {
 		custom: {}
 	},
 	
+}
+
+if (typeof module !== "undefined" && module.exports) {
+	module.exports = cortexFunctions;
 }

@@ -24,10 +24,14 @@ const cortexStorage = {
 	_useIDB: ( typeof indexedDB !== 'undefined' ),
 
 	// Sheet-template registry (entry shape, same as the spotlight library:
-	// { id (static), title, ..., character: {...} }). Stored separately from
-	// characters; imports upsert by static id so re-imports replace instead
-	// of duplicating. Built-ins resolve live from the bundle and are never
-	// stored here.
+	// { id (static), version, title, ..., character: {...} }). Snapshots are
+	// keyed by (id, version): re-imports replace the same version instead
+	// of duplicating, and pinned older versions survive bundle updates.
+	// Built-ins resolve live from the bundle and are never stored here.
+	templateKey( t ) {
+		return ( t && t.id ) + '@' + ( ( t && t.version ) || 1 );
+	},
+
 	normalizeTemplates( templates ) {
 		if ( !Array.isArray( templates ) ) return [];
 		const seen = new Set();
@@ -35,8 +39,10 @@ const cortexStorage = {
 		for ( const t of templates ) {
 			if ( !t || typeof t !== 'object' || typeof t.id !== 'string' || !t.id.length ) continue;
 			if ( !t.character || typeof t.character !== 'object' || !Array.isArray( t.character.traitSets ) ) continue;
-			if ( seen.has( t.id ) ) continue;
-			seen.add( t.id );
+			const key = this.templateKey( t );
+			if ( seen.has( key ) ) continue;
+			seen.add( key );
+			if ( t.version === undefined || t.version === null ) t.version = 1;
 			out.push( t );
 		}
 		return out;
@@ -45,11 +51,62 @@ const cortexStorage = {
 	upsertTemplate( templates, entry ) {
 		const list = this.normalizeTemplates( templates );
 		if ( !entry || typeof entry.id !== 'string' || !entry.id.length ) return list;
-		const i = list.findIndex( t => t.id === entry.id );
+		if ( entry.version === undefined || entry.version === null ) entry.version = 1;
+		const key = this.templateKey( entry );
+		const i = list.findIndex( t => this.templateKey( t ) === key );
 		const clean = JSON.parse( JSON.stringify( entry ) );
 		if ( i === -1 ) list.push( clean );
 		else list[i] = clean;
 		return list;
+	},
+
+	// Drop stored snapshots no character pins. Keeps the registry (and
+	// future switch prompts) exact across bundle updates.
+	pruneTemplates( templates, characters ) {
+		const list = this.normalizeTemplates( templates );
+		const pinned = new Set();
+		( Array.isArray( characters ) ? characters : [] ).forEach( c => {
+			const t = c && c.sheet && c.sheet.template;
+			const id = t ? ( typeof t === 'string' ? t : t.id ) : null;
+			if ( !id ) return;
+			const ver = ( t && typeof t === 'object' && t.version ) || 1;
+			pinned.add( id + '@' + ver );
+		} );
+		return list.filter( t => pinned.has( this.templateKey( t ) ) );
+	},
+
+	// Preference layer (brief D11): per-character arrangement + declines.
+	// Applied after the merge — user arrangement always wins. Shape:
+	// { version: 1, global: {}, characters: { charId: {
+	//   setOrder: [setId...], traitOrders: { setId: [lid...] },
+	//   declinedTemplateVersions: { tplId: version } } } }
+	normalizePreferences( prefs ) {
+		const out = { version: 1, global: {}, characters: {} };
+		if ( !prefs || typeof prefs !== 'object' ) return out;
+		if ( prefs.global && typeof prefs.global === 'object' ) out.global = prefs.global;
+		if ( prefs.characters && typeof prefs.characters === 'object' ) {
+			for ( const cid of Object.keys( prefs.characters ) ) {
+				const cp = prefs.characters[cid];
+				if ( !cp || typeof cp !== 'object' ) continue;
+				const clean = {};
+				if ( Array.isArray( cp.setOrder ) ) clean.setOrder = cp.setOrder.filter( x => typeof x === 'string' );
+				if ( cp.traitOrders && typeof cp.traitOrders === 'object' ) {
+					clean.traitOrders = {};
+					for ( const sid of Object.keys( cp.traitOrders ) ) {
+						const arr = cp.traitOrders[sid];
+						if ( Array.isArray( arr ) ) clean.traitOrders[sid] = arr.filter( x => typeof x === 'string' );
+					}
+				}
+				if ( cp.declinedTemplateVersions && typeof cp.declinedTemplateVersions === 'object' ) {
+					clean.declinedTemplateVersions = {};
+					for ( const tid of Object.keys( cp.declinedTemplateVersions ) ) {
+						if ( typeof cp.declinedTemplateVersions[tid] === 'number' ) clean.declinedTemplateVersions[tid] = cp.declinedTemplateVersions[tid];
+					}
+				}
+				out.characters[cid] = clean;
+			}
+		}
+		return out;
 	},
 
 	openDB() {
@@ -91,19 +148,9 @@ const cortexStorage = {
 			if ( c.isTemplate && c.name ) {
 				c.name = String( c.name ).replace( /\s*\([^)]*\)/g, '' ).trim();
 			}
-			if ( !c.custom ) c.custom = {};
-			if ( !c.custom.cortexToolkit ) c.custom.cortexToolkit = {};
-			if ( !c.custom.cortexToolkit.columnAlignment ) {
-				c.custom.cortexToolkit.columnAlignment = 'top-base';
-			}
-			if ( !c.custom.cortexToolkit.columnOffsets ) {
-				c.custom.cortexToolkit.columnOffsets = { left: 0, center: 0, right: 0 };
-			}
-			if ( c.custom.cortexToolkit.columnAlignment !== 'custom' ) {
-				c.custom.cortexToolkit.columnOffsets.left = 0;
-				c.custom.cortexToolkit.columnOffsets.center = 0;
-				c.custom.cortexToolkit.columnOffsets.right = 0;
-			}
+			// D5: load must not materialize defaults (columnAlignment /
+			// offsets resolve via renderer fallbacks). Only legacy
+			// migrations below may rewrite.
 			if ( c.portrait?.url ) {
 				const pUrl = c.portrait.url;
 				if ( pUrl.includes( 'camp_bewilderwood_logo' ) || pUrl.includes( 'cosa_nostra_logo' ) || pUrl.includes( 'brighter_stars_logo' ) ) {
@@ -224,6 +271,7 @@ const cortexStorage = {
 						playViewMode: record.playViewMode === 'tabs' ? 'tabs' : 'split',
 						rollerPosition: record.rollerPosition === 'right' ? 'right' : 'left',
 						templates: this.normalizeTemplates( record.templates ),
+						preferences: this.normalizePreferences( record.preferences ),
 						migrated: false,
 					};
 				}
@@ -233,11 +281,12 @@ const cortexStorage = {
 		}
 		const legacy = this.readLegacy();
 		if ( legacy.error ) {
-			return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], loadError: legacy.error, migrated: false };
+			return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: this.normalizePreferences( null ), loadError: legacy.error, migrated: false };
 		}
 		if ( legacy.state ) {
 			const state = legacy.state;
 			state.templates = [];
+			state.preferences = this.normalizePreferences( null );
 			try {
 				await this.save( state );
 				this.clearLegacy();
@@ -248,7 +297,7 @@ const cortexStorage = {
 			}
 			return state;
 		}
-		return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], migrated: false };
+		return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: this.normalizePreferences( null ), migrated: false };
 	},
 
 	async save( state ) {
@@ -260,6 +309,7 @@ const cortexStorage = {
 			playViewMode: state.playViewMode || 'split',
 			rollerPosition: state.rollerPosition || 'left',
 			templates: this.normalizeTemplates( state.templates ),
+			preferences: this.normalizePreferences( state.preferences ),
 		};
 		if ( this._useIDB ) {
 			const db = await this.openDB();
@@ -313,3 +363,7 @@ const cortexStorage = {
 	},
 
 };
+
+if (typeof module !== "undefined" && module.exports) {
+	module.exports = cortexStorage;
+}

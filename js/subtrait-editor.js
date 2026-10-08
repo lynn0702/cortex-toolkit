@@ -62,6 +62,20 @@ const SubtraitEditor = {
 			return ratings;
 		},
 
+		templateSubtraitMatched() {
+			const s = this.traitSetID, t = this.traitID;
+			const ts = this.character?.traitSets?.[s];
+			const tr = ts?.traits?.[t];
+			if ( !tr || !this.subtrait || !this.subtrait.name || !ts || !ts.id || !tr.name ) return false;
+			const entry = cortexFunctions.resolveTemplateFor(
+				this.character, this.$root ? this.$root.sheetTemplates : null );
+			const base = cortexFunctions.templateSetById( entry, ts.id );
+			const btr = base && Array.isArray( base.traits )
+				? base.traits.find( b => b && b.name === tr.name ) : null;
+			return Boolean( btr && Array.isArray( btr.traits ) &&
+				btr.traits.some( b => b && b.name === this.subtrait.name ) );
+		},
+
 	},
 
 	/*html*/
@@ -91,6 +105,9 @@ const SubtraitEditor = {
 					</div>
 					<div v-else class="editor-button editor-button-remove editor-button-delete-confirm" @click.prevent="removeSubtrait">
 						<span><i class="fas fa-exclamation-triangle"></i> Confirm Remove?</span>
+					</div>
+					<div v-if="templateSubtraitMatched" class="editor-button editor-button-remove" @click.prevent="removeFromSheet" title="Remove from sheet — reversible via restore, no confirmation needed">
+						<span><i class="fas fa-eraser"></i> Remove from sheet</span>
 					</div>
 				</div>
 			</div>
@@ -131,6 +148,15 @@ const SubtraitEditor = {
 		removeSubtrait() {
 			this.confirmDelete = false;
 			this.$emit( 'removeSubtrait', this.subtraitID );
+		},
+
+		removeFromSheet() {
+			const entry = cortexFunctions.resolveTemplateFor(
+				this.character, this.$root ? this.$root.sheetTemplates : null );
+			cortexFunctions.removeSubtraitFromSheet(
+				this.character, entry, this.traitSetID, this.traitID, this.subtraitID );
+			this.confirmDelete = false;
+			this.updateCharacter( this.character );
 		},
 
 		getDieDisplayValue( value ) {

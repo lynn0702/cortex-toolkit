@@ -252,6 +252,16 @@ const TraitSetEditor = {
 			}
 		},
 
+		templateEntry() {
+			return cortexFunctions.resolveTemplateFor(
+				this.character, this.$root ? this.$root.sheetTemplates : null );
+		},
+
+		// Template traits by name not currently on this sheet (D19 restore menu).
+		restorableTraitNames() {
+			return cortexFunctions.restorableTraits( this.character, this.templateEntry, this.traitSetID );
+		},
+
 		// Column width share for Spotlight rows (percent of the row this
 		// set's column takes; unset/null = equal share). Mates in the other
 		// column(s) flex to fill whatever is left, forming a row band.
@@ -1486,6 +1496,24 @@ const TraitSetEditor = {
 
 					</div>
 
+					<!-- RESTORE TEMPLATE TRAITS (D19) -->
+					<div class="editor-field" v-if="restorableTraitNames.length">
+						<label>Restore Removed Traits</label>
+						<div class="editor-button-group" style="flex-wrap: wrap;">
+							<button
+								v-for="tname in restorableTraitNames"
+								:key="'restore-' + tname"
+								type="button"
+								class="editor-group-btn"
+								@click.stop="restoreTrait(tname)"
+								:title="'Restore ‘' + tname + '’ from the template'"
+							>
+								<i class="fas fa-undo"></i> {{ tname }}
+							</button>
+						</div>
+						<div class="editor-hint">Template traits not on this sheet — restoring clears the removal.</div>
+					</div>
+
 				</div>
 
 			</div>
@@ -1610,10 +1638,22 @@ const TraitSetEditor = {
 			let s = this.traitSetID;
 
 			let clone = JSON.parse( JSON.stringify( character.traitSets[s] ) );
+			// A duplicate is a new set: fresh stable id + fresh internal ids
+			// so it never collides with (or shadows) the original in merges.
+			delete clone.id;
+			cortexFunctions.stripInternalIds({ traitSets: [ clone ] });
 			character.traitSets.splice( s + 1, 0, clone );
+			cortexFunctions.ensureTraitSetIds( character );
+			cortexFunctions.assignLids( character );
 
 			this.updateCharacter( character );
 			this.selectElement([ 'traitSet', s + 1 ]);
+		},
+
+		restoreTrait( name ) {
+			if ( cortexFunctions.restoreTraitOnSheet( this.character, this.templateEntry, this.traitSetID, name ) ) {
+				this.updateCharacter( this.character );
+			}
 		},
 
 		setColumn( col ) {
@@ -2075,6 +2115,7 @@ const TraitSetEditor = {
 		},
 
 		checkScrollPosition() {
+			if ( !this.$el || typeof this.$el.querySelector !== 'function' ) return;
 			let element = this.$el.querySelector('.editor-inner > div');
 			if ( !element ) return;
 

@@ -3,13 +3,16 @@
 	"$id": "https://cortex.engard.me/schema/0.1/character.schema.json",
 	"title": "Cortex Prime character",
 	"description": "A JSON schema for a Cortex Prime player character sheet.",
-	"type" : "object",
+	"type": "object",
 	"$defs": {
 		"traitSet": {
 			"type": "object",
 			"properties": {
 				"id": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "Stable identifier joining this set to its sheet template layout. Assigned once and never regenerated."
 				},
 				"name": {
@@ -31,39 +34,77 @@
 				"traits": {
 					"type": "array",
 					"description": "The traits in the trait set.",
-					"items": { "$ref": "#/$defs/trait" }
+					"items": {
+						"$ref": "#/$defs/trait"
+					}
 				},
 				"sfx": {
 					"type": "array",
 					"description": "Any SFX attached directly to this trait set.",
-					"items": { "$ref": "#/$defs/sfx" }
+					"items": {
+						"$ref": "#/$defs/sfx"
+					}
 				},
 				"ratingPosition": {
-					"type": "string",
-					"enum": [ "inline", "above", "below", "none" ],
+					"type": [
+						"string",
+						"null"
+					],
+					"enum": [
+						"inline",
+						"above",
+						"below",
+						"none"
+					],
 					"description": "Placement of trait rating dice relative to trait labels."
 				},
 				"statement": {
-					"type": "boolean",
+					"type": [
+						"boolean",
+						"null"
+					],
 					"description": "Whether traits in this set feature a statement box alongside the trait name."
 				},
 				"hasQuestionedPip": {
-					"type": "boolean",
+					"type": [
+						"boolean",
+						"null"
+					],
 					"description": "Whether statement traits feature a toggleable questioned pip."
 				},
 				"hasCounterColumn": {
-					"type": "boolean",
+					"type": [
+						"boolean",
+						"null"
+					],
 					"description": "Whether this trait set renders a secondary counter column (e.g. Badges XP)."
 				},
 				"counterLabel": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "Label for the secondary counter column header, e.g. 'XP'."
 				},
-				"tags": { "$ref": "#/$defs/tags" },
-				"custom": { "$ref": "#/$defs/custom" }
+				"tags": {
+					"$ref": "#/$defs/tags"
+				},
+				"custom": {
+					"$ref": "#/$defs/custom"
+				}
 			},
 			"additionalProperties": false,
-			"required": [ "name", "description", "nounSingular", "nounPlural", "traits", "sfx", "tags", "custom" ]
+			"required": [
+				"id",
+				"name",
+				"description",
+				"nounSingular",
+				"nounPlural",
+				"traits",
+				"sfx",
+				"tags",
+				"custom"
+			]
 		},
 		"trait": {
 			"type": "object",
@@ -73,59 +114,107 @@
 					"description": "The name of the trait."
 				},
 				"value": {
-					"type": [ "integer", "null" ],
+					"type": [
+						"integer",
+						"null"
+					],
 					"description": "The die value of the trait. For example, `2` for d2, `6` for a d6, etc. For unrated traits, use `0` or null."
 				},
 				"dice": {
-					"type": "array",
+					"type": [
+						"array",
+						"null"
+					],
 					"description": "Array of die values for multi-die traits (e.g. [6, 6, 6] or [8, 8, 6, 4]).",
-					"items": { "type": "integer" }
+					"items": {
+						"type": "integer"
+					}
 				},
 				"description": {
 					"type": "string",
 					"description": "A description of the trait, or the trait statement."
 				},
 				"statement": {
-					"type": "string",
+					"type": [
+						"string",
+						"null"
+					],
 					"description": "The trait statement (synonym for description)."
 				},
 				"questioned": {
-					"type": "boolean",
+					"type": [
+						"boolean",
+						"null"
+					],
 					"description": "Whether this trait statement is questioned or challenged."
 				},
 				"xp": {
-					"type": [ "integer", "string", "null" ],
+					"type": [
+						"integer",
+						"string",
+						"null"
+					],
 					"description": "XP or numeral counter value for this trait."
 				},
 				"counter": {
-					"type": [ "integer", "string", "null" ],
+					"type": [
+						"integer",
+						"string",
+						"null"
+					],
 					"description": "Alternative counter value for this trait."
 				},
 				"ratingPosition": {
-					"type": "string",
-					"enum": [ "inline", "above", "below", "none" ],
+					"type": [
+						"string",
+						"null"
+					],
+					"enum": [
+						"inline",
+						"above",
+						"below",
+						"none"
+					],
 					"description": "Override for rating dice placement on this trait."
 				},
 				"traits": {
 					"type": "array",
 					"description": "Any child traits attached this parent trait.",
-					"items": { "$ref": "#/$defs/trait" }
+					"items": {
+						"$ref": "#/$defs/trait"
+					}
 				},
 				"sfx": {
 					"type": "array",
 					"description": "Any SFX attached to this trait.",
 					"items": {
 						"oneOf": [
-							{"$ref": "#/$defs/sfx"},
-							{"$ref": "#/$defs/sfxHinder"}
+							{
+								"$ref": "#/$defs/sfx"
+							},
+							{
+								"$ref": "#/$defs/sfxHinder"
+							}
 						]
 					}
 				},
-				"tags": { "$ref": "#/$defs/tags" },
-				"custom": { "$ref": "#/$defs/custom" }
+				"tags": {
+					"$ref": "#/$defs/tags"
+				},
+				"custom": {
+					"$ref": "#/$defs/custom"
+				}
 			},
 			"additionalProperties": false,
-			"required": [ "name", "value", "description", "traits", "sfx", "tags", "custom" ]
+			"required": [
+				"name",
+				"value",
+				"description",
+				"traits",
+				"sfx",
+				"tags",
+				"custom"
+			]
 		},
 		"sfx": {
 			"type": "object",
@@ -138,23 +227,34 @@
 					"type": "string",
 					"description": "A description of the SFX."
 				},
-				"tags": { "$ref": "#/$defs/tags" },
-				"custom": { "$ref": "#/$defs/custom" }
+				"tags": {
+					"$ref": "#/$defs/tags"
+				},
+				"custom": {
+					"$ref": "#/$defs/custom"
+				}
 			},
 			"additionalProperties": false,
-			"required": [ "name", "description", "tags", "custom" ]
+			"required": [
+				"name",
+				"description",
+				"tags",
+				"custom"
+			]
 		},
 		"sfxHinder": {
 			"type": "string",
 			"description": "Represents the “Hinder” core SFX.",
-			"enum": [ "hinder" ]
+			"enum": [
+				"hinder"
+			]
 		},
 		"tags": {
 			"type": "array",
 			"description": "A list of taxonomy tags attached to this entity. Tags may include letters, numbers, hyphens, periods, and forward slashes (for namespacing).",
 			"items": {
 				"type": "string",
-				"pattern": "^[A-Za-z0-9-\\.\\\/]+$"
+				"pattern": "^[A-Za-z0-9-\\.\\/]+$"
 			}
 		},
 		"custom": {
@@ -166,15 +266,23 @@
 	"properties": {
 		"$schema": {
 			"description": "JSON schema URI for character.schema.json.",
-			"type": "string"
+			"type": [
+				"string",
+				"null"
+			]
 		},
 		"version": {
 			"description": "Version of character.schema.json to use.",
 			"type": "string",
-			"enum": [ "0.1" ]
+			"enum": [
+				"0.1"
+			]
 		},
 		"isTemplate": {
-			"type": "boolean",
+			"type": [
+				"boolean",
+				"null"
+			],
 			"description": "Whether this character represents a reusable template."
 		},
 		"id": {
@@ -216,7 +324,9 @@
 		"traitSets": {
 			"type": "array",
 			"description": "The character’s trait sets.",
-			"items": { "$ref": "#/$defs/traitSet" }
+			"items": {
+				"$ref": "#/$defs/traitSet"
+			}
 		},
 		"portrait": {
 			"type": "object",
@@ -240,28 +350,65 @@
 					"type": "string",
 					"description": "A description of the image."
 				},
-				"tags": { "$ref": "#/$defs/tags" },
-				"custom": { "$ref": "#/$defs/custom" }
+				"tags": {
+					"$ref": "#/$defs/tags"
+				},
+				"custom": {
+					"$ref": "#/$defs/custom"
+				}
 			},
-			"required": [ "url", "alt", "tags", "custom" ],
+			"required": [
+				"url",
+				"alt",
+				"tags",
+				"custom"
+			],
 			"additionalProperties": false
 		},
 		"sheet": {
-			"type": "object",
+			"type": [
+				"object",
+				"null"
+			],
 			"description": "Layout resolution: template names the sheet template whose values fill in anything not set locally (live: bare { id }; file export: full embedded template object).",
 			"properties": {
 				"template": {
 					"type": "object",
 					"description": "Sheet template reference (live) or embedded template object (export).",
 					"properties": {
-						"id": { "type": "string" }
+						"id": {
+							"type": "string"
+						}
 					},
-					"required": [ "id" ],
+					"required": [
+						"id"
+					],
 					"additionalProperties": true
 				}
 			},
-			"required": [ "template" ],
+			"required": [
+				"template"
+			],
 			"additionalProperties": false
+		},
+		"prefs": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "File-traveling arrangement (name-keyed set/trait order + declined template versions). Present only when the user rearranged; live prefs stay app-local.",
+			"properties": {
+				"setOrder": {
+					"type": "array"
+				},
+				"traitOrders": {
+					"type": "object"
+				},
+				"declinedTemplateVersions": {
+					"type": "object"
+				}
+			},
+			"additionalProperties": true
 		},
 		"plotPoints": {
 			"type": "integer",
@@ -271,9 +418,29 @@
 			"type": "string",
 			"description": "Any additional notes about the character. Format: plaintext, Markdown or HTML."
 		},
-		"tags": { "$ref": "#/$defs/tags" },
-		"custom": { "$ref": "#/$defs/custom" }
+		"tags": {
+			"$ref": "#/$defs/tags"
+		},
+		"custom": {
+			"$ref": "#/$defs/custom"
+		}
 	},
-	"required": [ "version", "id", "dateCreated", "dateModified", "dateTouched", "name", "game", "pronouns", "description", "traitSets", "portrait", "plotPoints", "notes", "tags", "custom" ],
+	"required": [
+		"version",
+		"id",
+		"dateCreated",
+		"dateModified",
+		"dateTouched",
+		"name",
+		"game",
+		"pronouns",
+		"description",
+		"traitSets",
+		"portrait",
+		"plotPoints",
+		"notes",
+		"tags",
+		"custom"
+	],
 	"additionalProperties": false
 }

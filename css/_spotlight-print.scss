@@ -176,6 +176,13 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+		// Physical page-break cut lines (screen preview only): a red rule
+		// every page-height so spillover past one sheet is visible.
+		background-image: repeating-linear-gradient(to bottom,
+			transparent 0,
+			transparent calc(var(--page-height) - 1px),
+			rgba(239, 68, 68, 0.6) calc(var(--page-height) - 1px),
+			rgba(239, 68, 68, 0.6) var(--page-height));
 
 		.page-watermark {
 			position: absolute;
@@ -1855,8 +1862,11 @@
 			border-radius: 0 !important;
 			overflow: visible !important;
 			position: relative !important;
-			page-break-inside: avoid !important;
-			break-inside: avoid !important;
+			// Tall sheets flow across physical pages (cut lines are a screen
+			// preview aid only and must never print).
+			background-image: none !important;
+			page-break-inside: auto !important;
+			break-inside: auto !important;
 			box-sizing: border-box !important;
 
 			&:not(:last-child) {

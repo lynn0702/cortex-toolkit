@@ -671,28 +671,9 @@ const Roster = {
 				
 			}
 			
-			// Populate custom data sets for this app.
-			if ( Array.isArray( character.traitSets ) ) {
-				for (let i = 0; i < character.traitSets.length; i++) {
-					const traitSet = character.traitSets[i];
-					if ( !traitSet.custom ) traitSet.custom = {};
-					if ( !traitSet.custom.cortexToolkit ) {
-						traitSet.custom.cortexToolkit = structuredClone( cortexFunctions.defaultTraitSet.custom.cortexToolkit );
-					}
-				}
-			} else {
-				character.traitSets = [];
-			}
-
-			if ( !character.portrait ) {
-				character.portrait = structuredClone( cortexFunctions.defaultCharacter.portrait );
-			} else {
-				if ( !character.portrait.custom ) character.portrait.custom = {};
-				if ( !character.portrait.custom.cortexToolkit ) {
-					character.portrait.custom.cortexToolkit = structuredClone( cortexFunctions.defaultCharacter.portrait.custom.cortexToolkit );
-				}
-			}
-
+			// D5: import must not materialize defaults — layout inherits from
+			// the linked template at merge; the renderer treats absence as
+			// empty. Identity (set ids) was ensured at sanitize time.
 			this.$emit('importCharacter', character );
 
 			await Vue.nextTick();

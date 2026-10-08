@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				characterID:        null,
 				openCharacterIDs:   [],
 				sheetTemplates:     [],
+				prefs:              { version: 1, global: {}, characters: {} },
 				playViewMode:       'split',
 				isAddCharacterModalOpen: false,
 				sessionCharacterSearch: '',
@@ -85,6 +86,25 @@ document.addEventListener('DOMContentLoaded', () => {
 					if ( q.length && !c.name?.toLowerCase().includes(q) && !c.game?.toLowerCase().includes(q) ) return false;
 					return true;
 				});
+			},
+
+			// Template version switch prompt (D16): the bundle moved on but
+			// this character still resolves against its pinned snapshot.
+			pendingTemplateUpdate() {
+				if ( this.mode !== 'character' || !this.character ) return null;
+				const t = this.character.sheet && this.character.sheet.template;
+				const id = t ? ( typeof t === 'string' ? t : t.id ) : null;
+				if ( !id ) return null;
+				const pinned = ( t && typeof t === 'object' && t.version ) || 1;
+				if ( typeof cortexSpotlightTemplates === 'undefined' ) return null;
+				const builtin = cortexFunctions.findSpotlightTemplate( id );
+				if ( !builtin ) return null;
+				const current = builtin.version || 1;
+				if ( current <= pinned ) return null;
+				const declined = this.prefs && this.prefs.characters && this.prefs.characters[this.character.id]
+					? this.prefs.characters[this.character.id].declinedTemplateVersions : null;
+				if ( declined && declined[id] && declined[id] >= current ) return null;
+				return { id: id, pinned: pinned, current: current };
 			},
 
 		},
@@ -194,6 +214,14 @@ document.addEventListener('DOMContentLoaded', () => {
 					</button>
 				</div>
 			
+				<!-- TEMPLATE VERSION SWITCH PROMPT -->
+				<div class="template-update-banner" v-if="pendingTemplateUpdate && submode === 'edit'"
+					style="margin: 0.5rem auto; max-width: 60rem; padding: 0.5rem 0.75rem; background: #fef9c3; border: 1px solid #eab308; border-radius: 6px; color: #713f12; font-size: 0.8rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+					<span><i class="fas fa-layer-group"></i> A newer layout (v{{ pendingTemplateUpdate.current }}) is available for this sheet — you are on your saved v{{ pendingTemplateUpdate.pinned }}. Your content and arrangement carry over.</span>
+					<button type="button" @click.stop="applyTemplateUpdate" style="background: #ca8a04; color: #fff; border: none; border-radius: 4px; padding: 0.25rem 0.6rem; cursor: pointer;">Update layout</button>
+					<button type="button" @click.stop="stayOnTemplateSnapshot" style="background: transparent; color: #713f12; border: 1px solid #ca8a04; border-radius: 4px; padding: 0.25rem 0.6rem; cursor: pointer;">Stay on v{{ pendingTemplateUpdate.pinned }}</button>
+				</div>
+
 				<!-- CHARACTER SHEET -->
 				<roster
 						v-if="mode === 'roster'"
@@ -277,6 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						></character>
 					</div>
 					</div>
+
 
 					<character
 						v-else-if="mode === 'character' && character"
@@ -547,38 +576,123 @@ document.addEventListener('DOMContentLoaded', () => {
 				return this._spotlightLoading;
 			},
 
-			resolveTemplateEntry( id ) {
+			resolveTemplateEntry( id, version ) {
 				if ( !id ) return null;
-				const stored = ( this.sheetTemplates || [] ).find( t => t.id === id );
-				if ( stored ) return stored;
-				return cortexFunctions.findSpotlightTemplate( id );
+				const store = this.sheetTemplates || [];
+				if ( version ) {
+					const snap = store.find( t => t.id === id && ( t.version || 1 ) === version );
+					if ( snap ) return snap;
+					const builtin = cortexFunctions.findSpotlightTemplate( id );
+					if ( builtin && ( ( builtin.version || 1 ) === version ) ) return builtin;
+					if ( builtin ) return builtin; // degraded: snapshot lost, use current
+					const any = store.filter( t => t.id === id ).sort( ( a, b ) => ( b.version || 1 ) - ( a.version || 1 ) );
+					return any[0] || null;
+				}
+				const builtin = cortexFunctions.findSpotlightTemplate( id );
+				if ( builtin ) return builtin;
+				const any = store.filter( t => t.id === id ).sort( ( a, b ) => ( b.version || 1 ) - ( a.version || 1 ) );
+				return any[0] || null;
+			},
+
+			// Preference layer (brief D11): arrangement lives here, applied
+			// after every merge so user arrangement always wins.
+			charPrefs( charId ) {
+				if ( !this.prefs ) this.prefs = { version: 1, global: {}, characters: {} };
+				if ( !this.prefs.characters[charId] ) this.prefs.characters[charId] = {};
+				return this.prefs.characters[charId];
+			},
+
+			applyPrefs( character ) {
+				if ( !character || !character.id ) return character;
+				const cp = this.prefs && this.prefs.characters ? this.prefs.characters[character.id] : null;
+				if ( !cp ) return character;
+				if ( Array.isArray( cp.setOrder ) && cp.setOrder.length && Array.isArray( character.traitSets ) ) {
+					const byId = new Map();
+					character.traitSets.forEach( ts => {
+						if ( ts && ts.id && !byId.has( ts.id ) ) byId.set( ts.id, ts );
+					} );
+					const ordered = [];
+					cp.setOrder.forEach( id => {
+						if ( byId.has( id ) ) { ordered.push( byId.get( id ) ); byId.delete( id ); }
+					} );
+					byId.forEach( ts => ordered.push( ts ) );
+					character.traitSets.forEach( ts => { if ( !ordered.includes( ts ) ) ordered.push( ts ); } );
+					character.traitSets = ordered;
+				}
+				if ( cp.traitOrders && Array.isArray( character.traitSets ) ) {
+					character.traitSets.forEach( ts => {
+						const order = ts && ts.id ? cp.traitOrders[ts.id] : null;
+						if ( !Array.isArray( order ) || !order.length || !Array.isArray( ts.traits ) ) return;
+						const byLid = new Map();
+						ts.traits.forEach( tr => {
+							if ( tr && tr._lid && !byLid.has( tr._lid ) ) byLid.set( tr._lid, tr );
+						} );
+						const ordered = [];
+						order.forEach( lid => {
+							if ( byLid.has( lid ) ) { ordered.push( byLid.get( lid ) ); byLid.delete( lid ); }
+						} );
+						byLid.forEach( tr => ordered.push( tr ) );
+						ts.traits.forEach( tr => { if ( !ordered.includes( tr ) ) ordered.push( tr ); } );
+						ts.traits = ordered;
+					} );
+				}
+				return character;
+			},
+
+			recordCharOrder( character ) {
+				if ( !character || !character.id ) return;
+				const cp = this.charPrefs( character.id );
+				if ( !Array.isArray( character.traitSets ) ) return;
+				cp.setOrder = character.traitSets.map( ts => ts && ts.id ).filter( Boolean );
+				cp.traitOrders = cp.traitOrders || {};
+				character.traitSets.forEach( ts => {
+					if ( ts && ts.id && Array.isArray( ts.traits ) ) {
+						cp.traitOrders[ts.id] = ts.traits.map( tr => tr && tr._lid ).filter( Boolean );
+					}
+				} );
 			},
 
 			// Normalize one stored character: stable set ids, sheet.template
-			// forms (full embed → upsert + collapse to { id }), then merge
-			// layout values not set locally from the template base.
+			// forms (full embed → upsert + collapse to a pinned { id, version }),
+			// snapshot-on-first-see for unversioned refs (D16), then merge +
+			// internal ids + preferences.
 			resolveStoredCharacter( c ) {
 				if ( !c || typeof c !== 'object' ) return c;
 				cortexFunctions.ensureTraitSetIds( c );
 				let ref = null;
 				const t = c.sheet && c.sheet.template;
 				if ( typeof t === 'string' && t.length ) {
-					ref = t;
+					ref = { id: t, version: null };
 					c.sheet = { template: { id: t } };
 				} else if ( t && typeof t === 'object' ) {
 					if ( t.character && t.id ) {
 						this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, t );
-						ref = t.id;
-						c.sheet = { template: { id: t.id } };
+						ref = { id: t.id, version: t.version || 1 };
+						c.sheet = { template: { id: t.id, version: t.version || 1 } };
 					} else if ( t.id ) {
-						ref = t.id;
-						c.sheet = { template: { id: t.id } };
+						ref = { id: t.id, version: t.version || null };
+						c.sheet = { template: t.version ? { id: t.id, version: t.version } : { id: t.id } };
 					}
 				}
 				if ( ref ) {
-					const entry = this.resolveTemplateEntry( ref );
-					if ( entry ) return cortexFunctions.mergeTemplateIntoCharacter( c, entry );
+					let entry = this.resolveTemplateEntry( ref.id, ref.version );
+					if ( entry ) {
+						const ver = ref.version || entry.version || 1;
+						// Snapshot the exact pinned base into the store (D16):
+						// a later bundle update must never move existing
+						// characters until the user accepts the switch.
+						const inStore = ( this.sheetTemplates || [] ).some( s => s.id === entry.id && ( s.version || 1 ) === ver );
+						if ( !inStore && cortexFunctions.findSpotlightTemplate( entry.id ) === entry ) {
+							this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, entry );
+						}
+						ref = { id: ref.id, version: ver };
+						c.sheet = { template: { id: ref.id, version: ver } };
+						entry = this.resolveTemplateEntry( ref.id, ref.version ) || entry;
+					}
+					if ( entry ) c = cortexFunctions.mergeTemplateIntoCharacter( c, entry );
 				}
+				cortexFunctions.assignLids( c );
+				this.applyPrefs( c );
 				return c;
 			},
 
@@ -672,6 +786,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
+				cortexFunctions.ensureTraitSetIds( character );
+				cortexFunctions.assignLids( character );
 
 				this.characters.push( character );
 				this.characterID = character.id;
@@ -699,6 +815,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				character.isTemplate = false;
 				character.name = '';
 				character.game = template.game || template.name || '';
+				cortexFunctions.stripInternalIds( character );
+				cortexFunctions.ensureTraitSetIds( character );
+				cortexFunctions.assignLids( character );
+				this.recordCharOrder( character );
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
@@ -725,7 +845,12 @@ document.addEventListener('DOMContentLoaded', () => {
 				character.name = asTemplate ? (spotlightItem.title ? spotlightItem.title.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '';
 				character.game = spotlightItem.spotlight || spotlightItem.title || '';
 				cortexFunctions.ensureTraitSetIds( character );
-				character.sheet = { template: { id: spotlightItem.id } };
+				cortexFunctions.assignLids( character );
+				character.sheet = { template: { id: spotlightItem.id, version: spotlightItem.version || 1 } };
+				// D16: snapshot the exact pinned base now — a later bundle
+				// update must never move this character unasked.
+				this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, JSON.parse( JSON.stringify( spotlightItem ) ) );
+				this.recordCharOrder( character );
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
@@ -766,6 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				if ( c === -1 ) return;
 
 				this.characters.splice( c, 1 );
+				if ( this.prefs && this.prefs.characters ) delete this.prefs.characters[id];
 
 				if ( this.characterID === id ) {
 					if ( this.openCharacterIDs.length ) {
@@ -788,6 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				this.characters = [];
 				this.characterID = null;
 				this.openCharacterIDs = [];
+				if ( this.prefs ) this.prefs.characters = {};
 				this.saveOpenCharacterIDs();
 				this.setMode( 'roster', null, true );
 				this.setPageTitle();
@@ -804,6 +931,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				let character = JSON.parse( JSON.stringify( original ) );
 				character.id = cortexFunctions.generateUUID();
 				character.name = character.name && character.name.length ? `${character.name} (Copy)` : 'Copy';
+				cortexFunctions.stripInternalIds( character );
+				cortexFunctions.ensureTraitSetIds( character );
+				cortexFunctions.assignLids( character );
+				this.recordCharOrder( character );
 				character.dateCreated  = ( new Date() ).toISOString();
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
@@ -835,10 +966,46 @@ document.addEventListener('DOMContentLoaded', () => {
 				this.showToast( `Saved layout template “${entry.title || entry.id}”` );
 			},
 
+			// D16 switch: rebase pure overrides (strip vs pinned snapshot)
+			// onto the newer bundle version, then re-merge and re-apply
+			// preferences. Stay records a decline so it stops nagging.
+			async applyTemplateUpdate() {
+				const u = this.pendingTemplateUpdate;
+				if ( !u || !this.character ) return;
+				await this.ensureSpotlightTemplates();
+				const oldEntry = this.resolveTemplateEntry( u.id, u.pinned );
+				const newEntry = cortexFunctions.findSpotlightTemplate( u.id );
+				if ( !newEntry ) return;
+				const stripped = oldEntry
+					? cortexFunctions.stripCharacterToDeltas( this.character, oldEntry )
+					: JSON.parse( JSON.stringify( this.character ) );
+				let rebased = cortexFunctions.mergeTemplateIntoCharacter( stripped, newEntry );
+				rebased.sheet = { template: { id: u.id, version: newEntry.version || 1 } };
+				cortexFunctions.assignLids( rebased );
+				this.characters[this.characterIndex] = rebased;
+				this.applyPrefs( rebased );
+				this.recordCharOrder( rebased );
+				this.initHistory();
+				this.saveLocalData();
+				this.showToast( 'Layout updated — your content and arrangement were kept' );
+			},
+
+			stayOnTemplateSnapshot() {
+				const u = this.pendingTemplateUpdate;
+				if ( !u || !this.character ) return;
+				const cp = this.charPrefs( this.character.id );
+				cp.declinedTemplateVersions = cp.declinedTemplateVersions || {};
+				cp.declinedTemplateVersions[u.id] = u.current;
+				this.saveLocalData();
+				this.showToast( 'Staying on your saved layout version' );
+			},
+
 			importCharacter( character ) {
 
 				// Embedded template travels with the file: upsert by static
-				// id (replace, never duplicate), then resolve sparse layout.
+				// (id, version) — replace, never duplicate — then resolve the
+				// sparse overlay. No template link: legacy path renders the
+				// file exactly as-is (D17 sacred).
 				let incoming = character;
 				const tref = incoming && incoming.sheet && incoming.sheet.template;
 				if ( tref && typeof tref === 'object' ) {
@@ -846,10 +1013,12 @@ document.addEventListener('DOMContentLoaded', () => {
 						this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, tref );
 						incoming = cortexFunctions.mergeTemplateIntoCharacter( incoming, tref );
 					} else if ( tref.id ) {
-						const entry = this.resolveTemplateEntry( tref.id );
+						const entry = this.resolveTemplateEntry( tref.id, tref.version || null );
 						if ( entry ) incoming = cortexFunctions.mergeTemplateIntoCharacter( incoming, entry );
 					}
 				}
+				cortexFunctions.ensureTraitSetIds( incoming );
+				cortexFunctions.assignLids( incoming );
 
 				// Save new character.
 				let c = this.characters.findIndex( existingCharacter => existingCharacter.id === incoming.id );
@@ -860,6 +1029,21 @@ document.addEventListener('DOMContentLoaded', () => {
 					this.characters.push( incoming );
 				}
 
+				// Arrangement: file prefs (name-keyed) convert to live form;
+				// otherwise the file's own order is recorded fresh.
+				if ( incoming.prefs && typeof incoming.prefs === 'object' ) {
+					const live = cortexFunctions.prefsFromImport( incoming.prefs, incoming );
+					if ( live ) {
+						if ( !this.prefs ) this.prefs = { version: 1, global: {}, characters: {} };
+						this.prefs.characters[incoming.id] = live;
+					} else if ( this.prefs && this.prefs.characters ) {
+						delete this.prefs.characters[incoming.id];
+					}
+					delete incoming.prefs;
+				} else {
+					this.recordCharOrder( incoming );
+				}
+				this.applyPrefs( incoming );
 				this.touchCharacter( incoming.id );
 				this.saveLocalData();
 				this.showToast(`Imported ${incoming.name || 'character'}`);
@@ -881,10 +1065,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			sheetTemplateForExport( character ) {
 				if ( !character ) return null;
 				const t = character.sheet && character.sheet.template;
-				const ref = t ? ( typeof t === 'string' ? t : t.id ) : null;
-				if ( !ref ) return null;
+				const ref = t ? ( typeof t === 'string' ? { id: t, version: null } : { id: t.id, version: t.version || null } ) : null;
+				if ( !ref || !ref.id ) return null;
 				if ( t && typeof t === 'object' && t.character ) return t;
-				return this.resolveTemplateEntry( ref );
+				return this.resolveTemplateEntry( ref.id, ref.version );
 			},
 
 			async exportCharacter( id ) {
@@ -897,6 +1081,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				const out = entry
 					? cortexFunctions.stripCharacterForExport( character, entry )
 					: JSON.parse( JSON.stringify( character ) );
+				// Arrangement travels name-keyed (D18 same-user-new-device).
+				const filePrefs = cortexFunctions.prefsForExport(
+					this.prefs && this.prefs.characters ? this.prefs.characters[character.id] : null, character );
+				if ( filePrefs ) out.prefs = filePrefs;
 
 				let name = ( out.name && out.name.length ) ? out.name : 'Name';
 				let timestamp = ( new Date(out.dateModified) ).getTime();
@@ -913,18 +1101,20 @@ document.addEventListener('DOMContentLoaded', () => {
 				const currentRef = character.sheet && character.sheet.template
 					? ( typeof character.sheet.template === 'string' ? character.sheet.template : character.sheet.template.id )
 					: null;
-				// Re-saving a custom template updates it in place; forking
-				// off a built-in (or nothing) mints a fresh static id once.
+				// Re-saving a custom template updates it in place (version bump);
+				// forking off a built-in (or nothing) mints a fresh static id.
 				const reuse = currentRef && !cortexFunctions.findSpotlightTemplate( currentRef ) ? currentRef : null;
+				const prev = reuse ? this.resolveTemplateEntry( reuse ) : null;
 				const entry = cortexFunctions.extractSheetTemplate(
 					character,
 					{
 						id: reuse || undefined,
+						version: reuse ? ( ( prev && prev.version ) || 1 ) + 1 : 1,
 						title: ( ( character.game || character.name || 'Custom' ) + ' Layout' )
 					}
 				);
 				this.sheetTemplates = cortexStorage.upsertTemplate( this.sheetTemplates, entry );
-				character.sheet = { template: { id: entry.id } };
+				character.sheet = { template: { id: entry.id, version: entry.version } };
 				this.saveLocalData();
 				this.showToast( `Saved layout as reusable template` );
 			},
@@ -946,7 +1136,11 @@ document.addEventListener('DOMContentLoaded', () => {
 				await this.ensureSpotlightTemplates();
 				const out = ( this.characters || [] ).map( c => {
 					const entry = this.sheetTemplateForExport( c );
-					return entry ? cortexFunctions.stripCharacterForExport( c, entry ) : JSON.parse( JSON.stringify( c ) );
+					const o = entry ? cortexFunctions.stripCharacterForExport( c, entry ) : JSON.parse( JSON.stringify( c ) );
+					const filePrefs = cortexFunctions.prefsForExport(
+						this.prefs && this.prefs.characters ? this.prefs.characters[c.id] : null, c );
+					if ( filePrefs ) o.prefs = filePrefs;
+					return o;
 				} );
 
 				let bundle = {
@@ -973,10 +1167,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				character.dateModified = ( new Date() ).toISOString();
 				character.dateTouched  = ( new Date() ).toISOString();
+				cortexFunctions.assignLids( character );
 
 				this.characters[c] = character;
 				this.setPageTitle();
 
+				this.recordCharOrder( character );
 				this.touchCharacter( character.id );
 				this.saveLocalData();
 				if ( !this.editing || !this.editing.length ) {
@@ -1130,6 +1326,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				try {
 					const stored = await cortexStorage.load();
 					this.sheetTemplates = cortexStorage.normalizeTemplates( stored.templates );
+					this.prefs = cortexStorage.normalizePreferences( stored.preferences );
 					await this.ensureSpotlightTemplates();
 					this.characters = ( stored.characters || [] ).map( c => this.resolveStoredCharacter( c ) );
 					this.playViewMode = stored.playViewMode || 'split';
@@ -1164,19 +1361,22 @@ document.addEventListener('DOMContentLoaded', () => {
 				try {
 					await this.ensureSpotlightTemplates();
 					const sparse = ( this.characters || [] ).map( c => {
-						const t = c.sheet && c.sheet.template;
-						const ref = t ? ( typeof t === 'string' ? t : t.id ) : null;
-						const entry = ref ? this.resolveTemplateEntry( ref ) : null;
+						const ct = c.sheet && c.sheet.template;
+						const ref = ct ? ( typeof ct === 'string' ? { id: ct, version: null } : { id: ct.id, version: ct.version || null } ) : null;
+						// Strip against the PINNED version (the base this
+						// character was merged from), never the newer bundle.
+						const entry = ref ? this.resolveTemplateEntry( ref.id, ref.version ) : null;
 						const out = entry
 							? cortexFunctions.stripCharacterToDeltas( c, entry )
 							: JSON.parse( JSON.stringify( c ) );
-						// Storage form keeps a bare { id } reference — the
-						// full template object lives in the template store
+						// Storage form keeps a pinned { id, version } reference —
+						// the full template object lives in the template store
 						// (embedded only on file export).
-						if ( ref ) out.sheet = { template: { id: ref } };
-						else if ( out.sheet && out.sheet.template && out.sheet.template.character ) {
-							out.sheet = { template: { id: out.sheet.template.id } };
-						}
+						if ( ref && ref.id ) {
+							out.sheet = ref.version
+								? { template: { id: ref.id, version: ref.version } }
+								: { template: { id: ref.id } };
+						} else delete out.sheet;
 						return out;
 					} );
 					plain = JSON.parse( JSON.stringify( {
@@ -1184,7 +1384,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						openCharacterIDs: this.openCharacterIDs,
 						playViewMode: this.playViewMode,
 						rollerPosition: this.rollerPosition,
-						templates: this.sheetTemplates,
+						templates: cortexStorage.pruneTemplates( this.sheetTemplates, this.characters ),
+						preferences: this.prefs,
 					} ) );
 				} catch ( err ) {
 					this.showToast( 'Could not save changes.' );

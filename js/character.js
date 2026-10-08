@@ -887,12 +887,6 @@ const Character = {
 						</template>
 					</div>
 
-					<!-- FOOTER (PRINT SUBMODE) -->
-					<footer class="spotlight-page-footer" v-if="submode === 'print'">
-						<span class="pencil-note">For best results, use pencil.</span>
-						<span class="page-num" v-if="pageCount > 1">Page {{ pageIndex }} of {{ pageCount }}</span>
-					</footer>
-
 				</div> <!-- .page-inner -->
 			</div> <!-- .page -->
 		</div> <!-- .pages -->
@@ -1235,7 +1229,9 @@ const Character = {
 
 		// Explicit grid placement for every set in a band section, in array
 		// order. Spanning sets occupy adjacent tracks; a lone set in a track
-		// stretches the full band height so bands read as solid blocks.
+		// stretches the full band height so bands read as solid blocks. An
+		// explicit rowSpan pins a tall set across rows (e.g. a right-column
+		// block running beside a taller left stack).
 		getSpotlightGridCells( section ) {
 			const n = section.trackCount || 2;
 			const cursors = {};
@@ -1252,10 +1248,12 @@ const Character = {
 				else tracks = [home];
 				let row = 0;
 				tracks.forEach( t => { row = Math.max( row, cursors[t] ); } );
-				tracks.forEach( t => { cursors[t] = row + 1; } );
-				cells.push({ s: entry.index, row, col: tracks[0], span: tracks.length, rowspan: 1 });
+				const rsRaw = Number( ts?.custom?.cortexToolkit?.rowSpan );
+				const rowspan = ( rsRaw >= 2 && rsRaw <= 12 ) ? Math.floor( rsRaw ) : 1;
+				tracks.forEach( t => { cursors[t] = row + rowspan; } );
+				cells.push({ s: entry.index, row, col: tracks[0], span: tracks.length, rowspan, explicitRs: rowspan > 1 });
 			});
-			const maxRow = cells.reduce( (a, c) => Math.max( a, c.row ), 1 );
+			const maxRow = cells.reduce( (a, c) => Math.max( a, c.row + c.rowspan - 1 ), 1 );
 			if ( maxRow > 1 ) {
 				const perTrack = {};
 				cells.forEach( c => {
@@ -1421,7 +1419,11 @@ const Character = {
 
 			let character = this.character;
 
-			character.traitSets.splice(traitSetID, 1);
+			const entry = cortexFunctions.resolveTemplateFor(
+				character, this.$root ? this.$root.sheetTemplates : null );
+			// Template-derived sets are remembered by id (removedSets);
+			// custom sets splice. Either way the set leaves the sheet.
+			cortexFunctions.removeTraitSetFromSheet( character, entry, traitSetID );
 
 			this.updateCharacter( character );
 
@@ -1510,7 +1512,11 @@ const Character = {
 
 			setTimeout( () => {
 				let character = this.character;
-				character.traitSets[traitSetID].traits.splice(traitID, 1);
+				const entry = cortexFunctions.resolveTemplateFor(
+					character, this.$root ? this.$root.sheetTemplates : null );
+				// Template-inherited traits are remembered by name so the
+				// merge never resurrects them (D6/D19); custom traits splice.
+				cortexFunctions.removeTraitFromSheet( character, entry, traitSetID, traitID );
 				this.updateCharacter( character );
 			}, 200 );
 
@@ -1637,6 +1643,7 @@ const Character = {
 		startHaloDrag( event, targetType ) {
 			if ( this.submode !== 'edit' ) return;
 
+			if ( !this.$el || typeof this.$el.querySelector !== 'function' ) return;
 			const portraitEl = this.$el.querySelector('.portrait-circle') || this.$el.querySelector('.portrait-inner');
 			if ( !portraitEl ) return;
 

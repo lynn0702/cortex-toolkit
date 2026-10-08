@@ -12,6 +12,8 @@
 	"scripts": {
 		"build": "npx mix --production && node scripts/version-assets.js",
 		"dev": "npx mix",
-		"watch": "npx mix -- --watch"
+		"watch": "npx mix -- --watch",
+		"validate": "node scripts/validate.js",
+		"test": "node scripts/merge-tests.js"
 	}
 }

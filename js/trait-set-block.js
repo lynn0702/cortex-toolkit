@@ -946,7 +946,7 @@ const TraitSetBlock = {
 												<span>Click to add illustration or image</span>
 											</div>
 											<div class="image-set-caption" v-if="traitSet?.custom?.cortexToolkit?.imageConfig?.caption">
-												{{ traitSet.custom.cortexToolkit.imageConfig.caption }}
+												{{ traitSet.custom?.cortexToolkit?.imageConfig?.caption || '' }}
 											</div>
 										</div>
 									</div>
@@ -1071,7 +1071,7 @@ const TraitSetBlock = {
 
 									<!-- GROWTH LADDER (VERTICAL DICE TRACK, e.g. Safe Zone Growth Pool) -->
 									<div class="trait-growth-ladder" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'growth-ladder'">
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<div :class="{ 'trait-inner': true, 'growth-rung': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
@@ -1112,7 +1112,7 @@ const TraitSetBlock = {
 
 									<!-- DOSSIER FIELDS (STACKED LABELED BLOCKS, e.g. KitBash Forces) -->
 									<div class="trait-dossier" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'dossier-fields'">
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<div :class="{ 'trait-inner': true, 'dossier-field': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
@@ -1170,7 +1170,7 @@ const TraitSetBlock = {
 														</div>
 														<div class="skill-branch-link" aria-hidden="true"></div>
 														<div class="skill-branch-specialties">
-															<template v-for="(entry, ei) in group.subs" :key="'sub-' + ei">
+															<template v-for="(entry, ei) in group.subs" :key="entry._lid || ('sub-' + ei)">
 																<div class="specialty-row" v-if="entry.kind === 'sub'"
 																	@click.stop="!printBlank && !group.skillItem.isPlaceholder ? handleSingleDieClick(entry.sub, entry.sub.value, traitSet, s, group.skillItem.originalIndex) : null">
 																	<span class="subtrait-name" v-if="!printBlank && entry.sub.name">{{ entry.sub.name }}</span>
@@ -1235,7 +1235,7 @@ const TraitSetBlock = {
 													<div class="skill-branch-skill"></div>
 													<div class="skill-branch-link" aria-hidden="true"></div>
 													<div class="skill-branch-specialties">
-														<template v-for="(entry, ei) in group.subs" :key="'orph-' + ei">
+														<template v-for="(entry, ei) in group.subs" :key="entry._lid || ('orph-' + ei)">
 															<div class="specialty-row" v-if="entry.kind === 'flat'"
 																@click.stop="!printBlank ? handleBranchFlatClick(s, entry.item.originalIndex, entry.item.trait) : null">
 																<span class="subtrait-name" v-if="!printBlank && entry.item.trait.name">{{ entry.item.trait.name }}</span>
@@ -1278,7 +1278,7 @@ const TraitSetBlock = {
 									<!-- TALENTS TABLE (TALENT / ACTIVATION / EFFECT) -->
 									<div class="trait-talents-table" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'talents-table'">
 										<div class="talents-head"><span>{{ getTraitSetLabel(traitSet, 'col1') }}</span><span>{{ getTraitSetLabel(traitSet, 'col2') }}</span><span>{{ getTraitSetLabel(traitSet, 'col3') }}</span></div>
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
@@ -1323,7 +1323,7 @@ const TraitSetBlock = {
 
 									<!-- STANDING (STANDING DIE + COMPLICATION & BONUS DICE, e.g. Camp Bewilderwood) -->
 									<div class="trait-standing" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'standing'">
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<div :class="{ 'trait-inner': true, 'standing-row-wrap': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
@@ -1412,7 +1412,7 @@ const TraitSetBlock = {
 											<span class="badges-head-name">{{ traitSet.name }}</span>
 											<span class="badges-head-counter">{{ getCounterLabel(traitSet) }}</span>
 										</div>
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<div :class="{ 'trait-inner': true, 'badge-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
@@ -1457,7 +1457,7 @@ const TraitSetBlock = {
 
 									<!-- RESOURCES WITH DICE COUNT (RATING DIE + DICE 1-5, e.g. Cosa Nostra) -->
 									<div class="trait-resources-count" v-else-if="traitSet?.custom?.cortexToolkit?.style?.body === 'resources-count'">
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<div :class="{ 'trait-inner': true, 'resource-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 													@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
@@ -1517,7 +1517,7 @@ const TraitSetBlock = {
 											</div>
 										</div>
 
-										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="t">
+										<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 											<div :class="getTraitClasses(item.trait)">
 												<transition name="trait" appear>
 													<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
@@ -1658,7 +1658,7 @@ const TraitSetBlock = {
 														</template>
 
 														<ul class="subtraits" v-if="traitSet?.custom?.cortexToolkit?.features?.subtraits && (item.trait.traits?.length || printBlank)">
-															<li class="subtrait" v-for="(subtrait, u) in (item.trait.traits?.length ? item.trait.traits : (printBlank ? [{ name: '', value: 0 }] : []))" :key="u" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
+															<li class="subtrait" v-for="(subtrait, u) in (item.trait.traits?.length ? item.trait.traits : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
 																<span class="subtrait-name" v-if="!printBlank && subtrait.name">{{ subtrait.name }}</span>
 																<span class="subtrait-name" v-else-if="printBlank">
 																	<span class="trait-blank-line subtrait-blank-line"></span>
@@ -1715,7 +1715,7 @@ const TraitSetBlock = {
 														</div>
 
 														<ul class="trait-sfx" v-else-if="!traitSet?.custom?.cortexToolkit?.sharedHinder && traitSet?.custom?.cortexToolkit?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length">
-															<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="sfIdx">
+															<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
 																<template v-if="sfx.isHinder">
 																	<span class="trait-sfx-name">Hinder</span>:
 																	<span class="trait-sfx-description"
@@ -1765,7 +1765,7 @@ const TraitSetBlock = {
 									</div>
 
 									<ul class="sfx" v-if="traitSet?.custom?.cortexToolkit?.features?.sfx && traitSet?.sfx?.length">
-										<li v-for="(sfx, sfId) in traitSet.sfx" :key="sfId">
+										<li v-for="(sfx, sfId) in (traitSet.sfx || [])" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 											<span class="sfx-name">{{ sfx.name }}</span>:
 											<span class="sfx-description" v-html="renderText(sfx.description)"></span>
 										</li>
@@ -1775,7 +1775,7 @@ const TraitSetBlock = {
 								<!-- RIGHT HEADER (OPTIONAL VERTICAL LABEL) -->
 								<div class="trait-set-header trait-set-header-right" v-if="traitSet?.custom?.cortexToolkit?.headerRight">
 									<div class="trait-set-header-inner">
-										<div>{{ traitSet.custom.cortexToolkit.headerRight }}</div>
+										<div>{{ traitSet.custom?.cortexToolkit?.headerRight || '' }}</div>
 									</div>
 								</div>
 							</div>`,

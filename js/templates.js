@@ -4,6 +4,7 @@
 const cortexSpotlightTemplates = [
   {
     "id": "spotlight-alien-us",
+    "version": 3,
     "title": "Alien, Us",
     "subtitle": "Sci-Fi Infiltration & Paranoia",
     "spotlight": "Alien, Us",
@@ -209,7 +210,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 7
+              "reservedSlots": 7,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -312,7 +315,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 7
+              "reservedSlots": 7,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -323,6 +328,36 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Talent",
           "nounPlural": "Talents",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -355,7 +390,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 4
+              "reservedSlots": 4,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -418,7 +455,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -429,6 +468,76 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -481,7 +590,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -516,7 +627,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 20
+              "reservedSlots": 20,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -535,6 +648,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-brighter-stars",
+    "version": 3,
     "title": "BrighterStars",
     "subtitle": "Hopepunk Starship Exploration",
     "spotlight": "BrighterStars",
@@ -606,7 +720,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Quirk:",
+              "name": "",
               "value": 0,
               "dice": [],
               "description": "",
@@ -639,7 +753,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 66
             }
           }
         },
@@ -722,7 +837,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 5
+              "reservedSlots": 5,
+              "colWidth": 66
             }
           }
         },
@@ -733,6 +849,56 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -773,7 +939,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -785,7 +951,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 66
             }
           }
         },
@@ -796,6 +963,16 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -921,6 +1098,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-camp-bewilderwood",
+    "version": 3,
     "title": "Camp Bewilderwood",
     "subtitle": "Cryptid Summer Camp Mystery",
     "spotlight": "Camp Bewilderwood",
@@ -1045,7 +1223,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 66
             }
           }
         },
@@ -1063,8 +1242,8 @@ const cortexSpotlightTemplates = [
               "name": "Bravery",
               "value": 0,
               "dice": [],
-              "statement": "I'll try anything once.",
-              "description": "I'll try anything once.",
+              "statement": "",
+              "description": "",
               "questioned": false,
               "traits": [],
               "sfx": [],
@@ -1075,8 +1254,8 @@ const cortexSpotlightTemplates = [
               "name": "Community",
               "value": 0,
               "dice": [],
-              "statement": "Your issue isn't my problem.",
-              "description": "Your issue isn't my problem.",
+              "statement": "",
+              "description": "",
               "questioned": false,
               "traits": [],
               "sfx": [],
@@ -1087,8 +1266,8 @@ const cortexSpotlightTemplates = [
               "name": "Curiosity",
               "value": 0,
               "dice": [],
-              "statement": "I'm not afraid to look!",
-              "description": "I'm not afraid to look!",
+              "statement": "",
+              "description": "",
               "questioned": false,
               "traits": [],
               "sfx": [],
@@ -1099,8 +1278,8 @@ const cortexSpotlightTemplates = [
               "name": "Friendship",
               "value": 0,
               "dice": [],
-              "statement": "No friend left behind?",
-              "description": "No friend left behind?",
+              "statement": "",
+              "description": "",
               "questioned": false,
               "traits": [],
               "sfx": [],
@@ -1111,8 +1290,8 @@ const cortexSpotlightTemplates = [
               "name": "Mischief",
               "value": 0,
               "dice": [],
-              "statement": "What's the point if you aren't having fun?",
-              "description": "What's the point if you aren't having fun?",
+              "statement": "",
+              "description": "",
               "questioned": false,
               "traits": [],
               "sfx": [],
@@ -1151,249 +1330,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 5
-            }
-          }
-        },
-        {
-          "id": "standing",
-          "name": "Standing",
-          "description": "Camp social standing with complication and bonus dice",
-          "nounSingular": "Standing",
-          "nounPlural": "Standings",
-          "statement": true,
-          "ratingPosition": "inline",
-          "traits": [
-            {
-              "name": "Camp Director",
-              "value": 0,
-              "dice": [],
-              "statement": "Nothing gets by him.",
-              "description": "Nothing gets by him.",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "BONUS",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Cool Kids",
-              "value": 0,
-              "dice": [],
-              "statement": "Who defines 'cool' anyway?",
-              "description": "Who defines 'cool' anyway?",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "BONUS",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Counselors",
-              "value": 0,
-              "dice": [],
-              "statement": "",
-              "description": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "BONUS",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Jocks",
-              "value": 0,
-              "dice": [],
-              "statement": "",
-              "description": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "BONUS",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Nature Nerds",
-              "value": 0,
-              "dice": [],
-              "statement": "",
-              "description": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "BONUS",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Staff",
-              "value": 0,
-              "dice": [],
-              "statement": "",
-              "description": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "BONUS",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": true
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "standing"
-              },
-              "ratingPosition": "inline",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "subtraitRatingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 6
+              "reservedSlots": 5,
+              "colWidth": 66
             }
           }
         },
@@ -1406,11 +1344,11 @@ const cortexSpotlightTemplates = [
           "ratingPosition": "above",
           "traits": [
             {
-              "name": "Grampa's Trusty Multitool",
+              "name": "",
               "value": 0,
               "dice": [],
               "statement": "(with spork attachment)",
-              "description": "(with spork attachment)",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -1538,6 +1476,250 @@ const cortexSpotlightTemplates = [
               "notes": "",
               "reservedSlots": 3,
               "attributesRing": false
+            }
+          }
+        },
+        {
+          "id": "standing",
+          "name": "Standing",
+          "description": "Camp social standing with complication and bonus dice",
+          "nounSingular": "Standing",
+          "nounPlural": "Standings",
+          "statement": true,
+          "ratingPosition": "inline",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "statement": "",
+              "description": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "BONUS",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {}
+                }
+              ],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": true
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "standing"
+              },
+              "ratingPosition": "inline",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "subtraitRatingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 6,
+              "colWidth": 40,
+              "rowBreak": true
             }
           }
         },
@@ -1814,6 +1996,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-cosa-nostra",
+    "version": 2,
     "title": "Cosa Nostra",
     "subtitle": "Historical Crime Syndicate Drama",
     "spotlight": "Cosa Nostra",
@@ -1840,7 +2023,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "hasNickname": true,
           "watermark": {
             "enabled": true,
@@ -1982,6 +2165,36 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
             }
           ],
           "sfx": [],
@@ -2005,7 +2218,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 6
+              "reservedSlots": 6,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -2118,6 +2333,16 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
             }
           ],
           "sfx": [],
@@ -2153,6 +2378,26 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Roles & Specialties",
           "traits": [
             {
+              "name": "Big Shot",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Brains",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
               "name": "Enforcer",
               "value": 0,
               "dice": [],
@@ -2163,7 +2408,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Grifter",
+              "name": "Thief",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2173,27 +2418,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Infiltrator",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Mastermind",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Wheeler-Dealer",
+              "name": "Wheelman",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2262,6 +2487,62 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 20
             }
           }
+        },
+        {
+          "id": "role-sfx",
+          "name": "Role SFX",
+          "description": "",
+          "nounSingular": "SFX",
+          "nounPlural": "SFX",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
         }
       ],
       "player": "",
@@ -2278,6 +2559,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-eidolon-alpha",
+    "version": 3,
     "title": "Eidolon Alpha",
     "subtitle": "Mythic Summoners & Living Eidolons",
     "spotlight": "Eidolon Alpha",
@@ -2383,7 +2665,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 4
+              "reservedSlots": 4,
+              "colWidth": 33
             }
           }
         },
@@ -2467,64 +2750,8 @@ const cortexSpotlightTemplates = [
               },
               "notes": "HIGHLIGHT: Check one Highlight circle per Attribute.\nSTRESS per Attribute: [4] [6] [8] [10] [12] + OUT",
               "reservedSlots": 5,
-              "attributesRing": false
-            }
-          }
-        },
-        {
-          "id": "role-freeform-distinctions",
-          "name": "Role & Freeform Distinctions",
-          "description": "Chosen calling and personal definition",
-          "nounSingular": "Role & Freeform Distinction",
-          "nounPlural": "Role & Freeform Distinctions",
-          "traits": [
-            {
-              "name": "Role Distinction:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Freeform Distinction:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": true,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "distinctions",
-                "body": "distinctions"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "Hinder: Gain a PP when you switch out this distinction’s d8 rating for a d4.",
-              "reservedSlots": 2
+              "attributesRing": false,
+              "colWidth": 33
             }
           }
         },
@@ -2675,7 +2902,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Summoned Eidolons",
           "traits": [
             {
-              "name": "Eidolon Power 1",
+              "name": "",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2685,7 +2912,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Eidolon Power 2",
+              "name": "",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2695,7 +2922,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Eidolon Power 3",
+              "name": "",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2705,7 +2932,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Highlight Attribute 1",
+              "name": "",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2715,7 +2942,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Highlight Attribute 2",
+              "name": "",
               "value": 0,
               "dice": [],
               "description": "",
@@ -2747,6 +2974,63 @@ const cortexSpotlightTemplates = [
               },
               "notes": "BASE TRAIT: d10 d10 or d4 d4 • SCALE: d8\nPOWERS start at d12 • HIGHLIGHT ATTRIBUTES start at d12",
               "reservedSlots": 5
+            }
+          }
+        },
+        {
+          "id": "role-freeform-distinctions",
+          "name": "Role & Freeform Distinctions",
+          "description": "Chosen calling and personal definition",
+          "nounSingular": "Role & Freeform Distinction",
+          "nounPlural": "Role & Freeform Distinctions",
+          "traits": [
+            {
+              "name": "Role Distinction:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Freeform Distinction:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "Hinder: Gain a PP when you switch out this distinction’s d8 rating for a d4.",
+              "reservedSlots": 2
             }
           }
         },
@@ -2803,6 +3087,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-hammerheads-character",
+    "version": 3,
     "title": "Hammerheads",
     "subtitle": "Disaster Response & Rescue Pilots",
     "spotlight": "Hammerheads",
@@ -3156,7 +3441,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "saved my life",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3166,7 +3451,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "owes me big",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3176,7 +3461,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "is a troublemaker",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3186,7 +3471,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "knows their stuff",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3196,7 +3481,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "is a liability",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3206,7 +3491,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "is dependable",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3216,7 +3501,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "is good for a laugh",
+              "description": "",
               "traits": [],
               "sfx": [],
               "tags": [],
@@ -3355,7 +3640,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "Write the name of the crisis pool in each quadrant, then write the number for its initial die rating above the appropriate dice icons. Place the dice for each crisis pool in the large blank area.\nINITIAL RATING: [6] [8] [10] [12]",
-              "reservedSlots": 4
+              "reservedSlots": 4,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -3374,6 +3661,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-hammerheads-vehicle",
+    "version": 2,
     "title": "Hammerheads - Vehicle File",
     "subtitle": "Rescue Craft & Fleet Support",
     "spotlight": "Hammerheads",
@@ -3400,7 +3688,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -3562,7 +3850,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "STARTING RATINGS — One: Systems d10, Engines d8, Frame d8 • Two: Systems d8, Engines d10, Frame d8 • Three: Systems d8, Engines d8, Frame d10",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 25
             }
           }
         },
@@ -3613,7 +3902,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -3627,7 +3916,8 @@ const cortexSpotlightTemplates = [
               "notes": "",
               "reservedSlots": 3,
               "sharedHinder": true,
-              "sharedHinderText": "Gain a PP when you trade out your distinction’s ⬡ 8 rating for a ▽ 4."
+              "sharedHinderText": "Gain a PP when you trade out your distinction’s ⬡ 8 rating for a ▽ 4.",
+              "colWidth": 25
             }
           }
         },
@@ -3739,6 +4029,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-inheritors-character",
+    "version": 2,
     "title": "Inheritors",
     "subtitle": "Superpowered Dynasty Heritage",
     "spotlight": "Inheritors",
@@ -3765,7 +4056,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -3783,7 +4074,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Attributes",
           "traits": [
             {
-              "name": "Physical",
+              "name": "Action",
               "value": 0,
               "dice": [],
               "description": "",
@@ -3793,7 +4084,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Mental",
+              "name": "Heritage",
               "value": 0,
               "dice": [],
               "description": "",
@@ -3803,7 +4094,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Social",
+              "name": "Science",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Weird",
               "value": 0,
               "dice": [],
               "description": "",
@@ -3822,7 +4123,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -3835,7 +4136,8 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 3,
-              "attributesRing": false
+              "attributesRing": false,
+              "colWidth": 25
             }
           }
         },
@@ -3847,38 +4149,32 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Distinctions",
           "traits": [
             {
-              "name": "Lineage:",
+              "name": "Family Tree",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Archetype:",
+              "name": "Approach to Conflict",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Personality:",
+              "name": "Personality/Quirk",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             }
@@ -3892,7 +4188,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -3904,7 +4200,49 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 50
+            }
+          }
+        },
+        {
+          "id": "stress",
+          "name": "Stress",
+          "description": "",
+          "nounSingular": "Stress",
+          "nounPlural": "Stress",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "stress",
+                "body": "stress"
+              },
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "reservedSlots": 1
             }
           }
         },
@@ -3967,7 +4305,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -3979,6 +4319,36 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Skills",
           "traits": [
             {
+              "name": "Acquire",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Build",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Charm",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
               "name": "Fight",
               "value": 0,
               "dice": [],
@@ -3989,27 +4359,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Focus",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Influence",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Know",
+              "name": "Investigate",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4029,7 +4379,47 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Notice",
+              "name": "Perform",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Pilot",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Shoot",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Sneak",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Study",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4040,6 +4430,26 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "Survive",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Treat",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Trick",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4058,7 +4468,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -4070,17 +4480,58 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 7
+              "reservedSlots": 7,
+              "rowBreak": true
             }
           }
         },
         {
           "id": "heirlooms-milestones",
-          "name": "Heirlooms & Milestones",
+          "name": "Heirlooms",
           "description": "Ancestral artifacts and legacy milestones",
           "nounSingular": "Heirlooms & Milestone",
           "nounPlural": "Heirlooms & Milestones",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -4101,7 +4552,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "default",
@@ -4114,6 +4565,62 @@ const cortexSpotlightTemplates = [
               },
               "notes": "STRESS TRACKS:\n• Afraid: [4] [6] [8] [10] [12]\n• Angry: [4] [6] [8] [10] [12]\n• Exhausted: [4] [6] [8] [10] [12]\n• Injured: [4] [6] [8] [10] [12]",
               "reservedSlots": 1
+            }
+          }
+        },
+        {
+          "id": "milestones",
+          "name": "Milestones",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "notes",
+                "body": "notes"
+              }
+            }
+          }
+        },
+        {
+          "id": "xp",
+          "name": "XP",
+          "description": "",
+          "nounSingular": "Pip",
+          "nounPlural": "Pips",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "pips",
+                "body": "pips"
+              },
+              "pips": {
+                "count": 25,
+                "perRow": 5,
+                "connected": true,
+                "filled": 0
+              }
             }
           }
         }
@@ -4132,6 +4639,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-inheritors-family",
+    "version": 2,
     "title": "Inheritors - Family & GMCs",
     "subtitle": "Superpowered Dynasty Heritage",
     "spotlight": "Inheritors",
@@ -4169,14 +4677,14 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
-          "id": "first-five-branches",
-          "name": "First Five Branches",
-          "description": "Core genealogical branches and direct ancestral forebears",
-          "nounSingular": "First Five Branche",
-          "nounPlural": "First Five Branches",
+          "id": "your-generation",
+          "name": "Your Generation",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
           "traits": [
             {
-              "name": "Branch 1",
+              "name": "Name",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4186,7 +4694,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Branch 2",
+              "name": "Description",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4196,7 +4704,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Branch 3",
+              "name": "Fame",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4206,7 +4714,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Branch 4",
+              "name": "Features",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4216,7 +4724,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Branch 5",
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4238,28 +4756,23 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "default",
-                "body": "default"
+                "header": "dossier-fields",
+                "body": "dossier-fields"
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 5
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
         {
-          "id": "wild-card-branches",
-          "name": "Wild Card Branches",
-          "description": "Distant relatives, rogues, and unexpected prodigies",
-          "nounSingular": "Wild Card Branche",
-          "nounPlural": "Wild Card Branches",
+          "id": "parents-generation-a",
+          "name": "Parents' Generation",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
           "traits": [
             {
-              "name": "Wild Card 1",
+              "name": "Name",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4269,7 +4782,47 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Wild Card 2",
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4291,28 +4844,21 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 2
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
             }
           }
         },
         {
-          "id": "generational-gmc-roster",
-          "name": "Generational GMC Roster",
-          "description": "Key GMC relatives categorized by generation",
-          "nounSingular": "Generational GMC Roster",
-          "nounPlural": "Generational GMC Rosters",
+          "id": "parents-generation-b",
+          "name": "Parents' Generation",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
           "traits": [
             {
-              "name": "PC Generation",
+              "name": "Name",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4322,7 +4868,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Parents Generation",
+              "name": "Description",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4332,7 +4878,37 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Grandparents Generation",
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4354,16 +4930,1249 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "default",
-                "body": "default"
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "grandparents-generation-a",
+          "name": "Grandparents' Generation",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "grandparents-generation-b",
+          "name": "Grandparents' Generation",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
               },
-              "notes": "",
-              "reservedSlots": 3
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "wild-card-a",
+          "name": "Wild Card Branch",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              },
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+        {
+          "id": "wild-card-b",
+          "name": "Wild Card Branch",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "wild-card-c",
+          "name": "Wild Card Branch",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "wild-card-d",
+          "name": "Wild Card Branch",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "wild-card-e",
+          "name": "Wild Card Branch",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "gmc-a",
+          "name": "GMC",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to PCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to GMCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "gmc-b",
+          "name": "GMC",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to PCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to GMCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "gmc-c",
+          "name": "GMC",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to PCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to GMCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "gmc-d",
+          "name": "GMC",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to PCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to GMCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "gmc-e",
+          "name": "GMC",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to PCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to GMCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
+            }
+          }
+        },
+        {
+          "id": "gmc-f",
+          "name": "GMC",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to PCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Relationship to GMCs",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Description",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fame",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Features",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Deed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Current Fate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "dossier-fields",
+                "body": "dossier-fields"
+              }
             }
           }
         }
@@ -4382,6 +6191,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-kitbash-hero",
+    "version": 2,
     "title": "KitBash",
     "subtitle": "Modular Comic Book Superheroes",
     "spotlight": "KitBash",
@@ -4408,7 +6218,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -4418,69 +6228,6 @@ const cortexSpotlightTemplates = [
         }
       },
       "traitSets": [
-        {
-          "id": "affiliations",
-          "name": "Affiliations",
-          "description": "Operating mode ratings",
-          "nounSingular": "Affiliation",
-          "nounPlural": "Affiliations",
-          "traits": [
-            {
-              "name": "Solo",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Buddy",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Team",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 3
-            }
-          }
-        },
         {
           "id": "distinctions",
           "name": "Distinctions",
@@ -4551,14 +6298,14 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "power-set",
-          "name": "Power Set",
-          "description": "Modular powers, SFX triggers, and shutdown limits",
-          "nounSingular": "Power Set",
-          "nounPlural": "Power Sets",
+          "id": "affiliations",
+          "name": "Affiliations",
+          "description": "Operating mode ratings",
+          "nounSingular": "Affiliation",
+          "nounPlural": "Affiliations",
           "traits": [
             {
-              "name": "",
+              "name": "Solo",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4568,7 +6315,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Buddy",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4578,7 +6325,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Team",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4594,10 +6341,10 @@ const cortexSpotlightTemplates = [
             "cortexToolkit": {
               "features": {
                 "description": true,
-                "sfx": true,
+                "sfx": false,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "default",
@@ -4608,7 +6355,7 @@ const cortexSpotlightTemplates = [
                 "includeD4": false,
                 "includeOut": true
               },
-              "notes": "SFX:\n\nLIMIT:",
+              "notes": "",
               "reservedSlots": 3
             }
           }
@@ -4620,6 +6367,26 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Specialtie",
           "nounPlural": "Specialties",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -4692,6 +6459,26 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
             }
           ],
           "sfx": [],
@@ -4703,7 +6490,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -4716,6 +6503,294 @@ const cortexSpotlightTemplates = [
               },
               "notes": "STRESS & GROWTH:\n• Physical Stress: [4] [6] [8] [10] [12]\n• Mental Stress: [4] [6] [8] [10] [12]\n• Emotional Stress: [4] [6] [8] [10] [12]\n• Growth Pool: [4] [6] [8] [10] [12]",
               "reservedSlots": 1
+            }
+          }
+        },
+        {
+          "id": "stress",
+          "name": "Stress",
+          "description": "",
+          "nounSingular": "Stress",
+          "nounPlural": "Stress",
+          "traits": [
+            {
+              "name": "Physical",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Mental",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Social",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "stress",
+                "body": "stress"
+              },
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "growth-pool",
+          "name": "Growth Pool",
+          "description": "",
+          "nounSingular": "Growth Die",
+          "nounPlural": "Growth Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "growth-ladder",
+                "body": "growth-ladder"
+              }
+            }
+          }
+        },
+        {
+          "id": "power-set",
+          "name": "Power Set",
+          "description": "Modular powers, SFX triggers, and shutdown limits",
+          "nounSingular": "Power Set",
+          "nounPlural": "Power Sets",
+          "traits": [
+            {
+              "name": "Powers",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Limits",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "SFX",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "SFX:\n\nLIMIT:",
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+        {
+          "id": "power-set-2",
+          "name": "Power Set 2",
+          "description": "",
+          "nounSingular": "Power",
+          "nounPlural": "Powers",
+          "traits": [
+            {
+              "name": "Powers",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Limits",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "SFX",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+        {
+          "id": "power-set-3",
+          "name": "Power Set 3",
+          "description": "",
+          "nounSingular": "Power",
+          "nounPlural": "Powers",
+          "traits": [
+            {
+              "name": "Powers",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Limits",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "SFX",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -4734,6 +6809,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-kitbash-team",
+    "version": 2,
     "title": "KitBash - Team File",
     "subtitle": "Modular Comic Book Superheroes",
     "spotlight": "KitBash",
@@ -4771,83 +6847,14 @@ const cortexSpotlightTemplates = [
       },
       "traitSets": [
         {
-          "id": "team-distinctions",
-          "name": "Team Distinctions",
-          "description": "Alliance motto, reputation, and public mandate",
-          "nounSingular": "Team Distinction",
-          "nounPlural": "Team Distinctions",
+          "id": "team-base",
+          "name": "Team Base",
+          "description": "",
+          "nounSingular": "Detail",
+          "nounPlural": "Details",
           "traits": [
             {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": true,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "distinctions",
-                "body": "distinctions"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 3
-            }
-          }
-        },
-        {
-          "id": "headquarters-resources",
-          "name": "Headquarters Resources",
-          "description": "Bases, communications, and logistical assets",
-          "nounSingular": "Headquarters Resource",
-          "nounPlural": "Headquarters Resources",
-          "traits": [
-            {
-              "name": "",
+              "name": "Name",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4857,7 +6864,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Location",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4867,7 +6874,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Description",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4877,7 +6884,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Benefits",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Drawbacks",
               "value": 0,
               "dice": [],
               "description": "",
@@ -4896,29 +6913,125 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
-                "header": "default",
-                "body": "default"
+                "header": "dossier-fields",
+                "body": "dossier-fields"
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 4
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
         {
-          "id": "active-roster-notes",
-          "name": "Active Roster & Notes",
-          "description": "Member status and priority alert codes",
-          "nounSingular": "Active Roster & Note",
-          "nounPlural": "Active Roster & Notes",
-          "traits": [],
+          "id": "team-resources",
+          "name": "Team Resources",
+          "description": "Resources come from backgrounds and are available for any PC to use.",
+          "nounSingular": "Resource",
+          "nounPlural": "Resources",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
           "sfx": [],
           "tags": [],
           "custom": {
@@ -4928,19 +7041,14 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "notes"
+                "body": "default"
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "TEAM ROSTER:\n1.\n2.\n3.\n4.\n\nALERT LEVEL:",
-              "reservedSlots": 0
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -4959,6 +7067,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-misty-cove",
+    "version": 2,
     "title": "Misty Cove",
     "subtitle": "Emotional Gothic Mystery",
     "spotlight": "Misty Cove",
@@ -5060,13 +7169,77 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 66
+            }
+          }
+        },
+        {
+          "id": "signature-assets-curios",
+          "name": "Signature Assets & Curios",
+          "description": "Heirlooms and keepsakes from the misty coast",
+          "nounSingular": "Signature Assets & Curio",
+          "nounPlural": "Signature Assets & Curios",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "GROWTH POOL:\n• [4] [6] [8] [10] [12]\n\nCOMPLICATIONS:\n• [6] [8] [10] [12] Haunting Visions\n• [6] [8] [10] [12] Whispers in the Tide",
+              "reservedSlots": 2
             }
           }
         },
         {
           "id": "emotional-attributes-stress",
-          "name": "Emotional Attributes & Stress",
+          "name": "Attributes",
           "description": "Core emotional drives with corresponding stress tracks",
           "nounSingular": "Emotional Attributes & Stres",
           "nounPlural": "Emotional Attributes & Stress",
@@ -5144,7 +7317,9 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 5,
-              "attributesRing": false
+              "attributesRing": false,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -5207,16 +7382,17 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 66
             }
           }
         },
         {
-          "id": "signature-assets-curios",
-          "name": "Signature Assets & Curios",
-          "description": "Heirlooms and keepsakes from the misty coast",
-          "nounSingular": "Signature Assets & Curio",
-          "nounPlural": "Signature Assets & Curios",
+          "id": "growth-pool",
+          "name": "Growth Pool",
+          "description": "",
+          "nounSingular": "Growth Die",
+          "nounPlural": "Growth Dice",
           "traits": [
             {
               "name": "",
@@ -5244,7 +7420,83 @@ const cortexSpotlightTemplates = [
           "custom": {
             "cortexToolkit": {
               "features": {
-                "description": true,
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "growth-ladder",
+                "body": "growth-ladder"
+              }
+            }
+          }
+        },
+        {
+          "id": "complications",
+          "name": "Complications",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
                 "sfx": false,
                 "subtraits": false
               },
@@ -5253,14 +7505,7 @@ const cortexSpotlightTemplates = [
               "style": {
                 "header": "default",
                 "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "GROWTH POOL:\n• [4] [6] [8] [10] [12]\n\nCOMPLICATIONS:\n• [6] [8] [10] [12] Haunting Visions\n• [6] [8] [10] [12] Whispers in the Tide",
-              "reservedSlots": 2
+              }
             }
           }
         }
@@ -5279,6 +7524,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-necromancer",
+    "version": 2,
     "title": "Necromancer",
     "subtitle": "Dark Fantasy Grimoire & Undead Arts",
     "spotlight": "Necromancer",
@@ -5380,7 +7626,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -5392,7 +7640,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Affiliations",
           "traits": [
             {
-              "name": "Alone",
+              "name": "My Life",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5402,7 +7650,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Coven",
+              "name": "The World",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5412,7 +7660,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Horde",
+              "name": "The Demi-Monde",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5443,19 +7691,21 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
         {
           "id": "roles-specialties",
-          "name": "Roles & Specialties",
+          "name": "Roles",
           "description": "Dark magical callings and practices",
           "nounSingular": "Roles & Specialtie",
           "nounPlural": "Roles & Specialties",
           "traits": [
             {
-              "name": "Corpse-Weaver",
+              "name": "Diplomat",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5465,7 +7715,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Grave-Warden",
+              "name": "Fighter",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5475,7 +7725,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Reaper",
+              "name": "Guardian",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5485,7 +7735,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Soul-Binder",
+              "name": "Healer",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5495,7 +7745,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Bone-Sculptor",
+              "name": "Sneak",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Transporter",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5514,7 +7774,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": true
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -5526,7 +7786,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 5
+              "reservedSlots": 5,
+              "colWidth": 33
             }
           }
         },
@@ -5619,6 +7880,16 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
             }
           ],
           "sfx": [],
@@ -5630,7 +7901,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -5643,6 +7914,93 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 2
+            }
+          }
+        },
+        {
+          "id": "session-record",
+          "name": "Session Record",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "session-record",
+                "body": "session-record"
+              },
+              "sessionRecord": {
+                "count": 10
+              },
+              "reservedSlots": 10,
+              "colWidth": 66,
+              "rowBreak": true
+            }
+          }
+        },
+        {
+          "id": "complications",
+          "name": "Complications",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "Deathmark",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
             }
           }
         }
@@ -5661,6 +8019,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-retired-crystalline",
+    "version": 2,
     "title": "Retired No More - Crystalline Age",
     "subtitle": "Aging Veteran Heroes",
     "spotlight": "Retired No More",
@@ -5705,7 +8064,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Values",
           "traits": [
             {
-              "name": "Duty",
+              "name": "Allegiance",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5725,7 +8084,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Justice",
+              "name": "Integrity",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5735,7 +8094,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Liberty",
+              "name": "Knowledge",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5745,7 +8104,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Love",
+              "name": "Novelty",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5755,7 +8114,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Truth",
+              "name": "Power",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Riches",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5786,7 +8155,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 6
+              "reservedSlots": 6,
+              "colWidth": 25
             }
           }
         },
@@ -5798,37 +8168,70 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Distinctions",
           "traits": [
             {
-              "name": "",
+              "name": "Archetype",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
               "sfx": [
-                "hinder"
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
               ],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Retirement",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
               "sfx": [
-                "hinder"
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
               ],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Satisfaction",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
               "sfx": [
-                "hinder"
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
               ],
               "tags": [],
               "custom": {}
@@ -5843,7 +8246,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "right",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -5860,11 +8263,11 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
-          "name": "Skills & Specialties",
-          "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
-          "nounSingular": "Skills & Specialtie",
-          "nounPlural": "Skills & Specialties",
+          "id": "vintage-resources-assets",
+          "name": "Resources",
+          "description": "Stashed tech, vintage vehicles, and old connections",
+          "nounSingular": "Vintage Resources & Asset",
+          "nounPlural": "Vintage Resources & Assets",
           "traits": [
             {
               "name": "",
@@ -5898,6 +8301,342 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "AGING COMPLICATIONS:\n• [6] [8] [10] Stiff Joints & Old War Wounds\n• [6] [8] [10] Outdated Technology Confusion\n\nSESSION RECORD: [○] [○] [○] [○] [○] [○] [○] [○]",
+              "reservedSlots": 2
+            }
+          }
+        },
+        {
+          "id": "pathways-complication",
+          "name": "Pathways Complication",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "signature-assets",
+          "name": "Signature Assets",
+          "description": "",
+          "nounSingular": "Asset",
+          "nounPlural": "Assets",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "aging-complications",
+          "name": "Aging Complications",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "stress",
+                "body": "stress"
+              },
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "reservedSlots": 2
+            }
+          }
+        },
+        {
+          "id": "skills-specialties",
+          "name": "Skills & Specialties",
+          "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
+          "nounSingular": "Skills & Specialtie",
+          "nounPlural": "Skills & Specialties",
+          "traits": [
+            {
+              "name": "Craft",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fight",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Fly",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Focus",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Influence",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Know",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Labor",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Move",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Notice",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Perform",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Sneak",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Survive",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Throw",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Tinker",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Treat",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Trick",
               "value": 0,
               "dice": [],
               "description": "",
@@ -5928,60 +8667,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 4
-            }
-          }
-        },
-        {
-          "id": "vintage-resources-assets",
-          "name": "Vintage Resources & Assets",
-          "description": "Stashed tech, vintage vehicles, and old connections",
-          "nounSingular": "Vintage Resources & Asset",
-          "nounPlural": "Vintage Resources & Assets",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "AGING COMPLICATIONS:\n• [6] [8] [10] Stiff Joints & Old War Wounds\n• [6] [8] [10] Outdated Technology Confusion\n\nSESSION RECORD: [○] [○] [○] [○] [○] [○] [○] [○]",
-              "reservedSlots": 2
+              "reservedSlots": 4,
+              "rowSpan": 4
             }
           }
         }
@@ -6000,6 +8687,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-retired-aerial",
+    "version": 2,
     "title": "Retired No More - Aerial Age",
     "subtitle": "Aging Veteran Heroes",
     "spotlight": "Retired No More",
@@ -6044,7 +8732,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Values",
           "traits": [
             {
-              "name": "Duty",
+              "name": "Allegiance",
               "value": 0,
               "dice": [],
               "description": "",
@@ -6064,7 +8752,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Justice",
+              "name": "Integrity",
               "value": 0,
               "dice": [],
               "description": "",
@@ -6074,7 +8762,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Liberty",
+              "name": "Knowledge",
               "value": 0,
               "dice": [],
               "description": "",
@@ -6084,7 +8772,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Love",
+              "name": "Novelty",
               "value": 0,
               "dice": [],
               "description": "",
@@ -6094,7 +8782,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Truth",
+              "name": "Power",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Riches",
               "value": 0,
               "dice": [],
               "description": "",
@@ -6125,7 +8823,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 6
+              "reservedSlots": 6,
+              "colWidth": 25
             }
           }
         },
@@ -6137,37 +8836,47 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Distinctions",
           "traits": [
             {
-              "name": "",
+              "name": "Archetype",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
               "sfx": [
-                "hinder"
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
               ],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Retirement",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
               "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
               ],
               "tags": [],
               "custom": {}
@@ -6182,7 +8891,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "right",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -6199,11 +8908,11 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
-          "name": "Skills & Specialties",
-          "description": "Flight and tactical skills with veteran specialties",
-          "nounSingular": "Skills & Specialtie",
-          "nounPlural": "Skills & Specialties",
+          "id": "vintage-plane-signature-assets",
+          "name": "Resources",
+          "description": "Custom aircraft and aviator gear",
+          "nounSingular": "Vintage Plane & Signature Asset",
+          "nounPlural": "Vintage Plane & Signature Assets",
           "traits": [
             {
               "name": "",
@@ -6217,6 +8926,191 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 2
+            }
+          }
+        },
+        {
+          "id": "pathways-complication",
+          "name": "Pathways Complication",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "signature-asset",
+          "name": "Signature Asset",
+          "description": "",
+          "nounSingular": "Asset",
+          "nounPlural": "Assets",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "skills-specialties",
+          "name": "Skills & Specialties",
+          "description": "Flight and tactical skills with veteran specialties",
+          "nounSingular": "Skills & Specialtie",
+          "nounPlural": "Skills & Specialties",
+          "traits": [
+            {
+              "name": "Fight",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Influence",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Know",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Move",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Notice",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Sneak",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Treat",
               "value": 0,
               "dice": [],
               "description": "",
@@ -6267,60 +9161,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 4
-            }
-          }
-        },
-        {
-          "id": "vintage-plane-signature-assets",
-          "name": "Vintage Plane & Signature Assets",
-          "description": "Custom aircraft and aviator gear",
-          "nounSingular": "Vintage Plane & Signature Asset",
-          "nounPlural": "Vintage Plane & Signature Assets",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 2
+              "reservedSlots": 4,
+              "rowSpan": 3
             }
           }
         }
@@ -6339,6 +9181,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-safe-zone-survivor",
+    "version": 3,
     "title": "Safe Zone",
     "subtitle": "Post-Apocalyptic Survival & Colony",
     "spotlight": "Safe Zone",
@@ -6365,7 +9208,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -6375,70 +9218,6 @@ const cortexSpotlightTemplates = [
         }
       },
       "traitSets": [
-        {
-          "id": "attributes",
-          "name": "Attributes",
-          "description": "Core survival attributes",
-          "nounSingular": "Attribute",
-          "nounPlural": "Attributes",
-          "traits": [
-            {
-              "name": "Physical",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Mental",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Social",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": false,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 3,
-              "attributesRing": false
-            }
-          }
-        },
         {
           "id": "distinctions",
           "name": "Distinctions",
@@ -6504,13 +9283,15 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
         {
           "id": "skills-specialties",
-          "name": "Skills & Specialties",
+          "name": "Skills",
           "description": "Practical survival disciplines with specialized traits",
           "nounSingular": "Skills & Specialtie",
           "nounPlural": "Skills & Specialties",
@@ -6600,38 +9381,7 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [
-                {
-                  "name": "Pistol",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "Rifles",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "Shotguns",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
+              "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
@@ -6671,18 +9421,7 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [
-                {
-                  "name": "Knives",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
+              "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
@@ -6732,18 +9471,7 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [
-                {
-                  "name": "Grenades",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
+              "traits": [],
               "sfx": [],
               "tags": [],
               "custom": {}
@@ -6776,13 +9504,13 @@ const cortexSpotlightTemplates = [
               "features": {
                 "description": false,
                 "sfx": false,
-                "subtraits": true
+                "subtraits": false
               },
               "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "skills-specialties"
+                "body": "default"
               },
               "multiDie": false,
               "stressConfig": {
@@ -6791,6 +9519,296 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 20
+            }
+          }
+        },
+        {
+          "id": "specialties",
+          "name": "Specialties",
+          "description": "",
+          "nounSingular": "Specialty",
+          "nounPlural": "Specialties",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "attributes",
+          "name": "Attributes",
+          "description": "Core survival attributes",
+          "nounSingular": "Attribute",
+          "nounPlural": "Attributes",
+          "traits": [
+            {
+              "name": "Analytical",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Forceful",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Quiet",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3,
+              "attributesRing": false
             }
           }
         },
@@ -6820,40 +9838,57 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 2
-            }
-          }
-        },
-        {
-          "id": "signature-assets",
-          "name": "Signature Assets",
-          "description": "Salvaged survival gear and weapons",
-          "nounSingular": "Signature Asset",
-          "nounPlural": "Signature Assets",
-          "traits": [
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -6884,7 +9919,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -6895,8 +9930,75 @@ const cortexSpotlightTemplates = [
                 "includeD4": false,
                 "includeOut": true
               },
-              "notes": "STRESS TRACKS:\n• Exhaustion: [4] [6] [8] [10] [12]\n• Injury: [4] [6] [8] [10] [12]\n• Panic: [4] [6] [8] [10] [12]\n\nGROWTH POOL: [4] [6] [8] [10] [12]",
-              "reservedSlots": 2
+              "notes": "",
+              "reservedSlots": 2,
+              "colSpan": 2,
+              "columnSpan": 2
+            }
+          }
+        },
+        {
+          "id": "talents",
+          "name": "Talents",
+          "description": "Survivor tricks and knacks",
+          "nounSingular": "Talent",
+          "nounPlural": "Talents",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "talents-table"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -6987,83 +10089,6 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 5
-            }
-          }
-        },
-        {
-          "id": "talents",
-          "name": "Talents",
-          "description": "Survivor tricks and knacks",
-          "nounSingular": "Talent",
-          "nounPlural": "Talents",
-          "traits": [
-            {
-              "name": "Trick Shot",
-              "value": 0,
-              "dice": [],
-              "description": "When attacking another human...",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "",
-                  "description": "Double Guns or Big Guns.",
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Zombie Hunter",
-              "value": 0,
-              "dice": [],
-              "description": "When fighting a Rotter...",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "",
-                  "description": "Double your Melee or Unarmed skill for the test or contest.",
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": true,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "talents-table"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 3
             }
           }
         },
@@ -7165,6 +10190,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-safe-zone-colony",
+    "version": 2,
     "title": "Safe Zone - Colony File",
     "subtitle": "Post-Apocalyptic Survival & Colony",
     "spotlight": "Safe Zone",
@@ -7185,7 +10211,7 @@ const cortexSpotlightTemplates = [
       "notes": "",
       "custom": {
         "cortexToolkit": {
-          "pageCount": 1,
+          "pageCount": 2,
           "spotlight": "Safe Zone",
           "style": {
             "hasAttributes": false
@@ -7197,7 +10223,8 @@ const cortexSpotlightTemplates = [
             "left": 0,
             "center": 0,
             "right": 0
-          }
+          },
+          "columnsPage2": 3
         }
       },
       "traitSets": [
@@ -7280,7 +10307,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 5
+              "reservedSlots": 5,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -7343,17 +10372,255 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
         {
-          "id": "colony-infrastructure",
-          "name": "Colony Infrastructure",
-          "description": "Fortifications, buildings, and community facilities",
-          "nounSingular": "Colony Infrastructure",
-          "nounPlural": "Colony Infrastructures",
+          "id": "building-1",
+          "name": "Building 1",
+          "description": "",
+          "nounSingular": "Building",
+          "nounPlural": "Buildings",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "building-2",
+          "name": "Building 2",
+          "description": "",
+          "nounSingular": "Building",
+          "nounPlural": "Buildings",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "building-3",
+          "name": "Building 3",
+          "description": "",
+          "nounSingular": "Building",
+          "nounPlural": "Buildings",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "building-4",
+          "name": "Building 4",
+          "description": "",
+          "nounSingular": "Building",
+          "nounPlural": "Buildings",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "building-5",
+          "name": "Building 5",
+          "description": "",
+          "nounSingular": "Building",
+          "nounPlural": "Buildings",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "building-6",
+          "name": "Building 6",
+          "description": "",
+          "nounSingular": "Building",
+          "nounPlural": "Buildings",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-1",
+          "name": "Survivor 1",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -7390,23 +10657,624 @@ const cortexSpotlightTemplates = [
           "custom": {
             "cortexToolkit": {
               "features": {
-                "description": true,
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-2",
+          "name": "Survivor 2",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-3",
+          "name": "Survivor 3",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
                 "sfx": false,
                 "subtraits": false
               },
               "location": "right",
-              "page": 1,
+              "page": 2,
               "style": {
                 "header": "default",
                 "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-4",
+          "name": "Survivor 4",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
+              "location": "left",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-5",
+          "name": "Survivor 5",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
               },
-              "notes": "",
-              "reservedSlots": 3
+              "location": "center",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-6",
+          "name": "Survivor 6",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-7",
+          "name": "Survivor 7",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-8",
+          "name": "Survivor 8",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "survivor-9",
+          "name": "Survivor 9",
+          "description": "",
+          "nounSingular": "Survivor",
+          "nounPlural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 2,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
             }
           }
         },
@@ -7427,7 +11295,7 @@ const cortexSpotlightTemplates = [
                 "subtraits": false
               },
               "location": "right",
-              "page": 1,
+              "page": 2,
               "style": {
                 "header": "default",
                 "body": "notes"
@@ -7438,7 +11306,36 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "COMMUNITY PROJECTS:\n• \n• \n\nCRISIS THREATS:\n• \n• ",
-              "reservedSlots": 0
+              "reservedSlots": 0,
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+        {
+          "id": "colony-projects",
+          "name": "Notes",
+          "description": "",
+          "nounSingular": "Project",
+          "nounPlural": "Projects",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 2,
+              "style": {
+                "header": "notes",
+                "body": "notes"
+              },
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -7457,6 +11354,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-snowfall-initiative",
+    "version": 2,
     "title": "Snowfall Initiative",
     "subtitle": "Cold War Espionage & Super-Spies",
     "spotlight": "Snowfall Initiative",
@@ -7483,7 +11381,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -7501,38 +11399,32 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Distinctions",
           "traits": [
             {
-              "name": "Cover:",
+              "name": "Role",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "Specialty:",
+              "name": "Background",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Personality",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             }
@@ -7558,7 +11450,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -7570,7 +11464,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Affiliations",
           "traits": [
             {
-              "name": "Field",
+              "name": "Diplomacy",
               "value": 0,
               "dice": [],
               "description": "",
@@ -7580,7 +11474,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Handler",
+              "name": "Discovery",
               "value": 0,
               "dice": [],
               "description": "",
@@ -7590,7 +11484,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Network",
+              "name": "Defense",
               "value": 0,
               "dice": [],
               "description": "",
@@ -7621,7 +11515,60 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 25
+            }
+          }
+        },
+        {
+          "id": "complications",
+          "name": "Complications",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "Frostbite",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Hypothermia",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "stress",
+                "body": "stress"
+              },
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "reservedSlots": 2,
+              "colWidth": 25
             }
           }
         },
@@ -7633,16 +11580,6 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Attributes & Stress",
           "traits": [
             {
-              "name": "Agility",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
               "name": "Brawn",
               "value": 0,
               "dice": [],
@@ -7653,7 +11590,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Intellect",
+              "name": "Endurance",
               "value": 0,
               "dice": [],
               "description": "",
@@ -7663,7 +11600,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Willpower",
+              "name": "Grace",
               "value": 0,
               "dice": [],
               "description": "",
@@ -7673,7 +11610,27 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Presence",
+              "name": "Grit",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Mettle",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Smarts",
               "value": 0,
               "dice": [],
               "description": "",
@@ -7768,17 +11725,478 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
         {
           "id": "signature-assets-gifts",
-          "name": "Signature Assets & Gifts",
+          "name": "Signature Assets",
           "description": "Classified spy gear and experimental equipment",
           "nounSingular": "Signature Assets & Gift",
           "nounPlural": "Signature Assets & Gifts",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 2,
+              "colWidth": 40
+            }
+          }
+        },
+        {
+          "id": "talents",
+          "name": "Talents",
+          "description": "",
+          "nounSingular": "Talent",
+          "nounPlural": "Talents",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "talents-table",
+                "body": "talents-table"
+              },
+              "colSpan": 2,
+              "columnSpan": 2
+            }
+          }
+        },
+        {
+          "id": "gifts",
+          "name": "Gifts",
+          "description": "",
+          "nounSingular": "Gift",
+          "nounPlural": "Gifts",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "colWidth": 25,
+              "rowBreak": true
+            }
+          }
+        },
+        {
+          "id": "milestones",
+          "name": "Milestones",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "notes",
+                "body": "notes"
+              },
+              "notes": "PERSONAL:\n• 1 XP when …\n• 3 XP when …\n• 10 XP when …\n\nGROUP:\n• 1 XP when …\n• 3 XP when …\n• 10 XP when …",
+              "colWidth": 50
+            }
+          }
+        },
+        {
+          "id": "xp",
+          "name": "XP",
+          "description": "",
+          "nounSingular": "Pip",
+          "nounPlural": "Pips",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "pips",
+                "body": "pips"
+              },
+              "pips": {
+                "count": 25,
+                "perRow": 5,
+                "connected": true,
+                "filled": 0
+              }
+            }
+          }
+        }
+      ],
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "spotlight-solarpunk-citizen",
+    "version": 2,
+    "title": "SolarPunk",
+    "subtitle": "Ecological Hope & Community Technology",
+    "spotlight": "SolarPunk",
+    "variant": "Citizen File",
+    "pages": 1,
+    "genre": "SolarPunk / Sci-Fi / Community",
+    "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Care, Craft, Reason, Resolve, Vitality), Distinctions, Signature Assets, Skills & Specialties, and Community Standing.",
+    "character": {
+      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
+      "version": "0.1",
+      "id": "template-spotlight-solarpunk-citizen",
+      "isTemplate": true,
+      "name": "",
+      "game": "SolarPunk",
+      "description": "",
+      "pronouns": "",
+      "plotPoints": 1,
+      "notes": "",
+      "custom": {
+        "cortexToolkit": {
+          "pageCount": 1,
+          "spotlight": "SolarPunk",
+          "style": {
+            "hasAttributes": false
+          },
+          "sheetStyle": "spotlight",
+          "columns": 3,
+          "columnAlignment": "top-base",
+          "columnOffsets": {
+            "left": 0,
+            "center": 0,
+            "right": 0
+          }
+        }
+      },
+      "traitSets": [
+        {
+          "id": "attributes",
+          "name": "Attributes",
+          "description": "SolarPunk holistic community attributes",
+          "nounSingular": "Attribute",
+          "nounPlural": "Attributes",
+          "traits": [
+            {
+              "name": "Mind",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Body",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Connection",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 5,
+              "attributesRing": false,
+              "colWidth": 33
+            }
+          }
+        },
+        {
+          "id": "distinctions",
+          "name": "Distinctions",
+          "description": "Ecological calling, technical specialty, and philosophy",
+          "nounSingular": "Distinction",
+          "nounPlural": "Distinctions",
+          "traits": [
+            {
+              "name": "Identity",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Community",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Purpose",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 3,
+              "colSpan": 2,
+              "columnSpan": 2
+            }
+          }
+        },
+        {
+          "id": "session-record",
+          "name": "Session Record",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "session-record",
+                "body": "session-record"
+              },
+              "sessionRecord": {
+                "count": 20
+              },
+              "reservedSlots": 20
+            }
+          }
+        },
+        {
+          "id": "signature-assets",
+          "name": "Signature Assets",
+          "description": "Sustainable tech, tools, and eco-cyberware",
+          "nounSingular": "Signature Asset",
+          "nounPlural": "Signature Assets",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -7821,211 +12239,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 2
-            }
-          }
-        }
-      ],
-      "player": "",
-      "portrait": {
-        "url": "",
-        "custom": {
-          "cortexToolkit": {
-            "size": "spotlight",
-            "location": "header"
-          }
-        }
-      }
-    }
-  },
-  {
-    "id": "spotlight-solarpunk-citizen",
-    "title": "SolarPunk",
-    "subtitle": "Ecological Hope & Community Technology",
-    "spotlight": "SolarPunk",
-    "variant": "Citizen File",
-    "pages": 1,
-    "genre": "SolarPunk / Sci-Fi / Community",
-    "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Care, Craft, Reason, Resolve, Vitality), Distinctions, Signature Assets, Skills & Specialties, and Community Standing.",
-    "character": {
-      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
-      "version": "0.1",
-      "id": "template-spotlight-solarpunk-citizen",
-      "isTemplate": true,
-      "name": "",
-      "game": "SolarPunk",
-      "description": "",
-      "pronouns": "",
-      "plotPoints": 1,
-      "notes": "",
-      "custom": {
-        "cortexToolkit": {
-          "pageCount": 1,
-          "spotlight": "SolarPunk",
-          "style": {
-            "hasAttributes": false
-          },
-          "sheetStyle": "spotlight",
-          "columns": 2,
-          "columnAlignment": "top-base",
-          "columnOffsets": {
-            "left": 0,
-            "center": 0,
-            "right": 0
-          }
-        }
-      },
-      "traitSets": [
-        {
-          "id": "attributes",
-          "name": "Attributes",
-          "description": "SolarPunk holistic community attributes",
-          "nounSingular": "Attribute",
-          "nounPlural": "Attributes",
-          "traits": [
-            {
-              "name": "Care",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Craft",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Reason",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Resolve",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Vitality",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 5,
-              "attributesRing": false
-            }
-          }
-        },
-        {
-          "id": "distinctions",
-          "name": "Distinctions",
-          "description": "Ecological calling, technical specialty, and philosophy",
-          "nounSingular": "Distinction",
-          "nounPlural": "Distinctions",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": true,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "distinctions",
-                "body": "distinctions"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 2,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -8036,6 +12252,76 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Skills & Specialtie",
           "nounPlural": "Skills & Specialties",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -8088,60 +12374,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
-            }
-          }
-        },
-        {
-          "id": "signature-assets",
-          "name": "Signature Assets",
-          "description": "Sustainable tech, tools, and eco-cyberware",
-          "nounSingular": "Signature Asset",
-          "nounPlural": "Signature Assets",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 2
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -8160,6 +12395,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-solarpunk-commune",
+    "version": 2,
     "title": "SolarPunk - Commune File",
     "subtitle": "Ecological Hope & Community Technology",
     "spotlight": "SolarPunk",
@@ -8186,7 +12422,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -8204,7 +12440,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Commune Attributes",
           "traits": [
             {
-              "name": "Ecology",
+              "name": "Resources",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8214,7 +12450,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Infrastructure",
+              "name": "Security",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8224,27 +12460,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Solidarity",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Culture",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Resilience",
+              "name": "Connections",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8263,7 +12479,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -8276,7 +12492,8 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 5,
-              "attributesRing": false
+              "attributesRing": false,
+              "colWidth": 33
             }
           }
         },
@@ -8288,38 +12505,32 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Commune Distinctions",
           "traits": [
             {
-              "name": "",
+              "name": "Unity",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Organization",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Morale",
               "value": 0,
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             }
@@ -8333,7 +12544,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -8345,17 +12556,29 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
         {
-          "id": "the-commons",
-          "name": "The Commons",
-          "description": "Shared public resources and community production",
-          "nounSingular": "The Common",
-          "nounPlural": "The Commons",
+          "id": "signature-assets",
+          "name": "Signature Assets",
+          "description": "",
+          "nounSingular": "Asset",
+          "nounPlural": "Assets",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -8392,23 +12615,136 @@ const cortexSpotlightTemplates = [
           "custom": {
             "cortexToolkit": {
               "features": {
-                "description": true,
+                "description": false,
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
                 "body": "default"
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+        {
+          "id": "skills",
+          "name": "Skills",
+          "description": "",
+          "nounSingular": "Skill",
+          "nounPlural": "Skills",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
               },
-              "notes": "",
-              "reservedSlots": 3
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -8427,6 +12763,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-spellcaught",
+    "version": 2,
     "title": "Spellcaught",
     "subtitle": "Arcane Curses & Eldritch Magic",
     "spotlight": "Spellcaught",
@@ -8453,7 +12790,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -8463,6 +12800,43 @@ const cortexSpotlightTemplates = [
         }
       },
       "traitSets": [
+        {
+          "id": "growth-pool",
+          "name": "Growth Pool",
+          "description": "",
+          "nounSingular": "Growth Die",
+          "nounPlural": "Growth Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "growth-ladder",
+                "body": "growth-ladder"
+              },
+              "colWidth": 25
+            }
+          }
+        },
         {
           "id": "distinctions",
           "name": "Distinctions",
@@ -8476,9 +12850,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
@@ -8488,9 +12860,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             },
@@ -8500,9 +12870,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "",
               "traits": [],
-              "sfx": [
-                "hinder"
-              ],
+              "sfx": [],
               "tags": [],
               "custom": {}
             }
@@ -8516,7 +12884,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -8528,7 +12896,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -8550,7 +12920,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Bond",
+              "name": "Responsibility",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8560,7 +12930,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Freedom",
+              "name": "Belonging",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8570,7 +12940,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Mastery",
+              "name": "Popularity",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8580,7 +12950,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Protection",
+              "name": "Empathy",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Secrecy",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8611,7 +12991,85 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 5
+              "reservedSlots": 5,
+              "colSpan": 2,
+              "columnSpan": 2
+            }
+          }
+        },
+        {
+          "id": "signature-assets",
+          "name": "Signature Assets",
+          "description": "",
+          "nounSingular": "Asset",
+          "nounPlural": "Assets",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
             }
           }
         },
@@ -8623,7 +13081,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Affiliations",
           "traits": [
             {
-              "name": "Solitary",
+              "name": "Self",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8633,7 +13091,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Guild",
+              "name": "Family",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8643,7 +13101,17 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Cabal",
+              "name": "School",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Coven",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8662,7 +13130,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -8674,19 +13142,102 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          }
+        },
+        {
+          "id": "stress",
+          "name": "Stress",
+          "description": "",
+          "nounSingular": "Stress",
+          "nounPlural": "Stress",
+          "traits": [
+            {
+              "name": "Angry",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Depressed",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Exhausted",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Insecure",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Injured",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "stress",
+                "body": "stress"
+              },
+              "stressConfig": {
+                "includeD4": true,
+                "includeOut": false
+              },
+              "reservedSlots": 5
             }
           }
         },
         {
           "id": "arcane-crafts-sfx",
-          "name": "Arcane Crafts & SFX",
+          "name": "Crafts",
           "description": "Mutated magical expressions and spellcasting disciplines",
           "nounSingular": "Arcane Crafts & SFX",
           "nounPlural": "Arcane Crafts & SFXs",
           "traits": [
             {
-              "name": "",
+              "name": "Azure Sympathy",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8696,7 +13247,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Black Wards",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8706,7 +13257,77 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Bronze Mending",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Crimson Passion",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Golden Inspiration",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Orange Flare",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Pink Fidelity",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Purple Veils",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Verdant Conjuration",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "White Purification",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8725,7 +13346,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "default",
@@ -8738,6 +13359,72 @@ const cortexSpotlightTemplates = [
               },
               "notes": "STRESS & GROWTH POOL:\n• Arcane Backlash: [4] [6] [8] [10] [12]\n• Physical Stress: [4] [6] [8] [10] [12]\n• Mental Stress: [4] [6] [8] [10] [12]\n• Growth Pool: [4] [6] [8] [10] [12]",
               "reservedSlots": 3
+            }
+          }
+        },
+        {
+          "id": "sfx",
+          "name": "SFX",
+          "description": "",
+          "nounSingular": "SFX",
+          "nounPlural": "SFX",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
             }
           }
         }
@@ -8756,6 +13443,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-strange-towns",
+    "version": 2,
     "title": "Strange Towns",
     "subtitle": "Small Town Supernatural Weirdness",
     "spotlight": "Strange Towns",
@@ -8782,7 +13470,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -8800,7 +13488,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Attributes",
           "traits": [
             {
-              "name": "Physical",
+              "name": "Mental",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8810,7 +13498,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Mental",
+              "name": "Physical",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8852,7 +13540,8 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 3,
-              "attributesRing": false
+              "attributesRing": false,
+              "colWidth": 25
             }
           }
         },
@@ -8909,7 +13598,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -8921,7 +13610,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 50
             }
           }
         },
@@ -8933,7 +13623,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Roles",
           "traits": [
             {
-              "name": "Investigator",
+              "name": "Enforcer",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8943,7 +13633,37 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Believer",
+              "name": "Entrepreneur",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Rebel",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Sage",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Shepherd",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8954,26 +13674,6 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "Townie",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Outsider",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Skeptic",
               "value": 0,
               "dice": [],
               "description": "",
@@ -8992,7 +13692,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -9004,13 +13704,15 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 5
+              "reservedSlots": 5,
+              "colWidth": 25,
+              "rowBreak": true
             }
           }
         },
         {
           "id": "relationships-strange-die",
-          "name": "Relationships & Strange Die",
+          "name": "Relationships",
           "description": "Bonds and the creeping town phenomenon",
           "nounSingular": "Relationships & Strange Die",
           "nounPlural": "Relationships & Strange Dies",
@@ -9044,6 +13746,36 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
             }
           ],
           "sfx": [],
@@ -9055,7 +13787,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "default",
@@ -9067,7 +13799,147 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 50
+            }
+          }
+        },
+        {
+          "id": "signature-assets",
+          "name": "Signature Assets",
+          "description": "",
+          "nounSingular": "Asset",
+          "nounPlural": "Assets",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "rowBreak": true
+            }
+          }
+        },
+        {
+          "id": "complications",
+          "name": "Complications",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              }
+            }
+          }
+        },
+        {
+          "id": "strange-die",
+          "name": "Strange Die",
+          "description": "",
+          "nounSingular": "Die",
+          "nounPlural": "Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "growth-ladder",
+                "body": "growth-ladder"
+              }
             }
           }
         }
@@ -9086,6 +13958,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-terraverse",
+    "version": 2,
     "title": "Terraverse",
     "subtitle": "Epic Science-Fantasy Multiverse",
     "spotlight": "Terraverse",
@@ -9112,7 +13985,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -9122,6 +13995,101 @@ const cortexSpotlightTemplates = [
         }
       },
       "traitSets": [
+        {
+          "id": "attributes",
+          "name": "Attributes",
+          "description": "Core hero ratings with Willpower",
+          "nounSingular": "Attribute",
+          "nounPlural": "Attributes",
+          "traits": [
+            {
+              "name": "Agility",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Alertness",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Intelligence",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Strength",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Vitality",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Willpower",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 4,
+              "attributesRing": false,
+              "colWidth": 33
+            }
+          }
+        },
         {
           "id": "distinctions",
           "name": "Distinctions",
@@ -9175,7 +14143,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -9187,7 +14155,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -9198,6 +14168,16 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
           "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
             {
               "name": "",
               "value": 0,
@@ -9245,80 +14225,6 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "attributes",
-          "name": "Attributes",
-          "description": "Core hero ratings with Willpower",
-          "nounSingular": "Attribute",
-          "nounPlural": "Attributes",
-          "traits": [
-            {
-              "name": "Physical",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Mental",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Social",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Willpower",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": false,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 4,
-              "attributesRing": false
-            }
-          }
-        },
-        {
           "id": "skills-specialties",
           "name": "Skills & Specialties",
           "description": "Multiverse capabilities and technical proficiencies",
@@ -9326,7 +14232,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Skills & Specialties",
           "traits": [
             {
-              "name": "",
+              "name": "Craft",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9336,7 +14242,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Drive",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9346,7 +14252,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Fight",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9356,7 +14262,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Fix",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9366,7 +14272,147 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Fly",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Focus",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Influence",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Know",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Labor",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Move",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Notice",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Operate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Perform",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Shoot",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Sneak",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Survive",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Throw",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Treat",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Trick",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9395,7 +14441,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": true
               },
-              "location": "right",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "default",
@@ -9407,7 +14453,154 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "LIFE POINTS & INITIATIVE:\n• Initiative Ladder: [d4] [d6] [d8] [d10] [d12]\n• Hero Dice: [d6] [d8] [d10] [d12]\n• Life Points Track: [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]",
-              "reservedSlots": 6
+              "reservedSlots": 6,
+              "colSpan": 2,
+              "columnSpan": 2
+            }
+          }
+        },
+        {
+          "id": "initiative",
+          "name": "Initiative",
+          "description": "",
+          "nounSingular": "Die",
+          "nounPlural": "Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "growth-ladder",
+                "body": "growth-ladder"
+              }
+            }
+          }
+        },
+        {
+          "id": "hero-dice",
+          "name": "Hero Dice",
+          "description": "",
+          "nounSingular": "Die",
+          "nounPlural": "Dice",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "center",
+              "page": 1,
+              "style": {
+                "header": "growth-ladder",
+                "body": "growth-ladder"
+              }
+            }
+          }
+        },
+        {
+          "id": "life-points",
+          "name": "Life Points",
+          "description": "Vitality counts down from 12; Willpower counts up from 1.",
+          "nounSingular": "Point",
+          "nounPlural": "Points",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "pips",
+                "body": "pips"
+              },
+              "pips": {
+                "count": 12,
+                "perRow": 6,
+                "connected": true,
+                "filled": 0
+              },
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         },
@@ -9511,7 +14704,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "center",
               "page": 2,
               "style": {
                 "header": "default",
@@ -9582,10 +14775,85 @@ const cortexSpotlightTemplates = [
         },
         {
           "id": "talents-growth-options",
-          "name": "Talents & Growth Options",
+          "name": "Talents",
           "description": "Session record and leveling advancement options",
           "nounSingular": "Talents & Growth Option",
           "nounPlural": "Talents & Growth Options",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 2,
+              "style": {
+                "header": "talents-table",
+                "body": "talents-table"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 0,
+              "colSpan": 2,
+              "columnSpan": 2
+            }
+          }
+        },
+        {
+          "id": "session-record",
+          "name": "Session Record",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
           "traits": [],
           "sfx": [],
           "tags": [],
@@ -9599,16 +14867,39 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 2,
               "style": {
-                "header": "default",
+                "header": "session-record",
+                "body": "session-record"
+              },
+              "sessionRecord": {
+                "count": 14
+              },
+              "reservedSlots": 14
+            }
+          }
+        },
+        {
+          "id": "leveling-up",
+          "name": "Leveling Up",
+          "description": "",
+          "nounSingular": "Option",
+          "nounPlural": "Options",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 2,
+              "style": {
+                "header": "notes",
                 "body": "notes"
               },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 0
+              "notes": "1 — Turn an asset from a session into a signature asset at d4. Switch out a distinction for a new one.\n2 — Step up a signature asset. Add a new specialty to a skill. Add a new SFX to a power set.\n3 — Step up a skill. Add a new talent. Add a second power set (one power, one SFX, one limit).\n4 — Step up one attribute and step down another."
             }
           }
         }
@@ -9627,6 +14918,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-titans-handler",
+    "version": 2,
     "title": "Titans vs Leviathans - Handler",
     "subtitle": "Giant Mech vs Kaiju Combat",
     "spotlight": "Titans vs Leviathans",
@@ -9671,7 +14963,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Handler Attributes",
           "traits": [
             {
-              "name": "Reflexes",
+              "name": "Prowess",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9681,7 +14973,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Tactical",
+              "name": "Control",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9691,17 +14983,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Willpower",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Sync",
+              "name": "Renown",
               "value": 0,
               "dice": [],
               "description": "",
@@ -9733,7 +15015,91 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 4,
-              "attributesRing": false
+              "attributesRing": false,
+              "colWidth": 25
+            }
+          }
+        },
+        {
+          "id": "roles",
+          "name": "Roles",
+          "description": "Combat roles and tactical responsibilities",
+          "nounSingular": "Role",
+          "nounPlural": "Roles",
+          "traits": [
+            {
+              "name": "Backup",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Blaster",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Boss",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Brain",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            },
+            {
+              "name": "Brawler",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "stressConfig": {
+                "includeD4": false,
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 4
             }
           }
         },
@@ -9790,7 +15156,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "right",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -9803,79 +15169,6 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 3
-            }
-          }
-        },
-        {
-          "id": "roles",
-          "name": "Roles",
-          "description": "Combat roles and tactical responsibilities",
-          "nounSingular": "Role",
-          "nounPlural": "Roles",
-          "traits": [
-            {
-              "name": "Commander",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Pilot",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Engineer",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Scout",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 4
             }
           }
         },
@@ -9931,6 +15224,71 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 2
             }
           }
+        },
+        {
+          "id": "complications",
+          "name": "Complications",
+          "description": "",
+          "nounSingular": "Complication",
+          "nounPlural": "Complications",
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "traits": [],
+              "sfx": [],
+              "tags": [],
+              "custom": {}
+            }
+          ],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "stress",
+                "body": "stress"
+              }
+            }
+          }
+        },
+        {
+          "id": "session-record",
+          "name": "Session Record",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "session-record",
+                "body": "session-record"
+              },
+              "sessionRecord": {
+                "count": 20
+              },
+              "reservedSlots": 20
+            }
+          }
         }
       ],
       "player": "",
@@ -9947,6 +15305,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-titans-titan",
+    "version": 2,
     "title": "Titans vs Leviathans - Titan Mech",
     "subtitle": "Giant Mech vs Kaiju Combat",
     "spotlight": "Titans vs Leviathans",
@@ -9991,7 +15350,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Titan Attributes & Stress",
           "traits": [
             {
-              "name": "Armor",
+              "name": "Prowess",
               "value": 0,
               "dice": [],
               "description": "",
@@ -10001,7 +15360,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Firepower",
+              "name": "Control",
               "value": 0,
               "dice": [],
               "description": "",
@@ -10011,17 +15370,7 @@ const cortexSpotlightTemplates = [
               "custom": {}
             },
             {
-              "name": "Mobility",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Systems",
+              "name": "Renown",
               "value": 0,
               "dice": [],
               "description": "",
@@ -10040,7 +15389,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -10053,7 +15402,8 @@ const cortexSpotlightTemplates = [
               },
               "notes": "",
               "reservedSlots": 4,
-              "attributesRing": false
+              "attributesRing": false,
+              "colWidth": 25
             }
           }
         },
@@ -10110,7 +15460,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "left",
+              "location": "right",
               "page": 1,
               "style": {
                 "header": "distinctions",
@@ -10127,22 +15477,41 @@ const cortexSpotlightTemplates = [
           }
         },
         {
+          "id": "session-record",
+          "name": "Session Record",
+          "description": "",
+          "nounSingular": "Milestone",
+          "nounPlural": "Milestones",
+          "traits": [],
+          "sfx": [],
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "right",
+              "page": 1,
+              "style": {
+                "header": "session-record",
+                "body": "session-record"
+              },
+              "sessionRecord": {
+                "count": 20
+              },
+              "reservedSlots": 20
+            }
+          }
+        },
+        {
           "id": "power-set",
           "name": "Power Set",
           "description": "Colossal kaiju-annihilation weaponry",
           "nounSingular": "Power Set",
           "nounPlural": "Power Sets",
           "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
             {
               "name": "",
               "value": 0,
@@ -10173,7 +15542,7 @@ const cortexSpotlightTemplates = [
                 "sfx": true,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "left",
               "page": 1,
               "style": {
                 "header": "default",
@@ -10185,7 +15554,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "SFX:\n\nLIMIT:",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": "full",
+              "columnSpan": "full"
             }
           }
         }
@@ -10204,6 +15575,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-trace-20",
+    "version": 2,
     "title": "TRACE 2.0",
     "subtitle": "Civic Paranormal Investigation",
     "spotlight": "TRACE 2.0",
@@ -10230,7 +15602,7 @@ const cortexSpotlightTemplates = [
             "hasAttributes": false
           },
           "sheetStyle": "spotlight",
-          "columns": 2,
+          "columns": 3,
           "columnAlignment": "top-base",
           "columnOffsets": {
             "left": 0,
@@ -10299,7 +15671,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colWidth": 30
             }
           }
         },
@@ -10442,56 +15815,6 @@ const cortexSpotlightTemplates = [
               "sfx": [],
               "tags": [],
               "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
             }
           ],
           "sfx": [],
@@ -10507,7 +15830,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "resources-count"
+                "body": "default"
               },
               "multiDie": true,
               "stressConfig": {
@@ -10584,7 +15907,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3
+              "reservedSlots": 3,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -10677,7 +16002,9 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 6
+              "reservedSlots": 6,
+              "colSpan": 2,
+              "columnSpan": 2
             }
           }
         },
@@ -10748,7 +16075,7 @@ const cortexSpotlightTemplates = [
                 "sfx": false,
                 "subtraits": false
               },
-              "location": "right",
+              "location": "center",
               "page": 1,
               "style": {
                 "header": "default",
@@ -10767,7 +16094,8 @@ const cortexSpotlightTemplates = [
                 8,
                 10,
                 12
-              ]
+              ],
+              "colWidth": 50
             }
           }
         },
@@ -10820,7 +16148,8 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 2
+              "reservedSlots": 2,
+              "colWidth": 20
             }
           }
         }

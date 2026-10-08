@@ -13,6 +13,7 @@ const TraitEditor = {
 			scrollPosition: 'none',
 			anchorPosition: 'top',
 			confirmDelete:  false,
+			nameBeforeEdit: '',
 		}
 	},
 
@@ -27,6 +28,23 @@ const TraitEditor = {
 			let s = this.traitSetID;
 			let t = this.traitID;
 			return this.character?.traitSets?.[s]?.traits?.[t];
+		},
+
+		templateEntry() {
+			return cortexFunctions.resolveTemplateFor(
+				this.character, this.$root ? this.$root.sheetTemplates : null );
+		},
+
+		// Explicit no-confirm removal of a template-inherited trait (D19).
+		templateTraitMatched() {
+			return this.templateHasTrait( this.trait ? this.trait.name : '' );
+		},
+
+		// D7: renaming a template-derived trait unlinks it from future
+		// template updates (the original reappears as inherited).
+		renameWarning() {
+			return Boolean( this.nameBeforeEdit && this.nameBeforeEdit !== this.name &&
+				this.templateHasTrait( this.nameBeforeEdit ) );
 		},
 
 		name: {
@@ -410,6 +428,13 @@ const TraitEditor = {
 				@click.stop="removeTrait"
 				title="Click again to confirm deletion"
 			><span>Confirm?</span></button>
+			<button
+				v-if="templateTraitMatched"
+				type="button"
+				class="editor-delete"
+				@click.stop="removeFromSheet"
+				title="Remove from sheet — reversible via restore, no confirmation needed"
+			><i class="fas fa-eraser"></i></button>
 		</div>
 
 		<div class="editor-inner">
@@ -432,7 +457,7 @@ const TraitEditor = {
 					<template v-if="isTalentsTable">
 						<div class="editor-field">
 							<label>{{ talentCol1Label }}</label>
-							<input type="text" v-model="name" ref="inputName" placeholder="e.g. Look, A Clue!">
+							<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
 						</div>
 
 						<div class="editor-field">
@@ -448,8 +473,10 @@ const TraitEditor = {
 
 					<div class="editor-field" v-else>
 						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isStandingStyle ? 'Standing Name' : 'Trait Name') }}</label>
-						<input type="text" v-model="name" ref="inputName" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isStandingStyle ? 'e.g. Camp Director' : '')">
+						<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isStandingStyle ? 'e.g. Camp Director' : '')">
 					</div>
+
+					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
 
 					<!-- STATEMENT FIELD -->
 					<div class="editor-field" v-if="isStatementSet || isStandingStyle">
@@ -891,6 +918,12 @@ const TraitEditor = {
 			let t = this.traitID;
 
 			let clone = JSON.parse( JSON.stringify( character.traitSets[s].traits[t] ) );
+			// A duplicate is a new instance: drop internal ids so keys and
+			// preferences never collide with the original (fresh ones are
+			// assigned on update).
+			delete clone._lid;
+			delete clone.id;
+			cortexFunctions.stripInternalIds({ traits: [ clone ] });
 			character.traitSets[s].traits.splice( t + 1, 0, clone );
 
 			this.updateCharacter( character );
@@ -901,6 +934,22 @@ const TraitEditor = {
 		removeTrait() {
 			this.confirmDelete = false;
 			this.$emit( 'removeTrait', this.traitSetID, this.traitID );
+		},
+
+		templateHasTrait( name ) {
+			if ( !name ) return false;
+			const setId = this.traitSet ? this.traitSet.id : null;
+			const entry = this.templateEntry;
+			const base = setId ? cortexFunctions.templateSetById( entry, setId ) : null;
+			return Boolean( base && Array.isArray( base.traits ) && base.traits.some( b => b && b.name === name ) );
+		},
+
+		removeFromSheet() {
+			const entry = this.templateEntry;
+			cortexFunctions.removeTraitFromSheet( this.character, entry, this.traitSetID, this.traitID );
+			this.confirmDelete = false;
+			this.selectElement([]);
+			this.updateCharacter( this.character );
 		},
 
 		addEffect() {
@@ -956,7 +1005,9 @@ const TraitEditor = {
 			let t = this.traitID;
 			let u = subtraitID;
 
-			character.traitSets[s].traits[t].traits.splice(u, 1);
+			const entry = cortexFunctions.resolveTemplateFor(
+				character, this.$root ? this.$root.sheetTemplates : null );
+			cortexFunctions.removeSubtraitFromSheet( character, entry, s, t, u );
 
 			this.updateCharacter( character );
 
@@ -1009,7 +1060,9 @@ const TraitEditor = {
 
 		checkScrollPosition() {
 
+			if ( !this.$el || typeof this.$el.querySelector !== 'function' ) return;
 			let element = this.$el.querySelector('.editor-inner > div');
+			if ( !element ) return;
 
 			let distance = element.scrollTop;
 			let max      = element.scrollHeight - element.clientHeight;
