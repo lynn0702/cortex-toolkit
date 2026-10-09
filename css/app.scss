@@ -257,3 +257,25 @@ $die-backings:
 @import 'roller';
 @import 'spotlight-print';
 @import 'multi-character';
+
+// COARSE POINTERS (touch): icon-only controls get full finger-sized hit
+// areas without changing their visual size.
+@media (pointer: coarse) {
+	.editor-controls button {
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+	}
+	.chip-remove,
+	.session-tab-close,
+	.roller-btn-icon,
+	.btn-pp-step {
+		min-width: 2.5rem;
+		min-height: 2.5rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.preview-button {
+		min-height: 2.75rem;
+	}
+}

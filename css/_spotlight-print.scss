@@ -2208,3 +2208,66 @@
 	}
 }
 
+// MOBILE (≤768px): the A4 sheet goes fluid and every band stacks to a
+// single column — no horizontal overflow or clipped content. Inline grid
+// placement is neutralized (!important beats inline styles); the -2px seam
+// between stacked bands is preserved. Print/designer-preview paper layout
+// is untouched (this block is screen-only).
+@media screen and (max-width: 768px) {
+	.character-sheet .page-inner,
+	.character-sheet .pages,
+	.character-sheet .page {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+	}
+
+	.character-sheet.spotlight-style,
+	.character-sheet.spotlight-print-style {
+		.spotlight-layout {
+			width: 100% !important;
+			max-width: 100% !important;
+			min-width: 0 !important;
+		}
+
+		.columns.spotlight-columns,
+		.columns.spotlight-columns.spotlight-grid {
+			display: flex !important;
+			flex-direction: column !important;
+			align-items: stretch !important;
+		}
+
+		.spotlight-grid > .trait-set {
+			grid-area: auto !important;
+			margin: 0 !important;
+			width: 100% !important;
+			max-width: 100% !important;
+			min-width: 0 !important;
+		}
+
+		.spotlight-grid > .trait-set + .trait-set {
+			margin-top: -2px !important;
+		}
+
+		.columns.spotlight-columns > .spotlight-column {
+			width: 100% !important;
+			max-width: 100% !important;
+			min-width: 0 !important;
+			margin-left: 0 !important;
+		}
+
+		.page-header-inner.spotlight-header-card,
+		.page-header-inner.spotlight-header-card:not(.has-portrait) {
+			grid-template-columns: 1fr !important;
+		}
+
+		.trait-set {
+			min-width: 0 !important;
+		}
+	}
+
+	.multi-character-column {
+		min-width: 0 !important;
+	}
+}
+

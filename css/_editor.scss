@@ -651,6 +651,7 @@
 
 .editor-button-group {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 0.25rem;
 	background: rgba(255, 255, 255, 0.08);
 	padding: 0.2rem;
@@ -728,64 +729,69 @@
 	padding: 0.75rem;
 	border-radius: 0.25rem;
 	margin-top: 0.25rem;
+}
 
-	.slider-row {
+// Generic slider rows (column-width fine-tune reuses the halo pattern).
+.slider-row {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+
+	.slider-header {
 		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.85);
 
-		.slider-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			font-size: 0.75rem;
-			color: rgba(255, 255, 255, 0.85);
-
-			.slider-val {
-				font-family: monospace;
-				color: var(--color-interactive);
-				font-weight: 700;
-			}
+		.slider-val {
+			font-family: monospace;
+			color: var(--color-interactive);
+			font-weight: 700;
+			white-space: nowrap;
 		}
+	}
 
-		.halo-presets {
-			display: flex;
-			gap: 0.35rem;
-			margin: 0.2rem 0;
+	input[type="range"] {
+		width: 100%;
+		accent-color: var(--color-primary);
+		cursor: pointer;
+		height: 4px;
+		margin: 0.25rem 0;
+	}
+}
 
-			.btn-preset {
-				flex: 1;
-				padding: 0.25rem 0.2rem;
-				font-size: 0.65rem;
-				font-weight: 700;
-				background: rgba(255, 255, 255, 0.08);
-				border: 1px solid rgba(255, 255, 255, 0.2);
-				border-radius: 3px;
-				color: rgba(255, 255, 255, 0.75);
-				cursor: pointer;
-				transition: all 0.15s;
-				text-align: center;
+.halo-sliders {
+	.halo-presets {
+		display: flex;
+		gap: 0.35rem;
+		margin: 0.2rem 0;
 
-				&:hover {
-					border-color: var(--color-primary);
-					color: white;
-					background: rgba(255, 255, 255, 0.15);
-				}
-
-				&.active {
-					background: var(--color-primary);
-					border-color: var(--color-primary);
-					color: white;
-				}
-			}
-		}
-
-		input[type="range"] {
-			width: 100%;
-			accent-color: var(--color-primary);
+		.btn-preset {
+			flex: 1;
+			padding: 0.25rem 0.2rem;
+			font-size: 0.65rem;
+			font-weight: 700;
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			border-radius: 3px;
+			color: rgba(255, 255, 255, 0.75);
 			cursor: pointer;
-			height: 4px;
-			margin: 0.25rem 0;
+			transition: all 0.15s;
+			text-align: center;
+
+			&:hover {
+				border-color: var(--color-primary);
+				color: white;
+				background: rgba(255, 255, 255, 0.15);
+			}
+
+			&.active {
+				background: var(--color-primary);
+				border-color: var(--color-primary);
+				color: white;
+			}
 		}
 	}
 
