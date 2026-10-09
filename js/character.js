@@ -914,10 +914,6 @@ const Character = {
 			this.selectElement(['theme']);
 		},
 
-		openNameEditor( tab = 'sheet' ) {
-			this.selectElement(['name']);
-		},
-
 		openSheetEditor() {
 			this.selectElement(['name']);
 		},
@@ -952,46 +948,6 @@ const Character = {
 			if ( ctk.diceConfig && typeof window !== 'undefined' ) {
 				window.__cortexActiveDiceConfig = ctk.diceConfig;
 			}
-		},
-
-		setSheetStyle( style ) {
-			if ( !this.character ) return;
-			if ( !this.character.custom ) this.character.custom = {};
-			if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
-			this.character.custom.cortexToolkit.sheetStyle = style;
-			this.updateCharacter( this.character );
-		},
-
-		setColumnCount( count ) {
-			if ( !this.character ) return;
-			if ( !this.character.custom ) this.character.custom = {};
-			if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
-			this.character.custom.cortexToolkit.columns = Number(count) || 2;
-			this.updateCharacter( this.character );
-		},
-
-		setColumnAlignmentMode( mode ) {
-			if ( !this.character ) return;
-			if ( !this.character.custom ) this.character.custom = {};
-			if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
-			this.character.custom.cortexToolkit.columnAlignment = mode;
-
-			if ( mode === 'top-base' ) {
-				this.character.custom.cortexToolkit.columnOffsets = { left: 0, center: 0, right: 0 };
-				const topSet = (this.character.traitSets || []).find( ts => (ts.custom?.cortexToolkit?.page || 1) === 1 );
-				if ( topSet && topSet.custom?.cortexToolkit?.colSpan > 1 ) {
-					topSet.custom.cortexToolkit.colSpan = 1;
-				}
-			} else if ( mode === 'full-width' ) {
-				this.character.custom.cortexToolkit.columnOffsets = { left: 0, center: 0, right: 0 };
-				const topSet = (this.character.traitSets || []).find( ts => (ts.custom?.cortexToolkit?.page || 1) === 1 );
-				if ( topSet ) {
-					if ( !topSet.custom ) topSet.custom = {};
-					if ( !topSet.custom.cortexToolkit ) topSet.custom.cortexToolkit = {};
-					topSet.custom.cortexToolkit.colSpan = this.columnCount;
-				}
-			}
-			this.updateCharacter( this.character );
 		},
 
 		renderText( text ) {
@@ -1052,48 +1008,6 @@ const Character = {
 			const loc = this.portrait?.custom?.cortexToolkit?.location;
 			if ( s === 'spotlight' && loc === pageLocation ) return true;
 			return false;
-		},
-
-		getTraitSetClasses( traitSet ) {
-
-			let classes = {
-				'trait-set': true
-			}
-
-			const bodyStyle = traitSet?.custom?.cortexToolkit?.style?.body || 'default';
-			classes[ 'trait-set-style-' + bodyStyle ] = true;
-
-			// Optional branched-Skills connectors.
-			if ( bodyStyle === 'skills-specialties' && traitSet?.custom?.cortexToolkit?.branchArrows === false ) {
-				classes[ 'hide-branch-arrows' ] = true;
-			}
-
-			if ( this.isSpotlightStyle ) {
-				const colSpan = Number(traitSet?.custom?.cortexToolkit?.colSpan ?? traitSet?.custom?.cortexToolkit?.columnSpan) || 1;
-				if ( colSpan >= this.columnCount || traitSet?.custom?.cortexToolkit?.colSpan === 'full' || traitSet?.custom?.cortexToolkit?.columnSpan === 'full' ) {
-					classes['span-full'] = true;
-					classes['span-' + this.columnCount] = true;
-				} else if ( colSpan === 2 ) {
-					classes['span-2'] = true;
-				} else {
-					classes['span-1'] = true;
-				}
-			}
-
-			if ( traitSet?.custom?.cortexToolkit?.features?.description ) {
-				classes[ 'trait-set-has-feature-description' ] = true;
-			}
-
-			if ( traitSet?.custom?.cortexToolkit?.features?.sfx ) {
-				classes[ 'trait-set-has-feature-sfx' ] = true;
-			}
-
-			if ( traitSet?.custom?.cortexToolkit?.features?.subtraits ) {
-				classes[ 'trait-set-has-feature-subtraits' ] = true;
-			}
-
-			return classes;
-
 		},
 
 		// Track count for a page: an optional per-page override
@@ -1279,14 +1193,6 @@ const Character = {
 		renderNameHtml( name ) {
 			if ( !name ) return '';
 			return cortexFunctions.renderText( name );
-		},
-
-		setColumnCount( cols ) {
-			if ( !this.character ) return;
-			if ( !this.character.custom ) this.character.custom = {};
-			if ( !this.character.custom.cortexToolkit ) this.character.custom.cortexToolkit = {};
-			this.character.custom.cortexToolkit.columns = cols;
-			this.updateCharacter( this.character );
 		},
 
 		removeHeaderPortrait() {
@@ -1475,6 +1381,10 @@ const Character = {
 
 		},
 		
+		getTraitSetRatings( traitSet ) {
+			return cortexFunctions.getTraitSetRatings( traitSet );
+		},
+
 		addTrait( traitSetID ) {
 
 			let character = this.character;
@@ -1499,16 +1409,7 @@ const Character = {
 
 		removeTrait( traitSetID, traitID ) {
 
-			/*// If we’re removing the trait that is currently selected, switch to the previous trait, or the parent trait set if no other traits remain.
-			if ( this.isSelected(['trait', traitSetID, traitID]) ) {
-				if ( this.character.traitSets[traitSetID].traits.length > 1) {
-					this.selectElement([ 'trait', traitSetID, traitID - 1 ]);
-				} else {
-					this.select( 'traitSet', traitSetID );
-				}
-			} else {*/
-				this.clearSelected();
-			/*}*/
+			this.clearSelected();
 
 			setTimeout( () => {
 				let character = this.character;
@@ -1564,20 +1465,6 @@ const Character = {
 		// from nested sub-traits AND from flat specialty-role traits linked to
 		// any skill via linkTo (original trait index). Unlinked flats collect
 		// in a trailing group under the right-hand heading.
-
-
-		shouldShowStressD4( traitSet ) {
-			const cfg = traitSet?.custom?.cortexToolkit?.stressConfig;
-			if ( cfg && typeof cfg.includeD4 === 'boolean' ) return cfg.includeD4;
-			return false;
-		},
-
-
-
-
-
-
-
 
 		handleAttributeClick( attributesID, a, attribute ) {
 			if ( this.isHaloDragging ) return;

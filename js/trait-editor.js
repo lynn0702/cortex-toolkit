@@ -273,13 +273,6 @@ const TraitEditor = {
 			return this.traitSet?.custom?.cortexToolkit?.style?.body === 'stress';
 		},
 
-		shouldShowStressD4() {
-			if ( !this.isStressSet ) return true;
-			const cfg = this.traitSet?.custom?.cortexToolkit?.stressConfig;
-			if ( cfg && typeof cfg.includeD4 === 'boolean' ) return cfg.includeD4;
-			return false;
-		},
-
 		shouldShowStressOut() {
 			if ( !this.isStressSet ) return false;
 			const cfg = this.traitSet?.custom?.cortexToolkit?.stressConfig;

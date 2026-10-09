@@ -1404,12 +1404,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			saveLocalData() {
 				this.persist();
-			},
-
-			clearLocalData() {
-				cortexStorage.clear().finally( () => {
-					window.location.reload();
-				} );
 			}
 
 		}
