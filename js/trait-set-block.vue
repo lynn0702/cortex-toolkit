@@ -16,7 +16,7 @@ import TraitSetResourcesCount from './trait-set-resources-count.vue';
 import TraitSetList from './trait-set-list.vue';
 
 const props = defineProps<{
-	character?: any;
+	character: any;
 	traitSetID?: number;
 	submode?: string | null;
 	editing?: any;

@@ -38,7 +38,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   const L = readLayered('spotlight-camp-bewilderwood');
   const orig = T.find((t) => t.id === 'spotlight-camp-bewilderwood');
   ok(!!orig, 'bewilderwood entry exists');
-  ok(L.id === 'spotlight-camp-bewilderwood' && L.version === 3, 'entry wrapper kept');
+  ok(L.id === 'spotlight-camp-bewilderwood' && L.version === 1, 'entry wrapper kept');
   ok(L.character.$schema === undefined && L.character.version === undefined, 'old-format markers dropped in layered form');
   const sets = L.character.sets;
   ok(JSON.stringify(Object.keys(sets)) === JSON.stringify(['Distinctions', 'Values', 'Signature Assets', 'Attributes', 'Standing', 'Badges', 'Talents']),
@@ -55,7 +55,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
     'shared hinder banner kept');
   ok(sets.Values.traits.Bravery.questioned === false && sets.Values.traits.Bravery.statement === '', 'values statement keys kept');
   ok(Object.keys(sets['Signature Assets'].slots).join(',') === '0,1,2', 'sig-asset slot indices');
-  ok(sets['Signature Assets'].slots['0'].statement === '(with spork attachment)', 'spork statement survives');
+  ok(sets['Signature Assets'].slots['0'].statement === '', 'blank sig-asset statement kept');
   ok(sets['Signature Assets'].slots['1'].statement === undefined, 'slot without statement stays keyless (presence preserved)');
   ok(Object.keys(sets.Standing.slots).length === 6, 'standing slots count');
   ok(sets.Standing.slots['0'].traits.COMPLICATION !== undefined && sets.Standing.slots['0'].traits.BONUS !== undefined,
@@ -127,7 +127,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(ss.traits.Bout.slots['0'].custom.cortexToolkit.branchSide === 'left', 'left slot marked');
   ok(ss.traits.Bout.slots['1'].custom.cortexToolkit.branchSide === 'right', 'right slot marked');
   ok(L.character.sets['Session Record'].custom.cortexToolkit.sessionRecord.orientation === 'horizontal', 'session horizontal authored');
-  ok(L.version === 5, 'alien-us version 5');
+  ok(L.version === 1, 'alien-us version baseline');
   const v = L.character.sets.Values;
   ok(v.custom.cortexToolkit.style.body === 'two-columns-detailed', 'values two-column style');
   ok(v.traits.Alien.description === '', 'no pre-filled value statements');

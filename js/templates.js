@@ -4,7 +4,7 @@
 const cortexSpotlightTemplates = [
   {
     "id": "spotlight-alien-us",
-    "version": 5,
+    "version": 1,
     "title": "Alien, Us",
     "subtitle": "Sci-Fi Infiltration & Paranoia",
     "spotlight": "Alien, Us",
@@ -863,7 +863,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-brighter-stars",
-    "version": 3,
+    "version": 1,
     "title": "BrighterStars",
     "subtitle": "Hopepunk Starship Exploration",
     "spotlight": "BrighterStars",
@@ -1313,7 +1313,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-camp-bewilderwood",
-    "version": 3,
+    "version": 1,
     "title": "Camp Bewilderwood",
     "subtitle": "Cryptid Summer Camp Mystery",
     "spotlight": "Camp Bewilderwood",
@@ -1562,7 +1562,7 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "statement": "(with spork attachment)",
+              "statement": "",
               "description": "",
               "traits": [],
               "sfx": [],
@@ -2211,7 +2211,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-cosa-nostra",
-    "version": 2,
+    "version": 1,
     "title": "Cosa Nostra",
     "subtitle": "Historical Crime Syndicate Drama",
     "spotlight": "Cosa Nostra",
@@ -2774,7 +2774,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-eidolon-alpha",
-    "version": 3,
+    "version": 1,
     "title": "Eidolon Alpha",
     "subtitle": "Mythic Summoners & Living Eidolons",
     "spotlight": "Eidolon Alpha",
@@ -3302,7 +3302,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-hammerheads-character",
-    "version": 3,
+    "version": 1,
     "title": "Hammerheads",
     "subtitle": "Disaster Response & Rescue Pilots",
     "spotlight": "Hammerheads",
@@ -3876,7 +3876,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-hammerheads-vehicle",
-    "version": 2,
+    "version": 1,
     "title": "Hammerheads - Vehicle File",
     "subtitle": "Rescue Craft & Fleet Support",
     "spotlight": "Hammerheads",
@@ -4244,7 +4244,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-inheritors-character",
-    "version": 2,
+    "version": 1,
     "title": "Inheritors",
     "subtitle": "Superpowered Dynasty Heritage",
     "spotlight": "Inheritors",
@@ -4854,7 +4854,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-inheritors-family",
-    "version": 2,
+    "version": 1,
     "title": "Inheritors - Family & GMCs",
     "subtitle": "Superpowered Dynasty Heritage",
     "spotlight": "Inheritors",
@@ -6406,7 +6406,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-kitbash-hero",
-    "version": 2,
+    "version": 1,
     "title": "KitBash",
     "subtitle": "Modular Comic Book Superheroes",
     "spotlight": "KitBash",
@@ -7024,7 +7024,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-kitbash-team",
-    "version": 2,
+    "version": 1,
     "title": "KitBash - Team File",
     "subtitle": "Modular Comic Book Superheroes",
     "spotlight": "KitBash",
@@ -7282,7 +7282,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-misty-cove",
-    "version": 2,
+    "version": 1,
     "title": "Misty Cove",
     "subtitle": "Emotional Gothic Mystery",
     "spotlight": "Misty Cove",
@@ -7739,7 +7739,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-necromancer",
-    "version": 2,
+    "version": 1,
     "title": "Necromancer",
     "subtitle": "Dark Fantasy Grimoire & Undead Arts",
     "spotlight": "Necromancer",
@@ -8234,7 +8234,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-retired-crystalline",
-    "version": 2,
+    "version": 1,
     "title": "Retired No More - Crystalline Age",
     "subtitle": "Aging Veteran Heroes",
     "spotlight": "Retired No More",
@@ -8902,7 +8902,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-retired-aerial",
-    "version": 2,
+    "version": 1,
     "title": "Retired No More - Aerial Age",
     "subtitle": "Aging Veteran Heroes",
     "spotlight": "Retired No More",
@@ -9396,7 +9396,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-safe-zone-survivor",
-    "version": 3,
+    "version": 1,
     "title": "Safe Zone",
     "subtitle": "Post-Apocalyptic Survival & Colony",
     "spotlight": "Safe Zone",
@@ -10405,7 +10405,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-safe-zone-colony",
-    "version": 2,
+    "version": 1,
     "title": "Safe Zone - Colony File",
     "subtitle": "Post-Apocalyptic Survival & Colony",
     "spotlight": "Safe Zone",
@@ -11569,7 +11569,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-snowfall-initiative",
-    "version": 2,
+    "version": 1,
     "title": "Snowfall Initiative",
     "subtitle": "Cold War Espionage & Super-Spies",
     "spotlight": "Snowfall Initiative",
@@ -12189,7 +12189,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-solarpunk-citizen",
-    "version": 2,
+    "version": 1,
     "title": "SolarPunk",
     "subtitle": "Ecological Hope & Community Technology",
     "spotlight": "SolarPunk",
@@ -12610,7 +12610,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-solarpunk-commune",
-    "version": 2,
+    "version": 1,
     "title": "SolarPunk - Commune File",
     "subtitle": "Ecological Hope & Community Technology",
     "spotlight": "SolarPunk",
@@ -12978,7 +12978,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-spellcaught",
-    "version": 2,
+    "version": 1,
     "title": "Spellcaught",
     "subtitle": "Arcane Curses & Eldritch Magic",
     "spotlight": "Spellcaught",
@@ -13658,7 +13658,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-strange-towns",
-    "version": 2,
+    "version": 1,
     "title": "Strange Towns",
     "subtitle": "Small Town Supernatural Weirdness",
     "spotlight": "Strange Towns",
@@ -14173,7 +14173,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-terraverse",
-    "version": 2,
+    "version": 1,
     "title": "Terraverse",
     "subtitle": "Epic Science-Fantasy Multiverse",
     "spotlight": "Terraverse",
@@ -15133,7 +15133,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-titans-handler",
-    "version": 2,
+    "version": 1,
     "title": "Titans vs Leviathans - Handler",
     "subtitle": "Giant Mech vs Kaiju Combat",
     "spotlight": "Titans vs Leviathans",
@@ -15520,7 +15520,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-titans-titan",
-    "version": 2,
+    "version": 1,
     "title": "Titans vs Leviathans - Titan Mech",
     "subtitle": "Giant Mech vs Kaiju Combat",
     "spotlight": "Titans vs Leviathans",
@@ -15790,7 +15790,7 @@ const cortexSpotlightTemplates = [
   },
   {
     "id": "spotlight-trace-20",
-    "version": 2,
+    "version": 1,
     "title": "TRACE 2.0",
     "subtitle": "Civic Paranormal Investigation",
     "spotlight": "TRACE 2.0",

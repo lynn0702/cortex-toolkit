@@ -1,5 +1,6 @@
 import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
+import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -13,7 +14,7 @@ export const cortexFunctions = {
 	materializeCharacter: materializeCharacter,
 	toLayeredEntity: toLayeredEntity,
 
-	arraysMatch: function( a: any, b: any ) {
+	arraysMatch: function( a: unknown, b: unknown ) {
 		if ( !Array.isArray(a) || !Array.isArray(b) ) return false;
 		if ( a.length !== b.length ) return false;
 		for (let i = 0; i < a.length; i++) {
@@ -33,7 +34,7 @@ export const cortexFunctions = {
 		});
 	},
 
-	getDieDisplayValue: function( dieValue: any ) {
+	getDieDisplayValue: function( dieValue: number ) {
 		switch ( dieValue ) {
 			case 4:  return '4';
 			case 6:  return '6';
@@ -67,7 +68,7 @@ export const cortexFunctions = {
 		style.textContent = `@font-face { font-family: '${fontName}'; src: url('${base64Data}') format('woff2'), url('${base64Data}') format('woff'), url('${base64Data}') format('truetype'); font-weight: normal; font-style: normal; }`;
 	},
 
-	renderDieconSVG: function( dieValue: any, isFilled = false, extraClass = '', diceConfig: any = null ) {
+	renderDieconSVG: function( dieValue: number, isFilled = false, extraClass = '', diceConfig: DiceConfig | null = null ) {
 		const s = Number( dieValue ) || 8;
 		const filledClass = isFilled ? 'diecon-filled' : 'diecon-unfilled';
 		const cls = `diecon diecon-d${s} ${filledClass} ${extraClass}`.trim();
@@ -145,7 +146,7 @@ export const cortexFunctions = {
 		return `<svg class="${cls}" viewBox="0 0 24 24" width="1.35rem" height="1.35rem" style="display:inline-block; vertical-align:middle; overflow:visible;">${defs}${shape}${text}</svg>`;
 	},
 
-	getTraitSetRatings: function( traitSet: any ) {
+	getTraitSetRatings: function( traitSet: TraitSet ) {
 		const custom = traitSet?.custom?.cortexToolkit;
 		if ( Array.isArray(custom?.ratingScale) && custom.ratingScale.length > 0 ) {
 			return [...custom.ratingScale].sort((a, b) => a - b);
@@ -153,13 +154,13 @@ export const cortexFunctions = {
 		return [4, 6, 8, 10, 12];
 	},
 
-	getHaloTraitRing: function( traitSet: any ) {
+	getHaloTraitRing: function( traitSet: TraitSet ) {
 		const ctk = traitSet?.custom?.cortexToolkit;
 		if ( !ctk ) return undefined;
 		return ctk.haloTraitRing !== undefined ? ctk.haloTraitRing : ctk.attributesRing;
 	},
 
-	getSubtraitRatings: function( traitSet: any ) {
+	getSubtraitRatings: function( traitSet: TraitSet ) {
 		const custom = traitSet?.custom?.cortexToolkit;
 		if ( Array.isArray(custom?.subtraitRatingScale) && custom.subtraitRatingScale.length > 0 ) {
 			return [...custom.subtraitRatingScale].sort((a, b) => a - b);
@@ -169,8 +170,8 @@ export const cortexFunctions = {
 
 	// Feature + multi-die defaults seeded when a trait-set style is chosen.
 	// Used by the trait set editor and the style gallery alike.
-	defaultFeaturesForStyle: function( style: any ) {
-		const map: any = {
+	defaultFeaturesForStyle: function( style: string ) {
+		const map: Record<string, { features: SetFeatures; multiDie: boolean }> = {
 			'talents-table':      { features: { description: true,  sfx: true,  subtraits: false }, multiDie: false },
 			'standing':           { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
 			'skills-specialties': { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
@@ -191,18 +192,18 @@ export const cortexFunctions = {
 		'talents-table':      { col1: 'TALENT', col2: 'ACTIVATION', col3: 'EFFECT' },
 		'resources-count':    { rating: 'RATING', dice: '/ DICE' },
 		'standing':           { slot0: 'COMPLICATION', slot1: 'BONUS' },
-	},
+	} as Record<string, Record<string, string>>,
 
-	labelDefaultForStyle: function( style: any, key: any ) {
-		const map: any = ( this.defaultTraitSetLabels as any )[ style ];
+	labelDefaultForStyle: function( style: string | undefined, key: string ) {
+		const map = style ? this.defaultTraitSetLabels[ style ] : undefined;
 		if ( map && map[ key ] !== undefined ) return map[ key ];
 		return '';
 	},
 
-	getTraitDice: function( trait: any ) {
+	getTraitDice: function( trait: Trait ) {
 		if ( !trait ) return [];
 		if ( Array.isArray(trait.dice) && trait.dice.length > 0 ) {
-			return trait.dice.filter( ( d: any ) => typeof d === 'number' && d > 0 );
+			return trait.dice.filter( ( d ) => typeof d === 'number' && d > 0 );
 		}
 		if ( typeof trait.value === 'number' && trait.value > 0 ) {
 			return [ trait.value ];
@@ -210,23 +211,23 @@ export const cortexFunctions = {
 		return [];
 	},
 
-	setTraitDice: function( trait: any, diceArray: any ) {
+	setTraitDice: function( trait: Trait, diceArray: number[] ) {
 		if ( !trait ) return;
 		trait.dice = Array.isArray(diceArray) ? diceArray.filter( d => typeof d === 'number' && d > 0 ) : [];
 		trait.value = trait.dice.length > 0 ? trait.dice[0] : null;
 	},
 
-	renderDate( timestamp: any ) {
+	renderDate( timestamp: string | number | Date ) {
 		let date = new Date( timestamp );
 		return date.toLocaleString();
 	},
 
-	renderText: function( text: any ) {
+	renderText: function( text: unknown ) {
 		if ( !text || typeof text !== 'string' ) return '';
 		return this.renderInlineMarkdown( text ).replace( /\n/g, '<br>' );
 	},
 
-	escapeHtml: function( text: any ) {
+	escapeHtml: function( text: unknown ) {
 		if ( text === null || text === undefined ) return '';
 		return String( text )
 			.replace( /&/g, '&amp;' )
@@ -239,7 +240,7 @@ export const cortexFunctions = {
 	// Only these URL schemes are safe to render (links and images).
 	// Scheme-less URLs (relative paths, fragments) cannot execute script
 	// and are always allowed here.
-	isSafeUrl: function( url: any, allowDataImage: any ) {
+	isSafeUrl: function( url: unknown, allowDataImage: boolean ) {
 		if ( !url || typeof url !== 'string' ) return false;
 		// Browsers strip ASCII tab/newline from URLs before parsing, so an
 		// attacker could smuggle a scheme past a naive check. Strip first.
@@ -258,7 +259,7 @@ export const cortexFunctions = {
 	// On top of the scheme check this rejects whitespace, quotes, parens
 	// and angle brackets, which could otherwise break out of the url()
 	// token (quoted or not) into arbitrary CSS.
-	safeImageUrl: function( url: any ) {
+	safeImageUrl: function( url: unknown ) {
 		if ( !url || typeof url !== 'string' ) return '';
 		const clean = url.trim();
 		if ( !clean.length || /[\s'"()\\<>`]/.test( clean ) ) return '';
@@ -266,7 +267,7 @@ export const cortexFunctions = {
 	},
 
 	// Downscales an uploaded image to a data URL (caps localStorage/IDB bloat).
-	processImageFile: function( file: any, maxDimension: any, quality: any ): Promise<string> {
+	processImageFile: function( file: File, maxDimension: number, quality: number ): Promise<string> {
 		maxDimension = maxDimension || 1024;
 		quality = ( quality === undefined || quality === null ) ? 0.85 : quality;
 		return new Promise( ( resolve, reject ) => {
@@ -363,29 +364,31 @@ export const cortexFunctions = {
 
 	TEMPLATE_SCHEMA_URL: 'https://cortex.engard.me/schema/0.1/sheet-template.schema.json',
 
-	deepEqual: function( a: any, b: any ) {
+	deepEqual: function( a: unknown, b: unknown ) {
 		if ( a === b ) return true;
 		if ( typeof a !== typeof b || a === null || b === null || a === undefined || b === undefined ) return false;
 		if ( Array.isArray( a ) !== Array.isArray( b ) ) return false;
 		if ( Array.isArray( a ) ) {
-			if ( a.length !== b.length ) return false;
-			for ( let i = 0; i < a.length; i++ ) {
-				if ( !this.deepEqual( a[i], b[i] ) ) return false;
+			const arrA = a, arrB = b as unknown[];
+			if ( arrA.length !== arrB.length ) return false;
+			for ( let i = 0; i < arrA.length; i++ ) {
+				if ( !this.deepEqual( arrA[i], arrB[i] ) ) return false;
 			}
 			return true;
 		}
 		if ( typeof a === 'object' ) {
-			const ka = Object.keys( a ), kb = Object.keys( b );
+			const recA = a as Record<string, unknown>, recB = b as Record<string, unknown>;
+			const ka = Object.keys( recA ), kb = Object.keys( recB );
 			if ( ka.length !== kb.length ) return false;
 			for ( const k of ka ) {
-				if ( !Object.prototype.hasOwnProperty.call( b, k ) || !this.deepEqual( a[k], b[k] ) ) return false;
+				if ( !Object.prototype.hasOwnProperty.call( recB, k ) || !this.deepEqual( recA[k], recB[k] ) ) return false;
 			}
 			return true;
 		}
 		return false;
 	},
 
-	slugifySetId: function( name: any, taken: any ) {
+	slugifySetId: function( name: string, taken: Set<string> ) {
 		let base = String( name || '' ).toLowerCase().replace( /[^a-z0-9]+/g, '-' ).replace( /^-+|-+$/g, '' ).slice( 0, 40 ) || 'set';
 		let id = base, i = 2;
 		while ( taken.has( id ) ) id = base + '-' + ( i++ );
@@ -397,14 +400,16 @@ export const cortexFunctions = {
 	// and rename-proof preference keys. Stored at rest (IndexedDB), NEVER
 	// exported (stripped with the layout deltas). Assigned at creation and
 	// import; load fills gaps only — existing ids are never rewritten.
+	// Structural mutators over loose character-like objects (defaults, drafts,
+	// templates): params stay `any` on purpose — the shape is not yet a Character.
 	assignLids: function( character: any ) {
 		if ( !character || !Array.isArray( character.traitSets ) ) return character;
 		const lid = () => ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' )
 			? crypto.randomUUID()
 			: ( 'lid-' + Math.random().toString( 36 ).slice( 2 ) + Date.now().toString( 36 ) );
-		const walk = ( traits: any ) => {
+		const walk = ( traits: Trait[] | undefined ) => {
 			if ( !Array.isArray( traits ) ) return;
-			traits.forEach( ( tr: any ) => {
+			traits.forEach( ( tr ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				if ( typeof tr._lid !== 'string' || !tr._lid.length ) tr._lid = lid();
 				walk( tr.traits );
@@ -417,10 +422,10 @@ export const cortexFunctions = {
 	// Strip app-local and forbidden-below-set keys for export: _lid
 	// everywhere below set level, plus any stray trait-level `id` (D1).
 	// Set-level ids are the join key and are always kept.
-	stripInternalIds: function( node: any ) {
-		const walkTraits = ( traits: any ) => {
+	stripInternalIds: function( node: { traitSets?: TraitSet[]; traits?: Trait[] } ) {
+		const walkTraits = ( traits: Trait[] | undefined ) => {
 			if ( !Array.isArray( traits ) ) return;
-			traits.forEach( ( tr: any ) => {
+			traits.forEach( ( tr ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				delete tr._lid;
 				delete tr.id;
@@ -429,7 +434,7 @@ export const cortexFunctions = {
 		};
 		if ( !node || typeof node !== 'object' ) return;
 		if ( Array.isArray( node.traitSets ) ) {
-			node.traitSets.forEach( ( ts: any ) => { if ( ts ) walkTraits( ts.traits ); } );
+			node.traitSets.forEach( ( ts ) => { if ( ts ) walkTraits( ts.traits ); } );
 		}
 		if ( Array.isArray( node.traits ) ) walkTraits( node.traits );
 	},
@@ -438,7 +443,7 @@ export const cortexFunctions = {
 	// template. Slugs stay readable in raw JSON; uniqueness is per character.
 	ensureTraitSetIds: function( character: any ) {
 		if ( !character || !Array.isArray( character.traitSets ) ) return character;
-		const taken = new Set();
+		const taken = new Set<string>();
 		character.traitSets.forEach( ( ts: any ) => {
 			if ( ts && typeof ts.id === 'string' && ts.id.length ) taken.add( ts.id );
 		} );
@@ -450,14 +455,14 @@ export const cortexFunctions = {
 		return character;
 	},
 
-	findSpotlightTemplate: function( id: any ) {
+	findSpotlightTemplate: function( id: string ) {
 		if ( !id || typeof cortexSpotlightTemplates === 'undefined' ) return null;
 		return cortexSpotlightTemplates.find( ( t: any ) => t.id === id ) || null;
 	},
 
 	// Resolve the template entry for a character: live store array first
 	// (passed in by editors via $root), then the built-in library.
-	resolveTemplateFor: function( character: any, storeTemplates: any ) {
+	resolveTemplateFor: function( character: Character, storeTemplates: SheetTemplate[] | null ): SheetTemplate | null {
 		const t = character && character.sheet && character.sheet.template;
 		const id = t ? ( typeof t === 'string' ? t : t.id ) : null;
 		if ( !id ) return null;
@@ -469,24 +474,24 @@ export const cortexFunctions = {
 					const exact = pool.find( x => ( x.version || 1 ) === ver );
 					if ( exact ) return exact;
 				}
-				pool.sort( ( a, b ) => ( ( b.version || 1 ) - ( a.version || 1 ) ) );
+				pool.sort( ( a, b ) => ( Number( b.version || 1 ) - Number( a.version || 1 ) ) );
 				return pool[0];
 			}
 		}
 		return this.findSpotlightTemplate( id );
 	},
 
-	templateSetById: function( templateEntry: any, setId: any ) {
+	templateSetById: function( templateEntry: SheetTemplate | null, setId: string ): TraitSet | null {
 		const ch = this.findTemplateCharacter( templateEntry );
 		if ( !ch || !Array.isArray( ch.traitSets ) ) return null;
-		return ch.traitSets.find( ( ts: any ) => ts && ts.id === setId ) || null;
+		return ch.traitSets.find( ( ts ) => ts && ts.id === setId ) || null;
 	},
 
 	// D19 removal core: drop the trait from the live sheet and remember its
 	// name on the parent set's removedTraits (no confirmation — explicit and
 	// reversible via restore). Returns true when a template-inherited trait
 	// was removed (plain deletes return false and splice only).
-	removeTraitFromSheet: function( character: any, templateEntry: any, s: any, t: any ) {
+	removeTraitFromSheet: function( character: Character, templateEntry: SheetTemplate | null, s: number, t: number ): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		const tr = ts && Array.isArray( ts.traits ) ? ts.traits[t] : null;
 		if ( !tr ) return false;
@@ -494,18 +499,18 @@ export const cortexFunctions = {
 		if ( tr.name && templateEntry && ts && ts.id ) {
 			const base = this.templateSetById( templateEntry, ts.id );
 			inherited = Boolean( base && Array.isArray( base.traits ) &&
-				base.traits.some( ( b: any ) => b && b.name === tr.name ) );
+				base.traits.some( ( b ) => b && b.name === tr.name ) );
 			if ( inherited ) {
 				if ( !Array.isArray( ts.removedTraits ) ) ts.removedTraits = [];
 				if ( !ts.removedTraits.includes( tr.name ) ) ts.removedTraits.push( tr.name );
 			}
 		}
-		ts.traits.splice( t, 1 );
+		ts!.traits.splice( t, 1 );
 		return inherited;
 	},
 
 	// Subtrait removal: same, against the parent trait's removedTraits.
-	removeSubtraitFromSheet: function( character: any, templateEntry: any, s: any, t: any, u: any ) {
+	removeSubtraitFromSheet: function( character: Character, templateEntry: SheetTemplate | null, s: number, t: number, u: number ): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		const tr = ts && Array.isArray( ts.traits ) ? ts.traits[t] : null;
 		const st = tr && Array.isArray( tr.traits ) ? tr.traits[u] : null;
@@ -514,46 +519,46 @@ export const cortexFunctions = {
 		if ( st.name && templateEntry && ts && ts.id && tr && tr.name ) {
 			const base = this.templateSetById( templateEntry, ts.id );
 			const btr = base && Array.isArray( base.traits )
-				? base.traits.find( ( b: any ) => b && b.name === tr.name ) : null;
+				? base.traits.find( ( b ) => b && b.name === tr.name ) : null;
 			inherited = Boolean( btr && Array.isArray( btr.traits ) &&
-				btr.traits.some( ( b: any ) => b && b.name === st.name ) );
+				btr.traits.some( ( b ) => b && b.name === st.name ) );
 			if ( inherited ) {
 				if ( !Array.isArray( tr.removedTraits ) ) tr.removedTraits = [];
 				if ( !tr.removedTraits.includes( st.name ) ) tr.removedTraits.push( st.name );
 			}
 		}
-		tr.traits.splice( u, 1 );
+		tr!.traits!.splice( u, 1 );
 		return inherited;
 	},
 
 	// Template traits (by name) not currently on the live sheet, including
 	// removed ones — the restore menu (D19). Editor maintains the invariant:
 	// restoring clears the name from removedTraits (D6).
-	restorableTraits: function( character: any, templateEntry: any, s: any ) {
+	restorableTraits: function( character: Character, templateEntry: SheetTemplate | null, s: number ): string[] {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		if ( !ts ) return [];
 		const base = ( ts.id && templateEntry ) ? this.templateSetById( templateEntry, ts.id ) : null;
 		if ( !base || !Array.isArray( base.traits ) ) return [];
 		const live = new Set(
 			( Array.isArray( ts.traits ) ? ts.traits : [] )
-				.filter( ( x: any ) => x && typeof x.name === 'string' && x.name.length )
-				.map( ( x: any ) => x.name )
+				.filter( ( x ) => x && typeof x.name === 'string' && x.name.length )
+				.map( ( x ) => x.name )
 		);
 		return base.traits
-			.filter( ( b: any ) => b && typeof b.name === 'string' && b.name.length && !live.has( b.name ) )
-			.map( ( b: any ) => b.name );
+			.filter( ( b ) => b && typeof b.name === 'string' && b.name.length && !live.has( b.name ) )
+			.map( ( b ) => b.name );
 	},
 
-	restoreTraitOnSheet: function( character: any, templateEntry: any, s: any, name: any ) {
+	restoreTraitOnSheet: function( character: Character, templateEntry: SheetTemplate | null, s: number, name: string ): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		if ( !ts || !name ) return false;
 		if ( Array.isArray( ts.removedTraits ) ) {
-			ts.removedTraits = ts.removedTraits.filter( ( n: any ) => n !== name );
+			ts.removedTraits = ts.removedTraits.filter( ( n ) => n !== name );
 		}
 		if ( !Array.isArray( ts.traits ) ) ts.traits = [];
-		if ( ts.traits.some( ( x: any ) => x && x.name === name ) ) return true;
+		if ( ts.traits.some( ( x ) => x && x.name === name ) ) return true;
 		const base = ( ts.id && templateEntry ) ? this.templateSetById( templateEntry, ts.id ) : null;
-		const btrait = base && Array.isArray( base.traits ) ? base.traits.find( ( b: any ) => b && b.name === name ) : null;
+		const btrait = base && Array.isArray( base.traits ) ? base.traits.find( ( b ) => b && b.name === name ) : null;
 		if ( btrait ) {
 			const clone = JSON.parse( JSON.stringify( btrait ) );
 			delete clone._lid;
@@ -567,7 +572,7 @@ export const cortexFunctions = {
 
 	// Set-level removal analog (brief: removedSets similarly needed).
 	// Template-derived sets are remembered by id; custom sets just splice.
-	removeTraitSetFromSheet: function( character: any, templateEntry: any, s: any ) {
+	removeTraitSetFromSheet: function( character: Character, templateEntry: SheetTemplate | null, s: number ): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		if ( !ts ) return false;
 		let inherited = false;
@@ -584,42 +589,43 @@ export const cortexFunctions = {
 
 	// A standalone template file/entry: same shape as the spotlight
 	// library ({ id (static), title, ..., character: {...} }).
-	isSheetTemplateFile: function( data: any ) {
-		return Boolean( data && typeof data === 'object' && !Array.isArray( data ) &&
-			typeof data.id === 'string' && data.id.length &&
-			data.character && typeof data.character === 'object' &&
-			Array.isArray( data.character.traitSets ) );
+	isSheetTemplateFile: function( data: unknown ): boolean {
+		const d = data as Record<string, unknown> | null;
+		return Boolean( d && typeof d === 'object' && !Array.isArray( d ) &&
+			typeof d.id === 'string' && ( d.id as string ).length &&
+			d.character && typeof d.character === 'object' &&
+			Array.isArray( ( d.character as Record<string, unknown> ).traitSets ) );
 	},
 
-	findTemplateCharacter: function( templateEntry: any ) {
+	findTemplateCharacter: function( templateEntry: SheetTemplate | null ): Character | null {
 		return templateEntry && templateEntry.character ? templateEntry.character : null;
 	},
 
 	// Preference export/import (brief D18): arrangement travels in the file
 	// in name-keyed form (stable across _lid regeneration); live prefs stay
 	// _lid-keyed. Blank slots export as '' and resolve positionally.
-	prefsForExport: function( prefsEntry: any, character: any ) {
+	prefsForExport: function( prefsEntry: CharacterPrefs | null, character: Character ): CharacterPrefs | null {
 		if ( !prefsEntry || typeof prefsEntry !== 'object' ) return null;
-		const out: any = {};
+		const out: CharacterPrefs = {};
 		if ( Array.isArray( prefsEntry.setOrder ) && prefsEntry.setOrder.length ) {
 			out.setOrder = prefsEntry.setOrder.slice();
 		}
 		if ( prefsEntry.traitOrders && typeof prefsEntry.traitOrders === 'object' ) {
-			const bySet: any = {};
-			( character && Array.isArray( character.traitSets ) ? character.traitSets : [] ).forEach( ( ts: any ) => {
+			const bySet: Record<string, string[]> = {};
+			( character && Array.isArray( character.traitSets ) ? character.traitSets : [] ).forEach( ( ts ) => {
 				if ( !ts || !ts.id || !Array.isArray( ts.traits ) ) return;
-				const lids = prefsEntry.traitOrders[ts.id];
+				const lids = prefsEntry.traitOrders![ ts.id ];
 				if ( !Array.isArray( lids ) || !lids.length ) return;
-				const byLid = new Map();
-				ts.traits.forEach( ( tr: any ) => {
+				const byLid = new Map<string, Trait>();
+				ts.traits.forEach( ( tr ) => {
 					if ( tr && tr._lid && !byLid.has( tr._lid ) ) byLid.set( tr._lid, tr );
 				} );
-				const names: any[] = [];
-				lids.forEach( ( lid: any ) => {
+				const names: string[] = [];
+				lids.forEach( ( lid ) => {
 					const tr = byLid.get( lid );
 					if ( tr ) names.push( typeof tr.name === 'string' ? tr.name : '' );
 				} );
-				if ( names.length ) bySet[ts.id] = names;
+				if ( names.length ) bySet[ ts.id ] = names;
 			} );
 			if ( Object.keys( bySet ).length ) out.traitOrders = bySet;
 		}
@@ -631,41 +637,42 @@ export const cortexFunctions = {
 
 	// Convert file (name-keyed) prefs back to live (_lid-keyed) form against
 	// a merged character. Unresolvable entries are dropped (D12 limits).
-	prefsFromImport: function( filePrefs: any, character: any ) {
+	prefsFromImport: function( filePrefs: CharacterPrefs | null, character: Character ): CharacterPrefs | null {
 		if ( !filePrefs || typeof filePrefs !== 'object' ) return null;
-		const out: any = {};
+		const out: CharacterPrefs = {};
 		if ( Array.isArray( filePrefs.setOrder ) && filePrefs.setOrder.length ) {
-			out.setOrder = filePrefs.setOrder.filter( ( x: any ) => typeof x === 'string' );
+			out.setOrder = filePrefs.setOrder.filter( ( x ) => typeof x === 'string' );
 		}
 		if ( filePrefs.traitOrders && typeof filePrefs.traitOrders === 'object' ) {
 			out.traitOrders = {};
-			( character && Array.isArray( character.traitSets ) ? character.traitSets : [] ).forEach( ( ts: any ) => {
+			( character && Array.isArray( character.traitSets ) ? character.traitSets : [] ).forEach( ( ts ) => {
 				if ( !ts || !ts.id || !Array.isArray( ts.traits ) ) return;
-				const names = filePrefs.traitOrders[ts.id];
+				const names = filePrefs.traitOrders![ ts.id ];
 				if ( !Array.isArray( names ) || !names.length ) return;
 				const pool = ts.traits.slice();
-				const take = ( pred: any ) => {
+				const take = ( pred: ( t: Trait ) => boolean ): Trait | null => {
 					for ( let i = 0; i < pool.length; i++ ) {
 						if ( pred( pool[i] ) ) return pool.splice( i, 1 )[0];
 					}
 					return null;
 				};
-				const lids: any[] = [];
-				names.forEach( nm => {
-					let tr = null;
-					if ( typeof nm === 'string' && nm.length ) tr = take( ( t: any ) => t && t.name === nm && t._lid );
-					else tr = take( ( t: any ) => t && !( typeof t.name === 'string' && t.name.length ) && t._lid );
+				const lids: string[] = [];
+				names.forEach( ( nm ) => {
+					let tr: Trait | null = null;
+					if ( typeof nm === 'string' && nm.length ) tr = take( ( t ) => Boolean( t && t.name === nm && t._lid ) );
+					else tr = take( ( t ) => Boolean( t && !( typeof t.name === 'string' && t.name.length ) && t._lid ) );
 					if ( tr && tr._lid ) lids.push( tr._lid );
 				} );
-				if ( lids.length ) out.traitOrders[ts.id] = lids;
+				if ( lids.length ) out.traitOrders![ ts.id ] = lids;
 			} );
 			if ( !Object.keys( out.traitOrders ).length ) delete out.traitOrders;
 		}
 		if ( filePrefs.declinedTemplateVersions && typeof filePrefs.declinedTemplateVersions === 'object' ) {
 			out.declinedTemplateVersions = {};
 			for ( const k of Object.keys( filePrefs.declinedTemplateVersions ) ) {
-				if ( typeof filePrefs.declinedTemplateVersions[k] === 'number' ) {
-					out.declinedTemplateVersions[k] = filePrefs.declinedTemplateVersions[k];
+				const v = filePrefs.declinedTemplateVersions[ k ];
+				if ( typeof v === 'number' ) {
+					out.declinedTemplateVersions[ k ] = v;
 				}
 			}
 			if ( !Object.keys( out.declinedTemplateVersions ).length ) delete out.declinedTemplateVersions;
@@ -673,20 +680,21 @@ export const cortexFunctions = {
 		return Object.keys( out ).length ? out : null;
 	},
 
-	isBlankName: function( name: any ) {
+	isBlankName: function( name: unknown ) {
 		return !( typeof name === 'string' && name.length );
 	},
 
 	// Deep equality ignoring app-local _lid keys (internal ids live at rest
 	// only and must never block delta pruning).
-	deepEqualClean: function( a: any, b: any ) {
-		const strip = ( v: any ): any => {
+	deepEqualClean: function( a: unknown, b: unknown ) {
+		const strip = ( v: unknown ): unknown => {
 			if ( Array.isArray( v ) ) return v.map( strip );
 			if ( v && typeof v === 'object' ) {
-				const o: any = {};
-				for ( const k of Object.keys( v ) ) {
+				const rec = v as Record<string, unknown>;
+				const o: Record<string, unknown> = {};
+				for ( const k of Object.keys( rec ) ) {
 					if ( k === '_lid' ) continue;
-					o[k] = strip( v[k] );
+					o[k] = strip( rec[k] );
 				}
 				return o;
 			}
@@ -695,10 +703,10 @@ export const cortexFunctions = {
 		return this.deepEqual( strip( a ), strip( b ) );
 	},
 
-	unionArrays: function( baseArr: any, overArr: any ) {
+	unionArrays: function( baseArr: unknown, overArr: unknown ): unknown[] {
 		if ( !Array.isArray( overArr ) || !overArr.length ) return [];
-		const out: any[] = [];
-		const push = ( v: any ) => {
+		const out: unknown[] = [];
+		const push = ( v: unknown ) => {
 			if ( !out.some( e => this.deepEqualClean( e, v ) ) ) out.push( JSON.parse( JSON.stringify( v ) ) );
 		};
 		( Array.isArray( baseArr ) ? baseArr : [] ).forEach( push );
@@ -706,7 +714,7 @@ export const cortexFunctions = {
 		return out;
 	},
 
-	findTraitByName: function( list: any, name: any ) {
+	findTraitByName: function( list: unknown, name: unknown ) {
 		if ( !Array.isArray( list ) || this.isBlankName( name ) ) return -1;
 		for ( let j = 0; j < list.length; j++ ) {
 			const o = list[j];

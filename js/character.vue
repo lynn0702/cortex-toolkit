@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import type { Character, TraitSet, Trait, CortexToolkitCustom } from './model.ts';
 import {
 	columnsForPage as gridColumnsForPage,
 	getTraitSetColumn as gridTraitSetColumn,
@@ -9,6 +10,8 @@ import {
 	getSpotlightSections as gridGetSpotlightSections,
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
 	getSpotlightGridCells as gridGetSpotlightGridCells,
+	type SpotlightSection,
+	type SpotlightCell,
 } from './spotlight-grid.ts';
 import NameEditor from './name-editor.vue';
 import PortraitEditor from './portrait-editor.vue';
@@ -21,18 +24,18 @@ import HaloAttributes from './halo-attributes.vue';
 
 const props = defineProps<{
 	submode?: string | null;
-	character?: any;
-	editing?: any;
+	character?: Character;
+	editing?: unknown[] | null;
 	viewY?: number | null;
 }>();
 
 const emit = defineEmits<{
-	( e: 'selectElement', selector: any[] ): void;
-	( e: 'updateCharacter', character: any ): void;
-	( e: 'exportCharacter', id: any ): void;
+	( e: 'selectElement', selector: unknown[] ): void;
+	( e: 'updateCharacter', character: Character ): void;
+	( e: 'exportCharacter', id: string ): void;
 	( e: 'saveSheetTemplate' ): void;
 	( e: 'exportSheetTemplate' ): void;
-	( e: 'addDieToRoller', die: any ): void;
+	( e: 'addDieToRoller', die: unknown ): void;
 }>();
 
 const instance = getCurrentInstance();
@@ -61,7 +64,7 @@ const game = computed( () => props.character?.game ?? '' );
 const traitSets = computed( () => props.character?.traitSets ?? [] );
 
 const haloTraitSetIndex = computed( () => {
-	let idx = traitSets.value.findIndex( ( ts: any ) => {
+	let idx = traitSets.value.findIndex( ( ts ) => {
 		const body = ts.custom?.cortexToolkit?.style?.body;
 		if ( body === 'halo' || body === 'attributes' ) return true;
 		if ( cortexFunctions.getHaloTraitRing( ts ) === true ) return true;
@@ -70,7 +73,7 @@ const haloTraitSetIndex = computed( () => {
 	} );
 	if ( idx !== -1 ) return idx;
 
-	idx = traitSets.value.findIndex( ( ts: any ) => {
+	idx = traitSets.value.findIndex( ( ts ) => {
 		const isAttr = ts.custom?.cortexToolkit?.isAttributes ||
 			ts.nounSingular?.toLowerCase() === 'attribute' ||
 			ts.name?.trim().toLowerCase() === 'attributes';
@@ -82,7 +85,7 @@ const haloTraitSetIndex = computed( () => {
 	return idx;
 } );
 
-const explicitHaloSetIndex = computed( () => traitSets.value.findIndex( ( ts: any ) => {
+const explicitHaloSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
 	const body = ts.custom?.cortexToolkit?.style?.body;
 	if ( body === 'halo' || body === 'attributes' ) return true;
 	if ( cortexFunctions.getHaloTraitRing( ts ) === true ) return true;
@@ -111,12 +114,12 @@ const haloNounSingular = computed( () => {
 const scaleTrait = computed( () => {
 	const attrSet = haloTraitSet.value;
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
-	return attrSet.traits.find( ( t: any ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
+	return attrSet.traits.find( ( t ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
 } );
 const attributes = computed( () => {
 	if ( !hasHaloTraitRing.value ) return [];
 	const all = haloTraitSet.value?.traits || [];
-	return all.filter( ( t: any ) => !( t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale ) );
+	return all.filter( ( t ) => !( t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale ) );
 } );
 const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
@@ -134,7 +137,7 @@ const scaleDieValue = computed( () => {
 
 const pageCount = computed( () => {
 	if ( props.character?.custom?.cortexToolkit?.pageCount ) {
-		return Math.max( 1, parseInt( props.character.custom.cortexToolkit.pageCount ) );
+		return Math.max( 1, Number( props.character.custom.cortexToolkit.pageCount ) );
 	}
 	let maxPage = 1;
 	for ( const ts of ( props.character?.traitSets || [] ) ) {
@@ -209,7 +212,7 @@ const hasAnyWatermark = computed( () => {
 const columnAlignmentMode = computed( () => props.character?.custom?.cortexToolkit?.columnAlignment || 'top-base' );
 
 const characterSheetStyle = computed( () => {
-	const ctk = props.character?.custom?.cortexToolkit || {};
+	const ctk: CortexToolkitCustom = props.character?.custom?.cortexToolkit || {};
 	const offsets = ctk.columnOffsets || {};
 	const style: Record<string, string> = {};
 
@@ -235,7 +238,7 @@ const characterSheetStyle = computed( () => {
 } );
 
 // PRESENTATION
-function isSelected( selector: any[] ) {
+function isSelected( selector: unknown[] ) {
 	return cortexFunctions.arraysMatch( props.editing, selector );
 }
 
@@ -257,7 +260,7 @@ function applyFonts() {
 		if ( ctk.theme.fonts.secondary && cortexFunctions.loadGoogleFont ) cortexFunctions.loadGoogleFont( ctk.theme.fonts.secondary );
 	}
 	if ( Array.isArray( ctk.customFonts ) && cortexFunctions.applyCustomFont ) {
-		ctk.customFonts.forEach( ( f: any ) => {
+		ctk.customFonts.forEach( ( f ) => {
 			if ( f.name && f.data ) {
 				cortexFunctions.applyCustomFont( f.name, f.data );
 			}
@@ -268,11 +271,11 @@ function applyFonts() {
 	}
 }
 
-function renderText( text: any ) { return cortexFunctions.renderText( text ); }
-function renderDieValue( value: any ) { return cortexFunctions.getDieDisplayValue( value ); }
+function renderText( text: unknown ) { return cortexFunctions.renderText( text ); }
+function renderDieValue( value: number ) { return cortexFunctions.getDieDisplayValue( value ); }
 
-function getTraitSetColumn( traitSet: any ) { return gridTraitSetColumn( traitSet ); }
-function isFullWidthClassic( traitSet: any ) { return gridIsFullWidthClassic( traitSet ); }
+function getTraitSetColumn( traitSet: TraitSet ) { return gridTraitSetColumn( traitSet ); }
+function isFullWidthClassic( traitSet: TraitSet ) { return gridIsFullWidthClassic( traitSet ); }
 function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets( traitSets.value, haloTraitID.value, pageIndex ); }
 
 function shouldShowClassicPortrait() {
@@ -294,38 +297,40 @@ function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number 
 
 function columnsForPage( pageIndex: number ) { return gridColumnsForPage( props.character, pageIndex, columnCount.value ); }
 function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex, columnsForPage( pageIndex ) ); }
-function getSpotlightGridStyle( section: any ) { return gridGetSpotlightGridStyle( section ); }
-function getSpotlightGridCells( section: any ) { return gridGetSpotlightGridCells( section ); }
+function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
+function getSpotlightGridCells( section: SpotlightSection ) { return gridGetSpotlightGridCells( section ); }
 
-function renderNameHtml( value: any ) {
+function renderNameHtml( value: unknown ) {
 	if ( !value ) return '';
 	return cortexFunctions.renderText( value );
 }
 
 function removeHeaderPortrait() {
-	if ( !props.character.portrait ) props.character.portrait = {};
-	if ( !props.character.portrait.custom ) props.character.portrait.custom = {};
-	if ( !props.character.portrait.custom.cortexToolkit ) props.character.portrait.custom.cortexToolkit = {};
-	props.character.portrait.url = '';
-	props.character.portrait.custom.cortexToolkit.size = 'none';
-	updateCharacter( props.character );
+	const character = props.character as Character;
+	if ( !character.portrait ) character.portrait = {};
+	if ( !character.portrait.custom ) character.portrait.custom = {};
+	if ( !character.portrait.custom.cortexToolkit ) character.portrait.custom.cortexToolkit = {};
+	character.portrait.url = '';
+	character.portrait.custom.cortexToolkit.size = 'none';
+	updateCharacter( character );
 	if ( isSelected( [ 'portrait' ] ) ) {
 		selectElement( [] );
 	}
 }
 
 function addHeaderPortrait() {
-	if ( !props.character.portrait ) props.character.portrait = {};
-	if ( !props.character.portrait.custom ) props.character.portrait.custom = {};
-	if ( !props.character.portrait.custom.cortexToolkit ) props.character.portrait.custom.cortexToolkit = {};
-	props.character.portrait.custom.cortexToolkit.size = 'spotlight';
-	props.character.portrait.custom.cortexToolkit.location = 'header';
-	updateCharacter( props.character );
+	const character = props.character as Character;
+	if ( !character.portrait ) character.portrait = {};
+	if ( !character.portrait.custom ) character.portrait.custom = {};
+	if ( !character.portrait.custom.cortexToolkit ) character.portrait.custom.cortexToolkit = {};
+	character.portrait.custom.cortexToolkit.size = 'spotlight';
+	character.portrait.custom.cortexToolkit.location = 'header';
+	updateCharacter( character );
 	selectElement( [ 'portrait' ] );
 }
 
 // SELECTING
-function selectElement( selector: any ) {
+function selectElement( selector: unknown[] ) {
 	if ( props.submode === 'edit' ) {
 		emit( 'selectElement', selector );
 	}
@@ -336,8 +341,8 @@ function clearSelected() {
 }
 
 // EDITING
-function addTraitSet( location: string, page = 1, span: any = 1 ) {
-	const character = props.character;
+function addTraitSet( location: string, page = 1, span: number | string = 1 ) {
+	const character = props.character as Character;
 
 	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
 	traitSet.custom.cortexToolkit.location = location ?? 'left';
@@ -360,7 +365,7 @@ function addTraitSet( location: string, page = 1, span: any = 1 ) {
 function removeTraitSet( traitSetID: number ) {
 	clearSelected();
 
-	const character = props.character;
+	const character = props.character as Character;
 
 	const entry = cortexFunctions.resolveTemplateFor( character, rootTemplates() );
 	cortexFunctions.removeTraitSetFromSheet( character, entry, traitSetID );
@@ -368,8 +373,8 @@ function removeTraitSet( traitSetID: number ) {
 	updateCharacter( character );
 }
 
-function addGallerySet( styleEntry: any, location: string, page: number ) {
-	const character = props.character;
+function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string; plur?: string }, location: string, page: number ) {
+	const character = props.character as Character;
 	if ( !character || !styleEntry ) return;
 
 	const styleId = styleEntry.id || 'default';
@@ -412,12 +417,12 @@ function addGallerySet( styleEntry: any, location: string, page: number ) {
 	selectElement( [ 'traitSet', newTraitSetID ] );
 }
 
-function getTraitSetRatings( traitSet: any ) {
+function getTraitSetRatings( traitSet: TraitSet ) {
 	return cortexFunctions.getTraitSetRatings( traitSet );
 }
 
 function addTrait( traitSetID: number ) {
-	const character = props.character;
+	const character = props.character as Character;
 	const traitSet = character.traitSets[ traitSetID ];
 	const noun = ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait';
 
@@ -440,14 +445,14 @@ function removeTrait( traitSetID: number, traitID: number ) {
 	clearSelected();
 
 	setTimeout( () => {
-		const character = props.character;
+		const character = props.character as Character;
 		const entry = cortexFunctions.resolveTemplateFor( character, rootTemplates() );
 		cortexFunctions.removeTraitFromSheet( character, entry, traitSetID, traitID );
 		updateCharacter( character );
 	}, 200 );
 }
 
-function updateCharacter( character: any ) {
+function updateCharacter( character: Character ) {
 	emit( 'updateCharacter', character );
 }
 
@@ -459,10 +464,10 @@ function adjustPlotPoints( delta: number ) {
 }
 
 function exportCharacter() {
-	emit( 'exportCharacter', props.character.id );
+	emit( 'exportCharacter', ( props.character as Character ).id );
 }
 
-function renderNotesText( text: any ) {
+function renderNotesText( text: unknown ) {
 	if ( !text ) return '';
 	return cortexFunctions.renderMarkdown( text );
 }
@@ -484,7 +489,7 @@ function getWatermarkStyle( pageIndex: number ) {
 	return `background-image: url('${url}'); opacity: ${isNaN( opacity ) ? 0.08 : opacity}; background-size: ${isNaN( scale ) ? 75 : scale}%;`;
 }
 
-function safeImageUrl( url: any ) {
+function safeImageUrl( url: unknown ) {
 	return cortexFunctions.safeImageUrl( url );
 }
 

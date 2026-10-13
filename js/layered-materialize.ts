@@ -23,23 +23,23 @@ import type { TraitRaw, TraitObject, SetObject } from "./cortex-toolkit-trait-he
 export interface LegacyTrait {
 	name?: string;
 	value?: number | null;
-	dice?: number[];
+	dice?: number[] | null;
 	description?: string;
 	traits?: LegacyTrait[];
 	sfx?: unknown[];
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
-	statement?: string;
-	questioned?: boolean;
+	statement?: string | null;
+	questioned?: boolean | null;
 	xp?: unknown;
 	counter?: unknown;
 	_lid?: string;
-	id?: string;
+	id?: string | null;
 	[key: string]: unknown;
 }
 
 export interface LegacySet {
-	id?: string;
+	id?: string | null;
 	name?: string;
 	description?: string;
 	traits?: LegacyTrait[];

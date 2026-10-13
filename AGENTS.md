@@ -56,6 +56,10 @@ prompt, the prompt wins for that session — then update this file.
 
 - Characters follow `schema/0.1/character.schema.json`. Validate imported files
   against it — never trust file contents.
+- TypeScript model types are generated from those schemas: `npm run types`
+  (`scripts/gen-types.mjs`) writes `js/model.generated.ts` (do not hand-edit;
+  chained into `npm run build`). `js/model.ts` re-exports the generated shapes
+  and adds the app-only `custom.cortexToolkit` types the schema leaves open.
 - App-only settings live under `custom.cortexToolkit`. Never add new
   top-level fields to a character, trait set, or trait.
 - localStorage: single key `cortexToolkitData`, namespaced as

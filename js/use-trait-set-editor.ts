@@ -1,13 +1,21 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import type { Character, TraitSet, CortexToolkitCustom, HaloConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
 	[ key: string ]: any;
 }
 
+export interface TraitSetEditorProps {
+	character: Character;
+	traitSetID: number;
+	open?: boolean;
+	viewY?: number | null;
+}
+
 export const TRAIT_SET_EDITOR_KEY: InjectionKey<TraitSetEditorApi> = Symbol( 'traitSetEditorApi' );
 
-export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
+export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): TraitSetEditorApi {
 	const inst = getCurrentInstance();
 
 	const rootEl = ref<any>( null );
@@ -48,17 +56,17 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const name = computed({
 		get: () => traitSet.value?.name ?? '',
-		set: ( v: any ) => setProperty( 'name', v )
+		set: ( v: string ) => setProperty( 'name', v )
 	});
 
 	const description = computed({
 		get: () => traitSet.value?.description ?? '',
-		set: ( v: any ) => setProperty( 'description', v )
+		set: ( v: string ) => setProperty( 'description', v )
 	});
 
 	const nounSingular = computed({
 		get: () => traitSet.value?.nounSingular ?? '',
-		set: ( v: any ) => setProperty( 'nounSingular', v )
+		set: ( v: string ) => setProperty( 'nounSingular', v )
 	});
 
 	const nounPlural = computed({
@@ -68,7 +76,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			const singular = traitSet.value?.nounSingular;
 			return ( singular && singular.length ) ? singular + 's' : '';
 		},
-		set: ( v: any ) => setProperty( 'nounPlural', v )
+		set: ( v: string ) => setProperty( 'nounPlural', v )
 	});
 
 	const styleBody = computed({
@@ -86,7 +94,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			}
 			return body || 'default';
 		},
-		set: ( value: any ) => {
+		set: ( value: string ) => {
 			if ( value === 'halo' ) {
 				// 1. Unset halo on any other trait sets in this character
 				props.character.traitSets.forEach( ( ts: any, idx: number ) => {
@@ -150,12 +158,12 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const haloTraitRing = computed({
 		get: () => isHalo.value,
-		set: ( value: any ) => { styleBody.value = value ? 'halo' : 'default'; }
+		set: ( value: boolean ) => { styleBody.value = value ? 'halo' : 'default'; }
 	});
 
 	const pageNumber = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.page ?? 1,
-		set: ( val: any ) => {
+		set: ( val: number ) => {
 			if ( !traitSet.value.custom ) traitSet.value.custom = {};
 			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
 			traitSet.value.custom.cortexToolkit.page = val;
@@ -190,7 +198,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			const span = traitSet.value?.custom?.cortexToolkit?.colSpan ?? traitSet.value?.custom?.cortexToolkit?.columnSpan;
 			return span === 'full' || Number( span ) >= setTrackCount.value;
 		},
-		set: ( val: any ) => {
+		set: ( val: boolean ) => {
 			if ( val ) {
 				setCustomProperty( 'colSpan', 'full' );
 			} else {
@@ -205,7 +213,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			if ( span === 'full' ) return setTrackCount.value;
 			return Number( span ) || 1;
 		},
-		set: ( val: any ) => {
+		set: ( val: number | 'full' ) => {
 			setCustomProperty( 'colSpan', val === 'full' ? 'full' : Math.max( 1, Number( val ) || 1 ) );
 		}
 	});
@@ -214,7 +222,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 	// carry different column shares (e.g. 66/34 above 40/60).
 	const rowBreak = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.rowBreak === true,
-		set: ( val: any ) => { setCustomProperty( 'rowBreak', val ? true : null ); }
+		set: ( val: boolean ) => { setCustomProperty( 'rowBreak', val ? true : null ); }
 	});
 
 	const templateEntry = computed( () => {
@@ -233,8 +241,8 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			const w = Number( traitSet.value?.custom?.cortexToolkit?.colWidth );
 			return ( w >= 10 && w <= 90 ) ? Math.round( w ) : null;
 		},
-		set: ( val: any ) => {
-			if ( val === null || val === undefined || val === '' ) {
+		set: ( val: number | null ) => {
+			if ( val === null || val === undefined || String( val ) === '' ) {
 				setCustomProperty( 'colWidth', null );
 				return;
 			}
@@ -245,7 +253,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const headerRight = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.headerRight ?? '',
-		set: ( val: any ) => { setCustomProperty( 'headerRight', val ); }
+		set: ( val: string ) => { setCustomProperty( 'headerRight', val ); }
 	});
 
 	const canMoveUp = computed( () => findMoveTarget( -1 ) !== -1 );
@@ -259,12 +267,12 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const haloSpread = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.arcSpread ?? 100,
-		set: ( val: any ) => { setHaloConfig( 'arcSpread', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'arcSpread', Number( val ) ); }
 	});
 
 	const haloDistance = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.arcDistance ?? 0,
-		set: ( val: any ) => { setHaloConfig( 'arcDistance', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'arcDistance', Number( val ) ); }
 	});
 
 	const haloAngle = computed({
@@ -272,7 +280,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			const cfg = traitSet.value?.custom?.cortexToolkit?.haloConfig;
 			return cfg?.arcAngle ?? ( cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90 );
 		},
-		set: ( val: any ) => { setHaloConfig( 'arcAngle', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'arcAngle', Number( val ) ); }
 	});
 
 	const haloAngleLabel = computed( () => {
@@ -286,7 +294,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const scaleAngle = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleAngle ?? 0,
-		set: ( val: any ) => { setHaloConfig( 'scaleAngle', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'scaleAngle', Number( val ) ); }
 	});
 
 	const scaleAngleLabel = computed( () => {
@@ -300,22 +308,22 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const scaleDistance = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleDistance ?? 0,
-		set: ( val: any ) => { setHaloConfig( 'scaleDistance', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'scaleDistance', Number( val ) ); }
 	});
 
 	const haloScaleY = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleDieY ?? 0,
-		set: ( val: any ) => { setHaloConfig( 'scaleDieY', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'scaleDieY', Number( val ) ); }
 	});
 
 	const haloScaleX = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleDieX ?? 0,
-		set: ( val: any ) => { setHaloConfig( 'scaleDieX', Number( val ) ); }
+		set: ( val: number ) => { setHaloConfig( 'scaleDieX', Number( val ) ); }
 	});
 
 	const scaleDieValue = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.scaleDie || props.character?.custom?.cortexToolkit?.scale || 0,
-		set: ( val: any ) => {
+		set: ( val: number ) => {
 			if ( !traitSet.value.custom ) traitSet.value.custom = {};
 			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
 			traitSet.value.custom.cortexToolkit.scaleDie = val;
@@ -328,37 +336,37 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const imageURL = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.url ?? '',
-		set: ( val: any ) => { setImageConfig( 'url', val ); }
+		set: ( val: string ) => { setImageConfig( 'url', val ); }
 	});
 
 	const imageAlignment = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.alignment ?? 'center',
-		set: ( val: any ) => { setImageConfig( 'alignment', val ); }
+		set: ( val: string ) => { setImageConfig( 'alignment', val ); }
 	});
 
 	const imageHeight = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.height ?? 'auto',
-		set: ( val: any ) => { setImageConfig( 'height', val ); }
+		set: ( val: string ) => { setImageConfig( 'height', val ); }
 	});
 
 	const imageCaption = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.caption ?? '',
-		set: ( val: any ) => { setImageConfig( 'caption', val ); }
+		set: ( val: string ) => { setImageConfig( 'caption', val ); }
 	});
 
 	const featureDescription = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.features?.description ),
-		set: ( value: any ) => { setFeature( 'description', value ); }
+		set: ( value: boolean ) => { setFeature( 'description', value ); }
 	});
 
 	const featureSubtraits = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.features?.subtraits ),
-		set: ( value: any ) => { setFeature( 'subtraits', value ); }
+		set: ( value: boolean ) => { setFeature( 'subtraits', value ); }
 	});
 
 	const featureSFX = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.features?.sfx ),
-		set: ( value: any ) => { setFeature( 'sfx', value ); }
+		set: ( value: boolean ) => { setFeature( 'sfx', value ); }
 	});
 
 	const includeOut = computed({
@@ -367,12 +375,12 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 			return true;
 		},
-		set: ( value: any ) => { setStressConfig( 'includeOut', value ); }
+		set: ( value: boolean ) => { setStressConfig( 'includeOut', value ); }
 	});
 
 	const ratingScale = computed({
 		get: () => cortexFunctions.getTraitSetRatings( traitSet.value ),
-		set: ( scale: any ) => {
+		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
 			if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
 			if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
@@ -384,7 +392,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const subtraitRatingScale = computed({
 		get: () => cortexFunctions.getSubtraitRatings( traitSet.value ),
-		set: ( scale: any ) => {
+		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
 			if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
 			if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
@@ -395,7 +403,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const multiDie = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.multiDie ),
-		set: ( value: any ) => { setCustomProperty( 'multiDie', value ); }
+		set: ( value: boolean ) => { setCustomProperty( 'multiDie', value ); }
 	});
 
 	const setDie = computed({
@@ -403,7 +411,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			const d = Number( traitSet.value?.custom?.cortexToolkit?.setDie );
 			return ( d > 0 ) ? d : null;
 		},
-		set: ( value: any ) => { setCustomProperty( 'setDie', ( value > 0 ) ? value : null ); }
+		set: ( value: number | null ) => { setCustomProperty( 'setDie', ( Number( value ) > 0 ) ? value : null ); }
 	});
 
 	const isChallengePool = computed({
@@ -411,7 +419,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			traitSet.value?.custom?.cortexToolkit?.isChallengePool ||
 			traitSet.value?.custom?.cortexToolkit?.challengePool
 		),
-		set: ( value: any ) => {
+		set: ( value: boolean ) => {
 			setCustomProperty( 'isChallengePool', value );
 			setCustomProperty( 'challengePool', value );
 		}
@@ -419,58 +427,58 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const notesContent = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.notes ?? ( traitSet.value?.description ?? '' ),
-		set: ( value: any ) => { setCustomProperty( 'notes', value ); }
+		set: ( value: string ) => { setCustomProperty( 'notes', value ); }
 	});
 
 	const reservedSlots = computed({
 		get: () => {
 			const val = traitSet.value?.custom?.cortexToolkit?.reservedSlots;
-			return ( val !== undefined && val !== null && val !== '' ) ? Number( val ) : '';
+			return ( val !== undefined && val !== null && String( val ) !== '' ) ? Number( val ) : '';
 		},
-		set: ( val: any ) => {
-			const num = ( val === '' || val === null || isNaN( val ) ) ? null : Math.max( 0, parseInt( val, 10 ) );
+		set: ( val: number | '' ) => {
+			const num = ( val === '' || val === null || isNaN( val ) ) ? null : Math.max( 0, parseInt( String( val ), 10 ) );
 			setCustomProperty( 'reservedSlots', num );
 		}
 	});
 
 	const sharedHinder = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.sharedHinder ),
-		set: ( val: any ) => { setCustomProperty( 'sharedHinder', Boolean( val ) ); }
+		set: ( val: boolean ) => { setCustomProperty( 'sharedHinder', Boolean( val ) ); }
 	});
 
 	const sharedHinderText = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.sharedHinderText ?? '',
-		set: ( val: any ) => { setCustomProperty( 'sharedHinderText', val ); }
+		set: ( val: string ) => { setCustomProperty( 'sharedHinderText', val ); }
 	});
 
 	const traitColumns = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.traitColumns ?? 1,
-		set: ( val: any ) => { setCustomProperty( 'traitColumns', parseInt( val, 10 ) || 1 ); }
+		set: ( val: number ) => { setCustomProperty( 'traitColumns', parseInt( String( val ), 10 ) || 1 ); }
 	});
 
 	const hasAttachedStress = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.attachedStress?.enabled ),
-		set: ( val: any ) => { setAttachedStressProperty( 'enabled', Boolean( val ) ); }
+		set: ( val: boolean ) => { setAttachedStressProperty( 'enabled', Boolean( val ) ); }
 	});
 
 	const attachedStressLabel = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.label ?? 'Stress',
-		set: ( val: any ) => { setAttachedStressProperty( 'label', val ); }
+		set: ( val: string ) => { setAttachedStressProperty( 'label', val ); }
 	});
 
 	const attachedStressScale = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.scale ?? [ 4, 6, 8, 10, 12 ],
-		set: ( scale: any ) => { setAttachedStressProperty( 'scale', scale ); }
+		set: ( scale: number[] ) => { setAttachedStressProperty( 'scale', scale ); }
 	});
 
 	const attachedStressOut = computed({
 		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.attachedStress?.includeOut ),
-		set: ( val: any ) => { setAttachedStressProperty( 'includeOut', Boolean( val ) ); }
+		set: ( val: boolean ) => { setAttachedStressProperty( 'includeOut', Boolean( val ) ); }
 	});
 
 	const ratingPosition = computed({
 		get: () => traitSet.value?.ratingPosition || traitSet.value?.custom?.cortexToolkit?.ratingPosition || 'inline',
-		set: ( val: any ) => {
+		set: ( val: 'inline' | 'above' | 'below' | 'none' ) => {
 			setProperty( 'ratingPosition', val );
 			setCustomProperty( 'ratingPosition', val );
 		}
@@ -478,7 +486,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const isStatementSet = computed({
 		get: () => Boolean( traitSet.value?.statement ?? traitSet.value?.custom?.cortexToolkit?.statement ),
-		set: ( val: any ) => {
+		set: ( val: boolean ) => {
 			setProperty( 'statement', Boolean( val ) );
 			setCustomProperty( 'statement', Boolean( val ) );
 		}
@@ -486,7 +494,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const hasQuestionedPip = computed({
 		get: () => Boolean( traitSet.value?.hasQuestionedPip ?? traitSet.value?.custom?.cortexToolkit?.hasQuestionedPip ),
-		set: ( val: any ) => {
+		set: ( val: boolean ) => {
 			setProperty( 'hasQuestionedPip', Boolean( val ) );
 			setCustomProperty( 'hasQuestionedPip', Boolean( val ) );
 		}
@@ -494,7 +502,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const hasCounterColumn = computed({
 		get: () => Boolean( traitSet.value?.hasCounterColumn ?? traitSet.value?.custom?.cortexToolkit?.hasCounterColumn ),
-		set: ( val: any ) => {
+		set: ( val: boolean ) => {
 			setProperty( 'hasCounterColumn', Boolean( val ) );
 			setCustomProperty( 'hasCounterColumn', Boolean( val ) );
 		}
@@ -502,7 +510,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const counterLabel = computed({
 		get: () => traitSet.value?.counterLabel || traitSet.value?.custom?.cortexToolkit?.counterLabel || 'XP',
-		set: ( val: any ) => {
+		set: ( val: string ) => {
 			setProperty( 'counterLabel', val );
 			setCustomProperty( 'counterLabel', val );
 		}
@@ -510,12 +518,12 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const pipCount = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.count ?? 25,
-		set: ( val: any ) => { setPipProperty( 'count', Math.max( 1, parseInt( val, 10 ) || 25 ) ); }
+		set: ( val: number ) => { setPipProperty( 'count', Math.max( 1, parseInt( String( val ), 10 ) || 25 ) ); }
 	});
 
 	const pipsPerRow = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.perRow ?? 5,
-		set: ( val: any ) => { setPipProperty( 'perRow', Math.max( 1, parseInt( val, 10 ) || 5 ) ); }
+		set: ( val: number ) => { setPipProperty( 'perRow', Math.max( 1, parseInt( String( val ), 10 ) || 5 ) ); }
 	});
 
 	const pipsConnected = computed({
@@ -525,15 +533,15 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const pipsFilled = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.filled ?? 0,
-		set: ( val: any ) => { setPipProperty( 'filled', Math.max( 0, parseInt( val, 10 ) || 0 ) ); }
+		set: ( val: number ) => { setPipProperty( 'filled', Math.max( 0, parseInt( String( val ), 10 ) || 0 ) ); }
 	});
 
 	const sessionRecordCount = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.sessionRecord?.count ??
 			traitSet.value?.custom?.cortexToolkit?.reservedSlots ??
 			( traitSet.value?.traits ? traitSet.value.traits.length : 0 ) ?? 20,
-		set: ( val: any ) => {
-			const count = Math.max( 1, parseInt( val, 10 ) || 20 );
+		set: ( val: number ) => {
+			const count = Math.max( 1, parseInt( String( val ), 10 ) || 20 );
 			if ( !traitSet.value.custom ) traitSet.value.custom = {};
 			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
 			if ( !traitSet.value.custom.cortexToolkit.sessionRecord ) {
@@ -547,7 +555,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const sessionRecordOrientation = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.sessionRecord?.orientation === 'horizontal' ? 'horizontal' : 'vertical',
-		set: ( val: any ) => {
+		set: ( val: 'horizontal' | 'vertical' ) => {
 			if ( !traitSet.value.custom ) traitSet.value.custom = {};
 			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
 			if ( !traitSet.value.custom.cortexToolkit.sessionRecord ) {
@@ -569,7 +577,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 
 	const editorDock = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left',
-		set: ( val: any ) => { setCustomProperty( 'editorDock', val === 'right' ? 'right' : 'left' ); }
+		set: ( val: 'left' | 'right' ) => { setCustomProperty( 'editorDock', val === 'right' ? 'right' : 'left' ); }
 	});
 
 	// Branched Skills connectors (per-specialty arrows) are optional.
@@ -578,13 +586,13 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			const v = traitSet.value?.custom?.cortexToolkit?.branchArrows;
 			return v !== false;
 		},
-		set: ( val: any ) => { setCustomProperty( 'branchArrows', Boolean( val ) ); }
+		set: ( val: boolean ) => { setCustomProperty( 'branchArrows', Boolean( val ) ); }
 	});
 
 	const cssClass = computed( () => {
 		let css: Record<string, boolean> = {
 			'editor':     true,
-			'open':       props.open,
+			'open':       props.open === true,
 			'scrollable': scrollable.value,
 		};
 
@@ -616,11 +624,19 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		}
 	}
 
-	function setProperty( key: string, value: any ) {
+	// Ensure + return this set's `custom.cortexToolkit` compartment (typed).
+	function ctkFor( s: number ): CortexToolkitCustom {
+		const ts = props.character.traitSets[ s ];
+		if ( !ts.custom ) ts.custom = {};
+		if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
+		return ts.custom.cortexToolkit;
+	}
+
+	function setProperty( key: keyof TraitSet, value: any ) {
 		let character = props.character;
 		let s = props.traitSetID;
 
-		character.traitSets[s][ key ] = value;
+		character.traitSets[s][ key ] = value as never;
 
 		updateCharacter( character );
 	}
@@ -738,7 +754,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		return -1;
 	}
 
-	function setHaloConfig( key: string, value: any ) {
+	function setHaloConfig( key: keyof HaloConfig, value: any ) {
 		let s = props.traitSetID;
 		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
 		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
@@ -754,7 +770,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 				arcSlide: 0
 			};
 		}
-		props.character.traitSets[s].custom.cortexToolkit.haloConfig[ key ] = value;
+		ctkFor( s ).haloConfig![ key ] = value;
 		updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 	}
 
@@ -775,7 +791,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 	}
 
-	function setFeature( featureID: string, value: any ) {
+	function setFeature( featureID: keyof SetFeatures, value: any ) {
 		let s = props.traitSetID;
 		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
 		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
@@ -786,7 +802,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 				subtraits: false
 			};
 		}
-		props.character.traitSets[s].custom.cortexToolkit.features[ featureID ] = value;
+		ctkFor( s ).features![ featureID ] = value;
 
 		updateCharacter( props.character );
 	}
@@ -832,7 +848,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		updateCharacter( props.character );
 	}
 
-	function setStressConfig( key: string, value: any ) {
+	function setStressConfig( key: keyof StressConfig, value: any ) {
 		let s = props.traitSetID;
 		if ( !props.character.traitSets[s].custom ) {
 			props.character.traitSets[s].custom = {};
@@ -843,12 +859,12 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		if ( !props.character.traitSets[s].custom.cortexToolkit.stressConfig ) {
 			props.character.traitSets[s].custom.cortexToolkit.stressConfig = {};
 		}
-		props.character.traitSets[s].custom.cortexToolkit.stressConfig[ key ] = value;
+		ctkFor( s ).stressConfig![ key ] = value;
 
 		updateCharacter( props.character );
 	}
 
-	function setImageConfig( key: string, value: any ) {
+	function setImageConfig( key: keyof ImageConfig, value: any ) {
 		let s = props.traitSetID;
 		if ( !props.character.traitSets[s].custom ) {
 			props.character.traitSets[s].custom = {};
@@ -859,7 +875,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		if ( !props.character.traitSets[s].custom.cortexToolkit.imageConfig ) {
 			props.character.traitSets[s].custom.cortexToolkit.imageConfig = {};
 		}
-		props.character.traitSets[s].custom.cortexToolkit.imageConfig[ key ] = value;
+		ctkFor( s ).imageConfig![ key ] = value;
 
 		updateCharacter( props.character );
 	}
@@ -967,7 +983,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		let character = props.character;
 		let s = props.traitSetID;
 
-		character.traitSets[s].sfx.push(
+		character.traitSets[s].sfx!.push(
 			structuredClone( cortexFunctions.defaultSFX )
 		);
 
@@ -979,7 +995,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		let s = props.traitSetID;
 		let f = effectID;
 
-		character.traitSets[s].sfx.splice( f, 1 );
+		character.traitSets[s].sfx!.splice( f, 1 );
 
 		updateCharacter( character );
 	}
@@ -989,11 +1005,9 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 	}
 
 	function ensurePipStruct() {
-		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit.pips ) {
-			props.character.traitSets[s].custom.cortexToolkit.pips = {
+		const ctk = ctkFor( props.traitSetID );
+		if ( !ctk.pips ) {
+			ctk.pips = {
 				count: 25,
 				perRow: 5,
 				connected: true,
@@ -1002,19 +1016,17 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		}
 	}
 
-	function setPipProperty( key: string, value: any ) {
+	function setPipProperty( key: keyof PipsConfig, value: any ) {
 		ensurePipStruct();
 		let s = props.traitSetID;
-		props.character.traitSets[s].custom.cortexToolkit.pips[ key ] = value;
+		ctkFor( s ).pips![ key ] = value;
 		updateCharacter( props.character );
 	}
 
 	function ensureAttachedStressStruct() {
-		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit.attachedStress ) {
-			props.character.traitSets[s].custom.cortexToolkit.attachedStress = {
+		const ctk = ctkFor( props.traitSetID );
+		if ( !ctk.attachedStress ) {
+			ctk.attachedStress = {
 				enabled: false,
 				label: 'Stress',
 				scale: [ 4, 6, 8, 10, 12 ],
@@ -1023,17 +1035,17 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 		}
 	}
 
-	function setAttachedStressProperty( key: string, value: any ) {
+	function setAttachedStressProperty( key: keyof AttachedStressConfig, value: any ) {
 		ensureAttachedStressStruct();
 		let s = props.traitSetID;
-		props.character.traitSets[s].custom.cortexToolkit.attachedStress[ key ] = value;
+		ctkFor( s ).attachedStress![ key ] = value;
 		updateCharacter( props.character );
 	}
 
 	function toggleAttachedStressScale( dieSize: any ) {
 		ensureAttachedStressStruct();
 		let s = props.traitSetID;
-		let currentScale = [ ...( props.character.traitSets[s].custom.cortexToolkit.attachedStress.scale || [ 4, 6, 8, 10, 12 ] ) ];
+		let currentScale = [ ...( ctkFor( s ).attachedStress!.scale || [ 4, 6, 8, 10, 12 ] ) ];
 		let idx = currentScale.indexOf( dieSize );
 		if ( idx > -1 ) {
 			if ( currentScale.length > 1 ) {
@@ -1043,7 +1055,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 			currentScale.push( dieSize );
 			currentScale.sort( ( a, b ) => a - b );
 		}
-		props.character.traitSets[s].custom.cortexToolkit.attachedStress.scale = currentScale;
+		ctkFor( s ).attachedStress!.scale = currentScale;
 		updateCharacter( props.character );
 	}
 
@@ -1190,7 +1202,7 @@ export function useTraitSetEditor( props: any, emit: any ): TraitSetEditorApi {
 	watch( () => props.traitSetID, () => { showDeleteConfirm.value = false; } );
 	watch( () => props.character, () => { checkAnchorPosition(); } );
 	watch( () => props.viewY, () => { checkAnchorPosition(); } );
-	watch( () => props.open, ( isOpen: boolean, wasOpen: boolean ) => {
+	watch( () => props.open, ( isOpen: boolean | undefined, wasOpen: boolean | undefined ) => {
 		showDeleteConfirm.value = false;
 		if ( isOpen && !wasOpen ) {
 			focusFirstInput();

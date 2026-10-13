@@ -1,7 +1,8 @@
 // spotlight-grid — pure grid geometry for the spotlight sheet layout.
 // Extracted from character.js so the placement math is isolated and testable.
+import type { Character, TraitSet } from './model.ts';
 
-export function columnsForPage( character: any, pageIndex: any, defaultColumnCount: number ): number {
+export function columnsForPage( character: Character | null | undefined, pageIndex: number, defaultColumnCount: number ): number {
 	if ( Number( pageIndex ) === 2 ) {
 		const override = Number( character?.custom?.cortexToolkit?.columnsPage2 );
 		if ( override === 2 || override === 3 ) return override;
@@ -12,46 +13,68 @@ export function columnsForPage( character: any, pageIndex: any, defaultColumnCou
 // Classic flow has left/right tracks only; 'center' (and anything
 // unexpected) folds left so no set ever vanishes. Full-width sets
 // are handled separately by isFullWidthClassic.
-export function getTraitSetColumn( traitSet: any ): 'left' | 'right' {
+export function getTraitSetColumn( traitSet: TraitSet ): 'left' | 'right' {
 	if ( traitSet?.custom?.cortexToolkit?.location === 'right' ) {
 		return 'right';
 	}
 	return 'left';
 }
 
-export function isFullWidthClassic( traitSet: any ): boolean {
+export function isFullWidthClassic( traitSet: TraitSet ): boolean {
 	const ctk = traitSet?.custom?.cortexToolkit;
 	const span = ctk?.colSpan ?? ctk?.columnSpan;
 	return span === 'full' || Number( span ) >= 2;
 }
 
-export function hasClassicFullSets( traitSets: any[], haloTraitID: number, pageIndex: number ): boolean {
-	return ( traitSets || [] ).some( ( traitSet: any, s: number ) =>
+export function hasClassicFullSets( traitSets: TraitSet[], haloTraitID: number, pageIndex: number ): boolean {
+	return ( traitSets || [] ).some( ( traitSet, s ) =>
 		s !== haloTraitID &&
 		( ( traitSet.custom?.cortexToolkit?.page || 1 ) === pageIndex ) &&
 		isFullWidthClassic( traitSet )
 	);
 }
 
+export interface SpotlightSectionItem {
+	traitSet: TraitSet;
+	index: number;
+}
+
+export interface SpotlightSection {
+	type: 'columns' | 'full-width';
+	trackCount: number;
+	ordered: SpotlightSectionItem[];
+	itemsByColumn: Record<string, SpotlightSectionItem[]>;
+}
+
+export interface SpotlightCell {
+	s: number;
+	row: number;
+	col: number;
+	span: number;
+	rowspan: number;
+	explicitRs: boolean;
+	style?: string;
+}
+
 // Bands a page's sets into full-width rows and column sections. A row break
 // starts a fresh band so consecutive bands can carry different column shares.
-export function getSpotlightSections( traitSets: any[], pageIndex: number, maxCols: number ): any[] {
-	const pageSets: { traitSet: any; index: number }[] = [];
-	( traitSets || [] ).forEach( ( traitSet: any, s: number ) => {
+export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number, maxCols: number ): SpotlightSection[] {
+	const pageSets: SpotlightSectionItem[] = [];
+	( traitSets || [] ).forEach( ( traitSet, s ) => {
 		const page = traitSet.custom?.cortexToolkit?.page || 1;
 		if ( page === pageIndex ) {
 			pageSets.push( { traitSet, index: s } );
 		}
 	} );
 
-	const newSection = () => ({
+	const newSection = (): SpotlightSection => ({
 		type: 'columns',
 		trackCount: maxCols,
-		ordered: [] as any[],
+		ordered: [],
 		itemsByColumn: maxCols === 3 ? { left: [], center: [], right: [] } : { left: [], right: [] }
 	});
 
-	const columnKeyFor = ( loc: any ) => {
+	const columnKeyFor = ( loc: string | number | null | undefined ): string => {
 		if ( maxCols === 3 ) {
 			if ( loc === 'center' || loc === 'middle' || loc === 2 ) return 'center';
 			if ( loc === 'right' || loc === 3 ) return 'right';
@@ -60,8 +83,8 @@ export function getSpotlightSections( traitSets: any[], pageIndex: number, maxCo
 		return ( loc === 'right' || loc === 2 ) ? 'right' : 'left';
 	};
 
-	const sections: any[] = [];
-	let currentCols: any = null;
+	const sections: SpotlightSection[] = [];
+	let currentCols: SpotlightSection | null = null;
 
 	pageSets.forEach( item => {
 		const ctk = item.traitSet?.custom?.cortexToolkit || {};
@@ -101,7 +124,7 @@ export function getSpotlightSections( traitSets: any[], pageIndex: number, maxCo
 }
 
 // 1-based grid track for a set location within trackCount tracks.
-function spotlightTrackForLocation( location: any, trackCount: number ): number {
+function spotlightTrackForLocation( location: string | number | null | undefined, trackCount: number ): number {
 	if ( trackCount === 3 ) {
 		if ( location === 'center' || location === 'middle' || location === 2 ) return 2;
 		if ( location === 'right' || location === 3 ) return 3;
@@ -111,7 +134,7 @@ function spotlightTrackForLocation( location: any, trackCount: number ): number 
 }
 
 // Grid column span for a set: full width, 2-of-3, or a single track.
-function spotlightSpanForSet( traitSet: any, trackCount: number ): number {
+function spotlightSpanForSet( traitSet: TraitSet, trackCount: number ): number {
 	const raw = traitSet?.custom?.cortexToolkit?.colSpan ?? traitSet?.custom?.cortexToolkit?.columnSpan;
 	if ( raw === 'full' || Number( raw ) >= trackCount ) return trackCount;
 	if ( trackCount === 3 && Number( raw ) === 2 ) return 2;
@@ -120,7 +143,7 @@ function spotlightSpanForSet( traitSet: any, trackCount: number ): number {
 
 // Explicit width share (10-90) for a grid track: first value found in array
 // order among single-track sets placed in that track. Returns 0 for equal share.
-function spotlightTrackWidth( section: any, track: number ): number {
+function spotlightTrackWidth( section: SpotlightSection, track: number ): number {
 	const n = section.trackCount || 2;
 	for ( const entry of ( section.ordered || [] ) ) {
 		const ts = entry.traitSet;
@@ -133,7 +156,7 @@ function spotlightTrackWidth( section: any, track: number ): number {
 }
 
 // grid-template-columns value for a band section, e.g. "25fr 50fr 25fr".
-export function getSpotlightGridStyle( section: any ): string {
+export function getSpotlightGridStyle( section: SpotlightSection ): string {
 	const n = section.trackCount || 2;
 	const grows: number[] = [];
 	for ( let t = 1; t <= n; t++ ) grows.push( spotlightTrackWidth( section, t ) );
@@ -150,12 +173,12 @@ export function getSpotlightGridStyle( section: any ): string {
 }
 
 // Explicit grid placement for every set in a band section, in array order.
-export function getSpotlightGridCells( section: any ): any[] {
+export function getSpotlightGridCells( section: SpotlightSection ): SpotlightCell[] {
 	const n = section.trackCount || 2;
 	const cursors: Record<number, number> = {};
 	for ( let t = 1; t <= n; t++ ) cursors[t] = 1;
-	const cells: any[] = [];
-	( section.ordered || [] ).forEach( ( entry: any ) => {
+	const cells: SpotlightCell[] = [];
+	( section.ordered || [] ).forEach( entry => {
 		const ts = entry.traitSet;
 		let span = spotlightSpanForSet( ts, n );
 		if ( span > n ) span = n;
@@ -173,7 +196,7 @@ export function getSpotlightGridCells( section: any ): any[] {
 	} );
 	const maxRow = cells.reduce( (a, c) => Math.max( a, c.row + c.rowspan - 1 ), 1 );
 	if ( maxRow > 1 ) {
-		const perTrack: Record<number, any[]> = {};
+		const perTrack: Record<number, SpotlightCell[]> = {};
 		cells.forEach( c => {
 			for ( let t = c.col; t < c.col + c.span; t++ ) {
 				( perTrack[t] = perTrack[t] || [] ).push( c );

@@ -1,6 +1,6 @@
 {
   "id": "spotlight-camp-bewilderwood",
-  "version": 3,
+  "version": 1,
   "title": "Camp Bewilderwood",
   "subtitle": "Cryptid Summer Camp Mystery",
   "spotlight": "Camp Bewilderwood",
@@ -256,7 +256,7 @@
         "slots": {
           "0": {
             "description": "",
-            "statement": "(with spork attachment)",
+            "statement": "",
             "tags": [],
             "custom": {}
           },

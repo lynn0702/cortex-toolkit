@@ -9,7 +9,7 @@ import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 
 const props = defineProps<{
 	character: any;
-	traitSetID?: number;
+	traitSetID: number;
 	open?: boolean;
 	viewY?: number | null;
 }>();
