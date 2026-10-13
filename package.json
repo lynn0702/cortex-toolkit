@@ -3,9 +3,15 @@
 	"version": "0.0.1",
 	"devDependencies": {
 		"@fortawesome/fontawesome-free": "^6.5.1",
+		"@vue/compiler-sfc": "^3.5.13",
 		"laravel-mix": "^6.0.49",
 		"sass": "^1.71.1",
 		"sass-loader": "^12.6.0",
+		"ts-loader": "^9.6.2",
+		"typescript": "^5.9.3",
+		"vue": "^3.5.13",
+		"vue-loader": "17.4.2",
+		"vue-tsc": "^2.2.12",
 		"webpack": "^5.89.0"
 	},
 	"license": "Cortex Prime is the award-winning world-building tabletop RPG system for forging unique, compelling game experiences from a set of modular rules mechanics available at CortexRPG.com Cortex is © 2022 Fandom, Inc. Cortex, Cortex Prime, associated logos and trade dress are the trademarks of Fandom, Inc. Iconography used with permission. If you wish to publish or sell what you make using this tool, it is your responsibility to ensure you have the proper license or right for any resources used. No rights are granted through the use of this tool.",
@@ -13,7 +19,8 @@
 		"build": "npx mix --production && node scripts/version-assets.js",
 		"dev": "npx mix",
 		"watch": "npx mix -- --watch",
+		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",
-		"test": "node scripts/merge-tests.js"
+		"test": "node scripts/cortex-pal-tests.js && node scripts/spotlight-grid-tests.js && node scripts/merge-tests.js && node scripts/migration-tests.js && node scripts/materialize-tests.js && node scripts/template-parity-tests.js"
 	}
 }

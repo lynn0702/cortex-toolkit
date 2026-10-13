@@ -1,0 +1,671 @@
+{
+  "id": "spotlight-safe-zone-survivor",
+  "version": 3,
+  "title": "Safe Zone",
+  "subtitle": "Post-Apocalyptic Survival & Colony",
+  "spotlight": "Safe Zone",
+  "variant": "Survivor File",
+  "pages": 1,
+  "genre": "Post-Apocalyptic / Survival",
+  "description": "Hardened survivors holding the perimeter of the last safe zones against wasteland horrors. Features Distinctions, Attributes, Skills & Specialties, Relationships, Stress tracks (Exhaustion, Injury, Panic), Talents, and Growth Pool.",
+  "character": {
+    "id": "template-spotlight-safe-zone-survivor",
+    "isTemplate": true,
+    "name": "",
+    "game": "Safe Zone",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Safe Zone",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Pre-fall career, colony specialty, and survivor trauma",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Skills": {
+        "id": "skills-specialties",
+        "description": "Practical survival disciplines with specialized traits",
+        "nounSingular": "Skills & Specialtie",
+        "nounPlural": "Skills & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 20
+          }
+        },
+        "traits": {
+          "Animals": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Athletics": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Big Guns": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Covert": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Craft": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Creativity": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Drive": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Focus": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Guns": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Influence": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Knowledge": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Mechanic": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Melee": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Notice": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Operate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Pilot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Survival": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Thrown": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Treatment": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Unarmed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Specialties": {
+        "id": "specialties",
+        "description": "",
+        "nounSingular": "Specialty",
+        "nounPlural": "Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "9": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "10": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "11": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "12": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "13": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "14": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "15": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "16": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "17": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "18": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "19": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Attributes": {
+        "id": "attributes",
+        "description": "Core survival attributes",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "attributesRing": false
+          }
+        },
+        "traits": {
+          "Analytical": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Forceful": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Quiet": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Relationships": {
+        "id": "relationships",
+        "description": "Ties to fellow survivors in the camp",
+        "nounSingular": "Relationship",
+        "nounPlural": "Relationships",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Talents": {
+        "id": "talents",
+        "description": "Survivor tricks and knacks",
+        "nounSingular": "Talent",
+        "nounPlural": "Talents",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "talents-table"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Stress": {
+        "id": "stress",
+        "description": "Survivor stress and trauma",
+        "nounSingular": "Stress",
+        "nounPlural": "Stress",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "stress"
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": true,
+              "includeOut": false
+            },
+            "notes": "",
+            "reservedSlots": 5
+          }
+        },
+        "traits": {
+          "Injured": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Isolated": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sick": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Tired": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Upset": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Growth Pool": {
+        "id": "growth-pool",
+        "description": "Survivor growth dice",
+        "nounSingular": "Growth Die",
+        "nounPlural": "Growth Dice",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "growth-ladder"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

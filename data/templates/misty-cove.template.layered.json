@@ -1,0 +1,357 @@
+{
+  "id": "spotlight-misty-cove",
+  "version": 2,
+  "title": "Misty Cove",
+  "subtitle": "Emotional Gothic Mystery",
+  "spotlight": "Misty Cove",
+  "variant": "Character File",
+  "pages": 1,
+  "genre": "Mystery / Drama / Supernatural",
+  "description": "Residents of a foggy coastal town haunted by secrets and psychic tension. Features Distinctions with SFX, Emotional Attributes with Stress (Anger, Desire, Fear, Joy, Sorrow), Town Relationships, Signature Assets, and Growth Pool.",
+  "character": {
+    "id": "template-spotlight-misty-cove",
+    "isTemplate": true,
+    "name": "",
+    "game": "Misty Cove",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Misty Cove",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Coastal heritage, town role, and personal quirk",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 66
+          }
+        },
+        "traits": {
+          "Extraordinary:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Backstory:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Role:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Signature Assets & Curios": {
+        "id": "signature-assets-curios",
+        "description": "Heirlooms and keepsakes from the misty coast",
+        "nounSingular": "Signature Assets & Curio",
+        "nounPlural": "Signature Assets & Curios",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "GROWTH POOL:\n• [4] [6] [8] [10] [12]\n\nCOMPLICATIONS:\n• [6] [8] [10] [12] Haunting Visions\n• [6] [8] [10] [12] Whispers in the Tide",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Attributes": {
+        "id": "emotional-attributes-stress",
+        "description": "Core emotional drives with corresponding stress tracks",
+        "nounSingular": "Emotional Attributes & Stres",
+        "nounPlural": "Emotional Attributes & Stress",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "attributesRing": false,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Anger": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Desire": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fear": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Joy": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sorrow": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Town Relationships": {
+        "id": "town-relationships",
+        "description": "Bonds and rivalries with local residents",
+        "nounSingular": "Town Relationship",
+        "nounPlural": "Town Relationships",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 66
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Growth Pool": {
+        "id": "growth-pool",
+        "description": "",
+        "nounSingular": "Growth Die",
+        "nounPlural": "Growth Dice",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "growth-ladder",
+              "body": "growth-ladder"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Complications": {
+        "id": "complications",
+        "description": "",
+        "nounSingular": "Complication",
+        "nounPlural": "Complications",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

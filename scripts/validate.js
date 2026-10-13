@@ -86,6 +86,28 @@ if (fs.existsSync(dataDir)) {
   for (const f of fs.readdirSync(dataDir)) {
     if (f === 'desktop.ini') continue;
     const fp = path.join(dataDir, f);
+    // Layered template files (presentation layers): complete, not sparse.
+    // Presentation keys and custom stay verbatim; set ids are kept for join
+    // continuity. Structural old-model keys are still forbidden.
+    if (f.endsWith('.template.layered.json')) {
+      try {
+        checkTemplateFile(`data/templates/${f}`, JSON.parse(fs.readFileSync(fp, 'utf8')));
+      } catch (e) {
+        err(`data/templates/${f}: invalid JSON (${e.message})`);
+      }
+      continue;
+    }
+    // Terse layered format (Phase-1 item 10): real validation, D1/D2/D8 ported
+    // to maps. Dupes (D8) are structurally impossible — map keys are unique by
+    // construction. Stable set ids (D2) dissolve the same way: the name is key.
+    if (f.endsWith('.layered.json')) {
+      try {
+        checkLayeredFile(`data/templates/${f}`, JSON.parse(fs.readFileSync(fp, 'utf8')));
+      } catch (e) {
+        err(`data/templates/${f}: invalid JSON (${e.message})`);
+      }
+      continue;
+    }
     try {
       const data = JSON.parse(fs.readFileSync(fp, 'utf8'));
       const isChar = data && typeof data.id === 'string' && Array.isArray(data.traitSets);
@@ -95,6 +117,248 @@ if (fs.existsSync(dataDir)) {
     } catch (e) {
       err(`data/templates/${f}: invalid JSON (${e.message})`);
     }
+  }
+}
+
+// ---- 4. Terse layered validation (Phase-1 item 10).
+function isDiceString(s) {
+  if (typeof s !== 'string' || !s.length) return false;
+  const re = /(\d*)d(4|6|8|10|12|20)/g;
+  let m, covered = 0, tokens = 0;
+  while ((m = re.exec(s)) !== null) { tokens++; covered += m[0].length; }
+  const rest = s.replace(/(\d*)d(4|6|8|10|12|20)/g, '').trim();
+  return tokens > 0 && covered > 0 && rest.length === 0;
+}
+
+function checkLayeredTrait(node, where, depth) {
+  if (node === null) return; // local clear, governed by the null-emit rule
+  if (typeof node === 'string') {
+    if (!isDiceString(node)) err(`${where}: invalid dice string ${JSON.stringify(node)}`);
+    return;
+  }
+  if (!node || typeof node !== 'object' || Array.isArray(node)) {
+    err(`${where}: trait must be a dice string, object, or null`);
+    return;
+  }
+  for (const k of ['id', '_lid']) {
+    if (node[k] !== undefined) err(`${where}: trait-level ${k} forbidden (D1)`);
+  }
+  for (const k of ['removedTraits', 'removedSets']) {
+    if (node[k] !== undefined) err(`${where}: tombstone ${k} is gone, use local nulls`);
+  }
+  if (node.custom !== undefined) err(`${where}: custom stays app-side, never in entity JSON`);
+  if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
+  if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
+  if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
+  for (const k of ['nounSingular', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+    if (node[k] !== undefined) err(`${where}: presentation key ${k} lives in the type layer`);
+  }
+  if (node.value !== undefined && !isDiceString(node.value)) err(`${where}: invalid value dice string ${JSON.stringify(node.value)}`);
+  if (node.cost !== undefined && (typeof node.cost !== 'object' || node.cost === null || Array.isArray(node.cost))) {
+    err(`${where}: cost is an object, never a bare number`);
+  }
+  if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
+    err(`${where}: usableBy must be owner|anyone|opposition`);
+  }
+  if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
+  if (node.select !== undefined) warn(`${where}: select lives on the set, not the trait`);
+  if (node.requiresSelect !== undefined) warn(`${where}: requiresSelect lives on the set, not the trait`);
+  if (node.traits !== undefined) {
+    if (!node.traits || typeof node.traits !== 'object' || Array.isArray(node.traits)) {
+      err(`${where}.traits: must be a name-keyed map`);
+    } else {
+      for (const name of Object.keys(node.traits)) {
+        if (!name.length) err(`${where}.traits: blank names have no map form`);
+        else if (depth < 8) checkLayeredTrait(node.traits[name], `${where}/${name}`, depth + 1);
+      }
+    }
+  }
+}
+
+function checkLayeredFile(where, data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    err(`${where}: must be an object`);
+    return;
+  }
+  if (Array.isArray(data.traitSets)) err(`${where}: array-form traitSets is old format, migrate to sets map`);
+  if (data.removedTraits !== undefined || data.removedSets !== undefined) {
+    err(`${where}: tombstone arrays are gone, use local nulls`);
+  }
+  if (data.custom !== undefined) err(`${where}: custom stays app-side, never in entity JSON`);
+  if (typeof data.name !== 'string') err(`${where}: name must be a string`);
+  if (data.sets === undefined) {
+    err(`${where}: missing sets map`);
+    return;
+  }
+  if (!data.sets || typeof data.sets !== 'object' || Array.isArray(data.sets)) {
+    err(`${where}: sets must be a name-keyed map`);
+    return;
+  }
+  for (const name of Object.keys(data.sets)) {
+    if (!name.length) {
+      err(`${where}: blank set names have no map form`);
+      continue;
+    }
+    const set = data.sets[name];
+    if (set === null) continue; // local clear of an inherited set
+    if (!set || typeof set !== 'object' || Array.isArray(set)) {
+      err(`${where}/${name}: set must be an object or null`);
+      continue;
+    }
+    for (const k of ['id', '_lid']) {
+      if (set[k] !== undefined) err(`${where}/${name}: set-level ${k} is old format (D1/D2)`);
+    }
+    if (set.custom !== undefined) err(`${where}/${name}: custom stays app-side`);
+    if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
+    if (Array.isArray(set.sfx)) err(`${where}/${name}: sfx arrays become traits under an SFX node`);
+    for (const k of ['nounSingular', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+      if (set[k] !== undefined) err(`${where}/${name}: presentation key ${k} lives in the type layer`);
+    }
+    if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {
+      err(`${where}/${name}: usableBy must be owner|anyone|opposition`);
+    }
+    if (set.select !== undefined && ['one', 'any'].indexOf(set.select) === -1) {
+      err(`${where}/${name}: select must be one|any`);
+    }
+    if (set.requiresSelect !== undefined && typeof set.requiresSelect !== 'boolean') {
+      err(`${where}/${name}: requiresSelect must be boolean`);
+    }
+    if (set.traits !== undefined && set.traits !== null) {
+      if (typeof set.traits !== 'object' || Array.isArray(set.traits)) {
+        err(`${where}/${name}: traits must be a name-keyed map`);
+      } else {
+        for (const tname of Object.keys(set.traits)) {
+          if (!tname.length) err(`${where}/${name}: blank trait names have no map form`);
+          else checkLayeredTrait(set.traits[tname], `${where}/${name}/${tname}`, 0);
+        }
+      }
+    }
+  }
+}
+
+// ---- 5. Layered template validation (presentation layers are complete).
+function checkTemplateTrait(node, where, depth, inSlot) {
+  if (node === null) return; // removal record against the wrapped base
+  if (typeof node === 'string') {
+    if (!isDiceString(node)) err(`${where}: invalid dice string ${JSON.stringify(node)}`);
+    return;
+  }
+  if (!node || typeof node !== 'object' || Array.isArray(node)) {
+    err(`${where}: trait must be a dice string, object, or null`);
+    return;
+  }
+  if (node.id !== undefined) err(`${where}: trait-level id forbidden (D1)`);
+  if (node._lid !== undefined) err(`${where}: _lid is app-local, never in files`);
+  for (const k of ['removedTraits', 'removedSets']) {
+    if (node[k] !== undefined) err(`${where}: tombstone ${k} is gone, use local nulls`);
+  }
+  if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
+  if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
+  if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
+  if (node.value !== undefined && !isDiceString(node.value)) err(`${where}: invalid value dice string ${JSON.stringify(node.value)}`);
+  if (node.cost !== undefined && (typeof node.cost !== 'object' || node.cost === null || Array.isArray(node.cost))) {
+    err(`${where}: cost is an object, never a bare number`);
+  }
+  if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
+    err(`${where}: usableBy must be owner|anyone|opposition`);
+  }
+  if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
+  const kids = (map, label) => {
+    if (map === undefined || map === null) return;
+    if (!map || typeof map !== 'object' || Array.isArray(map)) {
+      err(`${where}.${label}: must be a name-keyed map`);
+      return;
+    }
+    for (const name of Object.keys(map)) {
+      if (!name.length) err(`${where}.${label}: blank names live in slots, not traits`);
+      else if (depth < 8) checkTemplateTrait(map[name], `${where}/${name}`, depth + 1, false);
+    }
+  };
+  kids(node.traits, 'traits');
+  checkSlots(node, where, depth, (s, i) => checkTemplateTrait(s, `${where}/slot${i}`, depth + 1, true));
+}
+
+function checkSlots(node, where, depth, check) {
+  if (node.slots === undefined) return;
+  if (!node.slots || typeof node.slots !== 'object' || Array.isArray(node.slots)) {
+    err(`${where}.slots: must be an object keyed by 0-based position`);
+    return;
+  }
+  const named = node.traits && typeof node.traits === 'object' && !Array.isArray(node.traits)
+    ? Object.keys(node.traits).length : 0;
+  const idx = Object.keys(node.slots);
+  if (idx.some((k) => !/^\d+$/.test(k) || Number(k) >= named + idx.length)) {
+    err(`${where}.slots: keys must be 0-based positions within the trait order`);
+  }
+  idx.forEach((k) => {
+    const s = node.slots[k];
+    if (s && typeof s === 'object' && !Array.isArray(s) && s.name !== undefined) {
+      err(`${where}.slots[${k}]: slots carry no name key`);
+    } else check(s, k);
+  });
+}
+
+function checkTemplateFile(where, data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    err(`${where}: must be an object`);
+    return;
+  }
+  const ch = data.character;
+  if (!ch || typeof ch !== 'object' || Array.isArray(ch)) {
+    err(`${where}: entry must wrap character`);
+    return;
+  }
+  if (Array.isArray(ch.traitSets)) err(`${where}: array-form traitSets is old format, migrate to sets map`);
+  if (ch.removedSets !== undefined) err(`${where}: tombstone removedSets is gone, use local nulls`);
+  if (typeof ch.name !== 'string') err(`${where}: character name must be a string`);
+  if (ch.$schema !== undefined || ch.version !== undefined) {
+    warn(`${where}: old-format $schema/version markers do not belong in layered form`);
+  }
+  if (ch.sets === undefined) {
+    err(`${where}: missing sets map`);
+    return;
+  }
+  if (!ch.sets || typeof ch.sets !== 'object' || Array.isArray(ch.sets)) {
+    err(`${where}: sets must be a name-keyed map`);
+    return;
+  }
+  for (const name of Object.keys(ch.sets)) {
+    if (!name.length) {
+      err(`${where}: blank set names have no map form`);
+      continue;
+    }
+    const set = ch.sets[name];
+    if (set === null) continue; // local clear of an inherited set
+    if (!set || typeof set !== 'object' || Array.isArray(set)) {
+      err(`${where}/${name}: set must be an object or null`);
+      continue;
+    }
+    if (set._lid !== undefined) err(`${where}/${name}: _lid is app-local, never in files`);
+    if (set.removedTraits !== undefined || set.removedSets !== undefined) {
+      err(`${where}/${name}: tombstones are gone, use local nulls`);
+    }
+    if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
+    if (Array.isArray(set.sfx)) err(`${where}/${name}: sfx arrays become traits under an SFX node`);
+    if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {
+      err(`${where}/${name}: usableBy must be owner|anyone|opposition`);
+    }
+    if (set.select !== undefined && ['one', 'any'].indexOf(set.select) === -1) {
+      err(`${where}/${name}: select must be one|any`);
+    }
+    if (set.requiresSelect !== undefined && typeof set.requiresSelect !== 'boolean') {
+      err(`${where}/${name}: requiresSelect must be boolean`);
+    }
+    if (set.traits !== undefined && set.traits !== null) {
+      if (typeof set.traits !== 'object' || Array.isArray(set.traits)) {
+        err(`${where}/${name}: traits must be a name-keyed map`);
+      } else {
+        for (const tname of Object.keys(set.traits)) {
+          if (!tname.length) err(`${where}/${name}: blank trait names live in slots, not traits`);
+          else checkTemplateTrait(set.traits[tname], `${where}/${name}/${tname}`, 0, false);
+        }
+      }
+    }
+    checkSlots(set, `${where}/${name}`, 0, (s, i) => checkTemplateTrait(s, `${where}/${name}/slot${i}`, 0, true));
   }
 }
 

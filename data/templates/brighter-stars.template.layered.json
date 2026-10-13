@@ -1,0 +1,345 @@
+{
+  "id": "spotlight-brighter-stars",
+  "version": 3,
+  "title": "BrighterStars",
+  "subtitle": "Hopepunk Starship Exploration",
+  "spotlight": "BrighterStars",
+  "variant": "Character File",
+  "pages": 1,
+  "genre": "Sci-Fi / Space Exploration",
+  "description": "Crew members aboard the starship Diana venturing into unknown sectors. Features Distinctions with Hinder and SFX, Values with personal statements, Crew Relationships, Signature Assets, Milestones, and an XP bubble grid.",
+  "character": {
+    "id": "template-spotlight-brighter-stars",
+    "isTemplate": true,
+    "name": "",
+    "game": "BrighterStars",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "BrighterStars",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Crew role, quality, and personal drive",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's ⬡8 rating for a ▽4.",
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 66
+          }
+        },
+        "traits": {
+          "Purpose:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Quality:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Values": {
+        "id": "values",
+        "description": "Guiding philosophies paired with personal statements",
+        "nounSingular": "Value",
+        "nounPlural": "Values",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "colWidth": 66
+          }
+        },
+        "traits": {
+          "Courage": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Curiosity": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Hope": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Logic": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Peace": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Relationships": {
+        "id": "relationships",
+        "description": "Crew connections and ties to shipmates",
+        "nounSingular": "Relationship",
+        "nounPlural": "Relationships",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 66
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Specialized starship equipment and personal gear",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Milestones": {
+        "id": "milestones",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "notes"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "**PERSONAL:**\n• 1 XP when \n\n• 3 XP when \n\n• 10 XP when \n\n**GROUP:**\n• 1 XP when \n\n• 3 XP when \n\n• 10 XP when ",
+            "reservedSlots": 0
+          }
+        },
+        "traits": {}
+      },
+      "XP": {
+        "id": "xp",
+        "description": "Experience points bubble track",
+        "nounSingular": "XP",
+        "nounPlural": "XP",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "pips"
+            },
+            "pips": {
+              "count": 25,
+              "perRow": 5,
+              "connected": true,
+              "filled": 0
+            },
+            "reservedSlots": 0
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

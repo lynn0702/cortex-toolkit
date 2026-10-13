@@ -1,0 +1,1012 @@
+<script setup lang="ts">
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue';
+import { cortexFunctions } from './functions.ts';
+import SubtraitEditor from './subtrait-editor.vue';
+import SfxEditor from './sfx-editor.vue';
+
+const props = defineProps<{
+	character: any;
+	traitSetID: number;
+	traitID: number;
+	open: boolean;
+	viewY?: number | null;
+}>();
+
+const emit = defineEmits<{
+	( e: 'selectElement', selector: any[] ): void;
+	( e: 'updateCharacter', character: any ): void;
+	( e: 'removeTrait', traitSetID: number, traitID: number ): void;
+}>();
+
+const instance = getCurrentInstance();
+const rootTemplates = () => ( instance?.proxy as any )?.$root?.sheetTemplates ?? null;
+
+const rootEl = ref<HTMLElement | null>( null );
+const inputName = ref<HTMLInputElement | null>( null );
+
+const scrollPosition = ref( 'none' );
+const anchorPosition = ref( 'top' );
+const confirmDelete = ref( false );
+const nameBeforeEdit = ref( '' );
+
+const traitSet = computed( () => props.character?.traitSets?.[ props.traitSetID ] );
+
+const trait = computed( () => props.character?.traitSets?.[ props.traitSetID ]?.traits?.[ props.traitID ] );
+
+const templateEntry = computed( () => cortexFunctions.resolveTemplateFor( props.character, rootTemplates() ) );
+
+const templateTraitMatched = computed( () => templateHasTrait( trait.value ? trait.value.name : '' ) );
+
+const renameWarning = computed( () => Boolean( nameBeforeEdit.value && nameBeforeEdit.value !== name.value &&
+	templateHasTrait( nameBeforeEdit.value ) ) );
+
+const name = computed( {
+	get() {
+		return trait.value?.name ?? '';
+	},
+	set( val: string ) {
+		setProperty( 'name', val );
+		if ( isTalentsTable.value && Array.isArray( trait.value?.sfx ) ) {
+			const sfx = trait.value.sfx.find( ( e: any ) => e !== 'hinder' );
+			if ( sfx && typeof sfx === 'object' ) {
+				sfx.name = val;
+			}
+		}
+	},
+} );
+
+const value = computed( {
+	get() {
+		return trait.value?.value ?? 4;
+	},
+	set( val: any ) {
+		setProperty( 'value', val );
+	},
+} );
+
+const isListStyle = computed( () => {
+	const b = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'talents-table' || b === 'dossier-fields';
+} );
+
+const isStatementSet = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.statement || traitSet.value?.statement ) );
+const hasQuestionedPip = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.hasQuestionedPip || traitSet.value?.hasQuestionedPip ) );
+
+const isQuestioned = computed( {
+	get() {
+		return Boolean( trait.value?.questioned ?? trait.value?.custom?.questioned );
+	},
+	set( val: any ) {
+		setProperty( 'questioned', Boolean( val ) );
+		if ( !trait.value.custom ) trait.value.custom = {};
+		trait.value.custom.questioned = Boolean( val );
+		updateCharacter( props.character );
+	},
+} );
+
+const hasCounterColumn = computed( () => Boolean( traitSet.value?.hasCounterColumn ?? traitSet.value?.custom?.cortexToolkit?.hasCounterColumn ) );
+const counterLabel = computed( () => traitSet.value?.counterLabel || traitSet.value?.custom?.cortexToolkit?.counterLabel || 'XP' );
+
+const counterValue = computed( {
+	get() {
+		return trait.value?.xp ?? trait.value?.counter ?? trait.value?.custom?.xp ?? trait.value?.custom?.counter ?? '';
+	},
+	set( val: any ) {
+		setProperty( 'xp', val );
+		setProperty( 'counter', val );
+		if ( !trait.value.custom ) trait.value.custom = {};
+		trait.value.custom.counter = val;
+		trait.value.custom.xp = val;
+		updateCharacter( props.character );
+	},
+} );
+
+const isStandingStyle = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'standing' );
+
+const isSessionRecordStyle = computed( () => {
+	const b = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	return b === 'session-record' || b === 'angled-lines';
+} );
+
+const sessionRecordChecked = computed( {
+	get() {
+		return Boolean( trait.value?.custom?.checked || trait.value?.value );
+	},
+	set( val: any ) {
+		if ( !trait.value.custom ) trait.value.custom = {};
+		trait.value.custom.checked = Boolean( val );
+		trait.value.value = val ? 1 : 0;
+		updateCharacter( props.character );
+	},
+} );
+
+const isMultiDie = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.multiDie ) || ( traitSet.value?.custom?.cortexToolkit?.style?.body === 'resources' ) || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 1 ) );
+
+const dice = computed( () => cortexFunctions.getTraitDice( trait.value ) );
+
+const description = computed( {
+	get() {
+		return trait.value?.statement ?? trait.value?.description ?? '';
+	},
+	set( val: string ) {
+		setProperty( 'description', val );
+		setProperty( 'statement', val );
+	},
+} );
+
+const hinder = computed( {
+	get() {
+		return trait.value.sfx.includes( 'hinder' );
+	},
+	set( val: any ) {
+		setHinder( val );
+	},
+} );
+
+const editableSFX = computed( () => trait.value.sfx
+	.filter( ( effect: any ) => effect !== 'hinder' )
+	.map( ( effect: any ) => trait.value.sfx.indexOf( effect ) ) );
+
+const scrollable = computed( () => Boolean(
+	( traitSet.value.custom.cortexToolkit.features.sfx && editableSFX.value.length > 0 && !isTalentsTable.value )
+	||
+	( traitSet.value.custom.cortexToolkit.features.subtraits && trait.value.traits.length > 0 )
+) );
+
+const isTalentsTable = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'talents-table' );
+
+const talentCol1Label = computed( () => {
+	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+	if ( labels && labels.col1 ) return labels.col1;
+	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col1' ) : 'TALENT' ) || 'TALENT';
+} );
+
+const talentCol2Label = computed( () => {
+	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+	if ( labels && labels.col2 ) return labels.col2;
+	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col2' ) : 'ACTIVATION' ) || 'ACTIVATION';
+} );
+
+const talentCol3Label = computed( () => {
+	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+	if ( labels && labels.col3 ) return labels.col3;
+	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col3' ) : 'EFFECT' ) || 'EFFECT';
+} );
+
+const talentEffect = computed( {
+	get() {
+		const sfx = ( trait.value?.sfx || [] ).find( ( e: any ) => e !== 'hinder' );
+		if ( !sfx ) return '';
+		if ( typeof sfx === 'string' ) return sfx;
+		return sfx.description || sfx.name || '';
+	},
+	set( val: string ) {
+		if ( !Array.isArray( trait.value.sfx ) ) {
+			trait.value.sfx = [];
+		}
+		const sfxIndex = trait.value.sfx.findIndex( ( e: any ) => e !== 'hinder' );
+		if ( sfxIndex === -1 ) {
+			trait.value.sfx.push( {
+				name: trait.value.name || '',
+				description: val,
+				tags: [],
+				custom: {}
+			} );
+		} else {
+			if ( typeof trait.value.sfx[ sfxIndex ] === 'string' ) {
+				trait.value.sfx[ sfxIndex ] = {
+					name: trait.value.name || '',
+					description: val,
+					tags: [],
+					custom: {}
+				};
+			} else {
+				trait.value.sfx[ sfxIndex ].description = val;
+				trait.value.sfx[ sfxIndex ].name = trait.value.name || '';
+			}
+		}
+		updateCharacter( props.character );
+	},
+} );
+
+const canHinderTrait = computed( () => {
+	if ( isListStyle.value || isTalentsTable.value ) return false;
+	const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	if ( body === 'talents-table' || body === 'list' || body === 'notes' || body === 'dossier-fields' || body === 'session-record' ) {
+		return false;
+	}
+	return Boolean( trait.value?.value > 0 || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 0 ) );
+} );
+
+const isAttributesTrait = computed( () => {
+	const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	return traitSet.value?.custom?.cortexToolkit?.location === 'attributes' || body === 'halo' || body === 'attributes';
+} );
+
+const isScaleDie = computed( {
+	get() {
+		return Boolean(
+			trait.value?.custom?.isScale ||
+			( trait.value?.name && trait.value.name.trim().toLowerCase() === 'scale' )
+		);
+	},
+	set( val: any ) {
+		if ( !trait.value.custom ) trait.value.custom = {};
+		trait.value.custom.isScale = val;
+		if ( val && ( !trait.value.name || trait.value.name === 'New trait' || trait.value.name === 'New Attribute' ) ) {
+			setProperty( 'name', 'Scale' );
+		}
+		updateCharacter( props.character );
+	},
+} );
+
+const isStressSet = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'stress' );
+
+const shouldShowStressOut = computed( () => {
+	if ( !isStressSet.value ) return false;
+	const cfg = traitSet.value?.custom?.cortexToolkit?.stressConfig;
+	if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
+	return true;
+} );
+
+const isOut = computed( () => Boolean( trait.value?.value > 12 || trait.value?.isOut === true ) );
+
+const availableValues = computed( () => cortexFunctions.getTraitSetRatings( traitSet.value ) );
+
+const hasAttachedStress = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.attachedStress?.enabled ) );
+const attachedStressLabel = computed( () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.label || 'Stress' );
+const attachedStressScale = computed( () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ] );
+
+const attachedStressValue = computed( {
+	get() {
+		return trait.value?.custom?.stress ?? trait.value?.stress ?? 0;
+	},
+	set( val: any ) {
+		if ( !trait.value.custom ) trait.value.custom = {};
+		trait.value.custom.stress = val;
+		updateCharacter( props.character );
+	},
+} );
+
+const cssClass = computed( () => {
+	const cls: Record<string, boolean> = {
+		'editor': true,
+		'open': props.open,
+		'scrollable': scrollable.value
+	};
+	cls[ 'anchor-position-' + anchorPosition.value ] = true;
+	if ( parentIsFullWidth.value ) {
+		cls[ 'dock-' + editorDock.value ] = true;
+	}
+	if ( scrollable.value ) {
+		cls[ 'scroll-position-' + scrollPosition.value ] = true;
+	}
+	return cls;
+} );
+
+const parentColumnCount = computed( () => Number( props.character?.custom?.cortexToolkit?.columns ) || 2 );
+const parentIsBranch = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'skills-specialties' );
+
+const branchRole = computed( {
+	get() {
+		return trait.value?.custom?.cortexToolkit?.branchRole === 'specialty' ? 'specialty' : 'skill';
+	},
+	set( val: any ) {
+		if ( !trait.value.custom ) trait.value.custom = {};
+		if ( !trait.value.custom.cortexToolkit ) trait.value.custom.cortexToolkit = {};
+		trait.value.custom.cortexToolkit.branchRole = val === 'specialty' ? 'specialty' : 'skill';
+		if ( val !== 'specialty' ) {
+			trait.value.custom.cortexToolkit.linkTo = null;
+		}
+		updateCharacter( props.character );
+	},
+} );
+
+const branchSkillOptions = computed( () => {
+	const traits = traitSet.value?.traits || [];
+	const opts: any[] = [];
+	traits.forEach( ( tr: any, idx: number ) => {
+		if ( idx === props.traitID ) return;
+		if ( tr?.custom?.cortexToolkit?.branchRole === 'specialty' ) return;
+		opts.push( { index: idx, name: tr?.name?.length ? tr.name : ( 'Skill ' + ( idx + 1 ) ) } );
+	} );
+	return opts;
+} );
+
+const branchLink = computed( {
+	get() {
+		const v = trait.value?.custom?.cortexToolkit?.linkTo;
+		return typeof v === 'number' ? v : null;
+	},
+	set( val: any ) {
+		if ( !trait.value.custom ) trait.value.custom = {};
+		if ( !trait.value.custom.cortexToolkit ) trait.value.custom.cortexToolkit = {};
+		trait.value.custom.cortexToolkit.linkTo = ( val === null || val === undefined || val === '' ) ? null : Number( val );
+		updateCharacter( props.character );
+	},
+} );
+
+const branchSide = computed( {
+	get() {
+		return trait.value?.custom?.cortexToolkit?.branchSide === 'left' ? 'left' : 'right';
+	},
+	set( val: any ) {
+		if ( !trait.value.custom ) trait.value.custom = {};
+		if ( !trait.value.custom.cortexToolkit ) trait.value.custom.cortexToolkit = {};
+		trait.value.custom.cortexToolkit.branchSide = ( val === 'left' ) ? 'left' : 'right';
+		updateCharacter( props.character );
+	},
+} );
+
+const setDie = computed( () => {
+	const d = Number( traitSet.value?.custom?.cortexToolkit?.setDie );
+	return ( d > 0 ) ? d : null;
+} );
+
+const hideSkillDice = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setDie.value && !trait.value?.value ) );
+
+const parentIsFullWidth = computed( () => {
+	const span = traitSet.value?.custom?.cortexToolkit?.colSpan ?? traitSet.value?.custom?.cortexToolkit?.columnSpan;
+	return span === 'full' || Number( span ) >= parentColumnCount.value;
+} );
+
+const editorDock = computed( {
+	get() {
+		return traitSet.value?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left';
+	},
+	set( val: any ) {
+		if ( !traitSet.value.custom ) traitSet.value.custom = {};
+		if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
+		traitSet.value.custom.cortexToolkit.editorDock = val === 'right' ? 'right' : 'left';
+		updateCharacter( props.character );
+	},
+} );
+
+watch( () => props.traitID, () => { confirmDelete.value = false; } );
+watch( () => props.character, () => { checkAnchorPosition(); } );
+watch( () => props.viewY, () => { checkAnchorPosition(); } );
+watch( () => props.open, ( isOpen, wasOpen ) => {
+	confirmDelete.value = false;
+	if ( isOpen && !wasOpen ) {
+		focusFirstInput();
+		nextTick( () => {
+			checkAnchorPosition();
+			setTimeout( () => {
+				checkAnchorPosition();
+			}, 220 );
+		} );
+	} else if ( !isOpen ) {
+		if ( rootEl.value ) {
+			rootEl.value.style.setProperty( '--editor-shift-y', '0px' );
+			rootEl.value.style.setProperty( '--arrow-shift-y', '0px' );
+		}
+	}
+} );
+
+onMounted( () => {
+	checkAnchorPosition();
+	checkScrollPosition();
+	window.addEventListener( 'resize', checkAnchorPosition );
+
+	if ( props.open ) {
+		focusFirstInput();
+	}
+} );
+
+onUnmounted( () => {
+	window.removeEventListener( 'resize', checkAnchorPosition );
+} );
+
+onUpdated( () => {
+	if ( props.open ) {
+		checkAnchorPosition();
+	}
+} );
+
+function selectElement( selector: any[] ) {
+	emit( 'selectElement', selector );
+}
+
+async function focusFirstInput() {
+	await nextTick();
+	if ( inputName.value ) {
+		inputName.value.focus( { preventScroll: true } );
+	}
+}
+
+function setProperty( key: string, val: any ) {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	character.traitSets[ s ].traits[ t ][ key ] = val;
+	updateCharacter( character );
+}
+
+function setHinder( val: any ) {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	const sfx = character.traitSets[ s ].traits[ t ].sfx;
+
+	if ( val === false && sfx.includes( 'hinder' ) ) {
+		sfx.splice( sfx.indexOf( 'hinder' ), 1 );
+	} else if ( val === true && !sfx.includes( 'hinder' ) ) {
+		sfx.unshift( 'hinder' );
+	}
+
+	updateCharacter( character );
+}
+
+function setAttachedStress( val: any ) {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	if ( !character.traitSets[ s ].traits[ t ].custom ) {
+		character.traitSets[ s ].traits[ t ].custom = {};
+	}
+	const current = character.traitSets[ s ].traits[ t ].custom.stress ?? character.traitSets[ s ].traits[ t ].stress ?? 0;
+	character.traitSets[ s ].traits[ t ].custom.stress = ( current === val ) ? 0 : val;
+	updateCharacter( character );
+}
+
+function getDieCount( size: number ) {
+	return dice.value.filter( ( d: number ) => d === size ).length;
+}
+
+function addDieToTrait( size: number ) {
+	const current = [ ...dice.value, size ].sort( ( a, b ) => b - a );
+	cortexFunctions.setTraitDice( trait.value, current );
+	updateCharacter( props.character );
+}
+
+function removeDieFromTrait( size: number ) {
+	const current = [ ...dice.value ];
+	const idx = current.indexOf( size );
+	if ( idx !== -1 ) {
+		current.splice( idx, 1 );
+		cortexFunctions.setTraitDice( trait.value, current );
+		updateCharacter( props.character );
+	}
+}
+
+function removeDieAtIndex( index: number ) {
+	const current = [ ...dice.value ];
+	if ( index >= 0 && index < current.length ) {
+		current.splice( index, 1 );
+		cortexFunctions.setTraitDice( trait.value, current );
+		updateCharacter( props.character );
+	}
+}
+
+function stepDownDieAtIndex( index: number ) {
+	const current = [ ...dice.value ];
+	if ( index >= 0 && index < current.length ) {
+		const currentSize = current[ index ];
+		const sizes = [ 12, 10, 8, 6, 4 ];
+		const sIdx = sizes.indexOf( currentSize );
+		if ( sIdx !== -1 && sIdx < sizes.length - 1 ) {
+			current[ index ] = sizes[ sIdx + 1 ];
+		} else {
+			// Stepping down past d4 removes it
+			current.splice( index, 1 );
+		}
+		current.sort( ( a, b ) => b - a );
+		cortexFunctions.setTraitDice( trait.value, current );
+		updateCharacter( props.character );
+	}
+}
+
+function toggleTraitValue( val: any ) {
+	let v = val;
+	if ( v === trait.value.value && !isOut.value ) {
+		v = null;
+		trait.value.isOut = false;
+		cortexFunctions.setTraitDice( trait.value, [] );
+	} else {
+		trait.value.isOut = false;
+		cortexFunctions.setTraitDice( trait.value, [ v ] );
+	}
+	updateCharacter( props.character );
+}
+
+function toggleOutValue() {
+	if ( isOut.value ) {
+		trait.value.isOut = false;
+		trait.value.value = null;
+		cortexFunctions.setTraitDice( trait.value, [] );
+	} else {
+		trait.value.isOut = true;
+		trait.value.value = 14;
+		cortexFunctions.setTraitDice( trait.value, [ 14 ] );
+	}
+	updateCharacter( props.character );
+}
+
+function duplicateTrait() {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+
+	const clone = JSON.parse( JSON.stringify( character.traitSets[ s ].traits[ t ] ) );
+	// A duplicate is a new instance: drop internal ids so keys and
+	// preferences never collide with the original (fresh ones are
+	// assigned on update).
+	delete clone._lid;
+	delete clone.id;
+	cortexFunctions.stripInternalIds( { traits: [ clone ] } );
+	character.traitSets[ s ].traits.splice( t + 1, 0, clone );
+
+	updateCharacter( character );
+	selectElement( [ 'trait', s, t + 1 ] );
+}
+
+function removeTrait() {
+	confirmDelete.value = false;
+	emit( 'removeTrait', props.traitSetID, props.traitID );
+}
+
+function templateHasTrait( name: string ) {
+	if ( !name ) return false;
+	const setId = traitSet.value ? traitSet.value.id : null;
+	const entry = templateEntry.value;
+	const base = setId ? cortexFunctions.templateSetById( entry, setId ) : null;
+	return Boolean( base && Array.isArray( base.traits ) && base.traits.some( ( b: any ) => b && b.name === name ) );
+}
+
+function removeFromSheet() {
+	const entry = templateEntry.value;
+	cortexFunctions.removeTraitFromSheet( props.character, entry, props.traitSetID, props.traitID );
+	confirmDelete.value = false;
+	selectElement( [] );
+	updateCharacter( props.character );
+}
+
+function addEffect() {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	character.traitSets[ s ].traits[ t ].sfx.push(
+		structuredClone( cortexFunctions.defaultSFX )
+	);
+	updateCharacter( character );
+}
+
+function removeEffect( effectID: number ) {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	const f = effectID;
+	character.traitSets[ s ].traits[ t ].sfx.splice( f, 1 );
+	updateCharacter( character );
+}
+
+function addSubtrait() {
+	const subtrait = structuredClone( cortexFunctions.defaultTrait );
+	subtrait.name = 'New subtrait';
+	const allowed = cortexFunctions.getSubtraitRatings( traitSet.value );
+	if ( allowed.length > 0 && !allowed.includes( subtrait.value ) ) {
+		subtrait.value = allowed[ 0 ];
+	}
+
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	character.traitSets[ s ].traits[ t ].traits.push( subtrait );
+	updateCharacter( character );
+}
+
+function removeSubtrait( subtraitID: number ) {
+	const character = props.character;
+	const s = props.traitSetID;
+	const t = props.traitID;
+	const u = subtraitID;
+	const entry = cortexFunctions.resolveTemplateFor( character, rootTemplates() );
+	cortexFunctions.removeSubtraitFromSheet( character, entry, s, t, u );
+	updateCharacter( character );
+}
+
+function updateCharacter( character: any ) {
+	emit( 'updateCharacter', character );
+}
+
+function checkAnchorPosition() {
+	if ( !rootEl.value || !rootEl.value.parentElement ) return;
+
+	const windowHeight = ( window.innerHeight || document.documentElement.clientHeight );
+	const parentRect = rootEl.value.parentElement.getBoundingClientRect();
+	const traitMidpoint = parentRect.top + ( parentRect.height / 2 );
+
+	if ( traitMidpoint < ( windowHeight / 2 ) ) {
+		anchorPosition.value = 'top';
+	} else {
+		anchorPosition.value = 'bottom';
+	}
+
+	nextTick( () => {
+		if ( !rootEl.value ) return;
+
+		rootEl.value.style.setProperty( '--editor-shift-y', '0px' );
+		rootEl.value.style.setProperty( '--arrow-shift-y', '0px' );
+
+		const rect = rootEl.value.getBoundingClientRect();
+		const pad = 16;
+		let shiftY = 0;
+
+		if ( rect.top < pad ) {
+			shiftY = pad - rect.top;
+		} else if ( rect.bottom > windowHeight - pad ) {
+			shiftY = ( windowHeight - pad ) - rect.bottom;
+		}
+
+		if ( Math.abs( shiftY ) > 0.5 ) {
+			rootEl.value.style.setProperty( '--editor-shift-y', `${shiftY}px` );
+			const arrowNaturalY = ( anchorPosition.value === 'bottom' ) ? ( rect.height - 16 ) : 16;
+			const targetArrowY = arrowNaturalY - shiftY;
+			const clampedArrowY = Math.max( 16, Math.min( rect.height - 16, targetArrowY ) );
+			const arrowShift = clampedArrowY - arrowNaturalY;
+			rootEl.value.style.setProperty( '--arrow-shift-y', `${arrowShift}px` );
+		}
+		checkScrollPosition();
+	} );
+}
+
+function checkScrollPosition() {
+	if ( !rootEl.value || typeof rootEl.value.querySelector !== 'function' ) return;
+	const element = rootEl.value.querySelector( '.editor-inner > div' ) as HTMLElement | null;
+	if ( !element ) return;
+
+	const distance = element.scrollTop;
+	const max = element.scrollHeight - element.clientHeight;
+
+	if ( max <= 0 ) {
+		scrollPosition.value = 'none';
+		return;
+	}
+
+	if ( distance === 0 ) {
+		scrollPosition.value = 'top';
+		return;
+	}
+
+	if ( distance >= ( max - 1 ) ) { // slight buffer
+		scrollPosition.value = 'bottom';
+		return;
+	}
+
+	scrollPosition.value = 'middle';
+}
+
+function getDieDisplayValue( val: any ) {
+	return cortexFunctions.getDieDisplayValue( val );
+}
+</script>
+
+<template>
+	<aside :class="cssClass" ref="rootEl" @click.stop="">
+
+		<div class="editor-arrow"></div>
+
+		<div class="editor-controls">
+			<button type="button" @click.stop="selectElement([])"><i class="fas fa-times"></i></button>
+			<button type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait"><i class="fas fa-copy"></i></button>
+			<button
+				v-if="!confirmDelete"
+				type="button"
+				class="editor-delete"
+				@click.stop="confirmDelete = true"
+				title="Delete trait"
+			><i class="fas fa-trash"></i></button>
+			<button
+				v-else
+				type="button"
+				class="editor-delete editor-delete-confirm"
+				@click.stop="removeTrait"
+				title="Click again to confirm deletion"
+			><span>Confirm?</span></button>
+			<button
+				v-if="templateTraitMatched"
+				type="button"
+				class="editor-delete"
+				@click.stop="removeFromSheet"
+				title="Remove from sheet — reversible via restore, no confirmation needed"
+			><i class="fas fa-eraser"></i></button>
+		</div>
+
+		<div class="editor-inner">
+			<div @scroll="checkScrollPosition">
+	
+				<div class="editor-fields">
+
+					<div class="editor-field" v-if="parentIsFullWidth">
+						<label>Panel Position</label>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'left' }" @click.stop="editorDock = 'left'">
+								<i class="fas fa-arrow-left"></i> Left
+							</button>
+							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'right' }" @click.stop="editorDock = 'right'">
+								Right <i class="fas fa-arrow-right"></i>
+							</button>
+						</div>
+					</div>
+
+					<template v-if="isTalentsTable">
+						<div class="editor-field">
+							<label>{{ talentCol1Label }}</label>
+							<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
+						</div>
+
+						<div class="editor-field">
+							<label>{{ talentCol2Label }}</label>
+							<textarea v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
+						</div>
+
+						<div class="editor-field">
+							<label>{{ talentCol3Label }}</label>
+							<textarea v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
+						</div>
+					</template>
+
+					<div class="editor-field" v-else>
+						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isStandingStyle ? 'Standing Name' : 'Trait Name') }}</label>
+						<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isStandingStyle ? 'e.g. Camp Director' : '')">
+					</div>
+
+					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
+
+					<!-- STATEMENT FIELD -->
+					<div class="editor-field" v-if="isStatementSet || isStandingStyle">
+						<label>Statement</label>
+						<textarea v-model="description" rows="2" placeholder="e.g. I'll try anything once."></textarea>
+					</div>
+
+					<!-- QUESTIONED PIP TOGGLE -->
+					<div class="editor-field" v-if="isStatementSet && hasQuestionedPip">
+						<div class="editor-toggles">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-questioned'"
+									v-model="isQuestioned"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-questioned'">
+									Questioned
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<!-- COUNTER / XP FIELD -->
+					<div class="editor-field" v-if="hasCounterColumn">
+						<label>{{ counterLabel }}</label>
+						<input type="text" v-model="counterValue" :placeholder="counterLabel">
+					</div>
+
+					<!-- SESSION RECORD ROW CHECKBOX -->
+					<div class="editor-field" v-if="isSessionRecordStyle">
+						<div class="editor-toggles">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-session-checked'"
+									v-model="sessionRecordChecked"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-session-checked'">
+									Filled / Bubbled In
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<!-- SCALE DIE TOGGLE FOR HALO ATTRIBUTES -->
+					<div class="editor-field" v-if="isAttributesTrait">
+						<div class="editor-toggles">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-is-scale'"
+									v-model="isScaleDie"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-is-scale'">
+									Scale Die (inset on arc, triggers Keep 3 in roller)
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="parentIsBranch">
+						<label>Branch Role</label>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'skill' }" @click.stop="branchRole = 'skill'">
+								<i class="fas fa-arrow-right"></i> Skill
+							</button>
+							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'specialty' }" @click.stop="branchRole = 'specialty'">
+								Specialty
+							</button>
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
+						<label>Connects To Skill</label>
+						<select v-model="branchLink">
+							<option :value="null">Unlinked</option>
+							<option v-for="opt in branchSkillOptions" :key="opt.index" :value="opt.index">{{ opt.name }}</option>
+						</select>
+						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Draws the connecting arrow from this specialty to any skill in the set.</span>
+					</div>
+
+					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
+						<label>Side</label>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
+								<i class="fas fa-arrow-left"></i> Left
+							</button>
+							<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'right' }" @click.stop="branchSide = 'right'">
+								Right <i class="fas fa-arrow-right"></i>
+							</button>
+						</div>
+					</div>
+
+					<div class="editor-field" v-if="!isListStyle && !hideSkillDice">
+
+						<label>{{ isMultiDie ? 'Dice Pool' : 'Value' }}</label>
+
+						<!-- SINGLE DIE SELECTOR -->
+						<ul class="editor-values" v-if="!isMultiDie">
+							<li
+								v-for="val in availableValues"
+								:class="{ 'active': val === trait.value && !isOut }"
+								@click.stop="toggleTraitValue( val )"
+							>
+								<span class="c" v-html="getDieDisplayValue(val)"></span>
+							</li>
+							<li
+								v-if="shouldShowStressOut"
+								class="editor-value-out"
+								:class="{ 'active': isOut }"
+								@click.stop="toggleOutValue"
+								title="Out"
+							>
+								<span>💥 OUT</span>
+							</li>
+						</ul>
+
+						<!-- MULTI DIE COUNTERS AND POOL LIST -->
+						<div class="editor-multidie-container" v-else>
+							<div class="editor-die-steppers">
+								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
+									<span class="c">{{ getDieDisplayValue(size) }}</span>
+									<span class="stepper-label">d{{ size }}</span>
+									<div class="stepper-controls">
+										<button type="button" class="btn-step" @click.stop="removeDieFromTrait(size)" :disabled="getDieCount(size) === 0">-</button>
+										<span class="stepper-count">{{ getDieCount(size) }}</span>
+										<button type="button" class="btn-step" @click.stop="addDieToTrait(size)">+</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- CURRENT DICE IN POOL -->
+							<div class="multidie-active-list" v-if="dice.length > 0">
+								<label class="sub-label">Current Dice ({{ dice.length }}):</label>
+								<div class="multidie-chips">
+									<div v-for="(dieSize, dIdx) in dice" :key="dIdx" class="multidie-chip">
+										<span class="c">{{ getDieDisplayValue(dieSize) }}</span>
+										<span class="chip-text">d{{ dieSize }}</span>
+										<button type="button" class="btn-step-down" @click.stop="stepDownDieAtIndex(dIdx)" title="Step down die size">-2</button>
+										<button type="button" class="btn-remove-die" @click.stop="removeDieAtIndex(dIdx)" title="Remove die">×</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- ATTACHED STRESS SELECTOR -->
+					<div class="editor-field" v-if="hasAttachedStress">
+						<label>Attached {{ attachedStressLabel }}</label>
+						<ul class="editor-values">
+							<li
+								:class="{ 'active': attachedStressValue === 0 }"
+								@click.stop="setAttachedStress(0)"
+								title="No stress"
+							>
+								<span style="font-size: 0.75rem; font-weight: 700;">-</span>
+							</li>
+							<li
+								v-for="val in attachedStressScale"
+								:class="{ 'active': attachedStressValue === val }"
+								@click.stop="setAttachedStress(val)"
+							>
+								<span class="c" v-html="getDieDisplayValue(val)"></span>
+							</li>
+						</ul>
+					</div>
+
+					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description && !isTalentsTable && !isStatementSet && !isStandingStyle">
+						<label>Description</label>
+						<textarea v-model="description"></textarea>
+					</div>
+
+					<!-- SUBTRAITS -->
+					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.subtraits">
+
+						<label>Subtraits</label>
+
+						<div class="editor-subgroups">
+
+							<transition-group appear>
+								<subtrait-editor
+									v-for="(subtrait, subtraitID) in trait.traits"
+									:key="traitSetID + '-' + traitID + '-' + subtraitID"
+									:character="character"
+									:traitSetID="traitSetID"
+									:traitID="traitID"
+									:subtraitID="subtraitID"
+									@updateCharacter="updateCharacter"
+									@removeSubtrait="removeSubtrait"
+								></subtrait-editor>
+							</transition-group>
+
+						</div>
+
+						<div class="editor-button-container">
+							<div class="editor-button-container-inner">
+								<div class="editor-button" @click.stop="addSubtrait">
+									<span><i class="fas fa-plus"></i> New Subtrait</span>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- SFX -->
+					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.sfx && !isTalentsTable">
+
+						<label>SFX</label>
+
+						<div class="editor-field" v-if="canHinderTrait">
+							<div class="editor-toggles">
+								<div><input type="checkbox" :id="'trait-' + traitSetID + '-' + traitID + '-hinder'" :true-value="true" :false-value="false" v-model="hinder"></div>
+								<div><label :for="'trait-' + traitSetID + '-' + traitID + '-hinder'">Can Hinder</label></div>
+							</div>
+						</div>
+
+						<div class="editor-subgroups">
+
+							<transition-group appear>
+								<sfx-editor
+									v-for="effectID in editableSFX"
+									:key="traitSetID + '-' + traitID + '-' + effectID"
+									:character="character"
+									:traitSetID="traitSetID"
+									:traitID="traitID"
+									:effectID="effectID"
+									@updateCharacter="updateCharacter"
+									@removeEffect="removeEffect"
+								></sfx-editor>
+							</transition-group>
+
+						</div>
+
+						<div class="editor-button-container">
+							<div class="editor-button-container-inner">
+								<div class="editor-button" @click.stop="addEffect">
+									<span><i class="fas fa-plus"></i> New SFX</span>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+
+	</aside>
+</template>

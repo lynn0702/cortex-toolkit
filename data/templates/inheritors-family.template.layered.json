@@ -1,0 +1,989 @@
+{
+  "id": "spotlight-inheritors-family",
+  "version": 2,
+  "title": "Inheritors - Family & GMCs",
+  "subtitle": "Superpowered Dynasty Heritage",
+  "spotlight": "Inheritors",
+  "variant": "Family Tree File",
+  "pages": 1,
+  "genre": "Superhero / Dynastic Drama",
+  "description": "Family tree worksheet and GMC roster for Inheritors dynasties. Tracks the First Five Branches, Wild Card Branches, and generation relations across PCs, Parents, Grandparents, and Ancestral Lineages.",
+  "character": {
+    "id": "template-spotlight-inheritors-family",
+    "isTemplate": true,
+    "name": "",
+    "game": "Inheritors",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Inheritors",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Your Generation": {
+        "id": "your-generation",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Parents' Generation": {
+        "id": "parents-generation-a",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Parents' Generation~2": {
+        "id": "parents-generation-b",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Parents' Generation"
+      },
+      "Grandparents' Generation": {
+        "id": "grandparents-generation-a",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Grandparents' Generation~2": {
+        "id": "grandparents-generation-b",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Grandparents' Generation"
+      },
+      "Wild Card Branch": {
+        "id": "wild-card-a",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Wild Card Branch~2": {
+        "id": "wild-card-b",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Wild Card Branch"
+      },
+      "Wild Card Branch~3": {
+        "id": "wild-card-c",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Wild Card Branch"
+      },
+      "Wild Card Branch~4": {
+        "id": "wild-card-d",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Wild Card Branch"
+      },
+      "Wild Card Branch~5": {
+        "id": "wild-card-e",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Wild Card Branch"
+      },
+      "GMC": {
+        "id": "gmc-a",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to PCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to GMCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "GMC~2": {
+        "id": "gmc-b",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to PCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to GMCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "GMC"
+      },
+      "GMC~3": {
+        "id": "gmc-c",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to PCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to GMCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "GMC"
+      },
+      "GMC~4": {
+        "id": "gmc-d",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to PCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to GMCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "GMC"
+      },
+      "GMC~5": {
+        "id": "gmc-e",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to PCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to GMCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "GMC"
+      },
+      "GMC~6": {
+        "id": "gmc-f",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            }
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to PCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Relationship to GMCs": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fame": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Features": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Deed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Current Fate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "GMC"
+      }
+    }
+  }
+}

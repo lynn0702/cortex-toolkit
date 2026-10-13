@@ -1,0 +1,449 @@
+{
+  "id": "spotlight-trace-20",
+  "version": 2,
+  "title": "TRACE 2.0",
+  "subtitle": "Civic Paranormal Investigation",
+  "spotlight": "TRACE 2.0",
+  "variant": "Character File",
+  "pages": 1,
+  "genre": "Mystery / Procedural / Urban Fantasy",
+  "description": "Investigators of the City of Cortez probing the strange and uncanny. Features Affiliations (Solo, Partner, Squad), Roles (Forensics through Technology), multi-die Resources, Distinctions with Hinder, six Talents, five Stress tracks (Afraid, Angry, Anxious, Exhausted, Injured), and a Growth Pool.",
+  "character": {
+    "id": "template-spotlight-trace-20",
+    "isTemplate": true,
+    "name": "",
+    "game": "TRACE 2.0",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "TRACE 2.0",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Affiliations": {
+        "id": "affiliations",
+        "description": "Team configuration ratings",
+        "nounSingular": "Affiliation",
+        "nounPlural": "Affiliations",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 30
+          }
+        },
+        "traits": {
+          "Solo": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Partner": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Squad": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Roles": {
+        "id": "roles",
+        "description": "Civic investigation disciplines",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 7
+          }
+        },
+        "traits": {
+          "Forensics": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Investigation": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Legal": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Medicine": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Psychology": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Tactics": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Technology": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Resources": {
+        "id": "resources",
+        "description": "Civic assets, contacts, and backup",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": true,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "STARTING DICE: d10 d10 • d8 d8 • d6 d6 • d6 d6 (remainder blank)",
+            "reservedSlots": 8
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Defining history, drive, and complication",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {
+          "Distinction #1:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Distinction #2:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Distinction #3:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Talents": {
+        "id": "talents",
+        "description": "Training tricks and case-cracking knacks",
+        "nounSingular": "Talent",
+        "nounPlural": "Talents",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 6,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {
+          "Talent #1:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Talent #2:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Talent #3:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Talent #4:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Talent #5:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Talent #6:": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Stress": {
+        "id": "stress",
+        "description": "Emotional and physical pressure tracks",
+        "nounSingular": "Stress",
+        "nounPlural": "Stress",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "stress"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": true,
+              "includeOut": false
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "colWidth": 50
+          }
+        },
+        "traits": {
+          "Afraid": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Angry": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Anxious": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Exhausted": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Injured": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Growth Pool": {
+        "id": "growth-pool",
+        "description": "Civic growth dice (Base d6 d6)",
+        "nounSingular": "Growth Die",
+        "nounPlural": "Growth Dice",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "growth-ladder"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2,
+            "colWidth": 20
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

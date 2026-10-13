@@ -1,0 +1,712 @@
+{
+  "id": "spotlight-terraverse",
+  "version": 2,
+  "title": "Terraverse",
+  "subtitle": "Epic Science-Fantasy Multiverse",
+  "spotlight": "Terraverse",
+  "variant": "Character File",
+  "pages": 2,
+  "genre": "Sci-Fi / Superhero / Multiverse",
+  "description": "Multi-dimensional heroes and champions wielding cosmic power sets to save reality across the Terraverse. Features 2 complete pages: Attributes, Distinctions, Skills & Specialties, Signature Assets, Life Points Track, 3 Power Sets, Talents, and Session Growth Options.",
+  "character": {
+    "id": "template-spotlight-terraverse",
+    "isTemplate": true,
+    "name": "",
+    "game": "Terraverse",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 2,
+        "spotlight": "Terraverse",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Attributes": {
+        "id": "attributes",
+        "description": "Core hero ratings with Willpower",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4,
+            "attributesRing": false,
+            "colWidth": 33
+          }
+        },
+        "traits": {
+          "Agility": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Alertness": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Intelligence": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Strength": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Vitality": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Willpower": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Multiversal origin, champion archetype, and fatal flaw",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Artifacts and multiversal gear",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Skills & Specialties": {
+        "id": "skills-specialties",
+        "description": "Multiverse capabilities and technical proficiencies",
+        "nounSingular": "Skills & Specialtie",
+        "nounPlural": "Skills & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "LIFE POINTS & INITIATIVE:\n• Initiative Ladder: [d4] [d6] [d8] [d10] [d12]\n• Hero Dice: [d6] [d8] [d10] [d12]\n• Life Points Track: [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]",
+            "reservedSlots": 6,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {
+          "Craft": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Drive": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fight": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fix": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fly": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Focus": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Influence": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Know": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Labor": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Move": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Notice": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Operate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Perform": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Shoot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sneak": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Survive": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Throw": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Treat": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Trick": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "19": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Initiative": {
+        "id": "initiative",
+        "description": "",
+        "nounSingular": "Die",
+        "nounPlural": "Dice",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "growth-ladder",
+              "body": "growth-ladder"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Hero Dice": {
+        "id": "hero-dice",
+        "description": "",
+        "nounSingular": "Die",
+        "nounPlural": "Dice",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "growth-ladder",
+              "body": "growth-ladder"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Life Points": {
+        "id": "life-points",
+        "description": "Vitality counts down from 12; Willpower counts up from 1.",
+        "nounSingular": "Point",
+        "nounPlural": "Points",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "pips",
+              "body": "pips"
+            },
+            "pips": {
+              "count": 12,
+              "perRow": 6,
+              "connected": true,
+              "filled": 0
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {}
+      },
+      "Power Set 1": {
+        "id": "power-set-1",
+        "description": "Harnessing stellar rays and particle storms",
+        "nounSingular": "Power Set",
+        "nounPlural": "Power Sets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "SFX:\n\nLIMIT:",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Power Set 2": {
+        "id": "power-set-2",
+        "description": "Manipulating local temporal acceleration and deceleration",
+        "nounSingular": "Power Set",
+        "nounPlural": "Power Sets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Power Set 3": {
+        "id": "power-set-3",
+        "description": "Passing through solid barriers and cloaking presence",
+        "nounSingular": "Power Set",
+        "nounPlural": "Power Sets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Talents": {
+        "id": "talents-growth-options",
+        "description": "Session record and leveling advancement options",
+        "nounSingular": "Talents & Growth Option",
+        "nounPlural": "Talents & Growth Options",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "talents-table",
+              "body": "talents-table"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 0,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "session-record",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 14
+            },
+            "reservedSlots": 14
+          }
+        },
+        "traits": {}
+      },
+      "Leveling Up": {
+        "id": "leveling-up",
+        "description": "",
+        "nounSingular": "Option",
+        "nounPlural": "Options",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "notes",
+              "body": "notes"
+            },
+            "notes": "1 — Turn an asset from a session into a signature asset at d4. Switch out a distinction for a new one.\n2 — Step up a signature asset. Add a new specialty to a skill. Add a new SFX to a power set.\n3 — Step up a skill. Add a new talent. Add a second power set (one power, one SFX, one limit).\n4 — Step up one attribute and step down another."
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

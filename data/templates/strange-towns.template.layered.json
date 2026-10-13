@@ -1,0 +1,400 @@
+{
+  "id": "spotlight-strange-towns",
+  "version": 2,
+  "title": "Strange Towns",
+  "subtitle": "Small Town Supernatural Weirdness",
+  "spotlight": "Strange Towns",
+  "variant": "Townsperson File",
+  "pages": 1,
+  "genre": "Horror / Small Town / Weird Fiction",
+  "description": "Residents uncovering the bizarre, surreal, and terrifying secrets beneath their peaceful small town. Features Attributes, Roles (Investigator, Believer, Townie, Outsider, Skeptic), Distinctions, Relationships, and the ominous Strange Die.",
+  "character": {
+    "id": "template-spotlight-strange-towns",
+    "isTemplate": true,
+    "name": "",
+    "game": "Strange Towns",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Strange Towns",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Attributes": {
+        "id": "attributes",
+        "description": "Core attributes",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "attributesRing": false,
+            "colWidth": 25
+          }
+        },
+        "traits": {
+          "Mental": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Physical": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Social": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Town roots, encounter with the abnormal, and ruin",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 50
+          }
+        },
+        "traits": {
+          "Ruin:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        },
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Roles": {
+        "id": "roles",
+        "description": "Town archetypes and societal roles",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "colWidth": 25,
+            "rowBreak": true
+          }
+        },
+        "traits": {
+          "Enforcer": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Entrepreneur": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Rebel": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sage": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Shepherd": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Townie": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Relationships": {
+        "id": "relationships-strange-die",
+        "description": "Bonds and the creeping town phenomenon",
+        "nounSingular": "Relationships & Strange Die",
+        "nounPlural": "Relationships & Strange Dies",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 50
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "",
+        "nounSingular": "Asset",
+        "nounPlural": "Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "rowBreak": true
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Complications": {
+        "id": "complications",
+        "description": "",
+        "nounSingular": "Complication",
+        "nounPlural": "Complications",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Strange Die": {
+        "id": "strange-die",
+        "description": "",
+        "nounSingular": "Die",
+        "nounPlural": "Dice",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "growth-ladder",
+              "body": "growth-ladder"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,425 @@
+{
+  "id": "spotlight-cosa-nostra",
+  "version": 2,
+  "title": "Cosa Nostra",
+  "subtitle": "Historical Crime Syndicate Drama",
+  "spotlight": "Cosa Nostra",
+  "variant": "Mobster File",
+  "pages": 1,
+  "genre": "Crime / Drama / Noir",
+  "description": "Organized crime syndicate members climbing the ranks of the 1920s-1930s underworld. Features Distinctions with Distinction Stress, Drives, Roles with Specialties, Syndicate Resources, Signature Assets, and Session Record.",
+  "character": {
+    "id": "template-spotlight-cosa-nostra",
+    "isTemplate": true,
+    "name": "",
+    "game": "Cosa Nostra",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Cosa Nostra",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "hasNickname": true,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "colSpan": 3,
+            "columnSpan": 3,
+            "headerRight": "Character File",
+            "traitColumns": 3,
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "ratingScale": [
+              8,
+              10,
+              12
+            ],
+            "sharedHinder": true,
+            "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's die rating for a ▽4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
+            "attachedStress": {
+              "enabled": true,
+              "label": "Stress",
+              "scale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "includeOut": false
+            },
+            "multiDie": false,
+            "notes": "",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {
+          "Neighborhood": {
+            "description": "",
+            "tags": [],
+            "custom": {
+              "stress": 0
+            }
+          },
+          "Crew": {
+            "description": "",
+            "tags": [],
+            "custom": {
+              "stress": 0
+            }
+          },
+          "The Family": {
+            "description": "",
+            "tags": [],
+            "custom": {
+              "stress": 0
+            }
+          }
+        }
+      },
+      "Resources": {
+        "id": "resources",
+        "description": "Syndicate operational pools and assets",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "resources-count"
+            },
+            "multiDie": true,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 6,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Drives": {
+        "id": "drives",
+        "description": "Gain a PP when you use a drive rated at ▽4.",
+        "nounSingular": "Drive",
+        "nounPlural": "Drives",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5
+          }
+        },
+        "traits": {
+          "Corruption": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Greed": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Omerta": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Retribution": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Violence": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Personal weapons, vehicles, and syndicate perks",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Roles & Specialties": {
+        "id": "roles-specialties",
+        "description": "Syndicate roles with specialized criminal expertise",
+        "nounSingular": "Roles & Specialtie",
+        "nounPlural": "Roles & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "skills-specialties"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5
+          }
+        },
+        "traits": {
+          "Big Shot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Brains": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Enforcer": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Thief": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Wheelman": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "Session tracking and milestone progression",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 20
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 20
+          }
+        },
+        "traits": {}
+      },
+      "Role SFX": {
+        "id": "role-sfx",
+        "description": "",
+        "nounSingular": "SFX",
+        "nounPlural": "SFX",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

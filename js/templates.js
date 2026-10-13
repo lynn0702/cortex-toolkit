@@ -4,7 +4,7 @@
 const cortexSpotlightTemplates = [
   {
     "id": "spotlight-alien-us",
-    "version": 3,
+    "version": 5,
     "title": "Alien, Us",
     "subtitle": "Sci-Fi Infiltration & Paranoia",
     "spotlight": "Alien, Us",
@@ -202,7 +202,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "default"
+                "body": "two-columns-detailed"
               },
               "multiDie": false,
               "stressConfig": {
@@ -224,71 +224,274 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Skills & Specialties",
           "traits": [
             {
-              "name": "",
+              "name": "Bout",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Chat",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Find",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Make",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Play",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Operate",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
             },
             {
-              "name": "",
+              "name": "Work",
               "value": 0,
               "dice": [],
               "description": "",
-              "traits": [],
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  }
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "traits": [],
+                  "sfx": [],
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  }
+                }
+              ],
               "sfx": [],
               "tags": [],
               "custom": {}
@@ -308,6 +511,17 @@ const cortexSpotlightTemplates = [
               "style": {
                 "header": "default",
                 "body": "skills-specialties"
+              },
+              "setDie": 6,
+              "subtraitRatingScale": [
+                8,
+                10,
+                12
+              ],
+              "labels": {
+                "left": "Specialties",
+                "center": "Skills",
+                "right": "Specialties"
               },
               "multiDie": false,
               "stressConfig": {
@@ -619,7 +833,8 @@ const cortexSpotlightTemplates = [
                 "body": "session-record"
               },
               "sessionRecord": {
-                "count": 20
+                "count": 20,
+                "orientation": "horizontal"
               },
               "multiDie": false,
               "stressConfig": {

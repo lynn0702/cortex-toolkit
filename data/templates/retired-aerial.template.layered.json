@@ -1,0 +1,370 @@
+{
+  "id": "spotlight-retired-aerial",
+  "version": 2,
+  "title": "Retired No More - Aerial Age",
+  "subtitle": "Aging Veteran Heroes",
+  "spotlight": "Retired No More",
+  "variant": "Aerial Age",
+  "pages": 1,
+  "genre": "Dieselpunk / Aviation Adventure",
+  "description": "Sky aces and airborne champions of the Aerial Age dusted off for one more dogfight. Tailored for aerial combat, vintage flight gear, and sky federation politics.",
+  "character": {
+    "id": "template-spotlight-retired-aerial",
+    "isTemplate": true,
+    "name": "",
+    "game": "Retired No More",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Retired No More",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Values": {
+        "id": "values",
+        "description": "The aviator's code and sky ethics",
+        "nounSingular": "Value",
+        "nounPlural": "Values",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 6,
+            "colWidth": 25
+          }
+        },
+        "traits": {
+          "Allegiance": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Glory": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Integrity": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Knowledge": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Novelty": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Power": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Riches": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Aerial legend, grounded civilian, and final takeoff",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {
+          "Archetype": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  },
+                  "1": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
+          },
+          "Retirement": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  },
+                  "1": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Resources": {
+        "id": "vintage-plane-signature-assets",
+        "description": "Custom aircraft and aviator gear",
+        "nounSingular": "Vintage Plane & Signature Asset",
+        "nounPlural": "Vintage Plane & Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Pathways Complication": {
+        "id": "pathways-complication",
+        "description": "",
+        "nounSingular": "Complication",
+        "nounPlural": "Complications",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Asset": {
+        "id": "signature-asset",
+        "description": "",
+        "nounSingular": "Asset",
+        "nounPlural": "Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Skills & Specialties": {
+        "id": "skills-specialties",
+        "description": "Flight and tactical skills with veteran specialties",
+        "nounSingular": "Skills & Specialtie",
+        "nounPlural": "Skills & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4,
+            "rowSpan": 3
+          }
+        },
+        "traits": {
+          "Fight": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Influence": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Know": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Move": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Notice": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sneak": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Treat": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

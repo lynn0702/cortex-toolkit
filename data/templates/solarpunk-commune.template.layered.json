@@ -1,0 +1,265 @@
+{
+  "id": "spotlight-solarpunk-commune",
+  "version": 2,
+  "title": "SolarPunk - Commune File",
+  "subtitle": "Ecological Hope & Community Technology",
+  "spotlight": "SolarPunk",
+  "variant": "Commune File",
+  "pages": 1,
+  "genre": "SolarPunk / Settlement",
+  "description": "Bioregional commune worksheet for SolarPunk settings. Tracks Commune Attributes (Ecology, Infrastructure, Solidarity, Culture, Resilience), Distinctions, Commons Resources, and Ongoing Projects.",
+  "character": {
+    "id": "template-spotlight-solarpunk-commune",
+    "isTemplate": true,
+    "name": "",
+    "game": "SolarPunk",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "SolarPunk",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Commune Attributes": {
+        "id": "commune-attributes",
+        "description": "Collective settlement strengths",
+        "nounSingular": "Commune Attribute",
+        "nounPlural": "Commune Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "attributesRing": false,
+            "colWidth": 33
+          }
+        },
+        "traits": {
+          "Resources": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Security": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Connections": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Commune Distinctions": {
+        "id": "commune-distinctions",
+        "description": "Settlement history, geography, and values",
+        "nounSingular": "Commune Distinction",
+        "nounPlural": "Commune Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {
+          "Unity": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Organization": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "",
+        "nounSingular": "Asset",
+        "nounPlural": "Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Skills": {
+        "id": "skills",
+        "description": "",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

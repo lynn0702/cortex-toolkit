@@ -1,0 +1,98 @@
+{
+  "name": "Sendak Eggers",
+  "pronouns": "he/him",
+  "description": "A half-orc druid who would really rather be left alone, please.",
+  "sets": {
+    "Distinctions": {
+      "traits": {
+        "Half-Orc": {
+          "value": "d8",
+          "traits": {
+            "SFX": {
+              "traits": {
+                "Hinder": {}
+              }
+            }
+          }
+        },
+        "Druid": {
+          "value": "d10",
+          "traits": {
+            "SFX": {
+              "traits": {
+                "Hinder": {}
+              }
+            }
+          }
+        },
+        "Sage": {
+          "value": "d8",
+          "traits": {
+            "SFX": {
+              "traits": {
+                "Hinder": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "Attributes": {
+      "traits": {
+        "Strength": "d8",
+        "Agility": "d6",
+        "Wisdom": "d10"
+      }
+    },
+    "Values": {
+      "traits": {
+        "Honor": "d6",
+        "Wealth": "d4",
+        "Kindness": "d8",
+        "Justice": "d8",
+        "Truth": "d12",
+        "Power": "d6"
+      }
+    },
+    "Stress": {
+      "traits": {
+        "Harm": "d10",
+        "Stress": "d6",
+        "Doubt": "d8"
+      }
+    },
+    "Signature Assets": {
+      "traits": {
+        "Shillelagh": "d8",
+        "New Asset": "d6"
+      }
+    },
+    "Affiliations": {
+      "traits": {
+        "Circle of the Moon": "d6",
+        "King’s Guard": "d6",
+        "Biggetyburgh": "d6"
+      }
+    },
+    "Skills": {
+      "traits": {
+        "Athletics": {
+          "value": "d6",
+          "traits": {
+            "Jump": "d6",
+            "Swim": "d10",
+            "Climb": "d8"
+          }
+        },
+        "Knowledge": {
+          "value": "d6",
+          "traits": {
+            "Arcana": "d6",
+            "Nature": "d10",
+            "Society": "d8"
+          }
+        }
+      }
+    }
+  }
+}

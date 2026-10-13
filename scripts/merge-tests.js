@@ -1,7 +1,7 @@
 // Merge/pruner regression tests (decision brief D3/D4/D6 + reservedSlots).
 // Usage: node scripts/merge-tests.js  (exit 1 on failure)
-const F = require('../js/functions.js');
-const storage = require('../js/storage.js');
+const F = require('../js/functions.ts').cortexFunctions;
+const storage = require('../js/storage.ts').cortexStorage;
 
 let pass = 0, fail = 0;
 function ok(cond, name, extra) {

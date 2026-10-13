@@ -1,0 +1,628 @@
+{
+  "id": "spotlight-alien-us",
+  "version": 5,
+  "title": "Alien, Us",
+  "subtitle": "Sci-Fi Infiltration & Paranoia",
+  "spotlight": "Alien, Us",
+  "variant": "Character File",
+  "pages": 2,
+  "genre": "Sci-Fi / Espionage",
+  "description": "Play extraterrestrial operatives living undercover on Earth. Includes Distinctions with Hinder, Skills (d6) with branching Specialties (d8-d12), Values, Talents, Signature Assets/Tech, Relationships, and a 20-step Session Record.",
+  "character": {
+    "id": "template-spotlight-alien-us",
+    "isTemplate": true,
+    "name": "",
+    "game": "Alien, Us",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 2,
+        "spotlight": "Alien, Us",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "full-width",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Core alien background, job, and personality",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 3
+          }
+        },
+        "traits": {
+          "Alien Background:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Alien Role/Job:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Personality/Quirk:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Values": {
+        "id": "values",
+        "description": "Alien worldview versus human conditioning",
+        "nounSingular": "Value",
+        "nounPlural": "Values",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "two-columns-detailed"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 7,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Alien": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Conformity": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Materialism": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Paranoia": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Patriotism": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Secrecy": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Spirituality": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Skills & Specialties": {
+        "id": "skills-specialties",
+        "description": "Core baseline d6 skills with branching d8+ specialties",
+        "nounSingular": "Skills & Specialtie",
+        "nounPlural": "Skills & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "skills-specialties"
+            },
+            "setDie": 6,
+            "subtraitRatingScale": [
+              8,
+              10,
+              12
+            ],
+            "labels": {
+              "left": "Specialties",
+              "center": "Skills",
+              "right": "Specialties"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 7,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Bout": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          },
+          "Chat": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          },
+          "Find": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          },
+          "Make": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          },
+          "Play": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          },
+          "Operate": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          },
+          "Work": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "left"
+                  }
+                }
+              },
+              "1": {
+                "description": "",
+                "tags": [],
+                "custom": {
+                  "cortexToolkit": {
+                    "branchSide": "right"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Talents": {
+        "id": "talents",
+        "description": "Specialized alien abilities and tech modules",
+        "nounSingular": "Talent",
+        "nounPlural": "Talents",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "talents-table"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets / Tech": {
+        "id": "signature-assets-tech",
+        "description": "Alien equipment and concealed devices",
+        "nounSingular": "Signature Assets / Tech",
+        "nounPlural": "Signature Assets / Techs",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Relationships": {
+        "id": "relationships",
+        "description": "Connections to human contacts, superiors, and rivals",
+        "nounSingular": "Relationship",
+        "nounPlural": "Relationships",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "9": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "Session track and progression log",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 20,
+              "orientation": "horizontal"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 20,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

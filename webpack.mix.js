@@ -3,23 +3,12 @@ const mix = require('laravel-mix');
 mix
 .options({ processCssUrls: false })
 .disableNotifications()
-.combine([
-	'js/functions.js',
-	'js/storage.js',
-	'js/cortex-pal.js',
-	'js/roster.js',
-	'js/character.js',
-	'js/name-editor.js',
-	'js/trait-set-editor.js',
-	'js/trait-editor.js',
-	'js/subtrait-editor.js',
-	'js/sfx-editor.js',
-	'js/portrait-editor.js',
-	'js/trait-set-block.js',
-	'js/dice-roller.js',
-	'js/style-gallery.js',
-	'js/app.js'
-], 'js/app.min.js' )
+.ts('js/app.js', 'js/app.min.js', { transpileOnly: true })
+// Single-file components (Vue 3). mix.vue() wires vue-loader correctly; the
+// externals entry maps `import ... from 'vue'` (SFC script + compiled render
+// helpers) to the CDN global so Vue is never bundled.
+.vue({ version: 3 })
+.webpackConfig({ externals: { vue: 'Vue' } })
 .combine([
 	'js/templates.js',
 ], 'js/templates.bundle.js' )

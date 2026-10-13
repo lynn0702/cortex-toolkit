@@ -1,0 +1,311 @@
+{
+  "id": "spotlight-solarpunk-citizen",
+  "version": 2,
+  "title": "SolarPunk",
+  "subtitle": "Ecological Hope & Community Technology",
+  "spotlight": "SolarPunk",
+  "variant": "Citizen File",
+  "pages": 1,
+  "genre": "SolarPunk / Sci-Fi / Community",
+  "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Care, Craft, Reason, Resolve, Vitality), Distinctions, Signature Assets, Skills & Specialties, and Community Standing.",
+  "character": {
+    "id": "template-spotlight-solarpunk-citizen",
+    "isTemplate": true,
+    "name": "",
+    "game": "SolarPunk",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "SolarPunk",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Attributes": {
+        "id": "attributes",
+        "description": "SolarPunk holistic community attributes",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "attributesRing": false,
+            "colWidth": 33
+          }
+        },
+        "traits": {
+          "Mind": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Body": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Connection": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Ecological calling, technical specialty, and philosophy",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {
+          "Identity": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Community": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Purpose": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "session-record",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 20
+            },
+            "reservedSlots": 20
+          }
+        },
+        "traits": {}
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Sustainable tech, tools, and eco-cyberware",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Skills & Specialties": {
+        "id": "skills-specialties",
+        "description": "Ecological competencies and craft specialties",
+        "nounSingular": "Skills & Specialtie",
+        "nounPlural": "Skills & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "skills-specialties"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "9": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

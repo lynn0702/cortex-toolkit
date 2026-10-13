@@ -1094,6 +1094,38 @@
 		font-style: italic;
 		color: var(--color-label);
 	}
+
+	// SPLIT BRANCH (specialties both sides of the skill, e.g. Alien Us).
+	// Only applied when a set carries left-side specialties; all other
+	// branch sets keep the skill-left layout above untouched.
+	.branch-split-head {
+		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
+		.skills-branch-head-center {
+			text-align: center;
+			.set-die {
+				margin-left: .4em;
+			}
+		}
+	}
+
+	.branch-split-row {
+		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
+	}
+
+	.skill-branch-specialties.branch-left {
+		padding-left: 0;
+		padding-right: .6rem;
+		.specialty-row::before {
+			left: auto;
+			right: -.6rem;
+		}
+		.specialty-row::after {
+			left: auto;
+			right: -.18rem;
+			border-left: none;
+			border-right: .3rem solid var(--color-primary);
+		}
+	}
 }
 
 // TALENTS TABLE (TALENT / ACTIVATION / EFFECT)

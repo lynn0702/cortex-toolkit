@@ -1,0 +1,394 @@
+{
+  "id": "spotlight-necromancer",
+  "version": 2,
+  "title": "Necromancer",
+  "subtitle": "Dark Fantasy Grimoire & Undead Arts",
+  "spotlight": "Necromancer",
+  "variant": "Caster File",
+  "pages": 1,
+  "genre": "Dark Fantasy / Occult",
+  "description": "Practitioners of forbidden death magic navigating ancient covenants and terrifying bargains. Features Distinctions, Affiliations (Alone, Coven, Horde), Roles with Specialties, Necromancy Arts, Signature Assets, and Session Record.",
+  "character": {
+    "id": "template-spotlight-necromancer",
+    "isTemplate": true,
+    "name": "",
+    "game": "Necromancer",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Necromancer",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Occult lineage, taboo practice, and philosophical motivation",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Affiliations": {
+        "id": "affiliations",
+        "description": "Operating configuration dice",
+        "nounSingular": "Affiliation",
+        "nounPlural": "Affiliations",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "My Life": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "The World": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "The Demi-Monde": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Roles": {
+        "id": "roles-specialties",
+        "description": "Dark magical callings and practices",
+        "nounSingular": "Roles & Specialtie",
+        "nounPlural": "Roles & Specialties",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "colWidth": 33
+          }
+        },
+        "traits": {
+          "Diplomat": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fighter": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Guardian": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Healer": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sneak": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Transporter": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Necromantic Arts": {
+        "id": "necromantic-arts",
+        "description": "Forbidden spells, rites, and soul pacts",
+        "nounSingular": "Necromantic Art",
+        "nounPlural": "Necromantic Arts",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Occult relics, grimoires, and dark instruments",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "session-record",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 10
+            },
+            "reservedSlots": 10,
+            "colWidth": 66,
+            "rowBreak": true
+          }
+        },
+        "traits": {}
+      },
+      "Complications": {
+        "id": "complications",
+        "description": "",
+        "nounSingular": "Complication",
+        "nounPlural": "Complications",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Deathmark": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

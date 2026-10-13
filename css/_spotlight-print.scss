@@ -205,15 +205,47 @@
 			z-index: 1;
 		}
 	}
+
+	// PRINT: trait names never collapse into vertical letter stacks. The
+	// dice row wraps below the name on narrow columns instead, and print
+	// trait dice run smaller so more rows fit inline like the source sheets.
+	// (Same DOM renders real print output, so this covers paper too.)
+	.trait-title {
+		flex-wrap: wrap;
+		row-gap: 0.15rem;
+
+		> .trait-name {
+			flex: 1 1 auto;
+			min-width: 0;
+			overflow-wrap: normal;
+			word-break: normal;
+		}
+
+		> .trait-value {
+			flex: 0 0 auto;
+			min-width: 0;
+		}
+	}
+
+	// Beats the 1.25rem trait-value diecon rule elsewhere in this file for
+	// print trait rows only (higher specificity wins regardless of order).
+	&.spotlight-print-style .trait-title .diecon {
+		width: 0.9rem;
+		height: 0.9rem;
+	}
 }
 
 // SPOTLIGHT STYLES
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
 
-	// TOP HEADER BOXES
+	// TOP HEADER BOXES — flush into the first band (sectioned grid, no gutter).
 	.page-header {
-		margin-bottom: 1rem;
+		margin-bottom: 0;
+
+		+ .spotlight-layout > .columns.spotlight-columns:first-child {
+			margin-top: -2px;
+		}
 
 		.page-header-inner.spotlight-header-card {
 			display: grid;

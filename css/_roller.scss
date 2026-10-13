@@ -7,24 +7,61 @@
 	--color-effect: hsl(152, 60%, 42%);
 }
 
+// PLAY SHELL: ROLLER CO-PANEL + SHEET VIEWPORT
+// The roller is a co-panel (collapse / open left / open right), never a
+// drawer sliding over the sheet on desktop. It is viewport-pinned between
+// the fixed header and footer (top/bottom offsets, never sticky), while the
+// sheet viewport (session bar + character sheet) is the flex sibling that
+// yields room via margin on the roller's side. No overlap at any width.
+.play-shell {
+	display: flex;
+	align-items: stretch;
+}
+
+.sheet-column {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	order: 1;
+	transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media screen and (min-width: 769px) {
+	.play-shell.roller-open:not(.roller-right) .sheet-column {
+		margin-left: var(--roller-width);
+		margin-right: 0;
+	}
+
+	.play-shell.roller-open.roller-right .sheet-column {
+		margin-left: 0;
+		margin-right: var(--roller-width);
+	}
+}
+
 .sidebar {
 	@extend %no-print;
+	// Viewport-pinned co-panel: top edge under the fixed site header, bottom
+	// edge above the fixed footer. Fixed (not sticky) so both edges hold on
+	// first paint and at any scroll position.
 	position: fixed;
 	top: var(--header-size);
-	left: 0;
 	bottom: var(--header-size);
+	left: 0;
+	right: auto;
 	width: var(--roller-width);
+	height: auto;
 	background: rgba(255, 255, 255, 0.96);
 	backdrop-filter: blur(1rem);
 	box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
 	border-right: 1px solid var(--color-separator);
 	z-index: var(--z-frame);
-	transform: translateX(-100%);
-	transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	transform: none;
+	display: none;
 	overflow: hidden;
 
 	&.open {
-		transform: translateX(0);
+		display: block;
 	}
 
 	&.position-right {
@@ -33,34 +70,63 @@
 		border-right: none;
 		border-left: 1px solid var(--color-separator);
 		box-shadow: -2px 0 12px rgba(0, 0, 0, 0.08);
-		transform: translateX(100%);
+	}
 
-		&.open {
+	@media screen and (max-width: 768px) {
+		display: block;
+		position: fixed;
+		top: calc(var(--header-size) + 42px);
+		bottom: var(--header-size);
+		left: 0;
+		right: auto;
+		height: auto;
+		width: 100%;
+		flex: none;
+		z-index: calc(var(--z-frame) + 50);
+		transform: translateX(-100%);
+		transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+		&.mobile-visible {
 			transform: translateX(0);
 		}
 
-		@media screen and (max-width: 768px) {
-			&:not(.mobile-visible) {
-				transform: translateX(100%);
-			}
+		&.position-right {
+			left: 0;
+			right: auto;
+			transform: translateX(-100%);
+
 			&.mobile-visible {
 				transform: translateX(0);
 			}
 		}
 	}
 
-	@media screen and (max-width: 768px) {
-		width: 100%;
-		top: calc(var(--header-size) + 42px);
-		bottom: var(--header-size);
-		z-index: calc(var(--z-frame) + 50);
+	@media print {
+		display: none !important;
+	}
+}
 
-		&:not(.mobile-visible) {
-			transform: translateX(-100%);
-		}
-		&.mobile-visible {
-			transform: translateX(0);
-		}
+@media screen and (max-width: 768px) {
+	.play-shell,
+	.sheet-column {
+		display: block;
+	}
+
+	.play-shell .sheet-column {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+}
+
+@media print {
+	.play-shell,
+	.sheet-column {
+		display: block;
+	}
+
+	.play-shell .sheet-column {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
 	}
 }
 

@@ -1,0 +1,422 @@
+{
+  "id": "spotlight-hammerheads-character",
+  "version": 3,
+  "title": "Hammerheads",
+  "subtitle": "Disaster Response & Rescue Pilots",
+  "spotlight": "Hammerheads",
+  "variant": "Character File",
+  "pages": 2,
+  "genre": "Action / Rescue / Drama",
+  "description": "Hammerhead rescue pilots who run toward the crisis. Features Attributes with Stress (Physical, Mental, Social), 14 Training Packages, three Distinctions with Hinder and crisis-pool SFX, seven Relationships, an XP track, and page 2 Crisis Pools. Pair with the Hammerheads Vehicle File template.",
+  "character": {
+    "id": "template-spotlight-hammerheads-character",
+    "isTemplate": true,
+    "name": "",
+    "game": "Hammerheads",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 2,
+        "spotlight": "Hammerheads",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Attributes": {
+        "id": "attributes",
+        "description": "Body, mind, and presence under pressure",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "STRESS per Attribute: [4] [6] [8] [10] [12]",
+            "reservedSlots": 3,
+            "attributesRing": false
+          }
+        },
+        "traits": {
+          "Physical": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Mental": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Social": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Training Packages": {
+        "id": "training-packages",
+        "description": "Rescue disciplines and vehicle qualifications",
+        "nounSingular": "Training Package",
+        "nounPlural": "Training Packages",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 14
+          }
+        },
+        "traits": {
+          "Crowd Control": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Emergency Medical": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Firefighting": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Hammerhead Pilot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "HAZMAT": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "High-Altitude Recovery": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Legal Specialist": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Logistics": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Marine Recovery": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Network Specialist": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Mechanic": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Tactical Response": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Technical Analyst": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Urban Recovery": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Origin, true nature, and defining quirk",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "HINDER (each): Gain a PP when you switch out your distinction’s rating of d8 for a d4.\nLIFE BEFORE: Spend a PP to step up an attribute when you connect to your old life. / Add d6 to the crisis pool to double your attribute die when you connect to your old life.\nTRUE NATURE: Spend a PP to reroll your dice when you align with your true nature. / Add d6 to the crisis pool to step up your training package die when you align with your true nature.\nQUIRK: Spend a PP to double your relationship die when your assistance embraces your quirk or quality. / Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {
+          "Your Life Before:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Your Approach/Attitude:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Your Quirk/Quality:": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Relationships": {
+        "id": "relationships",
+        "description": "Crew bonds, debts, and troublemakers",
+        "nounSingular": "Relationship",
+        "nounPlural": "Relationships",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 7
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "XP": {
+        "id": "xp",
+        "description": "Experience points bubble track",
+        "nounSingular": "XP",
+        "nounPlural": "XP",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "pips"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 0,
+            "pips": {
+              "count": 15,
+              "perRow": 5,
+              "connected": true,
+              "filled": 0
+            }
+          }
+        },
+        "traits": {}
+      },
+      "Crisis Pools": {
+        "id": "crisis-pools",
+        "description": "Threat clocks and escalating disaster pools",
+        "nounSingular": "Crisis Pool",
+        "nounPlural": "Crisis Pools",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "Write the name of the crisis pool in each quadrant, then write the number for its initial die rating above the appropriate dice icons. Place the dice for each crisis pool in the large blank area.\nINITIAL RATING: [6] [8] [10] [12]",
+            "reservedSlots": 4,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

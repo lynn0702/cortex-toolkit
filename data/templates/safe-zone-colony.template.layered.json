@@ -1,0 +1,853 @@
+{
+  "id": "spotlight-safe-zone-colony",
+  "version": 2,
+  "title": "Safe Zone - Colony File",
+  "subtitle": "Post-Apocalyptic Survival & Colony",
+  "spotlight": "Safe Zone",
+  "variant": "Colony File",
+  "pages": 1,
+  "genre": "Post-Apocalyptic / Base Building",
+  "description": "Colony management and stockpile sheet for Safe Zone settlements. Tracks Essential Stockpiles (Food, Water, Medicine, Fuel, Ammo), Non-Essential Stockpiles, Buildings, Projects, and Crisis Threats.",
+  "character": {
+    "id": "template-spotlight-safe-zone-colony",
+    "isTemplate": true,
+    "name": "",
+    "game": "Safe Zone",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 2,
+        "spotlight": "Safe Zone",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        },
+        "columnsPage2": 3
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Essential Stockpiles": {
+        "id": "essential-stockpiles",
+        "description": "Vital supplies necessary for day-to-day survival",
+        "nounSingular": "Essential Stockpile",
+        "nounPlural": "Essential Stockpiles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Clean Water": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Food Rations": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Medical Supplies": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fuel & Power": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Ammunition": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Non-Essential Stockpiles": {
+        "id": "non-essential-stockpiles",
+        "description": "Barter goods, materials, and morale supplies",
+        "nounSingular": "Non-Essential Stockpile",
+        "nounPlural": "Non-Essential Stockpiles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Building Materials": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Luxury & Morale Goods": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Spare Parts & Tech": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Building 1": {
+        "id": "building-1",
+        "description": "",
+        "nounSingular": "Building",
+        "nounPlural": "Buildings",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Building 2": {
+        "id": "building-2",
+        "description": "",
+        "nounSingular": "Building",
+        "nounPlural": "Buildings",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Building 3": {
+        "id": "building-3",
+        "description": "",
+        "nounSingular": "Building",
+        "nounPlural": "Buildings",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Building 4": {
+        "id": "building-4",
+        "description": "",
+        "nounSingular": "Building",
+        "nounPlural": "Buildings",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Building 5": {
+        "id": "building-5",
+        "description": "",
+        "nounSingular": "Building",
+        "nounPlural": "Buildings",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Building 6": {
+        "id": "building-6",
+        "description": "",
+        "nounSingular": "Building",
+        "nounPlural": "Buildings",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 1": {
+        "id": "survivor-1",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 2": {
+        "id": "survivor-2",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 3": {
+        "id": "survivor-3",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 4": {
+        "id": "survivor-4",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 5": {
+        "id": "survivor-5",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 6": {
+        "id": "survivor-6",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 7": {
+        "id": "survivor-7",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 8": {
+        "id": "survivor-8",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Survivor 9": {
+        "id": "survivor-9",
+        "description": "",
+        "nounSingular": "Survivor",
+        "nounPlural": "Survivors",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "default"
+            }
+          }
+        },
+        "traits": {
+          "Morale": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "slots": {
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Projects & Crisis Threats": {
+        "id": "projects-crisis-threats",
+        "description": "Underway community builds and impending dangers",
+        "nounSingular": "Projects & Crisis Threat",
+        "nounPlural": "Projects & Crisis Threats",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 2,
+            "style": {
+              "header": "default",
+              "body": "notes"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "COMMUNITY PROJECTS:\n• \n• \n\nCRISIS THREATS:\n• \n• ",
+            "reservedSlots": 0,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {}
+      },
+      "Notes": {
+        "id": "colony-projects",
+        "description": "",
+        "nounSingular": "Project",
+        "nounPlural": "Projects",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 2,
+            "style": {
+              "header": "notes",
+              "body": "notes"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

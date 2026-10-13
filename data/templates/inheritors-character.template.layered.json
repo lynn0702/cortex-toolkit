@@ -1,0 +1,445 @@
+{
+  "id": "spotlight-inheritors-character",
+  "version": 2,
+  "title": "Inheritors",
+  "subtitle": "Superpowered Dynasty Heritage",
+  "spotlight": "Inheritors",
+  "variant": "Character File",
+  "pages": 1,
+  "genre": "Superhero / Dynastic Drama",
+  "description": "Descendants inheriting superhuman abilities and ancestral duties from heroic lineages. Features Attributes with 4-track Stress (Afraid, Angry, Exhausted, Injured), Distinctions, Powers, Skills, Heirlooms, and Milestones.",
+  "character": {
+    "id": "template-spotlight-inheritors-char",
+    "isTemplate": true,
+    "name": "",
+    "game": "Inheritors",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Inheritors",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Attributes": {
+        "id": "attributes",
+        "description": "Core capabilities coupled with dynastic stress tracks",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "attributesRing": false,
+            "colWidth": 25
+          }
+        },
+        "traits": {
+          "Action": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Heritage": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Science": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Weird": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Bloodline heritage, archetype, and personal stance",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colWidth": 50
+          }
+        },
+        "traits": {
+          "Family Tree": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Approach to Conflict": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Personality/Quirk": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Stress": {
+        "id": "stress",
+        "description": "",
+        "nounSingular": "Stress",
+        "nounPlural": "Stress",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "stress",
+              "body": "stress"
+            },
+            "stressConfig": {
+              "includeD4": true,
+              "includeOut": false
+            },
+            "reservedSlots": 1
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Inherited Abilities": {
+        "id": "inherited-abilities",
+        "description": "Powers granted by bloodline and relics",
+        "nounSingular": "Inherited Abilitie",
+        "nounPlural": "Inherited Abilities",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Skills": {
+        "id": "skills",
+        "description": "Training and mundane competencies",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 7,
+            "rowBreak": true
+          }
+        },
+        "traits": {
+          "Acquire": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Build": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Charm": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fight": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Investigate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Move": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Perform": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Pilot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Shoot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sneak": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Study": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Survive": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Treat": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Trick": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Heirlooms": {
+        "id": "heirlooms-milestones",
+        "description": "Ancestral artifacts and legacy milestones",
+        "nounSingular": "Heirlooms & Milestone",
+        "nounPlural": "Heirlooms & Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "STRESS TRACKS:\n• Afraid: [4] [6] [8] [10] [12]\n• Angry: [4] [6] [8] [10] [12]\n• Exhausted: [4] [6] [8] [10] [12]\n• Injured: [4] [6] [8] [10] [12]",
+            "reservedSlots": 1
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Milestones": {
+        "id": "milestones",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "notes",
+              "body": "notes"
+            }
+          }
+        },
+        "traits": {}
+      },
+      "XP": {
+        "id": "xp",
+        "description": "",
+        "nounSingular": "Pip",
+        "nounPlural": "Pips",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "pips",
+              "body": "pips"
+            },
+            "pips": {
+              "count": 25,
+              "perRow": 5,
+              "connected": true,
+              "filled": 0
+            }
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

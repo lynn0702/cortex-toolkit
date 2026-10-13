@@ -1,0 +1,321 @@
+{
+  "id": "spotlight-titans-handler",
+  "version": 2,
+  "title": "Titans vs Leviathans - Handler",
+  "subtitle": "Giant Mech vs Kaiju Combat",
+  "spotlight": "Titans vs Leviathans",
+  "variant": "Handler File",
+  "pages": 1,
+  "genre": "Mecha / Kaiju / Military",
+  "description": "Pilots and tactical handlers neural-linked to colossal titan mechs defending humanity from titanic leviathans. Features Handler Attributes (Reflexes, Tactical, Willpower, Sync), Roles, Distinctions, Signature Assets, Complications, and Session Record.",
+  "character": {
+    "id": "template-spotlight-titans-handler",
+    "isTemplate": true,
+    "name": "",
+    "game": "Titans vs Leviathans",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Titans vs Leviathans",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Handler Attributes": {
+        "id": "handler-attributes",
+        "description": "Neural synchronization and physical capabilities",
+        "nounSingular": "Handler Attribute",
+        "nounPlural": "Handler Attributes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4,
+            "attributesRing": false,
+            "colWidth": 25
+          }
+        },
+        "traits": {
+          "Prowess": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Control": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Renown": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Roles": {
+        "id": "roles",
+        "description": "Combat roles and tactical responsibilities",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4
+          }
+        },
+        "traits": {
+          "Backup": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Blaster": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Boss": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Brain": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Brawler": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Pilot background, drift specialty, and combat scars",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Handler cockpit gear and neural suits",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "SESSION RECORD: [○] [○] [○] [○] [○] [○] [○] [○]",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Complications": {
+        "id": "complications",
+        "description": "",
+        "nounSingular": "Complication",
+        "nounPlural": "Complications",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "stress",
+              "body": "stress"
+            }
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "session-record",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 20
+            },
+            "reservedSlots": 20
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

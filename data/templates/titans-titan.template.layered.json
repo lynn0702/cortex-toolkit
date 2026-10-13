@@ -1,0 +1,237 @@
+{
+  "id": "spotlight-titans-titan",
+  "version": 2,
+  "title": "Titans vs Leviathans - Titan Mech",
+  "subtitle": "Giant Mech vs Kaiju Combat",
+  "spotlight": "Titans vs Leviathans",
+  "variant": "Titan Mech File",
+  "pages": 1,
+  "genre": "Mecha / Kaiju / Military",
+  "description": "Colossal mechanical titan sheet equipped with heavy armor, devastating heavy ordnance, kinetic power sets, and system overheat stress tracks.",
+  "character": {
+    "id": "template-spotlight-titans-titan",
+    "isTemplate": true,
+    "name": "",
+    "game": "Titans vs Leviathans",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Titans vs Leviathans",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Titan Attributes & Stress": {
+        "id": "titan-attributes-stress",
+        "description": "Heavy mechanized systems with stress tracks",
+        "nounSingular": "Titan Attributes & Stres",
+        "nounPlural": "Titan Attributes & Stress",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4,
+            "attributesRing": false,
+            "colWidth": 25
+          }
+        },
+        "traits": {
+          "Prowess": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Control": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Renown": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Titan Distinctions": {
+        "id": "titan-distinctions",
+        "description": "Chassis archetype, reactor model, and weapon loadout",
+        "nounSingular": "Titan Distinction",
+        "nounPlural": "Titan Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "session-record",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 20
+            },
+            "reservedSlots": 20
+          }
+        },
+        "traits": {}
+      },
+      "Power Set": {
+        "id": "power-set",
+        "description": "Colossal kaiju-annihilation weaponry",
+        "nounSingular": "Power Set",
+        "nounPlural": "Power Sets",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeD4": false,
+              "includeOut": true
+            },
+            "notes": "SFX:\n\nLIMIT:",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}

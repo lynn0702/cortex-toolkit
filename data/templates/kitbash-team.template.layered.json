@@ -1,0 +1,178 @@
+{
+  "id": "spotlight-kitbash-team",
+  "version": 2,
+  "title": "KitBash - Team File",
+  "subtitle": "Modular Comic Book Superheroes",
+  "spotlight": "KitBash",
+  "variant": "Team Roster File",
+  "pages": 1,
+  "genre": "Comic Book / Superhero",
+  "description": "Headquarters, team resources, and hero roster for superhero alliances in KitBash. Features Team Distinctions, Headquarters Resources, Vehicle Bays, and Team Roster.",
+  "character": {
+    "id": "template-spotlight-kitbash-team",
+    "isTemplate": true,
+    "name": "",
+    "game": "KitBash",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "KitBash",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Team Base": {
+        "id": "team-base",
+        "description": "",
+        "nounSingular": "Detail",
+        "nounPlural": "Details",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "dossier-fields",
+              "body": "dossier-fields"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Name": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Location": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Description": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Benefits": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Drawbacks": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Team Resources": {
+        "id": "team-resources",
+        "description": "Resources come from backgrounds and are available for any PC to use.",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "8": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "9": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      }
+    }
+  }
+}
