@@ -122,7 +122,7 @@ body {
 // The backing must NEVER be visible outside the die outline. Previously it was
 // sized in mm and nudged to "top: 52%", which ignored where the font actually
 // draws the glyph (≈0.15em below the line-box centre), so white slivers poked
-// out around every die and clipped the halo ring.
+// out around every die and clipped the ring.
 //
 // Instead, the backing covers only the bounding box of the numeral cut-outs,
 // in em (so it scales with any font-size), positioned from the real glyph
@@ -277,5 +277,15 @@ $die-backings:
 	}
 	.preview-button {
 		min-height: 2.75rem;
+	}
+}
+
+// ============================================================
+// PRINT DENSITY (actual print only). Scaling the root rem/em base shrinks the
+// sheet for paper; the on-screen UI (incl. the print tab) is untouched.
+// ============================================================
+@media print {
+	html {
+		font-size: 13px;
 	}
 }

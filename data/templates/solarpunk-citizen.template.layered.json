@@ -223,7 +223,7 @@
         }
       },
       "Skills & Specialties": {
-        "id": "skills-specialties",
+        "id": "subtrait-columns",
         "description": "Ecological competencies and craft specialties",
         "nounSingular": "Skills & Specialtie",
         "nounPlural": "Skills & Specialties",
@@ -239,7 +239,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "skills-specialties"
+              "body": "subtrait-columns"
             },
             "multiDie": false,
             "stressConfig": {

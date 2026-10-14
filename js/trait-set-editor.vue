@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTraitSetEditor } from './use-trait-set-editor.ts';
-import TraitSetEditorHalo from './trait-set-editor-halo.vue';
+import TraitSetEditorRing from './trait-set-editor-ring.vue';
 import TraitSetEditorLayout from './trait-set-editor-layout.vue';
 import TraitSetEditorDice from './trait-set-editor-dice.vue';
 import TraitSetEditorImage from './trait-set-editor-image.vue';
@@ -24,7 +24,7 @@ const api = useTraitSetEditor( props, emit );
 
 const {
 	rootEl, inputName, cssClass, checkScrollPosition,
-	name, traitSetID, isHalo, headerRight, styleBody, styleOptions, branchArrows,
+	name, traitSetID, isRing, headerRight, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
 	styleLabel, setStyleLabel, description, includeOut,
 	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasAttachedStress, attachedStressLabel, attachedStressScale, toggleAttachedStressScale, attachedStressOut,
@@ -58,7 +58,7 @@ const {
 						<input type="text" v-model="name" ref="inputName">
 					</div>
 
-					<div class="editor-field" v-if="!isHalo">
+					<div class="editor-field" v-if="!isRing">
 						<label>Right header</label>
 						<input type="text" v-model="headerRight" placeholder="Character File">
 					</div>
@@ -68,11 +68,11 @@ const {
 						<select v-model="styleBody">
 							<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">{{ option.label }}</option>
 						</select>
-						<div class="editor-checkbox-row" v-if="styleBody === 'skills-specialties'" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;">
+						<div class="editor-checkbox-row" v-if="styleBody === 'subtrait-columns'" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-branch-arrows'" v-model="branchArrows">
 							<label :for="'trait-set-' + traitSetID + '-branch-arrows'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Show connecting arrows</label>
 						</div>
-						<div v-if="styleBody === 'skills-specialties'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+						<div v-if="styleBody === 'subtrait-columns'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
 							<div style="flex: 1;">
 								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Left Heading</label>
 								<input type="text" :value="styleLabel('left')" @change="setStyleLabel('left', targetValue($event))" :placeholder="styleLabel('left')">
@@ -81,12 +81,12 @@ const {
 								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Right Heading</label>
 								<input type="text" :value="styleLabel('right')" @change="setStyleLabel('right', targetValue($event))" :placeholder="styleLabel('right')">
 							</div>
-							<div style="flex: 1;" v-if="styleBody === 'skills-specialties'">
+							<div style="flex: 1;" v-if="styleBody === 'subtrait-columns'">
 								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Center Heading</label>
 								<input type="text" :value="styleLabel('center')" @change="setStyleLabel('center', targetValue($event))" :placeholder="styleLabel('center')">
 							</div>
 						</div>
-						<div v-if="styleBody === 'talents-table'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+						<div v-if="styleBody === 'three-column-table'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
 							<div style="flex: 1;">
 								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 1</label>
 								<input type="text" :value="styleLabel('col1')" @change="setStyleLabel('col1', targetValue($event))" :placeholder="styleLabel('col1')">
@@ -100,7 +100,7 @@ const {
 								<input type="text" :value="styleLabel('col3')" @change="setStyleLabel('col3', targetValue($event))" :placeholder="styleLabel('col3')">
 							</div>
 						</div>
-						<div v-if="styleBody === 'resources-count'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+						<div v-if="styleBody === 'dice-count'" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
 							<div style="flex: 1;">
 								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Rating Label</label>
 								<input type="text" :value="styleLabel('rating')" @change="setStyleLabel('rating', targetValue($event))" :placeholder="styleLabel('rating')">
@@ -112,7 +112,21 @@ const {
 						</div>
 					</div>
 
-					<TraitSetEditorHalo />
+					<!-- SET HEADER PLACEMENT + ALIGNMENT -->
+					<div class="editor-field">
+						<label>Set Header</label>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: headerMode === 'sidebar' }" @click.stop="headerMode = 'sidebar'">Sidebar</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerMode === 'top' }" @click.stop="headerMode = 'top'">Top Bar</button>
+						</div>
+						<div class="editor-button-group" style="margin-top: 0.35rem;">
+							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'left' }" @click.stop="headerAlign = 'left'">Left</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'center' }" @click.stop="headerAlign = 'center'">Center</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'right' }" @click.stop="headerAlign = 'right'">Right</button>
+						</div>
+					</div>
+
+					<TraitSetEditorRing />
 
 					<TraitSetEditorLayout />
 
@@ -298,7 +312,7 @@ const {
 					</div>
 
 					<!-- STATEMENT MODE -->
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines' && styleBody !== 'talents-table' && styleBody !== 'standing'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots'">
 						<label>Statements</label>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" v-model="isStatementSet">
@@ -311,7 +325,7 @@ const {
 					</div>
 
 					<!-- COUNTER COLUMN (e.g. BADGES XP) -->
-					<div class="editor-field" v-if="styleBody === 'badges-table' || styleBody === 'default' || styleBody === 'list'">
+					<div class="editor-field" v-if="styleBody === 'die-rows' || styleBody === 'default' || styleBody === 'list'">
 						<label>Counter</label>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-counter-col'" v-model="hasCounterColumn">

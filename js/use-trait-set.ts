@@ -78,7 +78,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const bodyStyle = traitSetArg?.custom?.cortexToolkit?.style?.body || 'default';
 		classes[ 'trait-set-style-' + bodyStyle ] = true;
 
-		if ( bodyStyle === 'skills-specialties' && traitSetArg?.custom?.cortexToolkit?.branchArrows === false ) {
+		if ( bodyStyle === 'subtrait-columns' && traitSetArg?.custom?.cortexToolkit?.branchArrows === false ) {
 			classes[ 'hide-branch-arrows' ] = true;
 		}
 
@@ -118,6 +118,13 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( traitSetArg?.custom?.cortexToolkit?.features?.subtraits ) {
 			classes[ 'trait-set-has-feature-subtraits' ] = true;
 		}
+
+		const ctk = traitSetArg?.custom?.cortexToolkit;
+		if ( ctk?.header === 'top' ) {
+			classes[ 'trait-set-header-top' ] = true;
+		}
+		const align = ctk?.headerAlign;
+		classes[ 'trait-set-header-align-' + ( align === 'center' || align === 'right' ? align : 'left' ) ] = true;
 
 		return classes;
 	}
@@ -291,7 +298,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( trait?.custom?.cortexToolkit?.isResource || trait?.isResource ) return true;
 		if ( !traitSetArg ) return false;
 		const body = traitSetArg?.custom?.cortexToolkit?.style?.body;
-		if ( body === 'resources' || body === 'resources-count' ) return true;
+		if ( body === 'resources' || body === 'dice-count' ) return true;
 		const name = ( traitSetArg?.name || '' ).trim().toLowerCase();
 		const nounSingular = ( traitSetArg?.nounSingular || '' ).trim().toLowerCase();
 		const nounPlural = ( traitSetArg?.nounPlural || '' ).trim().toLowerCase();
@@ -728,7 +735,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function hasBranchSplit( traitSetArg: TraitSet, items: any[] ) {
-		if ( traitSetArg?.custom?.cortexToolkit?.style?.body !== 'skills-specialties' ) return false;
+		if ( traitSetArg?.custom?.cortexToolkit?.style?.body !== 'subtrait-columns' ) return false;
 		return getBranchGroups( traitSetArg, items ).some( ( g: any ) => g.split );
 	}
 

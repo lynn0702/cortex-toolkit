@@ -226,7 +226,7 @@
         }
       },
       "Skills & Specialties": {
-        "id": "skills-specialties",
+        "id": "subtrait-columns",
         "description": "Multiverse capabilities and technical proficiencies",
         "nounSingular": "Skills & Specialtie",
         "nounPlural": "Skills & Specialties",
@@ -376,8 +376,8 @@
             "location": "left",
             "page": 1,
             "style": {
-              "header": "growth-ladder",
-              "body": "growth-ladder"
+              "header": "dice-ladder",
+              "body": "dice-ladder"
             }
           }
         },
@@ -406,8 +406,8 @@
             "location": "center",
             "page": 1,
             "style": {
-              "header": "growth-ladder",
-              "body": "growth-ladder"
+              "header": "dice-ladder",
+              "body": "dice-ladder"
             }
           }
         },
@@ -618,8 +618,8 @@
             "location": "left",
             "page": 2,
             "style": {
-              "header": "talents-table",
-              "body": "talents-table"
+              "header": "three-column-table",
+              "body": "three-column-table"
             },
             "multiDie": false,
             "stressConfig": {

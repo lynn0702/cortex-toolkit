@@ -10,18 +10,18 @@ const {
 </script>
 
 <template>
-	<div class="trait-dossier" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'dossier-fields'">
+	<div class="trait-labeled-fields" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'labeled-fields'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
-				<div :class="{ 'trait-inner': true, 'dossier-field': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+				<div :class="{ 'trait-inner': true, 'field-block': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
-					<span class="dossier-label" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
-					<span class="dossier-label dossier-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
-					<span class="dossier-label" v-else>{{ item.trait.name || '' }}</span>
-					<span class="dossier-text" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
-					<span class="dossier-text dossier-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
-					<span class="dossier-text dossier-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Click to add text...</span>
-					<span class="dossier-text" v-else></span>
+					<span class="field-label" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+					<span class="field-label field-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+					<span class="field-label" v-else>{{ item.trait.name || '' }}</span>
+					<span class="field-text" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
+					<span class="field-text field-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+					<span class="field-text field-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Click to add text...</span>
+					<span class="field-text" v-else></span>
 				</div>
 				<transition name="editor" appear>
 					<TraitEditor

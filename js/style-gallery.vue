@@ -28,9 +28,9 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set trait-set-style-distinctions"><div class="trait-set-header"><div class="trait-set-header-inner"><div>DISTINCTIONS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Ship\'s Doctor</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2><ul class="trait-sfx"><li><span class="trait-sfx-name">Hinder</span>: <span class="trait-sfx-description">Gain a PP…</span></li></ul></div></div></div></div></div>'
 	},
 	{
-		id: 'skills-specialties', name: 'Skills & Specialties', sing: 'Skill', plur: 'Skills',
+		id: 'subtrait-columns', name: 'Subtrait Columns', sing: 'Skill', plur: 'Skills',
 		blurb: 'Skills branched to specialties with connecting arrows. Specialties can be sub-traits or linked flat traits.',
-		preview: '<div class="trait-set trait-set-style-skills-specialties"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SKILLS</div></div></div><div class="trait-set-body"><div class="trait-skills-branch"><div class="skills-branch-head"><span>SKILL</span><span>SPECIALTIES</span></div><div class="skill-branch-row"><div class="skill-branch-skill"><span class="trait-name">Guns</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="skill-branch-link"></div><div class="skill-branch-specialties"><div class="specialty-row"><span class="subtrait-name">Pistol</span><div class="subtrait-value"><span class="c active">8</span></div></div></div></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-subtrait-columns"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SKILLS</div></div></div><div class="trait-set-body"><div class="trait-subtrait-columns"><div class="branch-head"><span>SKILL</span><span>SPECIALTIES</span></div><div class="branch-row"><div class="branch-main"><span class="trait-name">Guns</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="branch-link"></div><div class="branch-side"><div class="branch-slot"><span class="subtrait-name">Pistol</span><div class="subtrait-value"><span class="c active">8</span></div></div></div></div></div></div></div>'
 	},
 	{
 		id: 'assets', name: 'Assets', sing: 'Asset', plur: 'Assets',
@@ -43,34 +43,34 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set trait-set-style-resources"><div class="trait-set-header"><div class="trait-set-header-inner"><div>RESOURCES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Crew</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
 	},
 	{
-		id: 'resources-count', name: 'Resources + Count', sing: 'Resource', plur: 'Resources',
+		id: 'dice-count', name: 'Dice Count', sing: 'Resource', plur: 'Resources',
 		blurb: 'Syndicate style: a rating die plus a 1–5 dice-count track.',
-		preview: '<div class="trait-set trait-set-style-resources-count"><div class="trait-set-header"><div class="trait-set-header-inner"><div>RESOURCES</div></div></div><div class="trait-set-body"><div class="trait-resources-count"><div class="resource-row"><span class="trait-name">Crew</span><span class="resource-rating-label">RATING</span><div class="trait-value single-die-value"><span class="c active">8</span></div><span class="resource-count-label">/ DICE</span><div class="resource-count"><span class="count-pip filled">1</span><span class="count-pip filled">2</span><span class="count-pip">3</span></div></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-dice-count"><div class="trait-set-header"><div class="trait-set-header-inner"><div>RESOURCES</div></div></div><div class="trait-set-body"><div class="trait-dice-count"><div class="dice-count-row"><span class="trait-name">Crew</span><span class="dice-count-rating-label">RATING</span><div class="trait-value single-die-value"><span class="c active">8</span></div><span class="dice-count-count-label">/ DICE</span><div class="dice-count-track"><span class="dice-count-pip filled">1</span><span class="dice-count-pip filled">2</span><span class="dice-count-pip">3</span></div></div></div></div></div>'
 	},
 	{
-		id: 'standing', name: 'Standing', sing: 'Standing', plur: 'Standings',
+		id: 'paired-slots', name: 'Paired Slots', sing: 'Standing', plur: 'Standings',
 		blurb: 'Standing die with complication and bonus dice.',
-		preview: '<div class="trait-set trait-set-style-standing"><div class="trait-set-header"><div class="trait-set-header-inner"><div>STANDING</div></div></div><div class="trait-set-body"><div class="trait-standing"><div class="standing-main"><span class="trait-name">Cool Kids</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="standing-sub"><span class="standing-sub-label">COMPLICATION</span><div class="subtrait-value"><span class="c active">8</span></div><span class="standing-sub-label">BONUS</span><div class="subtrait-value"><span class="c active">6</span></div></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-paired-slots"><div class="trait-set-header"><div class="trait-set-header-inner"><div>STANDING</div></div></div><div class="trait-set-body"><div class="trait-paired-slots"><div class="paired-slot-main"><span class="trait-name">Cool Kids</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="paired-slot-sub"><span class="paired-slot-sub-label">COMPLICATION</span><div class="subtrait-value"><span class="c active">8</span></div><span class="paired-slot-sub-label">BONUS</span><div class="subtrait-value"><span class="c active">6</span></div></div></div></div></div>'
 	},
 	{
-		id: 'badges-table', name: 'Badges Table', sing: 'Badge', plur: 'Badges',
+		id: 'die-rows', name: 'Die Rows', sing: 'Badge', plur: 'Badges',
 		blurb: 'Checklist rows with a die per row.',
-		preview: '<div class="trait-set trait-set-style-badges-table"><div class="trait-set-header"><div class="trait-set-header-inner"><div>BADGES</div></div></div><div class="trait-set-body"><div class="trait-badges-table"><div class="badge-row"><span class="badge-name">Tracking</span><div class="trait-value single-die-value"><span class="c active">8</span></div></div><div class="badge-row"><span class="badge-name">Swimming</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-die-rows"><div class="trait-set-header"><div class="trait-set-header-inner"><div>BADGES</div></div></div><div class="trait-set-body"><div class="trait-die-rows"><div class="die-row"><span class="die-row-name">Tracking</span><div class="trait-value single-die-value"><span class="c active">8</span></div></div><div class="die-row"><span class="die-row-name">Swimming</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div></div></div></div>'
 	},
 	{
-		id: 'talents-table', name: 'Talents Table', sing: 'Talent', plur: 'Talents',
+		id: 'three-column-table', name: 'Three Column Table', sing: 'Talent', plur: 'Talents',
 		blurb: 'Talent / activation / effect rows. No dice.',
-		preview: '<div class="trait-set trait-set-style-talents-table"><div class="trait-set-header"><div class="trait-set-header-inner"><div>TALENTS</div></div></div><div class="trait-set-body"><div class="trait-talents-table"><div class="talents-head"><span>TALENT</span><span>ACTIVATION</span><span>EFFECT</span></div><div class="talent-row"><span class="talent-name">Trick Shot</span><span class="talent-activation">When attacking…</span><span class="talent-effect">Double Guns.</span></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-three-column-table"><div class="trait-set-header"><div class="trait-set-header-inner"><div>TALENTS</div></div></div><div class="trait-set-body"><div class="trait-three-column-table"><div class="three-col-head"><span>TALENT</span><span>ACTIVATION</span><span>EFFECT</span></div><div class="three-col-row"><span class="three-col-name">Trick Shot</span><span class="three-col-activation">When attacking…</span><span class="three-col-effect">Double Guns.</span></div></div></div></div>'
 	},
 	{
-		id: 'growth-ladder', name: 'Growth Ladder', sing: 'Growth Die', plur: 'Growth Dice',
+		id: 'dice-ladder', name: 'Dice Ladder', sing: 'Growth Die', plur: 'Growth Dice',
 		blurb: 'Vertical die track, e.g. a growth or XP pool.',
-		preview: '<div class="trait-set trait-set-style-growth-ladder"><div class="trait-set-header"><div class="trait-set-header-inner"><div>GROWTH POOL</div></div></div><div class="trait-set-body"><div class="trait-growth-ladder"><div class="growth-rung"><div class="trait-value single-die-value"><span class="c active">4</span></div></div><div class="growth-rung"><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="growth-rung"><div class="trait-value single-die-value"><span class="c active">8</span></div></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-dice-ladder"><div class="trait-set-header"><div class="trait-set-header-inner"><div>GROWTH POOL</div></div></div><div class="trait-set-body"><div class="trait-dice-ladder"><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">4</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">8</span></div></div></div></div></div>'
 	},
 	{
-		id: 'dossier-fields', name: 'Dossier Fields', sing: 'Field', plur: 'Fields',
+		id: 'labeled-fields', name: 'Labeled Fields', sing: 'Field', plur: 'Fields',
 		blurb: 'Stacked labeled blocks, e.g. faction dossiers. No dice.',
-		preview: '<div class="trait-set trait-set-style-dossier-fields"><div class="trait-set-header"><div class="trait-set-header-inner"><div>FORCE</div></div></div><div class="trait-set-body"><div class="trait-dossier"><div class="dossier-field"><span class="dossier-label">GOAL</span><span class="dossier-text">Gain as many members as possible.</span></div><div class="dossier-field"><span class="dossier-label">METHOD</span><span class="dossier-text">Offer peace and sanctuary.</span></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-labeled-fields"><div class="trait-set-header"><div class="trait-set-header-inner"><div>FORCE</div></div></div><div class="trait-set-body"><div class="trait-labeled-fields"><div class="field-block"><span class="field-label">GOAL</span><span class="field-text">Gain as many members as possible.</span></div><div class="field-block"><span class="field-label">METHOD</span><span class="field-text">Offer peace and sanctuary.</span></div></div></div></div>'
 	},
 	{
 		id: 'stress', name: 'Stress', sing: 'Stress', plur: 'Stress',
@@ -113,9 +113,9 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SESSION RECORD</div></div></div><div class="trait-set-body"><div class="gallery-session-mock"><div class="gallery-session-line"></div><div class="gallery-session-line"></div><div class="gallery-session-line"></div></div></div></div>'
 	},
 	{
-		id: 'halo', name: 'Portrait Halo', sing: 'Attribute', plur: 'Attributes',
+		id: 'portrait-ring', name: 'Portrait Ring', sing: 'Attribute', plur: 'Attributes',
 		blurb: 'Dice ringed around the character portrait.',
-		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>ATTRIBUTES</div></div></div><div class="trait-set-body"><div class="gallery-halo-mock"><div class="gallery-halo-ring"></div><span class="c gallery-halo-die" style="top:-6%;left:50%;">8</span><span class="c gallery-halo-die" style="top:50%;left:-4%;">6</span><span class="c gallery-halo-die" style="top:50%;left:96%;">0</span></div></div></div></div>'
+		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>ATTRIBUTES</div></div></div><div class="trait-set-body"><div class="gallery-ring-mock"><div class="gallery-ring"></div><span class="c gallery-ring-die" style="top:-6%;left:50%;">8</span><span class="c gallery-ring-die" style="top:50%;left:-4%;">6</span><span class="c gallery-ring-die" style="top:50%;left:96%;">0</span></div></div></div></div>'
 	},
 ];
 

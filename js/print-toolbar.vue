@@ -3,6 +3,7 @@ defineProps<{
 	printStyle: string | null;
 	sheetStyle: string;
 	printBlank: boolean;
+	printBW: boolean;
 	printPageView: any;
 	pageCount: number;
 }>();
@@ -12,11 +13,16 @@ const emit = defineEmits<{
 	( e: 'export' ): void;
 	( e: 'update:printStyle', value: string ): void;
 	( e: 'update:printBlank', value: boolean ): void;
+	( e: 'update:printBW', value: boolean ): void;
 	( e: 'update:printPageView', value: any ): void;
 }>();
 
 function toggleBlank( e: Event ) {
 	emit( 'update:printBlank', ( e.target as HTMLInputElement ).checked );
+}
+
+function toggleBW( e: Event ) {
+	emit( 'update:printBW', ( e.target as HTMLInputElement ).checked );
 }
 </script>
 
@@ -44,6 +50,11 @@ function toggleBlank( e: Event ) {
 			<label class="toolbar-checkbox">
 				<input type="checkbox" :checked="printBlank" @change="toggleBlank">
 								<span><i class="fas fa-pencil-alt"></i> Blank Sheet</span>
+			</label>
+
+			<label class="toolbar-checkbox">
+				<input type="checkbox" :checked="printBW" @change="toggleBW">
+				<span><i class="fas fa-circle-half-stroke"></i> Black &amp; White</span>
 			</label>
 		</div>
 

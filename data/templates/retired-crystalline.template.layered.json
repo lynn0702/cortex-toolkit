@@ -360,7 +360,7 @@
         }
       },
       "Skills & Specialties": {
-        "id": "skills-specialties",
+        "id": "subtrait-columns",
         "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
         "nounSingular": "Skills & Specialtie",
         "nounPlural": "Skills & Specialties",

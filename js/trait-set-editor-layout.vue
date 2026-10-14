@@ -2,7 +2,7 @@
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
-	isHalo, columnLocation, setColumn, characterColumnCount, canMoveUp, canMoveDown,
+	isRing, columnLocation, setColumn, characterColumnCount, canMoveUp, canMoveDown,
 	moveTraitSetUp, moveTraitSetDown, isFullWidthSpan, colSpan, setTrackCount, colWidth,
 	isSpotlightSheet, rowBreak, editorDock, pageNumber, targetValue
 } = injectTraitSetEditor();
@@ -10,7 +10,7 @@ const {
 
 <template>
 	<!-- COLUMN & REORDER CONTROLS -->
-	<div class="editor-field" v-if="!isHalo">
+	<div class="editor-field" v-if="!isRing">
 		<label>Column & Position</label>
 		<div class="editor-position-controls">
 			<div class="editor-button-group">
@@ -62,7 +62,7 @@ const {
 	</div>
 
 	<!-- COLUMN SPAN -->
-	<div class="editor-field" v-if="!isHalo">
+	<div class="editor-field" v-if="!isRing">
 		<label>Column Span</label>
 		<div class="editor-button-group">
 			<button
@@ -95,7 +95,7 @@ const {
 	</div>
 
 	<!-- COLUMN WIDTH (SPOTLIGHT ROWS) -->
-	<div class="editor-field" v-if="!isHalo && !isFullWidthSpan && isSpotlightSheet">
+	<div class="editor-field" v-if="!isRing && !isFullWidthSpan && isSpotlightSheet">
 		<label>Column Width — Row Share</label>
 		<div class="editor-button-group">
 			<button
@@ -130,7 +130,7 @@ const {
 	</div>
 
 	<!-- ROW BREAK (SPOTLIGHT BANDS) -->
-	<div class="editor-field" v-if="!isHalo && !isFullWidthSpan && isSpotlightSheet">
+	<div class="editor-field" v-if="!isRing && !isFullWidthSpan && isSpotlightSheet">
 		<label>Row Band</label>
 		<div class="editor-button-group">
 			<button
@@ -179,7 +179,7 @@ const {
 	</div>
 
 	<!-- PAGE SELECTOR -->
-	<div class="editor-field" v-if="!isHalo">
+	<div class="editor-field" v-if="!isRing">
 		<label>Page</label>
 		<div class="editor-position-controls">
 			<div class="editor-button-group">

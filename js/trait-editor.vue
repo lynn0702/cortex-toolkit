@@ -66,7 +66,7 @@ const value = computed( {
 
 const isListStyle = computed( () => {
 	const b = traitSet.value?.custom?.cortexToolkit?.style?.body;
-	return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'talents-table' || b === 'dossier-fields';
+	return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'three-column-table' || b === 'labeled-fields';
 } );
 
 const isStatementSet = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.statement || traitSet.value?.statement ) );
@@ -101,7 +101,7 @@ const counterValue = computed( {
 	},
 } );
 
-const isStandingStyle = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'standing' );
+const isPairedSlotsStyle = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'paired-slots' );
 
 const isSessionRecordStyle = computed( () => {
 	const b = traitSet.value?.custom?.cortexToolkit?.style?.body;
@@ -153,24 +153,24 @@ const scrollable = computed( () => Boolean(
 	( traitSet.value.custom.cortexToolkit.features.subtraits && trait.value.traits.length > 0 )
 ) );
 
-const isTalentsTable = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'talents-table' );
+const isTalentsTable = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'three-column-table' );
 
 const talentCol1Label = computed( () => {
 	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
 	if ( labels && labels.col1 ) return labels.col1;
-	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col1' ) : 'TALENT' ) || 'TALENT';
+	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col1' ) : 'TALENT' ) || 'TALENT';
 } );
 
 const talentCol2Label = computed( () => {
 	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
 	if ( labels && labels.col2 ) return labels.col2;
-	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col2' ) : 'ACTIVATION' ) || 'ACTIVATION';
+	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col2' ) : 'ACTIVATION' ) || 'ACTIVATION';
 } );
 
 const talentCol3Label = computed( () => {
 	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
 	if ( labels && labels.col3 ) return labels.col3;
-	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'talents-table', 'col3' ) : 'EFFECT' ) || 'EFFECT';
+	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col3' ) : 'EFFECT' ) || 'EFFECT';
 } );
 
 const talentEffect = computed( {
@@ -212,7 +212,7 @@ const talentEffect = computed( {
 const canHinderTrait = computed( () => {
 	if ( isListStyle.value || isTalentsTable.value ) return false;
 	const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
-	if ( body === 'talents-table' || body === 'list' || body === 'notes' || body === 'dossier-fields' || body === 'session-record' ) {
+	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' || body === 'session-record' ) {
 		return false;
 	}
 	return Boolean( trait.value?.value > 0 || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 0 ) );
@@ -220,7 +220,7 @@ const canHinderTrait = computed( () => {
 
 const isAttributesTrait = computed( () => {
 	const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
-	return traitSet.value?.custom?.cortexToolkit?.location === 'attributes' || body === 'halo' || body === 'attributes';
+	return traitSet.value?.custom?.cortexToolkit?.location === 'attributes' || body === 'portrait-ring' || body === 'attributes';
 } );
 
 const isScaleDie = computed( {
@@ -285,7 +285,7 @@ const cssClass = computed( () => {
 } );
 
 const parentColumnCount = computed( () => Number( props.character?.custom?.cortexToolkit?.columns ) || 2 );
-const parentIsBranch = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'skills-specialties' );
+const parentIsBranch = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'subtrait-columns' );
 
 const branchRole = computed( {
 	get() {
@@ -747,14 +747,14 @@ function getDieDisplayValue( val: any ) {
 					</template>
 
 					<div class="editor-field" v-else>
-						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isStandingStyle ? 'Standing Name' : 'Trait Name') }}</label>
-						<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isStandingStyle ? 'e.g. Camp Director' : '')">
+						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
+						<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
 					</div>
 
 					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
 
 					<!-- STATEMENT FIELD -->
-					<div class="editor-field" v-if="isStatementSet || isStandingStyle">
+					<div class="editor-field" v-if="isStatementSet || isPairedSlotsStyle">
 						<label>Statement</label>
 						<textarea v-model="description" rows="2" placeholder="e.g. I'll try anything once."></textarea>
 					</div>
@@ -801,7 +801,7 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<!-- SCALE DIE TOGGLE FOR HALO ATTRIBUTES -->
+					<!-- SCALE DIE TOGGLE FOR RING ATTRIBUTES -->
 					<div class="editor-field" v-if="isAttributesTrait">
 						<div class="editor-toggles">
 							<div>
@@ -927,7 +927,7 @@ function getDieDisplayValue( val: any ) {
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description && !isTalentsTable && !isStatementSet && !isStandingStyle">
+					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle">
 						<label>Description</label>
 						<textarea v-model="description"></textarea>
 					</div>

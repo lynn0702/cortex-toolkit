@@ -61,8 +61,8 @@
             "location": "left",
             "page": 1,
             "style": {
-              "header": "dossier-fields",
-              "body": "dossier-fields"
+              "header": "labeled-fields",
+              "body": "labeled-fields"
             },
             "colSpan": "full",
             "columnSpan": "full"

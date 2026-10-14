@@ -4,7 +4,7 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 const {
 	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue, setRatingPreset,
 	setDie, isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset,
-	featureSubtraits, isHalo, multiDie, isChallengePool, traitSetID
+	featureSubtraits, isRing, multiDie, isChallengePool, traitSetID
 } = injectTraitSetEditor();
 </script>
 
@@ -88,7 +88,7 @@ const {
 	<div class="editor-field" v-if="needsDiceUI">
 		<label>Pool Options</label>
 		<div class="editor-toggles">
-			<template v-if="!isHalo">
+			<template v-if="!isRing">
 				<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
 				<div><label :for="'trait-set-' + traitSetID + '-multi-die'">Multiple dice</label></div>
 			</template>

@@ -721,7 +721,7 @@
 	font-weight: 700;
 }
 
-.halo-sliders {
+.ring-sliders {
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
@@ -731,7 +731,7 @@
 	margin-top: 0.25rem;
 }
 
-// Generic slider rows (column-width fine-tune reuses the halo pattern).
+// Generic slider rows (column-width fine-tune reuses the ring pattern).
 .slider-row {
 	display: flex;
 	flex-direction: column;
@@ -762,8 +762,8 @@
 	}
 }
 
-.halo-sliders {
-	.halo-presets {
+.ring-sliders {
+	.ring-presets {
 		display: flex;
 		gap: 0.35rem;
 		margin: 0.2rem 0;
@@ -800,7 +800,7 @@
 		justify-content: flex-end;
 		margin-top: 0.25rem;
 
-		.btn-reset-halo {
+		.btn-reset-ring {
 			background: transparent;
 			border: 1px solid rgba(255, 255, 255, 0.2);
 			color: rgba(255, 255, 255, 0.7);

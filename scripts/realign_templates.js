@@ -50,13 +50,13 @@ templates = templates.map(item => {
       if (!ts.custom.cortexToolkit) ts.custom.cortexToolkit = {};
       const ctk = ts.custom.cortexToolkit;
 
-      // Convert halo/attribute sets to standard column sets
+      // Convert ring/attribute sets to standard column sets
       if (ctk.location === 'attributes' || ctk.style?.body === 'attributes' || ctk.style?.header === 'attributes') {
         ctk.location = 'right';
         if (!ctk.style) ctk.style = {};
         ctk.style.header = 'default';
         ctk.style.body = 'default';
-        delete ctk.haloConfig;
+        delete ctk.ringConfig;
         delete ctk.scaleDie;
         ctk.attributesRing = false;
       }

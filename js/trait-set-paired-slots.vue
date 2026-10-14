@@ -12,34 +12,34 @@ const {
 </script>
 
 <template>
-	<div class="trait-standing" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'standing'">
+	<div class="trait-paired-slots" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'paired-slots'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
-				<div :class="{ 'trait-inner': true, 'standing-row-wrap': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+				<div :class="{ 'trait-inner': true, 'paired-slot-row-wrap': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
-					<div class="standing-header-row">
-						<span class="standing-name-box">
-							<span class="standing-name-text" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
-							<span class="standing-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
-							<span class="standing-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Name</span>
-							<span class="standing-blank-line" v-else></span>
+					<div class="paired-slot-header-row">
+						<span class="paired-slot-name-box">
+							<span class="paired-slot-name-text" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+							<span class="paired-slot-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
+							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Name</span>
+							<span class="paired-slot-blank-line" v-else></span>
 						</span>
-						<span class="standing-statement-box">
-							<span class="standing-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
-							<span class="standing-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
-							<span class="standing-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Statement</span>
-							<span class="standing-blank-line" v-else></span>
+						<span class="paired-slot-statement-box">
+							<span class="paired-slot-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
+							<span class="paired-slot-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
+							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Statement</span>
+							<span class="paired-slot-blank-line" v-else></span>
 						</span>
 					</div>
-					<div class="standing-dice-row">
-						<div class="standing-main-dice single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+					<div class="paired-slot-dice-row">
+						<div class="paired-slot-main-dice single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
 							<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
 								:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
 								v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
 						</div>
-						<div class="standing-sub-group">
-							<div class="standing-sub-row">
-								<span class="standing-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 0) }} •</span>
+						<div class="paired-slot-sub-group">
+							<div class="paired-slot-sub-row">
+								<span class="paired-slot-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 0) }} •</span>
 								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingComplication(item.trait)"
 									@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), getStandingComplication(item.trait).value, traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
@@ -52,8 +52,8 @@ const {
 										v-html="renderDieValueForPrint(size, false)"></span>
 								</div>
 							</div>
-							<div class="standing-sub-row">
-								<span class="standing-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 1) }} •</span>
+							<div class="paired-slot-sub-row">
+								<span class="paired-slot-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 1) }} •</span>
 								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingBonus(item.trait)"
 									@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), getStandingBonus(item.trait).value, traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"

@@ -328,7 +328,7 @@
         }
       },
       "Standing": {
-        "id": "standing",
+        "id": "paired-slots",
         "description": "Camp social standing with complication and bonus dice",
         "nounSingular": "Standing",
         "nounPlural": "Standings",
@@ -346,7 +346,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "standing"
+              "body": "paired-slots"
             },
             "ratingPosition": "inline",
             "ratingScale": [
@@ -502,10 +502,11 @@
               "subtraits": false
             },
             "location": "right",
+            "header": "top",
             "page": 1,
             "style": {
               "header": "default",
-              "body": "badges-table"
+              "body": "die-rows"
             },
             "hasCounterColumn": true,
             "counterLabel": "XP",
@@ -521,91 +522,10 @@
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 16
+            "reservedSlots": 17
           }
         },
-        "traits": {
-          "Investigation": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Local Folklore": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Baking": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Boating": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Campfire Cooking": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Camping": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Cryptid Identification": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Exploring Camp Bewilderwood": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fire Building": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fun with Physics": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Leather Working": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Plant Identification and Uses": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Reading Nature": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Story Telling": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Swimming": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Tracking": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
+        "traits": {}
       },
       "Talents": {
         "id": "talents",
@@ -624,7 +544,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "talents-table"
+              "body": "three-column-table"
             },
             "multiDie": false,
             "stressConfig": {

@@ -6,13 +6,13 @@ import TraitSetImage from './trait-set-image.vue';
 import TraitSetNotes from './trait-set-notes.vue';
 import TraitSetPips from './trait-set-pips.vue';
 import TraitSetSessionRecord from './trait-set-session-record.vue';
-import TraitSetGrowthLadder from './trait-set-growth-ladder.vue';
-import TraitSetDossier from './trait-set-dossier.vue';
-import TraitSetSkills from './trait-set-skills.vue';
-import TraitSetTalents from './trait-set-talents.vue';
-import TraitSetStanding from './trait-set-standing.vue';
-import TraitSetBadges from './trait-set-badges.vue';
-import TraitSetResourcesCount from './trait-set-resources-count.vue';
+import TraitSetDiceLadder from './trait-set-dice-ladder.vue';
+import TraitSetLabeledFields from './trait-set-labeled-fields.vue';
+import TraitSetSubtraitColumns from './trait-set-subtrait-columns.vue';
+import TraitSetThreeColumnTable from './trait-set-three-column-table.vue';
+import TraitSetPairedSlots from './trait-set-paired-slots.vue';
+import TraitSetDieRows from './trait-set-die-rows.vue';
+import TraitSetDiceCount from './trait-set-dice-count.vue';
 import TraitSetList from './trait-set-list.vue';
 
 const props = defineProps<{
@@ -39,8 +39,11 @@ const ts = useTraitSet( props, emit );
 
 const {
 	traitSet, s, submode, viewY, character,
-	getTraitSetClasses, isSelected, renderText, selectElement, updateCharacter, removeTraitSet
+	getTraitSetClasses, isSelected, renderText, selectElement, updateCharacter, removeTraitSet,
+	hasCounterColumn, getCounterLabel
 } = ts;
+
+const headerTop = computed( () => traitSet.value?.custom?.cortexToolkit?.header === 'top' );
 
 const BODY_COMPONENTS: Record<string, any> = {
 	'image': TraitSetImage,
@@ -48,13 +51,13 @@ const BODY_COMPONENTS: Record<string, any> = {
 	'pips': TraitSetPips,
 	'session-record': TraitSetSessionRecord,
 	'angled-lines': TraitSetSessionRecord,
-	'growth-ladder': TraitSetGrowthLadder,
-	'dossier-fields': TraitSetDossier,
-	'skills-specialties': TraitSetSkills,
-	'talents-table': TraitSetTalents,
-	'standing': TraitSetStanding,
-	'badges-table': TraitSetBadges,
-	'resources-count': TraitSetResourcesCount
+	'dice-ladder': TraitSetDiceLadder,
+	'labeled-fields': TraitSetLabeledFields,
+	'subtrait-columns': TraitSetSubtraitColumns,
+	'three-column-table': TraitSetThreeColumnTable,
+	'paired-slots': TraitSetPairedSlots,
+	'die-rows': TraitSetDieRows,
+	'dice-count': TraitSetDiceCount
 };
 
 const bodyComponent = computed( () => {
@@ -70,7 +73,8 @@ const bodyComponent = computed( () => {
 				<div :class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
 					@click.stop="selectElement([ 'traitSet', s ])"
 				>
-					<div>{{ traitSet.name }}</div>
+					<div class="trait-set-header-name">{{ traitSet.name }}</div>
+					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>
 				</div>
 			</transition>
 

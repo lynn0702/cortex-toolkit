@@ -217,7 +217,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Core baseline d6 skills with branching d8+ specialties",
           "nounSingular": "Skills & Specialtie",
@@ -510,7 +510,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "skills-specialties"
+                "body": "subtrait-columns"
               },
               "setDie": 6,
               "subtraitRatingScale": [
@@ -596,7 +596,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "talents-table"
+                "body": "three-column-table"
               },
               "multiDie": false,
               "stressConfig": {
@@ -1695,7 +1695,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "standing",
+          "id": "paired-slots",
           "name": "Standing",
           "description": "Camp social standing with complication and bonus dice",
           "nounSingular": "Standing",
@@ -1909,7 +1909,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "standing"
+                "body": "paired-slots"
               },
               "ratingPosition": "inline",
               "ratingScale": [
@@ -1946,168 +1946,7 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Badges",
           "hasCounterColumn": true,
           "counterLabel": "XP",
-          "traits": [
-            {
-              "name": "Investigation",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Local Folklore",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Baking",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Boating",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Campfire Cooking",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Camping",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Cryptid Identification",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Exploring Camp Bewilderwood",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Fire Building",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Fun with Physics",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Leather Working",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Plant Identification and Uses",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Reading Nature",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Story Telling",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Swimming",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Tracking",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
+          "traits": [],
           "sfx": [],
           "tags": [],
           "custom": {
@@ -2118,10 +1957,11 @@ const cortexSpotlightTemplates = [
                 "subtraits": false
               },
               "location": "right",
+              "header": "top",
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "badges-table"
+                "body": "die-rows"
               },
               "hasCounterColumn": true,
               "counterLabel": "XP",
@@ -2137,7 +1977,7 @@ const cortexSpotlightTemplates = [
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 16
+              "reservedSlots": 17
             }
           }
         },
@@ -2182,7 +2022,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "talents-table"
+                "body": "three-column-table"
               },
               "multiDie": false,
               "stressConfig": {
@@ -2425,7 +2265,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "resources-count"
+                "body": "dice-count"
               },
               "multiDie": true,
               "stressConfig": {
@@ -2656,7 +2496,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "skills-specialties"
+                "body": "subtrait-columns"
               },
               "multiDie": false,
               "stressConfig": {
@@ -4217,7 +4057,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "resources-count"
+                "body": "dice-count"
               },
               "multiDie": true,
               "stressConfig": {
@@ -4971,8 +4811,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               },
               "colSpan": "full",
               "columnSpan": "full"
@@ -5059,8 +4899,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5145,8 +4985,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5231,8 +5071,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5317,8 +5157,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5403,8 +5243,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               },
               "colSpan": "full",
               "columnSpan": "full"
@@ -5491,8 +5331,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5577,8 +5417,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5663,8 +5503,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5749,8 +5589,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5855,8 +5695,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -5961,8 +5801,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -6067,8 +5907,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -6173,8 +6013,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -6279,8 +6119,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -6385,8 +6225,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               }
             }
           }
@@ -6822,8 +6662,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "growth-ladder",
-                "body": "growth-ladder"
+                "header": "dice-ladder",
+                "body": "dice-ladder"
               }
             }
           }
@@ -7131,8 +6971,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "dossier-fields",
-                "body": "dossier-fields"
+                "header": "labeled-fields",
+                "body": "labeled-fields"
               },
               "colSpan": "full",
               "columnSpan": "full"
@@ -7642,8 +7482,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "growth-ladder",
-                "body": "growth-ladder"
+                "header": "dice-ladder",
+                "body": "dice-ladder"
               }
             }
           }
@@ -8694,7 +8534,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
           "nounSingular": "Skills & Specialtie",
@@ -9258,7 +9098,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Flight and tactical skills with veteran specialties",
           "nounSingular": "Skills & Specialtie",
@@ -9505,7 +9345,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills",
           "description": "Practical survival disciplines with specialized traits",
           "nounSingular": "Skills & Specialtie",
@@ -10203,7 +10043,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "talents-table"
+                "body": "three-column-table"
               },
               "multiDie": false,
               "stressConfig": {
@@ -10378,7 +10218,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "growth-ladder"
+                "body": "dice-ladder"
               },
               "multiDie": false,
               "stressConfig": {
@@ -11882,7 +11722,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Black-ops competencies and weapon proficiencies",
           "nounSingular": "Skills & Specialtie",
@@ -12060,8 +11900,8 @@ const cortexSpotlightTemplates = [
               "location": "center",
               "page": 1,
               "style": {
-                "header": "talents-table",
-                "body": "talents-table"
+                "header": "three-column-table",
+                "body": "three-column-table"
               },
               "colSpan": 2,
               "columnSpan": 2
@@ -12461,7 +12301,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Ecological competencies and craft specialties",
           "nounSingular": "Skills & Specialtie",
@@ -12581,7 +12421,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "skills-specialties"
+                "body": "subtrait-columns"
               },
               "multiDie": false,
               "stressConfig": {
@@ -13045,8 +12885,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "growth-ladder",
-                "body": "growth-ladder"
+                "header": "dice-ladder",
+                "body": "dice-ladder"
               },
               "colWidth": 25
             }
@@ -14152,8 +13992,8 @@ const cortexSpotlightTemplates = [
               "location": "right",
               "page": 1,
               "style": {
-                "header": "growth-ladder",
-                "body": "growth-ladder"
+                "header": "dice-ladder",
+                "body": "dice-ladder"
               }
             }
           }
@@ -14440,7 +14280,7 @@ const cortexSpotlightTemplates = [
           }
         },
         {
-          "id": "skills-specialties",
+          "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Multiverse capabilities and technical proficiencies",
           "nounSingular": "Skills & Specialtie",
@@ -14704,8 +14544,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 1,
               "style": {
-                "header": "growth-ladder",
-                "body": "growth-ladder"
+                "header": "dice-ladder",
+                "body": "dice-ladder"
               }
             }
           }
@@ -14780,8 +14620,8 @@ const cortexSpotlightTemplates = [
               "location": "center",
               "page": 1,
               "style": {
-                "header": "growth-ladder",
-                "body": "growth-ladder"
+                "header": "dice-ladder",
+                "body": "dice-ladder"
               }
             }
           }
@@ -15048,8 +14888,8 @@ const cortexSpotlightTemplates = [
               "location": "left",
               "page": 2,
               "style": {
-                "header": "talents-table",
-                "body": "talents-table"
+                "header": "three-column-table",
+                "body": "three-column-table"
               },
               "multiDie": false,
               "stressConfig": {
@@ -16355,7 +16195,7 @@ const cortexSpotlightTemplates = [
               "page": 1,
               "style": {
                 "header": "default",
-                "body": "growth-ladder"
+                "body": "dice-ladder"
               },
               "multiDie": false,
               "stressConfig": {

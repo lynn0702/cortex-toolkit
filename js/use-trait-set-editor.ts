@@ -1,6 +1,6 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import type { Character, TraitSet, CortexToolkitCustom, HaloConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
+import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
 	[ key: string ]: any;
@@ -29,19 +29,19 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const styleOptions = [
 		{ id: 'default',              label: 'Default' },
-		{ id: 'halo',                 label: 'Portrait Halo' },
+		{ id: 'portrait-ring',        label: 'Portrait Ring' },
 		{ id: 'two-columns-compact',  label: 'Compact Columns' },
 		{ id: 'two-columns-detailed', label: 'Detailed Columns' },
 		{ id: 'distinctions',         label: 'Distinctions' },
 		{ id: 'assets',               label: 'Assets' },
 		{ id: 'resources',            label: 'Resources' },
-		{ id: 'resources-count',      label: 'Resources Count' },
-		{ id: 'skills-specialties',   label: 'Skills & Specialties' },
-		{ id: 'standing',             label: 'Standing' },
-		{ id: 'badges-table',         label: 'Badges Table' },
-		{ id: 'talents-table',        label: 'Talents Table' },
-		{ id: 'growth-ladder',        label: 'Growth Ladder' },
-		{ id: 'dossier-fields',       label: 'Dossier Fields' },
+		{ id: 'dice-count',           label: 'Dice Count' },
+		{ id: 'subtrait-columns',     label: 'Subtrait Columns' },
+		{ id: 'paired-slots',         label: 'Paired Slots' },
+		{ id: 'die-rows',             label: 'Die Rows' },
+		{ id: 'three-column-table',   label: 'Three Column Table' },
+		{ id: 'dice-ladder',          label: 'Dice Ladder' },
+		{ id: 'labeled-fields',       label: 'Labeled Fields' },
 		{ id: 'stress',               label: 'Stress' },
 		{ id: 'list',                 label: 'List' },
 		{ id: 'notes',                label: 'Notes' },
@@ -82,44 +82,44 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const styleBody = computed({
 		get: () => {
 			const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
-			if ( body === 'halo' || body === 'attributes' ) {
-				return 'halo';
+			if ( body === 'portrait-ring' || body === 'attributes' ) {
+				return 'portrait-ring';
 			}
-			// Backwards compatibility: default Attributes trait set to Halo when no style (or default) is specified
+			// Backwards compatibility: default Attributes trait set to Ring when no style (or default) is specified
 			if ( !body || body === 'default' ) {
 				if ( traitSet.value?.custom?.cortexToolkit?.location === 'attributes' ||
-					( isAttributesSet.value && cortexFunctions.getHaloTraitRing( traitSet.value ) !== false ) ) {
-					return 'halo';
+					( isAttributesSet.value && cortexFunctions.getRingTrait( traitSet.value ) !== false ) ) {
+					return 'portrait-ring';
 				}
 			}
 			return body || 'default';
 		},
 		set: ( value: string ) => {
-			if ( value === 'halo' ) {
-				// 1. Unset halo on any other trait sets in this character
+			if ( value === 'portrait-ring' ) {
+				// 1. Unset ring on any other trait sets in this character
 				props.character.traitSets.forEach( ( ts: any, idx: number ) => {
 					if ( idx !== props.traitSetID ) {
 						const tsBody = ts.custom?.cortexToolkit?.style?.body;
-						if ( tsBody === 'halo' || tsBody === 'attributes' || ts.custom?.cortexToolkit?.location === 'attributes' || cortexFunctions.getHaloTraitRing( ts ) ) {
+						if ( tsBody === 'portrait-ring' || tsBody === 'attributes' || ts.custom?.cortexToolkit?.location === 'attributes' || cortexFunctions.getRingTrait( ts ) ) {
 							if ( !ts.custom ) ts.custom = {};
 							if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
 							if ( !ts.custom.cortexToolkit.style ) ts.custom.cortexToolkit.style = {};
 							ts.custom.cortexToolkit.style.body = 'default';
 							ts.custom.cortexToolkit.style.header = 'default';
 							ts.custom.cortexToolkit.location = 'right';
-							ts.custom.cortexToolkit.haloTraitRing = false;
+							ts.custom.cortexToolkit.ringTrait = false;
 						}
 					}
 				});
 
-				// 2. Set halo on this trait set
+				// 2. Set ring on this trait set
 				if ( !traitSet.value.custom ) traitSet.value.custom = {};
 				if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
 				if ( !traitSet.value.custom.cortexToolkit.style ) traitSet.value.custom.cortexToolkit.style = {};
-				traitSet.value.custom.cortexToolkit.style.body = 'halo';
-				traitSet.value.custom.cortexToolkit.style.header = 'halo';
+				traitSet.value.custom.cortexToolkit.style.body = 'portrait-ring';
+				traitSet.value.custom.cortexToolkit.style.header = 'portrait-ring';
 				traitSet.value.custom.cortexToolkit.location = 'attributes';
-				traitSet.value.custom.cortexToolkit.haloTraitRing = true;
+				traitSet.value.custom.cortexToolkit.ringTrait = true;
 				traitSet.value.custom.cortexToolkit.isAttributes = true;
 			} else {
 				if ( !traitSet.value.custom ) traitSet.value.custom = {};
@@ -130,7 +130,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				if ( traitSet.value.custom.cortexToolkit.location === 'attributes' ) {
 					traitSet.value.custom.cortexToolkit.location = 'right';
 				}
-				traitSet.value.custom.cortexToolkit.haloTraitRing = false;
+				traitSet.value.custom.cortexToolkit.ringTrait = false;
 				// Spotlight PDF styles: seed the feature flags their layouts need.
 				if ( !traitSet.value.custom.cortexToolkit.features ) {
 					traitSet.value.custom.cortexToolkit.features = { description: false, sfx: false, subtraits: false };
@@ -145,20 +145,20 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	});
 
-	const isHalo = computed( () => styleBody.value === 'halo' );
+	const isRing = computed( () => styleBody.value === 'portrait-ring' );
 
 	const isAttributesSet = computed( () => Boolean(
 		traitSet.value?.custom?.cortexToolkit?.location === 'attributes' ||
 		traitSet.value?.custom?.cortexToolkit?.isAttributes ||
 		traitSet.value?.custom?.cortexToolkit?.style?.body === 'attributes' ||
-		traitSet.value?.custom?.cortexToolkit?.style?.body === 'halo' ||
+		traitSet.value?.custom?.cortexToolkit?.style?.body === 'portrait-ring' ||
 		traitSet.value?.nounSingular?.toLowerCase() === 'attribute' ||
 		traitSet.value?.name?.trim().toLowerCase() === 'attributes'
 	) );
 
-	const haloTraitRing = computed({
-		get: () => isHalo.value,
-		set: ( value: boolean ) => { styleBody.value = value ? 'halo' : 'default'; }
+	const ringTrait = computed({
+		get: () => isRing.value,
+		set: ( value: boolean ) => { styleBody.value = value ? 'portrait-ring' : 'default'; }
 	});
 
 	const pageNumber = computed({
@@ -265,26 +265,26 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return props.character?.custom?.cortexToolkit?.style?.hasAttributes === false;
 	});
 
-	const haloSpread = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.arcSpread ?? 100,
-		set: ( val: number ) => { setHaloConfig( 'arcSpread', Number( val ) ); }
+	const ringSpread = computed({
+		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.arcSpread ?? 100,
+		set: ( val: number ) => { setRingConfig( 'arcSpread', Number( val ) ); }
 	});
 
-	const haloDistance = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.arcDistance ?? 0,
-		set: ( val: number ) => { setHaloConfig( 'arcDistance', Number( val ) ); }
+	const ringDistance = computed({
+		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.arcDistance ?? 0,
+		set: ( val: number ) => { setRingConfig( 'arcDistance', Number( val ) ); }
 	});
 
-	const haloAngle = computed({
+	const ringAngle = computed({
 		get: () => {
-			const cfg = traitSet.value?.custom?.cortexToolkit?.haloConfig;
+			const cfg = traitSet.value?.custom?.cortexToolkit?.ringConfig;
 			return cfg?.arcAngle ?? ( cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90 );
 		},
-		set: ( val: number ) => { setHaloConfig( 'arcAngle', Number( val ) ); }
+		set: ( val: number ) => { setRingConfig( 'arcAngle', Number( val ) ); }
 	});
 
-	const haloAngleLabel = computed( () => {
-		const a = haloAngle.value;
+	const ringAngleLabel = computed( () => {
+		const a = ringAngle.value;
 		if ( a === 0 ) return 'Bottom';
 		if ( a === -90 ) return 'Right';
 		if ( a === 90 ) return 'Left';
@@ -293,8 +293,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const scaleAngle = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleAngle ?? 0,
-		set: ( val: number ) => { setHaloConfig( 'scaleAngle', Number( val ) ); }
+		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleAngle ?? 0,
+		set: ( val: number ) => { setRingConfig( 'scaleAngle', Number( val ) ); }
 	});
 
 	const scaleAngleLabel = computed( () => {
@@ -307,18 +307,18 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const scaleDistance = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleDistance ?? 0,
-		set: ( val: number ) => { setHaloConfig( 'scaleDistance', Number( val ) ); }
+		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleDistance ?? 0,
+		set: ( val: number ) => { setRingConfig( 'scaleDistance', Number( val ) ); }
 	});
 
-	const haloScaleY = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleDieY ?? 0,
-		set: ( val: number ) => { setHaloConfig( 'scaleDieY', Number( val ) ); }
+	const ringScaleY = computed({
+		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleDieY ?? 0,
+		set: ( val: number ) => { setRingConfig( 'scaleDieY', Number( val ) ); }
 	});
 
-	const haloScaleX = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.haloConfig?.scaleDieX ?? 0,
-		set: ( val: number ) => { setHaloConfig( 'scaleDieX', Number( val ) ); }
+	const ringScaleX = computed({
+		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleDieX ?? 0,
+		set: ( val: number ) => { setRingConfig( 'scaleDieX', Number( val ) ); }
 	});
 
 	const scaleDieValue = computed({
@@ -570,14 +570,28 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	// Styles sampled from the official Spotlight character sheet PDFs.
 	// Talents rows and dossier fields carry no dice.
-	const needsDiceUI = computed( () => styleBody.value !== 'talents-table' && styleBody.value !== 'dossier-fields' );
+	const needsDiceUI = computed( () => styleBody.value !== 'three-column-table' && styleBody.value !== 'labeled-fields' );
 
 	// Fixed-layout styles manage their own internal columns.
-	const allowsTraitColumns = computed( () => ![ 'skills-specialties', 'talents-table', 'standing', 'badges-table', 'resources-count', 'growth-ladder', 'dossier-fields' ].includes( styleBody.value ) );
+	const allowsTraitColumns = computed( () => ![ 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'dice-ladder', 'labeled-fields' ].includes( styleBody.value ) );
 
 	const editorDock = computed({
 		get: () => traitSet.value?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left',
 		set: ( val: 'left' | 'right' ) => { setCustomProperty( 'editorDock', val === 'right' ? 'right' : 'left' ); }
+	});
+
+	// Set header placement + alignment (generic; applies to every style).
+	const headerMode = computed({
+		get: () => ( traitSet.value?.custom?.cortexToolkit?.header === 'top' ? 'top' : 'sidebar' ),
+		set: ( val: 'sidebar' | 'top' ) => { setCustomProperty( 'header', val === 'top' ? 'top' : 'sidebar' ); }
+	});
+
+	const headerAlign = computed({
+		get: () => {
+			const a = traitSet.value?.custom?.cortexToolkit?.headerAlign;
+			return a === 'center' || a === 'right' ? a : 'left';
+		},
+		set: ( val: 'left' | 'center' | 'right' ) => { setCustomProperty( 'headerAlign', val === 'center' || val === 'right' ? val : 'left' ); }
 	});
 
 	// Branched Skills connectors (per-specialty arrows) are optional.
@@ -754,12 +768,12 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return -1;
 	}
 
-	function setHaloConfig( key: keyof HaloConfig, value: any ) {
+	function setRingConfig( key: keyof RingConfig, value: any ) {
 		let s = props.traitSetID;
 		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
 		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit.haloConfig ) {
-			props.character.traitSets[s].custom.cortexToolkit.haloConfig = {
+		if ( !props.character.traitSets[s].custom.cortexToolkit.ringConfig ) {
+			props.character.traitSets[s].custom.cortexToolkit.ringConfig = {
 				arcAngle: -90,
 				arcSpread: 100,
 				arcDistance: 0,
@@ -770,15 +784,15 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				arcSlide: 0
 			};
 		}
-		ctkFor( s ).haloConfig![ key ] = value;
+		ctkFor( s ).ringConfig![ key ] = value;
 		updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 	}
 
-	function resetHaloPlacement() {
+	function resetRingPlacement() {
 		let s = props.traitSetID;
 		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
 		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		props.character.traitSets[s].custom.cortexToolkit.haloConfig = {
+		props.character.traitSets[s].custom.cortexToolkit.ringConfig = {
 			arcAngle: -90,
 			arcSpread: 100,
 			arcDistance: 0,
@@ -1162,20 +1176,20 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const api: TraitSetEditorApi = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
-		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isHalo, isAttributesSet,
-		haloTraitRing, pageNumber, columnLocation, characterColumnCount, setTrackCount, isFullWidthSpan, colSpan,
+		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
+		ringTrait, pageNumber, columnLocation, characterColumnCount, setTrackCount, isFullWidthSpan, colSpan,
 		rowBreak, templateEntry, restorableTraitNames, colWidth, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
-		haloSpread, haloDistance, haloAngle, haloAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
-		haloScaleY, haloScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
+		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
+		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		multiDie, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
 		hasAttachedStress, attachedStressLabel, attachedStressScale, attachedStressOut, ratingPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled,
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
-		editorDock, branchArrows, cssClass,
+		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
 		duplicateTraitSet, restoreTrait, setColumn, moveTraitSetUp, moveTraitSetDown, isFullWidthSetByIndex,
-		pageOfSet, columnOfSet, findMoveTarget, setHaloConfig, resetHaloPlacement, setFeature,
+		pageOfSet, columnOfSet, findMoveTarget, setRingConfig, resetRingPlacement, setFeature,
 		setCustomProperty, styleLabel, setStyleLabel, setStressConfig, setImageConfig, uploadImageStart,
 		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset, getDieDisplayValue,

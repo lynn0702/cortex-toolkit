@@ -2,45 +2,45 @@
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
-	isHalo, haloAngle, haloAngleLabel, haloSpread, haloDistance, scaleAngle, scaleAngleLabel,
-	scaleDistance, haloScaleX, haloScaleY, resetHaloPlacement, scaleDieValue
+	isRing, ringAngle, ringAngleLabel, ringSpread, ringDistance, scaleAngle, scaleAngleLabel,
+	scaleDistance, ringScaleX, ringScaleY, resetRingPlacement, scaleDieValue
 } = injectTraitSetEditor();
 </script>
 
 <template>
-	<!-- HALO & SCALE DIE POSITIONING CONTROLS -->
-	<div class="editor-field" v-if="isHalo">
-		<label>Halo & Scale Die Placement</label>
+	<!-- RING & SCALE DIE POSITIONING CONTROLS -->
+	<div class="editor-field" v-if="isRing">
+		<label>Ring & Scale Die Placement</label>
 
-		<div class="halo-sliders">
+		<div class="ring-sliders">
 			<div class="slider-row">
 				<div class="slider-header">
 					<span>Arc Position</span>
-					<span class="slider-val">{{ haloAngleLabel }}</span>
+					<span class="slider-val">{{ ringAngleLabel }}</span>
 				</div>
-				<div class="halo-presets">
-				<button type="button" class="btn-preset" :class="{ active: haloAngle === 0 }" @click.stop="haloAngle = 0">Bottom</button>
-				<button type="button" class="btn-preset" :class="{ active: haloAngle === 90 }" @click.stop="haloAngle = 90">Left</button>
-				<button type="button" class="btn-preset" :class="{ active: haloAngle === -90 }" @click.stop="haloAngle = -90">Right</button>
-				<button type="button" class="btn-preset" :class="{ active: Math.abs(haloAngle) === 180 }" @click.stop="haloAngle = 180">Top</button>
+				<div class="ring-presets">
+				<button type="button" class="btn-preset" :class="{ active: ringAngle === 0 }" @click.stop="ringAngle = 0">Bottom</button>
+				<button type="button" class="btn-preset" :class="{ active: ringAngle === 90 }" @click.stop="ringAngle = 90">Left</button>
+				<button type="button" class="btn-preset" :class="{ active: ringAngle === -90 }" @click.stop="ringAngle = -90">Right</button>
+				<button type="button" class="btn-preset" :class="{ active: Math.abs(ringAngle) === 180 }" @click.stop="ringAngle = 180">Top</button>
 				</div>
-				<input type="range" min="-180" max="180" step="5" v-model.number="haloAngle">
+				<input type="range" min="-180" max="180" step="5" v-model.number="ringAngle">
 			</div>
 
 			<div class="slider-row">
 				<div class="slider-header">
 					<span>Arc Spread</span>
-					<span class="slider-val">{{ haloSpread }}%</span>
+					<span class="slider-val">{{ ringSpread }}%</span>
 				</div>
-				<input type="range" min="40" max="160" step="5" v-model.number="haloSpread">
+				<input type="range" min="40" max="160" step="5" v-model.number="ringSpread">
 			</div>
 
 			<div class="slider-row">
 				<div class="slider-header">
 					<span>Arc Distance</span>
-					<span class="slider-val">{{ haloDistance > 0 ? '+' + haloDistance : haloDistance }} mm</span>
+					<span class="slider-val">{{ ringDistance > 0 ? '+' + ringDistance : ringDistance }} mm</span>
 				</div>
-				<input type="range" min="-15" max="25" step="1" v-model.number="haloDistance">
+				<input type="range" min="-15" max="25" step="1" v-model.number="ringDistance">
 			</div>
 
 			<div class="slider-row">
@@ -48,7 +48,7 @@ const {
 					<span>Scale Die Angle</span>
 					<span class="slider-val">{{ scaleAngleLabel }}</span>
 				</div>
-				<div class="halo-presets">
+				<div class="ring-presets">
 					<button type="button" class="btn-preset" :class="{ active: scaleAngle === 0 }" @click.stop="scaleAngle = 0">Bottom (0°)</button>
 					<button type="button" class="btn-preset" :class="{ active: scaleAngle === 90 }" @click.stop="scaleAngle = 90">Left (+90°)</button>
 					<button type="button" class="btn-preset" :class="{ active: scaleAngle === -90 }" @click.stop="scaleAngle = -90">Right (-90°)</button>
@@ -68,29 +68,29 @@ const {
 			<div class="slider-row">
 				<div class="slider-header">
 					<span>Scale Die Offset X</span>
-					<span class="slider-val">{{ haloScaleX > 0 ? '+' + haloScaleX : haloScaleX }} mm</span>
+					<span class="slider-val">{{ ringScaleX > 0 ? '+' + ringScaleX : ringScaleX }} mm</span>
 				</div>
-				<input type="range" min="-40" max="40" step="1" v-model.number="haloScaleX">
+				<input type="range" min="-40" max="40" step="1" v-model.number="ringScaleX">
 			</div>
 
 			<div class="slider-row">
 				<div class="slider-header">
 					<span>Scale Die Offset Y</span>
-					<span class="slider-val">{{ haloScaleY > 0 ? '+' + haloScaleY : haloScaleY }} mm</span>
+					<span class="slider-val">{{ ringScaleY > 0 ? '+' + ringScaleY : ringScaleY }} mm</span>
 				</div>
-				<input type="range" min="-40" max="40" step="1" v-model.number="haloScaleY">
+				<input type="range" min="-40" max="40" step="1" v-model.number="ringScaleY">
 			</div>
 
 			<div class="slider-actions">
-				<button type="button" class="btn-reset-halo" @click.stop="resetHaloPlacement">
+				<button type="button" class="btn-reset-ring" @click.stop="resetRingPlacement">
 					<i class="fas fa-rotate-left"></i> Reset to Defaults
 				</button>
 			</div>
 		</div>
 	</div>
 
-	<!-- SCALE DIE OPTION FOR HALO -->
-	<div class="editor-field" v-if="isHalo">
+	<!-- SCALE DIE OPTION FOR RING -->
+	<div class="editor-field" v-if="isRing">
 		<label>Scale Die</label>
 		<select v-model.number="scaleDieValue">
 			<option :value="0">None</option>

@@ -418,7 +418,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "growth-ladder"
+              "body": "dice-ladder"
             },
             "multiDie": false,
             "stressConfig": {

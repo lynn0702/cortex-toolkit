@@ -8,7 +8,7 @@ const props = defineProps<{
 	editing: any;
 	submode?: string | null;
 	viewY?: number | null;
-	haloTraitID: number;
+	ringTraitID: number;
 }>();
 
 const emit = defineEmits<{
@@ -20,28 +20,28 @@ const emit = defineEmits<{
 
 const rootEl = ref<HTMLElement | null>( null );
 
-const isHaloDragging = ref( false );
+const isRingDragging = ref( false );
 const dragArcAngle = ref<number | null>( null );
 const dragScaleAngle = ref<number | null>( null );
 
-const haloTraitSet = computed( () => props.character?.traitSets?.[ props.haloTraitID ] ?? null );
+const ringTraitSet = computed( () => props.character?.traitSets?.[ props.ringTraitID ] ?? null );
 const scaleTrait = computed( () => {
-	const attrSet = haloTraitSet.value;
+	const attrSet = ringTraitSet.value;
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
 	return attrSet.traits.find( ( t: any ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
 } );
 const attributes = computed( () => {
-	const all = haloTraitSet.value?.traits || [];
+	const all = ringTraitSet.value?.traits || [];
 	return all.filter( ( t: any ) => !( t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale ) );
 } );
-const isHaloChallengePool = computed( () => {
-	const ts = haloTraitSet.value;
+const isRingChallengePool = computed( () => {
+	const ts = ringTraitSet.value;
 	return Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
 } );
 const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
 	if ( st ) return Number( st.value ) || 8;
-	const attrSet = haloTraitSet.value;
+	const attrSet = ringTraitSet.value;
 	if ( attrSet?.custom?.cortexToolkit?.scaleDie ) {
 		return Number( attrSet.custom.cortexToolkit.scaleDie );
 	}
@@ -50,12 +50,12 @@ const scaleDieValue = computed( () => {
 	}
 	return 0;
 } );
-const isAttributeEditorOpen = computed( () => Boolean( props.editing && props.editing[ 0 ] === 'trait' && props.editing[ 1 ] === props.haloTraitID ) );
+const isAttributeEditorOpen = computed( () => Boolean( props.editing && props.editing[ 0 ] === 'trait' && props.editing[ 1 ] === props.ringTraitID ) );
 const isOtherEditorOpen = computed( () => Boolean( props.editing && props.editing.length > 0 && !isSelected( [ 'scaleDie' ] ) ) );
 
-const haloConfig = computed( () => {
-	const attrSet = haloTraitSet.value;
-	const cfg = attrSet?.custom?.cortexToolkit?.haloConfig;
+const ringConfig = computed( () => {
+	const attrSet = ringTraitSet.value;
+	const cfg = attrSet?.custom?.cortexToolkit?.ringConfig;
 	const baseArcAngle = cfg?.arcAngle ?? ( cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90 );
 	const baseScaleAngle = cfg?.scaleAngle ?? 0;
 	return {
@@ -86,7 +86,7 @@ function renderDieValue( value: any ) {
 }
 
 function getAttributeAngle( a: number ) {
-	const cfg = haloConfig.value;
+	const cfg = ringConfig.value;
 	const centerAngle = 90 + ( cfg.arcAngle ?? -90 );
 	const spreadFactor = ( cfg.arcSpread ?? 100 ) / 100;
 	const totalSpan = 85 * spreadFactor;
@@ -102,7 +102,7 @@ function getAttributeAngle( a: number ) {
 }
 
 function getAttributeStyle( a: number ) {
-	const cfg = haloConfig.value;
+	const cfg = ringConfig.value;
 	const angleDeg = getAttributeAngle( a );
 	const rad = angleDeg * Math.PI / 180;
 	const cos = Math.cos( rad );
@@ -141,10 +141,10 @@ function getAttributeNameStyle( a: number ) {
 	return `position: absolute; left: 50%; top: calc(50% + ${offY.toFixed( 2 )}mm); transform: translate(-50%, 0); text-align: center;`;
 }
 
-function handleAttributeClick( haloTraitIDVal: number, a: number, attribute: any ) {
-	if ( isHaloDragging.value ) return;
+function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any ) {
+	if ( isRingDragging.value ) return;
 	if ( props.submode === 'play' ) {
-		const ts = props.character.traitSets[ haloTraitIDVal ];
+		const ts = props.character.traitSets[ ringTraitIDVal ];
 		const isChallenge = Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
 		if ( isChallenge ) {
 			const diceToAdd: any[] = [];
@@ -171,12 +171,12 @@ function handleAttributeClick( haloTraitIDVal: number, a: number, attribute: any
 			}
 		}
 	} else {
-		selectElement( [ 'trait', haloTraitIDVal, a ] );
+		selectElement( [ 'trait', ringTraitIDVal, a ] );
 	}
 }
 
 function handleScaleDieClick() {
-	if ( isHaloDragging.value ) return;
+	if ( isRingDragging.value ) return;
 	if ( props.submode === 'play' ) {
 		if ( scaleDieValue.value > 0 ) {
 			emit( 'addDieToRoller', {
@@ -191,7 +191,7 @@ function handleScaleDieClick() {
 			return;
 		}
 		if ( scaleTrait.value ) {
-			const attrSetID = props.haloTraitID;
+			const attrSetID = props.ringTraitID;
 			const traitIdx = props.character.traitSets[ attrSetID ].traits.indexOf( scaleTrait.value );
 			if ( traitIdx !== -1 ) {
 				selectElement( [ 'trait', attrSetID, traitIdx ] );
@@ -202,7 +202,7 @@ function handleScaleDieClick() {
 	}
 }
 
-function startHaloDrag( event: any, targetType: string ) {
+function startRingDrag( event: any, targetType: string ) {
 	if ( props.submode !== 'edit' ) return;
 
 	const host = rootEl.value?.closest( '.portrait' ) || rootEl.value;
@@ -220,8 +220,8 @@ function startHaloDrag( event: any, targetType: string ) {
 	const initialRad = Math.atan2( startY - centerY, startX - centerX );
 	const initialDeg = initialRad * 180 / Math.PI;
 
-	const startArcAngle = haloConfig.value.arcAngle ?? -90;
-	const startScaleAngle = haloConfig.value.scaleAngle ?? 0;
+	const startArcAngle = ringConfig.value.arcAngle ?? -90;
+	const startScaleAngle = ringConfig.value.scaleAngle ?? 0;
 
 	let hasMoved = false;
 
@@ -233,7 +233,7 @@ function startHaloDrag( event: any, targetType: string ) {
 		const dist = Math.hypot( clientX - startX, clientY - startY );
 		if ( dist > 4 ) {
 			hasMoved = true;
-			isHaloDragging.value = true;
+			isRingDragging.value = true;
 		}
 
 		if ( !hasMoved ) return;
@@ -268,20 +268,20 @@ function startHaloDrag( event: any, targetType: string ) {
 
 		if ( hasMoved ) {
 			if ( targetType === 'traits' && dragArcAngle.value !== null ) {
-				setHaloConfigProp( 'arcAngle', dragArcAngle.value );
+				setRingConfigProp( 'arcAngle', dragArcAngle.value );
 			} else if ( targetType === 'scale' && dragScaleAngle.value !== null ) {
-				setHaloConfigProp( 'scaleAngle', dragScaleAngle.value );
+				setRingConfigProp( 'scaleAngle', dragScaleAngle.value );
 			}
 			dragArcAngle.value = null;
 			dragScaleAngle.value = null;
 			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 			setTimeout( () => {
-				isHaloDragging.value = false;
+				isRingDragging.value = false;
 			}, 60 );
 		} else {
 			dragArcAngle.value = null;
 			dragScaleAngle.value = null;
-			isHaloDragging.value = false;
+			isRingDragging.value = false;
 		}
 	};
 
@@ -291,13 +291,13 @@ function startHaloDrag( event: any, targetType: string ) {
 	window.addEventListener( 'touchend', onUp );
 }
 
-function setHaloConfigProp( key: string, value: any ) {
-	const attrSet = haloTraitSet.value;
+function setRingConfigProp( key: string, value: any ) {
+	const attrSet = ringTraitSet.value;
 	if ( attrSet ) {
 		if ( !attrSet.custom ) attrSet.custom = {};
 		if ( !attrSet.custom.cortexToolkit ) attrSet.custom.cortexToolkit = {};
-		if ( !attrSet.custom.cortexToolkit.haloConfig ) {
-			attrSet.custom.cortexToolkit.haloConfig = {
+		if ( !attrSet.custom.cortexToolkit.ringConfig ) {
+			attrSet.custom.cortexToolkit.ringConfig = {
 				arcAngle: -90,
 				arcSpread: 100,
 				arcDistance: 0,
@@ -307,13 +307,13 @@ function setHaloConfigProp( key: string, value: any ) {
 				scaleDieY: 0
 			};
 		}
-		attrSet.custom.cortexToolkit.haloConfig[ key ] = value;
+		attrSet.custom.cortexToolkit.ringConfig[ key ] = value;
 	}
 }
 
 function setScaleDieValue( val: any ) {
 	const num = Number( val ) || 0;
-	const attrSet = haloTraitSet.value;
+	const attrSet = ringTraitSet.value;
 	if ( attrSet ) {
 		if ( !attrSet.custom ) attrSet.custom = {};
 		if ( !attrSet.custom.cortexToolkit ) attrSet.custom.cortexToolkit = {};
@@ -335,7 +335,7 @@ function setScaleDieValue( val: any ) {
 }
 
 function getScaleDieStyle() {
-	const cfg = haloConfig.value;
+	const cfg = ringConfig.value;
 	const R_percent = ( 29 / 84 ) * 100;
 	const angleDeg = 90 + ( cfg.scaleAngle ?? 0 );
 	const rad = angleDeg * Math.PI / 180;
@@ -361,16 +361,16 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 		>
 			<div v-for="( attribute, a ) in attributes"
 				class="attribute"
-				:class="{ 'has-open-editor': isSelected(['trait', haloTraitID, a]), 'is-draggable': submode === 'edit' }"
+				:class="{ 'has-open-editor': isSelected(['trait', ringTraitID, a]), 'is-draggable': submode === 'edit' }"
 				:style="getAttributeStyle( a )"
-				@mousedown="startHaloDrag($event, 'traits')"
-				@touchstart="startHaloDrag($event, 'traits')"
+				@mousedown="startRingDrag($event, 'traits')"
+				@touchstart="startRingDrag($event, 'traits')"
 			>
 
 				<div class="attribute-inner"
-					:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', haloTraitID, a]) }"
-					@click.stop="handleAttributeClick( haloTraitID, a, attribute )"
-					:title="submode === 'play' ? (isHaloChallengePool ? 'Challenge Pool: Click to add all dice to roller' : 'Click to add d' + attribute.value + ' to roller') : ''"
+					:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', ringTraitID, a]) }"
+					@click.stop="handleAttributeClick( ringTraitID, a, attribute )"
+					:title="submode === 'play' ? (isRingChallengePool ? 'Challenge Pool: Click to add all dice to roller' : 'Click to add d' + attribute.value + ' to roller') : ''"
 				>
 
 					<span class="c"
@@ -388,9 +388,9 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 				<transition name="editor" appear>
 					<TraitEditor
 						:character="character"
-						:open="isSelected(['trait', haloTraitID, a])"
-						v-show="submode === 'edit' && isSelected(['trait', haloTraitID, a])"
-						:traitSetID="haloTraitID"
+						:open="isSelected(['trait', ringTraitID, a])"
+						v-show="submode === 'edit' && isSelected(['trait', ringTraitID, a])"
+						:traitSetID="ringTraitID"
 						:traitID="a"
 						:viewY="viewY"
 						@selectElement="selectElement"
@@ -409,8 +409,8 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 			:class="{ 'under-editor': isOtherEditorOpen, 'is-draggable': submode === 'edit' }"
 			v-if="scaleDieValue > 0"
 			:style="getScaleDieStyle()"
-			@mousedown="startHaloDrag($event, 'scale')"
-			@touchstart="startHaloDrag($event, 'scale')"
+			@mousedown="startRingDrag($event, 'scale')"
+			@touchstart="startRingDrag($event, 'scale')"
 		>
 			<div
 				class="scale-die-inner"

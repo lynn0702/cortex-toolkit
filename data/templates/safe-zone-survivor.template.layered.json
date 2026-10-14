@@ -116,7 +116,7 @@
         }
       },
       "Skills": {
-        "id": "skills-specialties",
+        "id": "subtrait-columns",
         "description": "Practical survival disciplines with specialized traits",
         "nounSingular": "Skills & Specialtie",
         "nounPlural": "Skills & Specialties",
@@ -514,7 +514,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "talents-table"
+              "body": "three-column-table"
             },
             "multiDie": false,
             "stressConfig": {
@@ -626,7 +626,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "growth-ladder"
+              "body": "dice-ladder"
             },
             "multiDie": false,
             "stressConfig": {

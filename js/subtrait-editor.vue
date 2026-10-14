@@ -53,7 +53,7 @@ const availableValues = computed( () => {
 	const s = props.traitSetID;
 	const traitSet = props.character.traitSets[ s ];
 	const ratings = cortexFunctions.getSubtraitRatings( traitSet );
-	if ( traitSet?.custom?.cortexToolkit?.style?.body === 'standing' && subtrait.value?.name && subtrait.value.name.toUpperCase().includes( 'BONUS' ) ) {
+	if ( traitSet?.custom?.cortexToolkit?.style?.body === 'paired-slots' && subtrait.value?.name && subtrait.value.name.toUpperCase().includes( 'BONUS' ) ) {
 		if ( Array.isArray( ratings ) && ratings.length === 5 && ratings[ 0 ] === 4 ) {
 			return ratings.filter( ( size: number ) => size >= 6 );
 		}
@@ -64,7 +64,7 @@ const availableValues = computed( () => {
 const parentIsBranch = computed( () => {
 	const s = props.traitSetID;
 	const traitSet = props.character?.traitSets?.[ s ];
-	return traitSet?.custom?.cortexToolkit?.style?.body === 'skills-specialties';
+	return traitSet?.custom?.cortexToolkit?.style?.body === 'subtrait-columns';
 } );
 
 const branchSide = computed( {

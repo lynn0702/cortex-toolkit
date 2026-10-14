@@ -26,13 +26,14 @@ prompt, the prompt wins for that session — then update this file.
 
 ## Stack
 
-- Vue 3 is loaded from a CDN as a global (`Vue`). Components are `.vue`
-  single-file components (`<script setup lang="ts">`), each imported by the
-  component that uses it — there is **no global component registration**. SFCs
-  compile via `mix.vue({ version: 3 })`; an `externals: { vue: 'Vue' }` entry maps
-  the `vue` import to the CDN global, so Vue is never bundled. `mix.vue()` also
-  aliases `vue$` to the ESM bundler build — the externals entry is what keeps Vue
-  out.
+- Vue 3 is **bundled** (no CDN). Components are `.vue` single-file components
+  (`<script setup lang="ts">`), each imported by the component that uses it —
+  there is **no global component registration**. SFCs compile via
+  `mix.vue({ version: 3 })`; the alias `vue$` → `vue/dist/vue.runtime.esm-bundler.js`
+  resolves `vue` to the runtime-only ESM bundler build (templates are precompiled
+  by vue-loader, so no in-browser compiler). `DefinePlugin` sets the prod feature
+  flags. `index.html` loads only `js/app.min.js`; the app is offline-capable
+  (Google Fonts + Font Awesome remain remote).
 - `js/app.js` is the webpack entry; `import` statements ARE the load order and
   `js/app.min.js` is the bundle (see `webpack.mix.js`). It mounts `App` and sets
   the `window.app` / `cortex*` debug handles. **A new file must be imported into
@@ -78,8 +79,8 @@ prompt, the prompt wins for that session — then update this file.
   strings). Anything else needs justification in the PR/commit message.
 - Links: URLs must pass the scheme check in `renderMarkdownLinks`
   (http/https/mailto/relative only). `javascript:` and `data:` URLs are dropped.
-- After any change touching templates, run: `grep -rn 'v-html' js/*.js`
-  and confirm every site is safe.
+- After any change touching templates, run: `grep -rn 'v-html' js/`
+  (components are `.vue`/`.ts` now) and confirm every site is safe.
 
 ## Generated files — do not hand-edit
 
@@ -95,7 +96,7 @@ prompt, the prompt wins for that session — then update this file.
 1. `npm run build` passes with no errors or warnings.
 2. `npm run check` (`tsc --noEmit`) passes.
 3. New file? Imported into the graph from `js/app.js` (or intentionally standalone).
-4. `grep -rn 'v-html' js/*.js` — every site accounted for per Security rules.
+4. `grep -rn 'v-html' js/` — every site accounted for per Security rules.
 5. Smoke-tested the touched feature from the checklist below, in a real browser.
 6. Push to `main` only when 1–5 are green.
 

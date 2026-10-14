@@ -20,7 +20,7 @@ import TraitSetEditor from './trait-set-editor.vue';
 import TraitSetBlock from './trait-set-block.vue';
 import StyleGallery from './style-gallery.vue';
 import PrintToolbar from './print-toolbar.vue';
-import HaloAttributes from './halo-attributes.vue';
+import RingAttributes from './ring-attributes.vue';
 
 const props = defineProps<{
 	submode?: string | null;
@@ -42,11 +42,12 @@ const instance = getCurrentInstance();
 const rootTemplates = () => ( instance?.proxy as any )?.$root?.sheetTemplates ?? null;
 
 const rootEl = ref<HTMLElement | null>( null );
-const haloRef = ref<any>( null );
+const ringRef = ref<any>( null );
 
 const printPageView = ref<any>( 'all' );
 const printStyle = ref<string | null>( null );
 const printBlank = ref( false );
+const printBW = ref( false );
 const designerPrintPreview = ref( false );
 const showStyleGallery = ref( false );
 
@@ -63,12 +64,12 @@ const notes = computed( () => props.character?.notes ?? '' );
 const game = computed( () => props.character?.game ?? '' );
 const traitSets = computed( () => props.character?.traitSets ?? [] );
 
-const haloTraitSetIndex = computed( () => {
+const ringTraitSetIndex = computed( () => {
 	let idx = traitSets.value.findIndex( ( ts ) => {
 		const body = ts.custom?.cortexToolkit?.style?.body;
-		if ( body === 'halo' || body === 'attributes' ) return true;
-		if ( cortexFunctions.getHaloTraitRing( ts ) === true ) return true;
-		if ( ts.custom?.cortexToolkit?.location === 'attributes' && cortexFunctions.getHaloTraitRing( ts ) !== false ) return true;
+		if ( body === 'portrait-ring' || body === 'attributes' ) return true;
+		if ( cortexFunctions.getRingTrait( ts ) === true ) return true;
+		if ( ts.custom?.cortexToolkit?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
 		return false;
 	} );
 	if ( idx !== -1 ) return idx;
@@ -78,53 +79,53 @@ const haloTraitSetIndex = computed( () => {
 			ts.nounSingular?.toLowerCase() === 'attribute' ||
 			ts.name?.trim().toLowerCase() === 'attributes';
 		if ( !isAttr ) return false;
-		if ( cortexFunctions.getHaloTraitRing( ts ) === false ) return false;
+		if ( cortexFunctions.getRingTrait( ts ) === false ) return false;
 		const body = ts.custom?.cortexToolkit?.style?.body;
-		return !body || body === 'default' || body === 'attributes' || body === 'halo';
+		return !body || body === 'default' || body === 'attributes' || body === 'portrait-ring';
 	} );
 	return idx;
 } );
 
-const explicitHaloSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
+const explicitRingSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
 	const body = ts.custom?.cortexToolkit?.style?.body;
-	if ( body === 'halo' || body === 'attributes' ) return true;
-	if ( cortexFunctions.getHaloTraitRing( ts ) === true ) return true;
-	if ( ts.custom?.cortexToolkit?.location === 'attributes' && cortexFunctions.getHaloTraitRing( ts ) !== false ) return true;
+	if ( body === 'portrait-ring' || body === 'attributes' ) return true;
+	if ( cortexFunctions.getRingTrait( ts ) === true ) return true;
+	if ( ts.custom?.cortexToolkit?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
 	return false;
 } ) );
 
-const hasHaloTraitRing = computed( () => {
+const hasRingTrait = computed( () => {
 	if ( isSpotlightStyle.value ) return false;
-	if ( explicitHaloSetIndex.value !== -1 ) return true;
+	if ( explicitRingSetIndex.value !== -1 ) return true;
 	const pSize = portrait.value?.custom?.cortexToolkit?.size;
 	if ( pSize === 'spotlight' || pSize === 'none' ) return false;
-	return haloTraitSetIndex.value !== -1;
+	return ringTraitSetIndex.value !== -1;
 } );
 
-const haloTraitID = computed( () => ( hasHaloTraitRing.value ? haloTraitSetIndex.value : -1 ) );
-const haloTraitSet = computed( () => ( hasHaloTraitRing.value ? traitSets.value[ haloTraitID.value ] : null ) );
-const isHaloChallengePool = computed( () => {
-	const ts = haloTraitSet.value;
+const ringTraitID = computed( () => ( hasRingTrait.value ? ringTraitSetIndex.value : -1 ) );
+const ringTraitSet = computed( () => ( hasRingTrait.value ? traitSets.value[ ringTraitID.value ] : null ) );
+const isRingChallengePool = computed( () => {
+	const ts = ringTraitSet.value;
 	return Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
 } );
-const haloNounSingular = computed( () => {
-	const ts = haloTraitSet.value;
+const ringNounSingular = computed( () => {
+	const ts = ringTraitSet.value;
 	return ( ts?.nounSingular && ts.nounSingular.length ) ? ts.nounSingular : 'Attribute';
 } );
 const scaleTrait = computed( () => {
-	const attrSet = haloTraitSet.value;
+	const attrSet = ringTraitSet.value;
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
 	return attrSet.traits.find( ( t ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
 } );
 const attributes = computed( () => {
-	if ( !hasHaloTraitRing.value ) return [];
-	const all = haloTraitSet.value?.traits || [];
+	if ( !hasRingTrait.value ) return [];
+	const all = ringTraitSet.value?.traits || [];
 	return all.filter( ( t ) => !( t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale ) );
 } );
 const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
 	if ( st ) return Number( st.value ) || 8;
-	const attrSet = haloTraitSet.value;
+	const attrSet = ringTraitSet.value;
 	if ( attrSet?.custom?.cortexToolkit?.scaleDie ) {
 		return Number( attrSet.custom.cortexToolkit.scaleDie );
 	}
@@ -133,7 +134,7 @@ const scaleDieValue = computed( () => {
 	}
 	return 0;
 } );
-// (halo: attributes ring + scale die + drag now live in halo-attributes.vue)
+// (ring: attributes ring + scale die + drag now live in ring-attributes.vue)
 
 const pageCount = computed( () => {
 	if ( props.character?.custom?.cortexToolkit?.pageCount ) {
@@ -247,10 +248,6 @@ function openSheetEditor() { selectElement( [ 'name' ] ); }
 function openPageEditor() { selectElement( [ 'page' ] ); }
 function openDiceEditor() { selectElement( [ 'dice' ] ); }
 
-function toggleDesignerPrintPreview() {
-	designerPrintPreview.value = !designerPrintPreview.value;
-}
-
 function applyFonts() {
 	const ctk = props.character?.custom?.cortexToolkit;
 	if ( !ctk || typeof cortexFunctions === 'undefined' ) return;
@@ -276,11 +273,11 @@ function renderDieValue( value: number ) { return cortexFunctions.getDieDisplayV
 
 function getTraitSetColumn( traitSet: TraitSet ) { return gridTraitSetColumn( traitSet ); }
 function isFullWidthClassic( traitSet: TraitSet ) { return gridIsFullWidthClassic( traitSet ); }
-function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets( traitSets.value, haloTraitID.value, pageIndex ); }
+function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets( traitSets.value, ringTraitID.value, pageIndex ); }
 
 function shouldShowClassicPortrait() {
 	if ( isSpotlightStyle.value ) return false;
-	if ( explicitHaloSetIndex.value !== -1 ) return true;
+	if ( explicitRingSetIndex.value !== -1 ) return true;
 	const s = portrait.value?.custom?.cortexToolkit?.size;
 	if ( s === 'none' || s === 'spotlight' ) return false;
 	return true;
@@ -507,7 +504,7 @@ watch( () => props.character, () => {
 </script>
 
 <template>
-	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': printBlank, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
+	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': printBlank, 'print-bw': printBW, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
 	
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
@@ -515,12 +512,14 @@ watch( () => props.character, () => {
 			:printStyle="printStyle"
 			:sheetStyle="sheetStyle"
 			:printBlank="printBlank"
+			:printBW="printBW"
 			:printPageView="printPageView"
 			:pageCount="pageCount"
 			@print="print"
 			@export="exportCharacter"
 			@update:printStyle="printStyle = $event"
 			@update:printBlank="printBlank = $event"
+			@update:printBW="printBW = $event"
 			@update:printPageView="printPageView = $event"
 		/>
 
@@ -543,24 +542,6 @@ watch( () => props.character, () => {
 					<i class="fas fa-plus"></i> Add Set
 				</button>
 			</div>
-
-			<div class="toolbar-group">
-				<!-- DESIGNER PRINT VIEW TOGGLE -->
-				<button
-					type="button"
-					class="btn-toolbar-theme"
-					:class="{ active: designerPrintPreview }"
-					@click.stop="toggleDesignerPrintPreview"
-					title="Toggle Live Print View Preview in Designer"
-				>
-					<i class="fas fa-eye"></i> {{ designerPrintPreview ? 'Exit Print View' : 'Print View' }}
-				</button>
-			</div>
-		</div>
-
-		<!-- DESIGNER PRINT VIEW BANNER -->
-		<div class="designer-print-banner" v-if="designerPrintPreview && submode === 'edit'">
-			<span><i class="fas fa-eye"></i> Designer Print Preview Active — Showing exact print version layout &amp; reserved slots</span>
 		</div>
 
 		<div class="pages">
@@ -644,7 +625,6 @@ watch( () => props.character, () => {
 								></textarea>
 								<div class="desc-content" v-else-if="!printBlank && description" v-html="renderText(description)"></div>
 								<div class="desc-blank-area" v-else>
-									<div class="desc-blank-line"></div>
 									<div class="desc-blank-line"></div>
 									<div class="desc-blank-line"></div>
 								</div>
@@ -837,8 +817,8 @@ watch( () => props.character, () => {
 								</div>
 							</div>
 
-							<!-- CLASSIC PORTRAIT & HALO (PAGE 1 RIGHT ONLY) -->
-							<div :class="{ 'portrait': true, 'portrait-standalone': !hasHaloTraitRing }" v-if="pageIndex === 1 && pageLocation === 'right' && shouldShowClassicPortrait()">
+							<!-- CLASSIC PORTRAIT & RING (PAGE 1 RIGHT ONLY) -->
+							<div :class="{ 'portrait': true, 'portrait-standalone': !hasRingTrait }" v-if="pageIndex === 1 && pageLocation === 'right' && shouldShowClassicPortrait()">
 
 								<div :class="{ 'portrait-inner': true, 'selected': isSelected(['portrait']) }"
 									@click.stop="selectElement([ 'portrait' ])"
@@ -848,15 +828,15 @@ watch( () => props.character, () => {
 									</div>
 								</div>
 
-								<!-- ATTRIBUTES GRID (HALO OVERLAY) -->
-								<HaloAttributes
-									v-if="hasHaloTraitRing && haloTraitID > -1"
-									ref="haloRef"
+								<!-- ATTRIBUTES GRID (RING OVERLAY) -->
+								<RingAttributes
+									v-if="hasRingTrait && ringTraitID > -1"
+									ref="ringRef"
 									:character="character"
 									:editing="editing"
 									:submode="submode"
 									:viewY="viewY"
-									:haloTraitID="haloTraitID"
+									:ringTraitID="ringTraitID"
 									@selectElement="selectElement"
 									@updateCharacter="updateCharacter"
 									@addDieToRoller="emit('addDieToRoller', $event)"
@@ -876,7 +856,7 @@ watch( () => props.character, () => {
 							</div>
 
 							<!-- ATTRIBUTES -->
-							<div :class="{ 'attributes': true, 'vertical': attributes.length > 5 }" v-if="pageLocation === 'right' && hasHaloTraitRing && haloTraitID > -1">
+							<div :class="{ 'attributes': true, 'vertical': attributes.length > 5 }" v-if="pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
 
 								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR CHALLENGE POOL (PLAY) -->
 								<transition appear>
@@ -885,25 +865,25 @@ watch( () => props.character, () => {
 								>
 									<div class="preview-button-container-inner" v-show="submode === 'edit' && !designerPrintPreview">
 										<div class="preview-button"
-											@click.stop="addTrait( haloTraitID )"
+											@click.stop="addTrait( ringTraitID )"
 										>
-											<span><i class="fas fa-plus"></i> {{ haloNounSingular }}</span>
+											<span><i class="fas fa-plus"></i> {{ ringNounSingular }}</span>
 										</div>
 										<div class="preview-button"
 											v-if="!scaleDieValue"
-											@click.stop="haloRef?.setScaleDieValue(8); selectElement(['scaleDie'])"
+											@click.stop="ringRef?.setScaleDieValue(8); selectElement(['scaleDie'])"
 										>
 											<span><i class="fas fa-plus"></i> Scale Die</span>
 										</div>
 										<div class="preview-button"
-											@click.stop="selectElement(['traitSet', haloTraitID])"
+											@click.stop="selectElement(['traitSet', ringTraitID])"
 										>
 											<span><i class="fas fa-cog"></i> Settings</span>
 										</div>
 									</div>
-									<div class="preview-button-container-inner" v-if="submode === 'play' && isHaloChallengePool && attributes.length > 0">
+									<div class="preview-button-container-inner" v-if="submode === 'play' && isRingChallengePool && attributes.length > 0">
 										<div class="preview-button"
-											@click.stop="haloRef?.handleAttributeClick( haloTraitID, 0, attributes[0] )"
+											@click.stop="ringRef?.handleAttributeClick( ringTraitID, 0, attributes[0] )"
 											title="Add all Challenge Pool dice to roller"
 										>
 											<span><i class="fas fa-dice-d20"></i> Roll Challenge Pool ({{ attributes.length }} dice)</span>
@@ -915,9 +895,9 @@ watch( () => props.character, () => {
 								<transition name="editor" appear>
 									<TraitSetEditor
 										:character="character"
-										:open="isSelected(['traitSet', haloTraitID])"
-										v-show="submode === 'edit' && isSelected(['traitSet', haloTraitID])"
-										:traitSetID="haloTraitID"
+										:open="isSelected(['traitSet', ringTraitID])"
+										v-show="submode === 'edit' && isSelected(['traitSet', ringTraitID])"
+										:traitSetID="ringTraitID"
 										:viewY="viewY"
 										@selectElement="selectElement"
 										@updateCharacter="updateCharacter"
@@ -930,7 +910,7 @@ watch( () => props.character, () => {
 
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
-									v-if="s !== haloTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
+									v-if="s !== ringTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
 									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="printBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
@@ -958,7 +938,7 @@ watch( () => props.character, () => {
 					<div class="classic-full-band" v-if="!isSpotlightStyle && hasClassicFullSets(pageIndex)">
 						<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 							<TraitSetBlock
-								v-if="s !== haloTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
+								v-if="s !== ringTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
 								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="printBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>

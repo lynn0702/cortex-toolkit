@@ -209,7 +209,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "resources-count"
+              "body": "dice-count"
             },
             "multiDie": true,
             "stressConfig": {

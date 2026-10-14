@@ -182,7 +182,7 @@
         }
       },
       "Skills & Specialties": {
-        "id": "skills-specialties",
+        "id": "subtrait-columns",
         "description": "Core baseline d6 skills with branching d8+ specialties",
         "nounSingular": "Skills & Specialtie",
         "nounPlural": "Skills & Specialties",
@@ -198,7 +198,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "skills-specialties"
+              "body": "subtrait-columns"
             },
             "setDie": 6,
             "subtraitRatingScale": [
@@ -417,7 +417,7 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "talents-table"
+              "body": "three-column-table"
             },
             "multiDie": false,
             "stressConfig": {

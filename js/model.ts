@@ -7,7 +7,7 @@
  * source of truth for those, so types never drift from validation.
  *
  * This module adds the **app-only** layer the schema intentionally leaves open:
- * the `custom.cortexToolkit` compartment (style, features, pips, halo, layout,
+ * the `custom.cortexToolkit` compartment (style, features, pips, ring, layout,
  * labels, …). The schema types `custom` as an open map on purpose (other apps
  * may compartmentalize their own keys); we refine our compartment here.
  *
@@ -60,7 +60,7 @@ export interface AttachedStressConfig {
 	includeOut?: boolean;
 }
 
-export interface HaloConfig {
+export interface RingConfig {
 	arcAngle?: number;
 	arcSpread?: number;
 	arcDistance?: number;
@@ -121,7 +121,7 @@ export interface CortexToolkitCustom {
 	pips?: PipsConfig;
 	sessionRecord?: SessionRecordConfig;
 	attachedStress?: AttachedStressConfig;
-	haloConfig?: HaloConfig;
+	ringConfig?: RingConfig;
 	imageConfig?: ImageConfig;
 	stressConfig?: StressConfig;
 	labels?: Record<string, string>;
@@ -129,6 +129,10 @@ export interface CortexToolkitCustom {
 
 	// layout
 	location?: 'left' | 'right' | 'center' | 'attributes' | 'header';
+	/** Set header placement: vertical sidebar label, or a horizontal top bar. */
+	header?: 'sidebar' | 'top';
+	/** Header text alignment (respected in both orientations). */
+	headerAlign?: 'left' | 'center' | 'right';
 	page?: number;
 	colSpan?: number | 'full';
 	columnSpan?: number | 'full';
@@ -156,10 +160,10 @@ export interface CortexToolkitCustom {
 	isChallengePool?: boolean;
 	challengePool?: boolean;
 
-	// halo / portrait ring
+	// ring / portrait ring
 	isAttributes?: boolean;
-	/** Whether this set owns the portrait halo ring. Supersedes the legacy `attributesRing`. */
-	haloTraitRing?: boolean;
+	/** Whether this set owns the portrait ring. Supersedes the legacy `attributesRing`. */
+	ringTrait?: boolean;
 	/** @deprecated legacy key (`attributesRing`); read for back-compat, never write. */
 	attributesRing?: boolean;
 	scaleDie?: number;

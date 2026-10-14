@@ -61,8 +61,8 @@
             "location": "left",
             "page": 1,
             "style": {
-              "header": "growth-ladder",
-              "body": "growth-ladder"
+              "header": "dice-ladder",
+              "body": "dice-ladder"
             },
             "colWidth": 25
           }

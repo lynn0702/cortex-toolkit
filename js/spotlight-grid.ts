@@ -26,9 +26,9 @@ export function isFullWidthClassic( traitSet: TraitSet ): boolean {
 	return span === 'full' || Number( span ) >= 2;
 }
 
-export function hasClassicFullSets( traitSets: TraitSet[], haloTraitID: number, pageIndex: number ): boolean {
+export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, pageIndex: number ): boolean {
 	return ( traitSets || [] ).some( ( traitSet, s ) =>
-		s !== haloTraitID &&
+		s !== ringTraitID &&
 		( ( traitSet.custom?.cortexToolkit?.page || 1 ) === pageIndex ) &&
 		isFullWidthClassic( traitSet )
 	);

@@ -12,12 +12,11 @@
 		transform: rotate(180deg);
 		> div {
 			color: var(--color-primary);
-			background-color: var(--color-secondary);
 			font-weight: 800;
 			text-align: center;
 			text-transform: uppercase;
 			font-style: normal;
-			font-size: .717rem;
+			font-size: .82rem;
 		}
 	}
 	
@@ -148,8 +147,7 @@
 	&.trait-set-has-feature-subtraits .trait-title,
 	&.trait-set-has-feature-description .trait-title {
 		// padding-bottom: .5rem;
-		border-bottom: 2px solid var(--color-primary);
-	}	
+	}
 	.trait-value {
 		position: relative;
 		top: -.5em;
@@ -242,9 +240,9 @@
 
 }
 
-// PORTRAIT HALO (FALLBACK LIST RENDERING -- USED WHENEVER THE RING
+// PORTRAIT RING (FALLBACK LIST RENDERING -- USED WHENEVER THE RING
 // ITSELF DOES NOT ENGAGE, E.G. SPOTLIGHT MODE OR A MISSING PORTRAIT)
-.trait-set-style-halo,
+.trait-set-style-portrait-ring,
 .trait-set-style-attributes {
 	@extend .trait-set-style-default;
 }
@@ -339,9 +337,6 @@
 		position: relative;
 	}
 
-	.trait {
-		// flex: 1 1 5rem;
-	}
 	
 	.trait-title {
 		position: relative;
@@ -541,9 +536,6 @@
 		display: none;
 	}
 
-	.trait {
-	}
-
 	.trait-inner {
 		display: flex;
 		column-gap: .5rem;
@@ -659,12 +651,11 @@
 	.trait-set-header-inner {
 		> div {
 			color: var(--color-primary);
-			background-color: var(--color-secondary);
 			font-weight: 800;
 			text-align: center;
 			text-transform: uppercase;
 			font-style: normal;
-			font-size: .717rem;
+			font-size: .82rem;
 		}
 	}
 	
@@ -958,11 +949,11 @@
 }
 
 // SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk)
-.trait-set-style-skills-specialties {
+.trait-set-style-subtrait-columns {
 	@extend .trait-set-style-default;
 
 
-	.skills-branch-head {
+	.branch-head {
 		display: grid;
 		grid-template-columns: 1fr 2rem 1.4fr;
 		font-family: var(--font-secondary);
@@ -977,7 +968,7 @@
 		span:last-child { text-align: left; }
 	}
 
-	.skill-branch-row {
+	.branch-row {
 		display: grid;
 		grid-template-columns: 1fr 2rem 1.4fr;
 		align-items: stretch;
@@ -986,7 +977,7 @@
 		border-bottom: 1px solid var(--color-separator);
 	}
 
-	.skill-branch-skill {
+	.branch-main {
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 		border-radius: .25rem;
 		padding: .3rem .45rem;
@@ -1007,7 +998,7 @@
 		}
 	}
 
-	.skill-branch-link {
+	.branch-link {
 		position: relative;
 		&::before {
 			content: '';
@@ -1021,7 +1012,7 @@
 		}
 	}
 
-	.skill-branch-specialties {
+	.branch-side {
 		display: flex;
 		flex-direction: column;
 		row-gap: .3rem;
@@ -1029,7 +1020,7 @@
 		border-left: none;
 	}
 
-	.specialty-row {
+	.branch-slot {
 		display: flex;
 		align-items: center;
 		column-gap: .4rem;
@@ -1062,12 +1053,12 @@
 	}
 
 	&.hide-branch-arrows {
-		.skill-branch-link::before,
-		.specialty-row::before,
-		.specialty-row::after {
+		.branch-link::before,
+		.branch-slot::before,
+		.branch-slot::after {
 			display: none;
 		}
-		.skill-branch-specialties {
+		.branch-side {
 			padding-left: 0;
 		}
 	}
@@ -1089,7 +1080,7 @@
 		}
 	}
 
-	.specialty-empty {
+	.branch-slot-empty {
 		font-size: .7rem;
 		font-style: italic;
 		color: var(--color-label);
@@ -1100,7 +1091,7 @@
 	// branch sets keep the skill-left layout above untouched.
 	.branch-split-head {
 		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
-		.skills-branch-head-center {
+		.branch-head-center {
 			text-align: center;
 			.set-die {
 				margin-left: .4em;
@@ -1112,14 +1103,14 @@
 		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
 	}
 
-	.skill-branch-specialties.branch-left {
+	.branch-side.branch-left {
 		padding-left: 0;
 		padding-right: .6rem;
-		.specialty-row::before {
+		.branch-slot::before {
 			left: auto;
 			right: -.6rem;
 		}
-		.specialty-row::after {
+		.branch-slot::after {
 			left: auto;
 			right: -.18rem;
 			border-left: none;
@@ -1129,29 +1120,28 @@
 }
 
 // TALENTS TABLE (TALENT / ACTIVATION / EFFECT)
-.trait-set-style-talents-table {
+.trait-set-style-three-column-table {
 	@extend .trait-set-style-default;
 
-	.trait-talents-table {
+	.trait-three-column-table {
 		border: 1px solid var(--color-primary);
 		border-radius: .25rem;
 	}
 
-	.talents-head {
+	.three-col-head {
 		display: grid;
 		grid-template-columns: 1fr 1.2fr 1.4fr;
 		column-gap: 0;
-		background: var(--color-primary);
-		color: white;
+		color: #000000;
 		font-family: var(--font-secondary);
-		font-size: .68rem;
+		font-size: .8rem;
 		font-weight: 800;
 		letter-spacing: .08em;
 		text-transform: uppercase;
 		span { padding: .3rem .5rem; }
 	}
 
-	.talent-row {
+	.three-col-row {
 		display: grid;
 		grid-template-columns: 1fr 1.2fr 1.4fr;
 		column-gap: 0;
@@ -1166,15 +1156,15 @@
 		span + span { border-left: 1px solid var(--color-separator); }
 	}
 
-	.talent-name {
+	.three-col-name {
 		font-weight: 700;
 		font-size: .78rem;
 		text-transform: uppercase;
 		color: black;
 	}
 
-	.talent-activation,
-	.talent-effect {
+	.three-col-activation,
+	.three-col-effect {
 		font-size: .72rem;
 		line-height: 1.3;
 		color: #333;
@@ -1182,22 +1172,22 @@
 }
 
 // STANDING (STANDING DIE + COMPLICATION & BONUS DICE)
-.trait-set-style-standing {
+.trait-set-style-paired-slots {
 	@extend .trait-set-style-default;
 
-	.standing-row-wrap {
+	.paired-slot-row-wrap {
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
 		width: 100%;
 	}
 
-	.standing-header-row {
+	.paired-slot-header-row {
 		display: flex;
 		gap: 0.4rem;
 		align-items: stretch;
 
-		.standing-name-box {
+		.paired-slot-name-box {
 			border: 1px solid var(--color-primary);
 			border-radius: 2px;
 			padding: 0.2rem 0.4rem;
@@ -1212,7 +1202,7 @@
 			align-items: center;
 		}
 
-		.standing-statement-box {
+		.paired-slot-statement-box {
 			border: 1px solid var(--color-primary);
 			border-radius: 2px;
 			padding: 0.2rem 0.4rem;
@@ -1226,21 +1216,21 @@
 		}
 	}
 
-	.standing-dice-row {
+	.paired-slot-dice-row {
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
 		gap: 0.2rem;
 		min-width: 0;
 
-		.standing-main-dice {
+		.paired-slot-main-dice {
 			position: relative;
 			top: -.1em;
 			white-space: nowrap;
 			.c:not(.active) { color: var(--color-separator); }
 		}
 
-		.standing-sub-group {
+		.paired-slot-sub-group {
 			display: flex;
 			flex-direction: column;
 			align-items: stretch;
@@ -1248,7 +1238,7 @@
 			min-width: 0;
 			width: 100%;
 
-			.standing-sub-row {
+			.paired-slot-sub-row {
 				display: flex;
 				align-items: center;
 				gap: 0.35rem;
@@ -1257,7 +1247,7 @@
 				flex-wrap: wrap;
 			}
 
-			.standing-sub-label {
+			.paired-slot-sub-label {
 				font-family: var(--font-secondary);
 				font-size: 0.62rem;
 				font-weight: 800;
@@ -1285,7 +1275,7 @@
 		}
 	}
 
-	.standing-main {
+	.paired-slot-main {
 		display: flex;
 		align-items: center;
 		column-gap: .5rem;
@@ -1309,7 +1299,7 @@
 		}
 	}
 
-	.standing-sub {
+	.paired-slot-sub {
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
 		align-items: center;
@@ -1322,7 +1312,7 @@
 		min-width: 0;
 	}
 
-	.standing-sub-label {
+	.paired-slot-sub-label {
 		font-family: var(--font-secondary);
 		font-size: .62rem;
 		font-weight: 800;
@@ -1341,7 +1331,7 @@
 		}
 	}
 
-	.standing-sub .subtrait-value {
+	.paired-slot-sub .subtrait-value {
 		display: flex;
 		flex-wrap: wrap;
 		gap: .15rem;
@@ -1351,16 +1341,16 @@
 }
 
 // BADGES / CHECKLIST TABLE
-.trait-set-style-badges-table {
+.trait-set-style-die-rows {
 	@extend .trait-set-style-default;
 
-	.trait-badges-table {
+	.trait-die-rows {
 		border: 1px solid var(--color-primary);
 		border-radius: .25rem;
 		background: white;
 	}
 
-	.badges-head {
+	.die-rows-head {
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
@@ -1374,7 +1364,7 @@
 		color: var(--color-primary);
 	}
 
-	.badge-row {
+	.die-row {
 		display: flex;
 		align-items: center;
 		column-gap: .5rem;
@@ -1383,14 +1373,14 @@
 		&:first-child { border-top: none; }
 	}
 
-	.badge-name {
+	.die-row-name {
 		flex: 1;
 		font-size: .82rem;
 		font-weight: 600;
 		color: #222;
 	}
 
-	.badge-counter-box {
+	.die-row-counter {
 		border: 1px solid var(--color-primary);
 		border-radius: 2px;
 		min-width: 1.5rem;
@@ -1414,11 +1404,11 @@
 }
 
 // RESOURCES WITH DICE COUNT (RATING + DICE 1-5)
-.trait-set-style-resources-count {
+.trait-set-style-dice-count {
 	@extend .trait-set-style-default;
 
 
-	.resource-row {
+	.dice-count-row {
 		display: flex;
 		align-items: center;
 		column-gap: .45rem;
@@ -1433,8 +1423,8 @@
 		color: black;
 	}
 
-	.resource-rating-label,
-	.resource-count-label {
+	.dice-count-rating-label,
+	.dice-count-count-label {
 		font-family: var(--font-secondary);
 		font-size: .62rem;
 		font-weight: 800;
@@ -1450,13 +1440,13 @@
 		.c:not(.active) { color: var(--color-separator); }
 	}
 
-	.resource-count {
+	.dice-count-track {
 		display: inline-flex;
 		align-items: center;
 		column-gap: .25rem;
 	}
 
-	.count-pip {
+	.dice-count-pip {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -1481,11 +1471,11 @@
 }
 
 // GROWTH LADDER (VERTICAL DICE TRACK)
-.trait-set-style-growth-ladder {
+.trait-set-style-dice-ladder {
 	@extend .trait-set-style-default;
 
 
-	.trait-growth-ladder {
+	.trait-dice-ladder {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -1500,7 +1490,7 @@
 		}
 	}
 
-	.growth-rung {
+	.ladder-rung {
 		position: relative;
 		display: flex;
 		flex-direction: column;
@@ -1512,7 +1502,7 @@
 		border-radius: .25rem;
 	}
 
-	.growth-name {
+	.ladder-name {
 		font-family: var(--font-secondary);
 		font-size: .68rem;
 		font-weight: 800;
@@ -1533,16 +1523,16 @@
 }
 
 // DOSSIER FIELDS (STACKED LABELED BLOCKS)
-.trait-set-style-dossier-fields {
+.trait-set-style-labeled-fields {
 	@extend .trait-set-style-default;
 
 
-	.trait-dossier {
+	.trait-labeled-fields {
 		display: flex;
 		flex-direction: column;
 	}
 
-	.dossier-field {
+	.field-block {
 		padding: .35rem .5rem;
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
 		border-radius: .25rem;
@@ -1550,7 +1540,7 @@
 		background: white;
 	}
 
-	.dossier-label {
+	.field-label {
 		display: block;
 		font-family: var(--font-secondary);
 		font-size: .72rem;
@@ -1561,14 +1551,14 @@
 		margin-bottom: .15rem;
 	}
 
-	.dossier-text {
+	.field-text {
 		display: block;
 		font-size: .76rem;
 		line-height: 1.35;
 		color: #222;
 	}
 
-	.dossier-hint {
+	.field-hint {
 		font-style: italic;
 		color: var(--color-label);
 		font-size: .72rem;
@@ -1587,5 +1577,61 @@
 		&:hover {
 			transform: scale(1.15);
 		}
+	}
+}
+
+// ============================================================
+// GENERIC SET HEADER (placement + alignment) — appended overrides.
+// `header: 'top'` turns the vertical sidebar label into a horizontal top bar;
+// `headerAlign` positions the text in both orientations.
+// ============================================================
+.trait-set.trait-set-header-top {
+	flex-direction: column;
+
+	> .trait-set-header {
+		width: 100%;
+		min-width: 0;
+		height: auto;
+		border-right: none;
+		border-bottom: 2px solid #111;
+		border-radius: 2px 2px 0 0;
+		padding: 0.3rem 0.5rem;
+	}
+
+	> .trait-set-header > .trait-set-header-inner {
+		writing-mode: horizontal-tb;
+		transform: none;
+		display: flex;
+		align-items: baseline;
+		width: 100%;
+		justify-content: center;
+	}
+
+	.trait-set-header-counter {
+		margin-left: auto;
+		font-weight: 800;
+	}
+}
+
+.trait-set.trait-set-header-top.trait-set-header-align-left > .trait-set-header > .trait-set-header-inner { justify-content: flex-start; }
+.trait-set.trait-set-header-top.trait-set-header-align-right > .trait-set-header > .trait-set-header-inner { justify-content: flex-end; }
+
+.trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header { align-items: flex-start; }
+.trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header { align-items: flex-end; }
+
+// Standings (paired-slots): complication + bonus inline with the main rating.
+.trait-set-style-paired-slots {
+	.paired-slot-dice-row {
+		flex-direction: row !important;
+		align-items: center !important;
+		justify-content: space-between !important;
+	}
+	.paired-slot-sub-group {
+		flex-direction: row !important;
+		align-items: center !important;
+		justify-content: flex-end !important;
+		gap: 0.6rem !important;
+		flex-wrap: wrap;
+		width: auto !important;
 	}
 }

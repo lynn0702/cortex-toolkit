@@ -154,10 +154,10 @@ export const cortexFunctions = {
 		return [4, 6, 8, 10, 12];
 	},
 
-	getHaloTraitRing: function( traitSet: TraitSet ) {
+	getRingTrait: function( traitSet: TraitSet ) {
 		const ctk = traitSet?.custom?.cortexToolkit;
 		if ( !ctk ) return undefined;
-		return ctk.haloTraitRing !== undefined ? ctk.haloTraitRing : ctk.attributesRing;
+		return ctk.ringTrait !== undefined ? ctk.ringTrait : ctk.attributesRing;
 	},
 
 	getSubtraitRatings: function( traitSet: TraitSet ) {
@@ -172,13 +172,13 @@ export const cortexFunctions = {
 	// Used by the trait set editor and the style gallery alike.
 	defaultFeaturesForStyle: function( style: string ) {
 		const map: Record<string, { features: SetFeatures; multiDie: boolean }> = {
-			'talents-table':      { features: { description: true,  sfx: true,  subtraits: false }, multiDie: false },
-			'standing':           { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
-			'skills-specialties': { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
-			'badges-table':       { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
-			'resources-count':    { features: { description: false, sfx: false, subtraits: false }, multiDie: true  },
-			'growth-ladder':      { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
-			'dossier-fields':     { features: { description: true,  sfx: false, subtraits: false }, multiDie: false },
+			'three-column-table':      { features: { description: true,  sfx: true,  subtraits: false }, multiDie: false },
+			'paired-slots':           { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
+			'subtrait-columns': { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
+			'die-rows':       { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
+			'dice-count':    { features: { description: false, sfx: false, subtraits: false }, multiDie: true  },
+			'dice-ladder':      { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
+			'labeled-fields':     { features: { description: true,  sfx: false, subtraits: false }, multiDie: false },
 		};
 		if ( map[ style ] ) return map[ style ];
 		return { features: { description: false, sfx: false, subtraits: false }, multiDie: false };
@@ -188,10 +188,10 @@ export const cortexFunctions = {
 	// Custom labels live in custom.cortexToolkit.labels under the same keys;
 	// anything absent here (or unset there) renders as ''.
 	defaultTraitSetLabels: {
-		'skills-specialties': { left: 'SKILL', right: 'SPECIALTIES' },
-		'talents-table':      { col1: 'TALENT', col2: 'ACTIVATION', col3: 'EFFECT' },
-		'resources-count':    { rating: 'RATING', dice: '/ DICE' },
-		'standing':           { slot0: 'COMPLICATION', slot1: 'BONUS' },
+		'subtrait-columns': { left: 'SKILL', right: 'SPECIALTIES' },
+		'three-column-table':      { col1: 'TALENT', col2: 'ACTIVATION', col3: 'EFFECT' },
+		'dice-count':    { rating: 'RATING', dice: '/ DICE' },
+		'paired-slots':           { slot0: 'COMPLICATION', slot1: 'BONUS' },
 	} as Record<string, Record<string, string>>,
 
 	labelDefaultForStyle: function( style: string | undefined, key: string ) {

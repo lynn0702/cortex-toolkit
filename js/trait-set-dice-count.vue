@@ -5,32 +5,33 @@ import TraitEditor from './trait-editor.vue';
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, isSpotlightPrintStyle, renderDieValueForPrint,
-	handleSingleDieClick, hasCounterColumn, getCounterLabel, getTraitCounter
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, getTraitSetLabel, isSpotlightPrintStyle,
+	renderDieValueForPrint, handleSingleDieClick, getResourceDiceCount, setResourceDiceCount
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-badges-table" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'badges-table'">
-		<div class="badges-head" v-if="hasCounterColumn(traitSet)">
-			<span class="badges-head-name">{{ traitSet.name }}</span>
-			<span class="badges-head-counter">{{ getCounterLabel(traitSet) }}</span>
-		</div>
+	<div class="trait-dice-count" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'dice-count'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
-				<div :class="{ 'trait-inner': true, 'badge-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+				<div :class="{ 'trait-inner': true, 'dice-count-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
-					<span class="badge-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
-					<span class="badge-name badge-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
-					<span class="badge-name" v-else>{{ item.trait.name || '' }}</span>
+					<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+					<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+					<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
+					<span class="dice-count-rating-label">{{ getTraitSetLabel(traitSet, 'rating') }}</span>
 					<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
 						<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
 							:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
 							v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
 					</div>
-					<span class="badge-counter-box" v-if="hasCounterColumn(traitSet)">
-						{{ (!printBlank && !item.isPlaceholder) ? getTraitCounter(item.trait) : '' }}
-					</span>
+					<span class="dice-count-count-label">{{ getTraitSetLabel(traitSet, 'dice') }}</span>
+					<div class="dice-count-track">
+						<span v-for="n in [1, 2, 3, 4, 5]" :key="n" class="dice-count-pip"
+							:class="{ 'filled': !printBlank && !item.isPlaceholder && getResourceDiceCount(item.trait) >= n }"
+							@click.stop="submode === 'edit' && !printBlank && !item.isPlaceholder ? setResourceDiceCount(s, item.originalIndex, n) : null"
+							:title="submode === 'edit' && !item.isPlaceholder ? 'Set dice count to ' + n : ''">{{ n }}</span>
+					</div>
 				</div>
 				<transition name="editor" appear>
 					<TraitEditor
