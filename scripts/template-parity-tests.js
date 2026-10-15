@@ -129,7 +129,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(L.character.sets['Session Record'].custom.cortexToolkit.sessionRecord.orientation === 'horizontal', 'session horizontal authored');
   ok(L.version === 1, 'alien-us version baseline');
   const v = L.character.sets.Values;
-  ok(v.custom.cortexToolkit.style.body === 'two-columns-detailed', 'values two-column style');
+  ok(v.custom.cortexToolkit.style.body === 'default' && v.custom.cortexToolkit.traitColumns === 2, 'values two-column style');
   ok(v.traits.Alien.description === '', 'no pre-filled value statements');
   ok(JSON.stringify(Object.keys(v.traits)) === JSON.stringify(['Alien', 'Conformity', 'Materialism', 'Paranoia', 'Patriotism', 'Secrecy', 'Spirituality']), 'value names kept');
 }

@@ -32,6 +32,13 @@ const cortexSpotlightTemplates = [
           },
           "sheetStyle": "spotlight",
           "columns": 3,
+          "watermark": {
+            "enabled": true,
+            "url": "images/cortex_prime_logo_light_transparent.png",
+            "opacity": 0.08,
+            "scale": 70,
+            "page": "all"
+          },
           "columnAlignment": "full-width",
           "columnOffsets": {
             "left": 0,
@@ -62,9 +69,11 @@ const cortexSpotlightTemplates = [
             "cortexToolkit": {
               "features": {
                 "description": true,
-                "sfx": true,
+                "sfx": false,
                 "subtraits": false
               },
+              "sharedHinder": true,
+              "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
               "location": "left",
               "page": 1,
               "style": {
@@ -72,13 +81,16 @@ const cortexSpotlightTemplates = [
                 "body": "distinctions"
               },
               "multiDie": false,
+              "ratingScale": [
+                8
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
               "reservedSlots": 3,
-              "colSpan": 3
+              "colSpan": 3,
+              "columnSpan": "full"
             }
           },
           "traits": [
@@ -122,119 +134,16 @@ const cortexSpotlightTemplates = [
           "sfx": []
         },
         {
-          "id": "values",
-          "name": "Values",
-          "description": "Alien worldview versus human conditioning",
-          "nounSingular": "Value",
-          "nounPlural": "Values",
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": false,
-                "subtraits": false
-              },
-              "location": "left",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "two-columns-detailed"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "",
-              "reservedSlots": 7,
-              "colSpan": "full",
-              "columnSpan": "full"
-            }
-          },
-          "traits": [
-            {
-              "name": "Alien",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Conformity",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Materialism",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Paranoia",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Patriotism",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Secrecy",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Spirituality",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": []
-        },
-        {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Core baseline d6 skills with branching d8+ specialties",
-          "nounSingular": "Skills & Specialtie",
-          "nounPlural": "Skills & Specialties",
+          "nounSingular": "Skill",
+          "nounPlural": "Skills",
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "center",
               "features": {
                 "description": false,
                 "sfx": false,
@@ -259,7 +168,6 @@ const cortexSpotlightTemplates = [
               },
               "multiDie": false,
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
@@ -546,6 +454,122 @@ const cortexSpotlightTemplates = [
           "sfx": []
         },
         {
+          "id": "values",
+          "name": "Values",
+          "description": "Alien worldview versus human conditioning",
+          "nounSingular": "Value",
+          "nounPlural": "Values",
+          "statement": true,
+          "ratingPosition": "above",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "left",
+              "traitColumns": 2,
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "location": "left",
+              "page": 1,
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "multiDie": false,
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "stressConfig": {
+                "includeOut": true
+              },
+              "notes": "",
+              "reservedSlots": 7,
+              "colSpan": "full",
+              "columnSpan": "full"
+            }
+          },
+          "traits": [
+            {
+              "name": "Alien",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Conformity",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Materialism",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Paranoia",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Patriotism",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Secrecy",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Spirituality",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
           "id": "talents",
           "name": "Talents",
           "description": "Specialized alien abilities and tech modules",
@@ -567,7 +591,6 @@ const cortexSpotlightTemplates = [
               },
               "multiDie": false,
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
@@ -624,11 +647,14 @@ const cortexSpotlightTemplates = [
           "id": "signature-assets-tech",
           "name": "Signature Assets / Tech",
           "description": "Alien equipment and concealed devices",
-          "nounSingular": "Signature Assets / Tech",
-          "nounPlural": "Signature Assets / Techs",
+          "nounSingular": "Signature Asset / Tech",
+          "nounPlural": "Signature Assets / Tech",
+          "ratingPosition": "inline",
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "left",
               "features": {
                 "description": true,
                 "sfx": false,
@@ -641,8 +667,13 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
@@ -691,9 +722,13 @@ const cortexSpotlightTemplates = [
           "description": "Connections to human contacts, superiors, and rivals",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
+          "ratingPosition": "above",
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "left",
+              "traitColumns": 2,
               "features": {
                 "description": true,
                 "sfx": false,
@@ -706,12 +741,18 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3,
+              "reservedSlots": 10,
               "colSpan": "full",
               "columnSpan": "full"
             }
@@ -829,6 +870,8 @@ const cortexSpotlightTemplates = [
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "left",
               "features": {
                 "description": false,
                 "sfx": false,
@@ -846,7 +889,6 @@ const cortexSpotlightTemplates = [
               },
               "multiDie": false,
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
@@ -938,47 +980,73 @@ const cortexSpotlightTemplates = [
                 "body": "distinctions"
               },
               "sharedHinder": true,
-              "sharedHinderText": "Gain a PP when you trade out your distinction's ⬡8 rating for a ▽4.",
+              "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
               "multiDie": false,
+              "ratingScale": [
+                8
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
               "reservedSlots": 3,
-              "colWidth": 66
+              "colWidth": 64
             }
           },
           "traits": [
             {
               "name": "Purpose:",
-              "value": 0,
+              "value": 8,
               "dice": [],
               "description": "",
               "tags": [],
               "custom": {},
               "traits": [],
-              "sfx": []
+              "sfx": [
+                "hinder",
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
+              ]
             },
             {
               "name": "Quality:",
-              "value": 0,
+              "value": 8,
               "dice": [],
               "description": "",
               "tags": [],
               "custom": {},
               "traits": [],
-              "sfx": []
+              "sfx": [
+                "hinder",
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
+              ]
             },
             {
               "name": "",
-              "value": 0,
+              "value": 8,
               "dice": [],
               "description": "",
               "tags": [],
               "custom": {},
               "traits": [],
-              "sfx": []
+              "sfx": [
+                "hinder",
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
+              ]
             }
           ],
           "sfx": []
@@ -989,6 +1057,7 @@ const cortexSpotlightTemplates = [
           "description": "Guiding philosophies paired with personal statements",
           "nounSingular": "Value",
           "nounPlural": "Values",
+          "statement": true,
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1004,13 +1073,19 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
               "reservedSlots": 5,
-              "colWidth": 66
+              "colWidth": 64
             }
           },
           "traits": [
@@ -1073,9 +1148,13 @@ const cortexSpotlightTemplates = [
           "description": "Crew connections and ties to shipmates",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
+          "statement": true,
+          "ratingPosition": "below",
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "left",
               "features": {
                 "description": true,
                 "sfx": false,
@@ -1088,13 +1167,19 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 3,
-              "colWidth": 66
+              "reservedSlots": 8,
+              "colWidth": 64
             }
           },
           "traits": [
@@ -1187,6 +1272,7 @@ const cortexSpotlightTemplates = [
           "description": "Specialized starship equipment and personal gear",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
+          "ratingPosition": "above",
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1202,12 +1288,17 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
-              "reservedSlots": 2
+              "reservedSlots": 3
             }
           },
           "traits": [
@@ -1253,6 +1344,8 @@ const cortexSpotlightTemplates = [
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "left",
               "features": {
                 "description": false,
                 "sfx": false,
@@ -1266,10 +1359,9 @@ const cortexSpotlightTemplates = [
               },
               "multiDie": false,
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
-              "notes": "**PERSONAL:**\n• 1 XP when \n\n• 3 XP when \n\n• 10 XP when \n\n**GROUP:**\n• 1 XP when \n\n• 3 XP when \n\n• 10 XP when ",
+              "notes": "### PERSONAL:\n- **1 XP** when \n- **3 XP** when \n- **10 XP** when \n\n### GROUP:\n- **1 XP** when \n- **3 XP** when \n- **10 XP** when ",
               "reservedSlots": 0
             }
           },
@@ -1295,6 +1387,11 @@ const cortexSpotlightTemplates = [
               "style": {
                 "header": "default",
                 "body": "pips"
+              },
+              "pipsConfig": {
+                "rows": 5,
+                "perRow": 5,
+                "filled": 0
               },
               "pips": {
                 "count": 25,

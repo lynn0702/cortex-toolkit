@@ -388,43 +388,36 @@
         },
         "traits": {
           "Alien": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Conformity": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Materialism": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Paranoia": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Patriotism": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Secrecy": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Spirituality": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
@@ -525,19 +518,16 @@
         "traits": {},
         "slots": {
           "0": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
@@ -587,61 +577,51 @@
         "traits": {},
         "slots": {
           "0": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "3": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "4": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "5": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "6": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "7": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "8": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "9": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}

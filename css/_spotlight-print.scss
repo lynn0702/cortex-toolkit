@@ -2414,8 +2414,14 @@
 // `.print-bw` to the sheet; grayscale de-saturates every accent (and any
 // coloured glyph) for a true mono print, on screen and on paper.
 // ============================================================
-.character-sheet.print-bw {
+.character-sheet.submode-print.print-bw,
+.character-sheet.designer-print-preview.print-bw {
 	filter: grayscale(1) contrast(1.05);
+}
+@media print {
+	.character-sheet.print-bw {
+		filter: grayscale(1) contrast(1.05);
+	}
 }
 
 // ============================================================
@@ -2435,11 +2441,16 @@
 		min-width: var(--page-width);
 	}
 	.character-sheet.submode-print .pages,
-	.character-sheet.submode-print .page,
-	.character-sheet.submode-print .page-inner {
+	.character-sheet.submode-print .page {
 		width: var(--page-width) !important;
 		max-width: var(--page-width) !important;
 		min-width: 0 !important;
+	}
+	.character-sheet.submode-print .page-inner {
+		width: 100% !important;
+		max-width: 100% !important;
+		min-width: 0 !important;
+		box-sizing: border-box !important;
 	}
 	.character-sheet.submode-print .columns.spotlight-columns,
 	.character-sheet.submode-print .columns.spotlight-columns.spotlight-grid {

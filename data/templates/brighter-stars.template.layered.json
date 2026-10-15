@@ -98,8 +98,6 @@
                 },
                 "slots": {
                   "1": {
-                    "description": "",
-                    "tags": [],
                     "custom": {}
                   }
                 }
@@ -118,8 +116,6 @@
                 },
                 "slots": {
                   "1": {
-                    "description": "",
-                    "tags": [],
                     "custom": {}
                   }
                 }
@@ -140,8 +136,6 @@
                 },
                 "slots": {
                   "1": {
-                    "description": "",
-                    "tags": [],
                     "custom": {}
                   }
                 }
@@ -188,31 +182,26 @@
         },
         "traits": {
           "Courage": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Curiosity": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Hope": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Logic": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Peace": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
@@ -261,49 +250,41 @@
         "traits": {},
         "slots": {
           "0": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "3": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "4": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "5": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "6": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "7": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
@@ -347,19 +328,16 @@
         "traits": {},
         "slots": {
           "0": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
-            "value": null,
             "description": "",
             "tags": [],
             "custom": {}

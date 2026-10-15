@@ -162,7 +162,10 @@ const sheetStyle = computed( () => {
 } );
 
 const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
-const isSpotlightPrintStyle = computed( () => ( props.submode === 'print' || designerPrintPreview.value ) && isSpotlightStyle.value );
+const isPrintSubmode = computed( () => props.submode === 'print' || designerPrintPreview.value );
+const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotlightStyle.value );
+const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
+const effectivePrintBlank = computed( () => isPrintSubmode.value && printBlank.value );
 const pageJustification = computed( () => props.character?.custom?.cortexToolkit?.pageJustification || 'top-base' );
 
 const nameEditorInitialTab = computed( () => {
@@ -504,7 +507,7 @@ watch( () => props.character, () => {
 </script>
 
 <template>
-	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': printBlank, 'print-bw': printBW, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
+	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
 	
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
@@ -758,7 +761,7 @@ watch( () => props.character, () => {
 							>
 								<div :class="['spotlight-column', 'spotlight-full-column']">
 									<template v-for="{ traitSet, index: s } in section.itemsByColumn.full" :key="s">
-										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="printBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" 											@addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
+										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" 											@addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
 						</template>
 								</div>
 							</div>
@@ -770,7 +773,7 @@ watch( () => props.character, () => {
 								<TraitSetBlock
 									v-for="cell in getSpotlightGridCells(section)"
 									:key="cell.s"
-									:character="character" :traitSetID="cell.s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="printBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" :style="cell.style" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+									:character="character" :traitSetID="cell.s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" :style="cell.style" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</div>
 						</template>
@@ -911,7 +914,7 @@ watch( () => props.character, () => {
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
 									v-if="s !== ringTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
-									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="printBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
 
@@ -939,7 +942,7 @@ watch( () => props.character, () => {
 						<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 							<TraitSetBlock
 								v-if="s !== ringTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
-								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="printBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>
 					</div>
