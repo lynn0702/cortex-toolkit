@@ -1,4 +1,4 @@
-// FONTS
+﻿// FONTS
 
 // Google Fonts
 
@@ -102,6 +102,15 @@ body {
 	break-after: avoid-column;
 }
 
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 2px solid var(--color-interactive);
+	outline-offset: 2px;
+}
+
 // DIE VALUES
 
 .c {
@@ -121,7 +130,7 @@ body {
 //
 // The backing must NEVER be visible outside the die outline. Previously it was
 // sized in mm and nudged to "top: 52%", which ignored where the font actually
-// draws the glyph (≈0.15em below the line-box centre), so white slivers poked
+// draws the glyph (â‰ˆ0.15em below the line-box centre), so white slivers poked
 // out around every die and clipped the ring.
 //
 // Instead, the backing covers only the bounding box of the numeral cut-outs,
@@ -130,7 +139,7 @@ body {
 // ever show through the numerals themselves.
 //
 // Geometry measured from fonts/cortex-icons.woff (unitsPerEm 1024,
-// ascent 960 / descent 64). Values: die, dx, dy, width, height — offsets are
+// ascent 960 / descent 64). Values: die, dx, dy, width, height â€” offsets are
 // from the centre of the glyph's line box (line-height: 1). If the icon font
 // is ever regenerated, re-measure these.
 $die-backings:
@@ -289,3 +298,16 @@ $die-backings:
 		font-size: 13px;
 	}
 }
+
+// ============================================================
+// A11Y FOCUS VISIBLE
+// ============================================================
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-interactive);
+    outline-offset: 2px;
+}
+

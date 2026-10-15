@@ -19,7 +19,12 @@ const {
 	</div>
 		<template v-for="(group, gi) in getBranchGroups(traitSet, getRenderedTraits(traitSet, s))" :key="gi">
 			<div :class="group.skillItem ? getTraitClasses(group.skillItem.trait) : {}" v-if="group.skillItem">
-				<div :class="{ 'trait-inner': true, 'selected': !group.skillItem.isPlaceholder && isSelected(['trait', s, group.skillItem.originalIndex]), 'trait-placeholder-slot': group.skillItem.isPlaceholder }" @click.stop="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null">
+				<div :class="{ 'trait-inner': true, 'selected': !group.skillItem.isPlaceholder && isSelected(['trait', s, group.skillItem.originalIndex]), 'trait-placeholder-slot': group.skillItem.isPlaceholder }"
+					tabindex="0"
+					role="button"
+					@keydown.enter.prevent="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null"
+					@keydown.space.prevent="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null"
+					@click.stop="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null">
 					<div class="branch-row" :class="{ 'branch-split-row': group.split }">
 						<div class="branch-side branch-left" v-if="group.split">
 							<template v-for="(entry, ei) in branchSubs(group.subs, 'left')" :key="entry._lid || ('subl-' + ei)">

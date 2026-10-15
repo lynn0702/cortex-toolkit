@@ -1,4 +1,4 @@
-# AGENTS.md — Cortex Toolkit
+﻿# AGENTS.md — Cortex Toolkit
 
 Repo conventions for AI coding sessions (OpenCode, Antigravity, or anything else).
 Every session starts here. If a rule below conflicts with an instruction in the
@@ -6,8 +6,10 @@ prompt, the prompt wins for that session — then update this file.
 
 ## Working style
 
+- **Read `design/DECISIONS.md` first.** It is append-only and authoritative. Do not re-litigate ratified decisions or revive superseded ones (`removedTraits` in layered entities, `html.print-view`, `designerPrintPreview`, game-specific style IDs) without new evidence.
 - **Terse UI.** Short labels. No parenthetical explanations, no "e.g." examples.
   If a label needs a parenthetical to be understood, rename the thing.
+- **Name the layout, not the game concept.** Internal style IDs, component filenames, and CSS classes use geometric/structural names (`subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`).
 - **Build beyond the ask when it's genuinely helpful.** The test: does it
   surface something real, or invent something speculative?
   - Helpful: UI for a data element that can land at rest but currently has
@@ -17,8 +19,8 @@ prompt, the prompt wins for that session — then update this file.
 - **One migration path.** A user of the original fork — or Kaelri's original
   app — brings their files and they work. Never break import of old-format
   data. New work carries old data forward; it doesn't strand it.
-- **The model is the spec.** UI reflects `design/cortex-toolkit-trait-layers.md`
-  and `design/cortex-toolkit-trait-usage.md`. When the model changes, controls
+- **The model is the spec.** UI reflects `design/trait-layers.md`,
+  `design/trait-usage.md`, and `design/DECISIONS.md`. When the model changes, controls
   that embodied the old model get deleted — the data migrates, the legacy
   controls don't get preserved.
 - **When unsure, ask one question** instead of building the wrong thing.
@@ -41,6 +43,7 @@ prompt, the prompt wins for that session — then update this file.
   exports — an unused module vanishes by design). `js/templates.js` still ships as
   the separate, on-demand `js/templates.bundle.js`.
 - Styles: `css/app.scss` + partials compile to `css/app.min.css`.
+- Print density is controlled via `@media print { html { font-size: 13px } }` and on-screen `.submode-print .pages { zoom: 0.8125 }` — never re-introduce `html.print-view` global font scaling or a separate edit-mode "Print View" button.
 - Build: `npm run build`. Watch: `npm run watch`.
 - TypeScript: the build compiles `.ts` and `.vue` (`mix.ts` + ts-loader
   `transpileOnly`, vue-loader). `npm run check` (`vue-tsc --noEmit`) is the type
@@ -49,7 +52,7 @@ prompt, the prompt wins for that session — then update this file.
   run unchanged.
 - Deploy: GitHub Pages rebuilds from `main` on every push
   (`.github/workflows/publish.yml` runs `npm ci && npm run build`).
-  Pre-release (no public users, 2026-10-11): test local, push hosted.
+  Pre-release (no public users): test local, push hosted.
   No feature branches — work lands on `main` directly, but only when
   the Definition of Done below is green.
 
@@ -65,8 +68,7 @@ prompt, the prompt wins for that session — then update this file.
   top-level fields to a character, trait set, or trait.
 - localStorage: single key `cortexToolkitData`, namespaced as
   `{ "0.1": { characters } }`. Bump the namespace when the schema changes.
-- Deep clones: use `structuredClone()` everywhere. Do not use the
-  `JSON.parse(JSON.stringify(...))` idiom.
+- Deep clones: use `structuredClone()` everywhere (wrap Vue reactive proxies with `toRaw(v)` before cloning: `structuredClone(toRaw(v))`). Do not use the `JSON.parse(JSON.stringify(...))` idiom.
 
 ## Security rules (non-negotiable)
 
@@ -76,29 +78,28 @@ prompt, the prompt wins for that session — then update this file.
   (they escape HTML before applying markdown).
 - The only other acceptable `v-html` sources are values that are safe by
   construction (e.g. `getDieDisplayValue()`, which returns a fixed set of
-  strings). Anything else needs justification in the PR/commit message.
+  strings, or `renderDieconSVG()`). Anything else needs justification in the PR/commit message.
 - Links: URLs must pass the scheme check in `renderMarkdownLinks`
   (http/https/mailto/relative only). `javascript:` and `data:` URLs are dropped.
 - After any change touching templates, run: `grep -rn 'v-html' js/`
   (components are `.vue`/`.ts` now) and confirm every site is safe.
 
-## Generated files — do not hand-edit
+## Generated & paired files — handle with care
 
-- `js/templates.js` (~16,000 lines) is library data. `scripts/realign_templates.js`
-  normalizes it only (columns, blanks, portraits) — template *content*
-  (names, dice, statements) is hand-authored, then proven with
-  `npm test` (round-trip parity) and `npm run validate`.
-- `js/app.min.js`, `css/app.min.css`, `mix-manifest.json` are build outputs,
-  rebuilt by CI. Don't commit manual tweaks to them.
+- `js/model.generated.ts` is generated by `npm run types` (`scripts/gen-types.mjs`) from `schema/0.1/*.schema.json`. Do not hand-edit; extend app-only types in `js/model.ts`.
+- `js/templates.js` (~16,000 lines) and `data/templates/*.template.layered.json` are a **paired corpus**. `scripts/realign_templates.js` normalizes `js/templates.js` only (columns, blanks, portraits) — template *content* (names, dice, statements) is hand-authored. Any edit to a spotlight template in `js/templates.js` must be accompanied by updating/regenerating its `data/templates/<name>.template.layered.json` counterpart (via `cortexMigration.migrateTemplateEntry`) so `npm test` (round-trip parity) and `npm run validate` stay 100% green. Avoid blind PowerShell regex replacements on `js/templates.js`.
+- `js/app.min.js`, `js/templates.bundle.js`, `css/app.min.css`, and `mix-manifest.json` are build outputs, rebuilt by `npm run build` / CI. Don't commit manual tweaks to them.
 
 ## Definition of Done (applies to every change)
 
 1. `npm run build` passes with no errors or warnings.
-2. `npm run check` (`tsc --noEmit`) passes.
-3. New file? Imported into the graph from `js/app.js` (or intentionally standalone).
-4. `grep -rn 'v-html' js/` — every site accounted for per Security rules.
-5. Smoke-tested the touched feature from the checklist below, in a real browser.
-6. Push to `main` only when 1–5 are green.
+2. `npm run check` (`vue-tsc --noEmit`) passes.
+3. `npm test` passes all 6 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`).
+4. `npm run validate` passes with 0 errors and 0 warnings.
+5. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
+6. `grep -rn 'v-html' js/` — every site accounted for per Security rules.
+7. Smoke-tested the touched feature from the checklist below, in a real browser.
+8. Push to `main` only when 1–7 are green.
 
 ## Smoke checklist
 
@@ -108,4 +109,4 @@ prompt, the prompt wins for that session — then update this file.
   subtrait, and SFX editors.
 - Play mode: add dice to pool, roll, clear; challenge pool; print view renders.
 - Reload with existing localStorage data — zero console errors.
-- Mobile width: sheet and roller both usable.
+- Mobile width: sheet and roller both usable; print tab fits or scrolls cleanly.

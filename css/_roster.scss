@@ -1,4 +1,4 @@
-.roster {
+﻿.roster {
 	margin-inline: auto;
 	max-width: 44rem;
 	&.v-enter-active,
@@ -299,3 +299,39 @@
 	color: white;
 	font-weight: bold;
 }
+
+@media screen and (max-width: 600px) {
+	.roster-item {
+		column-gap: 1rem;
+		align-items: flex-start;
+
+		> div:nth-child(1) {
+			flex: 0 0 4.75rem;
+		}
+	}
+
+	.roster-item-name {
+		white-space: normal;
+		font-size: 1.05rem;
+	}
+}
+
+// ============================================================
+// MOBILE ROSTER REFLOW (<=600px)
+// ============================================================
+@media screen and (max-width: 600px) {
+    .roster-item {
+        column-gap: 1rem;
+        align-items: flex-start;
+
+        > div:nth-child(1) {
+            flex: 0 0 4.75rem;
+        }
+    }
+
+    .roster-item-name {
+        white-space: normal;
+        font-size: 1.05rem;
+    }
+}
+

@@ -861,6 +861,10 @@ function getDieDisplayValue( val: any ) {
 							<li
 								v-for="val in availableValues"
 								:class="{ 'active': val === trait.value && !isOut }"
+								tabindex="0"
+								role="button"
+								@keydown.enter.prevent="toggleTraitValue( val )"
+								@keydown.space.prevent="toggleTraitValue( val )"
 								@click.stop="toggleTraitValue( val )"
 							>
 								<span class="c" v-html="getDieDisplayValue(val)"></span>
@@ -869,6 +873,10 @@ function getDieDisplayValue( val: any ) {
 								v-if="shouldShowStressOut"
 								class="editor-value-out"
 								:class="{ 'active': isOut }"
+								tabindex="0"
+								role="button"
+								@keydown.enter.prevent="toggleOutValue"
+								@keydown.space.prevent="toggleOutValue"
 								@click.stop="toggleOutValue"
 								title="Out"
 							>
@@ -912,6 +920,10 @@ function getDieDisplayValue( val: any ) {
 						<ul class="editor-values">
 							<li
 								:class="{ 'active': attachedStressValue === 0 }"
+								tabindex="0"
+								role="button"
+								@keydown.enter.prevent="setAttachedStress(0)"
+								@keydown.space.prevent="setAttachedStress(0)"
 								@click.stop="setAttachedStress(0)"
 								title="No stress"
 							>
@@ -920,6 +932,10 @@ function getDieDisplayValue( val: any ) {
 							<li
 								v-for="val in attachedStressScale"
 								:class="{ 'active': attachedStressValue === val }"
+								tabindex="0"
+								role="button"
+								@keydown.enter.prevent="setAttachedStress(val)"
+								@keydown.space.prevent="setAttachedStress(val)"
 								@click.stop="setAttachedStress(val)"
 							>
 								<span class="c" v-html="getDieDisplayValue(val)"></span>

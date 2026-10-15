@@ -1,10 +1,13 @@
 import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
+import { cloneDeep } from './clone-deep.ts';
 import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
 
 export const cortexFunctions = {
+
+	cloneDeep: cloneDeep,
 
 	// Layered-model helpers (TS pilot). Imported here so the TypeScript
 	// toolchain compiles it into the bundle; consumers land during the UI pass.
@@ -86,7 +89,14 @@ export const cortexFunctions = {
 				stroke = cfg.borderColor || '#000000';
 				textFill = cfg.numeralColor || '#ffffff';
 				if ( cfg.backgroundType === 'gradient' && cfg.backgroundColor1 && cfg.backgroundColor2 ) {
-					const gradId = `die-grad-${s}-${Math.abs(Math.sin(s)).toString(36).substr(2, 5)}`;
+					const gradKey = `${s}-${cfg.backgroundColor1}-${cfg.backgroundColor2}-${cfg.gradientAngle || 135}`;
+					let hash = 0;
+					for ( let i = 0; i < gradKey.length; i++ ) {
+						hash = ( ( hash << 5 ) - hash ) + gradKey.charCodeAt( i );
+						hash |= 0;
+					}
+					const gradSlug = Math.abs( hash ).toString( 36 );
+					const gradId = `die-grad-${s}-${gradSlug}`;
 					const angle = Number(cfg.gradientAngle) || 135;
 					const rad = (angle - 90) * (Math.PI / 180);
 					const x1 = Math.round(50 + Math.cos(rad + Math.PI) * 50);
@@ -121,29 +131,29 @@ export const cortexFunctions = {
 		if ( s === 4 ) {
 			// Inverted triangle pointing down
 			shape = `<polygon points="2.5,4 21.5,4 12,20" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">4</text>`;
+			text = `<text aria-hidden="true" x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">4</text>`;
 		} else if ( s === 6 ) {
 			// Square
 			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">6</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">6</text>`;
 		} else if ( s === 8 ) {
 			// Diamond
 			shape = `<polygon points="12,2.5 21.5,12 12,21.5 2.5,12" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">8</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">8</text>`;
 		} else if ( s === 10 ) {
 			// Kite / Hexagon
 			shape = `<polygon points="12,2.5 21.5,7.5 21.5,16.5 12,21.5 2.5,16.5 2.5,7.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="8.75" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">10</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="8.75" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">10</text>`;
 		} else if ( s === 12 ) {
 			// 12-sided regular dodecagon
 			shape = `<polygon points="12,2.5 16.75,3.77 20.23,7.25 21.5,12 20.23,16.75 16.75,20.23 12,21.5 7.25,20.23 3.77,16.75 2.5,12 3.77,7.25 7.25,3.77" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="8.75" font-weight="900" letter-spacing="-0.03em" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">12</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="8.75" font-weight="900" letter-spacing="-0.03em" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">12</text>`;
 		} else {
 			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">${s}</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">${s}</text>`;
 		}
 
-		return `<svg class="${cls}" viewBox="0 0 24 24" width="1.35rem" height="1.35rem" style="display:inline-block; vertical-align:middle; overflow:visible;">${defs}${shape}${text}</svg>`;
+		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1.35rem" height="1.35rem" style="display:inline-block; vertical-align:middle; overflow:visible;">${defs}${shape}${text}</svg>`;
 	},
 
 	getTraitSetRatings: function( traitSet: TraitSet ) {
@@ -323,7 +333,7 @@ export const cortexFunctions = {
 			inner = Object.assign( {}, inner );
 			inner.id = this.generateUUID();
 		}
-		const clean = JSON.parse( JSON.stringify( inner ) );
+		const clean = cloneDeep( inner );
 		// D5: import must not materialize defaults — missing lists/objects
 		// inherit from the template at merge; the renderer treats absence
 		// as empty. Only identity (set ids) is ensured below.
@@ -560,7 +570,7 @@ export const cortexFunctions = {
 		const base = ( ts.id && templateEntry ) ? this.templateSetById( templateEntry, ts.id ) : null;
 		const btrait = base && Array.isArray( base.traits ) ? base.traits.find( ( b ) => b && b.name === name ) : null;
 		if ( btrait ) {
-			const clone = JSON.parse( JSON.stringify( btrait ) );
+			const clone = cloneDeep( btrait );
 			delete clone._lid;
 			delete clone.id;
 			ts.traits.push( clone );
@@ -630,7 +640,7 @@ export const cortexFunctions = {
 			if ( Object.keys( bySet ).length ) out.traitOrders = bySet;
 		}
 		if ( prefsEntry.declinedTemplateVersions && typeof prefsEntry.declinedTemplateVersions === 'object' ) {
-			out.declinedTemplateVersions = JSON.parse( JSON.stringify( prefsEntry.declinedTemplateVersions ) );
+			out.declinedTemplateVersions = cloneDeep( prefsEntry.declinedTemplateVersions );
 		}
 		return Object.keys( out ).length ? out : null;
 	},
@@ -707,7 +717,7 @@ export const cortexFunctions = {
 		if ( !Array.isArray( overArr ) || !overArr.length ) return [];
 		const out: unknown[] = [];
 		const push = ( v: unknown ) => {
-			if ( !out.some( e => this.deepEqualClean( e, v ) ) ) out.push( JSON.parse( JSON.stringify( v ) ) );
+			if ( !out.some( e => this.deepEqualClean( e, v ) ) ) out.push( cloneDeep( v ) );
 		};
 		( Array.isArray( baseArr ) ? baseArr : [] ).forEach( push );
 		overArr.forEach( push );
@@ -736,7 +746,7 @@ export const cortexFunctions = {
 		const consumed = new Set();
 		const result: any[] = [];
 		const mergeOne = ( b: any, o: any ) => {
-			const c = JSON.parse( JSON.stringify( b ) );
+			const c = cloneDeep( b );
 			this.applyOverrides( c, o );
 			return c;
 		};
@@ -747,7 +757,7 @@ export const cortexFunctions = {
 		// positionally — documented; the pruner never emits that shape.
 		for ( let i = 0; i < base.length; i++ ) {
 			const b = base[i];
-			if ( !b || typeof b !== 'object' ) { result.push( JSON.parse( JSON.stringify( b ) ) ); continue; }
+			if ( !b || typeof b !== 'object' ) { result.push( cloneDeep( b ) ); continue; }
 			if ( !this.isBlankName( b.name ) && rem.has( b.name ) ) continue; // D6 removal wins.
 			let m = -1;
 			if ( !this.isBlankName( b.name ) ) {
@@ -764,16 +774,16 @@ export const cortexFunctions = {
 				}
 			}
 			if ( m >= 0 ) { consumed.add( m ); result.push( mergeOne( b, over[m] ) ); }
-			else result.push( JSON.parse( JSON.stringify( b ) ) );
+			else result.push( cloneDeep( b ) );
 		}
 		for ( let j = 0; j < over.length; j++ ) {
 			if ( consumed.has( j ) ) continue;
 			const o = over[j];
-			if ( !o || typeof o !== 'object' ) { result.push( JSON.parse( JSON.stringify( o ) ) ); continue; }
+			if ( !o || typeof o !== 'object' ) { result.push( cloneDeep( o ) ); continue; }
 			if ( !this.isBlankName( o.name ) ) {
-				if ( this.findTraitByName( base, o.name ) === -1 ) result.push( JSON.parse( JSON.stringify( o ) ) );
+				if ( this.findTraitByName( base, o.name ) === -1 ) result.push( cloneDeep( o ) );
 			} else if ( j >= base.length ) {
-				result.push( JSON.parse( JSON.stringify( o ) ) ); // genuinely extra blank slot
+				result.push( cloneDeep( o ) ); // genuinely extra blank slot
 			}
 		}
 		return result;
@@ -794,20 +804,20 @@ export const cortexFunctions = {
 		const consumed = new Set();
 		const result: any[] = [];
 		for ( const b of base ) {
-			if ( !b || typeof b !== 'object' ) { result.push( JSON.parse( JSON.stringify( b ) ) ); continue; }
+			if ( !b || typeof b !== 'object' ) { result.push( cloneDeep( b ) ); continue; }
 			if ( typeof b.id === 'string' && b.id.length && rem.has( b.id ) ) continue;
 			const j = ( typeof b.id === 'string' && b.id.length && byId.has( b.id ) ) ? byId.get( b.id ) : -1;
 			if ( j >= 0 ) {
 				consumed.add( j );
-				const c = JSON.parse( JSON.stringify( b ) );
+				const c = cloneDeep( b );
 				this.applyOverrides( c, over[j] );
 				result.push( c );
 			} else {
-				result.push( JSON.parse( JSON.stringify( b ) ) );
+				result.push( cloneDeep( b ) );
 			}
 		}
 		over.forEach( ( o, j ) => {
-			if ( !consumed.has( j ) ) result.push( JSON.parse( JSON.stringify( o ) ) );
+			if ( !consumed.has( j ) ) result.push( cloneDeep( o ) );
 		} );
 		return result;
 	},
@@ -833,7 +843,7 @@ export const cortexFunctions = {
 			const val = over[key];
 			if ( val === null ) { base[key] = null; continue; }
 			if ( key === 'removedTraits' || key === 'removedSets' ) {
-				base[key] = JSON.parse( JSON.stringify( val ) );
+				base[key] = cloneDeep( val );
 				continue;
 			}
 			const bval = base[key];
@@ -846,7 +856,7 @@ export const cortexFunctions = {
 			} else if ( val && typeof val === 'object' && !Array.isArray( val ) && bval && typeof bval === 'object' && !Array.isArray( bval ) ) {
 				this.applyOverrides( bval, val );
 			} else {
-				base[key] = JSON.parse( JSON.stringify( val ) );
+				base[key] = cloneDeep( val );
 			}
 		}
 		return base;
@@ -857,8 +867,8 @@ export const cortexFunctions = {
 	// a pinned { id, version } reference in sheet.template.
 	mergeTemplateIntoCharacter: function( charData: any, templateEntry: any ) {
 		const base = this.findTemplateCharacter( templateEntry );
-		if ( !base ) return JSON.parse( JSON.stringify( charData ) );
-		const out = this.applyOverrides( JSON.parse( JSON.stringify( base ) ), charData || {} );
+		if ( !base ) return cloneDeep( charData );
+		const out = this.applyOverrides( cloneDeep( base ), charData || {} );
 		if ( templateEntry.id ) {
 			out.sheet = { template: { id: templateEntry.id, version: templateEntry.version || 1 } };
 		}
@@ -872,7 +882,7 @@ export const cortexFunctions = {
 	extractSheetTemplate: function( character: any, meta: any ) {
 		this.ensureTraitSetIds( character );
 		const id = meta && meta.id ? String( meta.id ) : ( 'custom-' + this.generateUUID().slice( 0, 8 ) );
-		const snapshot = JSON.parse( JSON.stringify( character ) );
+		const snapshot = cloneDeep( character );
 		delete snapshot.sheet;
 		snapshot.isTemplate = true;
 		snapshot.name = '';
@@ -920,7 +930,7 @@ export const cortexFunctions = {
 			let out: any = {};
 			for ( const k of Object.keys( oval ) ) {
 				if ( k === 'sheet' || k === 'removedTraits' || k === 'removedSets' || k === 'id' || k === 'name' ) {
-					out[k] = JSON.parse( JSON.stringify( oval[k] ) );
+					out[k] = cloneDeep( oval[k] );
 					continue;
 				}
 				if ( k === 'traitSets' && Array.isArray( oval[k] ) && Array.isArray( bval[k] ) ) {
@@ -949,7 +959,7 @@ export const cortexFunctions = {
 			if ( Object.keys( out ).every( kk => kk === 'id' || kk === 'name' ) ) return { drop: true };
 			return { keep: out };
 		}
-		return { keep: JSON.parse( JSON.stringify( oval ) ) };
+		return { keep: cloneDeep( oval ) };
 	},
 
 	pruneTraitArrays: function( bTraits: any, oTraits: any, removed: any ) {
@@ -962,10 +972,10 @@ export const cortexFunctions = {
 			if ( b && typeof b === 'object' && !this.isBlankName( b.name ) && !baseByName.has( b.name ) ) baseByName.set( b.name, b );
 		} );
 		over.forEach( ( o: any, i: number ) => {
-			if ( !o || typeof o !== 'object' ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; }
+			if ( !o || typeof o !== 'object' ) { sparse.push( cloneDeep( o ) ); return; }
 			if ( !this.isBlankName( o.name ) ) {
 				const b = baseByName.get( o.name );
-				if ( !b ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; } // char-only
+				if ( !b ) { sparse.push( cloneDeep( o ) ); return; } // char-only
 				// Shape-preserving: fully-inherited named traits stay as
 				// {name} stubs so live indices survive the round-trip.
 				const r = this.pruneValue( b, o, null );
@@ -977,7 +987,7 @@ export const cortexFunctions = {
 				// index alignment (and reserved print rows) survives the
 				// round-trip. Fully-inherited ones prune to a bare stub.
 				const b = ( i < base.length && base[i] && typeof base[i] === 'object' && this.isBlankName( base[i].name ) ) ? base[i] : null;
-				if ( !b ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; } // extra blank slot
+				if ( !b ) { sparse.push( cloneDeep( o ) ); return; } // extra blank slot
 				const r = this.pruneValue( b, o, null );
 				sparse.push( r.drop ? { name: ( typeof o.name === 'string' ? o.name : '' ) } : r.keep );
 			}
@@ -1006,9 +1016,9 @@ export const cortexFunctions = {
 		};
 		const stubOnly = ( p: any ) => bare( p );
 		over.forEach( ( o: any ) => {
-			if ( !o || typeof o !== 'object' ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; }
+			if ( !o || typeof o !== 'object' ) { sparse.push( cloneDeep( o ) ); return; }
 			const b = ( typeof o.id === 'string' && o.id.length ) ? baseById.get( o.id ) : null;
-			if ( !b ) { sparse.push( JSON.parse( JSON.stringify( o ) ) ); return; } // custom set: whole
+			if ( !b ) { sparse.push( cloneDeep( o ) ); return; } // custom set: whole
 			const r = this.pruneValue( b, o, null );
 			const pruned = r.drop ? { id: o.id } : r.keep;
 			pruned.id = o.id;
@@ -1024,8 +1034,8 @@ export const cortexFunctions = {
 	// entry's character base.
 	stripCharacterToDeltas: function( character: any, templateEntry: any ) {
 		const base = this.findTemplateCharacter( templateEntry );
-		if ( !base ) return JSON.parse( JSON.stringify( character ) );
-	 const r = this.pruneValue( base, JSON.parse( JSON.stringify( character ) ), null );
+		if ( !base ) return cloneDeep( character );
+	 const r = this.pruneValue( base, cloneDeep( character ), null );
 		return r.drop ? {} : r.keep;
 	},
 
@@ -1036,7 +1046,7 @@ export const cortexFunctions = {
 		const clean = this.stripCharacterToDeltas( character, templateEntry );
 		this.stripInternalIds( clean );
 		if ( templateEntry && templateEntry.id ) {
-			clean.sheet = { template: JSON.parse( JSON.stringify( templateEntry ) ) };
+			clean.sheet = { template: cloneDeep( templateEntry ) };
 		}
 		return clean;
 	},
@@ -1046,9 +1056,9 @@ export const cortexFunctions = {
 		// Escape user HTML first: everything below re-adds only our own safe tags.
 		let str = this.escapeHtml( text );
 		// Dice tokens
-		str = str.replace( /\bd(4|6|8)\b/gi, '<span class="c">$1</span>' );
-		str = str.replace( /\bd10\b/gi, '<span class="c">0</span>' );
-		str = str.replace( /\bd12\b/gi, '<span class="c">2</span>' );
+		str = str.replace( /\bd(4|6|8)\b/gi, '<span class="c" role="img" aria-label="d$1">$1</span>' );
+		str = str.replace( /\bd10\b/gi, '<span class="c" role="img" aria-label="d10">0</span>' );
+		str = str.replace( /\bd12\b/gi, '<span class="c" role="img" aria-label="d12">2</span>' );
 		// Plot points
 		str = str.replace( /(^|\W)PP(\W|$)/g, '$1<span class="pp">PP</span>$2' );
 		// Bold: **text** or __text__

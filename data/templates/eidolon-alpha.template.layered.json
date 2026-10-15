@@ -50,6 +50,7 @@
         "description": "Prime vocations and endarch callings",
         "nounSingular": "Role",
         "nounPlural": "Roles",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -65,8 +66,14 @@
               "body": "default"
             },
             "multiDie": false,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -102,6 +109,8 @@
         "description": "Elemental selfhood with highlight circles and stress",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
+        "ratingPosition": "below",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -117,11 +126,29 @@
               "body": "default"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "attachedStress": {
+              "enabled": true,
+              "label": "STRESS",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "includeOut": false
             },
-            "notes": "HIGHLIGHT: Check one Highlight circle per Attribute.\nSTRESS per Attribute: [4] [6] [8] [10] [12] + OUT",
+            "stressConfig": {
+              "includeOut": false
+            },
+            "notes": "",
             "reservedSlots": 5,
             "attributesRing": false,
             "colWidth": 33
@@ -175,104 +202,84 @@
               "body": "distinctions"
             },
             "multiDie": false,
+            "ratingScale": [
+              8
+            ],
+            "subtraitRatingScale": [
+              8
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "Hinder: Gain a PP when you switch out your endarch distinction’s rating of d8 for a d4.",
+            "notes": "",
             "reservedSlots": 1
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "Power 1": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Power 2": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Power 3": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4."
+                  },
+                  "Summon": {
+                    "description": "Shut down this endarch distinction to summon your Eidolon on your next turn."
+                  }
+                },
+                "slots": {
+                  "1": {
+                    "custom": {}
+                  },
+                  "2": {
+                    "custom": {}
+                  },
+                  "3": {
+                    "custom": {}
+                  }
                 }
               }
             }
           }
         }
       },
-      "Endarch SFX": {
-        "id": "endarch-sfx",
-        "description": "Endarch triggers, the summoning rite, and custom SFX",
-        "nounSingular": "Endarch SFX",
-        "nounPlural": "Endarch SFXs",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "HINDER: Gain a PP when you switch out your endarch distinction’s rating of d8 for a d4.\nSUMMON: Shut down this endarch distinction to summon your Eidolon on your next turn.",
-            "reservedSlots": 3
-          }
-        },
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
       "Summoned Eidolon": {
         "id": "summoned-eidolon",
         "description": "Manifested eidolon form: base trait, scale, powers, highlights",
-        "nounSingular": "Summoned Eidolon",
-        "nounPlural": "Summoned Eidolons",
+        "nounSingular": "Eidolon Trait",
+        "nounPlural": "Eidolon Traits",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "right",
             "page": 1,
@@ -280,38 +287,60 @@
               "header": "default",
               "body": "default"
             },
-            "multiDie": false,
+            "multiDie": true,
+            "ratingScale": [
+              4,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "BASE TRAIT: d10 d10 or d4 d4 • SCALE: d8\nPOWERS start at d12 • HIGHLIGHT ATTRIBUTES start at d12",
+            "notes": "",
             "reservedSlots": 5
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Base Trait": {
+            "value": "2d10",
+            "pool": true,
+            "description": "d10 d10 or d4 d4",
+            "tags": [],
+            "custom": {}
+          },
+          "Scale": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "1": {
+          "Power 1": {
+            "value": "d12",
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "2": {
+          "Power 2": {
+            "value": "d12",
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "3": {
+          "Power 3": {
+            "value": "d12",
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "4": {
+          "Highlight Attribute 1": {
+            "value": "d12",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Highlight Attribute 2": {
+            "value": "d12",
             "description": "",
             "tags": [],
             "custom": {}
@@ -321,8 +350,8 @@
       "Role & Freeform Distinctions": {
         "id": "role-freeform-distinctions",
         "description": "Chosen calling and personal definition",
-        "nounSingular": "Role & Freeform Distinction",
-        "nounPlural": "Role & Freeform Distinctions",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -338,16 +367,19 @@
               "body": "distinctions"
             },
             "multiDie": false,
+            "ratingScale": [
+              8
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "Hinder: Gain a PP when you switch out this distinction’s d8 rating for a d4.",
+            "notes": "",
             "reservedSlots": 2
           }
         },
         "traits": {
-          "Role Distinction:": {
+          "Role Distinction": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -359,7 +391,8 @@
               }
             }
           },
-          "Freeform Distinction:": {
+          "Freeform Distinction": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -381,6 +414,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -394,14 +429,18 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 0,
+            "pipsConfig": {
+              "rows": 2,
+              "perRow": 10,
+              "filled": 0
+            },
             "pips": {
-              "count": 18,
-              "perRow": 6,
+              "count": 20,
+              "perRow": 10,
               "connected": true,
               "filled": 0
             }

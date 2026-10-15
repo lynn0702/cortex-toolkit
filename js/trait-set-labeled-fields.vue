@@ -14,6 +14,10 @@ const {
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
 				<div :class="{ 'trait-inner': true, 'field-block': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+					tabindex="0"
+					role="button"
+					@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
+					@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
 					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
 					<span class="field-label" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 					<span class="field-label field-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>

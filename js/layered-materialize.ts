@@ -17,6 +17,7 @@
 
 import { asTrait, parseDice } from "./cortex-toolkit-trait-helpers.ts";
 import type { TraitRaw, TraitObject, SetObject } from "./cortex-toolkit-trait-helpers.ts";
+import { cloneDeep } from "./clone-deep.ts";
 
 // ---------- legacy (render) shapes ----------
 
@@ -54,7 +55,7 @@ export interface LegacyCharacter {
 	[key: string]: unknown;
 }
 
-const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
+const clone = cloneDeep;
 
 const dieSize = (die: string): number => parseInt(String(die).slice(1), 10);
 

@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { cortexMigration } from './migration.ts';
+import { cloneDeep } from './clone-deep.ts';
 import App from './app.vue';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,5 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.cortexMaterialize = cortexFunctions.materializeCharacter;
 	window.cortexToLayered = cortexFunctions.toLayeredEntity;
 	window.cortexFunctions = cortexFunctions;
+	window.cortexCloneDeep = cloneDeep;
 
 });

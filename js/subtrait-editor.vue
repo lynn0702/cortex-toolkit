@@ -147,6 +147,10 @@ function getDieDisplayValue( value: any ) {
 				<li
 					v-for="value in availableValues"
 					:class="{ 'active': value === subtrait.value }"
+					tabindex="0"
+					role="button"
+					@keydown.enter.prevent="toggleSubtraitValue( value )"
+					@keydown.space.prevent="toggleSubtraitValue( value )"
 					@click.stop="toggleSubtraitValue( value )"
 				>
 					<span class="c" v-html="getDieDisplayValue(value)"></span>

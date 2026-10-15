@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "full-width",
         "columnOffsets": {
           "left": 0,
@@ -55,9 +62,11 @@
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "location": "left",
             "page": 1,
             "style": {
@@ -65,13 +74,16 @@
               "body": "distinctions"
             },
             "multiDie": false,
+            "ratingScale": [
+              8
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3,
-            "colSpan": 3
+            "colSpan": 3,
+            "columnSpan": "full"
           }
         },
         "traits": {
@@ -113,82 +125,16 @@
           }
         }
       },
-      "Values": {
-        "id": "values",
-        "description": "Alien worldview versus human conditioning",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "two-columns-detailed"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 7,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
-        },
-        "traits": {
-          "Alien": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Conformity": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Materialism": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Paranoia": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Patriotism": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Secrecy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Spirituality": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Core baseline d6 skills with branching d8+ specialties",
-        "nounSingular": "Skills & Specialtie",
-        "nounPlural": "Skills & Specialties",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -213,7 +159,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -400,6 +345,92 @@
           }
         }
       },
+      "Values": {
+        "id": "values",
+        "description": "Alien worldview versus human conditioning",
+        "nounSingular": "Value",
+        "nounPlural": "Values",
+        "statement": true,
+        "ratingPosition": "above",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 7,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Alien": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Conformity": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Materialism": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Paranoia": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Patriotism": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Secrecy": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Spirituality": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
       "Talents": {
         "id": "talents",
         "description": "Specialized alien abilities and tech modules",
@@ -421,7 +452,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -457,11 +487,14 @@
       "Signature Assets / Tech": {
         "id": "signature-assets-tech",
         "description": "Alien equipment and concealed devices",
-        "nounSingular": "Signature Assets / Tech",
-        "nounPlural": "Signature Assets / Techs",
+        "nounSingular": "Signature Asset / Tech",
+        "nounPlural": "Signature Assets / Tech",
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -474,8 +507,13 @@
               "body": "default"
             },
             "multiDie": false,
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -487,16 +525,19 @@
         "traits": {},
         "slots": {
           "0": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
@@ -508,9 +549,13 @@
         "description": "Connections to human contacts, superiors, and rivals",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
+        "ratingPosition": "above",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
             "features": {
               "description": true,
               "sfx": false,
@@ -523,12 +568,18 @@
               "body": "default"
             },
             "multiDie": false,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
+            "reservedSlots": 10,
             "colSpan": "full",
             "columnSpan": "full"
           }
@@ -536,51 +587,61 @@
         "traits": {},
         "slots": {
           "0": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "3": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "4": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "5": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "6": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "7": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "8": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "9": {
+            "value": null,
             "description": "",
             "tags": [],
             "custom": {}
@@ -595,6 +656,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -612,7 +675,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",

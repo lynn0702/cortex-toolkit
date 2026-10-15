@@ -40,6 +40,16 @@ const cortexSpotlightTemplates = [
           }
         }
       },
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      },
       "traitSets": [
         {
           "id": "distinctions",
@@ -47,45 +57,6 @@ const cortexSpotlightTemplates = [
           "description": "Core alien background, job, and personality",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "traits": [
-            {
-              "name": "Alien Background:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Alien Role/Job:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Personality/Quirk:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -109,7 +80,46 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 3,
               "colSpan": 3
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Alien Background:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ]
+            },
+            {
+              "name": "Alien Role/Job:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ]
+            },
+            {
+              "name": "Personality/Quirk:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ]
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "values",
@@ -117,79 +127,6 @@ const cortexSpotlightTemplates = [
           "description": "Alien worldview versus human conditioning",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "traits": [
-            {
-              "name": "Alien",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Conformity",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Materialism",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Paranoia",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Patriotism",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Secrecy",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Spirituality",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -214,7 +151,80 @@ const cortexSpotlightTemplates = [
               "colSpan": "full",
               "columnSpan": "full"
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Alien",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Conformity",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Materialism",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Paranoia",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Patriotism",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Secrecy",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Spirituality",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "subtrait-columns",
@@ -222,282 +232,6 @@ const cortexSpotlightTemplates = [
           "description": "Core baseline d6 skills with branching d8+ specialties",
           "nounSingular": "Skills & Specialtie",
           "nounPlural": "Skills & Specialties",
-          "traits": [
-            {
-              "name": "Bout",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Chat",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Find",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Make",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Play",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Operate",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Work",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "left"
-                    }
-                  }
-                },
-                {
-                  "name": "",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {
-                    "cortexToolkit": {
-                      "branchSide": "right"
-                    }
-                  }
-                }
-              ],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -533,7 +267,283 @@ const cortexSpotlightTemplates = [
               "colSpan": "full",
               "columnSpan": "full"
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Bout",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Chat",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Find",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Make",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Play",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Operate",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Work",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "left"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "",
+                  "value": 0,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {
+                    "cortexToolkit": {
+                      "branchSide": "right"
+                    }
+                  },
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "talents",
@@ -541,49 +551,6 @@ const cortexSpotlightTemplates = [
           "description": "Specialized alien abilities and tech modules",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -608,7 +575,50 @@ const cortexSpotlightTemplates = [
               "colSpan": "full",
               "columnSpan": "full"
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "signature-assets-tech",
@@ -616,39 +626,6 @@ const cortexSpotlightTemplates = [
           "description": "Alien equipment and concealed devices",
           "nounSingular": "Signature Assets / Tech",
           "nounPlural": "Signature Assets / Techs",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -673,7 +650,40 @@ const cortexSpotlightTemplates = [
               "colSpan": "full",
               "columnSpan": "full"
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "relationships",
@@ -681,109 +691,6 @@ const cortexSpotlightTemplates = [
           "description": "Connections to human contacts, superiors, and rivals",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -808,7 +715,110 @@ const cortexSpotlightTemplates = [
               "colSpan": "full",
               "columnSpan": "full"
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "session-record",
@@ -816,8 +826,6 @@ const cortexSpotlightTemplates = [
           "description": "Session track and progression log",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "traits": [],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -846,19 +854,11 @@ const cortexSpotlightTemplates = [
               "colSpan": "full",
               "columnSpan": "full"
             }
-          }
+          },
+          "traits": [],
+          "sfx": []
         }
-      ],
-      "player": "",
-      "portrait": {
-        "url": "",
-        "custom": {
-          "cortexToolkit": {
-            "size": "spotlight",
-            "location": "header"
-          }
-        }
-      }
+      ]
     }
   },
   {
@@ -906,6 +906,16 @@ const cortexSpotlightTemplates = [
           }
         }
       },
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      },
       "traitSets": [
         {
           "id": "distinctions",
@@ -913,39 +923,6 @@ const cortexSpotlightTemplates = [
           "description": "Crew role, quality, and personal drive",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "traits": [
-            {
-              "name": "Purpose:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Quality:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -971,7 +948,40 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 3,
               "colWidth": 66
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Purpose:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Quality:",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "values",
@@ -979,59 +989,6 @@ const cortexSpotlightTemplates = [
           "description": "Guiding philosophies paired with personal statements",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "traits": [
-            {
-              "name": "Courage",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Curiosity",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Hope",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Logic",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Peace",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1055,7 +1012,60 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 5,
               "colWidth": 66
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Courage",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Curiosity",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Hope",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Logic",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Peace",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "relationships",
@@ -1063,89 +1073,6 @@ const cortexSpotlightTemplates = [
           "description": "Crew connections and ties to shipmates",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1169,7 +1096,90 @@ const cortexSpotlightTemplates = [
               "reservedSlots": 3,
               "colWidth": 66
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "signature-assets",
@@ -1177,39 +1187,6 @@ const cortexSpotlightTemplates = [
           "description": "Specialized starship equipment and personal gear",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1232,7 +1209,40 @@ const cortexSpotlightTemplates = [
               "notes": "",
               "reservedSlots": 2
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "milestones",
@@ -1240,8 +1250,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "traits": [],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1264,7 +1272,9 @@ const cortexSpotlightTemplates = [
               "notes": "**PERSONAL:**\n• 1 XP when \n\n• 3 XP when \n\n• 10 XP when \n\n**GROUP:**\n• 1 XP when \n\n• 3 XP when \n\n• 10 XP when ",
               "reservedSlots": 0
             }
-          }
+          },
+          "traits": [],
+          "sfx": []
         },
         {
           "id": "xp",
@@ -1272,8 +1282,6 @@ const cortexSpotlightTemplates = [
           "description": "Experience points bubble track",
           "nounSingular": "XP",
           "nounPlural": "XP",
-          "traits": [],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -1296,19 +1304,11 @@ const cortexSpotlightTemplates = [
               },
               "reservedSlots": 0
             }
-          }
+          },
+          "traits": [],
+          "sfx": []
         }
-      ],
-      "player": "",
-      "portrait": {
-        "url": "",
-        "custom": {
-          "cortexToolkit": {
-            "size": "spotlight",
-            "location": "header"
-          }
-        }
-      }
+      ]
     }
   },
   {
@@ -2650,6 +2650,16 @@ const cortexSpotlightTemplates = [
           }
         }
       },
+      "player": "",
+      "portrait": {
+        "url": "",
+        "custom": {
+          "cortexToolkit": {
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      },
       "traitSets": [
         {
           "id": "roles",
@@ -2657,49 +2667,7 @@ const cortexSpotlightTemplates = [
           "description": "Prime vocations and endarch callings",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "traits": [
-            {
-              "name": "Warrior",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Priest",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Scout",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Other",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
+          "ratingPosition": "below",
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -2715,15 +2683,64 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
               "reservedSlots": 4,
               "colWidth": 33
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Warrior",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Priest",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Scout",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Other",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "attributes",
@@ -2731,59 +2748,8 @@ const cortexSpotlightTemplates = [
           "description": "Elemental selfhood with highlight circles and stress",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "traits": [
-            {
-              "name": "Courage",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Grace",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Guile",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Reason",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Vigor",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
+          "ratingPosition": "below",
+          "hasQuestionedPip": true,
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -2799,16 +2765,87 @@ const cortexSpotlightTemplates = [
                 "body": "default"
               },
               "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "attachedStress": {
+                "enabled": true,
+                "label": "STRESS",
+                "ratingScale": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ],
+                "includeOut": false
               },
-              "notes": "HIGHLIGHT: Check one Highlight circle per Attribute.\nSTRESS per Attribute: [4] [6] [8] [10] [12] + OUT",
+              "stressConfig": {
+                "includeOut": false
+              },
+              "notes": "",
               "reservedSlots": 5,
               "attributesRing": false,
               "colWidth": 33
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Courage",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Grace",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Guile",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Reason",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Vigor",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "endarch-distinction",
@@ -2816,52 +2853,6 @@ const cortexSpotlightTemplates = [
           "description": "Ancestral endarch patron and its three bound powers",
           "nounSingular": "Endarch Distinction",
           "nounPlural": "Endarch Distinctions",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [
-                {
-                  "name": "Power 1",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "Power 2",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                },
-                {
-                  "name": "Power 3",
-                  "value": 0,
-                  "dice": [],
-                  "description": "",
-                  "traits": [],
-                  "sfx": [],
-                  "tags": [],
-                  "custom": {}
-                }
-              ],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -2877,144 +2868,106 @@ const cortexSpotlightTemplates = [
                 "body": "distinctions"
               },
               "multiDie": false,
+              "ratingScale": [
+                8
+              ],
+              "subtraitRatingScale": [
+                8
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
-              "notes": "Hinder: Gain a PP when you switch out your endarch distinction’s rating of d8 for a d4.",
+              "notes": "",
               "reservedSlots": 1
             }
-          }
-        },
-        {
-          "id": "endarch-sfx",
-          "name": "Endarch SFX",
-          "description": "Endarch triggers, the summoning rite, and custom SFX",
-          "nounSingular": "Endarch SFX",
-          "nounPlural": "Endarch SFXs",
+          },
           "traits": [
             {
               "name": "",
-              "value": 0,
+              "value": 8,
               "dice": [],
               "description": "",
-              "traits": [],
-              "sfx": [],
               "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "custom": {},
+              "traits": [
+                {
+                  "name": "Power 1",
+                  "value": 8,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "Power 2",
+                  "value": 8,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "Power 3",
+                  "value": 8,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": [
+                {
+                  "name": "Hinder",
+                  "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4."
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                },
+                {
+                  "name": "Summon",
+                  "description": "Shut down this endarch distinction to summon your Eidolon on your next turn."
+                }
+              ]
             }
           ],
-          "sfx": [],
-          "tags": [],
-          "custom": {
-            "cortexToolkit": {
-              "features": {
-                "description": true,
-                "sfx": true,
-                "subtraits": false
-              },
-              "location": "right",
-              "page": 1,
-              "style": {
-                "header": "default",
-                "body": "default"
-              },
-              "multiDie": false,
-              "stressConfig": {
-                "includeD4": false,
-                "includeOut": true
-              },
-              "notes": "HINDER: Gain a PP when you switch out your endarch distinction’s rating of d8 for a d4.\nSUMMON: Shut down this endarch distinction to summon your Eidolon on your next turn.",
-              "reservedSlots": 3
-            }
-          }
+          "sfx": []
         },
         {
           "id": "summoned-eidolon",
           "name": "Summoned Eidolon",
           "description": "Manifested eidolon form: base trait, scale, powers, highlights",
-          "nounSingular": "Summoned Eidolon",
-          "nounPlural": "Summoned Eidolons",
-          "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
+          "nounSingular": "Eidolon Trait",
+          "nounPlural": "Eidolon Traits",
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "center",
               "features": {
                 "description": true,
                 "sfx": false,
-                "subtraits": false
+                "subtraits": true
               },
               "location": "right",
               "page": 1,
@@ -3022,49 +2975,103 @@ const cortexSpotlightTemplates = [
                 "header": "default",
                 "body": "default"
               },
-              "multiDie": false,
+              "multiDie": true,
+              "ratingScale": [
+                4,
+                8,
+                10,
+                12
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
-              "notes": "BASE TRAIT: d10 d10 or d4 d4 • SCALE: d8\nPOWERS start at d12 • HIGHLIGHT ATTRIBUTES start at d12",
+              "notes": "",
               "reservedSlots": 5
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Base Trait",
+              "value": 10,
+              "dice": [
+                10,
+                10
+              ],
+              "description": "d10 d10 or d4 d4",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Scale",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Power 1",
+              "value": 12,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Power 2",
+              "value": 12,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Power 3",
+              "value": 12,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Highlight Attribute 1",
+              "value": 12,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Highlight Attribute 2",
+              "value": 12,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "role-freeform-distinctions",
           "name": "Role & Freeform Distinctions",
           "description": "Chosen calling and personal definition",
-          "nounSingular": "Role & Freeform Distinction",
-          "nounPlural": "Role & Freeform Distinctions",
-          "traits": [
-            {
-              "name": "Role Distinction:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            },
-            {
-              "name": "Freeform Distinction:",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "tags": [],
-              "custom": {}
-            }
-          ],
-          "sfx": [],
+          "nounSingular": "Distinction",
+          "nounPlural": "Distinctions",
           "tags": [],
           "custom": {
             "cortexToolkit": {
@@ -3080,14 +3087,43 @@ const cortexSpotlightTemplates = [
                 "body": "distinctions"
               },
               "multiDie": false,
+              "ratingScale": [
+                8
+              ],
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
-              "notes": "Hinder: Gain a PP when you switch out this distinction’s d8 rating for a d4.",
+              "notes": "",
               "reservedSlots": 2
             }
-          }
+          },
+          "traits": [
+            {
+              "name": "Role Distinction",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ]
+            },
+            {
+              "name": "Freeform Distinction",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ]
+            }
+          ],
+          "sfx": []
         },
         {
           "id": "xp",
@@ -3095,11 +3131,11 @@ const cortexSpotlightTemplates = [
           "description": "Experience points bubble track",
           "nounSingular": "XP",
           "nounPlural": "XP",
-          "traits": [],
-          "sfx": [],
           "tags": [],
           "custom": {
             "cortexToolkit": {
+              "header": "top",
+              "headerAlign": "center",
               "features": {
                 "description": false,
                 "sfx": false,
@@ -3113,31 +3149,27 @@ const cortexSpotlightTemplates = [
               },
               "multiDie": false,
               "stressConfig": {
-                "includeD4": false,
                 "includeOut": true
               },
               "notes": "",
               "reservedSlots": 0,
+              "pipsConfig": {
+                "rows": 2,
+                "perRow": 10,
+                "filled": 0
+              },
               "pips": {
-                "count": 18,
-                "perRow": 6,
+                "count": 20,
+                "perRow": 10,
                 "connected": true,
                 "filled": 0
               }
             }
-          }
+          },
+          "traits": [],
+          "sfx": []
         }
-      ],
-      "player": "",
-      "portrait": {
-        "url": "",
-        "custom": {
-          "cortexToolkit": {
-            "size": "spotlight",
-            "location": "header"
-          }
-        }
-      }
+      ]
     }
   },
   {
@@ -16219,6 +16251,906 @@ const cortexSpotlightTemplates = [
           }
         }
       }
+    }
+  },
+  {
+    "id": "spotlight-kitchen-sink",
+    "title": "Kitchen Sink Style Showcase",
+    "subtitle": "All 17 Trait Set Styles & Features",
+    "spotlight": "Toolkit Reference",
+    "variant": "Showcase",
+    "pages": 2,
+    "genre": "Reference",
+    "description": "Visual regression and style reference template exercising every layout component, header orientation, and die mechanic.",
+    "version": 1,
+    "updatedAt": "2026-10-14T12:00:00.000Z",
+    "character": {
+      "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
+      "version": "0.1",
+      "id": "00000000-0000-4000-8000-000000000001",
+      "isTemplate": true,
+      "dateCreated": "2026-10-14T12:00:00.000Z",
+      "dateModified": "2026-10-14T12:00:00.000Z",
+      "dateTouched": "2026-10-14T12:00:00.000Z",
+      "name": "Kitchen Sink Showcase",
+      "player": "Style Audit",
+      "game": "Cortex Prime Style Catalog",
+      "pronouns": "They / Them",
+      "description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
+      "plotPoints": 3,
+      "notes": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.",
+      "tags": [
+        "showcase",
+        "kitchen-sink"
+      ],
+      "portrait": {
+        "url": "",
+        "alt": "Character Portrait",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "alignment": "center-center",
+            "size": "spotlight",
+            "location": "header"
+          }
+        }
+      },
+      "custom": {
+        "cortexToolkit": {
+          "nickname": "The Everything Sheet",
+          "sheetStyle": "spotlight",
+          "columns": 2,
+          "pageCount": 2,
+          "columnAlignment": "top-base",
+          "columnOffsets": {
+            "left": 0,
+            "center": 0,
+            "right": 0
+          }
+        }
+      },
+      "traitSets": [
+        {
+          "id": "ks-distinctions",
+          "name": "Distinctions",
+          "description": "",
+          "nounSingular": "Distinction",
+          "nounPlural": "Distinctions",
+          "ratingPosition": "inline",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "left",
+              "style": {
+                "header": "distinctions",
+                "body": "distinctions"
+              },
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "sharedHinder": true,
+              "reservedSlots": 3,
+              "ratingScale": [
+                8
+              ]
+            }
+          },
+          "traits": [
+            {
+              "name": "Walking Style Guide",
+              "value": 8,
+              "dice": [],
+              "description": "Every layout edge case deserves a test.",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder",
+                {
+                  "name": "Pixel Parity",
+                  "description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
+                }
+              ]
+            },
+            {
+              "name": "",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder",
+                {
+                  "name": "",
+                  "description": "",
+                  "tags": [],
+                  "custom": {}
+                }
+              ]
+            },
+            {
+              "name": "",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                "hinder"
+              ]
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-values-statements",
+          "name": "Values",
+          "description": "",
+          "nounSingular": "Value",
+          "nounPlural": "Values",
+          "ratingPosition": "inline",
+          "statement": true,
+          "hasQuestionedPip": true,
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "default"
+              },
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              },
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
+          },
+          "traits": [
+            {
+              "name": "Craft",
+              "value": 10,
+              "dice": [],
+              "description": "Form and function are inseparable.",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Speed",
+              "value": 8,
+              "dice": [],
+              "description": "Ship early, refine relentlessly.",
+              "questioned": true,
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Clarity",
+              "value": 6,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-subtrait-columns",
+          "name": "Skills",
+          "description": "",
+          "nounSingular": "Skill",
+          "nounPlural": "Skills",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "left",
+              "style": {
+                "header": "default",
+                "body": "subtrait-columns"
+              },
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": true
+              },
+              "labels": {
+                "left": "SKILL",
+                "right": "SPECIALTIES"
+              }
+            }
+          },
+          "traits": [
+            {
+              "name": "Engineering",
+              "value": 10,
+              "dice": [],
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "Clockwork",
+                  "value": 8,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "Aetherics",
+                  "value": 6,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Navigation",
+              "value": 8,
+              "dice": [],
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "Star Charts",
+                  "value": 6,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "Diplomacy",
+              "value": 6,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-paired-slots",
+          "name": "Standing",
+          "description": "",
+          "nounSingular": "Standing",
+          "nounPlural": "Standings",
+          "statement": true,
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "paired-slots"
+              },
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": true
+              },
+              "labels": {
+                "slot0": "COMPLICATION",
+                "slot1": "BONUS"
+              },
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "subtraitRatingScale": [
+                6,
+                8,
+                10,
+                12
+              ]
+            }
+          },
+          "traits": [
+            {
+              "name": "The Guild",
+              "value": 8,
+              "dice": [],
+              "description": "They owe me a drydock bay.",
+              "tags": [],
+              "custom": {},
+              "traits": [
+                {
+                  "name": "Complication",
+                  "value": 6,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                },
+                {
+                  "name": "Bonus",
+                  "value": 8,
+                  "dice": [],
+                  "description": "",
+                  "tags": [],
+                  "custom": {},
+                  "traits": [],
+                  "sfx": []
+                }
+              ],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-die-rows",
+          "name": "Badges",
+          "description": "",
+          "nounSingular": "Badge",
+          "nounPlural": "Badges",
+          "hasCounterColumn": true,
+          "counterLabel": "XP",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "left",
+              "header": "top",
+              "headerAlign": "left",
+              "style": {
+                "header": "default",
+                "body": "die-rows"
+              },
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "reservedSlots": 3
+            }
+          },
+          "traits": [
+            {
+              "name": "First Responder",
+              "value": 8,
+              "dice": [],
+              "xp": 3,
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Trailblazer",
+              "value": 6,
+              "dice": [],
+              "xp": 1,
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-three-col-table",
+          "name": "Talents",
+          "description": "",
+          "nounSingular": "Talent",
+          "nounPlural": "Talents",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "three-column-table"
+              },
+              "features": {
+                "description": true,
+                "sfx": true,
+                "subtraits": false
+              },
+              "labels": {
+                "col1": "TALENT",
+                "col2": "ACTIVATION",
+                "col3": "EFFECT"
+              },
+              "reservedSlots": 2
+            }
+          },
+          "traits": [
+            {
+              "name": "Overclock",
+              "value": 0,
+              "dice": [],
+              "description": "Spend 1 PP when rolling Engineering.",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": [
+                {
+                  "name": "Effect",
+                  "description": "Step up your Effect die by one step for the scene."
+                }
+              ]
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-dice-count",
+          "name": "Resources",
+          "description": "",
+          "nounSingular": "Resource",
+          "nounPlural": "Resources",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "left",
+              "style": {
+                "header": "default",
+                "body": "dice-count"
+              },
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "multiDie": true,
+              "labels": {
+                "rating": "RATING",
+                "dice": "/ DICE"
+              }
+            }
+          },
+          "traits": [
+            {
+              "name": "Salvage Cache",
+              "value": 8,
+              "dice": [
+                8,
+                8,
+                8
+              ],
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Contacts",
+              "value": 6,
+              "dice": [
+                6,
+                6
+              ],
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-stress",
+          "name": "Stress",
+          "description": "",
+          "nounSingular": "Stress",
+          "nounPlural": "Stress",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 1,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "stress"
+              },
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              },
+              "stressConfig": {
+                "includeOut": true
+              },
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ]
+            }
+          },
+          "traits": [
+            {
+              "name": "Physical",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Mental",
+              "value": 0,
+              "dice": [],
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Social",
+              "value": 12,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-dice-ladder",
+          "name": "Growth Ladder",
+          "description": "",
+          "nounSingular": "Rung",
+          "nounPlural": "Rungs",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 2,
+              "location": "left",
+              "style": {
+                "header": "default",
+                "body": "dice-ladder"
+              },
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              }
+            }
+          },
+          "traits": [
+            {
+              "name": "Novice",
+              "value": 6,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Adept",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Master",
+              "value": 10,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-labeled-fields",
+          "name": "Dossier",
+          "description": "",
+          "nounSingular": "Field",
+          "nounPlural": "Fields",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 2,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "labeled-fields"
+              },
+              "features": {
+                "description": true,
+                "sfx": false,
+                "subtraits": false
+              }
+            }
+          },
+          "traits": [
+            {
+              "name": "Origin",
+              "value": 0,
+              "dice": [],
+              "description": "Outer Rim Shipyard #4",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Drive",
+              "value": 0,
+              "dice": [],
+              "description": "Restore the lost fleet",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Quirk",
+              "value": 0,
+              "dice": [],
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-pips",
+          "name": "Progress Track",
+          "description": "",
+          "nounSingular": "Pip",
+          "nounPlural": "Pips",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 2,
+              "location": "left",
+              "style": {
+                "header": "default",
+                "body": "pips"
+              },
+              "pipsConfig": {
+                "rows": 2,
+                "perRow": 5,
+                "filled": 4
+              }
+            }
+          },
+          "traits": [],
+          "sfx": []
+        },
+        {
+          "id": "ks-session-record",
+          "name": "Session Record",
+          "description": "",
+          "nounSingular": "Session",
+          "nounPlural": "Sessions",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 2,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "session-record"
+              },
+              "sessionRecord": {
+                "orientation": "vertical",
+                "lines": 4
+              }
+            }
+          },
+          "traits": [
+            {
+              "name": "Session 1: The Awakening",
+              "value": 6,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Session 2: Crossing the Threshold",
+              "value": 0,
+              "dice": [],
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-two-col-compact",
+          "name": "Roles (Compact Two-Column)",
+          "description": "",
+          "nounSingular": "Role",
+          "nounPlural": "Roles",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 2,
+              "location": "left",
+              "style": {
+                "header": "two-columns-compact",
+                "body": "two-columns-compact"
+              },
+              "features": {
+                "description": false,
+                "sfx": false,
+                "subtraits": false
+              }
+            }
+          },
+          "traits": [
+            {
+              "name": "Tactician",
+              "value": 8,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Outrider",
+              "value": 6,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Scholar",
+              "value": 10,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            },
+            {
+              "name": "Sentinel",
+              "value": 4,
+              "dice": [],
+              "description": "",
+              "tags": [],
+              "custom": {},
+              "traits": [],
+              "sfx": []
+            }
+          ],
+          "sfx": []
+        },
+        {
+          "id": "ks-notes",
+          "name": "Notes",
+          "description": "",
+          "nounSingular": "Note",
+          "nounPlural": "Notes",
+          "tags": [],
+          "custom": {
+            "cortexToolkit": {
+              "page": 2,
+              "location": "right",
+              "style": {
+                "header": "default",
+                "body": "notes"
+              },
+              "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*"
+            }
+          },
+          "traits": [],
+          "sfx": []
+        }
+      ]
     }
   }
 ];

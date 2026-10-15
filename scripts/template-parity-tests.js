@@ -20,7 +20,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
 
 // ---- 1. Every template round-trips deep-equal with marker-only warnings.
 {
-  ok(T.length === 26, '26 templates in library', T.length);
+  ok(T.length === 27, '27 templates in library', T.length);
   T.forEach((orig) => {
     const layeredFile = readLayered(orig.id);
     const fresh = M.migrateTemplateEntry(orig);

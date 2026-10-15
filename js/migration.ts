@@ -7,8 +7,9 @@
  * the type layer, sfx arrays to SFX trait maps, custom app-side, sheet.template
  * as a merge layer, dice-string ratings, terse validation.
  *
- * Pure functions, no dependencies. Node tests `require()` this ESM module.
  */
+
+import { cloneDeep } from './clone-deep.ts';
 
 export const cortexMigration = {
 
@@ -93,7 +94,7 @@ export const cortexMigration = {
 					const node: any = {};
 					if ( typeof sfx.description === 'string' && sfx.description.length ) node.description = sfx.description;
 					if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
-					if ( sfx.custom !== undefined ) node.custom = JSON.parse( JSON.stringify( sfx.custom ) );
+					if ( sfx.custom !== undefined ) node.custom = cloneDeep( sfx.custom );
 					slots[String( i )] = node;
 					return;
 				}
@@ -102,7 +103,7 @@ export const cortexMigration = {
 					node.description = sfx.description;
 				}
 				if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
-				if ( sfx.custom !== undefined ) node.custom = JSON.parse( JSON.stringify( sfx.custom ) );
+				if ( sfx.custom !== undefined ) node.custom = cloneDeep( sfx.custom );
 				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate sfx ' + JSON.stringify( key ) + ', last wins' );
 				map[key] = node;
 				return;
@@ -394,7 +395,7 @@ export const cortexMigration = {
 				if ( Object.keys( orders ).length ) prefs.traitOrders = orders;
 			}
 			if ( inner.prefs.declinedTemplateVersions && typeof inner.prefs.declinedTemplateVersions === 'object' ) {
-				prefs.declinedTemplateVersions = JSON.parse( JSON.stringify( inner.prefs.declinedTemplateVersions ) );
+				prefs.declinedTemplateVersions = cloneDeep( inner.prefs.declinedTemplateVersions );
 			}
 			if ( Object.keys( prefs ).length ) out.prefs = prefs;
 		}
@@ -446,7 +447,7 @@ export const cortexMigration = {
 				node[k] = ( Array.isArray( old[k] ) ) ? old[k].slice() : old[k];
 			}
 		} );
-		if ( old.custom !== undefined ) node.custom = JSON.parse( JSON.stringify( old.custom ) );
+		if ( old.custom !== undefined ) node.custom = cloneDeep( old.custom );
 		if ( old.id !== undefined ) {
 			this.warn( warnings, path + ': dropped trait-level id (D1)' );
 		}
@@ -512,7 +513,7 @@ export const cortexMigration = {
 		const set: any = {};
 		Object.keys( old ).forEach( ( k: string ) => {
 			if ( k === 'name' || k === 'traits' || k === 'sfx' || k === 'removedTraits' ) return;
-			set[k] = JSON.parse( JSON.stringify( old[k] ) );
+			set[k] = cloneDeep( old[k] );
 		} );
 		const split = this.splitTemplateTraits( old.traits, warnings, here );
 		set.traits = split.map;
@@ -541,12 +542,12 @@ export const cortexMigration = {
 		const out: any = {};
 		Object.keys( entry ).forEach( ( k: string ) => {
 			if ( k === 'character' ) return;
-			out[k] = JSON.parse( JSON.stringify( entry[k] ) );
+			out[k] = cloneDeep( entry[k] );
 		} );
 		const c: any = {};
 		Object.keys( ch ).forEach( ( k: string ) => {
 			if ( k === '$schema' || k === 'version' || k === 'traitSets' ) return;
-			c[k] = JSON.parse( JSON.stringify( ch[k] ) );
+			c[k] = cloneDeep( ch[k] );
 		} );
 		if ( ch.$schema !== undefined || ch.version !== undefined ) {
 			this.warn( warnings, 'character: dropped old-format $schema/version markers' );
@@ -619,9 +620,9 @@ export const cortexMigration = {
 		const d = this.unmigrateDieString( node.value, warnings, here );
 		const tr: any = { name: name, value: d.value, dice: d.dice };
 		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
-			if ( node[k] !== undefined ) tr[k] = JSON.parse( JSON.stringify( node[k] ) );
+			if ( node[k] !== undefined ) tr[k] = cloneDeep( node[k] );
 		} );
-		tr.custom = node.custom !== undefined ? JSON.parse( JSON.stringify( node.custom ) ) : {};
+		tr.custom = node.custom !== undefined ? cloneDeep( node.custom ) : {};
 		const subs = ( node.traits && typeof node.traits === 'object' && !Array.isArray( node.traits ) ) ? node.traits : {};
 		const subSlots = ( node.slots && typeof node.slots === 'object' && !Array.isArray( node.slots ) ) ? node.slots : {};
 		const self = this;
@@ -658,9 +659,9 @@ export const cortexMigration = {
 		const o: any = { name: isSlot ? '' : k };
 		const src = ( s && typeof s === 'object' && !Array.isArray( s ) ) ? s : {};
 		o.description = src.description !== undefined ? src.description : '';
-		if ( src.tags !== undefined ) o.tags = JSON.parse( JSON.stringify( src.tags ) );
+		if ( src.tags !== undefined ) o.tags = cloneDeep( src.tags );
 		else if ( isSlot ) o.tags = [];
-		if ( src.custom !== undefined ) o.custom = JSON.parse( JSON.stringify( src.custom ) );
+		if ( src.custom !== undefined ) o.custom = cloneDeep( src.custom );
 		else if ( isSlot ) o.custom = {};
 		return o;
 	},
@@ -694,7 +695,7 @@ export const cortexMigration = {
 		const ts: any = { id: set.id, name: name };
 		Object.keys( set ).forEach( ( k: string ) => {
 			if ( k === 'id' || k === 'name' || k === 'label' || k === 'traits' || k === 'slots' || k === 'sfx' ) return;
-			ts[k] = JSON.parse( JSON.stringify( set[k] ) );
+			ts[k] = cloneDeep( set[k] );
 		} );
 		const subs = ( set.traits && typeof set.traits === 'object' && !Array.isArray( set.traits ) ) ? set.traits : {};
 		const subSlots = ( set.slots && typeof set.slots === 'object' && !Array.isArray( set.slots ) ) ? set.slots : {};
@@ -724,7 +725,7 @@ export const cortexMigration = {
 		const out: any = {};
 		Object.keys( layered ).forEach( ( k: string ) => {
 			if ( k === 'character' ) return;
-			out[k] = JSON.parse( JSON.stringify( layered[k] ) );
+			out[k] = cloneDeep( layered[k] );
 		} );
 		const c: any = {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
@@ -732,7 +733,7 @@ export const cortexMigration = {
 		};
 		Object.keys( ch ).forEach( ( k: string ) => {
 			if ( k === 'sets' || k === 'slots' ) return;
-			c[k] = JSON.parse( JSON.stringify( ch[k] ) );
+			c[k] = cloneDeep( ch[k] );
 		} );
 		// Display name is the label when present, else the key. Suffixed dupe
 		// keys resolve through their labels; unadorned keys are their names.

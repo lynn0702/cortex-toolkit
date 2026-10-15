@@ -33,6 +33,10 @@ const {
 			<div :class="getTraitClasses(item.trait)">
 				<transition name="trait" appear>
 					<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
+						tabindex="0"
+						role="button"
+						@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
+						@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
 						@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
 					>
 						<!-- RATING POSITION ABOVE (e.g. Signature Assets) -->
@@ -78,7 +82,7 @@ const {
 										</template>
 									</span>
 									<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
-									<span v-if="hasQuestionedPip(traitSet)" class="statement-pip" :class="{ 'questioned': isTraitQuestioned(item.trait) }" @click.stop="toggleTraitQuestioned(s, item.originalIndex)" :title="submode === 'play' ? (isTraitQuestioned(item.trait) ? 'Questioned (click to reset)' : 'Click to question') : ''"></span>
+									<span v-if="hasQuestionedPip(traitSet)" class="statement-pip" :class="{ 'questioned': isTraitQuestioned(item.trait) }" tabindex="0" role="button" @keydown.enter.prevent="toggleTraitQuestioned(s, item.originalIndex)" @keydown.space.prevent="toggleTraitQuestioned(s, item.originalIndex)" @click.stop="toggleTraitQuestioned(s, item.originalIndex)" :title="submode === 'play' ? (isTraitQuestioned(item.trait) ? 'Questioned (click to reset)' : 'Click to question') : ''"></span>
 									<span class="trait-statement-box">
 										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
 										<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>

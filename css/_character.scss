@@ -34,8 +34,7 @@
 }
 
 @mixin print {
-	.submode-print &,
-	.designer-print-preview & {
+	.submode-print & {
 		@content;
 	}
 	@media print {

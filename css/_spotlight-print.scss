@@ -110,27 +110,8 @@
 	}
 }
 
-.designer-print-banner {
-	@extend %no-print;
-	background: #0284c7;
-	color: #ffffff;
-	font-size: 0.8rem;
-	font-weight: 700;
-	padding: 0.5rem 1rem;
-	border-radius: 4px;
-	margin: 0 auto 1rem;
-	width: var(--page-width);
-	max-width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-// Designer Print View mirrors the printed page: no on-sheet edit buttons
-// (+ Trait, + Attribute, Scale Die, etc.) — you can't click paper.
-.character-sheet.designer-print-preview,
+// Print View mirrors the printed page: no on-sheet edit buttons
+// (+ Trait, + Attribute, Scale Die, etc.) â€” you can't click paper.
 .character-sheet.submode-print {
 	.preview-button-container,
 	.spotlight-add-set-bar,
@@ -142,8 +123,7 @@
 }
 
 // MULTI-PAGE & PRINT LAYOUT
-.character-sheet.submode-print,
-.character-sheet.designer-print-preview {
+.character-sheet.submode-print {
 	background: #f1f5f9;
 	min-height: 100vh;
 	padding-bottom: 4rem;
@@ -239,7 +219,7 @@
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
 
-	// TOP HEADER BOXES — flush into the first band (sectioned grid, no gutter).
+	// TOP HEADER BOXES â€” flush into the first band (sectioned grid, no gutter).
 	.page-header {
 		margin-bottom: 0;
 
@@ -612,7 +592,7 @@
 	}
 
 	// COLUMNS IN SPOTLIGHT (GRID BANDS)
-	// BLOCK BUILDING: sets tile edge-to-edge like the source sheets — no
+	// BLOCK BUILDING: sets tile edge-to-edge like the source sheets â€” no
 	// gutters. Each band section is a grid: sets carry explicit placement
 	// (grid-row/column from the renderer) with per-band track shares, so a
 	// 66% set leaves ~33% for its mate. Shared 2px trait-set borders
@@ -1629,6 +1609,23 @@
 			align-items: center;
 			justify-content: center;
 			padding: 0.25rem 0;
+			position: relative;
+
+			&.vertical {
+				.pip-spine-line {
+					position: absolute;
+					top: 8px;
+					bottom: 8px;
+					left: 50%;
+					width: 1.5px;
+					background: #000000;
+					transform: translateX(-50%);
+					z-index: 0;
+				}
+				.pip-row {
+					max-width: none;
+				}
+			}
 
 			.pip-row {
 				display: flex;
@@ -1784,7 +1781,6 @@
 	.footer,
 	.footer-nav,
 	.nav-mode,
-	.designer-print-banner,
 	.preview-button-container,
 	.spotlight-add-set-bar,
 	.spotlight-add-portrait-link,
@@ -2240,8 +2236,8 @@
 	}
 }
 
-// MOBILE (≤768px): the A4 sheet goes fluid and every band stacks to a
-// single column — no horizontal overflow or clipped content. Inline grid
+// MOBILE (â‰¤768px): the A4 sheet goes fluid and every band stacks to a
+// single column â€” no horizontal overflow or clipped content. Inline grid
 // placement is neutralized (!important beats inline styles); the -2px seam
 // between stacked bands is preserved. Print/designer-preview paper layout
 // is untouched (this block is screen-only).
@@ -2305,7 +2301,7 @@
 
 
 // ============================================================
-// GENERIC SET HEADER (print) — placement + alignment overrides.
+// GENERIC SET HEADER (print) â€” placement + alignment overrides.
 // ============================================================
 .character-sheet.spotlight-print-style .trait-set.trait-set-header-top {
 	flex-direction: column;
@@ -2334,7 +2330,7 @@
 .character-sheet.spotlight-print-style .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header { align-items: flex-end; }
 
 // ============================================================
-// PRINT FIDELITY — table bodies.
+// PRINT FIDELITY â€” table bodies.
 // The shared `.trait` row adds padding/margin/border-bottom; inside the
 // table-style bodies that doubles the row divider (a "gutter"). Flush them;
 // the table's own borders/dividers provide the structure.
@@ -2489,3 +2485,409 @@ body:has(.character-sheet.submode-print) .main {
 .character-sheet.spotlight-print-style .trait-set-header-top > .trait-set-header > .trait-set-header-inner {
 	font-size: 1rem !important;
 }
+
+// Print Visual Parity & Mobile WYSIWYG Zoom
+.character-sheet.spotlight-print-style {
+	// Restore table row dividers stripped by .trait reset
+	.trait-set-style-die-rows .die-row:not(:last-child) {
+		border-bottom: 1px solid #000000 !important;
+	}
+	.trait-set-style-three-column-table .three-col-row {
+		border-top: 1px solid #000000 !important;
+	}
+
+	// Left-align stacked trait titles (e.g. Eidolon Alpha Roles & Attributes)
+	.trait-title.trait-title-stacked {
+		align-items: flex-start;
+		text-align: left;
+		.trait-name {
+			text-align: left;
+		}
+		.trait-value {
+			justify-content: flex-start;
+		}
+	}
+
+	// Compact inline U-bracket for Attached Stress (Eidolon Alpha Attributes)
+	.attached-stress-block {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.4rem;
+		border: 1.5px solid #000000;
+		border-top: none;
+		border-radius: 0 0 2px 2px;
+		padding: 0.15rem 0.4rem;
+		margin-top: 0.15rem;
+
+		.attached-stress-divider {
+			display: none;
+		}
+		.attached-stress-header {
+			margin-bottom: 0;
+		}
+	}
+
+	// High-contrast black borders for specialty styles in print
+	.trait-set-style-subtrait-columns {
+		.branch-head {
+			color: #000000;
+			border-bottom-color: #000000;
+		}
+		.branch-main,
+		.branch-slot {
+			border: 1.5px solid #000000;
+		}
+		.branch-link::before,
+		.branch-slot::before {
+			background: #000000;
+		}
+		.branch-slot::after {
+			border-left-color: #000000;
+		}
+		.branch-side.branch-left .branch-slot::after {
+			border-right-color: #000000;
+		}
+	}
+
+	.trait-set-style-dice-count {
+		.dice-count-rating-label,
+		.dice-count-count-label {
+			color: #000000;
+		}
+		.dice-count-pip {
+			border-color: #000000;
+			color: #000000;
+			&.filled {
+				background: #000000;
+				color: #ffffff;
+			}
+		}
+	}
+
+	.trait-set-style-dice-ladder {
+		.trait-dice-ladder::before {
+			background: #000000;
+		}
+		.ladder-rung {
+			border: 1.5px solid #000000;
+		}
+	}
+
+	.trait-set-style-labeled-fields {
+		.field-block {
+			border: 1.5px solid #000000;
+		}
+		.field-label {
+			color: #000000;
+		}
+	}
+
+	// Blank-mode override: hollow out filled SVG diecons and pips for pencil write-in
+	&.print-blank-mode {
+		.diecon-filled {
+			polygon,
+			rect {
+				fill: none !important;
+				stroke: #000000 !important;
+			}
+			text {
+				fill: #000000 !important;
+			}
+		}
+		.dice-count-pip.filled {
+			background: #ffffff !important;
+			color: #000000 !important;
+		}
+	}
+}
+
+// Mobile print preview: scale the A4 zoom so the full page fits narrow screens
+@media screen and (max-width: 768px) {
+	.character-sheet.submode-print .pages {
+		zoom: 0.62;
+	}
+}
+@media screen and (max-width: 520px) {
+	.character-sheet.submode-print .pages {
+		zoom: 0.45;
+	}
+}
+
+// ============================================================
+// GENERIC PRINT GEOMETRY & MOBILE ZOOM
+// ============================================================
+.character-sheet.spotlight-print-style {
+
+    // 1. Restore table row dividers stripped by the shared .trait reset
+    .trait-set-style-die-rows .die-row:not(:last-child) {
+        border-bottom: 1px solid #000000 !important;
+    }
+    .trait-set-style-three-column-table .three-col-row {
+        border-top: 1px solid #000000 !important;
+    }
+
+    // 2. STACKED TRAITS (ratingPosition: 'below', no statement):
+    // Left-align name above the die row (reusable across Roles, Attributes, etc.)
+    .trait-title.trait-title-stacked:not(.trait-title-statement) {
+        align-items: flex-start;
+        text-align: left;
+
+        > .trait-name {
+            text-align: left;
+        }
+        > .trait-value {
+            justify-content: flex-start;
+        }
+    }
+
+    // 3. INLINE STATEMENTS (statement: true + ratingPosition: 'inline'):
+    // Consistent minimum label column so statement boxes align vertically.
+    .trait-title.trait-title-statement:not(.trait-title-stacked) {
+        > .trait-name:not(.trait-name-blank) {
+            min-width: 4.5rem;
+        }
+    }
+
+    // 4. STACKED STATEMENTS (statement: true + ratingPosition: 'below'):
+    // Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the
+    // full-height Statement box. Works for both named traits and blank slots.
+    .trait-title.trait-title-statement.trait-title-stacked {
+        display: grid !important;
+        grid-template-columns: 38% 1fr;
+        grid-template-rows: auto auto;
+        column-gap: 0.45rem;
+        row-gap: 0.2rem;
+        align-items: stretch;
+        text-align: left;
+
+        > .trait-name {
+            grid-column: 1;
+            grid-row: 1;
+            text-align: left;
+
+            &.trait-name-blank {
+                border: 1.5px solid #000000;
+                border-radius: 2px;
+                min-height: 1.25rem;
+                padding: 0.15rem 0.35rem;
+                background: #ffffff;
+                .trait-blank-line {
+                    border-bottom: none !important;
+                }
+            }
+        }
+
+        > .trait-value {
+            grid-column: 1;
+            grid-row: 2;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        > .trait-statement-box {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            min-height: 100%;
+            height: 100%;
+        }
+    }
+
+    // 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'):
+    // Row 1: Trait Name (left) + Die Scale (right)
+    // Row 2: Full-width Statement Box underneath.
+    .trait-set-rating-above .trait-title.trait-title-statement,
+    .trait-title.trait-title-statement.trait-title-above {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center;
+        justify-content: space-between;
+        row-gap: 0.2rem;
+
+        > .trait-name {
+            order: 1;
+            flex: 1 1 auto;
+        }
+        > .trait-value {
+            order: 2;
+            flex: 0 0 auto;
+            margin-left: auto;
+        }
+        > .trait-statement-box {
+            order: 3;
+            flex: 1 0 100%;
+            width: 100%;
+            min-height: 1.45rem;
+        }
+    }
+
+    // 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes):
+    // When a default-style set has features.description enabled and inline blank
+    // slots, render the blank slot as a full-width bordered write-in box beside the dice.
+    .trait-set-style-default.trait-set-has-feature-description {
+        .trait-title:not(.trait-title-statement):not(.trait-title-stacked) {
+            > .trait-name.trait-name-blank {
+                border: 1.5px solid #000000;
+                border-radius: 2px;
+                min-height: 1.35rem;
+                padding: 0.15rem 0.4rem;
+                background: #ffffff;
+                .trait-blank-line {
+                    border-bottom: none !important;
+                }
+            }
+        }
+    }
+
+    // 7. ASSET CARDS (ratingPosition: 'above'): right-align die scale over the box
+    // when inside multi-column grids, and remove double bottom borders.
+    .trait-list-cols-2,
+    .trait-list-cols-3 {
+        column-gap: 0.85rem !important;
+        row-gap: 0.35rem !important;
+
+        // Only put the vertical dotted divider on non-trailing columns
+        > .trait {
+            border-right: none !important;
+            padding-right: 0 !important;
+        }
+
+        .trait-asset-card .trait-value {
+            justify-content: flex-end;
+            width: 100%;
+        }
+    }
+
+    // 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches):
+    // When header is set to 'top', the 3-column .branch-split-head already
+    // provides the top header bar ("SPECIALTIES | SKILLS d6 | SPECIALTIES"),
+    // so hide the redundant outer .trait-set-header.
+    .trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
+        > .trait-set-header {
+            display: none !important;
+        }
+    }
+
+    // 5. ATTACHED STRESS: Compact inline U-bracket row under parent trait
+    .attached-stress-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.4rem;
+        border: 1.5px solid #000000;
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        padding: 0.15rem 0.4rem;
+        margin-top: 0.15rem;
+
+        .attached-stress-divider {
+            display: none;
+        }
+        .attached-stress-header {
+            margin-bottom: 0;
+        }
+    }
+
+    // 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT
+    .trait-set-style-subtrait-columns {
+        .branch-head {
+            color: #000000;
+            border-bottom-color: #000000;
+        }
+        .branch-main,
+        .branch-slot {
+            border: 1.5px solid #000000;
+        }
+        .branch-link::before,
+        .branch-slot::before {
+            background: #000000;
+        }
+        .branch-slot::after {
+            border-left-color: #000000;
+        }
+        .branch-side.branch-left .branch-slot::after {
+            border-right-color: #000000;
+        }
+    }
+
+    .trait-set-style-dice-count {
+        .dice-count-rating-label,
+        .dice-count-count-label {
+            color: #000000;
+        }
+        .dice-count-pip {
+            border-color: #000000;
+            color: #000000;
+            &.filled {
+                background: #000000;
+                color: #ffffff;
+            }
+        }
+    }
+
+    .trait-set-style-dice-ladder {
+        .trait-dice-ladder::before {
+            background: #000000;
+        }
+        .ladder-rung {
+            border: 1.5px solid #000000;
+        }
+    }
+
+    .trait-set-style-labeled-fields {
+        .field-block {
+            border: 1.5px solid #000000;
+        }
+        .field-label {
+            color: #000000;
+        }
+    }
+
+    // 7. PIP TRACKS: Opt-in vertical connectors (.pips-lattice or single-column .pips-per-row-1)
+    .trait-pips-body .pips-track-container.pips-lattice,
+    .trait-pips-body .pips-track-container.pips-per-row-1 {
+        .pip-row:not(:last-child) .pip-bubble-wrap::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            width: 1.5px;
+            height: 0.55rem;
+            background: #000000;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+    }
+
+    // 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in
+    &.print-blank-mode {
+        .diecon-filled {
+            polygon,
+            rect {
+                fill: none !important;
+                stroke: #000000 !important;
+            }
+            text {
+                fill: #000000 !important;
+            }
+        }
+        .dice-count-pip.filled {
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
+    }
+}
+
+// 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports
+@media screen and (max-width: 768px) {
+    .character-sheet.submode-print .pages {
+        zoom: 0.58;
+    }
+}
+@media screen and (max-width: 520px) {
+    .character-sheet.submode-print .pages {
+        zoom: 0.44;
+    }
+}
+

@@ -1,0 +1,410 @@
+{
+  "id": "spotlight-kitchen-sink",
+  "title": "Kitchen Sink Style Showcase",
+  "subtitle": "All 17 Trait Set Styles & Features",
+  "spotlight": "Toolkit Reference",
+  "variant": "Showcase",
+  "pages": 2,
+  "genre": "Reference",
+  "description": "Visual regression and style reference template exercising every layout component, header orientation, and die mechanic.",
+  "version": 1,
+  "updatedAt": "2026-10-14T12:00:00.000Z",
+  "character": {
+    "id": "00000000-0000-4000-8000-000000000001",
+    "isTemplate": true,
+    "dateCreated": "2026-10-14T12:00:00.000Z",
+    "dateModified": "2026-10-14T12:00:00.000Z",
+    "dateTouched": "2026-10-14T12:00:00.000Z",
+    "name": "Kitchen Sink Showcase",
+    "player": "Style Audit",
+    "game": "Cortex Prime Style Catalog",
+    "pronouns": "They / Them",
+    "description": "Visual regression and layout showcase exercising every trait set style, header orientation, die rating (d4-d12), pool, subtrait branch, and track.",
+    "plotPoints": 3,
+    "notes": "### Sheet Notes\nSupports **bold**, *italics*, `code`, die glyphs like d4 d6 d8 d10 d12, and PP tokens.",
+    "tags": ["showcase", "kitchen-sink"],
+    "portrait": {
+      "url": "",
+      "alt": "Character Portrait",
+      "tags": [],
+      "custom": {
+        "cortexToolkit": {
+          "alignment": "center-center",
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "custom": {
+      "cortexToolkit": {
+        "nickname": "The Everything Sheet",
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "pageCount": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": { "left": 0, "center": 0, "right": 0 }
+      }
+    },
+    "sets": {
+      "Distinctions": {
+        "id": "ks-distinctions",
+        "description": "",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "ratingPosition": "inline",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "left",
+            "style": { "header": "distinctions", "body": "distinctions" },
+            "features": { "description": true, "sfx": true, "subtraits": false },
+            "sharedHinder": true,
+            "reservedSlots": 3,
+            "ratingScale": [8]
+          }
+        },
+        "traits": {
+          "Walking Style Guide": {
+            "value": "d8",
+            "description": "Every layout edge case deserves a test.",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {},
+                  "Pixel Parity": {
+                    "description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "slots": {
+          "1": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": { "Hinder": {} },
+                "slots": { "1": { "description": "", "tags": [], "custom": {} } }
+              }
+            }
+          },
+          "2": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": { "traits": { "Hinder": {} } }
+            }
+          }
+        }
+      },
+      "Values": {
+        "id": "ks-values-statements",
+        "description": "",
+        "nounSingular": "Value",
+        "nounPlural": "Values",
+        "ratingPosition": "inline",
+        "statement": true,
+        "hasQuestionedPip": true,
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "right",
+            "style": { "header": "default", "body": "default" },
+            "features": { "description": true, "sfx": false, "subtraits": false },
+            "ratingScale": [4, 6, 8, 10, 12]
+          }
+        },
+        "traits": {
+          "Craft": { "value": "d10", "description": "Form and function are inseparable." },
+          "Speed": { "value": "d8", "description": "Ship early, refine relentlessly.", "questioned": true },
+          "Clarity": "d6"
+        }
+      },
+      "Skills": {
+        "id": "ks-subtrait-columns",
+        "description": "",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "left",
+            "style": { "header": "default", "body": "subtrait-columns" },
+            "features": { "description": false, "sfx": false, "subtraits": true },
+            "labels": { "left": "SKILL", "right": "SPECIALTIES" }
+          }
+        },
+        "traits": {
+          "Engineering": {
+            "value": "d10",
+            "traits": { "Clockwork": "d8", "Aetherics": "d6" }
+          },
+          "Navigation": {
+            "value": "d8",
+            "traits": { "Star Charts": "d6" }
+          },
+          "Diplomacy": "d6"
+        }
+      },
+      "Standing": {
+        "id": "ks-paired-slots",
+        "description": "",
+        "nounSingular": "Standing",
+        "nounPlural": "Standings",
+        "statement": true,
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "right",
+            "style": { "header": "default", "body": "paired-slots" },
+            "features": { "description": true, "sfx": false, "subtraits": true },
+            "labels": { "slot0": "COMPLICATION", "slot1": "BONUS" },
+            "ratingScale": [6, 8, 10, 12],
+            "subtraitRatingScale": [6, 8, 10, 12]
+          }
+        },
+        "traits": {
+          "The Guild": {
+            "value": "d8",
+            "description": "They owe me a drydock bay.",
+            "traits": { "Complication": "d6", "Bonus": "d8" }
+          }
+        },
+        "slots": {
+          "1": { "value": null, "description": "", "tags": [], "custom": {} }
+        }
+      },
+      "Badges": {
+        "id": "ks-die-rows",
+        "description": "",
+        "nounSingular": "Badge",
+        "nounPlural": "Badges",
+        "hasCounterColumn": true,
+        "counterLabel": "XP",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "left",
+            "header": "top",
+            "headerAlign": "left",
+            "style": { "header": "default", "body": "die-rows" },
+            "features": { "description": false, "sfx": false, "subtraits": false },
+            "ratingScale": [6, 8, 10, 12],
+            "reservedSlots": 3
+          }
+        },
+        "traits": {
+          "First Responder": { "value": "d8", "xp": 3 },
+          "Trailblazer": { "value": "d6", "xp": 1 }
+        },
+        "slots": {
+          "2": { "value": null, "description": "", "tags": [], "custom": {} }
+        }
+      },
+      "Talents": {
+        "id": "ks-three-col-table",
+        "description": "",
+        "nounSingular": "Talent",
+        "nounPlural": "Talents",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "right",
+            "style": { "header": "default", "body": "three-column-table" },
+            "features": { "description": true, "sfx": true, "subtraits": false },
+            "labels": { "col1": "TALENT", "col2": "ACTIVATION", "col3": "EFFECT" },
+            "reservedSlots": 2
+          }
+        },
+        "traits": {
+          "Overclock": {
+            "value": null,
+            "description": "Spend 1 PP when rolling Engineering.",
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Effect": { "description": "Step up your Effect die by one step for the scene." }
+                }
+              }
+            }
+          }
+        },
+        "slots": {
+          "1": { "value": null, "description": "", "tags": [], "custom": {} }
+        }
+      },
+      "Resources": {
+        "id": "ks-dice-count",
+        "description": "",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "left",
+            "style": { "header": "default", "body": "dice-count" },
+            "features": { "description": false, "sfx": false, "subtraits": false },
+            "multiDie": true,
+            "labels": { "rating": "RATING", "dice": "/ DICE" }
+          }
+        },
+        "traits": {
+          "Salvage Cache": { "value": "3d8", "pool": true },
+          "Contacts": { "value": "2d6", "pool": true }
+        }
+      },
+      "Stress": {
+        "id": "ks-stress",
+        "description": "",
+        "nounSingular": "Stress",
+        "nounPlural": "Stress",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 1,
+            "location": "right",
+            "style": { "header": "default", "body": "stress" },
+            "features": { "description": false, "sfx": false, "subtraits": false },
+            "stressConfig": { "includeOut": true },
+            "ratingScale": [6, 8, 10, 12]
+          }
+        },
+        "traits": {
+          "Physical": "d8",
+          "Mental": { "value": null },
+          "Social": "d12"
+        }
+      },
+      "Growth Ladder": {
+        "id": "ks-dice-ladder",
+        "description": "",
+        "nounSingular": "Rung",
+        "nounPlural": "Rungs",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 2,
+            "location": "left",
+            "style": { "header": "default", "body": "dice-ladder" },
+            "features": { "description": false, "sfx": false, "subtraits": false }
+          }
+        },
+        "traits": {
+          "Novice": "d6",
+          "Adept": "d8",
+          "Master": "d10"
+        }
+      },
+      "Dossier": {
+        "id": "ks-labeled-fields",
+        "description": "",
+        "nounSingular": "Field",
+        "nounPlural": "Fields",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 2,
+            "location": "right",
+            "style": { "header": "default", "body": "labeled-fields" },
+            "features": { "description": true, "sfx": false, "subtraits": false }
+          }
+        },
+        "traits": {
+          "Origin": { "value": null, "description": "Outer Rim Shipyard #4" },
+          "Drive": { "value": null, "description": "Restore the lost fleet" },
+          "Quirk": { "value": null }
+        }
+      },
+      "Progress Track": {
+        "id": "ks-pips",
+        "description": "",
+        "nounSingular": "Pip",
+        "nounPlural": "Pips",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 2,
+            "location": "left",
+            "style": { "header": "default", "body": "pips" },
+            "pipsConfig": { "rows": 2, "perRow": 5, "filled": 4 }
+          }
+        },
+        "traits": {}
+      },
+      "Session Record": {
+        "id": "ks-session-record",
+        "description": "",
+        "nounSingular": "Session",
+        "nounPlural": "Sessions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 2,
+            "location": "right",
+            "style": { "header": "default", "body": "session-record" },
+            "sessionRecord": { "orientation": "vertical", "lines": 4 }
+          }
+        },
+        "traits": {
+          "Session 1: The Awakening": "d6",
+          "Session 2: Crossing the Threshold": { "value": null }
+        },
+        "slots": {
+          "2": { "value": null, "description": "", "tags": [], "custom": {} }
+        }
+      },
+      "Roles (Compact Two-Column)": {
+        "id": "ks-two-col-compact",
+        "description": "",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 2,
+            "location": "left",
+            "style": { "header": "two-columns-compact", "body": "two-columns-compact" },
+            "features": { "description": false, "sfx": false, "subtraits": false }
+          }
+        },
+        "traits": {
+          "Tactician": "d8",
+          "Outrider": "d6",
+          "Scholar": "d10",
+          "Sentinel": "d4"
+        }
+      },
+      "Notes": {
+        "id": "ks-notes",
+        "description": "",
+        "nounSingular": "Note",
+        "nounPlural": "Notes",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "page": 2,
+            "location": "right",
+            "style": { "header": "default", "body": "notes" },
+            "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*"
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}

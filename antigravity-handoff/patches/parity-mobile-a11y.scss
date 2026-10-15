@@ -1,0 +1,167 @@
+﻿// ============================================================
+// PATCHES FOR CSS/APP.SCSS, _EDITOR.SCSS, _ROSTER.SCSS, _SPOTLIGHT-PRINT.SCSS
+// ============================================================
+
+// 1. Add to css/app.scss (Keyboard Focus Accessibility)
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-interactive);
+    outline-offset: 2px;
+}
+
+// 2. Add inside @media (max-width: 768px) of .editor in css/_editor.scss
+// Prevents .editor.scrollable (36rem) from overflowing the mobile bottom sheet
+// when the virtual keyboard is open.
+@media (max-width: 768px) {
+    .editor.scrollable {
+        height: auto !important;
+    }
+}
+
+// 3. Add to css/_roster.scss (Mobile Roster Card Reflow)
+@media screen and (max-width: 600px) {
+    .roster-item {
+        column-gap: 1rem;
+        align-items: flex-start;
+
+        > div:nth-child(1) {
+            flex: 0 0 4.75rem;
+        }
+    }
+
+    .roster-item-name {
+        white-space: normal;
+        font-size: 1.05rem;
+    }
+}
+
+// 4. Add to css/_spotlight-print.scss (Print Visual Parity & Mobile WYSIWYG Zoom)
+.character-sheet.spotlight-print-style {
+    // Restore table row dividers stripped by .trait reset
+    .trait-set-style-die-rows .die-row:not(:last-child) {
+        border-bottom: 1px solid #000000 !important;
+    }
+    .trait-set-style-three-column-table .three-col-row {
+        border-top: 1px solid #000000 !important;
+    }
+
+    // Left-align stacked trait titles (e.g. Eidolon Alpha Roles & Attributes)
+    .trait-title.trait-title-stacked {
+        align-items: flex-start;
+        text-align: left;
+        .trait-name {
+            text-align: left;
+        }
+        .trait-value {
+            justify-content: flex-start;
+        }
+    }
+
+    // Compact inline U-bracket for Attached Stress (Eidolon Alpha Attributes)
+    .attached-stress-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.4rem;
+        border: 1.5px solid #000000;
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        padding: 0.15rem 0.4rem;
+        margin-top: 0.15rem;
+
+        .attached-stress-divider {
+            display: none;
+        }
+        .attached-stress-header {
+            margin-bottom: 0;
+        }
+    }
+
+    // High-contrast black borders for specialty styles in print
+    .trait-set-style-subtrait-columns {
+        .branch-head {
+            color: #000000;
+            border-bottom-color: #000000;
+        }
+        .branch-main,
+        .branch-slot {
+            border: 1.5px solid #000000;
+        }
+        .branch-link::before,
+        .branch-slot::before {
+            background: #000000;
+        }
+        .branch-slot::after {
+            border-left-color: #000000;
+        }
+        .branch-side.branch-left .branch-slot::after {
+            border-right-color: #000000;
+        }
+    }
+
+    .trait-set-style-dice-count {
+        .dice-count-rating-label,
+        .dice-count-count-label {
+            color: #000000;
+        }
+        .dice-count-pip {
+            border-color: #000000;
+            color: #000000;
+            &.filled {
+                background: #000000;
+                color: #ffffff;
+            }
+        }
+    }
+
+    .trait-set-style-dice-ladder {
+        .trait-dice-ladder::before {
+            background: #000000;
+        }
+        .ladder-rung {
+            border: 1.5px solid #000000;
+        }
+    }
+
+    .trait-set-style-labeled-fields {
+        .field-block {
+            border: 1.5px solid #000000;
+        }
+        .field-label {
+            color: #000000;
+        }
+    }
+
+    // Blank-mode override: hollow out filled SVG diecons and pips for pencil write-in
+    &.print-blank-mode {
+        .diecon-filled {
+            polygon,
+            rect {
+                fill: none !important;
+                stroke: #000000 !important;
+            }
+            text {
+                fill: #000000 !important;
+            }
+        }
+        .dice-count-pip.filled {
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
+    }
+}
+
+// Mobile print preview: scale the A4 zoom so the full page fits narrow screens
+@media screen and (max-width: 768px) {
+    .character-sheet.submode-print .pages {
+        zoom: 0.58;
+    }
+}
+@media screen and (max-width: 520px) {
+    .character-sheet.submode-print .pages {
+        zoom: 0.44;
+    }
+}

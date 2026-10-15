@@ -1,0 +1,427 @@
+﻿{
+  "id": "spotlight-eidolon-alpha",
+  "version": 1,
+  "title": "Eidolon Alpha",
+  "subtitle": "Mythic Summoners & Living Eidolons",
+  "spotlight": "Eidolon Alpha",
+  "variant": "Character File",
+  "pages": 1,
+  "genre": "Fantasy / Summoning / Mythic",
+  "description": "Vessels of ancient endarchs who manifest living eidolons. Features Roles (Warrior, Priest, Scout, Other), Attributes with Highlight and Stress (Courage, Grace, Guile, Reason, Vigor), Endarch, Role and Freeform Distinctions with Hinder, Endarch SFX with the Summon rite, a Summoned Eidolon power block, and an XP track.",
+  "character": {
+    "id": "template-spotlight-eidolon-alpha",
+    "isTemplate": true,
+    "name": "",
+    "game": "Eidolon Alpha",
+    "description": "",
+    "pronouns": "",
+    "plotPoints": 1,
+    "notes": "",
+    "custom": {
+      "cortexToolkit": {
+        "pageCount": 1,
+        "spotlight": "Eidolon Alpha",
+        "style": {
+          "hasAttributes": false
+        },
+        "sheetStyle": "spotlight",
+        "columns": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      }
+    },
+    "player": "",
+    "portrait": {
+      "url": "",
+      "custom": {
+        "cortexToolkit": {
+          "size": "spotlight",
+          "location": "header"
+        }
+      }
+    },
+    "sets": {
+      "Roles": {
+        "id": "roles",
+        "description": "Prime vocations and endarch callings",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
+        "ratingPosition": "below",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "ratingScale": [4, 6, 8, 10, 12],
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4,
+            "colWidth": 33
+          }
+        },
+        "traits": {
+          "Warrior": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Priest": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Scout": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Other": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Attributes": {
+        "id": "attributes",
+        "description": "Elemental selfhood with highlight circles and stress",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "ratingPosition": "below",
+        "hasQuestionedPip": true,
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": false,
+            "ratingScale": [4, 6, 8, 10, 12],
+            "attachedStress": {
+              "enabled": true,
+              "label": "STRESS",
+              "ratingScale": [4, 6, 8, 10, 12],
+              "includeOut": false
+            },
+            "stressConfig": {
+              "includeOut": false
+            },
+            "notes": "",
+            "reservedSlots": 5,
+            "attributesRing": false,
+            "colWidth": 33
+          }
+        },
+        "traits": {
+          "Courage": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Grace": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Guile": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Reason": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Vigor": {
+            "value": null,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Endarch Distinction": {
+        "id": "endarch-distinction",
+        "description": "Ancestral endarch patron and its three bound powers",
+        "nounSingular": "Endarch Distinction",
+        "nounPlural": "Endarch Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": true
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "ratingScale": [8],
+            "subtraitRatingScale": [8],
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 1
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "Power 1": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "Power 2": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "Power 3": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "SFX": {
+                "traits": {
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4."
+                  },
+                  "Summon": {
+                    "description": "Shut down this endarch distinction to summon your Eidolon on your next turn."
+                  }
+                },
+                "slots": {
+                  "1": { "description": "", "tags": [], "custom": {} },
+                  "2": { "description": "", "tags": [], "custom": {} },
+                  "3": { "description": "", "tags": [], "custom": {} }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Summoned Eidolon": {
+        "id": "summoned-eidolon",
+        "description": "Manifested eidolon form: base trait, scale, powers, highlights",
+        "nounSingular": "Eidolon Trait",
+        "nounPlural": "Eidolon Traits",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "multiDie": true,
+            "ratingScale": [4, 8, 10, 12],
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 5
+          }
+        },
+        "traits": {
+          "Base Trait": {
+            "value": "2d10",
+            "pool": true,
+            "description": "d10 d10 or d4 d4",
+            "tags": [],
+            "custom": {}
+          },
+          "Scale": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Power 1": {
+            "value": "d12",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Power 2": {
+            "value": "d12",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Power 3": {
+            "value": "d12",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Highlight Attribute 1": {
+            "value": "d12",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Highlight Attribute 2": {
+            "value": "d12",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Role & Freeform Distinctions": {
+        "id": "role-freeform-distinctions",
+        "description": "Chosen calling and personal definition",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "ratingScale": [8],
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 2
+          }
+        },
+        "traits": {
+          "Role Distinction": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "Freeform Distinction": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "XP": {
+        "id": "xp",
+        "description": "Experience points bubble track",
+        "nounSingular": "XP",
+        "nounPlural": "XP",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "pips"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 0,
+            "pipsConfig": {
+              "rows": 2,
+              "perRow": 10,
+              "filled": 0
+            },
+            "pips": {
+              "count": 20,
+              "perRow": 10,
+              "connected": true,
+              "filled": 0
+            }
+          }
+        },
+        "traits": {}
+      }
+    }
+  }
+}
