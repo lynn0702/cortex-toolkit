@@ -7,7 +7,7 @@
   "variant": "Commune File",
   "pages": 1,
   "genre": "SolarPunk / Settlement",
-  "description": "Bioregional commune worksheet for SolarPunk settings. Tracks Commune Attributes (Ecology, Infrastructure, Solidarity, Culture, Resilience), Distinctions, Commons Resources, and Ongoing Projects.",
+  "description": "Bioregional commune worksheet for SolarPunk settings. Tracks Commune Attributes (Resources, Security, Connections — d4 to d8), Commune Distinctions (Unity, Organization, Morale), 4 d6 Signature Assets, and 9 Commune Skills (d6-d8).",
   "character": {
     "id": "template-spotlight-solarpunk-commune",
     "isTemplate": true,
@@ -25,7 +25,14 @@
           "hasAttributes": false
         },
         "sheetStyle": "spotlight",
-        "columns": 3,
+        "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -45,16 +52,17 @@
       }
     },
     "sets": {
-      "Commune Attributes": {
+      "Attributes": {
         "id": "commune-attributes",
         "description": "Collective settlement strengths",
-        "nounSingular": "Commune Attribute",
-        "nounPlural": "Commune Attributes",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -64,15 +72,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 5,
+            "reservedSlots": 3,
             "attributesRing": false,
-            "colWidth": 33
+            "colWidth": 28
           }
         },
         "traits": {
@@ -93,20 +106,25 @@
           }
         }
       },
-      "Commune Distinctions": {
+      "Distinctions": {
         "id": "commune-distinctions",
-        "description": "Settlement history, geography, and values",
-        "nounSingular": "Commune Distinction",
-        "nounPlural": "Commune Distinctions",
+        "description": "Settlement unity, organization, and morale",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
-            "location": "center",
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
+            "location": "right",
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -114,30 +132,51 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2
+            "reservedSlots": 3
           }
         },
         "traits": {
-          "Unity": {
+          "Unity:": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           },
-          "Organization": {
+          "Organization:": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           },
-          "Morale": {
+          "Morale:": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           }
         }
       },
@@ -146,11 +185,15 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "traitColumns": 2,
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -160,6 +203,10 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6
+            ],
+            "reservedSlots": 4,
             "colSpan": "full",
             "columnSpan": "full"
           }
@@ -167,21 +214,25 @@
         "traits": {},
         "slots": {
           "0": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
           },
           "3": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -196,17 +247,25 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "left",
             "page": 1,
             "style": {
               "header": "default",
-              "body": "default"
+              "body": "subtrait-columns"
             },
+            "ratingScale": [
+              6,
+              8
+            ],
+            "subtraitRatingScale": [],
+            "reservedSlots": 9,
             "colSpan": "full",
             "columnSpan": "full"
           }
@@ -216,47 +275,110 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "1": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "2": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "3": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "4": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "5": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "6": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "7": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "8": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       }

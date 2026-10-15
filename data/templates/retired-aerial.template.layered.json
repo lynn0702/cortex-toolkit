@@ -7,7 +7,7 @@
   "variant": "Aerial Age",
   "pages": 1,
   "genre": "Dieselpunk / Aviation Adventure",
-  "description": "Sky aces and airborne champions of the Aerial Age dusted off for one more dogfight. Tailored for aerial combat, vintage flight gear, and sky federation politics.",
+  "description": "Sky aces and airborne champions of the Aerial Age dusted off for one more dogfight. Features Values, Archetype & Retirement Distinctions, 5d6 Resources, a Signature Asset, 9 write-in Skills (d4-d6) & Specialties (d8-d12), and a 20-step Session Record.",
   "character": {
     "id": "template-spotlight-retired-aerial",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -50,11 +57,12 @@
         "description": "The aviator's code and sky ethics",
         "nounSingular": "Value",
         "nounPlural": "Values",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -64,14 +72,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 6,
-            "colWidth": 25
+            "reservedSlots": 7,
+            "colWidth": 28
           }
         },
         "traits": {
@@ -114,7 +129,7 @@
       },
       "Distinctions": {
         "id": "distinctions",
-        "description": "Aerial legend, grounded civilian, and final takeoff",
+        "description": "Aerial legend and grounded retirement",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
@@ -125,6 +140,11 @@
               "sfx": true,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "right",
             "page": 1,
             "style": {
@@ -133,44 +153,49 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 2
           }
         },
         "traits": {
-          "Archetype": {
+          "Archetype:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {},
+                "traits": {
+                  "Hinder": {}
+                },
                 "slots": {
-                  "0": {
+                  "1": {
                     "custom": {}
                   },
-                  "1": {
+                  "2": {
                     "custom": {}
                   }
                 }
               }
             }
           },
-          "Retirement": {
+          "Retirement:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {},
+                "traits": {
+                  "Hinder": {}
+                },
                 "slots": {
-                  "0": {
+                  "1": {
                     "custom": {}
                   },
-                  "1": {
+                  "2": {
                     "custom": {}
                   }
                 }
@@ -181,12 +206,15 @@
       },
       "Resources": {
         "id": "vintage-plane-signature-assets",
-        "description": "Custom aircraft and aviator gear",
-        "nounSingular": "Vintage Plane & Signature Asset",
-        "nounPlural": "Vintage Plane & Signature Assets",
+        "description": "Custom aircraft and aviator resources (5d6 each)",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": false,
@@ -198,58 +226,38 @@
               "header": "default",
               "body": "default"
             },
-            "multiDie": false,
+            "ratingPosition": "below",
+            "ratingScale": [
+              6
+            ],
+            "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 3,
+            "colWidth": 28
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
-      "Pathways Complication": {
-        "id": "pathways-complication",
-        "description": "",
-        "nounSingular": "Complication",
-        "nounPlural": "Complications",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            }
-          }
-        },
-        "traits": {},
-        "slots": {
-          "0": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
@@ -261,11 +269,14 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -274,7 +285,16 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1,
+            "colWidth": 28
           }
         },
         "traits": {},
@@ -288,12 +308,14 @@
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
-        "description": "Flight and tactical skills with veteran specialties",
-        "nounSingular": "Skills & Specialtie",
-        "nounPlural": "Skills & Specialties",
+        "description": "Flight and tactical skills (d4-d6) with veteran specialties (d8-d12)",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -303,63 +325,185 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "default"
+              "body": "subtrait-columns"
+            },
+            "ratingScale": [
+              4,
+              6
+            ],
+            "subtraitRatingScale": [
+              8,
+              10,
+              12
+            ],
+            "labels": {
+              "left": "Skills",
+              "right": "Specialties"
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 4,
-            "rowSpan": 3
+            "reservedSlots": 9,
+            "rowSpan": 2
           }
         },
-        "traits": {
-          "Fight": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Influence": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Know": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Move": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Notice": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sneak": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Treat": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        },
+        "traits": {},
         "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
           "7": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "8": {
             "description": "",
+            "tags": [],
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          }
+        }
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "session-record"
+            },
+            "sessionRecord": {
+              "count": 20,
+              "orientation": "horizontal"
+            },
+            "reservedSlots": 20,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Training": {
+            "description": "Training",
+            "tags": [],
+            "custom": {}
+          },
+          "Adventuring Triumph": {
+            "description": "Adventuring Triumph",
+            "tags": [],
+            "custom": {}
+          },
+          "Retirement": {
+            "description": "Retirement",
             "tags": [],
             "custom": {}
           }

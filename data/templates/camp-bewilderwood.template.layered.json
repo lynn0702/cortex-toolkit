@@ -77,7 +77,6 @@
             "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -170,7 +169,6 @@
             ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -245,7 +243,6 @@
             ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -301,7 +298,6 @@
             ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -365,7 +361,6 @@
             ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -518,7 +513,6 @@
             ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -548,7 +542,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",

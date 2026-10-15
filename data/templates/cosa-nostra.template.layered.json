@@ -82,10 +82,17 @@
               12
             ],
             "sharedHinder": true,
-            "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's die rating for a ▽4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
+            "sharedHinderText": "Gain a PP when you trade out your distinction's die rating for a d4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
             "attachedStress": {
               "enabled": true,
               "label": "Stress",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
               "scale": [
                 4,
                 6,
@@ -143,9 +150,14 @@
               "header": "default",
               "body": "dice-count"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -190,14 +202,17 @@
       },
       "Drives": {
         "id": "drives",
-        "description": "Gain a PP when you use a drive rated at ▽4.",
+        "description": "Gain a PP when you use a drive rated at d4.",
         "nounSingular": "Drive",
         "nounPlural": "Drives",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -207,9 +222,16 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -249,11 +271,14 @@
         "description": "Personal weapons, vehicles, and syndicate perks",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -263,13 +288,18 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 3
           }
         },
         "traits": {},
@@ -294,11 +324,13 @@
       "Roles & Specialties": {
         "id": "roles-specialties",
         "description": "Syndicate roles with specialized criminal expertise",
-        "nounSingular": "Roles & Specialtie",
-        "nounPlural": "Roles & Specialties",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -310,9 +342,15 @@
               "header": "default",
               "body": "subtrait-columns"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -323,27 +361,62 @@
           "Big Shot": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Brains": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Enforcer": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Thief": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Wheelman": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -355,6 +428,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -367,15 +442,14 @@
               "body": "session-record"
             },
             "sessionRecord": {
-              "count": 20
+              "count": 15
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 20
+            "reservedSlots": 15
           }
         },
         "traits": {}
@@ -388,8 +462,10 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -398,7 +474,8 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "reservedSlots": 3
           }
         },
         "traits": {},

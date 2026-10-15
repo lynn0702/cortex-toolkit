@@ -7,7 +7,7 @@
   "variant": "Titan Mech File",
   "pages": 1,
   "genre": "Mecha / Kaiju / Military",
-  "description": "Colossal mechanical titan sheet equipped with heavy armor, devastating heavy ordnance, kinetic power sets, and system overheat stress tracks.",
+  "description": "Colossal mechanical titan sheet equipped with Titan Attributes & Stress (Prowess, Control, Renown — d6 to d12), Titan Distinctions (Type, History with Underscore/Overcompensate SFX, Battle), 2 Power Set blocks, and a 15-pip Session Record.",
   "character": {
     "id": "template-spotlight-titans-titan",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -45,11 +52,12 @@
       }
     },
     "sets": {
-      "Titan Attributes & Stress": {
+      "Attributes": {
         "id": "titan-attributes-stress",
         "description": "Heavy mechanized systems with stress tracks",
-        "nounSingular": "Titan Attributes & Stres",
-        "nounPlural": "Titan Attributes & Stress",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,15 +72,38 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "attachedStress": {
+              "enabled": true,
+              "label": "STRESS",
+              "ratingScale": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "scale": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "includeOut": false
+            },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
+              "includeOut": false
             },
             "notes": "",
-            "reservedSlots": 4,
+            "reservedSlots": 3,
             "attributesRing": false,
-            "colWidth": 25
+            "colWidth": 28
           }
         },
         "traits": {
@@ -93,11 +124,11 @@
           }
         }
       },
-      "Titan Distinctions": {
+      "Distinctions": {
         "id": "titan-distinctions",
-        "description": "Chassis archetype, reactor model, and weapon loadout",
-        "nounSingular": "Titan Distinction",
-        "nounPlural": "Titan Distinctions",
+        "description": "Chassis type, operational history, and battle stance",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -112,87 +143,78 @@
               "header": "distinctions",
               "body": "distinctions"
             },
+            "ratingScale": [
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Type:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {
-                  "Hinder": {}
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  },
+                  "1": {
+                    "custom": {}
+                  }
                 }
               }
             }
           },
-          "1": {
+          "History:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Underscore": {
+                    "description": "Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history."
+                  },
+                  "Overcompensate": {
+                    "description": "Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history."
+                  }
                 }
               }
             }
           },
-          "2": {
+          "Battle:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {
-                  "Hinder": {}
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  }
                 }
               }
             }
           }
         }
       },
-      "Session Record": {
-        "id": "session-record",
-        "description": "",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "session-record",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 20
-            },
-            "reservedSlots": 20
-          }
-        },
-        "traits": {}
-      },
       "Power Set": {
         "id": "power-set",
         "description": "Colossal kaiju-annihilation weaponry",
-        "nounSingular": "Power Set",
-        "nounPlural": "Power Sets",
+        "nounSingular": "Power",
+        "nounPlural": "Powers",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -207,15 +229,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "SFX:\n\nLIMIT:",
-            "reservedSlots": 3,
-            "colSpan": "full",
-            "columnSpan": "full"
+            "notes": "",
+            "reservedSlots": 4,
+            "colWidth": 50,
+            "rowBreak": true
           }
         },
         "traits": {},
@@ -229,8 +256,115 @@
             "description": "",
             "tags": [],
             "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
           }
         }
+      },
+      "Power Set~2": {
+        "id": "power-set-2",
+        "description": "Secondary titan systems and ordnance",
+        "nounSingular": "Power",
+        "nounPlural": "Powers",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "right",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "multiDie": false,
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 4
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        },
+        "label": "Power Set"
+      },
+      "Session Record": {
+        "id": "session-record",
+        "description": "",
+        "nounSingular": "Session",
+        "nounPlural": "Sessions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "right",
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "pips"
+            },
+            "pipsConfig": {
+              "rows": 1,
+              "perRow": 15,
+              "filled": 0
+            },
+            "pips": {
+              "count": 15,
+              "perRow": 15,
+              "connected": true,
+              "filled": 0
+            },
+            "reservedSlots": 0,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {}
       }
     }
   }

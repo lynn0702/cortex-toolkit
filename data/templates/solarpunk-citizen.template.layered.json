@@ -7,7 +7,7 @@
   "variant": "Citizen File",
   "pages": 1,
   "genre": "SolarPunk / Sci-Fi / Community",
-  "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Care, Craft, Reason, Resolve, Vitality), Distinctions, Signature Assets, Skills & Specialties, and Community Standing.",
+  "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Mind, Body, Connection), Distinctions (Identity, Community, Purpose) with SFX, a 20-pip Session Record grid, Signature Assets with SFX, and 19 Skills & d6 Specialties.",
   "character": {
     "id": "template-spotlight-solarpunk-citizen",
     "isTemplate": true,
@@ -25,7 +25,14 @@
           "hasAttributes": false
         },
         "sheetStyle": "spotlight",
-        "columns": 3,
+        "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -50,11 +57,12 @@
         "description": "SolarPunk holistic community attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -64,15 +72,22 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 5,
+            "reservedSlots": 3,
             "attributesRing": false,
-            "colWidth": 33
+            "colWidth": 28
           }
         },
         "traits": {
@@ -93,59 +108,11 @@
           }
         }
       },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Ecological calling, technical specialty, and philosophy",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
-        },
-        "traits": {
-          "Identity": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Community": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Purpose": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
       "Session Record": {
         "id": "session-record",
         "description": "",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
+        "nounSingular": "Session",
+        "nounPlural": "Sessions",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -157,97 +124,160 @@
             "location": "left",
             "page": 1,
             "style": {
-              "header": "session-record",
-              "body": "session-record"
+              "header": "default",
+              "body": "pips"
             },
-            "sessionRecord": {
-              "count": 20
+            "pipsConfig": {
+              "rows": 4,
+              "perRow": 5,
+              "filled": 0
             },
-            "reservedSlots": 20
+            "pips": {
+              "count": 20,
+              "perRow": 5,
+              "connected": true,
+              "filled": 0
+            },
+            "reservedSlots": 0,
+            "colWidth": 28
           }
         },
         "traits": {}
       },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Sustainable tech, tools, and eco-cyberware",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Ecological calling, community role, and personal purpose",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": false,
+              "sfx": true,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "right",
+            "rowSpan": 2,
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3
+          }
+        },
+        "traits": {
+          "Identity:": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                },
+                "slots": {
+                  "1": {
+                    "custom": {}
+                  },
+                  "2": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
+          },
+          "Community:": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                },
+                "slots": {
+                  "1": {
+                    "custom": {}
+                  },
+                  "2": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
+          },
+          "Purpose:": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                },
+                "slots": {
+                  "1": {
+                    "custom": {}
+                  },
+                  "2": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Sustainable tech, tools, and eco-craft",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "ratingPosition": "inline",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "traitColumns": 2,
+            "features": {
+              "description": true,
+              "sfx": true,
+              "subtraits": false
+            },
+            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 2,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
-        },
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
-      "Skills & Specialties": {
-        "id": "subtrait-columns",
-        "description": "Ecological competencies and craft specialties",
-        "nounSingular": "Skills & Specialtie",
-        "nounPlural": "Skills & Specialties",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": true
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "subtrait-columns"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
             "colSpan": "full",
             "columnSpan": "full"
           }
@@ -257,49 +287,169 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           },
           "1": {
             "description": "",
             "tags": [],
-            "custom": {}
-          },
-          "2": {
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Skills & Specialties": {
+        "id": "subtrait-columns",
+        "description": "Ecological competencies (d4-d12) and d6 craft specialties",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "traitColumns": 2,
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": true
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6
+            ],
+            "multiDie": false,
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 19,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Craft": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "3": {
+          "Drive": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "4": {
+          "Fight": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "5": {
+          "Fix": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "6": {
+          "Fly": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "7": {
+          "Focus": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "8": {
+          "Influence": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "9": {
+          "Know": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Labor": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Move": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Notice": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Operate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Perform": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Shoot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sneak": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Survive": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Throw": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Treat": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Trick": {
             "description": "",
             "tags": [],
             "custom": {}

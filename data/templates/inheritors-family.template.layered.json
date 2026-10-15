@@ -5,9 +5,9 @@
   "subtitle": "Superpowered Dynasty Heritage",
   "spotlight": "Inheritors",
   "variant": "Family Tree File",
-  "pages": 1,
+  "pages": 2,
   "genre": "Superhero / Dynastic Drama",
-  "description": "Family tree worksheet and GMC roster for Inheritors dynasties. Tracks the First Five Branches, Wild Card Branches, and generation relations across PCs, Parents, Grandparents, and Ancestral Lineages.",
+  "description": "Family tree worksheet and GMC roster for Inheritors dynasties. Tracks the First Five Branches, Wild Card Branches, and generation relations across PCs, Parents, Grandparents, and Group Family GMCs.",
   "character": {
     "id": "template-spotlight-inheritors-family",
     "isTemplate": true,
@@ -19,13 +19,20 @@
     "notes": "",
     "custom": {
       "cortexToolkit": {
-        "pageCount": 1,
+        "pageCount": 2,
         "spotlight": "Inheritors",
         "style": {
           "hasAttributes": false
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -53,6 +60,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -109,6 +118,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -163,6 +174,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -218,6 +231,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -272,6 +287,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -327,6 +344,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -383,6 +402,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -438,6 +459,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -493,6 +516,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -548,6 +573,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -603,13 +630,15 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "left",
-            "page": 1,
+            "page": 2,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
@@ -667,13 +696,15 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "right",
-            "page": 1,
+            "page": 2,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
@@ -732,13 +763,15 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "left",
-            "page": 1,
+            "page": 2,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
@@ -797,13 +830,15 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "right",
-            "page": 1,
+            "page": 2,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
@@ -862,13 +897,15 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "left",
-            "page": 1,
+            "page": 2,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
@@ -927,13 +964,15 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "right",
-            "page": 1,
+            "page": 2,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"

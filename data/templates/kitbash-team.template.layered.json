@@ -7,7 +7,7 @@
   "variant": "Team Roster File",
   "pages": 1,
   "genre": "Comic Book / Superhero",
-  "description": "Headquarters, team resources, and hero roster for superhero alliances in KitBash. Features Team Distinctions, Headquarters Resources, Vehicle Bays, and Team Roster.",
+  "description": "Headquarters, team resources, and hero roster for superhero alliances in KitBash. Features Team Base details and 20 shared Team Resource boxes.",
   "character": {
     "id": "template-spotlight-kitbash-team",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -47,12 +54,14 @@
     "sets": {
       "Team Base": {
         "id": "team-base",
-        "description": "",
+        "description": "As a group, decide on the following information.",
         "nounSingular": "Detail",
         "nounPlural": "Details",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -98,14 +107,17 @@
       },
       "Team Resources": {
         "id": "team-resources",
-        "description": "Resources come from backgrounds and are available for any PC to use.",
+        "description": "Resources come from backgrounds (page 8) and are available for any PC to use.",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -115,6 +127,7 @@
               "header": "default",
               "body": "default"
             },
+            "reservedSlots": 20,
             "colSpan": "full",
             "columnSpan": "full"
           }
@@ -167,6 +180,56 @@
             "custom": {}
           },
           "9": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "10": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "11": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "12": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "13": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "14": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "15": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "16": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "17": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "18": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "19": {
             "description": "",
             "tags": [],
             "custom": {}

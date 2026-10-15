@@ -25,7 +25,7 @@
           "hasAttributes": false
         },
         "sheetStyle": "spotlight",
-        "columns": 3,
+        "columns": 2,
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -64,14 +64,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              8,
+              10
+            ],
+            "subtraitRatingScale": [
+              8,
+              10
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "STARTING RATINGS — One: Systems d10, Engines d8, Frame d8 • Two: Systems d8, Engines d10, Frame d8 • Three: Systems d8, Engines d8, Frame d10",
+            "notes": "",
             "reservedSlots": 3,
-            "colWidth": 25
+            "colWidth": 32
           }
         },
         "traits": {
@@ -81,16 +88,19 @@
             "custom": {},
             "traits": {
               "Systems": {
+                "value": "d10",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Engines": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Frame": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
@@ -103,16 +113,19 @@
             "custom": {},
             "traits": {
               "Systems": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Engines": {
+                "value": "d10",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Frame": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
@@ -125,16 +138,19 @@
             "custom": {},
             "traits": {
               "Systems": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Engines": {
+                "value": "d8",
                 "description": "",
                 "tags": [],
                 "custom": {}
               },
               "Frame": {
+                "value": "d10",
                 "description": "",
                 "tags": [],
                 "custom": {}
@@ -152,40 +168,44 @@
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
-              "sfx": true,
+              "description": false,
+              "sfx": false,
               "subtraits": false
             },
-            "location": "center",
+            "location": "right",
             "page": 1,
             "style": {
               "header": "distinctions",
               "body": "distinctions"
             },
+            "ratingScale": [
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3,
             "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you trade out your distinction’s ⬡ 8 rating for a ▽ 4.",
-            "colWidth": 25
+            "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
           }
         },
         "traits": {
           "Resource Support Vehicle": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Top of the Line": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Broad-Spectrum Sensors": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {}
@@ -200,8 +220,9 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "traitColumns": 2,
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -211,42 +232,56 @@
               "header": "default",
               "body": "dice-count"
             },
+            "ratingScale": [
+              6
+            ],
             "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "STARTING DICE (all d6): Unassigned x7 • Tactical x4 • Medical x4 • IT/Network x4 • Food/Shelter x4 • Land/Sea/Air x4",
+            "notes": "",
             "reservedSlots": 6
           }
         },
         "traits": {
           "Unassigned Resources": {
+            "value": "7d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Tactical Support": {
+            "value": "4d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Medical Supplies": {
+            "value": "4d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "IT/Network Support": {
+            "value": "4d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Food/Shelter": {
+            "value": "4d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "Land/Sea/Air Support": {
+            "value": "4d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}

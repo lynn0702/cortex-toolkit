@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -50,6 +57,7 @@
         "description": "Body, mind, and presence under pressure",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,14 +72,41 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "attachedStress": {
+              "enabled": true,
+              "label": "STRESS",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "scale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "includeOut": false
+            },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
+              "includeOut": false
             },
-            "notes": "STRESS per Attribute: [4] [6] [8] [10] [12]",
+            "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false
+            "attributesRing": false,
+            "colWidth": 36
           }
         },
         "traits": {
@@ -97,6 +132,7 @@
         "description": "Rescue disciplines and vehicle qualifications",
         "nounSingular": "Training Package",
         "nounPlural": "Training Packages",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -111,13 +147,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 14
+            "reservedSlots": 14,
+            "colWidth": 36
           }
         },
         "traits": {
@@ -212,48 +256,77 @@
               "header": "distinctions",
               "body": "distinctions"
             },
+            "ratingScale": [
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "HINDER (each): Gain a PP when you switch out your distinction’s rating of d8 for a d4.\nLIFE BEFORE: Spend a PP to step up an attribute when you connect to your old life. / Add d6 to the crisis pool to double your attribute die when you connect to your old life.\nTRUE NATURE: Spend a PP to reroll your dice when you align with your true nature. / Add d6 to the crisis pool to step up your training package die when you align with your true nature.\nQUIRK: Spend a PP to double your relationship die when your assistance embraces your quirk or quality. / Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.",
+            "notes": "",
             "reservedSlots": 3
           }
         },
         "traits": {
           "Your Life Before:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  },
+                  "Connect": {
+                    "description": "Spend a PP to step up an attribute when you connect to your old life."
+                  },
+                  "Overdrive": {
+                    "description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life."
+                  }
                 }
               }
             }
           },
           "Your Approach/Attitude:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  },
+                  "True Nature": {
+                    "description": "Spend a PP to reroll your dice when you align with your true nature."
+                  },
+                  "Push Limits": {
+                    "description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature."
+                  }
                 }
               }
             }
           },
           "Your Quirk/Quality:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  },
+                  "Embrace": {
+                    "description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality."
+                  },
+                  "Escalate": {
+                    "description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality."
+                  }
                 }
               }
             }
@@ -265,6 +338,8 @@
         "description": "Crew bonds, debts, and troublemakers",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
+        "statement": true,
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -279,9 +354,15 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -291,37 +372,44 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
+            "description": "saved my life",
+            "statement": "saved my life",
             "tags": [],
             "custom": {}
           },
           "1": {
-            "description": "",
+            "description": "owes me big",
+            "statement": "owes me big",
             "tags": [],
             "custom": {}
           },
           "2": {
-            "description": "",
+            "description": "is a troublemaker",
+            "statement": "is a troublemaker",
             "tags": [],
             "custom": {}
           },
           "3": {
-            "description": "",
+            "description": "knows their stuff",
+            "statement": "knows their stuff",
             "tags": [],
             "custom": {}
           },
           "4": {
-            "description": "",
+            "description": "is a liability",
+            "statement": "is a liability",
             "tags": [],
             "custom": {}
           },
           "5": {
-            "description": "",
+            "description": "is dependable",
+            "statement": "is dependable",
             "tags": [],
             "custom": {}
           },
           "6": {
-            "description": "",
+            "description": "is good for a laugh",
+            "statement": "is good for a laugh",
             "tags": [],
             "custom": {}
           }
@@ -335,6 +423,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -348,14 +438,18 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 0,
+            "pipsConfig": {
+              "rows": 2,
+              "perRow": 10,
+              "filled": 0
+            },
             "pips": {
-              "count": 15,
-              "perRow": 5,
+              "count": 20,
+              "perRow": 10,
               "connected": true,
               "filled": 0
             }
@@ -368,9 +462,13 @@
         "description": "Threat clocks and escalating disaster pools",
         "nounSingular": "Crisis Pool",
         "nounPlural": "Crisis Pools",
+        "ratingPosition": "above",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
             "features": {
               "description": true,
               "sfx": false,
@@ -382,12 +480,17 @@
               "header": "default",
               "body": "default"
             },
-            "multiDie": false,
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "Write the name of the crisis pool in each quadrant, then write the number for its initial die rating above the appropriate dice icons. Place the dice for each crisis pool in the large blank area.\nINITIAL RATING: [6] [8] [10] [12]",
+            "notes": "",
             "reservedSlots": 4,
             "colSpan": "full",
             "columnSpan": "full"

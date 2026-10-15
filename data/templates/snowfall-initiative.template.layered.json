@@ -7,7 +7,7 @@
   "variant": "Agent File",
   "pages": 1,
   "genre": "Spy / Cold War / High-Tech",
-  "description": "Elite operatives conducting clandestine black-ops missions in sub-zero locales. Features Distinctions, Affiliations (Field, Handler, Network), Attributes with Stress, Skills & Specialties, Signature Assets, Talents, and Milestones.",
+  "description": "Elite operatives conducting clandestine black-ops missions in sub-zero locales. Features Distinctions (Role, Background, Personality), Affiliations (Diplomacy, Discovery, Defense), Complications (Frostbite, Hypothermia), Attributes with Stress (Brawn, Endurance, Grace, Grit, Mettle, Smarts), 19 Skills & d6 Specialties, Signature Assets, Talents, Gifts, Milestones, and an XP track.",
   "character": {
     "id": "template-spotlight-snowfall",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -55,9 +62,14 @@
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "left",
             "page": 1,
             "style": {
@@ -66,7 +78,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -77,19 +88,43 @@
         },
         "traits": {
           "Role": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           },
           "Background": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           },
           "Personality": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           }
         }
       },
@@ -98,11 +133,14 @@
         "description": "Operational deployment modes",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -112,14 +150,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3,
-            "colWidth": 25
+            "colWidth": 23
           }
         },
         "traits": {
@@ -145,9 +190,12 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -159,6 +207,14 @@
               "header": "stress",
               "body": "stress"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
               "includeD4": true,
               "includeOut": false
@@ -183,11 +239,14 @@
       "Attributes & Stress": {
         "id": "attributes-stress",
         "description": "Core operative capabilities and physical resilience",
-        "nounSingular": "Attributes & Stres",
-        "nounPlural": "Attributes & Stress",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -199,14 +258,40 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "attachedStress": {
+              "enabled": true,
+              "label": "Stress",
+              "ratingScale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "scale": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ],
+              "includeOut": false
+            },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
+              "includeOut": false
             },
             "notes": "",
-            "reservedSlots": 5,
-            "attributesRing": false
+            "reservedSlots": 6,
+            "attributesRing": false,
+            "colWidth": 52
           }
         },
         "traits": {
@@ -244,47 +329,138 @@
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
-        "description": "Black-ops competencies and weapon proficiencies",
-        "nounSingular": "Skills & Specialtie",
-        "nounPlural": "Skills & Specialties",
+        "description": "Black-ops competencies and d6 specialties",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "traitColumns": 2,
             "features": {
               "description": false,
               "sfx": false,
               "subtraits": true
             },
-            "location": "right",
+            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
+            "reservedSlots": 19,
             "colSpan": "full",
             "columnSpan": "full"
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Craft": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "1": {
+          "Drive": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "2": {
+          "Fight": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fix": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Fly": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Focus": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Influence": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Know": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Labor": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Move": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Notice": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Operate": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Perform": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Shoot": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Sneak": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Survive": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Throw": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Treat": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Trick": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -294,11 +470,14 @@
       "Signature Assets": {
         "id": "signature-assets-gifts",
         "description": "Classified spy gear and experimental equipment",
-        "nounSingular": "Signature Assets & Gift",
-        "nounPlural": "Signature Assets & Gifts",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": false,
@@ -310,14 +489,19 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2,
-            "colWidth": 40
+            "reservedSlots": 3,
+            "colWidth": 35
           }
         },
         "traits": {},
@@ -358,6 +542,7 @@
               "header": "three-column-table",
               "body": "three-column-table"
             },
+            "reservedSlots": 3,
             "colSpan": 2,
             "columnSpan": 2
           }
@@ -386,11 +571,14 @@
         "description": "",
         "nounSingular": "Gift",
         "nounPlural": "Gifts",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -400,18 +588,26 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 2,
             "colWidth": 25,
             "rowBreak": true
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Gift of": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "1": {
+          "Gift of~2": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -426,6 +622,9 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
+            "traitColumns": 2,
             "features": {
               "description": false,
               "sfx": false,
@@ -434,10 +633,10 @@
             "location": "center",
             "page": 1,
             "style": {
-              "header": "notes",
+              "header": "default",
               "body": "notes"
             },
-            "notes": "PERSONAL:\n• 1 XP when …\n• 3 XP when …\n• 10 XP when …\n\nGROUP:\n• 1 XP when …\n• 3 XP when …\n• 10 XP when …",
+            "notes": "- **1 XP** when \n- **3 XP** when \n- **10 XP** when \n- **1 XP** when \n- **3 XP** when \n- **10 XP** when ",
             "colWidth": 50
           }
         },
@@ -459,15 +658,21 @@
             "location": "right",
             "page": 1,
             "style": {
-              "header": "pips",
+              "header": "default",
               "body": "pips"
             },
-            "pips": {
-              "count": 25,
-              "perRow": 5,
-              "connected": true,
+            "pipsConfig": {
+              "rows": 5,
+              "perRow": 4,
               "filled": 0
-            }
+            },
+            "pips": {
+              "count": 20,
+              "perRow": 4,
+              "connected": false,
+              "filled": 0
+            },
+            "colWidth": 25
           }
         },
         "traits": {}

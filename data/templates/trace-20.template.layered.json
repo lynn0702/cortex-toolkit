@@ -7,7 +7,7 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Mystery / Procedural / Urban Fantasy",
-  "description": "Investigators of the City of Cortez probing the strange and uncanny. Features Affiliations (Solo, Partner, Squad), Roles (Forensics through Technology), multi-die Resources, Distinctions with Hinder, six Talents, five Stress tracks (Afraid, Angry, Anxious, Exhausted, Injured), and a Growth Pool.",
+  "description": "Investigators of the City of Cortez probing the strange and uncanny. Features Affiliations (Solo, Partner, Squad), 7 Roles (Forensics through Technology), 8 multi-die Resources (starting with 2d10, 2d8, 2d6, 2d6), Distinctions with Hinder, 6 Talents, 5 Stress tracks (Afraid, Angry, Anxious, Exhausted, Injured), and a Growth Pool (Base 2d6).",
   "character": {
     "id": "template-spotlight-trace-20",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -50,6 +57,7 @@
         "description": "Team configuration ratings",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,14 +72,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3,
-            "colWidth": 30
+            "colWidth": 28
           }
         },
         "traits": {
@@ -111,13 +126,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 7
+            "reservedSlots": 7,
+            "colWidth": 28
           }
         },
         "traits": {
@@ -163,11 +185,12 @@
         "description": "Civic assets, contacts, and backup",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -177,28 +200,66 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10
+            ],
             "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "STARTING DICE: d10 d10 • d8 d8 • d6 d6 • d6 d6 (remainder blank)",
-            "reservedSlots": 8
+            "notes": "",
+            "reservedSlots": 8,
+            "colWidth": 28
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "value": "2d10",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": "2d8",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
+            "value": "2d6",
+            "pool": true,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "value": "2d6",
+            "pool": true,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "6": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "7": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -215,10 +276,15 @@
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
-            "location": "right",
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+            "ratingScale": [
+              8
+            ],
+            "location": "center",
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -226,7 +292,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -237,6 +302,7 @@
         },
         "traits": {
           "Distinction #1:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -249,6 +315,7 @@
             }
           },
           "Distinction #2:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -261,6 +328,7 @@
             }
           },
           "Distinction #3:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -287,15 +355,15 @@
               "sfx": false,
               "subtraits": false
             },
-            "location": "right",
+            "location": "center",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -370,7 +438,7 @@
               10,
               12
             ],
-            "colWidth": 50
+            "colWidth": 52
           }
         },
         "traits": {
@@ -403,12 +471,14 @@
       },
       "Growth Pool": {
         "id": "growth-pool",
-        "description": "Civic growth dice (Base d6 d6)",
+        "description": "Base d6 d6",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -420,13 +490,19 @@
               "header": "default",
               "body": "dice-ladder"
             },
-            "multiDie": false,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2,
+            "reservedSlots": 5,
             "colWidth": 20
           }
         },
@@ -438,6 +514,21 @@
             "custom": {}
           },
           "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
             "description": "",
             "tags": [],
             "custom": {}

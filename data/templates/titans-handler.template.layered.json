@@ -7,7 +7,7 @@
   "variant": "Handler File",
   "pages": 1,
   "genre": "Mecha / Kaiju / Military",
-  "description": "Pilots and tactical handlers neural-linked to colossal titan mechs defending humanity from titanic leviathans. Features Handler Attributes (Reflexes, Tactical, Willpower, Sync), Roles, Distinctions, Signature Assets, Complications, and Session Record.",
+  "description": "Pilots and tactical handlers neural-linked to colossal titan mechs defending humanity from titanic leviathans. Features Handler Attributes (Prowess, Control, Renown — d6 to d10), 5 Roles (Backup, Blaster, Boss, Brain, Brawler), Distinctions (Identity, Persona, Aspiration) with signature SFX, Signature Assets, Complications, and Session Record.",
   "character": {
     "id": "template-spotlight-titans-handler",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -45,11 +52,12 @@
       }
     },
     "sets": {
-      "Handler Attributes": {
+      "Attributes": {
         "id": "handler-attributes",
-        "description": "Neural synchronization and physical capabilities",
-        "nounSingular": "Handler Attribute",
-        "nounPlural": "Handler Attributes",
+        "description": "Neural synchronization and handler capabilities",
+        "nounSingular": "Attribute",
+        "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,15 +72,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 4,
+            "reservedSlots": 3,
             "attributesRing": false,
-            "colWidth": 25
+            "colWidth": 28
           }
         },
         "traits": {
@@ -98,11 +111,12 @@
         "description": "Combat roles and tactical responsibilities",
         "nounSingular": "Role",
         "nounPlural": "Roles",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -112,13 +126,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 4
+            "reservedSlots": 5,
+            "colWidth": 28
           }
         },
         "traits": {
@@ -151,7 +173,7 @@
       },
       "Distinctions": {
         "id": "distinctions",
-        "description": "Pilot background, drift specialty, and combat scars",
+        "description": "Personal identity, public persona, and driving aspiration",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
@@ -163,54 +185,83 @@
               "subtraits": false
             },
             "location": "right",
+            "rowSpan": 2,
             "page": 1,
             "style": {
               "header": "distinctions",
               "body": "distinctions"
             },
+            "ratingScale": [
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Identity:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  },
+                  "Affirmation": {
+                    "description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity."
+                  },
+                  "Authenticity": {
+                    "description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity."
+                  }
                 }
               }
             }
           },
-          "1": {
+          "Persona:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  },
+                  "Shake it Off": {
+                    "description": "Spend a PP to recover a complication when acting in line with your public persona."
+                  },
+                  "Double Down": {
+                    "description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona."
+                  }
                 }
               }
             }
           },
-          "2": {
+          "Aspiration:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  },
+                  "Cards on the Table": {
+                    "description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration."
+                  },
+                  "Hurts for a Minute": {
+                    "description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration."
+                  }
                 }
               }
             }
@@ -219,12 +270,14 @@
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "description": "Handler cockpit gear and neural suits",
+        "description": "Handler cockpit gear and personal assets",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -236,12 +289,17 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "SESSION RECORD: [○] [○] [○] [○] [○] [○] [○] [○]",
+            "notes": "",
             "reservedSlots": 2
           }
         },
@@ -267,17 +325,29 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "left",
             "page": 1,
             "style": {
-              "header": "stress",
-              "body": "stress"
-            }
+              "header": "default",
+              "body": "default"
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 2,
+            "colSpan": "full",
+            "columnSpan": "full"
           }
         },
         "traits": {},
@@ -286,35 +356,13 @@
             "description": "",
             "tags": [],
             "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
           }
         }
-      },
-      "Session Record": {
-        "id": "session-record",
-        "description": "",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "session-record",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 20
-            },
-            "reservedSlots": 20
-          }
-        },
-        "traits": {}
       }
     }
   }

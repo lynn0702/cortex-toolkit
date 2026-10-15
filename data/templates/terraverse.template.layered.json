@@ -7,7 +7,7 @@
   "variant": "Character File",
   "pages": 2,
   "genre": "Sci-Fi / Superhero / Multiverse",
-  "description": "Multi-dimensional heroes and champions wielding cosmic power sets to save reality across the Terraverse. Features 2 complete pages: Attributes, Distinctions, Skills & Specialties, Signature Assets, Life Points Track, 3 Power Sets, Talents, and Session Growth Options.",
+  "description": "Multi-dimensional heroes and champions wielding cosmic power sets to save reality across the Terraverse. Features 2 complete pages: 6 Attributes (Agility through Willpower), Distinctions with Hinder, 19 Skills (d4-d6) & Specialties (d8-d12), Signature Assets (d8-d12), Initiative & Hero Dice ladders, Life Points Track, 3 Power Sets, Talents, Session Record, and Leveling Up table.",
   "character": {
     "id": "template-spotlight-terraverse",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -47,9 +54,10 @@
     "sets": {
       "Attributes": {
         "id": "attributes",
-        "description": "Core hero ratings with Willpower",
+        "description": "Core hero ratings with Vitality and Willpower",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,15 +72,22 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 4,
+            "reservedSlots": 6,
             "attributesRing": false,
-            "colWidth": 33
+            "colWidth": 28
           }
         },
         "traits": {
@@ -110,7 +125,7 @@
       },
       "Distinctions": {
         "id": "distinctions",
-        "description": "Multiversal origin, champion archetype, and fatal flaw",
+        "description": "Multiversal origin, champion archetype, and personal drive",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
@@ -118,9 +133,14 @@
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "center",
             "page": 1,
             "style": {
@@ -129,7 +149,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -141,6 +160,7 @@
         "traits": {},
         "slots": {
           "0": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -153,6 +173,7 @@
             }
           },
           "1": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -165,6 +186,7 @@
             }
           },
           "2": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -187,7 +209,7 @@
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -197,13 +219,18 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 4,
+            "colWidth": 28
           }
         },
         "traits": {},
@@ -222,35 +249,55 @@
             "description": "",
             "tags": [],
             "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
           }
         }
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
-        "description": "Multiverse capabilities and technical proficiencies",
-        "nounSingular": "Skills & Specialtie",
-        "nounPlural": "Skills & Specialties",
+        "description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
               "subtraits": true
             },
             "location": "center",
+            "rowSpan": 2,
             "page": 1,
             "style": {
               "header": "default",
-              "body": "default"
+              "body": "subtrait-columns"
+            },
+            "ratingScale": [
+              4,
+              6
+            ],
+            "subtraitRatingScale": [
+              8,
+              10,
+              12
+            ],
+            "labels": {
+              "left": "Skills",
+              "right": "Specialties"
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "LIFE POINTS & INITIATIVE:\n• Initiative Ladder: [d4] [d6] [d8] [d10] [d12]\n• Hero Dice: [d6] [d8] [d10] [d12]\n• Life Points Track: [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]",
-            "reservedSlots": 6,
+            "notes": "",
+            "reservedSlots": 19,
             "colSpan": 2,
             "columnSpan": 2
           }
@@ -259,104 +306,230 @@
           "Craft": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Drive": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Fight": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Fix": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Fly": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Focus": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Influence": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Know": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Labor": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Move": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Notice": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Operate": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Perform": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Shoot": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Sneak": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Survive": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Throw": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Treat": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Trick": {
             "description": "",
             "tags": [],
-            "custom": {}
-          }
-        },
-        "slots": {
-          "19": {
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -378,12 +551,41 @@
             "style": {
               "header": "dice-ladder",
               "body": "dice-ladder"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5,
+            "colWidth": 14
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -403,12 +605,21 @@
               "sfx": false,
               "subtraits": false
             },
-            "location": "center",
+            "location": "left",
             "page": 1,
             "style": {
               "header": "dice-ladder",
               "body": "dice-ladder"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5,
+            "colWidth": 14
           }
         },
         "traits": {},
@@ -442,12 +653,14 @@
       },
       "Life Points": {
         "id": "life-points",
-        "description": "Vitality counts down from 12; Willpower counts up from 1.",
+        "description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
         "nounSingular": "Point",
         "nounPlural": "Points",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -456,12 +669,17 @@
             "location": "left",
             "page": 1,
             "style": {
-              "header": "pips",
+              "header": "default",
               "body": "pips"
             },
+            "pipsConfig": {
+              "rows": 2,
+              "perRow": 12,
+              "filled": 0
+            },
             "pips": {
-              "count": 12,
-              "perRow": 6,
+              "count": 24,
+              "perRow": 12,
               "connected": true,
               "filled": 0
             },
@@ -473,12 +691,14 @@
       },
       "Power Set 1": {
         "id": "power-set-1",
-        "description": "Harnessing stellar rays and particle storms",
-        "nounSingular": "Power Set",
-        "nounPlural": "Power Sets",
+        "description": "SFX: • SFX: • Limit:",
+        "nounSingular": "Power",
+        "nounPlural": "Powers",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": true,
@@ -490,12 +710,17 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "SFX:\n\nLIMIT:",
+            "notes": "",
             "reservedSlots": 3
           }
         },
@@ -504,7 +729,16 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "SFX 1": {},
+                  "SFX 2": {},
+                  "Limit": {}
+                }
+              }
+            }
           },
           "1": {
             "description": "",
@@ -520,12 +754,14 @@
       },
       "Power Set 2": {
         "id": "power-set-2",
-        "description": "Manipulating local temporal acceleration and deceleration",
-        "nounSingular": "Power Set",
-        "nounPlural": "Power Sets",
+        "description": "SFX: • SFX: • Limit:",
+        "nounSingular": "Power",
+        "nounPlural": "Powers",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": true,
@@ -537,13 +773,18 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 3
           }
         },
         "traits": {},
@@ -551,9 +792,23 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "SFX 1": {},
+                  "SFX 2": {},
+                  "Limit": {}
+                }
+              }
+            }
           },
           "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -562,12 +817,14 @@
       },
       "Power Set 3": {
         "id": "power-set-3",
-        "description": "Passing through solid barriers and cloaking presence",
-        "nounSingular": "Power Set",
-        "nounPlural": "Power Sets",
+        "description": "SFX: • SFX: • Limit:",
+        "nounSingular": "Power",
+        "nounPlural": "Powers",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": true,
@@ -579,13 +836,18 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 3
           }
         },
         "traits": {},
@@ -593,9 +855,23 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "SFX 1": {},
+                  "SFX 2": {},
+                  "Limit": {}
+                }
+              }
+            }
           },
           "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -604,9 +880,9 @@
       },
       "Talents": {
         "id": "talents-growth-options",
-        "description": "Session record and leveling advancement options",
-        "nounSingular": "Talents & Growth Option",
-        "nounPlural": "Talents & Growth Options",
+        "description": "Name, Activation, and Effect",
+        "nounSingular": "Talent",
+        "nounPlural": "Talents",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -618,16 +894,15 @@
             "location": "left",
             "page": 2,
             "style": {
-              "header": "three-column-table",
+              "header": "default",
               "body": "three-column-table"
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 0,
+            "reservedSlots": 4,
             "colSpan": 2,
             "columnSpan": 2
           }
@@ -659,8 +934,8 @@
       "Session Record": {
         "id": "session-record",
         "description": "",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
+        "nounSingular": "Session",
+        "nounPlural": "Sessions",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -672,13 +947,21 @@
             "location": "right",
             "page": 2,
             "style": {
-              "header": "session-record",
-              "body": "session-record"
+              "header": "default",
+              "body": "pips"
             },
-            "sessionRecord": {
-              "count": 14
+            "pipsConfig": {
+              "rows": 2,
+              "perRow": 6,
+              "filled": 0
             },
-            "reservedSlots": 14
+            "pips": {
+              "count": 12,
+              "perRow": 6,
+              "connected": true,
+              "filled": 0
+            },
+            "reservedSlots": 0
           }
         },
         "traits": {}
@@ -691,6 +974,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -699,10 +984,10 @@
             "location": "right",
             "page": 2,
             "style": {
-              "header": "notes",
+              "header": "default",
               "body": "notes"
             },
-            "notes": "1 — Turn an asset from a session into a signature asset at d4. Switch out a distinction for a new one.\n2 — Step up a signature asset. Add a new specialty to a skill. Add a new SFX to a power set.\n3 — Step up a skill. Add a new talent. Add a second power set (one power, one SFX, one limit).\n4 — Step up one attribute and step down another."
+            "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another"
           }
         },
         "traits": {}

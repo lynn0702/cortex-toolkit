@@ -7,7 +7,7 @@
   "variant": "Hero File",
   "pages": 1,
   "genre": "Comic Book / Superhero",
-  "description": "Comic book heroes customized with modular power sets, affiliations, distinctions, and specialties. Features Affiliations (Solo, Buddy, Team), Distinctions, 2-3 Power Sets, Specialties, Signature Assets, Stress tracks, and Growth Pool.",
+  "description": "Comic book heroes customized with modular power sets, affiliations, distinctions, and specialties. Features Affiliations (Personal, Group, World), Distinctions (Personality, Past, Quirk), 3 Power Sets, Specialties, Signature Assets, Stress tracks, and Growth Pool.",
   "character": {
     "id": "template-spotlight-kitbash-hero",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -53,29 +60,35 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "location": "left",
             "page": 1,
             "style": {
               "header": "distinctions",
               "body": "distinctions"
             },
+            "ratingScale": [
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Personality:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -87,7 +100,8 @@
               }
             }
           },
-          "1": {
+          "Past:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -99,7 +113,8 @@
               }
             }
           },
-          "2": {
+          "Quirk:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -118,11 +133,14 @@
         "description": "Operating mode ratings",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -132,9 +150,14 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -142,17 +165,17 @@
           }
         },
         "traits": {
-          "Solo": {
+          "Personal:": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "Buddy": {
+          "Group:": {
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "Team": {
+          "World:": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -162,13 +185,15 @@
       "Specialties": {
         "id": "specialties",
         "description": "Master and expert professional skills",
-        "nounSingular": "Specialtie",
+        "nounSingular": "Specialty",
         "nounPlural": "Specialties",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -178,13 +203,17 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 5
           }
         },
         "traits": {},
@@ -224,8 +253,10 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -235,13 +266,19 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "STRESS & GROWTH:\n• Physical Stress: [4] [6] [8] [10] [12]\n• Mental Stress: [4] [6] [8] [10] [12]\n• Emotional Stress: [4] [6] [8] [10] [12]\n• Growth Pool: [4] [6] [8] [10] [12]",
-            "reservedSlots": 1
+            "notes": "",
+            "reservedSlots": 3,
+            "rowBreak": true
           }
         },
         "traits": {},
@@ -268,9 +305,12 @@
         "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -282,6 +322,14 @@
               "header": "stress",
               "body": "stress"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
               "includeD4": true,
               "includeOut": false
@@ -315,6 +363,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -325,7 +375,15 @@
             "style": {
               "header": "dice-ladder",
               "body": "dice-ladder"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {},
@@ -339,10 +397,25 @@
             "description": "",
             "tags": [],
             "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
           }
         }
       },
-      "Power Set": {
+      "Power Set 1": {
         "id": "power-set",
         "description": "Modular powers, SFX triggers, and shutdown limits",
         "nounSingular": "Power Set",
@@ -350,23 +423,25 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
             "location": "left",
             "page": 1,
             "style": {
-              "header": "default",
-              "body": "default"
+              "header": "labeled-fields",
+              "body": "labeled-fields"
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "SFX:\n\nLIMIT:",
+            "notes": "",
             "reservedSlots": 3,
             "colSpan": "full",
             "columnSpan": "full"
@@ -382,11 +457,6 @@
             "description": "",
             "tags": [],
             "custom": {}
-          },
-          "SFX": {
-            "description": "",
-            "tags": [],
-            "custom": {}
           }
         }
       },
@@ -398,16 +468,19 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
             "location": "left",
             "page": 1,
             "style": {
-              "header": "default",
-              "body": "default"
+              "header": "labeled-fields",
+              "body": "labeled-fields"
             },
             "colSpan": "full",
             "columnSpan": "full"
@@ -420,11 +493,6 @@
             "custom": {}
           },
           "Limits": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "SFX": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -439,16 +507,19 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 2,
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
             "location": "left",
             "page": 1,
             "style": {
-              "header": "default",
-              "body": "default"
+              "header": "labeled-fields",
+              "body": "labeled-fields"
             },
             "colSpan": "full",
             "columnSpan": "full"
@@ -461,11 +532,6 @@
             "custom": {}
           },
           "Limits": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "SFX": {
             "description": "",
             "tags": [],
             "custom": {}

@@ -7,7 +7,7 @@
   "variant": "Townsperson File",
   "pages": 1,
   "genre": "Horror / Small Town / Weird Fiction",
-  "description": "Residents uncovering the bizarre, surreal, and terrifying secrets beneath their peaceful small town. Features Attributes, Roles (Investigator, Believer, Townie, Outsider, Skeptic), Distinctions, Relationships, and the ominous Strange Die.",
+  "description": "Residents uncovering the bizarre, surreal, and terrifying secrets beneath their peaceful small town. Features Attributes (Mental, Physical, Social — d6 to d10), 6 Roles (Enforcer, Entrepreneur, Rebel, Sage, Shepherd, Townie), Distinctions (Mundane, Offbeat, Strange), 6 Relationships, d8 Signature Assets, Complications, and the Strange Die.",
   "character": {
     "id": "template-spotlight-strange-towns",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -50,6 +57,7 @@
         "description": "Core attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,15 +72,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "colWidth": 25
+            "colWidth": 28
           }
         },
         "traits": {
@@ -95,7 +108,7 @@
       },
       "Distinctions": {
         "id": "distinctions",
-        "description": "Town roots, encounter with the abnormal, and ruin",
+        "description": "Mundane, Offbeat, and Strange facets of town life",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
@@ -103,10 +116,17 @@
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "center",
+            "colSpan": 2,
+            "columnSpan": 2,
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -114,16 +134,15 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 50
+            "reservedSlots": 3
           }
         },
         "traits": {
           "Ruin:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -140,11 +159,12 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {},
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {}
+            "custom": {
+              "traits": {
+                "SFX": {
+                  "traits": {
+                    "Hinder": {}
+                  }
                 }
               }
             }
@@ -152,11 +172,12 @@
           "1": {
             "description": "",
             "tags": [],
-            "custom": {},
-            "traits": {
-              "SFX": {
-                "traits": {
-                  "Hinder": {}
+            "custom": {
+              "traits": {
+                "SFX": {
+                  "traits": {
+                    "Hinder": {}
+                  }
                 }
               }
             }
@@ -168,11 +189,12 @@
         "description": "Town archetypes and societal roles",
         "nounSingular": "Role",
         "nounPlural": "Roles",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -182,14 +204,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 5,
-            "colWidth": 25,
+            "reservedSlots": 6,
+            "colWidth": 28,
             "rowBreak": true
           }
         },
@@ -228,31 +257,38 @@
       },
       "Relationships": {
         "id": "relationships-strange-die",
-        "description": "Bonds and the creeping town phenomenon",
-        "nounSingular": "Relationships & Strange Die",
-        "nounPlural": "Relationships & Strange Dies",
+        "description": "Bonds and ties within the town",
+        "nounSingular": "Relationship",
+        "nounPlural": "Relationships",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
             "location": "center",
+            "colSpan": 2,
+            "columnSpan": 2,
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 50
+            "reservedSlots": 6
           }
         },
         "traits": {},
@@ -294,11 +330,12 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -308,17 +345,25 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              8
+            ],
+            "reservedSlots": 2,
+            "colWidth": 28,
             "rowBreak": true
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {}
@@ -330,11 +375,12 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -343,7 +389,17 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 3,
+            "colWidth": 52
           }
         },
         "traits": {},
@@ -383,12 +439,41 @@
             "style": {
               "header": "dice-ladder",
               "body": "dice-ladder"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5,
+            "colWidth": 20
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "1": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "2": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
             "description": "",
             "tags": [],
             "custom": {}

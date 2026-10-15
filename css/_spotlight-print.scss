@@ -2902,3 +2902,141 @@ body:has(.character-sheet.submode-print) .main {
     }
 }
 
+// ============================================================
+// GENERIC PREFILLED STATEMENT & LABELED-FIELDS GEOMETRY
+// ============================================================
+.character-sheet.spotlight-print-style {
+
+	// 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships):
+	// When a slot has a blank write-in trait name AND a pre-filled statement prompt,
+	// fuse the blank name box and statement box into a single continuous bordered
+	// field with open write-in space on the left and the prompt flush-right.
+	.trait-title.trait-title-statement:not(.trait-title-stacked):has(> .trait-name-blank) {
+		> .trait-name.trait-name-blank {
+			flex: 1 1 45%;
+			border: 1.5px solid #000000;
+			border-right: none;
+			border-radius: 2px 0 0 2px;
+			min-height: 1.35rem;
+			padding: 0.15rem 0.4rem;
+			background: #ffffff;
+			.trait-blank-line {
+				border-bottom: none !important;
+			}
+		}
+		> .trait-statement-box {
+			flex: 0 1 auto;
+			border-left: none;
+			border-radius: 0 2px 2px 0;
+			justify-content: flex-end;
+			text-align: right;
+			padding-left: 0.25rem;
+		}
+	}
+
+	// 2. MULTI-COLUMN LABELED FIELDS (when traitColumns: 2 is set on a labeled-fields set,
+	// e.g. KitBash Power Sets where Powers + Limits sit side-by-side above full-width SFX):
+	.trait-set-style-labeled-fields {
+		.trait-list-cols-2 .trait-labeled-fields,
+		&.trait-set-cols-2 .trait-labeled-fields {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 0.35rem;
+
+			> .field-block:nth-child(3):last-child {
+				grid-column: 1 / -1;
+			}
+		}
+	}
+}
+
+// ============================================================
+// GENERIC LEFT-RATED & STACKED-BOX GEOMETRY
+// ============================================================
+.character-sheet.spotlight-print-style {
+
+	// 1. INLINE BLANK WRITE-IN BOX WITH DICE ON THE LEFT (ratingPosition: 'left'):
+	// Places the die scale on the left and the bordered write-in box on the right
+	// (e.g. Misty Cove Relationships).
+	.trait-set-rating-left {
+		.trait-title:not(.trait-title-stacked) {
+			flex-direction: row;
+			> .trait-value {
+				order: -1;
+				margin-left: 0;
+				margin-right: 0.45rem;
+			}
+			> .trait-name {
+				order: 1;
+				flex: 1 1 auto;
+			}
+		}
+	}
+
+	// 2. STACKED BLANK WRITE-IN BOX ABOVE DICE (ratingPosition: 'below' + features.description):
+	// When a blank write-in slot has ratingPosition: 'below' and description enabled
+	// (e.g. Retired No More Resources, Signature Assets, Aging Complications),
+	// render the blank name as a rectangular write-in box with the die scale centered below it.
+	.trait-set-style-default.trait-set-has-feature-description {
+		.trait-title.trait-title-stacked:not(.trait-title-statement) {
+			align-items: stretch;
+			> .trait-name.trait-name-blank {
+				border: 1.5px solid #000000;
+				border-radius: 2px;
+				min-height: 1.45rem;
+				padding: 0.15rem 0.4rem;
+				background: #ffffff;
+				width: 100%;
+				.trait-blank-line {
+					border-bottom: none !important;
+				}
+			}
+			> .trait-value {
+				justify-content: center;
+				width: 100%;
+				margin-top: -0.35rem;
+				z-index: 1;
+			}
+		}
+	}
+}
+
+// ============================================================
+// GENERIC INLINE ATTACHED STRESS & TWO-COL NOTES
+// ============================================================
+.character-sheet.spotlight-print-style {
+
+	// 1. INLINE ATTACHED STRESS (when parent trait is ratingPosition: 'inline'
+	// and has attachedStress enabled, e.g. Snowfall Initiative Attributes & Stress):
+	// Place the trait row on the left and the attached stress dice inline on the right.
+	.trait-set:not(.trait-set-rating-below):not(.trait-set-rating-above) {
+		.trait-inner:has(> .attached-stress-block) {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.5rem;
+
+			> .trait-title {
+				flex: 1 1 auto;
+			}
+			> .attached-stress-block {
+				flex: 0 0 auto;
+				border: none;
+				padding: 0;
+				margin-top: 0;
+				.attached-stress-header {
+					display: none;
+				}
+			}
+		}
+	}
+
+	// 2. TWO-COLUMN NOTES (when traitColumns: 2 is set on a notes set,
+	// e.g. Snowfall Initiative Milestones):
+	.trait-set-style-notes.trait-set-cols-2 .trait-notes-body {
+		column-count: 2;
+		column-gap: 1rem;
+		border-top: none;
+	}
+}

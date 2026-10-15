@@ -7,7 +7,7 @@
   "variant": "Caster File",
   "pages": 1,
   "genre": "Dark Fantasy / Occult",
-  "description": "Practitioners of forbidden death magic navigating ancient covenants and terrifying bargains. Features Distinctions, Affiliations (Alone, Coven, Horde), Roles with Specialties, Necromancy Arts, Signature Assets, and Session Record.",
+  "description": "Practitioners of forbidden death magic navigating ancient covenants and terrifying bargains. Features Distinctions (Job, Necromancy, Desire), Affiliations (My Life, The World, The Demi-Monde) with statements, Roles, Necromancy Ability with Effect Tags, SFX and Limit, Signature Assets, Session Record, and Complications.",
   "character": {
     "id": "template-spotlight-necromancer",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -55,9 +62,14 @@
           "cortexToolkit": {
             "features": {
               "description": true,
-              "sfx": true,
+              "sfx": false,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "left",
             "page": 1,
             "style": {
@@ -66,7 +78,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -75,9 +86,9 @@
             "columnSpan": "full"
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Job:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -89,7 +100,8 @@
               }
             }
           },
-          "1": {
+          "Necromancy:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -101,7 +113,8 @@
               }
             }
           },
-          "2": {
+          "Desire:": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
@@ -117,12 +130,16 @@
       },
       "Affiliations": {
         "id": "affiliations",
-        "description": "Operating configuration dice",
+        "description": "Operating configuration dice and statements",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
+        "statement": true,
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": false,
@@ -134,9 +151,16 @@
               "header": "default",
               "body": "default"
             },
+            "statement": true,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -166,15 +190,17 @@
       "Roles": {
         "id": "roles-specialties",
         "description": "Dark magical callings and practices",
-        "nounSingular": "Roles & Specialtie",
-        "nounPlural": "Roles & Specialties",
+        "nounSingular": "Role",
+        "nounPlural": "Roles",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
-              "subtraits": true
+              "subtraits": false
             },
             "location": "left",
             "page": 1,
@@ -182,14 +208,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 5,
-            "colWidth": 33
+            "reservedSlots": 6,
+            "colWidth": 38
           }
         },
         "traits": {
@@ -225,32 +257,42 @@
           }
         }
       },
-      "Necromantic Arts": {
-        "id": "necromantic-arts",
-        "description": "Forbidden spells, rites, and soul pacts",
-        "nounSingular": "Necromantic Art",
-        "nounPlural": "Necromantic Arts",
+      "Signature Assets": {
+        "id": "signature-assets",
+        "description": "Occult relics, grimoires, and dark instruments",
+        "nounSingular": "Signature Asset",
+        "nounPlural": "Signature Assets",
+        "ratingPosition": "above",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": false,
               "subtraits": false
             },
-            "location": "right",
+            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "above",
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "colWidth": 38
           }
         },
         "traits": {},
@@ -272,50 +314,77 @@
           }
         }
       },
-      "Signature Assets": {
-        "id": "signature-assets",
-        "description": "Occult relics, grimoires, and dark instruments",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
+      "Ability": {
+        "id": "necromantic-arts",
+        "description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
+        "nounSingular": "Ability",
+        "nounPlural": "Abilities",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
-              "sfx": false,
-              "subtraits": false
+              "sfx": true,
+              "subtraits": true
             },
-            "location": "left",
+            "location": "right",
+            "rowSpan": 2,
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Necromancy": {
             "description": "",
             "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "Descriptor Tags:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "SFX": {
+                "traits": {
+                  "Been There": {
+                    "description": "When you are resurrecting a ______________, double your Necromancy."
+                  },
+                  "Done That": {
+                    "description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP."
+                  },
+                  "Limit — Dammit": {
+                    "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
+                  }
+                },
+                "slots": {
+                  "3": {
+                    "custom": {}
+                  },
+                  "4": {
+                    "custom": {}
+                  },
+                  "5": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -327,6 +396,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -335,14 +406,15 @@
             "location": "left",
             "page": 1,
             "style": {
-              "header": "session-record",
+              "header": "default",
               "body": "session-record"
             },
             "sessionRecord": {
-              "count": 10
+              "count": 10,
+              "orientation": "horizontal"
             },
             "reservedSlots": 10,
-            "colWidth": 66,
+            "colWidth": 62,
             "rowBreak": true
           }
         },
@@ -353,11 +425,14 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
+        "ratingPosition": "above",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -366,12 +441,21 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingPosition": "above",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 3
           }
         },
         "traits": {
           "Deathmark": {
-            "description": "",
+            "description": "Deathmark",
             "tags": [],
             "custom": {}
           }

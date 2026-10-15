@@ -7,7 +7,7 @@
   "variant": "Crystalline Age",
   "pages": 1,
   "genre": "Superhero / Silver Age Nostalgia",
-  "description": "Veteran heroes of the legendary Crystalline Age stepping back into action after decades of retirement. Features Values, Distinctions, Era Resources, Skills (d4, d6) & Specialties (d8-d12), Signature Assets, and Aging Complications.",
+  "description": "Veteran heroes of the legendary Crystalline Age stepping back into action after decades of retirement. Features Values, 3 Distinctions (Archetype, Retirement, Satisfaction), 5 Era Resources (5d6), 16 Skills (d4-d6) & Specialties (d8-d12), Signature Assets, and Aging Complications.",
   "character": {
     "id": "template-spotlight-retired-crystalline",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -50,11 +57,12 @@
         "description": "Enduring principles of the golden era",
         "nounSingular": "Value",
         "nounPlural": "Values",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -64,14 +72,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 6,
-            "colWidth": 25
+            "reservedSlots": 7,
+            "colWidth": 28
           }
         },
         "traits": {
@@ -125,6 +140,11 @@
               "sfx": true,
               "subtraits": false
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "location": "right",
             "page": 1,
             "style": {
@@ -133,7 +153,6 @@
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -142,12 +161,15 @@
         },
         "traits": {
           "Archetype": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {},
+                "traits": {
+                  "Hinder": {}
+                },
                 "slots": {
                   "0": {
                     "custom": {}
@@ -160,17 +182,20 @@
             }
           },
           "Retirement": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {},
+                "traits": {
+                  "Hinder": {}
+                },
                 "slots": {
-                  "0": {
+                  "1": {
                     "custom": {}
                   },
-                  "1": {
+                  "2": {
                     "custom": {}
                   }
                 }
@@ -178,17 +203,20 @@
             }
           },
           "Satisfaction": {
+            "value": "d8",
             "description": "",
             "tags": [],
             "custom": {},
             "traits": {
               "SFX": {
-                "traits": {},
+                "traits": {
+                  "Hinder": {}
+                },
                 "slots": {
-                  "0": {
+                  "1": {
                     "custom": {}
                   },
-                  "1": {
+                  "2": {
                     "custom": {}
                   }
                 }
@@ -199,12 +227,15 @@
       },
       "Resources": {
         "id": "vintage-resources-assets",
-        "description": "Stashed tech, vintage vehicles, and old connections",
-        "nounSingular": "Vintage Resources & Asset",
-        "nounPlural": "Vintage Resources & Assets",
+        "description": "Stashed tech, vintage vehicles, and old connections (5d6 each)",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": true,
               "sfx": false,
@@ -216,68 +247,52 @@
               "header": "default",
               "body": "default"
             },
-            "multiDie": false,
+            "ratingPosition": "below",
+            "ratingScale": [
+              6
+            ],
+            "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "AGING COMPLICATIONS:\n• [6] [8] [10] Stiff Joints & Old War Wounds\n• [6] [8] [10] Outdated Technology Confusion\n\nSESSION RECORD: [○] [○] [○] [○] [○] [○] [○] [○]",
-            "reservedSlots": 2
+            "notes": "",
+            "reservedSlots": 5,
+            "colWidth": 28
           }
         },
         "traits": {},
         "slots": {
           "0": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "1": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "2": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "3": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
           "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
-      "Pathways Complication": {
-        "id": "pathways-complication",
-        "description": "",
-        "nounSingular": "Complication",
-        "nounPlural": "Complications",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            }
-          }
-        },
-        "traits": {},
-        "slots": {
-          "0": {
+            "value": "5d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
@@ -289,11 +304,14 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
@@ -302,7 +320,16 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 2,
+            "colWidth": 28
           }
         },
         "traits": {},
@@ -324,25 +351,32 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "left",
             "page": 1,
             "style": {
-              "header": "stress",
-              "body": "stress"
+              "header": "default",
+              "body": "default"
             },
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
-            "reservedSlots": 2
+            "ratingPosition": "below",
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 2,
+            "colWidth": 28
           }
         },
         "traits": {},
@@ -362,11 +396,13 @@
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
-        "nounSingular": "Skills & Specialtie",
-        "nounPlural": "Skills & Specialties",
+        "nounSingular": "Skill",
+        "nounPlural": "Skills",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "center",
             "features": {
               "description": false,
               "sfx": false,
@@ -376,98 +412,222 @@
             "page": 1,
             "style": {
               "header": "default",
-              "body": "default"
+              "body": "subtrait-columns"
+            },
+            "ratingScale": [
+              4,
+              6
+            ],
+            "subtraitRatingScale": [
+              8,
+              10,
+              12
+            ],
+            "labels": {
+              "left": "Skills",
+              "right": "Specialties"
             },
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 4,
-            "rowSpan": 4
+            "reservedSlots": 16,
+            "rowSpan": 3
           }
         },
         "traits": {
           "Craft": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Fight": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Fly": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Focus": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Influence": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Know": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Labor": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Move": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Notice": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Perform": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Sneak": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Survive": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Throw": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Tinker": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Treat": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           },
           "Trick": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "slots": {
+              "0": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       }

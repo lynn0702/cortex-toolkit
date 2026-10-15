@@ -5,9 +5,9 @@
   "subtitle": "Post-Apocalyptic Survival & Colony",
   "spotlight": "Safe Zone",
   "variant": "Colony File",
-  "pages": 1,
+  "pages": 2,
   "genre": "Post-Apocalyptic / Base Building",
-  "description": "Colony management and stockpile sheet for Safe Zone settlements. Tracks Essential Stockpiles (Food, Water, Medicine, Fuel, Ammo), Non-Essential Stockpiles, Buildings, Projects, and Crisis Threats.",
+  "description": "Colony management and stockpile sheet for Safe Zone settlements. Tracks Essential Stockpiles (Food, Water, Shelter — 12d6 each), Non-Essential Stockpiles (Medicine, Protection, Tools — 12d6 each), 6 Colony Buildings with d6-d12 Benefits, 9 Colony Survivors (Morale & Skills/Specialties), and Colony Notes.",
   "character": {
     "id": "template-spotlight-safe-zone-colony",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 2,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -48,14 +55,17 @@
     "sets": {
       "Essential Stockpiles": {
         "id": "essential-stockpiles",
-        "description": "Vital supplies necessary for day-to-day survival",
+        "description": "Building Benefits:",
         "nounSingular": "Essential Stockpile",
         "nounPlural": "Essential Stockpiles",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 3,
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -65,67 +75,11 @@
               "header": "default",
               "body": "default"
             },
-            "multiDie": false,
+            "ratingScale": [
+              6
+            ],
+            "multiDie": true,
             "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 5,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
-        },
-        "traits": {
-          "Clean Water": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Food Rations": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Medical Supplies": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fuel & Power": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Ammunition": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
-      "Non-Essential Stockpiles": {
-        "id": "non-essential-stockpiles",
-        "description": "Barter goods, materials, and morale supplies",
-        "nounSingular": "Non-Essential Stockpile",
-        "nounPlural": "Non-Essential Stockpiles",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -135,17 +89,82 @@
           }
         },
         "traits": {
-          "Building Materials": {
+          "Food": {
+            "value": "12d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "Luxury & Morale Goods": {
+          "Water": {
+            "value": "12d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
           },
-          "Spare Parts & Tech": {
+          "Shelter": {
+            "value": "12d6",
+            "pool": true,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Non-Essential Stockpiles": {
+        "id": "non-essential-stockpiles",
+        "description": "Building Benefits:",
+        "nounSingular": "Non-Essential Stockpile",
+        "nounPlural": "Non-Essential Stockpiles",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "traitColumns": 3,
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "default",
+              "body": "default"
+            },
+            "ratingScale": [
+              6
+            ],
+            "multiDie": true,
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": "full",
+            "columnSpan": "full"
+          }
+        },
+        "traits": {
+          "Medicine": {
+            "value": "12d6",
+            "pool": true,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Protection": {
+            "value": "12d6",
+            "pool": true,
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Tools": {
+            "value": "12d6",
+            "pool": true,
             "description": "",
             "tags": [],
             "custom": {}
@@ -160,25 +179,66 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "left",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Name:": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "d6 Benefit:": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d8 Benefit:": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d10 Benefit:": {
+                "value": "d10",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d12 Benefit:": {
+                "value": "d12",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -190,25 +250,66 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "right",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Name:": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "d6 Benefit:": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d8 Benefit:": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d10 Benefit:": {
+                "value": "d10",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d12 Benefit:": {
+                "value": "d12",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -220,25 +321,66 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "left",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Name:": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "d6 Benefit:": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d8 Benefit:": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d10 Benefit:": {
+                "value": "d10",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d12 Benefit:": {
+                "value": "d12",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -250,25 +392,66 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "right",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Name:": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "d6 Benefit:": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d8 Benefit:": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d10 Benefit:": {
+                "value": "d10",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d12 Benefit:": {
+                "value": "d12",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -280,25 +463,66 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "left",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Name:": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "d6 Benefit:": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d8 Benefit:": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d10 Benefit:": {
+                "value": "d10",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d12 Benefit:": {
+                "value": "d12",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -310,25 +534,66 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
-              "subtraits": false
+              "subtraits": true
             },
             "location": "right",
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "subtraitRatingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "Name:": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "d6 Benefit:": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d8 Benefit:": {
+                "value": "d8",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d10 Benefit:": {
+                "value": "d10",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "d12 Benefit:": {
+                "value": "d12",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
           }
         }
       },
@@ -337,9 +602,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -350,18 +618,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -388,9 +665,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -401,18 +681,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -439,9 +728,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -452,18 +744,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -490,9 +791,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -503,18 +807,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -541,9 +854,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -554,18 +870,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -592,9 +917,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -605,18 +933,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -643,9 +980,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -656,18 +996,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -694,9 +1043,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -707,18 +1059,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -745,9 +1106,12 @@
         "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
+        "hasQuestionedPip": true,
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -758,18 +1122,27 @@
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5
           }
         },
         "traits": {
           "Morale": {
             "description": "",
+            "questioned": false,
             "tags": [],
             "custom": {}
           }
         },
         "slots": {
           "1": {
+            "value": "d6",
             "description": "",
             "tags": [],
             "custom": {}
@@ -791,46 +1164,16 @@
           }
         }
       },
-      "Projects & Crisis Threats": {
-        "id": "projects-crisis-threats",
-        "description": "Underway community builds and impending dangers",
-        "nounSingular": "Projects & Crisis Threat",
-        "nounPlural": "Projects & Crisis Threats",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "COMMUNITY PROJECTS:\n• \n• \n\nCRISIS THREATS:\n• \n• ",
-            "reservedSlots": 0,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
-        },
-        "traits": {}
-      },
       "Notes": {
         "id": "colony-projects",
         "description": "",
-        "nounSingular": "Project",
-        "nounPlural": "Projects",
+        "nounSingular": "Note",
+        "nounPlural": "Notes",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -839,9 +1182,10 @@
             "location": "left",
             "page": 2,
             "style": {
-              "header": "notes",
+              "header": "default",
               "body": "notes"
             },
+            "notes": "",
             "colSpan": "full",
             "columnSpan": "full"
           }

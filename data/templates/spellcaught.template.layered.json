@@ -7,7 +7,7 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Fantasy / Eldritch / Arcane",
-  "description": "Mortals touched, cursed, or mutated by runaway magical disasters. Features Distinctions with Hinder, Values, Affiliations (Solitary, Guild, Cabal), Arcane Crafts & Abilities, Stress tracks, and Growth Pool.",
+  "description": "Mortals touched, cursed, or mutated by runaway magical disasters. Features Growth Pool, Distinctions with Hinder, 6 Values with statements, 4 Affiliations (Self, Family, School, Coven) with statements, 6 Signature Assets, 5 Stress tracks, 10 Arcane Crafts, and 4 SFX boxes.",
   "character": {
     "id": "template-spotlight-spellcaught",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -64,46 +71,15 @@
               "header": "dice-ladder",
               "body": "dice-ladder"
             },
-            "colWidth": 25
-          }
-        },
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
-      "Distinctions": {
-        "id": "distinctions",
-        "description": "Origin of the magical calamity and personal burden",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": false,
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 5,
+            "colWidth": 22
           }
         },
         "traits": {},
@@ -122,14 +98,103 @@
             "description": "",
             "tags": [],
             "custom": {}
+          },
+          "3": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "4": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Distinctions": {
+        "id": "distinctions",
+        "description": "Origin of the magical calamity and personal burden",
+        "nounSingular": "Distinction",
+        "nounPlural": "Distinctions",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
+            "location": "center",
+            "page": 1,
+            "style": {
+              "header": "distinctions",
+              "body": "distinctions"
+            },
+            "multiDie": false,
+            "stressConfig": {
+              "includeOut": true
+            },
+            "notes": "",
+            "reservedSlots": 3,
+            "colSpan": 2,
+            "columnSpan": 2
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "1": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
+          },
+          "2": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                }
+              }
+            }
           }
         }
       },
       "Values": {
         "id": "values",
-        "description": "Guiding passions driving the spellcaught",
+        "description": "Gain a PP when you use your d4 value.",
         "nounSingular": "Value",
         "nounPlural": "Values",
+        "statement": true,
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -144,13 +209,20 @@
               "header": "default",
               "body": "default"
             },
+            "statement": true,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 5,
+            "reservedSlots": 6,
             "colSpan": 2,
             "columnSpan": 2
           }
@@ -193,20 +265,30 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
+        "ratingPosition": "above",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": false,
+              "description": true,
               "sfx": false,
               "subtraits": false
             },
             "location": "right",
+            "rowSpan": 2,
             "page": 1,
             "style": {
               "header": "default",
               "body": "default"
-            }
+            },
+            "ratingPosition": "above",
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "reservedSlots": 6
           }
         },
         "traits": {},
@@ -235,14 +317,21 @@
             "description": "",
             "tags": [],
             "custom": {}
+          },
+          "5": {
+            "description": "",
+            "tags": [],
+            "custom": {}
           }
         }
       },
       "Affiliations": {
         "id": "affiliations",
-        "description": "Operating spellcraft configuration",
+        "description": "When Worlds Collide: When two affiliations are in the same scene, add a d6 to the doom pool and a d4 to your dice pool to include both affiliations in your pool.",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
+        "statement": true,
+        "ratingPosition": "inline",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -257,15 +346,22 @@
               "header": "default",
               "body": "default"
             },
+            "statement": true,
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
-            "colSpan": "full",
-            "columnSpan": "full"
+            "reservedSlots": 4,
+            "colSpan": 2,
+            "columnSpan": 2
           }
         },
         "traits": {
@@ -296,9 +392,12 @@
         "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -310,11 +409,21 @@
               "header": "stress",
               "body": "stress"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "stressConfig": {
               "includeD4": true,
               "includeOut": false
             },
-            "reservedSlots": 5
+            "reservedSlots": 5,
+            "colWidth": 24,
+            "rowBreak": true
           }
         },
         "traits": {
@@ -348,13 +457,13 @@
       "Crafts": {
         "id": "arcane-crafts-sfx",
         "description": "Mutated magical expressions and spellcasting disciplines",
-        "nounSingular": "Arcane Crafts & SFX",
-        "nounPlural": "Arcane Crafts & SFXs",
+        "nounSingular": "Craft",
+        "nounPlural": "Crafts",
         "tags": [],
         "custom": {
           "cortexToolkit": {
             "features": {
-              "description": true,
+              "description": false,
               "sfx": false,
               "subtraits": false
             },
@@ -364,13 +473,20 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "STRESS & GROWTH POOL:\n• Arcane Backlash: [4] [6] [8] [10] [12]\n• Physical Stress: [4] [6] [8] [10] [12]\n• Mental Stress: [4] [6] [8] [10] [12]\n• Growth Pool: [4] [6] [8] [10] [12]",
-            "reservedSlots": 3
+            "notes": "",
+            "reservedSlots": 10,
+            "colWidth": 48
           }
         },
         "traits": {
@@ -428,25 +544,10 @@
       },
       "SFX": {
         "id": "sfx",
-        "description": "",
         "nounSingular": "SFX",
         "nounPlural": "SFX",
+        "ratingPosition": "above",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            }
-          }
-        },
         "traits": {},
         "slots": {
           "0": {

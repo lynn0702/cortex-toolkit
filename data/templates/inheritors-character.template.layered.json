@@ -7,7 +7,7 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Superhero / Dynastic Drama",
-  "description": "Descendants inheriting superhuman abilities and ancestral duties from heroic lineages. Features Attributes with 4-track Stress (Afraid, Angry, Exhausted, Injured), Distinctions, Powers, Skills, Heirlooms, and Milestones.",
+  "description": "Descendants inheriting superhuman abilities and ancestral duties from heroic lineages. Features Attributes (Action, Heritage, Science, Weird), Stress, Distinctions with Family Ties SFX, Inherited Abilities, 14 Skills, Heirlooms, Milestones, and an XP grid.",
   "character": {
     "id": "template-spotlight-inheritors-char",
     "isTemplate": true,
@@ -26,6 +26,13 @@
         },
         "sheetStyle": "spotlight",
         "columns": 3,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -47,9 +54,10 @@
     "sets": {
       "Attributes": {
         "id": "attributes",
-        "description": "Core capabilities coupled with dynastic stress tracks",
+        "description": "Gain a PP when you include your d4 attribute in your dice pool.",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
@@ -64,15 +72,21 @@
               "header": "default",
               "body": "default"
             },
+            "ratingPosition": "below",
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
+            "reservedSlots": 4,
             "attributesRing": false,
-            "colWidth": 25
+            "colWidth": 28
           }
         },
         "traits": {
@@ -98,6 +112,52 @@
           }
         }
       },
+      "Stress": {
+        "id": "stress",
+        "description": "",
+        "nounSingular": "Stress",
+        "nounPlural": "Stress",
+        "ratingPosition": "below",
+        "tags": [],
+        "custom": {
+          "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": false,
+              "sfx": false,
+              "subtraits": false
+            },
+            "location": "left",
+            "page": 1,
+            "style": {
+              "header": "stress",
+              "body": "stress"
+            },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "stressConfig": {
+              "includeD4": true,
+              "includeOut": false
+            },
+            "reservedSlots": 1,
+            "colWidth": 28
+          }
+        },
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
       "Distinctions": {
         "id": "distinctions",
         "description": "Bloodline heritage, archetype, and personal stance",
@@ -112,86 +172,106 @@
               "subtraits": false
             },
             "location": "center",
+            "colSpan": 2,
+            "columnSpan": 2,
             "page": 1,
             "style": {
               "header": "distinctions",
               "body": "distinctions"
             },
+            "sharedHinder": true,
+            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+            "ratingScale": [
+              8
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 50
+            "reservedSlots": 3
           }
         },
         "traits": {
           "Family Tree": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {},
+                  "Family Ties": {
+                    "description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset."
+                  }
+                },
+                "slots": {
+                  "2": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           },
           "Approach to Conflict": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                },
+                "slots": {
+                  "1": {
+                    "custom": {}
+                  },
+                  "2": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           },
           "Personality/Quirk": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "SFX": {
+                "traits": {
+                  "Hinder": {}
+                },
+                "slots": {
+                  "1": {
+                    "custom": {}
+                  },
+                  "2": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           }
         }
       },
-      "Stress": {
-        "id": "stress",
-        "description": "",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
-        "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "stress",
-              "body": "stress"
-            },
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
-            "reservedSlots": 1
-          }
-        },
-        "traits": {},
-        "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
-        }
-      },
-      "Inherited Abilities": {
+      "Abilities": {
         "id": "inherited-abilities",
         "description": "Powers granted by bloodline and relics",
-        "nounSingular": "Inherited Abilitie",
-        "nounPlural": "Inherited Abilities",
+        "nounSingular": "Ability",
+        "nounPlural": "Abilities",
+        "ratingPosition": "below",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "traitColumns": 3,
             "features": {
               "description": true,
-              "sfx": false,
-              "subtraits": false
+              "sfx": true,
+              "subtraits": true
             },
             "location": "left",
             "page": 1,
@@ -199,9 +279,14 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
@@ -215,17 +300,86 @@
           "0": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "Effect Tags:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "Limit:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  },
+                  "1": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           },
           "1": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "Effect Tags:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "Limit:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  },
+                  "1": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           },
           "2": {
             "description": "",
             "tags": [],
-            "custom": {}
+            "custom": {},
+            "traits": {
+              "Effect Tags:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "Limit:": {
+                "description": "",
+                "tags": [],
+                "custom": {}
+              },
+              "SFX": {
+                "traits": {},
+                "slots": {
+                  "0": {
+                    "custom": {}
+                  },
+                  "1": {
+                    "custom": {}
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -237,6 +391,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -248,13 +404,19 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
             "notes": "",
-            "reservedSlots": 7,
+            "reservedSlots": 14,
             "rowBreak": true
           }
         },
@@ -333,12 +495,14 @@
       },
       "Heirlooms": {
         "id": "heirlooms-milestones",
-        "description": "Ancestral artifacts and legacy milestones",
-        "nounSingular": "Heirlooms & Milestone",
-        "nounPlural": "Heirlooms & Milestones",
+        "description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
+        "nounSingular": "Heirloom",
+        "nounPlural": "Heirlooms",
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": true,
               "sfx": false,
@@ -350,13 +514,18 @@
               "header": "default",
               "body": "default"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
             "multiDie": false,
             "stressConfig": {
-              "includeD4": false,
               "includeOut": true
             },
-            "notes": "STRESS TRACKS:\n• Afraid: [4] [6] [8] [10] [12]\n• Angry: [4] [6] [8] [10] [12]\n• Exhausted: [4] [6] [8] [10] [12]\n• Injured: [4] [6] [8] [10] [12]",
-            "reservedSlots": 1
+            "notes": "",
+            "reservedSlots": 4
           }
         },
         "traits": {},
@@ -380,11 +549,6 @@
             "description": "",
             "tags": [],
             "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
           }
         }
       },
@@ -396,6 +560,8 @@
         "tags": [],
         "custom": {
           "cortexToolkit": {
+            "header": "top",
+            "headerAlign": "left",
             "features": {
               "description": false,
               "sfx": false,
@@ -404,9 +570,10 @@
             "location": "right",
             "page": 1,
             "style": {
-              "header": "notes",
+              "header": "default",
               "body": "notes"
-            }
+            },
+            "notes": "### PERSONAL:\n- **1 XP** when \n- **3 XP** when \n- **10 XP** when \n\n### GROUP:\n- **1 XP** when \n- **3 XP** when \n- **10 XP** when "
           }
         },
         "traits": {}
@@ -427,8 +594,13 @@
             "location": "right",
             "page": 1,
             "style": {
-              "header": "pips",
+              "header": "default",
               "body": "pips"
+            },
+            "pipsConfig": {
+              "rows": 5,
+              "perRow": 5,
+              "filled": 0
             },
             "pips": {
               "count": 25,
