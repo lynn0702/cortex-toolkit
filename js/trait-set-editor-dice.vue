@@ -4,7 +4,7 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 const {
 	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue, setRatingPreset,
 	setDie, isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset,
-	featureSubtraits, isRing, multiDie, isChallengePool, traitSetID
+	featureSubtraits, isRing, multiDie, isPool, isChallengePool, traitSetID
 } = injectTraitSetEditor();
 </script>
 
@@ -46,7 +46,7 @@ const {
 			</button>
 			<button
 				type="button"
-				v-for="size in [4, 6, 8, 10, 12, 20]"
+				v-for="size in [4, 6, 8, 10, 12]"
 				:key="size"
 				class="editor-group-btn"
 				:class="{ active: setDie === size }"
@@ -92,6 +92,9 @@ const {
 				<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
 				<div><label :for="'trait-set-' + traitSetID + '-multi-die'">Multiple dice</label></div>
 			</template>
+
+			<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-pool'" :true-value="true" :false-value="false" v-model="isPool"></div>
+			<div><label :for="'trait-set-' + traitSetID + '-pool'" title="Clicking a trait adds its whole pool to the roller">Pool</label></div>
 
 			<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-challenge-pool'" :true-value="true" :false-value="false" v-model="isChallengePool"></div>
 			<div><label :for="'trait-set-' + traitSetID + '-challenge-pool'">Challenge pool</label></div>

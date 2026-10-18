@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitEditor from './trait-editor.vue';
 
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightPrintStyle,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitSetLabel, getSetDie,
 	getBranchGroups, branchSubs, hasBranchSplit, handleBranchFlatClick
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-subtrait-columns" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'subtrait-columns'">
+	<div class="trait-subtrait-columns" v-if="getView(traitSet)?.style?.body === 'subtrait-columns'">
 		<div class="branch-head" :class="{ 'branch-split-head': hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) }">
 		<template v-if="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s))"><span>{{ getTraitSetLabel(traitSet, 'left') }}</span><span class="branch-head-center">{{ getTraitSetLabel(traitSet, 'center') }}<span v-if="getSetDie(traitSet)" class="c set-die" v-html="renderDieValueForPrint(getSetDie(traitSet), true)"></span></span><span></span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template>
 		<template v-else><span>{{ getTraitSetLabel(traitSet, 'left') }}</span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template>
@@ -34,7 +34,7 @@ const {
 									<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
 									<div class="subtrait-value">
 										<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
-											:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.sub.value === size }"
+											:class="{ 'c': true, 'active': !printBlank && entry.sub.value === size }"
 											v-html="renderDieValueForPrint(size, !printBlank && entry.sub.value === size)"></span>
 									</div>
 								</div>
@@ -44,22 +44,9 @@ const {
 									<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
 									<div class="subtrait-value">
 										<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-											:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+											:class="{ 'c': true, 'active': !printBlank && entry.item.trait.value === size }"
 											v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
 									</div>
-									<transition name="editor" appear>
-										<TraitEditor
-											:character="character"
-											:open="isSelected(['trait', s, entry.item.originalIndex])"
-											v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
-											:traitSetID="s"
-											:traitID="entry.item.originalIndex"
-											:viewY="viewY"
-											@selectElement="selectElement"
-											@updateCharacter="updateCharacter"
-											@removeTrait="removeTrait"
-										></TraitEditor>
-									</transition>
 								</div>
 							</template>
 							<div class="branch-slot branch-slot-blank" v-if="printBlank && !branchSubs(group.subs, 'left').length">
@@ -72,11 +59,18 @@ const {
 						</div>
 						<div class="branch-main" @click="submode === 'play' && !printBlank && !group.skillItem.isPlaceholder && !group.skillItem.trait.value && getSetDie(traitSet) ? handleSingleDieClick(group.skillItem.trait, getSetDie(traitSet), traitSet, s, group.skillItem.originalIndex) : null">
 							<span class="trait-name" v-if="!printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.name">{{ group.skillItem.trait.name }}</span>
-							<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder"><span class="trait-blank-line"></span></span>
+							<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder || !group.skillItem.trait.name">
+								<template v-if="submode === 'edit' && !designerPrintPreview && !printBlank && !group.skillItem.trait.name">
+									<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+								</template>
+								<template v-else>
+									<span class="trait-blank-line"></span>
+								</template>
+							</span>
 							<span class="trait-name" v-else>{{ group.skillItem.trait.name || '' }}</span>
 							<div class="trait-value single-die-value" v-if="group.skillItem.trait.value || !getSetDie(traitSet)" @click.stop="!printBlank && !group.skillItem.isPlaceholder ? handleSingleDieClick(group.skillItem.trait, group.skillItem.trait.value || getSetDie(traitSet), traitSet, s, group.skillItem.originalIndex) : null">
 								<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-									:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size }"
+									:class="{ 'c': true, 'active': !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size }"
 									v-html="renderDieValueForPrint(size, !printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.value === size)"></span>
 							</div>
 						</div>
@@ -89,7 +83,7 @@ const {
 									<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
 									<div class="subtrait-value">
 										<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
-											:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.sub.value === size }"
+											:class="{ 'c': true, 'active': !printBlank && entry.sub.value === size }"
 											v-html="renderDieValueForPrint(size, !printBlank && entry.sub.value === size)"></span>
 									</div>
 								</div>
@@ -99,22 +93,9 @@ const {
 									<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
 									<div class="subtrait-value">
 										<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-											:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+											:class="{ 'c': true, 'active': !printBlank && entry.item.trait.value === size }"
 											v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
 									</div>
-									<transition name="editor" appear>
-										<TraitEditor
-											:character="character"
-											:open="isSelected(['trait', s, entry.item.originalIndex])"
-											v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
-											:traitSetID="s"
-											:traitID="entry.item.originalIndex"
-											:viewY="viewY"
-											@selectElement="selectElement"
-											@updateCharacter="updateCharacter"
-											@removeTrait="removeTrait"
-										></TraitEditor>
-									</transition>
 								</div>
 							</template>
 							<div class="branch-slot branch-slot-blank" v-if="printBlank && !(group.split ? branchSubs(group.subs, 'right') : group.subs).length">
@@ -127,20 +108,6 @@ const {
 						</div>
 					</div>
 				</div>
-				<transition name="editor" appear>
-					<TraitEditor
-						v-if="!group.skillItem.isPlaceholder"
-						:character="character"
-						:open="isSelected(['trait', s, group.skillItem.originalIndex])"
-						v-show="submode === 'edit' && isSelected(['trait', s, group.skillItem.originalIndex])"
-						:traitSetID="s"
-						:traitID="group.skillItem.originalIndex"
-						:viewY="viewY"
-						@selectElement="selectElement"
-						@updateCharacter="updateCharacter"
-						@removeTrait="removeTrait"
-					></TraitEditor>
-				</transition>
 			</div>
 			<div class="branch-orphans" v-else>
 				<div class="branch-row" :class="{ 'branch-split-row': group.split }">
@@ -152,7 +119,7 @@ const {
 								<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
 								<div class="subtrait-value">
 									<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-										:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+										:class="{ 'c': true, 'active': !printBlank && entry.item.trait.value === size }"
 										v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
 								</div>
 							</div>
@@ -168,22 +135,9 @@ const {
 								<span class="subtrait-name" v-else-if="printBlank"><span class="trait-blank-line subtrait-blank-line"></span></span>
 								<div class="subtrait-value">
 									<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-										:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && entry.item.trait.value === size }"
+										:class="{ 'c': true, 'active': !printBlank && entry.item.trait.value === size }"
 										v-html="renderDieValueForPrint(size, !printBlank && entry.item.trait.value === size)"></span>
 								</div>
-								<transition name="editor" appear>
-									<TraitEditor
-										:character="character"
-										:open="isSelected(['trait', s, entry.item.originalIndex])"
-										v-show="submode === 'edit' && isSelected(['trait', s, entry.item.originalIndex])"
-										:traitSetID="s"
-										:traitID="entry.item.originalIndex"
-										:viewY="viewY"
-										@selectElement="selectElement"
-										@updateCharacter="updateCharacter"
-										@removeTrait="removeTrait"
-									></TraitEditor>
-								</transition>
 							</div>
 						</template>
 					</div>

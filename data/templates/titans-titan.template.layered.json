@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 1,
-        "spotlight": "Titans vs Leviathans",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 2,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 1,
+      "spotlight": "Titans vs Leviathans",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -59,52 +54,55 @@
         "nounPlural": "Attributes",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "attachedStress": {
+            "enabled": true,
+            "label": "STRESS",
             "ratingScale": [
               6,
               8,
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "STRESS",
-              "ratingScale": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": false
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "attributesRing": false,
-            "colWidth": 28
-          }
+            "scale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "includeOut": false
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": false
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "attributesRing": false,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            28,
+            72,
+            0
+          ]
         },
         "traits": {
           "Prowess": {
@@ -130,29 +128,28 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "ratingScale": [
-              8
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "ratingScale": [
+            8
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Type:": {
@@ -216,34 +213,37 @@
         "nounSingular": "Power",
         "nounPlural": "Powers",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 4,
-            "colWidth": 50,
-            "rowBreak": true
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 4,
+          "rowBreak": true,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            50,
+            50,
+            0
+          ]
         },
         "traits": {},
         "slots": {
@@ -275,32 +275,31 @@
         "nounSingular": "Power",
         "nounPlural": "Powers",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 4
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 4,
+          "track": 2,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -333,36 +332,33 @@
         "nounSingular": "Session",
         "nounPlural": "Sessions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "right",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "pipsConfig": {
-              "rows": 1,
-              "perRow": 15,
-              "filled": 0
-            },
-            "pips": {
-              "count": 15,
-              "perRow": 15,
-              "connected": true,
-              "filled": 0
-            },
-            "reservedSlots": 0,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "right",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "pipsConfig": {
+            "rows": 1,
+            "perRow": 15,
+            "filled": 0
+          },
+          "pips": {
+            "count": 15,
+            "perRow": 15,
+            "connected": true,
+            "filled": 0
+          },
+          "reservedSlots": 0,
+          "span": 3
         },
         "traits": {}
       }

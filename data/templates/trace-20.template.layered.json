@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 1,
-        "spotlight": "TRACE 2.0",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 3,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 1,
+      "spotlight": "TRACE 2.0",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -59,35 +54,38 @@
         "nounPlural": "Affiliations",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 28
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            30,
+            50,
+            20
+          ]
         },
         "traits": {
           "Solo": {
@@ -113,34 +111,32 @@
         "nounSingular": "Role",
         "nounPlural": "Roles",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 7,
-            "colWidth": 28
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 7,
+          "track": 1,
+          "span": 1
         },
         "traits": {
           "Forensics": {
@@ -187,32 +183,30 @@
         "nounPlural": "Resources",
         "ratingPosition": "inline",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10
-            ],
-            "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 8,
-            "colWidth": 28
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10
+          ],
+          "multiDie": true,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 8,
+          "track": 1,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -272,33 +266,30 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-            "ratingScale": [
-              8
-            ],
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "sharedHinder": true,
+          "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+          "ratingScale": [
+            8
+          ],
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 2
         },
         "traits": {
           "Distinction #1:": {
@@ -348,29 +339,26 @@
         "nounSingular": "Talent",
         "nounPlural": "Talents",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 6,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 6,
+          "track": 2,
+          "span": 2
         },
         "traits": {
           "Talent #1:": {
@@ -411,35 +399,33 @@
         "nounSingular": "Stress",
         "nounPlural": "Stress",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "stress"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
-            "notes": "",
-            "reservedSlots": 5,
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "colWidth": 52
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "stress"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeD4": true,
+            "includeOut": false
+          },
+          "notes": "",
+          "reservedSlots": 5,
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Afraid": {
@@ -475,63 +461,76 @@
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "dice-ladder"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 5,
-            "colWidth": 20
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "dice-count"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": true,
+          "pool": true,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 5,
+          "track": 3,
+          "span": 1
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "D4": {
+            "value": "d4",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 0
+            }
           },
-          "1": {
+          "D6": {
+            "value": "d6",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 2
+            }
           },
-          "2": {
+          "D8": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 0
+            }
           },
-          "3": {
+          "D10": {
+            "value": "d10",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 0
+            }
           },
-          "4": {
+          "D12": {
+            "value": "d12",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 0
+            }
           }
         }
       }

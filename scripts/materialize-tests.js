@@ -29,7 +29,7 @@ function compareRender(render, label) {
     ok(!!rs, label + ': set present ' + os.name);
     if (!rs) continue;
     // presentation kept from template
-    ok(!!(rs.custom && rs.custom.cortexToolkit), label + ': presentation kept ' + os.name);
+    ok(!!(rs.view || (rs.custom && rs.custom.cortexToolkit)), label + ': presentation kept ' + os.name);
     ok(rs.nounSingular === os.nounSingular, label + ': noun kept ' + os.name);
     // every original named trait survives with the same dice
     for (const ot of os.traits) {
@@ -84,9 +84,20 @@ function compareRender(render, label) {
   ov.traitSets[0].custom.cortexToolkit.style.body = 'zzz-body';
   ov.traitSets[0].nounSingular = 'ZZZ NOUN';
   const back = materializeCharacter(toLayeredEntity(ov), cortex);
-  ok(back.traitSets[0].custom.cortexToolkit.style.body === 'zzz-body', 'set style override survives', back.traitSets[0].custom.cortexToolkit.style.body);
+  ok((back.traitSets[0].view?.style?.body || back.traitSets[0].custom?.cortexToolkit?.style?.body) === 'zzz-body', 'set style override survives', back.traitSets[0].custom?.cortexToolkit?.style?.body);
   ok(back.traitSets[0].nounSingular === 'ZZZ NOUN', 'set noun override survives', back.traitSets[0].nounSingular);
   ok(JSON.stringify(back.traitSets[0].traits) === JSON.stringify(ov.traitSets[0].traits), 'traits unchanged alongside override');
+}
+
+// ---- 5b. per-entity view presentation overrides survive the codec.
+{
+  const ov = JSON.parse(JSON.stringify(cortex));
+  delete ov.traitSets[0].custom;
+  ov.traitSets[0].view = { style: { header: 'default', body: 'view-body' } };
+  ov.traitSets[0].nounSingular = 'VIEW NOUN';
+  const back = materializeCharacter(toLayeredEntity(ov), cortex);
+  ok(back.traitSets[0].view && back.traitSets[0].view.style.body === 'view-body', 'view set style override survives', back.traitSets[0].view?.style?.body);
+  ok(back.traitSets[0].nounSingular === 'VIEW NOUN', 'set noun override survives', back.traitSets[0].nounSingular);
 }
 
 // ---- 6. unrated (value 0) round-trips as 0, not null.

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { computed } from 'vue';
-import TraitSetEditor from './trait-set-editor.vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetNotes from './trait-set-notes.vue';
@@ -43,7 +43,7 @@ const {
 	hasCounterColumn, getCounterLabel
 } = ts;
 
-const headerTop = computed( () => traitSet.value?.custom?.cortexToolkit?.header === 'top' );
+const headerTop = computed( () => getView(traitSet.value)?.header === 'top' );
 
 const BODY_COMPONENTS: Record<string, any> = {
 	'image': TraitSetImage,
@@ -61,8 +61,8 @@ const BODY_COMPONENTS: Record<string, any> = {
 };
 
 const bodyComponent = computed( () => {
-	const style = traitSet.value?.custom?.cortexToolkit?.style?.body;
-	return BODY_COMPONENTS[ style ] || TraitSetList;
+	const style = getView(traitSet.value)?.style?.body;
+	return ( style && BODY_COMPONENTS[ style ] ) || TraitSetList;
 } );
 </script>
 
@@ -77,25 +77,12 @@ const bodyComponent = computed( () => {
 					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>
 				</div>
 			</transition>
-
-			<transition name="editor" appear>
-				<TraitSetEditor
-					:character="character"
-					:open="isSelected(['traitSet', s])"
-					v-show="submode === 'edit' && isSelected(['traitSet', s])"
-					:traitSetID="s"
-					:viewY="viewY"
-					@selectElement="selectElement"
-					@updateCharacter="updateCharacter"
-					@removeTraitSet="removeTraitSet"
-				></TraitSetEditor>
-			</transition>
 		</div>
 
 		<div class="trait-set-body">
 			<component :is="bodyComponent" />
 
-			<ul class="sfx" v-if="traitSet?.custom?.cortexToolkit?.features?.sfx && traitSet?.sfx?.length">
+			<ul class="sfx" v-if="getView(traitSet)?.features?.sfx && traitSet?.sfx?.length">
 				<li v-for="(sfx, sfId) in (traitSet.sfx || [])" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 					<span class="sfx-name">{{ sfx.name }}</span>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>
@@ -104,9 +91,9 @@ const bodyComponent = computed( () => {
 		</div>
 
 		<!-- RIGHT HEADER (OPTIONAL VERTICAL LABEL) -->
-		<div class="trait-set-header trait-set-header-right" v-if="traitSet?.custom?.cortexToolkit?.headerRight">
+		<div class="trait-set-header trait-set-header-right" v-if="getView(traitSet)?.headerRight">
 			<div class="trait-set-header-inner">
-				<div>{{ traitSet.custom?.cortexToolkit?.headerRight || '' }}</div>
+				<div>{{ getView(traitSet)?.headerRight || '' }}</div>
 			</div>
 		</div>
 	</div>

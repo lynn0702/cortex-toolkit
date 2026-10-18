@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 1,
-        "spotlight": "Snowfall Initiative",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 3,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 1,
+      "spotlight": "Snowfall Initiative",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -58,33 +53,30 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
-              8
-            ],
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "sharedHinder": true,
+          "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+          "ratingScale": [
+            8
+          ],
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "span": 3
         },
         "traits": {
           "Role": {
@@ -135,37 +127,40 @@
         "nounPlural": "Affiliations",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 23
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            23,
+            25,
+            52
+          ]
         },
         "traits": {
           "Diplomacy": {
@@ -192,36 +187,34 @@
         "nounPlural": "Complications",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "stress",
-              "body": "stress"
-            },
-            "ratingPosition": "below",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
-            "reservedSlots": 2,
-            "colWidth": 25
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "stress",
+            "body": "stress"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "stressConfig": {
+            "includeD4": true,
+            "includeOut": false
+          },
+          "reservedSlots": 2,
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Frostbite": {
@@ -243,21 +236,29 @@
         "nounPlural": "Attributes",
         "ratingPosition": "inline",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "attachedStress": {
+            "enabled": true,
+            "label": "Stress",
             "ratingScale": [
               4,
               6,
@@ -265,34 +266,24 @@
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "Stress",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": false
-            },
-            "notes": "",
-            "reservedSlots": 6,
-            "attributesRing": false,
-            "colWidth": 52
-          }
+            "scale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "includeOut": false
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": false
+          },
+          "notes": "",
+          "reservedSlots": 6,
+          "attributesRing": false,
+          "track": 3,
+          "span": 1
         },
         "traits": {
           "Brawn": {
@@ -333,41 +324,38 @@
         "nounSingular": "Skill",
         "nounPlural": "Skills",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "traitColumns": 2,
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": true
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "subtraitRatingScale": [
-              6
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 19,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "traitColumns": 2,
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": true
+          },
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "subtraitRatingScale": [
+            6
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 19,
+          "span": 3
         },
         "traits": {
           "Craft": {
@@ -474,35 +462,38 @@
         "nounPlural": "Signature Assets",
         "ratingPosition": "inline",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 35
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            35,
+            32.5,
+            32.5
+          ]
         },
         "traits": {},
         "slots": {
@@ -529,23 +520,20 @@
         "nounSingular": "Talent",
         "nounPlural": "Talents",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "three-column-table",
-              "body": "three-column-table"
-            },
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "three-column-table",
+            "body": "three-column-table"
+          },
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 2
         },
         "traits": {},
         "slots": {
@@ -573,33 +561,36 @@
         "nounPlural": "Gifts",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "reservedSlots": 2,
-            "colWidth": 25,
-            "rowBreak": true
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "reservedSlots": 2,
+          "rowBreak": true,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            25,
+            50,
+            25
+          ]
         },
         "traits": {
           "Gift of": {
@@ -620,27 +611,90 @@
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "traitColumns": 2,
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "- **1 XP** when \n- **3 XP** when \n- **10 XP** when \n- **1 XP** when \n- **3 XP** when \n- **10 XP** when ",
-            "colWidth": 50
+        "ratingPosition": "none",
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingPosition": "none",
+          "ratingScale": [],
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
+        },
+        "traits": {
+          "1 XP": {
+            "description": "when ",
+            "tags": [],
+            "custom": {}
+          },
+          "3 XP": {
+            "description": "when ",
+            "tags": [],
+            "custom": {}
+          },
+          "10 XP": {
+            "description": "when ",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Milestones~2": {
+        "id": "milestones-b",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "ratingPosition": "none",
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingPosition": "none",
+          "ratingScale": [],
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
+        },
+        "traits": {
+          "1 XP": {
+            "description": "when ",
+            "tags": [],
+            "custom": {}
+          },
+          "3 XP": {
+            "description": "when ",
+            "tags": [],
+            "custom": {}
+          },
+          "10 XP": {
+            "description": "when ",
+            "tags": [],
+            "custom": {}
           }
         },
-        "traits": {}
+        "label": "Milestones"
       },
       "XP": {
         "id": "xp",
@@ -648,32 +702,30 @@
         "nounSingular": "Pip",
         "nounPlural": "Pips",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "pipsConfig": {
-              "rows": 5,
-              "perRow": 4,
-              "filled": 0
-            },
-            "pips": {
-              "count": 20,
-              "perRow": 4,
-              "connected": false,
-              "filled": 0
-            },
-            "colWidth": 25
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "pipsConfig": {
+            "rows": 5,
+            "perRow": 4,
+            "filled": 0
+          },
+          "pips": {
+            "count": 20,
+            "perRow": 4,
+            "connected": false,
+            "filled": 0
+          },
+          "track": 3,
+          "span": 1
         },
         "traits": {}
       }

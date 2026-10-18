@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getView } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -12,14 +13,11 @@ const props = withDefaults( defineProps<{
 } );
 
 const emit = defineEmits<{
-	( e: 'resumeSession' ): void;
 	( e: 'createFromSpotlight', tmpl: any, asTemplate: boolean, openPrint: boolean ): void;
-	( e: 'createCharacter' ): void;
-	( e: 'createTemplate' ): void;
+	( e: 'createCharacter', isTemplate: boolean, templateId?: string | null ): void;
 	( e: 'createFromTemplate', characterID: string ): void;
 	( e: 'toggleTemplate', characterID: string ): void;
 	( e: 'loadCharacter', characterID: string ): void;
-	( e: 'openAlongside', characterID: string ): void;
 	( e: 'duplicateCharacter', characterID: string ): void;
 	( e: 'exportCharacter', characterID: string ): void;
 	( e: 'exportAllCharacters' ): void;
@@ -32,6 +30,9 @@ const emit = defineEmits<{
 const instance = getCurrentInstance();
 
 const filterMode = ref( 'all' ); // 'all', 'characters', 'templates'
+const rosterSearch = ref( '' );
+const selectedTemplateId = ref( '' );
+
 const showImportConfirm = ref( false );
 const importQueue = ref<any[]>( [] );
 const importBuffer = ref<any>( null );
@@ -47,20 +48,34 @@ const spotlightFilter = ref( 'all' );
 
 const inputFile = ref<HTMLInputElement | null>( null );
 
+const templateSheets = computed( () => props.characters.filter( c => !!c.isTemplate ) );
+
 const charactersSorted = computed( () => [ ...props.characters ].sort( ( a, b ) => {
 	const aDate = Math.max( ( new Date( a.dateCreated ) ).getTime(), ( new Date( a.dateModified ) ).getTime(), ( new Date( a.dateTouched ) ).getTime() );
 	const bDate = Math.max( ( new Date( b.dateCreated ) ).getTime(), ( new Date( b.dateModified ) ).getTime(), ( new Date( b.dateTouched ) ).getTime() );
 	return bDate - aDate;
 } ) );
 
-const templateCount = computed( () => props.characters.filter( c => !!c.isTemplate ).length );
-const characterCount = computed( () => props.characters.filter( c => !c.isTemplate ).length );
+const matchingCharacters = computed( () => {
+	const q = rosterSearch.value.toLowerCase().trim();
+	if ( !q ) return charactersSorted.value;
+	return charactersSorted.value.filter( ( c: any ) => {
+		const name = ( c.name || '' ).toLowerCase();
+		const game = ( c.game || '' ).toLowerCase();
+		const type = ( c.type || getView( c )?.type || '' ).toLowerCase();
+		return name.includes( q ) || game.includes( q ) || type.includes( q );
+	} );
+} );
+
+const allCount = computed( () => matchingCharacters.value.length );
+const characterCount = computed( () => matchingCharacters.value.filter( c => !c.isTemplate ).length );
+const templateCount = computed( () => matchingCharacters.value.filter( c => !!c.isTemplate ).length );
 
 const charactersFiltered = computed( () => {
-	const sorted = charactersSorted.value;
-	if ( filterMode.value === 'templates' ) return sorted.filter( c => !!c.isTemplate );
-	if ( filterMode.value === 'characters' ) return sorted.filter( c => !c.isTemplate );
-	return sorted;
+	const list = matchingCharacters.value;
+	if ( filterMode.value === 'templates' ) return list.filter( c => !!c.isTemplate );
+	if ( filterMode.value === 'characters' ) return list.filter( c => !c.isTemplate );
+	return list;
 } );
 
 const spotlightTemplates = computed( () => {
@@ -122,11 +137,7 @@ function useSpotlight( tmpl: any, asTemplate = false, openPrint = false ) {
 }
 
 function createCharacter() {
-	emit( 'createCharacter' );
-}
-
-function createTemplate() {
-	emit( 'createTemplate' );
+	emit( 'createCharacter', false, selectedTemplateId.value || null );
 }
 
 function createFromTemplate( characterID: string ) {
@@ -139,10 +150,6 @@ function toggleTemplate( characterID: string ) {
 
 function loadCharacter( characterID: string ) {
 	emit( 'loadCharacter', characterID );
-}
-
-function openAlongside( characterID: string ) {
-	emit( 'openAlongside', characterID );
 }
 
 function duplicateCharacter( characterID: string ) {
@@ -353,22 +360,18 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 					<div class="roster-button"
 						@click.stop="createCharacter"
 					>
-						<span><i class="fas fa-plus"></i> New Character</span>
+						<span><i class="fas fa-plus"></i> New Sheet</span>
 					</div>
 
-					<div class="roster-button roster-button-resume"
-						@click.stop="emit('resumeSession')"
-						v-if="openCharacterIDs && openCharacterIDs.length > 0"
-						title="Return to your open character sheets"
-					>
-						<span><i class="fas fa-play"></i> Play Session ({{ openCharacterIDs.length }})</span>
-					</div>
-
-					<div class="roster-button roster-button-template"
-						@click.stop="createTemplate"
-					>
-						<span><i class="fas fa-bookmark"></i> New Template</span>
-					</div>
+					<label class="roster-template-picker">
+						<span class="picker-label">Template</span>
+						<select v-model="selectedTemplateId" class="picker-select">
+							<option value="">None</option>
+							<option v-for="tmpl in templateSheets" :key="tmpl.id" :value="tmpl.id">
+								{{ tmpl.name || 'Unnamed Template' }}
+							</option>
+						</select>
+					</label>
 
 					<div class="roster-button roster-button-spotlight"
 						@click.stop="openSpotlightLibrary"
@@ -401,10 +404,18 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 				</div>
 			</div>
 
+			<!-- SEARCH -->
+			<div class="roster-search" v-if="characters.length > 0">
+				<div class="roster-search-input">
+					<i class="fas fa-search"></i>
+					<input type="text" v-model="rosterSearch" placeholder="Search">
+				</div>
+			</div>
+
 			<!-- FILTER TABS -->
 			<div class="roster-filter-tabs" v-if="characters.length > 0">
 				<button :class="{ active: filterMode === 'all' }" @click="filterMode = 'all'">
-					All <span class="tab-count">({{ characters.length }})</span>
+					All <span class="tab-count">({{ allCount }})</span>
 				</button>
 				<button :class="{ active: filterMode === 'characters' }" @click="filterMode = 'characters'">
 					Characters <span class="tab-count">({{ characterCount }})</span>
@@ -412,6 +423,10 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 				<button :class="{ active: filterMode === 'templates' }" @click="filterMode = 'templates'">
 					Templates <span class="tab-count">({{ templateCount }})</span>
 				</button>
+			</div>
+
+			<div class="roster-empty" v-if="charactersFiltered.length === 0">
+				No sheets found.
 			</div>
 
 			<!-- CHARACTER LIST -->
@@ -424,7 +439,7 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 
 					<div>
 
-						<div :class="'roster-item-portrait alignment-' + (character.portrait?.custom?.cortexToolkit?.alignment || 'center')"
+						<div :class="'roster-item-portrait alignment-' + (getView(character.portrait)?.alignment || 'center')"
 							:style="'background-image: url(' + safeImageUrl(character.portrait?.url || '') + ');'"
 							@click.stop="loadCharacter( character.id )"
 						>
@@ -466,15 +481,6 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 									@click.stop="loadCharacter( character.id )"
 								>
 									<span><i class="fas fa-eye"></i> Open</span>
-								</div>
-
-								<!-- OPEN ALONGSIDE -->
-								<div class="roster-item-button roster-button-alongside"
-									@click.stop="openAlongside( character.id )"
-									v-if="openCharacterIDs && openCharacterIDs.length > 0 && !openCharacterIDs.includes(character.id)"
-									title="Open alongside your current active session"
-								>
-									<span><i class="fas fa-columns"></i> Open Alongside</span>
 								</div>
 
 								<!-- DUPLICATE -->
@@ -654,6 +660,9 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 							<div class="spotlight-card-badges">
 								<span class="badge-page-count" :class="{ 'multi-page': tmpl.pages > 1 }">
 									<i class="fas" :class="tmpl.pages > 1 ? 'fa-copy' : 'fa-file'"></i> {{ tmpl.pages }} Page{{ tmpl.pages > 1 ? 's' : '' }}
+								</span>
+								<span class="badge-orientation" :class="{ landscape: getView(tmpl.character)?.pageOrientation === 'landscape' }">
+									{{ getView(tmpl.character)?.pageOrientation === 'landscape' ? 'Landscape' : 'Portrait' }}
 								</span>
 								<span class="badge-genre">{{ tmpl.genre }}</span>
 							</div>

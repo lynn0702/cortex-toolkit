@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 2,
-        "spotlight": "Terraverse",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 3,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 2,
+      "spotlight": "Terraverse",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -59,36 +54,39 @@
         "nounPlural": "Attributes",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 6,
-            "attributesRing": false,
-            "colWidth": 28
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 6,
+          "attributesRing": false,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            28,
+            36,
+            36
+          ]
         },
         "traits": {
           "Agility": {
@@ -129,33 +127,30 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-            "ratingScale": [
-              8
-            ],
-            "location": "center",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "sharedHinder": true,
+          "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+          "ratingScale": [
+            8
+          ],
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 2
         },
         "traits": {},
         "slots": {
@@ -206,32 +201,30 @@
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 4,
-            "colWidth": 28
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 4,
+          "track": 1,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -263,44 +256,40 @@
         "nounSingular": "Skill",
         "nounPlural": "Skills",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": true
-            },
-            "location": "center",
-            "rowSpan": 2,
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "subtrait-columns"
-            },
-            "ratingScale": [
-              4,
-              6
-            ],
-            "subtraitRatingScale": [
-              8,
-              10,
-              12
-            ],
-            "labels": {
-              "left": "Skills",
-              "right": "Specialties"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 19,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": true
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "subtrait-columns"
+          },
+          "ratingScale": [
+            4,
+            6
+          ],
+          "subtraitRatingScale": [
+            8,
+            10,
+            12
+          ],
+          "labels": {
+            "left": "Skills",
+            "right": "Specialties"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 19,
+          "track": 2,
+          "span": 2
         },
         "traits": {
           "Craft": {
@@ -539,29 +528,27 @@
         "nounSingular": "Die",
         "nounPlural": "Dice",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "dice-ladder",
-              "body": "dice-ladder"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "reservedSlots": 5,
-            "colWidth": 14
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "dice-ladder",
+            "body": "dice-ladder"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "reservedSlots": 5,
+          "track": 1,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -598,29 +585,27 @@
         "nounSingular": "Die",
         "nounPlural": "Dice",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "dice-ladder",
-              "body": "dice-ladder"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "reservedSlots": 5,
-            "colWidth": 14
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "dice-ladder",
+            "body": "dice-ladder"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "reservedSlots": 5,
+          "track": 1,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -657,35 +642,32 @@
         "nounSingular": "Point",
         "nounPlural": "Points",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 12,
-              "filled": 0
-            },
-            "pips": {
-              "count": 24,
-              "perRow": 12,
-              "connected": true,
-              "filled": 0
-            },
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "left",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "pipsConfig": {
+            "rows": 2,
+            "perRow": 12,
+            "filled": 0
+          },
+          "pips": {
+            "count": 24,
+            "perRow": 12,
+            "connected": true,
+            "filled": 0
+          },
+          "span": 3
         },
         "traits": {}
       },
@@ -695,34 +677,38 @@
         "nounSingular": "Power",
         "nounPlural": "Powers",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            33.333,
+            33.333,
+            33.334
+          ]
         },
         "traits": {},
         "slots": {
@@ -758,34 +744,33 @@
         "nounSingular": "Power",
         "nounPlural": "Powers",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "center",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -821,34 +806,33 @@
         "nounSingular": "Power",
         "nounPlural": "Powers",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 3,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -884,28 +868,25 @@
         "nounSingular": "Talent",
         "nounPlural": "Talents",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 4,
-            "colSpan": 2,
-            "columnSpan": 2
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "three-column-table"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 4,
+          "track": 1,
+          "span": 2
         },
         "traits": {},
         "slots": {
@@ -937,32 +918,31 @@
         "nounSingular": "Session",
         "nounPlural": "Sessions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 6,
-              "filled": 0
-            },
-            "pips": {
-              "count": 12,
-              "perRow": 6,
-              "connected": true,
-              "filled": 0
-            },
-            "reservedSlots": 0
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "pipsConfig": {
+            "rows": 2,
+            "perRow": 6,
+            "filled": 0
+          },
+          "pips": {
+            "count": 12,
+            "perRow": 6,
+            "connected": true,
+            "filled": 0
+          },
+          "reservedSlots": 0,
+          "track": 3,
+          "span": 1
         },
         "traits": {}
       },
@@ -972,23 +952,22 @@
         "nounSingular": "Option",
         "nounPlural": "Options",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another"
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "notes"
+          },
+          "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
+          "track": 3,
+          "span": 1
         },
         "traits": {}
       }

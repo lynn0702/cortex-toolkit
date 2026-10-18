@@ -63,9 +63,9 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set trait-set-style-three-column-table"><div class="trait-set-header"><div class="trait-set-header-inner"><div>TALENTS</div></div></div><div class="trait-set-body"><div class="trait-three-column-table"><div class="three-col-head"><span>TALENT</span><span>ACTIVATION</span><span>EFFECT</span></div><div class="three-col-row"><span class="three-col-name">Trick Shot</span><span class="three-col-activation">When attacking…</span><span class="three-col-effect">Double Guns.</span></div></div></div></div>'
 	},
 	{
-		id: 'dice-ladder', name: 'Dice Ladder', sing: 'Growth Die', plur: 'Growth Dice',
-		blurb: 'Vertical die track, e.g. a growth or XP pool.',
-		preview: '<div class="trait-set trait-set-style-dice-ladder"><div class="trait-set-header"><div class="trait-set-header-inner"><div>GROWTH POOL</div></div></div><div class="trait-set-body"><div class="trait-dice-ladder"><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">4</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">8</span></div></div></div></div></div>'
+		id: 'dice-ladder', name: 'Dice Ladder', sing: 'Rung', plur: 'Rungs',
+		blurb: 'Vertical die track for stepped ratings, e.g. an advancement ladder.',
+		preview: '<div class="trait-set trait-set-style-dice-ladder"><div class="trait-set-header"><div class="trait-set-header-inner"><div>DICE LADDER</div></div></div><div class="trait-set-body"><div class="trait-dice-ladder"><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">4</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">8</span></div></div></div></div></div>'
 	},
 	{
 		id: 'labeled-fields', name: 'Labeled Fields', sing: 'Field', plur: 'Fields',

@@ -13,7 +13,7 @@ import { cloneDeep } from './clone-deep.ts';
 
 export const cortexMigration = {
 
-	DIE_SIZES: [4, 6, 8, 10, 12, 20] as number[],
+	DIE_SIZES: [4, 6, 8, 10, 12] as number[],
 
 	// Seed filler from the original sample files. The terse reference example
 	// (Sendak_Eggers.layered.json) carries no descriptions, so exact-match
@@ -31,6 +31,87 @@ export const cortexMigration = {
 
 	isFillerDescription: function( text: unknown ) {
 		return typeof text === 'string' && this.FILLER_DESCRIPTIONS.indexOf( text ) !== -1;
+	},
+
+	normalizeView: function( obj: any ) {
+		if ( !obj || typeof obj !== 'object' ) return obj;
+
+		if ( Array.isArray( obj ) ) {
+			obj.forEach( ( item: any ) => this.normalizeView( item ) );
+			return obj;
+		}
+		if ( Array.isArray( obj.characters ) ) {
+			obj.characters.forEach( ( c: any ) => this.normalizeView( c ) );
+		}
+
+		const normalizeNode = ( node: any ) => {
+			if ( !node || typeof node !== 'object' ) return;
+			if ( node.custom && typeof node.custom === 'object' && node.custom.cortexToolkit !== undefined ) {
+				if ( node.view === undefined ) {
+					node.view = node.custom.cortexToolkit;
+				}
+				delete node.custom.cortexToolkit;
+				if ( Object.keys( node.custom ).length === 0 ) {
+					delete node.custom;
+				}
+			}
+			if ( node.portrait && typeof node.portrait === 'object' ) {
+				normalizeNode( node.portrait );
+			}
+			if ( Array.isArray( node.traitSets ) ) {
+				node.traitSets.forEach( ( ts: any ) => normalizeSet( ts ) );
+			}
+			if ( node.sets && typeof node.sets === 'object' && !Array.isArray( node.sets ) ) {
+				Object.values( node.sets ).forEach( ( s: any ) => normalizeLayeredSet( s ) );
+			}
+		};
+
+		const normalizeTraitsArray = ( traits: any ) => {
+			if ( !Array.isArray( traits ) ) return;
+			traits.forEach( ( tr: any ) => {
+				if ( !tr || typeof tr !== 'object' ) return;
+				normalizeNode( tr );
+				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits );
+				if ( Array.isArray( tr.sfx ) ) {
+					tr.sfx.forEach( ( s: any ) => {
+						if ( s && typeof s === 'object' ) normalizeNode( s );
+					} );
+				}
+			} );
+		};
+
+		const normalizeSet = ( set: any ) => {
+			if ( !set || typeof set !== 'object' ) return;
+			normalizeNode( set );
+			normalizeTraitsArray( set.traits );
+			if ( Array.isArray( set.sfx ) ) {
+				set.sfx.forEach( ( s: any ) => {
+					if ( s && typeof s === 'object' ) normalizeNode( s );
+				} );
+			}
+		};
+
+		const normalizeLayeredTraits = ( traits: any ) => {
+			if ( !traits || typeof traits !== 'object' || Array.isArray( traits ) ) return;
+			Object.values( traits ).forEach( ( tr: any ) => {
+				if ( !tr || typeof tr !== 'object' ) return;
+				normalizeNode( tr );
+				if ( tr.traits ) normalizeLayeredTraits( tr.traits );
+			} );
+		};
+
+		const normalizeLayeredSet = ( set: any ) => {
+			if ( !set || typeof set !== 'object' ) return;
+			normalizeNode( set );
+			if ( set.traits ) normalizeLayeredTraits( set.traits );
+			if ( set.slots ) normalizeLayeredTraits( set.slots );
+		};
+
+		normalizeNode( obj );
+		if ( obj.character && typeof obj.character === 'object' ) {
+			normalizeNode( obj.character );
+		}
+		return obj;
 	},
 
 	warn: function( warnings: string[] | undefined, message: string ) {
@@ -447,6 +528,7 @@ export const cortexMigration = {
 				node[k] = ( Array.isArray( old[k] ) ) ? old[k].slice() : old[k];
 			}
 		} );
+		if ( old.view !== undefined ) node.view = cloneDeep( old.view );
 		if ( old.custom !== undefined ) node.custom = cloneDeep( old.custom );
 		if ( old.id !== undefined ) {
 			this.warn( warnings, path + ': dropped trait-level id (D1)' );
@@ -535,6 +617,7 @@ export const cortexMigration = {
 		if ( !entry || typeof entry !== 'object' || Array.isArray( entry ) ) {
 			return { data: null, warnings: ['input: not a template entry'] };
 		}
+		this.normalizeView( entry );
 		const ch = entry.character;
 		if ( !ch || typeof ch !== 'object' || !Array.isArray( ch.traitSets ) ) {
 			return { data: null, warnings: ['input: entry has no character.traitSets'] };
@@ -622,7 +705,8 @@ export const cortexMigration = {
 		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
 			if ( node[k] !== undefined ) tr[k] = cloneDeep( node[k] );
 		} );
-		tr.custom = node.custom !== undefined ? cloneDeep( node.custom ) : {};
+		if ( node.view !== undefined ) tr.view = cloneDeep( node.view );
+		if ( node.custom !== undefined ) tr.custom = cloneDeep( node.custom );
 		const subs = ( node.traits && typeof node.traits === 'object' && !Array.isArray( node.traits ) ) ? node.traits : {};
 		const subSlots = ( node.slots && typeof node.slots === 'object' && !Array.isArray( node.slots ) ) ? node.slots : {};
 		const self = this;
@@ -749,6 +833,156 @@ export const cortexMigration = {
 		} ).filter( Boolean );
 		out.character = c;
 		return { data: out, warnings: warnings };
+	},
+
+	// ---------- Banded Layout Engine (Rule of 3) Placement Migration ----------
+	migratePlacement: function( charObj: any ) {
+		if ( !charObj || typeof charObj !== 'object' ) return;
+		this.normalizeView( charObj );
+		const char = charObj.character || charObj;
+		const ctkChar = char?.view || char?.custom?.cortexToolkit;
+
+		const setsList: any[] = [];
+		if ( Array.isArray( char.traitSets ) ) {
+			char.traitSets.forEach( ( ts: any ) => {
+				if ( ts && typeof ts === 'object' ) setsList.push( ts );
+			} );
+		} else if ( char.sets && typeof char.sets === 'object' && !Array.isArray( char.sets ) ) {
+			Object.keys( char.sets ).forEach( ( k: string ) => {
+				const s = char.sets[k];
+				if ( s && typeof s === 'object' && !Array.isArray( s ) ) setsList.push( s );
+			} );
+		}
+
+		if ( !setsList.length ) return;
+
+		const legacyCols1 = Number( ctkChar?.columns ) || 2;
+		const legacyCols2 = Number( ctkChar?.columnsPage2 ) || legacyCols1;
+
+		const byPage: Record<number, any[]> = {};
+		setsList.forEach( set => {
+			const p = Number( set?.view?.page ?? set?.custom?.cortexToolkit?.page ) || 1;
+			( byPage[p] = byPage[p] || [] ).push( set );
+		} );
+
+		Object.keys( byPage ).forEach( pageStr => {
+			const p = Number( pageStr );
+			const pageSets = byPage[p];
+			const trackCount = p === 2 ? legacyCols2 : legacyCols1;
+
+			const bands: any[][] = [];
+			let currentBand: any[] = [];
+
+			pageSets.forEach( set => {
+				const sCtk = set.view || set.custom?.cortexToolkit;
+				if ( !sCtk ) {
+					currentBand.push( set );
+					return;
+				}
+				const rawSpan = sCtk.colSpan ?? sCtk.columnSpan ?? sCtk.span;
+				const isFull = rawSpan === 'full' || ( typeof rawSpan === 'number' && rawSpan >= ( sCtk.span ? 3 : trackCount ) );
+
+				if ( isFull ) {
+					if ( currentBand.length ) {
+						bands.push( currentBand );
+						currentBand = [];
+					}
+					bands.push( [ set ] );
+				} else {
+					if ( sCtk.rowBreak === true && currentBand.length ) {
+						bands.push( currentBand );
+						currentBand = [];
+					}
+					currentBand.push( set );
+				}
+			} );
+			if ( currentBand.length ) bands.push( currentBand );
+
+			bands.forEach( band => {
+				if ( !band.length ) return;
+				const firstSet = band[0];
+				if ( !firstSet.view ) firstSet.view = firstSet.custom?.cortexToolkit || {};
+				const firstCtk = firstSet.view;
+
+				const firstSpan = firstCtk.span ?? firstCtk.colSpan ?? firstCtk.columnSpan;
+				const isFullBand = ( firstSpan === 'full' || ( typeof firstSpan === 'number' && firstSpan >= ( firstCtk.span ? 3 : trackCount ) ) );
+
+				if ( isFullBand ) {
+					firstCtk.span = 3;
+					delete firstCtk.colSpan;
+					delete firstCtk.columnSpan;
+					delete firstCtk.colWidth;
+					delete firstCtk.rowSpan;
+					return;
+				}
+
+				const declared: ( number | null )[] = [ null, null, null ];
+
+				band.forEach( set => {
+					if ( !set.view ) set.view = set.custom?.cortexToolkit || {};
+					const ctk = set.view;
+
+					if ( ctk.track === undefined ) {
+						const loc = String( ctk.location || '' ).toLowerCase().trim();
+						if ( trackCount === 2 ) {
+							ctk.track = ( loc === 'right' || loc === '2' ) ? 2 : 1;
+						} else {
+							if ( loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2' ) ctk.track = 2;
+							else if ( loc === 'right' || loc === '3' || loc === 'col-3' ) ctk.track = 3;
+							else ctk.track = 1;
+						}
+					}
+					if ( ctk.location !== 'header' ) {
+						delete ctk.location;
+					}
+
+					if ( ctk.span === undefined ) {
+						const sp = ctk.colSpan ?? ctk.columnSpan;
+						if ( sp === 'full' || Number( sp ) >= trackCount ) ctk.span = 3;
+						else if ( Number( sp ) === 2 ) ctk.span = 2;
+						else ctk.span = 1;
+					}
+					delete ctk.colSpan;
+					delete ctk.columnSpan;
+
+					const w = Number( ctk.colWidth );
+					if ( w >= 10 && w <= 90 ) {
+						const tr = ctk.track as 1 | 2 | 3;
+						if ( declared[ tr - 1 ] === null ) declared[ tr - 1 ] = Math.round( w );
+					}
+					delete ctk.colWidth;
+					delete ctk.rowSpan;
+				} );
+
+				if ( !Array.isArray( firstCtk.widths ) || firstCtk.widths.length !== 3 ) {
+					if ( trackCount === 2 ) {
+						if ( declared[0] !== null ) firstCtk.widths = [ declared[0], 100 - declared[0], 0 ];
+						else if ( declared[1] !== null ) firstCtk.widths = [ 100 - declared[1], declared[1], 0 ];
+						else firstCtk.widths = [ 50, 50, 0 ];
+					} else {
+						const declaredCount = declared.filter( ( d ): d is number => d !== null ).length;
+						if ( declaredCount > 0 ) {
+							const sumDeclared = declared.reduce( ( a: number, b ) => a + ( b || 0 ), 0 );
+							const remaining = Math.max( 0, 100 - sumDeclared );
+							const emptyCount = 3 - declaredCount;
+							const share = emptyCount > 0 ? Math.round( remaining / emptyCount * 100 ) / 100 : 0;
+							firstCtk.widths = [
+								declared[0] !== null ? declared[0] : share,
+								declared[1] !== null ? declared[1] : share,
+								declared[2] !== null ? declared[2] : share,
+							];
+						} else {
+							firstCtk.widths = [ 33.333, 33.333, 33.334 ];
+						}
+					}
+				}
+			} );
+		} );
+
+		if ( ctkChar ) {
+			delete ctkChar.columns;
+			delete ctkChar.columnsPage2;
+		}
 	},
 
 };

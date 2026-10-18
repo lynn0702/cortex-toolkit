@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 1,
-        "spotlight": "BrighterStars",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 2,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 1,
+      "spotlight": "BrighterStars",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -58,32 +53,35 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "multiDie": false,
-            "ratingScale": [
-              8
-            ],
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 64
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "sharedHinder": true,
+          "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+          "multiDie": false,
+          "ratingScale": [
+            8
+          ],
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            64,
+            36,
+            0
+          ]
         },
         "traits": {
           "Purpose:": {
@@ -151,34 +149,33 @@
         "nounPlural": "Values",
         "statement": true,
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "multiDie": false,
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 5,
-            "colWidth": 64
-          }
+        "hasQuestionedPip": true,
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 5,
+          "track": 1,
+          "span": 1
         },
         "traits": {
           "Courage": {
@@ -216,36 +213,34 @@
         "statement": true,
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "multiDie": false,
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 8,
-            "colWidth": 64
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "left",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 8,
+          "track": 1,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -298,32 +293,31 @@
         "nounPlural": "Signature Assets",
         "ratingPosition": "above",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "multiDie": false,
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -344,36 +338,95 @@
           }
         }
       },
-      "Milestones": {
-        "id": "milestones",
+      "Personal Milestones": {
+        "id": "personal-milestones",
         "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "### PERSONAL:\n- **1 XP** when \n- **3 XP** when \n- **10 XP** when \n\n### GROUP:\n- **1 XP** when \n- **3 XP** when \n- **10 XP** when ",
-            "reservedSlots": 0
-          }
+        "ratingPosition": "none",
+        "view": {
+          "header": "top",
+          "headerAlign": "left",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingPosition": "none",
+          "ratingScale": [],
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
         },
-        "traits": {}
+        "traits": {
+          "1 XP": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3 XP": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "10 XP": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Group Milestones": {
+        "id": "group-milestones",
+        "description": "",
+        "nounSingular": "Milestone",
+        "nounPlural": "Milestones",
+        "tags": [],
+        "ratingPosition": "none",
+        "view": {
+          "header": "top",
+          "headerAlign": "left",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "multiDie": false,
+          "ratingPosition": "none",
+          "ratingScale": [],
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
+        },
+        "traits": {
+          "1 XP": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "3 XP": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "10 XP": {
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
       },
       "XP": {
         "id": "xp",
@@ -381,32 +434,31 @@
         "nounSingular": "XP",
         "nounPlural": "XP",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "pipsConfig": {
-              "rows": 5,
-              "perRow": 5,
-              "filled": 0
-            },
-            "pips": {
-              "count": 25,
-              "perRow": 5,
-              "connected": true,
-              "filled": 0
-            },
-            "reservedSlots": 0
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "pipsConfig": {
+            "rows": 5,
+            "perRow": 5,
+            "filled": 0
+          },
+          "pips": {
+            "count": 25,
+            "perRow": 5,
+            "connected": true,
+            "filled": 0
+          },
+          "reservedSlots": 0,
+          "track": 2,
+          "span": 1
         },
         "traits": {}
       }

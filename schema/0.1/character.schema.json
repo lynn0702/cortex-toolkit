@@ -89,6 +89,9 @@
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
+				"view": {
+					"$ref": "#/$defs/view"
+				},
 				"custom": {
 					"$ref": "#/$defs/custom"
 				}
@@ -102,8 +105,7 @@
 				"nounPlural",
 				"traits",
 				"sfx",
-				"tags",
-				"custom"
+				"tags"
 			]
 		},
 		"trait": {
@@ -201,6 +203,9 @@
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
+				"view": {
+					"$ref": "#/$defs/view"
+				},
 				"custom": {
 					"$ref": "#/$defs/custom"
 				}
@@ -212,8 +217,7 @@
 				"description",
 				"traits",
 				"sfx",
-				"tags",
-				"custom"
+				"tags"
 			]
 		},
 		"sfx": {
@@ -230,6 +234,9 @@
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
+				"view": {
+					"$ref": "#/$defs/view"
+				},
 				"custom": {
 					"$ref": "#/$defs/custom"
 				}
@@ -238,8 +245,7 @@
 			"required": [
 				"name",
 				"description",
-				"tags",
-				"custom"
+				"tags"
 			]
 		},
 		"sfxHinder": {
@@ -256,6 +262,14 @@
 				"type": "string",
 				"pattern": "^[A-Za-z0-9-\\.\\/]+$"
 			}
+		},
+		"view": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "App presentation and view settings (layout, placement, style, features).",
+			"additionalProperties": true
 		},
 		"custom": {
 			"type": "object",
@@ -353,6 +367,9 @@
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
+				"view": {
+					"$ref": "#/$defs/view"
+				},
 				"custom": {
 					"$ref": "#/$defs/custom"
 				}
@@ -360,8 +377,7 @@
 			"required": [
 				"url",
 				"alt",
-				"tags",
-				"custom"
+				"tags"
 			],
 			"additionalProperties": false
 		},
@@ -421,6 +437,9 @@
 		"tags": {
 			"$ref": "#/$defs/tags"
 		},
+		"view": {
+			"$ref": "#/$defs/view"
+		},
 		"custom": {
 			"$ref": "#/$defs/custom"
 		}
@@ -439,8 +458,7 @@
 		"portrait",
 		"plotPoints",
 		"notes",
-		"tags",
-		"custom"
+		"tags"
 	],
 	"additionalProperties": false
 }

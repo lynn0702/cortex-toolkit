@@ -7,7 +7,7 @@
 //   trait:  "d8"  (shorthand)  or  { value?, description?, cost?, usableBy?, traits? }
 // Merge: mergeLayers(...layers), later wins — absent inherits, null clears.
 
-export const DIE_SIZES = [4, 6, 8, 10, 12, 20] as const;
+export const DIE_SIZES = [4, 6, 8, 10, 12] as const;
 export type DieSize = (typeof DIE_SIZES)[number];
 export type DieString = `d${DieSize}`;
 

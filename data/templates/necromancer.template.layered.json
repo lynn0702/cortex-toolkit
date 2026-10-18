@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 1,
-        "spotlight": "Necromancer",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 2,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 1,
+      "spotlight": "Necromancer",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -58,33 +53,30 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
-              8
-            ],
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "sharedHinder": true,
+          "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+          "ratingScale": [
+            8
+          ],
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "span": 3
         },
         "traits": {
           "Job:": {
@@ -136,38 +128,35 @@
         "statement": true,
         "ratingPosition": "inline",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "statement": true,
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "statement": true,
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "span": 3
         },
         "traits": {
           "My Life": {
@@ -193,36 +182,39 @@
         "nounSingular": "Role",
         "nounPlural": "Roles",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 6,
-            "colWidth": 38
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 6,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            38,
+            62,
+            0
+          ]
         },
         "traits": {
           "Diplomat": {
@@ -264,36 +256,34 @@
         "nounPlural": "Signature Assets",
         "ratingPosition": "above",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "above",
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colWidth": 38
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "above",
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -320,34 +310,32 @@
         "nounSingular": "Ability",
         "nounPlural": "Abilities",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": true
-            },
-            "location": "right",
-            "rowSpan": 2,
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 1
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": true
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 1,
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Necromancy": {
@@ -394,29 +382,32 @@
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 10,
-              "orientation": "horizontal"
-            },
-            "reservedSlots": 10,
-            "colWidth": 62,
-            "rowBreak": true
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "left",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "session-record"
+          },
+          "sessionRecord": {
+            "count": 10,
+            "orientation": "horizontal"
+          },
+          "reservedSlots": 10,
+          "rowBreak": true,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            62,
+            38,
+            0
+          ]
         },
         "traits": {}
       },
@@ -427,31 +418,30 @@
         "nounPlural": "Complications",
         "ratingPosition": "above",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "above",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "reservedSlots": 3
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "above",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Deathmark": {

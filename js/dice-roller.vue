@@ -55,7 +55,7 @@ const activeTab = ref( 'roller' ); // 'roller' | 'log'
 
 const diceSizes = computed( () => [ 4, 6, 8, 10, 12 ] );
 
-const stagedDice = computed( () => ( props.pool ? props.pool.items : [] ) );
+const stagedDice = computed<any[]>( () => ( props.pool ? props.pool.items : [] ) );
 
 const hasScaleDie = computed( () => Boolean( stagedDice.value && stagedDice.value.some( ( d: any ) => d.isScale || ( d.source && d.source.toLowerCase() === 'scale' ) ) ) );
 
@@ -531,7 +531,7 @@ function copyOutput() {
 
 			<!-- QUICK ADD AD-HOC DICE -->
 			<div class="roller-section">
-				<label class="roller-label">Quick Add Dice</label>
+				<div class="roller-label">Quick Add Dice</div>
 				<div class="roller-adhoc-grid">
 					<button
 						v-for="size in diceSizes"
@@ -578,7 +578,7 @@ function copyOutput() {
 			<!-- CURRENT POOL -->
 			<div class="roller-section">
 				<div class="roller-section-header">
-					<label class="roller-label">Dice Pool ({{ stagedDice.length }})</label>
+					<span class="roller-label">Dice Pool ({{ stagedDice.length }})</span>
 					<span class="roller-sublabel" v-if="stagedDice.length === 0">Tap traits on sheet to add</span>
 				</div>
 
@@ -595,7 +595,7 @@ function copyOutput() {
 						<span class="c">{{ getDieDisplayValue(item.size) }}</span>
 						<span class="chip-source" v-if="cleanTraitLabel(item.source)" :title="cleanTraitLabel(item.source)">{{ cleanTraitLabel(item.source) }}</span>
 						<span class="chip-tag-res" v-if="item.isResource">RES</span>
-						<button class="chip-remove" @click.stop="removeDie(idx)" title="Remove die">×</button>
+						<button class="chip-remove" @click.stop="removeDie(Number(idx))" title="Remove die">×</button>
 					</div>
 				</div>
 

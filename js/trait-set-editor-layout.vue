@@ -2,42 +2,56 @@
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
-	isRing, columnLocation, setColumn, characterColumnCount, canMoveUp, canMoveDown,
-	moveTraitSetUp, moveTraitSetDown, isFullWidthSpan, colSpan, setTrackCount, colWidth,
-	isSpotlightSheet, rowBreak, editorDock, pageNumber, targetValue
+	isRing, pageNumber, track, span, bandWidths, rowBreak, flex,
+	canMoveUp, canMoveDown, moveTraitSetUp, moveTraitSetDown,
+	editorDock, isSpotlightSheet, targetValue
 } = injectTraitSetEditor();
+
+const WIDTH_PRESETS: { label: string; widths: [number, number, number] }[] = [
+	{ label: 'Equal', widths: [33.333, 33.333, 33.334] },
+	{ label: '33/67', widths: [33, 67, 0] },
+	{ label: '50/50', widths: [50, 50, 0] },
+	{ label: '25/50/25', widths: [25, 50, 25] },
+	{ label: '30/50/20', widths: [30, 50, 20] },
+	{ label: '100', widths: [100, 0, 0] },
+];
+
+function isPresetActive( preset: [number, number, number] ): boolean {
+	const current = bandWidths.value;
+	return Math.round( current[0] ) === Math.round( preset[0] ) &&
+		Math.round( current[1] ) === Math.round( preset[1] ) &&
+		Math.round( current[2] ) === Math.round( preset[2] );
+}
+
+function updateTrackWidth( index: number, event: Event ) {
+	const val = Math.max( 0, Math.min( 100, Number( ( event.target as HTMLInputElement ).value ) || 0 ) );
+	const copy: [number, number, number] = [ bandWidths.value[0], bandWidths.value[1], bandWidths.value[2] ];
+	copy[ index ] = val;
+	bandWidths.value = copy;
+}
 </script>
 
 <template>
-	<!-- COLUMN & REORDER CONTROLS -->
+	<!-- PAGE -->
 	<div class="editor-field" v-if="!isRing">
-		<label>Column & Position</label>
+		<div class="editor-label">Page</div>
 		<div class="editor-position-controls">
 			<div class="editor-button-group">
 				<button
 					type="button"
 					class="editor-group-btn"
-					:class="{ active: columnLocation === 'left' }"
-					@click.stop="setColumn('left')"
+					:class="{ active: pageNumber === 1 }"
+					@click.stop="pageNumber = 1"
 				>
-					<i class="fas fa-arrow-left" v-if="characterColumnCount === 2"></i> Left{{ characterColumnCount === 3 ? ' (Col 1)' : ' Column' }}
+					Page 1
 				</button>
 				<button
 					type="button"
 					class="editor-group-btn"
-					v-if="characterColumnCount === 3"
-					:class="{ active: columnLocation === 'center' }"
-					@click.stop="setColumn('center')"
+					:class="{ active: pageNumber === 2 }"
+					@click.stop="pageNumber = 2"
 				>
-					Center (Col 2)
-				</button>
-				<button
-					type="button"
-					class="editor-group-btn"
-					:class="{ active: columnLocation === 'right' }"
-					@click.stop="setColumn('right')"
-				>
-					Right{{ characterColumnCount === 3 ? ' (Col 3)' : ' Column' }} <i class="fas fa-arrow-right" v-if="characterColumnCount === 2"></i>
+					Page 2
 				</button>
 			</div>
 			<div class="editor-reorder-buttons">
@@ -47,7 +61,7 @@ const {
 					:disabled="!canMoveUp"
 					@click.stop="moveTraitSetUp"
 				>
-					<i class="fas fa-arrow-up"></i> Move Up
+					<i class="fas fa-arrow-up"></i>
 				</button>
 				<button
 					type="button"
@@ -55,109 +69,144 @@ const {
 					:disabled="!canMoveDown"
 					@click.stop="moveTraitSetDown"
 				>
-					<i class="fas fa-arrow-down"></i> Move Down
+					<i class="fas fa-arrow-down"></i>
 				</button>
 			</div>
 		</div>
 	</div>
 
-	<!-- COLUMN SPAN -->
+	<!-- TRACK -->
 	<div class="editor-field" v-if="!isRing">
-		<label>Column Span</label>
+		<div class="editor-label">Track</div>
 		<div class="editor-button-group">
 			<button
+				v-for="t in [1, 2, 3]"
+				:key="'track-' + t"
 				type="button"
 				class="editor-group-btn"
-				:class="{ active: !isFullWidthSpan && colSpan === 1 }"
-				@click.stop="colSpan = 1"
+				:class="{ active: track === t }"
+				@click.stop="track = t"
 			>
-				1 Column
-			</button>
-			<button
-				type="button"
-				class="editor-group-btn"
-				v-if="setTrackCount === 3"
-				:class="{ active: !isFullWidthSpan && colSpan === 2 }"
-				@click.stop="colSpan = 2"
-				title="Span two columns"
-			>
-				Span 2 Cols
-			</button>
-			<button
-				type="button"
-				class="editor-group-btn"
-				:class="{ active: isFullWidthSpan }"
-				@click.stop="isFullWidthSpan = !isFullWidthSpan"
-			>
-				<i class="fas fa-arrows-alt-h"></i> Full Width Span
+				Track {{ t }}
 			</button>
 		</div>
 	</div>
 
-	<!-- COLUMN WIDTH (SPOTLIGHT ROWS) -->
-	<div class="editor-field" v-if="!isRing && !isFullWidthSpan && isSpotlightSheet">
-		<label>Column Width — Row Share</label>
+	<!-- SPAN -->
+	<div class="editor-field" v-if="!isRing">
+		<div class="editor-label">Span</div>
 		<div class="editor-button-group">
 			<button
+				v-for="s in [1, 2, 3]"
+				:key="'span-' + s"
 				type="button"
 				class="editor-group-btn"
-				:class="{ active: colWidth === null }"
-				@click.stop="colWidth = null"
-				title="Share the row equally with the other column(s)"
+				:class="{ active: span === s }"
+				@click.stop="span = s"
 			>
-				Equal
-			</button>
-			<button
-				v-for="w in [25, 33, 50, 66, 75]"
-				:key="'colw-' + w"
-				type="button"
-				class="editor-group-btn"
-				:class="{ active: colWidth === w }"
-				@click.stop="colWidth = (colWidth === w ? null : w)"
-				:title="'Take ' + w + '% of the row; the other column(s) share the rest'"
-			>
-				{{ w }}%
+				{{ s }}
 			</button>
 		</div>
-		<div class="slider-row" style="margin-top: 0.4rem;">
-			<div class="slider-header">
-				<span>Fine tune</span>
-				<span class="slider-val">{{ colWidth === null ? 'Equal' : colWidth + '%' }}</span>
-			</div>
-			<input type="range" min="10" max="90" step="1" :value="colWidth || 50" @input.stop="colWidth = Number(targetValue($event))" @click.stop title="Exact column width percent">
-		</div>
-		<div class="editor-hint">Set 66% here and the other column takes ~33%, forming a row band like the source sheets.</div>
 	</div>
 
-	<!-- ROW BREAK (SPOTLIGHT BANDS) -->
-	<div class="editor-field" v-if="!isRing && !isFullWidthSpan && isSpotlightSheet">
-		<label>Row Band</label>
+	<!-- WIDTHS -->
+	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+		<div class="editor-label">Widths</div>
+		<div class="editor-button-group">
+			<button
+				v-for="p in WIDTH_PRESETS"
+				:key="p.label"
+				type="button"
+				class="editor-group-btn"
+				:class="{ active: isPresetActive( p.widths ) }"
+				@click.stop="bandWidths = p.widths"
+			>
+				{{ p.label }}
+			</button>
+		</div>
+		<div class="editor-button-group" style="margin-top: 0.35rem; display: flex; gap: 0.4rem;">
+			<input
+				type="number"
+				min="0"
+				max="100"
+				:value="Math.round( bandWidths[0] )"
+				@change.stop="updateTrackWidth( 0, $event )"
+				class="editor-input"
+				style="width: 33%; text-align: center;"
+				title="Track 1 width percent"
+			>
+			<input
+				type="number"
+				min="0"
+				max="100"
+				:value="Math.round( bandWidths[1] )"
+				@change.stop="updateTrackWidth( 1, $event )"
+				class="editor-input"
+				style="width: 33%; text-align: center;"
+				title="Track 2 width percent"
+			>
+			<input
+				type="number"
+				min="0"
+				max="100"
+				:value="Math.round( bandWidths[2] )"
+				@change.stop="updateTrackWidth( 2, $event )"
+				class="editor-input"
+				style="width: 33%; text-align: center;"
+				title="Track 3 width percent"
+			>
+		</div>
+	</div>
+
+	<!-- NEW BAND -->
+	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+		<div class="editor-label">New Band</div>
 		<div class="editor-button-group">
 			<button
 				type="button"
 				class="editor-group-btn"
 				:class="{ active: !rowBreak }"
 				@click.stop="rowBreak = false"
-				title="Keep flowing in the current row band"
 			>
-				Continue band
+				Continue
 			</button>
 			<button
 				type="button"
 				class="editor-group-btn"
 				:class="{ active: rowBreak }"
 				@click.stop="rowBreak = true"
-				title="Start a fresh row band here, so this band can use different column shares"
 			>
-				<i class="fas fa-grip-lines"></i> New band
+				New Band
 			</button>
 		</div>
 	</div>
 
-	<!-- PANEL POSITION (FULL-WIDTH SETS) -->
-	<div class="editor-field" v-if="isFullWidthSpan">
-		<label>Panel Position</label>
+	<!-- FLEX -->
+	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+		<div class="editor-label">Flex</div>
+		<div class="editor-button-group">
+			<button
+				type="button"
+				class="editor-group-btn"
+				:class="{ active: !flex }"
+				@click.stop="flex = false"
+			>
+				Content
+			</button>
+			<button
+				type="button"
+				class="editor-group-btn"
+				:class="{ active: flex }"
+				@click.stop="flex = true"
+			>
+				Fill Stack
+			</button>
+		</div>
+	</div>
 
+	<!-- PANEL POSITION (SPAN 3 FULL-WIDTH) -->
+	<div class="editor-field" v-if="span === 3">
+		<div class="editor-label">Panel Position</div>
 		<div class="editor-button-group">
 			<button
 				type="button"
@@ -165,7 +214,7 @@ const {
 				:class="{ active: editorDock === 'left' }"
 				@click.stop="editorDock = 'left'"
 			>
-				<i class="fas fa-arrow-left"></i> Left
+				Left
 			</button>
 			<button
 				type="button"
@@ -173,33 +222,8 @@ const {
 				:class="{ active: editorDock === 'right' }"
 				@click.stop="editorDock = 'right'"
 			>
-				Right <i class="fas fa-arrow-right"></i>
+				Right
 			</button>
-		</div>
-	</div>
-
-	<!-- PAGE SELECTOR -->
-	<div class="editor-field" v-if="!isRing">
-		<label>Page</label>
-		<div class="editor-position-controls">
-			<div class="editor-button-group">
-				<button
-					type="button"
-					class="editor-group-btn"
-					:class="{ active: pageNumber === 1 }"
-					@click.stop="pageNumber = 1"
-				>
-					<i class="fas fa-file"></i> Page 1
-				</button>
-				<button
-					type="button"
-					class="editor-group-btn"
-					:class="{ active: pageNumber === 2 }"
-					@click.stop="pageNumber = 2"
-				>
-					Page 2 <i class="fas fa-copy"></i>
-				</button>
-			</div>
 		</div>
 	</div>
 </template>

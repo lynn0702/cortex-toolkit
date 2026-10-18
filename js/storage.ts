@@ -7,6 +7,8 @@
  * falls back to localStorage with quota errors surfaced to the caller.
  */
 
+import { cortexMigration } from './migration.ts';
+
 export interface StorageState {
 	characters: unknown[];
 	openCharacterIDs: string[];
@@ -181,6 +183,7 @@ export const cortexStorage: CortexStorage = {
 		if ( !Array.isArray( characters ) ) return [];
 		return structuredClone( characters ).map( ( c: any ) => {
 			if ( !c || typeof c !== 'object' ) return null;
+			cortexMigration.normalizeView( c );
 			if ( c.isTemplate && c.name ) {
 				c.name = String( c.name ).replace( /\s*\([^)]*\)/g, '' ).trim();
 			}
@@ -196,9 +199,9 @@ export const cortexStorage: CortexStorage = {
 
 			if ( Array.isArray( c.traitSets ) ) {
 				c.traitSets.forEach( ( ts: any ) => {
-					const ctk = ts?.custom?.cortexToolkit;
+					const ctk = ts?.view || ts?.custom?.cortexToolkit;
 					// Normalize Distinctions with 'none' ratingPosition to 'inline'
-					if ( ( ts.custom?.cortexToolkit?.style?.body === 'distinctions' || ts.name?.toLowerCase() === 'distinctions' ) &&
+					if ( ( ctk?.style?.body === 'distinctions' || ts.name?.toLowerCase() === 'distinctions' ) &&
 						( ts.ratingPosition === 'none' || ctk?.ratingPosition === 'none' ) ) {
 						ts.ratingPosition = 'inline';
 						if ( ctk ) ctk.ratingPosition = 'inline';

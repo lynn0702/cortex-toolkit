@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 import SfxEditor from './sfx-editor.vue';
 
@@ -7,9 +8,9 @@ const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacte
 
 <template>
 	<!-- SFX -->
-	<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.sfx">
+	<div class="editor-field" v-if="getView(traitSet)?.features?.sfx">
 
-		<label>Trait Set SFX</label>
+		<div class="editor-label">Trait Set SFX</div>
 
 		<div class="editor-subgroups">
 
@@ -20,7 +21,7 @@ const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacte
 					:character="character"
 					:traitSetID="traitSetID"
 					:traitID="null"
-					:effectID="effectID"
+					:effectID="Number(effectID)"
 					@updateCharacter="updateCharacter"
 					@removeEffect="removeEffect"
 				></SfxEditor>

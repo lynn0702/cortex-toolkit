@@ -20,6 +20,7 @@
 		"build": "npm run types && npx mix --production && node scripts/version-assets.js",
 		"dev": "npx mix",
 		"watch": "npx mix -- --watch",
+		"serve": "node scripts/serve.js",
 		"types": "node scripts/gen-types.mjs",
 		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",

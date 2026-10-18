@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getView, ensureView } from './model.ts';
 
 interface DicePreset {
 	name: string;
@@ -26,7 +27,7 @@ const DICE_PRESETS: DicePreset[] = [
 		backgroundColor2: '#f1f5f9',
 		numeralColor: '#000000',
 		borderColor: '#000000',
-		borderWidth: 1.7,
+		borderWidth: 1,
 		unfilledBackground: 'none',
 		unfilledNumeral: '#000000',
 		unfilledBorder: '#000000'
@@ -170,13 +171,11 @@ const player = computed( {
 
 const nickname = computed( {
 	get() {
-		return props.character?.nickname ?? props.character?.custom?.cortexToolkit?.nickname ?? '';
+		return props.character?.nickname ?? getView( props.character )?.nickname ?? '';
 	},
 	set( val: string ) {
 		setCharacterProperty( 'nickname', val );
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.nickname = val;
+		ensureView( props.character ).nickname = val;
 	},
 } );
 
@@ -218,43 +217,41 @@ const plotPoints = computed( {
 
 const sheetStyle = computed( {
 	get() {
-		if ( props.character?.custom?.cortexToolkit?.style?.body === 'spotlight' ) return 'spotlight';
-		if ( props.character?.custom?.cortexToolkit?.style?.hasAttributes === false ) return 'spotlight';
+		const s = getView( props.character )?.sheetStyle;
+		if ( s === 'spotlight' || s === 'classic' ) return s;
+		if ( getView( props.character )?.style?.body === 'spotlight' ) return 'spotlight';
+		if ( getView( props.character )?.style?.hasAttributes === false ) return 'spotlight';
 		return 'classic';
 	},
 	set( style: string ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		if ( !props.character.custom.cortexToolkit.style ) props.character.custom.cortexToolkit.style = {};
-		props.character.custom.cortexToolkit.style.body = style;
-		props.character.custom.cortexToolkit.style.hasAttributes = ( style !== 'spotlight' );
+		const view = ensureView( props.character );
+		if ( !view.style ) view.style = {};
+		view.style.body = style;
+		view.style.hasAttributes = ( style !== 'spotlight' );
 		emit( 'updateCharacter', props.character );
 	},
 } );
 
 const pageCount = computed( {
 	get() {
-		return Math.max( 1, parseInt( props.character?.custom?.cortexToolkit?.pageCount, 10 ) || 1 );
+		return Math.max( 1, Number( getView( props.character )?.pageCount ) || 1 );
 	},
 	set( count: any ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.pageCount = Math.max( 1, parseInt( count, 10 ) || 1 );
+		ensureView( props.character ).pageCount = Math.max( 1, parseInt( count, 10 ) || 1 );
 		emit( 'updateCharacter', props.character );
 	},
 } );
 
 const columnCount = computed( {
 	get() {
-		return Number( props.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2;
+		const c = Number( getView( props.character )?.columns );
+		return ( c === 2 || c === 3 ) ? c : 2;
 	},
 	set( count: any ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.columns = count;
+		ensureView( props.character ).columns = Number( count ) || 2;
 		emit( 'updateCharacter', props.character );
 	},
 } );
@@ -263,15 +260,24 @@ const columnCount = computed( {
 // Null/0 = same as page 1.
 const columnsPage2 = computed( {
 	get() {
-		const v = Number( props.character?.custom?.cortexToolkit?.columnsPage2 );
+		const v = Number( getView( props.character )?.columnsPage2 );
 		return ( v === 2 || v === 3 ) ? v : 0;
 	},
 	set( count: any ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		if ( count === 2 || count === 3 ) props.character.custom.cortexToolkit.columnsPage2 = count;
-		else delete props.character.custom.cortexToolkit.columnsPage2;
+		if ( count === 2 || count === 3 ) ensureView( props.character ).columnsPage2 = Number( count );
+		else delete ensureView( props.character ).columnsPage2;
+		emit( 'updateCharacter', props.character );
+	},
+} );
+
+const pageOrientation = computed( {
+	get() {
+		return getView( props.character )?.pageOrientation || getView( props.character )?.orientation || 'portrait';
+	},
+	set( val: string ) {
+		if ( !props.character ) return;
+		ensureView( props.character ).pageOrientation = val === 'landscape' ? 'landscape' : 'portrait';
 		emit( 'updateCharacter', props.character );
 	},
 } );
@@ -287,46 +293,40 @@ const sheetTemplateId = computed( () => {
 
 const pageJustification = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.pageJustification || 'top-base';
+		return getView( props.character )?.pageJustification || 'top-base';
 	},
 	set( mode: string ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.pageJustification = mode;
+		ensureView( props.character ).pageJustification = mode;
 		emit( 'updateCharacter', props.character );
 	},
 } );
 
 const accentColor = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.accentColor || '#0ea5e9';
+		return getView( props.character )?.accentColor || '#0ea5e9';
 	},
 	set( val: string ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.accentColor = val;
+		ensureView( props.character ).accentColor = val;
 		emit( 'updateCharacter', props.character );
 	},
 } );
 
 const primaryColor = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.primaryColor || accentColor.value;
+		return getView( props.character )?.primaryColor || accentColor.value;
 	},
 	set( val: string ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.primaryColor = val;
+		ensureView( props.character ).primaryColor = val;
 		emit( 'updateCharacter', props.character );
 	},
 } );
 
 const headingFont = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.theme?.fonts?.heading || 'Josefin Sans';
+		return getView( props.character )?.theme?.fonts?.heading || 'Josefin Sans';
 	},
 	set( val: string ) {
 		setThemeFont( 'heading', val );
@@ -335,7 +335,7 @@ const headingFont = computed( {
 
 const primaryFont = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.theme?.fonts?.primary || 'Open Sans';
+		return getView( props.character )?.theme?.fonts?.primary || 'Open Sans';
 	},
 	set( val: string ) {
 		setThemeFont( 'primary', val );
@@ -344,18 +344,18 @@ const primaryFont = computed( {
 
 const secondaryFont = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.theme?.fonts?.secondary || 'Alegreya Sans SC';
+		return getView( props.character )?.theme?.fonts?.secondary || 'Alegreya Sans SC';
 	},
 	set( val: string ) {
 		setThemeFont( 'secondary', val );
 	},
 } );
 
-const customFontsList = computed( () => ( props.character?.custom?.cortexToolkit?.customFonts || [] ).map( ( f: any ) => f.name ) );
+const customFontsList = computed( () => ( getView( props.character )?.customFonts || [] ).map( ( f: any ) => f.name ) );
 
 const diceConfig = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.diceConfig || {
+		return getView( props.character )?.diceConfig || {
 			style: 'default',
 			backgroundType: 'solid',
 			backgroundColor1: '#ffffff',
@@ -371,9 +371,7 @@ const diceConfig = computed( {
 	},
 	set( cfg: any ) {
 		if ( !props.character ) return;
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		props.character.custom.cortexToolkit.diceConfig = { ...cfg };
+		ensureView( props.character ).diceConfig = { ...cfg };
 		if ( typeof window !== 'undefined' ) {
 			( window as any ).__cortexActiveDiceConfig = { ...cfg };
 		}
@@ -383,7 +381,7 @@ const diceConfig = computed( {
 
 const watermarkEnabled = computed( {
 	get() {
-		return Boolean( props.character?.custom?.cortexToolkit?.watermark?.enabled );
+		return Boolean( getView( props.character )?.watermark?.enabled );
 	},
 	set( val: any ) {
 		setWatermarkProperty( 'enabled', Boolean( val ) );
@@ -392,7 +390,7 @@ const watermarkEnabled = computed( {
 
 const watermarkURL = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.watermark?.url ?? '';
+		return getView( props.character )?.watermark?.url ?? '';
 	},
 	set( val: string ) {
 		setWatermarkProperty( 'url', val );
@@ -404,7 +402,7 @@ const watermarkURL = computed( {
 
 const watermarkOpacity = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.watermark?.opacity ?? 0.08;
+		return getView( props.character )?.watermark?.opacity ?? 0.08;
 	},
 	set( val: any ) {
 		setWatermarkProperty( 'opacity', Number( val ) || 0.08 );
@@ -413,7 +411,7 @@ const watermarkOpacity = computed( {
 
 const watermarkScale = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.watermark?.scale ?? 75;
+		return getView( props.character )?.watermark?.scale ?? 75;
 	},
 	set( val: any ) {
 		setWatermarkProperty( 'scale', Number( val ) || 75 );
@@ -422,7 +420,7 @@ const watermarkScale = computed( {
 
 const watermarkPage = computed( {
 	get() {
-		return props.character?.custom?.cortexToolkit?.watermark?.page ?? 'all';
+		return getView( props.character )?.watermark?.page ?? 'all';
 	},
 	set( val: string ) {
 		setWatermarkProperty( 'page', val );
@@ -465,10 +463,9 @@ function setCharacterProperty( key: string, val: any ) {
 
 function ensureWatermarkStruct() {
 	if ( !props.character ) return;
-	if ( !props.character.custom ) props.character.custom = {};
-	if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-	if ( !props.character.custom.cortexToolkit.watermark ) {
-		props.character.custom.cortexToolkit.watermark = {
+	const view = ensureView( props.character );
+	if ( !view.watermark ) {
+		view.watermark = {
 			enabled: false,
 			url: '',
 			opacity: 0.08,
@@ -480,7 +477,7 @@ function ensureWatermarkStruct() {
 
 function setWatermarkProperty( key: string, val: any ) {
 	ensureWatermarkStruct();
-	props.character.custom.cortexToolkit.watermark[ key ] = val;
+	( ensureView( props.character ).watermark as any )[ key ] = val;
 	updateCharacter( props.character );
 }
 
@@ -517,19 +514,16 @@ function setAccent( hex: string ) {
 
 function resetAccent() {
 	if ( !props.character ) return;
-	if ( !props.character.custom ) props.character.custom = {};
-	if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-	delete props.character.custom.cortexToolkit.accentColor;
+	delete ensureView( props.character ).accentColor;
 	emit( 'updateCharacter', props.character );
 }
 
 function setThemeFont( target: string, fontName: string ) {
 	if ( !props.character ) return;
-	if ( !props.character.custom ) props.character.custom = {};
-	if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-	if ( !props.character.custom.cortexToolkit.theme ) props.character.custom.cortexToolkit.theme = {};
-	if ( !props.character.custom.cortexToolkit.theme.fonts ) props.character.custom.cortexToolkit.theme.fonts = {};
-	props.character.custom.cortexToolkit.theme.fonts[ target ] = fontName;
+	const view = ensureView( props.character );
+	if ( !view.theme ) view.theme = {};
+	if ( !view.theme.fonts ) view.theme.fonts = {};
+	( view.theme.fonts as any )[ target ] = fontName;
 	if ( typeof cortexFunctions !== 'undefined' && cortexFunctions.loadGoogleFont ) {
 		cortexFunctions.loadGoogleFont( fontName );
 	}
@@ -565,10 +559,9 @@ function handleFontUpload( event: Event ) {
 		if ( typeof cortexFunctions !== 'undefined' && cortexFunctions.applyCustomFont ) {
 			cortexFunctions.applyCustomFont( fontName, base64Data );
 		}
-		if ( !props.character.custom ) props.character.custom = {};
-		if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-		if ( !props.character.custom.cortexToolkit.customFonts ) props.character.custom.cortexToolkit.customFonts = [];
-		props.character.custom.cortexToolkit.customFonts.push( { name: fontName, data: base64Data } );
+		const view = ensureView( props.character );
+		if ( !view.customFonts ) view.customFonts = [];
+		view.customFonts.push( { name: fontName, data: base64Data } );
 		headingFont.value = fontName;
 		emit( 'updateCharacter', props.character );
 	};
@@ -594,7 +587,7 @@ function resetDiceConfig() {
 		gradientAngle: 135,
 		numeralColor: '#000000',
 		borderColor: '#000000',
-		borderWidth: 1.7,
+		borderWidth: 1,
 		unfilledBackground: 'none',
 		unfilledNumeral: '#000000',
 		unfilledBorder: '#000000'
@@ -647,50 +640,50 @@ function updateCharacter( character: any ) {
 					<!-- ================= TAB 1: SHEET LEVEL ================= -->
 					<template v-if="currentTab === 'sheet'">
 						<div class="editor-field">
-							<label>Character Name</label>
-							<input type="text" v-model="name" ref="inputName" placeholder="e.g. Maya Lin, Vance Astro">
+							<label for="char-field-name">Character Name</label>
+							<input type="text" id="char-field-name" name="characterName" v-model="name" ref="inputName" placeholder="e.g. Maya Lin, Vance Astro">
 						</div>
 
 						<div class="editor-field">
-							<label>Game / Campaign Title</label>
-							<input type="text" v-model="game" placeholder="e.g. Terraverse, Dragon Brigade...">
+							<label for="char-field-game">Game / Campaign Title</label>
+							<input type="text" id="char-field-game" name="gameTitle" v-model="game" placeholder="e.g. Terraverse, Dragon Brigade...">
 						</div>
 
 						<div class="editor-field">
-							<label>Nickname / Call-Sign</label>
-							<input type="text" v-model="nickname" placeholder="e.g. Apex, Kid">
+							<label for="char-field-nickname">Nickname / Call-Sign</label>
+							<input type="text" id="char-field-nickname" name="nickname" v-model="nickname" placeholder="e.g. Apex, Kid">
 						</div>
 
 						<div class="editor-field">
-							<label>Player Name</label>
-							<input type="text" v-model="player" placeholder="Player name...">
+							<label for="char-field-player">Player Name</label>
+							<input type="text" id="char-field-player" name="playerName" v-model="player" placeholder="Player name...">
 						</div>
 
 						<div class="editor-field">
-							<label>Pronouns</label>
-							<input type="text" v-model="pronouns" placeholder="e.g. she/her, they/them">
+							<label for="char-field-pronouns">Pronouns</label>
+							<input type="text" id="char-field-pronouns" name="pronouns" v-model="pronouns" placeholder="e.g. she/her, they/them">
 						</div>
 
 						<div class="editor-field">
-							<label>Plot Points</label>
-							<input type="number" min="0" v-model.number="plotPoints">
+							<label for="char-field-plot-points">Plot Points</label>
+							<input type="number" id="char-field-plot-points" name="plotPoints" min="0" v-model.number="plotPoints">
 						</div>
 
 						<div class="editor-field">
-							<label>Description / Bio</label>
-							<textarea v-model="description" rows="3" placeholder="Character narrative background..."></textarea>
+							<label for="char-field-description">Description / Bio</label>
+							<textarea id="char-field-description" name="description" v-model="description" rows="3" placeholder="Character narrative background..."></textarea>
 						</div>
 
 						<div class="editor-field">
-							<label>Sheet Layout Style</label>
-							<select v-model="sheetStyle">
+							<label for="char-field-sheet-style">Sheet Layout Style</label>
+							<select id="char-field-sheet-style" name="sheetStyle" v-model="sheetStyle">
 								<option value="spotlight">Spotlight Style</option>
 								<option value="classic">Classic Style</option>
 							</select>
 						</div>
 
 						<div class="editor-field">
-							<label>Layout Template</label>
+							<div class="editor-label">Layout Template</div>
 							<div style="font-size: 0.75rem; opacity: 0.85; margin-bottom: 0.4rem;">
 								<span v-if="sheetTemplateId">Resolves against <strong>{{ sheetTemplateId }}</strong> — values you haven't changed come from the template, keeping this file clean.</span>
 								<span v-else>Inline layout (no template) — everything is stored on this character.</span>
@@ -709,9 +702,9 @@ function updateCharacter( character: any ) {
 
 						<!-- WATERMARK CONFIGURATION -->
 						<div class="editor-field">
-							<label>Watermark Image</label>
+							<label for="name-editor-watermark-enabled">Watermark Image</label>
 							<div class="editor-checkbox-row" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
-								<input type="checkbox" id="name-editor-watermark-enabled" v-model="watermarkEnabled">
+								<input type="checkbox" id="name-editor-watermark-enabled" name="watermarkEnabled" v-model="watermarkEnabled">
 								<label for="name-editor-watermark-enabled" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Background Watermark</label>
 							</div>
 
@@ -731,29 +724,29 @@ function updateCharacter( character: any ) {
 									</div>
 								</div>
 
-								<input type="file" ref="watermarkFileInput" style="display:none" @change="uploadWatermarkProcess" accept="image/*">
+								<input type="file" id="char-field-watermark-file" name="watermarkFile" ref="watermarkFileInput" style="display:none" @change="uploadWatermarkProcess" accept="image/*">
 
 								<div class="editor-upload-error" v-if="watermarkError">{{ watermarkError }}</div>
 
 								<div>
-									<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Image URL</label>
-									<input type="text" v-model.lazy="watermarkURL" placeholder="https://example.com/watermark.png">
+									<label for="char-field-watermark-url" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Image URL</label>
+									<input type="text" id="char-field-watermark-url" name="watermarkUrl" v-model.lazy="watermarkURL" placeholder="https://example.com/watermark.png">
 								</div>
 
 								<div class="slider-row">
 									<div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.2rem;">
-										<span>Opacity</span>
+										<label for="char-field-watermark-opacity">Opacity</label>
 										<span>{{ Math.round(watermarkOpacity * 100) }}%</span>
 									</div>
-									<input type="range" min="0.02" max="0.35" step="0.01" v-model.number="watermarkOpacity">
+									<input type="range" id="char-field-watermark-opacity" name="watermarkOpacity" min="0.02" max="0.35" step="0.01" v-model.number="watermarkOpacity">
 								</div>
 
 								<div class="slider-row">
 									<div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.2rem;">
-										<span>Scale</span>
+										<label for="char-field-watermark-scale">Scale</label>
 										<span>{{ watermarkScale }}%</span>
 									</div>
-									<input type="range" min="30" max="130" step="5" v-model.number="watermarkScale">
+									<input type="range" id="char-field-watermark-scale" name="watermarkScale" min="30" max="130" step="5" v-model.number="watermarkScale">
 								</div>
 							</div>
 						</div>
@@ -762,18 +755,18 @@ function updateCharacter( character: any ) {
 					<!-- ================= TAB 2: PAGE LEVEL ================= -->
 					<template v-else-if="currentTab === 'page'">
 						<div class="editor-field">
-							<label>Page Justification</label>
+							<div class="editor-label">Page Justification</div>
 							<div class="editor-segmented-wrap" style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.25rem;">
-								<label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: #f1f5f9;">
-									<input type="radio" value="top-base" v-model="pageJustification">
+								<label for="char-field-just-top" style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: #f1f5f9;">
+									<input type="radio" id="char-field-just-top" name="pageJustification" value="top-base" v-model="pageJustification">
 									<strong>Top Base</strong>
 								</label>
 								<p style="font-size: 0.7rem; color: #94a3b8; margin: 0 0 0 1.4rem; line-height: 1.3;">
 									Columns start strictly level at the top base with flush vertical baselines.
 								</p>
 
-								<label style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: #f1f5f9;">
-									<input type="radio" value="distributed" v-model="pageJustification">
+								<label for="char-field-just-dist" style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: #f1f5f9;">
+									<input type="radio" id="char-field-just-dist" name="pageJustification" value="distributed" v-model="pageJustification">
 									<strong>Distributed</strong>
 								</label>
 								<p style="font-size: 0.7rem; color: #94a3b8; margin: 0 0 0 1.4rem; line-height: 1.3;">
@@ -783,8 +776,19 @@ function updateCharacter( character: any ) {
 						</div>
 
 						<div class="editor-field">
-							<label>Columns Layout</label>
-							<select v-model.number="columnCount">
+							<label for="char-field-page-orientation">Page Orientation</label>
+							<select id="char-field-page-orientation" name="pageOrientation" v-model="pageOrientation">
+								<option value="portrait">Portrait</option>
+								<option value="landscape">Landscape</option>
+							</select>
+							<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem; display: block;">
+								Selects page aspect ratio and printable page rotation.
+							</span>
+						</div>
+
+						<div class="editor-field">
+							<label for="char-field-column-count">Columns Layout</label>
+							<select id="char-field-column-count" name="columnCount" v-model.number="columnCount">
 								<option :value="2">2 Columns</option>
 								<option :value="3">3 Columns</option>
 							</select>
@@ -794,16 +798,16 @@ function updateCharacter( character: any ) {
 						</div>
 
 						<div class="editor-field">
-							<label>Page Count</label>
-							<select v-model.number="pageCount">
+							<label for="char-field-page-count">Page Count</label>
+							<select id="char-field-page-count" name="pageCount" v-model.number="pageCount">
 								<option :value="1">1 Page</option>
 								<option :value="2">2 Pages</option>
 							</select>
 						</div>
 
 						<div class="editor-field" v-if="pageCount > 1">
-							<label>Page 2 Columns</label>
-							<select v-model.number="columnsPage2">
+							<label for="char-field-columns-p2">Page 2 Columns</label>
+							<select id="char-field-columns-p2" name="columnsPage2" v-model.number="columnsPage2">
 								<option :value="0">Same as page 1 ({{ columnCount }})</option>
 								<option :value="2">2 Columns</option>
 								<option :value="3">3 Columns</option>
@@ -817,7 +821,7 @@ function updateCharacter( character: any ) {
 					<!-- ================= TAB 3: THEME & FONTS ================= -->
 					<template v-else-if="currentTab === 'theme'">
 						<div class="editor-field">
-							<label>Theme Accent Color</label>
+							<label for="char-field-accent-color">Theme Accent Color</label>
 							<div class="theme-accent-swatches">
 								<button
 									v-for="swatch in presetColors"
@@ -831,8 +835,8 @@ function updateCharacter( character: any ) {
 								></button>
 							</div>
 							<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem;">
-								<input type="color" v-model="accentColor" style="width: 2.2rem; height: 1.8rem; padding: 0; border: none; cursor: pointer; border-radius: 4px;">
-								<input type="text" v-model="accentColor" placeholder="#0ea5e9" style="font-family: monospace; font-size: 0.8rem;">
+								<input type="color" id="char-field-accent-color" name="accentColorPicker" v-model="accentColor" style="width: 2.2rem; height: 1.8rem; padding: 0; border: none; cursor: pointer; border-radius: 4px;">
+								<input type="text" id="char-field-accent-hex" name="accentColorHex" v-model="accentColor" placeholder="#0ea5e9" style="font-family: monospace; font-size: 0.8rem;">
 								<button type="button" class="editor-tab-btn" style="border: 1px solid rgba(255,255,255,0.2);" @click.stop="resetAccent" title="Reset">
 									Reset
 								</button>
@@ -841,36 +845,36 @@ function updateCharacter( character: any ) {
 
 						<!-- TYPOGRAPHY PICKERS WITH LIVE PREVIEW -->
 						<div class="editor-field">
-							<label>Heading Font</label>
+							<label for="char-field-heading-font">Heading Font</label>
 							<div class="font-picker-preview" :style="{ fontFamily: '\'' + (fontPreview.heading || headingFont) + '\', sans-serif' }">
 								<span class="font-picker-sample">Ag</span>
 								<span class="font-picker-name">{{ fontPreview.heading || headingFont }}</span>
 							</div>
-							<input type="text" :value="headingFont" @input="previewFont('heading', targetValue($event))" @change="headingFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Syne">
+							<input type="text" id="char-field-heading-font" name="headingFont" :value="headingFont" @input="previewFont('heading', targetValue($event))" @change="headingFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Syne">
 							<div class="font-picker-custom" v-if="customFontsList.length">
 								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="headingFont = cf">{{ cf }}</button>
 							</div>
 						</div>
 
 						<div class="editor-field">
-							<label>Body Font</label>
+							<label for="char-field-body-font">Body Font</label>
 							<div class="font-picker-preview" :style="{ fontFamily: '\'' + (fontPreview.primary || primaryFont) + '\', sans-serif' }">
 								<span class="font-picker-sample">Ag</span>
 								<span class="font-picker-name">{{ fontPreview.primary || primaryFont }}</span>
 							</div>
-							<input type="text" :value="primaryFont" @input="previewFont('primary', targetValue($event))" @change="primaryFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Inter">
+							<input type="text" id="char-field-body-font" name="bodyFont" :value="primaryFont" @input="previewFont('primary', targetValue($event))" @change="primaryFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Inter">
 							<div class="font-picker-custom" v-if="customFontsList.length">
 								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="primaryFont = cf">{{ cf }}</button>
 							</div>
 						</div>
 
 						<div class="editor-field">
-							<label>Trait / Label Font</label>
+							<label for="char-field-secondary-font">Trait / Label Font</label>
 							<div class="font-picker-preview" :style="{ fontFamily: '\'' + (fontPreview.secondary || secondaryFont) + '\', sans-serif' }">
 								<span class="font-picker-sample">Ag</span>
 								<span class="font-picker-name">{{ fontPreview.secondary || secondaryFont }}</span>
 							</div>
-							<input type="text" :value="secondaryFont" @input="previewFont('secondary', targetValue($event))" @change="secondaryFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Oswald">
+							<input type="text" id="char-field-secondary-font" name="secondaryFont" :value="secondaryFont" @input="previewFont('secondary', targetValue($event))" @change="secondaryFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Oswald">
 							<div class="font-picker-custom" v-if="customFontsList.length">
 								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="secondaryFont = cf">{{ cf }}</button>
 							</div>
@@ -881,8 +885,8 @@ function updateCharacter( character: any ) {
 
 						<!-- CUSTOM FONT UPLOAD -->
 						<div class="editor-field" style="background: rgba(255,255,255,0.05); padding: 0.6rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15);">
-							<label style="font-size: 0.75rem;"><i class="fas fa-file-arrow-up"></i> Upload Custom Font</label>
-							<input type="file" ref="fontFileInput" style="display:none" @change="handleFontUpload" accept=".woff,.woff2,.ttf,.otf">
+							<label for="char-field-font-upload" style="font-size: 0.75rem;"><i class="fas fa-file-arrow-up"></i> Upload Custom Font</label>
+							<input type="file" id="char-field-font-upload" name="fontUpload" ref="fontFileInput" style="display:none" @change="handleFontUpload" accept=".woff,.woff2,.ttf,.otf">
 							<button type="button" class="editor-tab-btn" style="width: 100%; margin-top: 0.3rem; border: 1px solid rgba(255,255,255,0.25); text-align: center;" @click.stop="triggerFontUpload">
 								<i class="fas fa-upload"></i> Choose Font File (.woff2, .woff, .ttf)
 							</button>
@@ -897,7 +901,7 @@ function updateCharacter( character: any ) {
 					<template v-else-if="currentTab === 'dice'">
 						<!-- LIVE SVG PREVIEW OF ALL 5 DICE -->
 						<div class="editor-field" style="text-align: center; background: #ffffff; padding: 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
-							<label style="font-size: 0.75rem; color: #1e293b; margin-bottom: 0.4rem; display: block; font-weight: 700;">Live Dice Appearance Preview</label>
+							<div class="editor-label" style="font-size: 0.75rem; color: #1e293b; margin-bottom: 0.4rem; display: block; font-weight: 700;">Live Dice Appearance Preview</div>
 							<div style="display: flex; justify-content: center; gap: 0.6rem; align-items: center; margin-bottom: 0.5rem;">
 								<span v-for="d in [4, 6, 8, 10, 12]" :key="'filled-' + d" v-html="renderDicePreview(d, true)" :title="'d' + d + ' (Active / Filled)'"></span>
 							</div>
@@ -909,7 +913,7 @@ function updateCharacter( character: any ) {
 
 						<!-- PRESET PALETTES -->
 						<div class="editor-field">
-							<label>Dice Themes &amp; Presets</label>
+							<div class="editor-label">Dice Themes &amp; Presets</div>
 							<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.25rem;">
 								<button
 									v-for="p in dicePresets"
@@ -927,7 +931,7 @@ function updateCharacter( character: any ) {
 
 						<!-- BACKGROUND TYPE: SOLID VS GRADIENT -->
 						<div class="editor-field">
-							<label>Die Fill Background</label>
+							<div class="editor-label">Die Fill Background</div>
 							<div class="editor-button-group" style="margin-bottom: 0.5rem;">
 								<button
 									type="button"
@@ -949,27 +953,27 @@ function updateCharacter( character: any ) {
 
 							<div style="display: flex; flex-direction: column; gap: 0.5rem;">
 								<div style="display: flex; align-items: center; justify-content: space-between;">
-									<span style="font-size: 0.75rem; color: #cbd5e1;">{{ diceConfig.backgroundType === 'gradient' ? 'Start Color' : 'Fill Color' }}</span>
+									<label for="char-field-dice-bg1" style="font-size: 0.75rem; color: #cbd5e1; margin: 0;">{{ diceConfig.backgroundType === 'gradient' ? 'Start Color' : 'Fill Color' }}</label>
 									<div style="display: flex; align-items: center; gap: 0.4rem;">
-										<input type="color" :value="diceConfig.backgroundColor1 || '#ffffff'" @input="updateDiceProp('backgroundColor1', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
-										<input type="text" :value="diceConfig.backgroundColor1 || '#ffffff'" @input="updateDiceProp('backgroundColor1', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
+										<input type="color" id="char-field-dice-bg1" name="diceBgColor1" :value="diceConfig.backgroundColor1 || '#ffffff'" @input="updateDiceProp('backgroundColor1', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
+										<input type="text" id="char-field-dice-bg1-text" name="diceBgColor1Text" :value="diceConfig.backgroundColor1 || '#ffffff'" @input="updateDiceProp('backgroundColor1', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
 									</div>
 								</div>
 
 								<div v-if="diceConfig.backgroundType === 'gradient'" style="display: flex; align-items: center; justify-content: space-between;">
-									<span style="font-size: 0.75rem; color: #cbd5e1;">End Color</span>
+									<label for="char-field-dice-bg2" style="font-size: 0.75rem; color: #cbd5e1; margin: 0;">End Color</label>
 									<div style="display: flex; align-items: center; gap: 0.4rem;">
-										<input type="color" :value="diceConfig.backgroundColor2 || '#f1f5f9'" @input="updateDiceProp('backgroundColor2', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
-										<input type="text" :value="diceConfig.backgroundColor2 || '#f1f5f9'" @input="updateDiceProp('backgroundColor2', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
+										<input type="color" id="char-field-dice-bg2" name="diceBgColor2" :value="diceConfig.backgroundColor2 || '#f1f5f9'" @input="updateDiceProp('backgroundColor2', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
+										<input type="text" id="char-field-dice-bg2-text" name="diceBgColor2Text" :value="diceConfig.backgroundColor2 || '#f1f5f9'" @input="updateDiceProp('backgroundColor2', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
 									</div>
 								</div>
 
 								<div v-if="diceConfig.backgroundType === 'gradient'" class="slider-row">
 									<div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.2rem;">
-										<span>Gradient Angle</span>
+										<label for="char-field-dice-gradient-angle">Gradient Angle</label>
 										<span>{{ diceConfig.gradientAngle || 135 }}°</span>
 									</div>
-									<input type="range" min="0" max="360" step="15" :value="diceConfig.gradientAngle || 135" @input="updateDiceProp('gradientAngle', Number(targetValue($event)))">
+									<input type="range" id="char-field-dice-gradient-angle" name="diceGradientAngle" min="0" max="360" step="15" :value="diceConfig.gradientAngle || 135" @input="updateDiceProp('gradientAngle', Number(targetValue($event)))">
 								</div>
 							</div>
 						</div>
@@ -977,10 +981,10 @@ function updateCharacter( character: any ) {
 						<!-- NUMERAL COLOR -->
 						<div class="editor-field">
 							<div style="display: flex; align-items: center; justify-content: space-between;">
-								<label style="margin: 0;">Numeral / Text Color</label>
+								<label for="char-field-dice-numeral-color" style="margin: 0;">Numeral / Text Color</label>
 								<div style="display: flex; align-items: center; gap: 0.4rem;">
-									<input type="color" :value="diceConfig.numeralColor || '#000000'" @input="updateDiceProp('numeralColor', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
-									<input type="text" :value="diceConfig.numeralColor || '#000000'" @input="updateDiceProp('numeralColor', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
+									<input type="color" id="char-field-dice-numeral-color" name="diceNumeralColor" :value="diceConfig.numeralColor || '#000000'" @input="updateDiceProp('numeralColor', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
+									<input type="text" id="char-field-dice-numeral-color-text" name="diceNumeralColorText" :value="diceConfig.numeralColor || '#000000'" @input="updateDiceProp('numeralColor', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
 								</div>
 							</div>
 						</div>
@@ -988,18 +992,18 @@ function updateCharacter( character: any ) {
 						<!-- BORDER COLOR & WIDTH -->
 						<div class="editor-field">
 							<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
-								<label style="margin: 0;">Border Color</label>
+								<label for="char-field-dice-border-color" style="margin: 0;">Border Color</label>
 								<div style="display: flex; align-items: center; gap: 0.4rem;">
-									<input type="color" :value="diceConfig.borderColor || '#000000'" @input="updateDiceProp('borderColor', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
-									<input type="text" :value="diceConfig.borderColor || '#000000'" @input="updateDiceProp('borderColor', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
+									<input type="color" id="char-field-dice-border-color" name="diceBorderColor" :value="diceConfig.borderColor || '#000000'" @input="updateDiceProp('borderColor', targetValue($event))" style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px;">
+									<input type="text" id="char-field-dice-border-color-text" name="diceBorderColorText" :value="diceConfig.borderColor || '#000000'" @input="updateDiceProp('borderColor', targetValue($event))" style="font-family: monospace; font-size: 0.75rem; width: 5.5rem;">
 								</div>
 							</div>
 							<div class="slider-row">
 								<div class="slider-header" style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.2rem;">
-									<span>Border Width</span>
-									<span>{{ diceConfig.borderWidth || 1.7 }}px</span>
+									<label for="char-field-dice-border-width">Border Width</label>
+									<span>{{ diceConfig.borderWidth || 1 }}px</span>
 								</div>
-								<input type="range" min="1" max="3" step="0.2" :value="diceConfig.borderWidth || 1.7" @input="updateDiceProp('borderWidth', Number(targetValue($event)))">
+								<input type="range" id="char-field-dice-border-width" name="diceBorderWidth" min="0.5" max="3" step="0.1" :value="diceConfig.borderWidth || 1" @input="updateDiceProp('borderWidth', Number(targetValue($event)))">
 							</div>
 						</div>
 

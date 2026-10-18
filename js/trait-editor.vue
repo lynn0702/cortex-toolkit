@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getView, ensureView } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
 
@@ -65,12 +66,12 @@ const value = computed( {
 } );
 
 const isListStyle = computed( () => {
-	const b = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	const b = getView( traitSet.value )?.style?.body;
 	return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'three-column-table' || b === 'labeled-fields';
 } );
 
-const isStatementSet = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.statement || traitSet.value?.statement ) );
-const hasQuestionedPip = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.hasQuestionedPip || traitSet.value?.hasQuestionedPip ) );
+const isStatementSet = computed( () => Boolean( getView( traitSet.value )?.statement || traitSet.value?.statement ) );
+const hasQuestionedPip = computed( () => Boolean( getView( traitSet.value )?.hasQuestionedPip || traitSet.value?.hasQuestionedPip ) );
 
 const isQuestioned = computed( {
 	get() {
@@ -84,8 +85,8 @@ const isQuestioned = computed( {
 	},
 } );
 
-const hasCounterColumn = computed( () => Boolean( traitSet.value?.hasCounterColumn ?? traitSet.value?.custom?.cortexToolkit?.hasCounterColumn ) );
-const counterLabel = computed( () => traitSet.value?.counterLabel || traitSet.value?.custom?.cortexToolkit?.counterLabel || 'XP' );
+const hasCounterColumn = computed( () => Boolean( traitSet.value?.hasCounterColumn ?? getView( traitSet.value )?.hasCounterColumn ) );
+const counterLabel = computed( () => traitSet.value?.counterLabel || getView( traitSet.value )?.counterLabel || 'XP' );
 
 const counterValue = computed( {
 	get() {
@@ -101,16 +102,22 @@ const counterValue = computed( {
 	},
 } );
 
-const isPairedSlotsStyle = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'paired-slots' );
+const isPairedSlotsStyle = computed( () => getView( traitSet.value )?.style?.body === 'paired-slots' );
 
 const isSessionRecordStyle = computed( () => {
-	const b = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	const b = getView( traitSet.value )?.style?.body;
 	return b === 'session-record' || b === 'angled-lines';
 } );
 
 const sessionRecordChecked = computed( {
 	get() {
-		return Boolean( trait.value?.custom?.checked || trait.value?.value );
+		if ( trait.value?.custom?.checked !== undefined ) {
+			return Boolean( trait.value.custom.checked );
+		}
+		const srec = getView( traitSet.value )?.sessionRecord;
+		const checkedList: number[] = Array.isArray( srec?.checked ) ? srec.checked : [];
+		const fallbackChecked = checkedList.includes( props.traitID + 1 );
+		return Boolean( trait.value?.value ) || fallbackChecked;
 	},
 	set( val: any ) {
 		if ( !trait.value.custom ) trait.value.custom = {};
@@ -120,7 +127,7 @@ const sessionRecordChecked = computed( {
 	},
 } );
 
-const isMultiDie = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.multiDie ) || ( traitSet.value?.custom?.cortexToolkit?.style?.body === 'resources' ) || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 1 ) );
+const isMultiDie = computed( () => Boolean( getView( traitSet.value )?.multiDie ) || ( getView( traitSet.value )?.style?.body === 'resources' ) || ( getView( traitSet.value )?.style?.body === 'dice-count' ) || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 1 ) );
 
 const dice = computed( () => cortexFunctions.getTraitDice( trait.value ) );
 
@@ -148,27 +155,27 @@ const editableSFX = computed( () => trait.value.sfx
 	.map( ( effect: any ) => trait.value.sfx.indexOf( effect ) ) );
 
 const scrollable = computed( () => Boolean(
-	( traitSet.value.custom.cortexToolkit.features.sfx && editableSFX.value.length > 0 && !isTalentsTable.value )
+	( getView( traitSet.value )?.features?.sfx && editableSFX.value.length > 0 && !isTalentsTable.value )
 	||
-	( traitSet.value.custom.cortexToolkit.features.subtraits && trait.value.traits.length > 0 )
+	( getView( traitSet.value )?.features?.subtraits && trait.value?.traits?.length > 0 )
 ) );
 
-const isTalentsTable = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'three-column-table' );
+const isTalentsTable = computed( () => getView( traitSet.value )?.style?.body === 'three-column-table' );
 
 const talentCol1Label = computed( () => {
-	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col1 ) return labels.col1;
 	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col1' ) : 'TALENT' ) || 'TALENT';
 } );
 
 const talentCol2Label = computed( () => {
-	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col2 ) return labels.col2;
 	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col2' ) : 'ACTIVATION' ) || 'ACTIVATION';
 } );
 
 const talentCol3Label = computed( () => {
-	const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col3 ) return labels.col3;
 	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col3' ) : 'EFFECT' ) || 'EFFECT';
 } );
@@ -211,7 +218,7 @@ const talentEffect = computed( {
 
 const canHinderTrait = computed( () => {
 	if ( isListStyle.value || isTalentsTable.value ) return false;
-	const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
+	const body = getView( traitSet.value )?.style?.body;
 	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' || body === 'session-record' ) {
 		return false;
 	}
@@ -219,8 +226,8 @@ const canHinderTrait = computed( () => {
 } );
 
 const isAttributesTrait = computed( () => {
-	const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
-	return traitSet.value?.custom?.cortexToolkit?.location === 'attributes' || body === 'portrait-ring' || body === 'attributes';
+	const body = getView( traitSet.value )?.style?.body;
+	return getView( traitSet.value )?.location === 'attributes' || body === 'portrait-ring' || body === 'attributes';
 } );
 
 const isScaleDie = computed( {
@@ -240,11 +247,11 @@ const isScaleDie = computed( {
 	},
 } );
 
-const isStressSet = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'stress' );
+const isStressSet = computed( () => getView( traitSet.value )?.style?.body === 'stress' );
 
 const shouldShowStressOut = computed( () => {
 	if ( !isStressSet.value ) return false;
-	const cfg = traitSet.value?.custom?.cortexToolkit?.stressConfig;
+	const cfg = getView( traitSet.value )?.stressConfig;
 	if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 	return true;
 } );
@@ -253,9 +260,9 @@ const isOut = computed( () => Boolean( trait.value?.value > 12 || trait.value?.i
 
 const availableValues = computed( () => cortexFunctions.getTraitSetRatings( traitSet.value ) );
 
-const hasAttachedStress = computed( () => Boolean( traitSet.value?.custom?.cortexToolkit?.attachedStress?.enabled ) );
-const attachedStressLabel = computed( () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.label || 'Stress' );
-const attachedStressScale = computed( () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ] );
+const hasAttachedStress = computed( () => Boolean( getView( traitSet.value )?.attachedStress?.enabled ) );
+const attachedStressLabel = computed( () => getView( traitSet.value )?.attachedStress?.label || 'Stress' );
+const attachedStressScale = computed( () => getView( traitSet.value )?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ] );
 
 const attachedStressValue = computed( {
 	get() {
@@ -284,19 +291,17 @@ const cssClass = computed( () => {
 	return cls;
 } );
 
-const parentColumnCount = computed( () => Number( props.character?.custom?.cortexToolkit?.columns ) || 2 );
-const parentIsBranch = computed( () => traitSet.value?.custom?.cortexToolkit?.style?.body === 'subtrait-columns' );
+const parentColumnCount = computed( () => Number( getView( props.character )?.columns ) || 2 );
+const parentIsBranch = computed( () => getView( traitSet.value )?.style?.body === 'subtrait-columns' );
 
 const branchRole = computed( {
 	get() {
-		return trait.value?.custom?.cortexToolkit?.branchRole === 'specialty' ? 'specialty' : 'skill';
+		return getView( trait.value )?.branchRole === 'specialty' ? 'specialty' : 'skill';
 	},
 	set( val: any ) {
-		if ( !trait.value.custom ) trait.value.custom = {};
-		if ( !trait.value.custom.cortexToolkit ) trait.value.custom.cortexToolkit = {};
-		trait.value.custom.cortexToolkit.branchRole = val === 'specialty' ? 'specialty' : 'skill';
+		ensureView( trait.value ).branchRole = val === 'specialty' ? 'specialty' : 'skill';
 		if ( val !== 'specialty' ) {
-			trait.value.custom.cortexToolkit.linkTo = null;
+			ensureView( trait.value ).linkTo = undefined;
 		}
 		updateCharacter( props.character );
 	},
@@ -307,7 +312,7 @@ const branchSkillOptions = computed( () => {
 	const opts: any[] = [];
 	traits.forEach( ( tr: any, idx: number ) => {
 		if ( idx === props.traitID ) return;
-		if ( tr?.custom?.cortexToolkit?.branchRole === 'specialty' ) return;
+		if ( getView( tr )?.branchRole === 'specialty' ) return;
 		opts.push( { index: idx, name: tr?.name?.length ? tr.name : ( 'Skill ' + ( idx + 1 ) ) } );
 	} );
 	return opts;
@@ -315,49 +320,43 @@ const branchSkillOptions = computed( () => {
 
 const branchLink = computed( {
 	get() {
-		const v = trait.value?.custom?.cortexToolkit?.linkTo;
+		const v = getView( trait.value )?.linkTo;
 		return typeof v === 'number' ? v : null;
 	},
 	set( val: any ) {
-		if ( !trait.value.custom ) trait.value.custom = {};
-		if ( !trait.value.custom.cortexToolkit ) trait.value.custom.cortexToolkit = {};
-		trait.value.custom.cortexToolkit.linkTo = ( val === null || val === undefined || val === '' ) ? null : Number( val );
+		ensureView( trait.value ).linkTo = ( val === null || val === undefined || val === '' ) ? undefined : Number( val );
 		updateCharacter( props.character );
 	},
 } );
 
 const branchSide = computed( {
 	get() {
-		return trait.value?.custom?.cortexToolkit?.branchSide === 'left' ? 'left' : 'right';
+		return getView( trait.value )?.branchSide === 'left' ? 'left' : 'right';
 	},
 	set( val: any ) {
-		if ( !trait.value.custom ) trait.value.custom = {};
-		if ( !trait.value.custom.cortexToolkit ) trait.value.custom.cortexToolkit = {};
-		trait.value.custom.cortexToolkit.branchSide = ( val === 'left' ) ? 'left' : 'right';
+		ensureView( trait.value ).branchSide = ( val === 'left' ) ? 'left' : 'right';
 		updateCharacter( props.character );
 	},
 } );
 
 const setDie = computed( () => {
-	const d = Number( traitSet.value?.custom?.cortexToolkit?.setDie );
+	const d = Number( getView( traitSet.value )?.setDie );
 	return ( d > 0 ) ? d : null;
 } );
 
 const hideSkillDice = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setDie.value && !trait.value?.value ) );
 
 const parentIsFullWidth = computed( () => {
-	const span = traitSet.value?.custom?.cortexToolkit?.colSpan ?? traitSet.value?.custom?.cortexToolkit?.columnSpan;
+	const span = getView( traitSet.value )?.span ?? getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
 	return span === 'full' || Number( span ) >= parentColumnCount.value;
 } );
 
 const editorDock = computed( {
 	get() {
-		return traitSet.value?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left';
+		return getView( traitSet.value )?.editorDock === 'right' ? 'right' : 'left';
 	},
 	set( val: any ) {
-		if ( !traitSet.value.custom ) traitSet.value.custom = {};
-		if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-		traitSet.value.custom.cortexToolkit.editorDock = val === 'right' ? 'right' : 'left';
+		ensureView( traitSet.value ).editorDock = val === 'right' ? 'right' : 'left';
 		updateCharacter( props.character );
 	},
 } );
@@ -453,9 +452,16 @@ function getDieCount( size: number ) {
 	return dice.value.filter( ( d: number ) => d === size ).length;
 }
 
+function syncPoolCount( count: number ) {
+	if ( getView( traitSet.value )?.style?.body === 'dice-count' ) {
+		ensureView( trait.value ).poolCount = count;
+	}
+}
+
 function addDieToTrait( size: number ) {
 	const current = [ ...dice.value, size ].sort( ( a, b ) => b - a );
 	cortexFunctions.setTraitDice( trait.value, current );
+	syncPoolCount( current.length );
 	updateCharacter( props.character );
 }
 
@@ -465,6 +471,7 @@ function removeDieFromTrait( size: number ) {
 	if ( idx !== -1 ) {
 		current.splice( idx, 1 );
 		cortexFunctions.setTraitDice( trait.value, current );
+		syncPoolCount( current.length );
 		updateCharacter( props.character );
 	}
 }
@@ -474,6 +481,7 @@ function removeDieAtIndex( index: number ) {
 	if ( index >= 0 && index < current.length ) {
 		current.splice( index, 1 );
 		cortexFunctions.setTraitDice( trait.value, current );
+		syncPoolCount( current.length );
 		updateCharacter( props.character );
 	}
 }
@@ -718,7 +726,7 @@ function getDieDisplayValue( val: any ) {
 				<div class="editor-fields">
 
 					<div class="editor-field" v-if="parentIsFullWidth">
-						<label>Panel Position</label>
+						<div class="editor-label">Panel Position</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'left' }" @click.stop="editorDock = 'left'">
 								<i class="fas fa-arrow-left"></i> Left
@@ -731,32 +739,32 @@ function getDieDisplayValue( val: any ) {
 
 					<template v-if="isTalentsTable">
 						<div class="editor-field">
-							<label>{{ talentCol1Label }}</label>
-							<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
+							<label :for="'trait-talent-col1-' + traitID">{{ talentCol1Label }}</label>
+							<input type="text" :id="'trait-talent-col1-' + traitID" name="talentName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
 						</div>
 
 						<div class="editor-field">
-							<label>{{ talentCol2Label }}</label>
-							<textarea v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
+							<label :for="'trait-talent-col2-' + traitID">{{ talentCol2Label }}</label>
+							<textarea :id="'trait-talent-col2-' + traitID" name="talentDescription" v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
 						</div>
 
 						<div class="editor-field">
-							<label>{{ talentCol3Label }}</label>
-							<textarea v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
+							<label :for="'trait-talent-col3-' + traitID">{{ talentCol3Label }}</label>
+							<textarea :id="'trait-talent-col3-' + traitID" name="talentEffect" v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
 						</div>
 					</template>
 
 					<div class="editor-field" v-else>
-						<label>{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
-						<input type="text" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
+						<label :for="'trait-name-' + traitID">{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
+						<input type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
 					</div>
 
 					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
 
 					<!-- STATEMENT FIELD -->
 					<div class="editor-field" v-if="isStatementSet || isPairedSlotsStyle">
-						<label>Statement</label>
-						<textarea v-model="description" rows="2" placeholder="e.g. I'll try anything once."></textarea>
+						<label :for="'trait-statement-' + traitID">Statement</label>
+						<textarea :id="'trait-statement-' + traitID" name="traitStatement" v-model="description" rows="2" placeholder="e.g. I'll try anything once."></textarea>
 					</div>
 
 					<!-- QUESTIONED PIP TOGGLE -->
@@ -766,6 +774,7 @@ function getDieDisplayValue( val: any ) {
 								<input
 									type="checkbox"
 									:id="'trait-' + traitID + '-questioned'"
+									name="traitQuestioned"
 									v-model="isQuestioned"
 								>
 							</div>
@@ -779,8 +788,8 @@ function getDieDisplayValue( val: any ) {
 
 					<!-- COUNTER / XP FIELD -->
 					<div class="editor-field" v-if="hasCounterColumn">
-						<label>{{ counterLabel }}</label>
-						<input type="text" v-model="counterValue" :placeholder="counterLabel">
+						<label :for="'trait-counter-' + traitID">{{ counterLabel }}</label>
+						<input type="text" :id="'trait-counter-' + traitID" name="traitCounter" v-model="counterValue" :placeholder="counterLabel">
 					</div>
 
 					<!-- SESSION RECORD ROW CHECKBOX -->
@@ -790,6 +799,7 @@ function getDieDisplayValue( val: any ) {
 								<input
 									type="checkbox"
 									:id="'trait-' + traitID + '-session-checked'"
+									name="sessionRecordChecked"
 									v-model="sessionRecordChecked"
 								>
 							</div>
@@ -808,6 +818,7 @@ function getDieDisplayValue( val: any ) {
 								<input
 									type="checkbox"
 									:id="'trait-' + traitID + '-is-scale'"
+									name="isScaleDie"
 									v-model="isScaleDie"
 								>
 							</div>
@@ -820,7 +831,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<div class="editor-field" v-if="parentIsBranch">
-						<label>Branch Role</label>
+						<div class="editor-label">Branch Role</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'skill' }" @click.stop="branchRole = 'skill'">
 								<i class="fas fa-arrow-right"></i> Skill
@@ -832,8 +843,8 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
-						<label>Connects To Skill</label>
-						<select v-model="branchLink">
+						<label :for="'trait-branch-link-' + traitID">Connects To Skill</label>
+						<select :id="'trait-branch-link-' + traitID" name="branchLink" v-model="branchLink">
 							<option :value="null">Unlinked</option>
 							<option v-for="opt in branchSkillOptions" :key="opt.index" :value="opt.index">{{ opt.name }}</option>
 						</select>
@@ -841,7 +852,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
-						<label>Side</label>
+						<div class="editor-label">Side</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
 								<i class="fas fa-arrow-left"></i> Left
@@ -854,7 +865,7 @@ function getDieDisplayValue( val: any ) {
 
 					<div class="editor-field" v-if="!isListStyle && !hideSkillDice">
 
-						<label>{{ isMultiDie ? 'Dice Pool' : 'Value' }}</label>
+						<div class="editor-label">{{ isMultiDie ? 'Dice Pool' : 'Value' }}</div>
 
 						<!-- SINGLE DIE SELECTOR -->
 						<ul class="editor-values" v-if="!isMultiDie">
@@ -900,7 +911,7 @@ function getDieDisplayValue( val: any ) {
 
 							<!-- CURRENT DICE IN POOL -->
 							<div class="multidie-active-list" v-if="dice.length > 0">
-								<label class="sub-label">Current Dice ({{ dice.length }}):</label>
+								<span class="sub-label">Current Dice ({{ dice.length }}):</span>
 								<div class="multidie-chips">
 									<div v-for="(dieSize, dIdx) in dice" :key="dIdx" class="multidie-chip">
 										<span class="c">{{ getDieDisplayValue(dieSize) }}</span>
@@ -916,7 +927,7 @@ function getDieDisplayValue( val: any ) {
 
 					<!-- ATTACHED STRESS SELECTOR -->
 					<div class="editor-field" v-if="hasAttachedStress">
-						<label>Attached {{ attachedStressLabel }}</label>
+						<div class="editor-label">Attached {{ attachedStressLabel }}</div>
 						<ul class="editor-values">
 							<li
 								:class="{ 'active': attachedStressValue === 0 }"
@@ -943,15 +954,15 @@ function getDieDisplayValue( val: any ) {
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle">
-						<label>Description</label>
-						<textarea v-model="description"></textarea>
+					<div class="editor-field" v-if="getView( traitSet )?.features?.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle">
+						<label :for="'trait-desc-' + traitID">Description</label>
+						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
 					</div>
 
 					<!-- SUBTRAITS -->
-					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.subtraits">
+					<div class="editor-field" v-if="getView( traitSet )?.features?.subtraits">
 
-						<label>Subtraits</label>
+						<div class="editor-label">Subtraits</div>
 
 						<div class="editor-subgroups">
 
@@ -962,7 +973,7 @@ function getDieDisplayValue( val: any ) {
 									:character="character"
 									:traitSetID="traitSetID"
 									:traitID="traitID"
-									:subtraitID="subtraitID"
+									:subtraitID="Number(subtraitID)"
 									@updateCharacter="updateCharacter"
 									@removeSubtrait="removeSubtrait"
 								></subtrait-editor>
@@ -981,13 +992,13 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- SFX -->
-					<div class="editor-field" v-if="traitSet.custom.cortexToolkit.features.sfx && !isTalentsTable">
+					<div class="editor-field" v-if="getView( traitSet )?.features?.sfx && !isTalentsTable">
 
-						<label>SFX</label>
+						<div class="editor-label">SFX</div>
 
 						<div class="editor-field" v-if="canHinderTrait">
 							<div class="editor-toggles">
-								<div><input type="checkbox" :id="'trait-' + traitSetID + '-' + traitID + '-hinder'" :true-value="true" :false-value="false" v-model="hinder"></div>
+								<div><input type="checkbox" :id="'trait-' + traitSetID + '-' + traitID + '-hinder'" name="canHinder" :true-value="true" :false-value="false" v-model="hinder"></div>
 								<div><label :for="'trait-' + traitSetID + '-' + traitID + '-hinder'">Can Hinder</label></div>
 							</div>
 						</div>

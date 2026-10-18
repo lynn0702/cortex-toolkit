@@ -83,8 +83,8 @@
 }
 
 .page {
-	font-size: .66rem;
-	line-height: 0.9167rem;
+	font-size: 0.8125rem;
+	line-height: 1.15;
 	font-weight: 400;
 	transition: padding .2s;
 	padding-top: 2rem;
@@ -411,7 +411,7 @@
 		background: #fbfbfb;
 		border: 1px solid var(--color-separator);
 		border-radius: 4px;
-		font-size: 0.75rem;
+		font-size: var(--text-body);
 		line-height: 1.35;
 		color: #444;
 
@@ -425,9 +425,9 @@
 			font-family: var(--font-heading);
 			color: var(--color-primary);
 		}
-		h1 { font-size: 0.9rem; }
-		h2 { font-size: 0.82rem; }
-		h3 { font-size: 0.78rem; }
+		h1 { font-size: var(--text-trait-title); }
+		h2 { font-size: var(--text-card-title); }
+		h3 { font-size: var(--text-body); }
 
 		ul {
 			margin: 0.15rem 0 0.25rem 1rem;
@@ -479,6 +479,26 @@
 
 .trait-set-header-inner {
 	@extend %editable;
+	font-family: var(--font-heading);
+	font-size: var(--text-header);
+	font-weight: 800;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-primary);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	> div,
+	.trait-set-header-name {
+		font-size: inherit;
+		font-weight: inherit;
+		letter-spacing: inherit;
+		text-transform: inherit;
+		color: inherit;
+		-webkit-font-smoothing: inherit;
+		-moz-osx-font-smoothing: inherit;
+	}
+
 	&.v-enter-active,
 	&.v-leave-active {
 		transition: opacity .2s ease;
@@ -522,11 +542,11 @@
 		margin-top: -.125rem;
 		font-style: normal;
 		margin-right: 0;
-		font-size: .646rem;
+		font-size: var(--text-body);
 		&::before {
 			font-family: var(--font-heading);
 			content: "\25cf";
-			font-size: .875rem;
+			font-size: var(--text-body);
 			color: var(--color-primary);
 			padding-right: 0.3em;
 			position: relative;
@@ -617,8 +637,10 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: 10rem;
-	color: color-mix(in srgb, var(--color-interactive), transparent 80% );
+	width: 72%;
+	height: 72%;
+	object-fit: contain;
+	opacity: 0.55;
 }
 
 .portrait-preview {
@@ -741,7 +763,7 @@
 	color: black;
 	text-transform: none;
 	font-weight: 500;
-	font-size: .9167rem;
+	font-size: var(--text-trait-title);
 	font-style: normal;
 	margin: 0;
 	width: max-content;
@@ -788,7 +810,7 @@
 		cursor: pointer;
 
 		.c {
-			font-size: 1.66rem;
+			font-size: var(--diecon-size);
 			display: block;
 			color: #1e293b;
 			line-height: 1;
@@ -802,7 +824,7 @@
 		.scale-name {
 			font-family: var(--font-secondary);
 			font-weight: 800;
-			font-size: 0.75rem;
+			font-size: var(--text-meta);
 			letter-spacing: 0.05em;
 			text-transform: uppercase;
 			color: #1e293b;
@@ -885,7 +907,7 @@
 .preview-button-container {
 	@extend %button-container;
 	.page & {
-		--button-font-size: .66rem;
+		--button-font-size: 0.8125rem;
 	}
 	.trait-set & {
 		margin-top: 1rem;
@@ -983,7 +1005,7 @@
 
 	.session-edit-hint {
 		@extend %no-print;
-		font-size: 0.68rem;
+		font-size: 0.8125rem;
 		font-style: italic;
 		color: var(--color-label);
 		text-align: center;
@@ -1035,7 +1057,7 @@
 
 			.session-label {
 				font-family: inherit;
-				font-size: 8.5px;
+				font-size: var(--text-trait-title);
 				font-weight: 600;
 				fill: #1e293b;
 				cursor: pointer;
@@ -1102,35 +1124,41 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.45rem;
-		background: #0ea5e9;
-		color: white;
-		border: none;
-		border-radius: 4px;
-		padding: 0.4rem 0.85rem;
-		font-weight: 700;
+		background: rgba(255, 255, 255, 0.08);
+		color: #e6edf3;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: 6px;
+		padding: 0.35rem 0.75rem;
+		font-weight: 600;
 		font-size: 0.8rem;
+		letter-spacing: 0.02em;
 		cursor: pointer;
-		transition: background-color 0.15s ease, transform 0.1s ease;
+		box-shadow: none;
+		transition: background-color 0.15s ease, border-color 0.15s ease;
 
 		&:hover {
-			background: #0284c7;
+			background: rgba(255, 255, 255, 0.16);
+			border-color: rgba(255, 255, 255, 0.32);
 		}
 
 		&.active {
-			background: #38bdf8;
-			color: #0f172a;
-			box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5);
+			background: #2563eb;
+			border-color: #3b82f6;
+			color: #ffffff;
+			box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
 		}
 
 		&.secondary {
-			background: #334155;
-			color: #e2e8f0;
+			background: rgba(255, 255, 255, 0.04);
+			color: #94a3b8;
+			border-color: rgba(255, 255, 255, 0.1);
 
 			&:hover {
-				background: #475569;
+				background: rgba(255, 255, 255, 0.1);
+				color: #e2e8f0;
 			}
 			&.active {
-				background: #64748b;
+				background: #3b82f6;
 				color: white;
 			}
 		}

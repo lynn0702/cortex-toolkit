@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const { traitSet, s, submode, selectElement, getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick } = injectTraitSet();
@@ -6,10 +7,10 @@ const { traitSet, s, submode, selectElement, getPipConfig, getPipRowCount, getPi
 
 <template>
 	<div class="trait-pips-body"
-		v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'pips'"
+		v-if="getView(traitSet)?.style?.body === 'pips'"
 		@click.stop="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
 	>
-		<div class="pips-track-container" :class="{ 'connected': getPipConfig(traitSet).connected, 'vertical': getPipConfig(traitSet).perRow === 1 }">
+		<div class="pips-track-container" :class="{ 'connected': getPipConfig(traitSet).connected, 'pips-connected': getPipConfig(traitSet).connected, 'vertical': getPipConfig(traitSet).perRow === 1, ['pips-per-row-' + getPipConfig(traitSet).perRow]: true }">
 			<div class="pip-spine-line" v-if="getPipConfig(traitSet).connected && getPipConfig(traitSet).perRow === 1"></div>
 			<div
 				v-for="rowIdx in getPipRowCount(traitSet)"

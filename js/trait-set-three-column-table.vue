@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitEditor from './trait-editor.vue';
 
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
@@ -10,7 +10,7 @@ const {
 </script>
 
 <template>
-	<div class="trait-three-column-table" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'three-column-table'">
+	<div class="trait-three-column-table" v-if="getView(traitSet)?.style?.body === 'three-column-table'">
 		<div class="three-col-head"><span>{{ getTraitSetLabel(traitSet, 'col1') }}</span><span>{{ getTraitSetLabel(traitSet, 'col2') }}</span><span>{{ getTraitSetLabel(traitSet, 'col3') }}</span></div>
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
@@ -32,20 +32,6 @@ const {
 						<span class="three-col-effect" v-else></span>
 					</div>
 				</div>
-				<transition name="editor" appear>
-					<TraitEditor
-						v-if="!item.isPlaceholder"
-						:character="character"
-						:open="isSelected(['trait', s, item.originalIndex])"
-						v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
-						:traitSetID="s"
-						:traitID="item.originalIndex"
-						:viewY="viewY"
-						@selectElement="selectElement"
-						@updateCharacter="updateCharacter"
-						@removeTrait="removeTrait"
-					></TraitEditor>
-				</transition>
 			</div>
 		</template>
 		<transition appear>

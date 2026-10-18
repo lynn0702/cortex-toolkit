@@ -147,5 +147,86 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
     'unknown size surfaces with warning', w);
 }
 
+// ---- 11. Banded layout engine (Rule of 3) placement migration.
+{
+  const char = {
+    custom: { cortexToolkit: { columns: 2, columnsPage2: 3 } },
+    traitSets: [
+      { name: 'A', custom: { cortexToolkit: { page: 1, location: 'left', colWidth: 40 } } },
+      { name: 'B', custom: { cortexToolkit: { page: 1, location: 'right', rowSpan: 2 } } },
+      { name: 'C', custom: { cortexToolkit: { page: 1, location: 'left', colSpan: 'full' } } },
+      { name: 'D', custom: { cortexToolkit: { page: 2, location: 'left', colWidth: 30 } } },
+      { name: 'E', custom: { cortexToolkit: { page: 2, location: 'center', colWidth: 50 } } },
+      { name: 'F', custom: { cortexToolkit: { page: 2, location: 'right', colWidth: 20 } } },
+    ],
+  };
+  M.migratePlacement(char);
+  const sets = char.traitSets;
+  // Page 1
+  ok(sets[0].view.track === 1, 'set A track 1');
+  ok(JSON.stringify(sets[0].view.widths) === JSON.stringify([40, 60, 0]), 'set A anchor widths [40, 60, 0]');
+  ok(sets[0].view.colWidth === undefined, 'colWidth deleted from set A');
+  ok(sets[0].view.location === undefined, 'location deleted from set A');
+
+  ok(sets[1].view.track === 2, 'set B track 2');
+  ok(sets[1].view.rowSpan === undefined, 'rowSpan deleted from set B');
+
+  ok(sets[2].view.span === 3, 'set C span 3');
+  ok(sets[2].view.colSpan === undefined, 'colSpan deleted from set C');
+
+  // Page 2
+  ok(sets[3].view.track === 1, 'set D track 1');
+  ok(JSON.stringify(sets[3].view.widths) === JSON.stringify([30, 50, 20]), 'set D anchor widths [30, 50, 20]');
+  ok(sets[4].view.track === 2, 'set E track 2');
+  ok(sets[5].view.track === 3, 'set F track 3');
+
+  // Sheet level
+  ok(char.view.columns === undefined, 'columns deleted from sheet');
+  ok(char.view.columnsPage2 === undefined, 'columnsPage2 deleted from sheet');
+}
+
+// ---- 12. normalizeView migration seam.
+{
+  // 12a. Legacy custom.cortexToolkit migrates to view and cleans up empty custom
+  const obj1 = {
+    custom: { cortexToolkit: { sheetStyle: 'spotlight', columns: 2 } },
+    portrait: { custom: { cortexToolkit: { size: 'spotlight' } } },
+    traitSets: [
+      { name: 'Distinctions', custom: { cortexToolkit: { style: { header: 'default', body: 'default' } } } },
+    ],
+  };
+  M.normalizeView(obj1);
+  ok(obj1.view && obj1.view.sheetStyle === 'spotlight' && obj1.view.columns === 2, 'char custom.cortexToolkit migrated to view');
+  ok(obj1.custom === undefined, 'empty custom cleaned up on character');
+  ok(obj1.portrait.view && obj1.portrait.view.size === 'spotlight', 'portrait custom.cortexToolkit migrated to view');
+  ok(obj1.portrait.custom === undefined, 'empty custom cleaned up on portrait');
+  ok(obj1.traitSets[0].view && obj1.traitSets[0].view.style.body === 'default', 'set custom.cortexToolkit migrated to view');
+  ok(obj1.traitSets[0].custom === undefined, 'empty custom cleaned up on traitSet');
+
+  // 12b. Conflict resolution: view wins, legacy dropped
+  const obj2 = {
+    view: { columns: 3, pageCount: 2 },
+    custom: { cortexToolkit: { columns: 2, pageCount: 1, extraKey: 'legacy' } },
+  };
+  M.normalizeView(obj2);
+  ok(obj2.view.columns === 3, 'view wins on conflict (columns)');
+  ok(obj2.view.pageCount === 2, 'view wins on conflict (pageCount)');
+  ok(obj2.view.extraKey === undefined, 'legacy bag dropped completely when view exists');
+  ok(obj2.custom === undefined, 'custom.cortexToolkit cleaned up');
+
+  // 12c. Non-cortexToolkit custom keys (e.g. custom.stress) pass through untouched
+  const obj3 = {
+    custom: {
+      cortexToolkit: { sheetStyle: 'classic' },
+      stress: { physical: 6, mental: 8 },
+    },
+  };
+  M.normalizeView(obj3);
+  ok(obj3.view && obj3.view.sheetStyle === 'classic', 'view migrated');
+  ok(obj3.custom && obj3.custom.cortexToolkit === undefined, 'cortexToolkit removed from custom');
+  ok(obj3.custom && obj3.custom.stress && obj3.custom.stress.physical === 6, 'custom.stress preserved');
+}
+
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
+

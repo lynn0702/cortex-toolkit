@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 2,
-        "spotlight": "Hammerheads",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 2,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 2,
+      "spotlight": "Hammerheads",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -59,20 +54,28 @@
         "nounPlural": "Attributes",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "attachedStress": {
+            "enabled": true,
+            "label": "STRESS",
             "ratingScale": [
               4,
               6,
@@ -80,34 +83,29 @@
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "STRESS",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": false
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "attributesRing": false,
-            "colWidth": 36
-          }
+            "scale": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ],
+            "includeOut": false
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": false
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "attributesRing": false,
+          "track": 1,
+          "span": 1,
+          "widths": [
+            36,
+            64,
+            0
+          ]
         },
         "traits": {
           "Physical": {
@@ -134,35 +132,33 @@
         "nounPlural": "Training Packages",
         "ratingPosition": "below",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingPosition": "below",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 14,
-            "colWidth": 36
-          }
+        "view": {
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingPosition": "below",
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 14,
+          "track": 1,
+          "span": 1
         },
         "traits": {
           "Crowd Control": {
@@ -243,29 +239,28 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "ratingScale": [
-              8
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "ratingScale": [
+            8
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Your Life Before:": {
@@ -341,33 +336,32 @@
         "statement": true,
         "ratingPosition": "inline",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 7
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 7,
+          "track": 2,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -421,39 +415,38 @@
         "nounSingular": "XP",
         "nounPlural": "XP",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 0,
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 10,
-              "filled": 0
-            },
-            "pips": {
-              "count": 20,
-              "perRow": 10,
-              "connected": true,
-              "filled": 0
-            }
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 0,
+          "pipsConfig": {
+            "rows": 2,
+            "perRow": 10,
+            "filled": 0
+          },
+          "pips": {
+            "count": 20,
+            "perRow": 10,
+            "connected": true,
+            "filled": 0
+          },
+          "track": 2,
+          "span": 1
         },
         "traits": {}
       },
@@ -464,37 +457,34 @@
         "nounPlural": "Crisis Pools",
         "ratingPosition": "above",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "left",
-            "traitColumns": 2,
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 2,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 4,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "left",
+          "traitColumns": 2,
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "location": "left",
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": true,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 4,
+          "span": 3
         },
         "traits": {},
         "slots": {

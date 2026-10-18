@@ -44,7 +44,7 @@
 			"format": "date-time"
 		},
 		"character": {
-			"description": "Character-shaped blank carrying the layout (custom.cortexToolkit at sheet and set level) plus blank traits.",
+			"description": "Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.",
 			"type": "object"
 		}
 	},

@@ -1,5 +1,6 @@
 import { computed, provide, inject, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getView, ensureView } from './model.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
 export interface TraitSetApi {
@@ -30,33 +31,39 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	const designerPrintPreview = computed( () => props.designerPrintPreview );
 	const printStyle = computed( () => props.printStyle );
 	const viewY = computed( () => props.viewY );
-	const columnCount = computed( () => ( Number( props.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2 ) );
+	const columnCount = computed( () => {
+		const c = Number( getView( props.character )?.columns );
+		return ( c >= 2 && c <= 4 ) ? c : 2;
+	} );
 
 	const sheetStyle = computed( () => {
 		if ( props.submode === 'print' && props.printStyle ) {
 			return props.printStyle;
 		}
-		const explicit = props.character?.custom?.cortexToolkit?.sheetStyle;
+		const explicit = getView( props.character )?.sheetStyle;
 		if ( explicit ) return explicit;
-		if ( props.character?.custom?.cortexToolkit?.style?.hasAttributes === false ) {
+		if ( getView( props.character )?.style?.hasAttributes === false ) {
+			return 'spotlight';
+		}
+		if ( getView( props.character )?.spotlight ) {
+			return 'spotlight';
+		}
+		if ( ( props.character as any )?.sheet?.template ) {
 			return 'spotlight';
 		}
 		return 'classic';
 	} );
 
-	const isSpotlightPrintStyle = computed( () => ( props.submode === 'print' || props.designerPrintPreview ) && isSpotlightStyle() );
+	const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
+	const isSpotlightPrintStyle = computed( () => ( props.submode === 'print' || props.designerPrintPreview ) && isSpotlightStyle.value );
 
 	function getTraitSetLabel( traitSetArg: TraitSet, key: string ) {
-		const labels = traitSetArg?.custom?.cortexToolkit?.labels;
+		const labels = getView( traitSetArg )?.labels;
 		if ( labels && labels[ key ] !== undefined && labels[ key ] !== null && String( labels[ key ] ).length ) {
 			return labels[ key ];
 		}
-		const style = traitSetArg?.custom?.cortexToolkit?.style?.body;
+		const style = getView( traitSetArg )?.style?.body;
 		return cortexFunctions.labelDefaultForStyle( style, key );
-	}
-
-	function isSpotlightStyle() {
-		return sheetStyle.value === 'spotlight';
 	}
 
 	function isSelected( selector: unknown[] ) {
@@ -75,16 +82,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function getTraitSetClasses( traitSetArg: TraitSet ) {
 		const classes: Record<string, boolean> = { 'trait-set': true };
 
-		const bodyStyle = traitSetArg?.custom?.cortexToolkit?.style?.body || 'default';
+		const bodyStyle = getView( traitSetArg )?.style?.body || 'default';
 		classes[ 'trait-set-style-' + bodyStyle ] = true;
 
-		if ( bodyStyle === 'subtrait-columns' && traitSetArg?.custom?.cortexToolkit?.branchArrows === false ) {
+		if ( bodyStyle === 'subtrait-columns' && getView( traitSetArg )?.branchArrows === false ) {
 			classes[ 'hide-branch-arrows' ] = true;
 		}
 
-		if ( isSpotlightStyle() ) {
-			const colSpan = Number( traitSetArg?.custom?.cortexToolkit?.colSpan ?? traitSetArg?.custom?.cortexToolkit?.columnSpan ) || 1;
-			if ( colSpan >= columnCount.value || traitSetArg?.custom?.cortexToolkit?.colSpan === 'full' || traitSetArg?.custom?.cortexToolkit?.columnSpan === 'full' ) {
+		if ( isSpotlightStyle.value ) {
+			const rawSpan = getView( traitSetArg )?.span ?? getView( traitSetArg )?.colSpan ?? getView( traitSetArg )?.columnSpan;
+			const colSpan = Number( rawSpan ) || 1;
+			if ( colSpan >= columnCount.value || rawSpan === 'full' ) {
 				classes['span-full'] = true;
 				classes['span-' + columnCount.value] = true;
 			} else if ( colSpan === 2 ) {
@@ -107,19 +115,19 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			classes[ 'trait-set-has-counter' ] = true;
 		}
 
-		if ( traitSetArg?.custom?.cortexToolkit?.features?.description ) {
+		if ( getView( traitSetArg )?.features?.description ) {
 			classes[ 'trait-set-has-feature-description' ] = true;
 		}
 
-		if ( traitSetArg?.custom?.cortexToolkit?.features?.sfx ) {
+		if ( getView( traitSetArg )?.features?.sfx ) {
 			classes[ 'trait-set-has-feature-sfx' ] = true;
 		}
 
-		if ( traitSetArg?.custom?.cortexToolkit?.features?.subtraits ) {
+		if ( getView( traitSetArg )?.features?.subtraits ) {
 			classes[ 'trait-set-has-feature-subtraits' ] = true;
 		}
 
-		const ctk = traitSetArg?.custom?.cortexToolkit;
+		const ctk = getView( traitSetArg );
 		if ( ctk?.header === 'top' ) {
 			classes[ 'trait-set-header-top' ] = true;
 		}
@@ -130,19 +138,19 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getRatingPosition( traitSetArg: TraitSet ) {
-		return traitSetArg?.ratingPosition || traitSetArg?.custom?.cortexToolkit?.ratingPosition || 'inline';
+		return traitSetArg?.ratingPosition || getView( traitSetArg )?.ratingPosition || 'inline';
 	}
 
 	function isStatementSet( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.statement ?? traitSetArg?.custom?.cortexToolkit?.statement );
+		return Boolean( traitSetArg?.statement ?? getView( traitSetArg )?.statement );
 	}
 
 	function hasQuestionedPip( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.hasQuestionedPip ?? traitSetArg?.custom?.cortexToolkit?.hasQuestionedPip );
+		return Boolean( traitSetArg?.hasQuestionedPip ?? getView( traitSetArg )?.hasQuestionedPip );
 	}
 
 	function isTraitQuestioned( trait: Trait ) {
-		return Boolean( trait?.questioned ?? trait?.custom?.questioned ?? trait?.custom?.cortexToolkit?.questioned );
+		return Boolean( trait?.questioned ?? trait?.custom?.questioned ?? getView( trait )?.questioned );
 	}
 
 	function toggleTraitQuestioned( sArg: any, t: any ) {
@@ -157,15 +165,15 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function hasCounterColumn( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.hasCounterColumn ?? traitSetArg?.custom?.cortexToolkit?.hasCounterColumn );
+		return Boolean( traitSetArg?.hasCounterColumn ?? getView( traitSetArg )?.hasCounterColumn );
 	}
 
 	function getCounterLabel( traitSetArg: TraitSet ) {
-		return traitSetArg?.counterLabel || traitSetArg?.custom?.cortexToolkit?.counterLabel || 'XP';
+		return traitSetArg?.counterLabel || getView( traitSetArg )?.counterLabel || 'XP';
 	}
 
 	function getTraitCounter( trait: Trait ) {
-		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? trait?.custom?.cortexToolkit?.xp ?? '';
+		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView( trait )?.xp ?? '';
 	}
 
 	function getTraitStatement( trait: Trait ) {
@@ -225,7 +233,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			return list;
 		}
 
-		const reserved = Number( traitSetArg?.custom?.cortexToolkit?.reservedSlots );
+		const reserved = Number( getView( traitSetArg )?.reservedSlots );
 		const targetCount = ( !isNaN( reserved ) && reserved > 0 ) ? Math.max( reserved, existing.length ) : existing.length;
 		const list: any[] = existing.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx, isPlaceholder: false }) );
 		for ( let i = existing.length; i < targetCount; i++ ) {
@@ -235,7 +243,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function createBlankSlotTrait( traitSetArg: TraitSet ) {
-		const hasSubtraits = Boolean( traitSetArg?.custom?.cortexToolkit?.features?.subtraits );
+		const hasSubtraits = Boolean( getView( traitSetArg )?.features?.subtraits );
 		return {
 			name: '',
 			value: 0,
@@ -252,25 +260,37 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( !trait || !trait.name ) return false;
 		const name = trait.name.trim();
 		if ( name.endsWith( ':' ) ) return false;
-		const tsBody = traitSetArg?.custom?.cortexToolkit?.style?.body;
+		const tsBody = getView( traitSetArg )?.style?.body;
 		const tsName = ( traitSetArg?.name || '' ).toLowerCase();
 		if ( tsBody === 'attributes' || tsBody === 'stress' ||
 		     tsName.includes( 'attribute' ) || tsName.includes( 'value' ) ||
 		     tsName.includes( 'drive' ) || tsName.includes( 'role' ) ||
 		     tsName.includes( 'affiliation' ) || tsName.includes( 'branch' ) ||
-		     ( traitSetArg?.custom?.cortexToolkit?.traitColumns ?? 0 ) > 1 ||
-		     Boolean( traitSetArg?.custom?.cortexToolkit?.attachedStress?.enabled ) ) {
+		     tsName.includes( 'eidolon' ) || tsName.includes( 'power' ) ||
+		     tsName.includes( 'system' ) || tsName.includes( 'chassis' ) ||
+		     ( getView( traitSetArg )?.traitColumns ?? 0 ) > 1 ||
+		     Boolean( getView( traitSetArg )?.attachedStress?.enabled ) ) {
 			return true;
+		}
+		const spotlightId = getView( props.character )?.spotlight;
+		if ( spotlightId && typeof ( window as any )?.cortexSpotlightTemplates !== 'undefined' ) {
+			const tpls = ( window as any ).cortexSpotlightTemplates;
+			if ( Array.isArray( tpls ) ) {
+				const tpl = tpls.find( ( t: any ) => t.id === spotlightId || t.title === spotlightId || t.spotlight === spotlightId );
+				if ( tpl?.sets ) {
+					for ( const sKey of Object.keys( tpl.sets ) ) {
+						const setDef = tpl.sets[ sKey ];
+						if ( setDef?.traits && Object.prototype.hasOwnProperty.call( setDef.traits, name ) ) return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
 
 	function renderDieValueForPrint( size: number, isActive = false ) {
-		if ( isSpotlightPrintStyle.value ) {
-			const isFilled = props.printBlank ? false : Boolean( isActive );
-			return cortexFunctions.renderDieconSVG( size, isFilled, '', props.character?.custom?.cortexToolkit?.diceConfig );
-		}
-		return renderDieValue( size );
+		const isFilled = props.printBlank ? false : Boolean( isActive );
+		return cortexFunctions.renderDieconSVG( size, isFilled, '', getView( props.character )?.diceConfig );
 	}
 
 	function getTraitSetRatings( traitSetArg: TraitSet ) {
@@ -286,18 +306,25 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function isMultiDieTrait( traitSetArg: TraitSet, trait: Trait ) {
-		if ( !traitSetArg?.custom?.cortexToolkit?.style?.body ) return false;
-		const style = traitSetArg.custom.cortexToolkit.style.body;
-		if ( style === 'stress' || style === 'list' || style === 'notes' ) {
+		const style = getView( traitSetArg )?.style?.body;
+		if ( !style || style === 'stress' || style === 'list' || style === 'notes' ) {
 			return false;
 		}
-		return Boolean( traitSetArg?.custom?.cortexToolkit?.multiDie ) || ( style === 'resources' ) || ( getTraitDice( trait ).length > 1 );
+		return Boolean( getView( traitSetArg )?.multiDie ) || ( style === 'resources' ) || ( style === 'dice-count' ) || ( getTraitDice( trait ).length > 1 );
+	}
+
+	// A pool set (e.g. Growth Pool) is a plain multi-die pool, not a resource:
+	// clicking a trait adds its whole pool to the roller, and its dice are
+	// never flagged as resources. Explicit per-trait isResource still wins.
+	function isPoolSet( traitSetArg: TraitSet ) {
+		return Boolean( getView( traitSetArg )?.pool );
 	}
 
 	function isResourceTrait( traitSetArg: TraitSet, trait: Trait ) {
-		if ( trait?.custom?.cortexToolkit?.isResource || trait?.isResource ) return true;
+		if ( getView( trait )?.isResource || trait?.isResource ) return true;
 		if ( !traitSetArg ) return false;
-		const body = traitSetArg?.custom?.cortexToolkit?.style?.body;
+		if ( isPoolSet( traitSetArg ) ) return false;
+		const body = getView( traitSetArg )?.style?.body;
 		if ( body === 'resources' || body === 'dice-count' ) return true;
 		const name = ( traitSetArg?.name || '' ).trim().toLowerCase();
 		const nounSingular = ( traitSetArg?.nounSingular || '' ).trim().toLowerCase();
@@ -309,18 +336,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function isDieSpent( trait: Trait, index: number ) {
-		const spent = trait?.custom?.cortexToolkit?.spentDice;
+		const spent = getView( trait )?.spentDice;
 		return Array.isArray( spent ) && spent.includes( index );
 	}
 
 	function toggleDieSpentInPlay( sArg: any, t: any, index: number ) {
 		const trait = props.character.traitSets[sArg].traits[t];
-		if ( !trait.custom ) trait.custom = {};
-		if ( !trait.custom.cortexToolkit ) trait.custom.cortexToolkit = {};
-		if ( !Array.isArray( trait.custom.cortexToolkit.spentDice ) ) {
-			trait.custom.cortexToolkit.spentDice = [];
+		const view = ensureView( trait );
+		if ( !Array.isArray( view.spentDice ) ) {
+			view.spentDice = [];
 		}
-		const spentList = trait.custom.cortexToolkit.spentDice;
+		const spentList = view.spentDice;
 		const idx = spentList.indexOf( index );
 		if ( idx !== -1 ) {
 			spentList.splice( idx, 1 );
@@ -336,9 +362,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 				toggleDieSpentInPlay( sArg, t, dIdx );
 				return;
 			}
-			const isChallenge = Boolean( traitSetArg?.custom?.cortexToolkit?.isChallengePool || traitSetArg?.custom?.cortexToolkit?.challengePool );
+			const isChallenge = Boolean( getView( traitSetArg )?.isChallengePool || getView( traitSetArg )?.challengePool );
 			if ( isChallenge ) {
 				addTraitSetDiceToRoller( traitSetArg );
+				return;
+			}
+			if ( isPoolSet( traitSetArg ) ) {
+				// Pools add whole: every die on the trait enters the roller,
+				// and the roller sheds dice individually from there.
+				const dice = getResourcePoolDice( trait, traitSetArg );
+				if ( !dice.length ) return;
+				emit( 'addDieToRoller', dice.map( ( size: number ) => ({ size: size, qty: 1, source: trait.name }) ) );
 				return;
 			}
 			const isRes = isResourceTrait( traitSetArg, trait );
@@ -356,15 +390,26 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function handleSingleDieClick( trait: Trait, value: number | null | undefined, traitSetArg: TraitSet, sArg: any, t: any ) {
 		if ( props.submode === 'play' ) {
-			if ( value ) {
-				const isChallenge = Boolean( traitSetArg?.custom?.cortexToolkit?.isChallengePool || traitSetArg?.custom?.cortexToolkit?.challengePool );
+			const targetVal = value || trait.value;
+			if ( !trait.value && value ) {
+				trait.value = value;
+				updateCharacter( props.character );
+			}
+			if ( targetVal ) {
+				const isChallenge = Boolean( getView( traitSetArg )?.isChallengePool || getView( traitSetArg )?.challengePool );
 				if ( isChallenge ) {
 					addTraitSetDiceToRoller( traitSetArg );
 					return;
 				}
+				if ( isPoolSet( traitSetArg ) ) {
+					const dice = getResourcePoolDice( trait, traitSetArg );
+					if ( !dice.length ) return;
+					emit( 'addDieToRoller', dice.map( ( size: number ) => ({ size: size, qty: 1, source: trait.name }) ) );
+					return;
+				}
 				const isRes = isResourceTrait( traitSetArg, trait );
 				emit( 'addDieToRoller', {
-					size: value,
+					size: targetVal,
 					qty: 1,
 					source: trait.name,
 					isResource: isRes,
@@ -407,7 +452,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function shouldShowStressOut( traitSetArg: TraitSet ) {
-		const cfg = traitSetArg?.custom?.cortexToolkit?.stressConfig;
+		const cfg = getView( traitSetArg )?.stressConfig;
 		if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 		return true;
 	}
@@ -439,11 +484,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
-		if ( props.printBlank ) {
-			return [];
-		}
 		if ( !trait?.sfx || !Array.isArray( trait.sfx ) || !trait.sfx.length ) return [];
-		const isSharedHinder = Boolean( traitSetArg?.custom?.cortexToolkit?.sharedHinder );
+		const isSharedHinder = Boolean( getView( traitSetArg )?.sharedHinder );
 		let list = trait.sfx;
 		if ( isSharedHinder ) {
 			list = list.filter( ( sfx: any ) => sfx !== 'hinder' && ( typeof sfx !== 'object' || sfx.name?.toLowerCase() !== 'hinder' ) );
@@ -461,15 +503,15 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function hasAttachedStress( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.custom?.cortexToolkit?.attachedStress?.enabled );
+		return Boolean( getView( traitSetArg )?.attachedStress?.enabled );
 	}
 
 	function getAttachedStressLabel( traitSetArg: TraitSet ) {
-		return traitSetArg?.custom?.cortexToolkit?.attachedStress?.label || 'Stress';
+		return getView( traitSetArg )?.attachedStress?.label || 'Stress';
 	}
 
 	function getAttachedStressScale( traitSetArg: TraitSet ) {
-		return traitSetArg?.custom?.cortexToolkit?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ];
+		return getView( traitSetArg )?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ];
 	}
 
 	function getAttachedStressValue( trait: Trait ) {
@@ -477,7 +519,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function shouldShowAttachedStressOut( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.custom?.cortexToolkit?.attachedStress?.includeOut );
+		return Boolean( getView( traitSetArg )?.attachedStress?.includeOut );
 	}
 
 	function isAttachedStressOut( trait: Trait ) {
@@ -504,12 +546,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getPipConfig( traitSetArg: TraitSet ) {
-		const p = traitSetArg?.custom?.cortexToolkit?.pips;
+		const ctk = getView( traitSetArg );
+		const p = ctk?.pips || ctk?.pipsConfig;
+		const count = p?.count ?? ( p?.rows ? ( p.rows * ( p.perRow || 1 ) ) : 25 );
+		const perRow = p?.perRow ?? 5;
+		const connected = p?.connected !== false;
+		const filled = p?.filled ?? 0;
 		return {
-			count: Math.max( 1, p?.count || 25 ),
-			perRow: Math.max( 1, p?.perRow || 5 ),
-			connected: p?.connected !== false,
-			filled: Math.max( 0, p?.filled || 0 )
+			count: Math.max( 1, count ),
+			perRow: Math.max( 1, perRow ),
+			connected,
+			filled: Math.max( 0, filled )
 		};
 	}
 
@@ -539,16 +586,15 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( props.submode === 'print' ) return;
 		const ts = traitSets.value[ traitSetIndex ];
 		if ( !ts ) return;
-		if ( !ts.custom ) ts.custom = {};
-		if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
-		if ( !ts.custom.cortexToolkit.pips ) {
-			ts.custom.cortexToolkit.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
+		const view = ensureView( ts );
+		if ( !view.pips ) {
+			view.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
 		}
-		const curFilled = ts.custom.cortexToolkit.pips.filled || 0;
+		const curFilled = view.pips.filled || 0;
 		if ( curFilled === pipIdx + 1 ) {
-			ts.custom.cortexToolkit.pips.filled = pipIdx;
+			view.pips.filled = pipIdx;
 		} else {
-			ts.custom.cortexToolkit.pips.filled = pipIdx + 1;
+			view.pips.filled = pipIdx + 1;
 		}
 		updateCharacter( props.character );
 	}
@@ -558,7 +604,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function isSessionHorizontal( traitSetArg: TraitSet ) {
-		return traitSetArg?.custom?.cortexToolkit?.sessionRecord?.orientation === 'horizontal';
+		return getView( traitSetArg )?.sessionRecord?.orientation === 'horizontal';
 	}
 
 	function sessionViewBox( traitSetArg: TraitSet ) {
@@ -586,8 +632,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function sessionLine( traitSetArg: TraitSet, index: number ) {
 		if ( isSessionHorizontal( traitSetArg ) ) {
+			// The writing line starts at the pip's right edge and runs
+			// up-right, mirroring vertical mode (pip left, line right).
 			const x = 55 + index * 28;
-			return { x1: x - 3, y1: 111.5, x2: x + 34, y2: 16 };
+			return { x1: x + 7, y1: 111.5, x2: x + 44, y2: 16 };
 		}
 		const y = 55 + index * 28;
 		return { x1: 30.5, y1: y, x2: 252, y2: y - 56 };
@@ -603,8 +651,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function sessionLabelTransform( traitSetArg: TraitSet, index: number ) {
 		if ( isSessionHorizontal( traitSetArg ) ) {
+			// Text runs parallel just left of its line, starting above the
+			// pip — the horizontal twin of vertical mode's right-of-pip anchor.
 			const x = 55 + index * 28;
-			return 'translate(' + ( x + 4 ) + ', 106) rotate(-66.5)';
+			return 'translate(' + ( x + 3 ) + ', 106) rotate(-66.5)';
 		}
 		const y = 55 + index * 28;
 		return 'translate(36, ' + ( y - 4 ) + ') rotate(-14.2)';
@@ -613,10 +663,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function getSessionRecordItems( traitSetArg: TraitSet ) {
 		const count = getSessionRecordCount( traitSetArg );
 		const traits = traitSetArg?.traits || [];
+		const srec = getView( traitSetArg )?.sessionRecord;
+		const checkedList: number[] = Array.isArray( srec?.checked ) ? srec.checked : [];
 		const items: any[] = [];
 		for ( let i = 0; i < count; i++ ) {
 			const t = traits[ i ];
-			const isFilled = !props.printBlank && ( Boolean( t?.custom?.checked ) || Boolean( t?.value ) );
+			const fallbackChecked = checkedList.includes( i + 1 );
+			const isFilled = !props.printBlank && (
+				t?.custom?.checked !== undefined
+					? Boolean( t.custom.checked )
+					: ( Boolean( t?.value ) || fallbackChecked )
+			);
 			const name = t?.name || '';
 			items.push({ index: i, trait: t, isFilled: isFilled, name: name });
 		}
@@ -625,10 +682,14 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function handleSessionBubbleClick( traitSetIndex: number, itemIndex: number ) {
 		if ( props.submode === 'print' ) return;
+		const ts = props.character.traitSets?.[ traitSetIndex ];
+		const srec = getView( ts )?.sessionRecord;
+		const checkedList: number[] = Array.isArray( srec?.checked ) ? srec.checked : [];
 		const trait = ensureSessionRecordTrait( traitSetIndex, itemIndex );
 		if ( !trait ) return;
 		if ( !trait.custom ) trait.custom = {};
-		const currentlyChecked = Boolean( trait.custom.checked || trait.value );
+		const fallbackChecked = checkedList.includes( itemIndex + 1 );
+		const currentlyChecked = trait.custom.checked !== undefined ? Boolean( trait.custom.checked ) : ( Boolean( trait.value ) || fallbackChecked );
 		trait.custom.checked = !currentlyChecked;
 		trait.value = !currentlyChecked ? 1 : 0;
 		updateCharacter( props.character );
@@ -674,22 +735,19 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			tags: [],
 			custom: {}
 		});
-		if ( !ts.custom ) ts.custom = {};
-		if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
-		const ctk = ts.custom.cortexToolkit;
+		const view = ensureView( ts );
 		const needed = ts.traits.length;
-		if ( !ctk.sessionRecord ) ctk.sessionRecord = {};
-		if ( ( Number( ctk.sessionRecord.count ) || 0 ) < needed ) {
-			ctk.sessionRecord.count = needed;
-		}
-		if ( ( Number( ctk.reservedSlots ) || 0 ) < needed ) {
-			ctk.reservedSlots = needed;
+		const effectiveCount = getSessionRecordCount( ts );
+		if ( effectiveCount < needed ) {
+			if ( !view.sessionRecord ) view.sessionRecord = {};
+			view.sessionRecord.count = needed;
+			view.reservedSlots = needed;
 		}
 		updateCharacter( props.character );
 	}
 
 	function getImageSetContainerStyle( traitSetArg: TraitSet ) {
-		const h = traitSetArg?.custom?.cortexToolkit?.imageConfig?.height;
+		const h = getView( traitSetArg )?.imageConfig?.height;
 		if ( h && h !== 'auto' ) {
 			return { height: h };
 		}
@@ -697,7 +755,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getImageSetGraphicStyle( traitSetArg: TraitSet ) {
-		const url = cortexFunctions.safeImageUrl( traitSetArg?.custom?.cortexToolkit?.imageConfig?.url );
+		const url = cortexFunctions.safeImageUrl( getView( traitSetArg )?.imageConfig?.url );
 		if ( !url ) return {};
 		return {
 			backgroundImage: `url("${url}")`,
@@ -715,12 +773,12 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			const sIdx = skillItem.originalIndex;
 			const nested = ( skillItem.trait?.traits || [] ).map( ( sub: any, u: number ) => ({ kind: 'sub', sub, u }) );
 			const linked = flats
-				.filter( ( f: any ) => f.trait?.custom?.cortexToolkit?.linkTo === sIdx )
+				.filter( ( f: any ) => getView( f.trait )?.linkTo === sIdx )
 				.map( ( f: any ) => ({ kind: 'flat', item: f }) );
 			return { skillItem, subs: [ ...nested, ...linked ] };
 		} );
 		const orphans = flats.filter( ( f: any ) => {
-			const lt = f.trait?.custom?.cortexToolkit?.linkTo;
+			const lt = getView( f.trait )?.linkTo;
 			return !( typeof lt === 'number' && skillIdx.has( lt ) );
 		} ).map( ( f: any ) => ({ kind: 'flat', item: f }) );
 		if ( orphans.length ) {
@@ -735,21 +793,21 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function hasBranchSplit( traitSetArg: TraitSet, items: any[] ) {
-		if ( traitSetArg?.custom?.cortexToolkit?.style?.body !== 'subtrait-columns' ) return false;
+		if ( getView( traitSetArg )?.style?.body !== 'subtrait-columns' ) return false;
 		return getBranchGroups( traitSetArg, items ).some( ( g: any ) => g.split );
 	}
 
 	function getBranchRole( trait: Trait ) {
-		return trait?.custom?.cortexToolkit?.branchRole === 'specialty' ? 'specialty' : 'skill';
+		return getView( trait )?.branchRole === 'specialty' ? 'specialty' : 'skill';
 	}
 
 	function getSetDie( traitSetArg: TraitSet ) {
-		const d = Number( traitSetArg?.custom?.cortexToolkit?.setDie );
+		const d = Number( getView( traitSetArg )?.setDie );
 		return ( d > 0 ) ? d : null;
 	}
 
 	function getBranchSide( trait: Trait ) {
-		return trait?.custom?.cortexToolkit?.branchSide === 'left' ? 'left' : 'right';
+		return getView( trait )?.branchSide === 'left' ? 'left' : 'right';
 	}
 
 	function branchSubs( subs: any[], side: string ) {
@@ -792,7 +850,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( sub && sub.name && String( sub.name ).trim().length ) {
 			return sub.name;
 		}
-		const style = traitSetArg?.custom?.cortexToolkit?.style?.body;
+		const style = getView( traitSetArg )?.style?.body;
 		return cortexFunctions.labelDefaultForStyle( style, 'slot' + index );
 	}
 
@@ -803,9 +861,44 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return sfx.description || sfx.name || '';
 	}
 
+	function getExplicitPoolCount( trait: Trait ) {
+		const raw = getView( trait )?.poolCount;
+		if ( raw === undefined || raw === null || raw === '' ) return null;
+		const n = Number( raw );
+		if ( !Number.isFinite( n ) || n < 0 ) return null;
+		return Math.floor( n );
+	}
+
 	function getResourceDiceCount( trait: Trait ) {
 		const dice = cortexFunctions.getTraitDice( trait );
+		if ( dice.length > 1 ) return dice.length;
+		const poolCount = getExplicitPoolCount( trait );
+		if ( poolCount !== null ) return poolCount;
 		return dice.length;
+	}
+
+	function getResourcePoolDice( trait: Trait, traitSetArg?: TraitSet ) {
+		if ( !trait ) return [];
+		const dice = cortexFunctions.getTraitDice( trait );
+		if ( dice.length > 1 ) return dice;
+		const poolCount = getExplicitPoolCount( trait );
+		const val = ( typeof trait.value === 'number' && trait.value > 0 ) ? trait.value : ( dice[0] || ( traitSetArg ? getTraitSetRatings( traitSetArg )[0] : 6 ) || 6 );
+		if ( poolCount !== null ) {
+			const res: number[] = [];
+			for ( let i = 0; i < poolCount; i++ ) res.push( val );
+			return res;
+		}
+		return dice.length > 0 ? dice : [ val ];
+	}
+
+	// Print tally pips: the fixed 1–5 track saturates, so extend the track
+	// to the live count for bigger pools (growth pools grow past 5).
+	function getPrintTallyPips( trait: Trait ) {
+		const count = getResourceDiceCount( trait );
+		const total = Math.max( 5, count );
+		const list: number[] = [];
+		for ( let n = 1; n <= total; n++ ) list.push( n );
+		return list;
 	}
 
 	function setResourceDiceCount( sArg: any, t: any, count: number ) {
@@ -818,6 +911,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const dice = [];
 		for ( let i = 0; i < clamped; i++ ) dice.push( size );
 		cortexFunctions.setTraitDice( trait, dice );
+		ensureView( trait ).poolCount = clamped;
 		updateCharacter( props.character );
 	}
 
@@ -842,23 +936,25 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getSessionRecordConfig( traitSetArg: TraitSet ) {
-		const srec = traitSetArg?.custom?.cortexToolkit?.sessionRecord;
-		const reserved = traitSetArg?.custom?.cortexToolkit?.reservedSlots;
+		const srec = getView( traitSetArg )?.sessionRecord;
+		const reserved = getView( traitSetArg )?.reservedSlots;
 		const traitsLen = traitSetArg?.traits ? traitSetArg.traits.length : 0;
-		const count = Math.max( 1, srec?.count || reserved || traitsLen || 20 );
+		const configured = Number( srec?.count ?? srec?.boxCount ?? reserved ) || 0;
+		const count = Math.max( 1, configured || 20, traitsLen );
 		return { count: count };
 	}
 
 	function getSharedHinderText( traitSetArg: TraitSet ) {
-		if ( traitSetArg?.custom?.cortexToolkit?.sharedHinderText?.trim() ) {
-			return traitSetArg.custom.cortexToolkit.sharedHinderText.trim();
+		const hinderText = getView( traitSetArg )?.sharedHinderText?.trim();
+		if ( hinderText ) {
+			return hinderText;
 		}
 		const noun = ( traitSetArg?.nounSingular && traitSetArg.nounSingular.length ) ? traitSetArg.nounSingular.toLowerCase() : 'distinction';
 		return `Gain a PP when you trade out your ${noun}'s d8 rating for a d4.`;
 	}
 
 	function getTraitSetSlotCount( traitSetArg: TraitSet ) {
-		const custom = traitSetArg?.custom?.cortexToolkit;
+		const custom = getView( traitSetArg );
 		const bodyStyle = custom?.style?.body;
 		if ( bodyStyle === 'notes' || bodyStyle === 'image' || bodyStyle === 'session-record' || bodyStyle === 'angled-lines' ) return 0;
 
@@ -872,7 +968,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	const api: TraitSetApi = {
 		traitSet, s, traitSets, character, submode, editing, printBlank, designerPrintPreview, printStyle, viewY,
-		columnCount, sheetStyle, isSpotlightPrintStyle,
+		columnCount, sheetStyle, isSpotlightPrintStyle, getView, ensureView,
 		getTraitSetLabel, isSpotlightStyle, isSelected, renderText, renderNotesText, getTraitSetClasses,
 		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
 		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
@@ -891,7 +987,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		getImageSetContainerStyle, getImageSetGraphicStyle,
 		getBranchGroups, hasBranchSplit, getBranchRole, getSetDie, getBranchSide, branchSubs, handleBranchFlatClick,
 		getStandingComplication, getStandingBonus, getStandingBonusRatings, getSubtraitNameOr,
-		getTalentEffect, getResourceDiceCount, setResourceDiceCount, addTraitSetDiceToRoller,
+		getTalentEffect, getResourceDiceCount, setResourceDiceCount, getResourcePoolDice, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
 		getSessionRecordConfig, getSharedHinderText, getTraitSetSlotCount
 	};
 

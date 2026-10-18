@@ -20,7 +20,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
 
 // ---- 1. Every template round-trips deep-equal with marker-only warnings.
 {
-  ok(T.length === 27, '27 templates in library', T.length);
+  ok(T.length === 28, '28 templates in library', T.length);
   T.forEach((orig) => {
     const layeredFile = readLayered(orig.id);
     const fresh = M.migrateTemplateEntry(orig);
@@ -49,7 +49,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   const sfx = sets.Distinctions.traits['HERITAGE:'].traits.SFX.traits;
   ok(sfx && sfx.Heritage.description === 'Spend a PP to step up an attribute when you connect to your heritage.',
     'trait sfx kept with description');
-  const dctk = sets.Distinctions.custom.cortexToolkit;
+  const dctk = sets.Distinctions.view;
   ok(dctk.sharedHinder === true &&
     dctk.sharedHinderText === 'Hinder: Gain a PP when you trade out your distinction\'s d8 rating for a d4.',
     'shared hinder banner kept');
@@ -61,17 +61,19 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(sets.Standing.slots['0'].traits.COMPLICATION !== undefined && sets.Standing.slots['0'].traits.BONUS !== undefined,
     'complication/bonus pairs survive');
   ok(Object.keys(sets.Talents.slots).length === 2, 'talent slots count');
-  ok(sets['Signature Assets'].custom.cortexToolkit.reservedSlots === 3 && sets.Standing.custom.cortexToolkit.reservedSlots === 6, 'reservedSlots intact');
-  ok(JSON.stringify(sets.Values.custom.cortexToolkit.ratingScale) === '[4,6,8,10,12]', 'rating scale kept');
+  ok(sets['Signature Assets'].view.reservedSlots === 3 && sets.Standing.view.reservedSlots === 6, 'reservedSlots intact');
+  ok(JSON.stringify(sets.Values.view.ratingScale) === '[4,6,8,10,12]', 'rating scale kept');
   ok(sets.Badges.hasCounterColumn === true && sets.Badges.counterLabel === 'XP', 'counter column kept');
-  const tctk = sets.Talents.custom.cortexToolkit;
-  ok(tctk.colSpan === 'full' && tctk.columnSpan === 'full', 'legacy span keys kept verbatim');
-  ok(sets.Standing.custom.cortexToolkit.rowBreak === true && sets.Standing.custom.cortexToolkit.colWidth === 40, 'grid keys kept');
-  ok(sets.Attributes.custom.cortexToolkit.attributesRing === false, 'ring flag kept');
-  ok(L.character.custom.cortexToolkit.columns === 2 &&
-    L.character.custom.cortexToolkit.watermark.opacity === 0.08, 'sheet custom kept verbatim');
+  const tctk = sets.Talents.view;
+  ok(tctk.span === 3 && tctk.colSpan === undefined && tctk.columnSpan === undefined, 'talents has span: 3');
+  ok(sets.Standing.view.rowBreak === true &&
+    JSON.stringify(sets.Standing.view.widths) === JSON.stringify([40, 60, 0]) &&
+    sets.Standing.view.colWidth === undefined, 'standing has rowBreak: true and widths: [40, 60, 0]');
+  ok(sets.Attributes.view.attributesRing === false, 'ring flag kept');
+  ok(L.character.view.columns === undefined &&
+    L.character.view.watermark.opacity === 0.08, 'columns removed from sheet custom, watermark kept');
   ok(L.character.plotPoints === 1, 'plotPoints kept');
-  ok(L.character.portrait.custom.cortexToolkit.size === 'spotlight', 'portrait custom kept');
+  ok(L.character.portrait.view.size === 'spotlight', 'portrait custom kept');
   const blob = JSON.stringify(L.character.sets);
   ok(blob.indexOf('"traitSets"') === -1, 'no array-form traitSets');
   ok(blob.indexOf('"traits":[') === -1, 'no array-form traits');
@@ -98,8 +100,8 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(JSON.stringify(gmcKeys) === JSON.stringify(['GMC', 'GMC~2', 'GMC~3', 'GMC~4', 'GMC~5', 'GMC~6']), 'suffixed keys in order', gmcKeys);
   ok(L.character.sets['GMC~2'].label === 'GMC', 'display name in label');
   ok(L.character.sets['GMC~2'].id === 'gmc-b', 'each instance keeps its id');
-  ok(L.character.sets['GMC'].custom.cortexToolkit.location === 'left' &&
-    L.character.sets['GMC~2'].custom.cortexToolkit.location === 'right', 'per-instance placement kept');
+  ok(L.character.sets['GMC'].view.track === 1 &&
+    L.character.sets['GMC~2'].view.track === 2, 'per-instance placement kept');
 }
 
 // ---- 5. Blank sfx rows survive with order (retired-crystalline Archetype [_]).
@@ -113,23 +115,23 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
 {
   const L = readLayered('spotlight-alien-us');
   const ss = L.character.sets['Skills & Specialties'];
-  ok(ss.custom.cortexToolkit.setDie === 6, 'set die authored');
-  ok(ss.custom.cortexToolkit.labels &&
-    ss.custom.cortexToolkit.labels.left === 'Specialties' &&
-    ss.custom.cortexToolkit.labels.center === 'Skills' &&
-    ss.custom.cortexToolkit.labels.right === 'Specialties', 'branch labels authored');
-  ok(JSON.stringify(ss.custom.cortexToolkit.subtraitRatingScale) === '[8,10,12]', 'specialty scale authored');
+  ok(ss.view.setDie === 6, 'set die authored');
+  ok(ss.view.labels &&
+    ss.view.labels.left === 'Specialties' &&
+    ss.view.labels.center === 'Skills' &&
+    ss.view.labels.right === 'Specialties', 'branch labels authored');
+  ok(JSON.stringify(ss.view.subtraitRatingScale) === '[8,10,12]', 'specialty scale authored');
   ok(JSON.stringify(Object.keys(ss.traits)) === JSON.stringify(['Bout', 'Chat', 'Find', 'Make', 'Play', 'Operate', 'Work']),
     'seven skills in sheet order', Object.keys(ss.traits));
   ok(ss.traits.Bout.value === undefined, 'skills unrated');
   ok(ss.traits.Bout.traits === undefined, 'no pre-filled specialties');
   ok(Object.keys(ss.traits.Bout.slots).join(',') === '0,1', 'blank specialty slots indexed');
-  ok(ss.traits.Bout.slots['0'].custom.cortexToolkit.branchSide === 'left', 'left slot marked');
-  ok(ss.traits.Bout.slots['1'].custom.cortexToolkit.branchSide === 'right', 'right slot marked');
-  ok(L.character.sets['Session Record'].custom.cortexToolkit.sessionRecord.orientation === 'horizontal', 'session horizontal authored');
+  ok(ss.traits.Bout.slots['0'].view.branchSide === 'left', 'left slot marked');
+  ok(ss.traits.Bout.slots['1'].view.branchSide === 'right', 'right slot marked');
+  ok(L.character.sets['Session Record'].view.sessionRecord.orientation === 'horizontal', 'session horizontal authored');
   ok(L.version === 1, 'alien-us version baseline');
   const v = L.character.sets.Values;
-  ok(v.custom.cortexToolkit.style.body === 'default' && v.custom.cortexToolkit.traitColumns === 2, 'values two-column style');
+  ok(v.view.style.body === 'default' && v.view.traitColumns === 2, 'values two-column style');
   ok(v.traits.Alien.description === '', 'no pre-filled value statements');
   ok(JSON.stringify(Object.keys(v.traits)) === JSON.stringify(['Alien', 'Conformity', 'Materialism', 'Paranoia', 'Patriotism', 'Secrecy', 'Spirituality']), 'value names kept');
 }

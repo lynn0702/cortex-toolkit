@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getView, ensureView } from './model.ts';
 
 const props = defineProps<{
 	character: any;
@@ -53,7 +54,7 @@ const availableValues = computed( () => {
 	const s = props.traitSetID;
 	const traitSet = props.character.traitSets[ s ];
 	const ratings = cortexFunctions.getSubtraitRatings( traitSet );
-	if ( traitSet?.custom?.cortexToolkit?.style?.body === 'paired-slots' && subtrait.value?.name && subtrait.value.name.toUpperCase().includes( 'BONUS' ) ) {
+	if ( getView( traitSet )?.style?.body === 'paired-slots' && subtrait.value?.name && subtrait.value.name.toUpperCase().includes( 'BONUS' ) ) {
 		if ( Array.isArray( ratings ) && ratings.length === 5 && ratings[ 0 ] === 4 ) {
 			return ratings.filter( ( size: number ) => size >= 6 );
 		}
@@ -64,17 +65,15 @@ const availableValues = computed( () => {
 const parentIsBranch = computed( () => {
 	const s = props.traitSetID;
 	const traitSet = props.character?.traitSets?.[ s ];
-	return traitSet?.custom?.cortexToolkit?.style?.body === 'subtrait-columns';
+	return getView( traitSet )?.style?.body === 'subtrait-columns';
 } );
 
 const branchSide = computed( {
 	get() {
-		return subtrait.value?.custom?.cortexToolkit?.branchSide === 'left' ? 'left' : 'right';
+		return getView( subtrait.value )?.branchSide === 'left' ? 'left' : 'right';
 	},
 	set( val: string ) {
-		if ( !subtrait.value.custom ) subtrait.value.custom = {};
-		if ( !subtrait.value.custom.cortexToolkit ) subtrait.value.custom.cortexToolkit = {};
-		subtrait.value.custom.cortexToolkit.branchSide = ( val === 'left' ) ? 'left' : 'right';
+		ensureView( subtrait.value ).branchSide = ( val === 'left' ) ? 'left' : 'right';
 		updateCharacter( props.character );
 	},
 } );
@@ -139,8 +138,8 @@ function getDieDisplayValue( value: any ) {
 		<div class="editor-fields">
 
 			<div class="editor-field">
-				<label>Subtrait Name</label>
-				<input type="text" v-model="name">
+				<label :for="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID">Subtrait Name</label>
+				<input type="text" :id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitName" v-model="name">
 			</div>
 
 			<ul class="editor-values">
@@ -158,7 +157,7 @@ function getDieDisplayValue( value: any ) {
 			</ul>
 
 			<div class="editor-field" v-if="parentIsBranch">
-				<label>Side</label>
+				<div class="editor-label">Side</div>
 				<div class="editor-button-group">
 					<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
 						<i class="fas fa-arrow-left"></i> Left

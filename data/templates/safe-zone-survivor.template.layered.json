@@ -17,38 +17,33 @@
     "pronouns": "",
     "plotPoints": 1,
     "notes": "",
-    "custom": {
-      "cortexToolkit": {
-        "pageCount": 1,
-        "spotlight": "Safe Zone",
-        "style": {
-          "hasAttributes": false
-        },
-        "sheetStyle": "spotlight",
-        "columns": 3,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
     "player": "",
     "portrait": {
       "url": "",
-      "custom": {
-        "cortexToolkit": {
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "size": "spotlight",
+        "location": "header"
+      }
+    },
+    "view": {
+      "pageCount": 1,
+      "spotlight": "Safe Zone",
+      "style": {
+        "hasAttributes": false
+      },
+      "sheetStyle": "spotlight",
+      "watermark": {
+        "enabled": true,
+        "url": "images/cortex_prime_logo_light_transparent.png",
+        "opacity": 0.08,
+        "scale": 70,
+        "page": "all"
+      },
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -58,33 +53,30 @@
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "sharedHinder": true,
-            "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
-              8
-            ],
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": "full",
-            "columnSpan": "full"
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "sharedHinder": true,
+          "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
+          "ratingScale": [
+            8
+          ],
+          "location": "left",
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "span": 3
         },
         "traits": {
           "Before:": {
@@ -134,44 +126,45 @@
         "nounSingular": "Skill",
         "nounPlural": "Skills",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": true
-            },
-            "location": "left",
-            "colSpan": 2,
-            "columnSpan": 2,
-            "rowSpan": 3,
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "subtrait-columns"
-            },
-            "ratingScale": [
-              4,
-              6
-            ],
-            "subtraitRatingScale": [
-              8,
-              10,
-              12
-            ],
-            "labels": {
-              "left": "Skills",
-              "right": "Specialties"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 20
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": true
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "subtrait-columns"
+          },
+          "ratingScale": [
+            4,
+            6
+          ],
+          "subtraitRatingScale": [
+            8,
+            10,
+            12
+          ],
+          "labels": {
+            "left": "Skills",
+            "right": "Specialties"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 20,
+          "track": 1,
+          "span": 2,
+          "widths": [
+            33.333,
+            33.333,
+            33.334
+          ]
         },
         "traits": {
           "Animals": {
@@ -422,36 +415,35 @@
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "attributesRing": false
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "attributesRing": false,
+          "track": 3,
+          "span": 1
         },
         "traits": {
           "Analytical": {
@@ -477,35 +469,34 @@
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 10
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 10,
+          "track": 3,
+          "span": 1
         },
         "traits": {},
         "slots": {
@@ -567,36 +558,35 @@
         "nounSingular": "Stress",
         "nounPlural": "Stress",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "stress"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
-            "notes": "",
-            "reservedSlots": 5
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "stress"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": false,
+          "stressConfig": {
+            "includeD4": true,
+            "includeOut": false
+          },
+          "notes": "",
+          "reservedSlots": 5,
+          "track": 3,
+          "span": 1
         },
         "traits": {
           "Injured": {
@@ -632,29 +622,31 @@
         "nounSingular": "Talent",
         "nounPlural": "Talents",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "location": "left",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
-            "colSpan": 2,
-            "columnSpan": 2,
-            "rowBreak": true
-          }
+        "view": {
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "three-column-table"
+          },
+          "multiDie": false,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 3,
+          "rowBreak": true,
+          "track": 1,
+          "span": 2,
+          "widths": [
+            33.333,
+            33.333,
+            33.334
+          ]
         },
         "traits": {},
         "slots": {
@@ -681,62 +673,76 @@
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "header": "top",
-            "headerAlign": "center",
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "location": "right",
-            "page": 1,
-            "style": {
-              "header": "default",
-              "body": "dice-ladder"
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 5
-          }
+        "view": {
+          "header": "top",
+          "headerAlign": "center",
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "dice-count"
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": true,
+          "pool": true,
+          "stressConfig": {
+            "includeOut": true
+          },
+          "notes": "",
+          "reservedSlots": 5,
+          "track": 3,
+          "span": 1
         },
-        "traits": {},
-        "slots": {
-          "0": {
+        "traits": {
+          "D4": {
+            "value": "d4",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 1
+            }
           },
-          "1": {
+          "D6": {
+            "value": "d6",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 1
+            }
           },
-          "2": {
+          "D8": {
+            "value": "d8",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 1
+            }
           },
-          "3": {
+          "D10": {
+            "value": "d10",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 1
+            }
           },
-          "4": {
+          "D12": {
+            "value": "d12",
             "description": "",
             "tags": [],
-            "custom": {}
+            "view": {
+              "poolCount": 1
+            }
           }
         }
       }

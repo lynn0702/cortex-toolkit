@@ -99,6 +99,7 @@ function sfxArrayFrom(container: unknown): unknown[] | undefined {
 		const entry: Record<string, unknown> = { name: key };
 		entry.description = typeof o.description === "string" ? o.description : "";
 		if (o.tags !== undefined) entry.tags = clone(o.tags);
+		if (o.view !== undefined) entry.view = clone(o.view);
 		if (o.custom !== undefined) entry.custom = clone(o.custom);
 		out.push(entry);
 	}
@@ -108,7 +109,8 @@ function sfxArrayFrom(container: unknown): unknown[] | undefined {
 		const entry: Record<string, unknown> = { name: "" };
 		entry.description = typeof o.description === "string" ? o.description : "";
 		entry.tags = o.tags !== undefined ? clone(o.tags) : [];
-		entry.custom = o.custom !== undefined ? clone(o.custom) : {};
+		if (o.view !== undefined) entry.view = clone(o.view);
+		if (o.custom !== undefined) entry.custom = clone(o.custom);
 		out.push(entry);
 	}
 	return out.length ? out : undefined;
@@ -146,12 +148,89 @@ function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitR
 	return out;
 }
 
+function mergeCustom(base: unknown, override: unknown): Record<string, unknown> {
+	if (!base || typeof base !== "object" || Array.isArray(base)) {
+		return (override && typeof override === "object" && !Array.isArray(override))
+			? (clone(override) as Record<string, unknown>)
+			: {};
+	}
+	if (!override || typeof override !== "object" || Array.isArray(override)) {
+		return clone(base) as Record<string, unknown>;
+	}
+	const result = clone(base) as Record<string, unknown>;
+	for (const [k, v] of Object.entries(override as Record<string, unknown>)) {
+		if (
+			v &&
+			typeof v === "object" &&
+			!Array.isArray(v) &&
+			typeof result[k] === "object" &&
+			result[k] &&
+			!Array.isArray(result[k])
+		) {
+			result[k] = mergeCustom(result[k], v);
+		} else {
+			result[k] = clone(v);
+		}
+	}
+	return result;
+}
+
+// Presentation moved from legacy `custom.cortexToolkit` to top-level `view`.
+// Pinned snapshots and legacy stored entities may still carry the old key, so
+// fold it UNDER the current bag on both sides of the merge. A partial view
+// override (e.g. span/track written by the layout editor) must never shadow
+// the full presentation (e.g. the set's style) sitting in the legacy bag.
+function legacyBag(node: unknown): Record<string, unknown> {
+	if (!node || typeof node !== "object") return {};
+	const record = node as Record<string, unknown>;
+	const bag = record.custom;
+	if (!bag || typeof bag !== "object" || Array.isArray(bag)) return {};
+	const inner = (bag as Record<string, unknown>).cortexToolkit;
+	if (!inner || typeof inner !== "object" || Array.isArray(inner)) return {};
+	return inner as Record<string, unknown>;
+}
+
+// After folding the legacy presentation bag into `view`, drop the old key so
+// the render object carries a single presentation bag (getView prefers `view`).
+function dropLegacyBag(node: Record<string, unknown>): void {
+	const bag = node.custom;
+	if (!bag || typeof bag !== "object" || Array.isArray(bag)) return;
+	const inner = bag as Record<string, unknown>;
+	if (inner.cortexToolkit !== undefined) {
+		delete inner.cortexToolkit;
+		if (Object.keys(inner).length === 0) delete node.custom;
+	}
+}
+
+// Split-brain heal: a node carrying BOTH the current `view` bag and the
+// legacy `custom.cortexToolkit` bag renders only the first (getView prefers
+// `view`), so the legacy presentation is silently shadowed — e.g. a stale
+// span/track-only view hiding the set's style, which drops the whole style
+// dispatch. Fold legacy UNDER view and drop the old key. Single-bag nodes
+// pass through untouched (the exact-codec tests depend on verbatim
+// passthrough), so this only fires on genuinely dual-bagged nodes.
+function healSplitView(node: { view?: unknown; custom?: unknown }): void {
+	const rec = node as Record<string, unknown>;
+	if (rec.view === undefined) return; // legacy-only: keep verbatim
+	if (!Object.keys(legacyBag(rec)).length) return; // view-only: keep verbatim
+	rec.view = mergeCustom(legacyBag(rec), rec.view);
+	dropLegacyBag(rec);
+}
+
 function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): LegacyTrait {
 	const et = asTrait(raw);
 	const t: LegacyTrait = pres ? clone(pres) : { name };
 	if (!pres) t.name = name;
 	for (const [k, v] of Object.entries(et)) {
 		if (k === "traits" || k === "pool") continue;
+		if (k === "custom") {
+			t.custom = mergeCustom(pres?.custom, v);
+			continue;
+		}
+		if (k === "view") {
+			t.view = mergeCustom(pres?.view, v);
+			continue;
+		}
 		if (k === "value") {
 			const hadDice = pres ? Object.prototype.hasOwnProperty.call(pres, "dice") : true;
 			if (v === null) {
@@ -172,6 +251,7 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 		}
 		(t as Record<string, unknown>)[k] = clone(v);
 	}
+	healSplitView(t);
 	const subs = et.traits as Record<string, TraitRaw> | undefined;
 	if (subs) {
 		const sfx = sfxArrayFrom(subs.SFX);
@@ -188,8 +268,17 @@ function buildSet(pres: LegacySet | null, eset: SetObject, name: string): Legacy
 	if (!pres) set.name = name;
 	for (const [k, v] of Object.entries(eset)) {
 		if (k === "traits") continue;
+		if (k === "custom") {
+			set.custom = mergeCustom(pres?.custom, v);
+			continue;
+		}
+		if (k === "view") {
+			set.view = mergeCustom(pres?.view, v);
+			continue;
+		}
 		(set as Record<string, unknown>)[k] = clone(v);
 	}
+	healSplitView(set);
 	const traitsMap = eset.traits as Record<string, TraitRaw> | undefined;
 	const sfx = sfxArrayFrom(traitsMap?.SFX);
 	const rest: Record<string, TraitRaw> = { ...(traitsMap ?? {}) };
@@ -203,7 +292,7 @@ function buildSet(pres: LegacySet | null, eset: SetObject, name: string): Legacy
  * Fold a layered file (envelope + entity) onto its presentation template and
  * return the legacy array-shaped character the renderer reads. `presentation`
  * is the template character (legacy array shape): its character-level fields
- * (custom, portrait, nouns, $schema…) fill whatever the entity does not set,
+ * (view, custom, portrait, nouns, $schema…) fill whatever the entity does not set,
  * and its `traitSets` supply set/trait order + presentation. Omit it for
  * entity-only output.
  */
@@ -222,7 +311,28 @@ export function materializeCharacter(
 	// entity character-level keys win over the presentation base
 	for (const [k, v] of Object.entries(file)) {
 		if (k === "sets" || k === "template") continue;
+		if (k === "custom") {
+			out.custom = mergeCustom(base.custom, v);
+			continue;
+		}
+		if (k === "view") {
+			out.view = mergeCustom(base.view, v);
+			continue;
+		}
 		out[k] = clone(v);
+	}
+	healSplitView(out as { view?: unknown; custom?: unknown });
+	if (file.portrait && typeof file.portrait === "object") {
+		const fp = file.portrait as Record<string, unknown>;
+		const bp = (base.portrait && typeof base.portrait === "object") ? (base.portrait as Record<string, unknown>) : {};
+		const p: Record<string, unknown> = clone(bp);
+		for (const [pk, pv] of Object.entries(fp)) {
+			if (pk === "view") p.view = mergeCustom(bp.view, pv);
+			else if (pk === "custom") p.custom = mergeCustom(bp.custom, pv);
+			else p[pk] = clone(pv);
+		}
+		healSplitView(p as { view?: unknown; custom?: unknown });
+		out.portrait = p;
 	}
 	// isTemplate belongs to the entity, not the presentation template it folds onto.
 	out.isTemplate = file.isTemplate === true;
@@ -277,6 +387,7 @@ function sfxContainerFrom(arr: unknown[]): Record<string, unknown> {
 			const o: Record<string, unknown> = {};
 			o.description = src.description !== undefined ? clone(src.description) : "";
 			if (src.tags !== undefined) o.tags = clone(src.tags);
+			if (src.view !== undefined) o.view = clone(src.view);
 			if (src.custom !== undefined) o.custom = clone(src.custom);
 			if (!name.length) slots[String(i)] = o;
 			else traits[name] = o;

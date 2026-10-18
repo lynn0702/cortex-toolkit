@@ -1,4 +1,4 @@
-﻿.editor {
+.editor {
 	@extend %no-print;
 	position: absolute;
 	z-index: var(--z-editor);
@@ -313,7 +313,8 @@
 	flex-direction: column;
 	row-gap: 1rem;
 
-	label {
+	label,
+	.editor-label {
 		display: block;
 		font-family: var(--font-secondary);
 		margin-bottom: .25rem;

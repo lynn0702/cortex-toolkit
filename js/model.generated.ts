@@ -6,6 +6,12 @@
  */
 export type Tags = string[];
 /**
+ * App presentation and view settings (layout, placement, style, features).
+ */
+export type View = {
+  [k: string]: unknown;
+} | null;
+/**
  * Represents the “Hinder” core SFX.
  */
 export type SfxHinder = "hinder";
@@ -72,7 +78,8 @@ export interface Character {
      */
     alt: string;
     tags: Tags;
-    custom: Custom;
+    view?: View;
+    custom?: Custom;
   };
   /**
    * Layout resolution: template names the sheet template whose values fill in anything not set locally (live: bare { id }; file export: full embedded template object).
@@ -104,7 +111,8 @@ export interface Character {
    */
   notes: string;
   tags: Tags;
-  custom: Custom;
+  view?: View;
+  custom?: Custom;
 }
 export interface TraitSet {
   /**
@@ -156,7 +164,8 @@ export interface TraitSet {
    */
   counterLabel?: string | null;
   tags: Tags;
-  custom: Custom;
+  view?: View;
+  custom?: Custom;
 }
 export interface Trait {
   /**
@@ -204,7 +213,8 @@ export interface Trait {
    */
   sfx: (Sfx | SfxHinder)[];
   tags: Tags;
-  custom: Custom;
+  view?: View;
+  custom?: Custom;
 }
 export interface Sfx {
   /**
@@ -216,7 +226,8 @@ export interface Sfx {
    */
   description: string;
   tags: Tags;
-  custom: Custom;
+  view?: View;
+  custom?: Custom;
 }
 /**
  * An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.
@@ -253,7 +264,7 @@ export interface SheetTemplate {
   version?: number;
   updatedAt?: string;
   /**
-   * Character-shaped blank carrying the layout (custom.cortexToolkit at sheet and set level) plus blank traits.
+   * Character-shaped blank carrying the layout (view at sheet and set level) plus blank traits.
    */
   character: {};
   [k: string]: unknown;

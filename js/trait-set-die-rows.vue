@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitEditor from './trait-editor.vue';
 
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, isSpotlightPrintStyle, renderDieValueForPrint,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, isSpotlightStyle, renderDieValueForPrint,
 	handleSingleDieClick, hasCounterColumn, getTraitCounter
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-die-rows" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'die-rows'">
+	<div class="trait-die-rows" v-if="getView(traitSet)?.style?.body === 'die-rows'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
 				<div :class="{ 'trait-inner': true, 'die-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
@@ -21,31 +21,24 @@ const {
 					@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
 					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
 					<span class="die-row-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
-					<span class="die-row-name die-row-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
+					<span class="die-row-name die-row-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
+						<template v-if="submode === 'edit' && !designerPrintPreview && !printBlank && !item.trait.name">
+							<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+						</template>
+						<template v-else>
+							<span class="trait-blank-line"></span>
+						</template>
+					</span>
 					<span class="die-row-name" v-else>{{ item.trait.name || '' }}</span>
 					<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
 						<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-							:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+							:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
 							v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
 					</div>
 					<span class="die-row-counter" v-if="hasCounterColumn(traitSet)">
 						{{ (!printBlank && !item.isPlaceholder) ? getTraitCounter(item.trait) : '' }}
 					</span>
 				</div>
-				<transition name="editor" appear>
-					<TraitEditor
-						v-if="!item.isPlaceholder"
-						:character="character"
-						:open="isSelected(['trait', s, item.originalIndex])"
-						v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
-						:traitSetID="s"
-						:traitID="item.originalIndex"
-						:viewY="viewY"
-						@selectElement="selectElement"
-						@updateCharacter="updateCharacter"
-						@removeTrait="removeTrait"
-					></TraitEditor>
-				</transition>
 			</div>
 		</template>
 		<transition appear>

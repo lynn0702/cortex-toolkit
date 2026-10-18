@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitEditor from './trait-editor.vue';
 
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightPrintStyle,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitStatement, renderText, getSubtraitNameOr,
 	getStandingComplication, getStandingBonus, getStandingBonusRatings
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-paired-slots" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'paired-slots'">
+	<div class="trait-paired-slots" v-if="getView(traitSet)?.style?.body === 'paired-slots'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
 				<div :class="{ 'trait-inner': true, 'paired-slot-row-wrap': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
@@ -38,7 +38,7 @@ const {
 					<div class="paired-slot-dice-row">
 						<div class="paired-slot-main-dice single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
 							<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-								:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+								:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
 								v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
 						</div>
 						<div class="paired-slot-sub-group">
@@ -47,12 +47,12 @@ const {
 								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingComplication(item.trait)"
 									@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), getStandingComplication(item.trait).value, traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
-										:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && getStandingComplication(item.trait).value === size }"
+										:class="{ 'c': true, 'active': !printBlank && getStandingComplication(item.trait).value === size }"
 										v-html="renderDieValueForPrint(size, !printBlank && getStandingComplication(item.trait).value === size)"></span>
 								</div>
 								<div class="subtrait-value" v-else>
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
-										:class="{ 'c': !isSpotlightPrintStyle, 'active': false }"
+										:class="{ 'c': true, 'active': false }"
 										v-html="renderDieValueForPrint(size, false)"></span>
 								</div>
 							</div>
@@ -61,32 +61,18 @@ const {
 								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingBonus(item.trait)"
 									@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), getStandingBonus(item.trait).value, traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"
-										:class="{ 'c': !isSpotlightPrintStyle, 'active': !printBlank && getStandingBonus(item.trait).value === size }"
+										:class="{ 'c': true, 'active': !printBlank && getStandingBonus(item.trait).value === size }"
 										v-html="renderDieValueForPrint(size, !printBlank && getStandingBonus(item.trait).value === size)"></span>
 								</div>
 								<div class="subtrait-value" v-else>
 									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"
-										:class="{ 'c': !isSpotlightPrintStyle, 'active': false }"
+										:class="{ 'c': true, 'active': false }"
 										v-html="renderDieValueForPrint(size, false)"></span>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<transition name="editor" appear>
-					<TraitEditor
-						v-if="!item.isPlaceholder"
-						:character="character"
-						:open="isSelected(['trait', s, item.originalIndex])"
-						v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
-						:traitSetID="s"
-						:traitID="item.originalIndex"
-						:viewY="viewY"
-						@selectElement="selectElement"
-						@updateCharacter="updateCharacter"
-						@removeTrait="removeTrait"
-					></TraitEditor>
-				</transition>
 			</div>
 		</template>
 		<transition appear>

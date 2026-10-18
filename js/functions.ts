@@ -1,6 +1,7 @@
 import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
+import { VIEW_KEY, getView, ensureView } from './model.ts';
 import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
@@ -8,6 +9,9 @@ declare const cortexSpotlightTemplates: any;
 export const cortexFunctions = {
 
 	cloneDeep: cloneDeep,
+	VIEW_KEY: VIEW_KEY,
+	getView: getView,
+	ensureView: ensureView,
 
 	// Layered-model helpers (TS pilot). Imported here so the TypeScript
 	// toolchain compiles it into the bundle; consumers land during the UI pass.
@@ -80,11 +84,11 @@ export const cortexFunctions = {
 		let fill = isFilled ? '#000000' : 'none';
 		let stroke = '#000000';
 		let textFill = isFilled ? '#ffffff' : '#000000';
-		let strokeWidth = 1.7;
+		let strokeWidth = 1;
 		let defs = '';
 
 		if ( cfg && (cfg.style === 'custom' || cfg.backgroundType) ) {
-			strokeWidth = Number(cfg.borderWidth) || 1.7;
+			strokeWidth = Number(cfg.borderWidth) || 1;
 			if ( isFilled ) {
 				stroke = cfg.borderColor || '#000000';
 				textFill = cfg.numeralColor || '#ffffff';
@@ -131,33 +135,33 @@ export const cortexFunctions = {
 		if ( s === 4 ) {
 			// Inverted triangle pointing down
 			shape = `<polygon points="2.5,4 21.5,4 12,20" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">4</text>`;
+			text = `<text aria-hidden="true" x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">4</text>`;
 		} else if ( s === 6 ) {
 			// Square
-			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">6</text>`;
+			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">6</text>`;
 		} else if ( s === 8 ) {
 			// Diamond
 			shape = `<polygon points="12,2.5 21.5,12 12,21.5 2.5,12" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">8</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">8</text>`;
 		} else if ( s === 10 ) {
 			// Kite / Hexagon
 			shape = `<polygon points="12,2.5 21.5,7.5 21.5,16.5 12,21.5 2.5,16.5 2.5,7.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="8.75" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">10</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}">10</text>`;
 		} else if ( s === 12 ) {
-			// 12-sided regular dodecagon
-			shape = `<polygon points="12,2.5 16.75,3.77 20.23,7.25 21.5,12 20.23,16.75 16.75,20.23 12,21.5 7.25,20.23 3.77,16.75 2.5,12 3.77,7.25 7.25,3.77" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="8.75" font-weight="900" letter-spacing="-0.03em" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">12</text>`;
+			// Regular pentagon pointing up
+			shape = `<polygon points="12,2.7 21.7,9.8 18,21.3 6,21.3 2.3,9.8" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
+			text = `<text aria-hidden="true" x="12" y="12.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}">12</text>`;
 		} else {
-			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" fill="${textFill}">${s}</text>`;
+			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">${s}</text>`;
 		}
 
-		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1.35rem" height="1.35rem" style="display:inline-block; vertical-align:middle; overflow:visible;">${defs}${shape}${text}</svg>`;
+		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1.45rem" height="1.45rem" style="display:inline-block; vertical-align:middle; overflow:visible; width:var(--diecon-size, 1.45rem); height:var(--diecon-size, 1.45rem);">${defs}${shape}${text}</svg>`;
 	},
 
 	getTraitSetRatings: function( traitSet: TraitSet ) {
-		const custom = traitSet?.custom?.cortexToolkit;
+		const custom = getView( traitSet );
 		if ( Array.isArray(custom?.ratingScale) && custom.ratingScale.length > 0 ) {
 			return [...custom.ratingScale].sort((a, b) => a - b);
 		}
@@ -165,13 +169,13 @@ export const cortexFunctions = {
 	},
 
 	getRingTrait: function( traitSet: TraitSet ) {
-		const ctk = traitSet?.custom?.cortexToolkit;
+		const ctk = getView( traitSet );
 		if ( !ctk ) return undefined;
 		return ctk.ringTrait !== undefined ? ctk.ringTrait : ctk.attributesRing;
 	},
 
 	getSubtraitRatings: function( traitSet: TraitSet ) {
-		const custom = traitSet?.custom?.cortexToolkit;
+		const custom = getView( traitSet );
 		if ( Array.isArray(custom?.subtraitRatingScale) && custom.subtraitRatingScale.length > 0 ) {
 			return [...custom.subtraitRatingScale].sort((a, b) => a - b);
 		}
@@ -886,8 +890,11 @@ export const cortexFunctions = {
 		delete snapshot.sheet;
 		snapshot.isTemplate = true;
 		snapshot.name = '';
+		if ( snapshot.view ) {
+			delete snapshot.view.nickname; // Character data, not layout.
+		}
 		if ( snapshot.custom && snapshot.custom.cortexToolkit ) {
-			delete snapshot.custom.cortexToolkit.nickname; // Character data, not layout.
+			delete snapshot.custom.cortexToolkit.nickname;
 		}
 		// Templates must never carry removals or internal ids: removals are
 		// character-local (they would otherwise infect every character) and
@@ -1226,19 +1233,17 @@ export const cortexFunctions = {
 				],
 				'sfx': [],
 				'tags': [],
-				'custom': {
-					'cortexToolkit': {
-						'features': {
-							'description': true,
-							'sfx': true,
-							'subtraits': false
-						},
-						'location': 'left',
-						'reservedSlots': 3,
-						'style': {
-							'header': 'distinctions',
-							'body': 'distinctions',
-						}
+				'view': {
+					'features': {
+						'description': true,
+						'sfx': true,
+						'subtraits': false
+					},
+					'location': 'left',
+					'reservedSlots': 3,
+					'style': {
+						'header': 'distinctions',
+						'body': 'distinctions',
 					}
 				},
 			},
@@ -1256,7 +1261,6 @@ export const cortexFunctions = {
 						'traits': [],
 						'sfx': [],
 						'tags': [],
-						'custom': {},
 					},
 					{
 						'name': 'Mental',
@@ -1266,7 +1270,6 @@ export const cortexFunctions = {
 						'traits': [],
 						'sfx': [],
 						'tags': [],
-						'custom': {},
 					},
 					{
 						'name': 'Social',
@@ -1276,24 +1279,21 @@ export const cortexFunctions = {
 						'traits': [],
 						'sfx': [],
 						'tags': [],
-						'custom': {},
 					}
 				],
 				'sfx': [],
 				'tags': [],
-				'custom': {
-					'cortexToolkit': {
-						'features': {
-							'description': false,
-							'sfx': false,
-							'subtraits': false
-						},
-						'location': 'right',
-						'reservedSlots': 3,
-						'style': {
-							'header': 'default',
-							'body': 'default',
-						}
+				'view': {
+					'features': {
+						'description': false,
+						'sfx': false,
+						'subtraits': false
+					},
+					'location': 'right',
+					'reservedSlots': 3,
+					'style': {
+						'header': 'default',
+						'body': 'default',
 					}
 				},
 			},
@@ -1311,24 +1311,21 @@ export const cortexFunctions = {
 						'traits': [],
 						'sfx': [],
 						'tags': [],
-						'custom': {},
 					}
 				],
 				'sfx': [],
 				'tags': [],
-				'custom': {
-					'cortexToolkit': {
-						'features': {
-							'description': false,
-							'sfx': false,
-							'subtraits': false
-						},
-						'location': 'right',
-						'reservedSlots': 4,
-						'style': {
-							'header': 'default',
-							'body': 'default',
-						}
+				'view': {
+					'features': {
+						'description': false,
+						'sfx': false,
+						'subtraits': false
+					},
+					'location': 'right',
+					'reservedSlots': 4,
+					'style': {
+						'header': 'default',
+						'body': 'default',
 					}
 				},
 			}
@@ -1337,31 +1334,27 @@ export const cortexFunctions = {
 			'url': '',
 			'alt': '',
 			'tags': [],
-			'custom': {
-				'cortexToolkit': {
-					'alignment': 'top-center',
-					'size': 'spotlight',
-					'location': 'header'
-				}
+			'view': {
+				'alignment': 'top-center',
+				'size': 'spotlight',
+				'location': 'header'
 			}
 		},
 		'plotPoints': 1,
 		'notes': '',
 		'tags': [],
-		'custom': {
-			'cortexToolkit': {
-				'sheetStyle': 'spotlight',
-				'columns': 2,
-				'pageCount': 1,
-				'columnAlignment': 'top-base',
-				'columnOffsets': {
-					'left': 0,
-					'center': 0,
-					'right': 0
-				},
-				'style': {
-					'hasAttributes': false,
-				}
+		'view': {
+			'sheetStyle': 'spotlight',
+			'columns': 2,
+			'pageCount': 1,
+			'columnAlignment': 'top-base',
+			'columnOffsets': {
+				'left': 0,
+				'center': 0,
+				'right': 0
+			},
+			'style': {
+				'hasAttributes': false,
 			}
 		}
 	},
@@ -1374,25 +1367,23 @@ export const cortexFunctions = {
 		traits: [],
 		sfx: [],
 		tags: [],
-		custom: {
-			'cortexToolkit': {
-				features: {
-					description: false,
-					sfx: false,
-					subtraits: false
-				},
-				location: 'left',
-				style: {
-					header: 'default',
-					body: 'default',
-				},
-				multiDie: false,
+		view: {
+			features: {
+				description: false,
+				sfx: false,
+				subtraits: false
+			},
+			location: 'left',
+			style: {
+				header: 'default',
+				body: 'default',
+			},
+			multiDie: false,
 				stressConfig: {
 					includeOut: true
 				},
 				notes: ''
 			}
-		}
 	},
 	
 	defaultTrait: {

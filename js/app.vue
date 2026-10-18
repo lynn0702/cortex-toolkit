@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { cortexMigration } from './migration.ts';
 import { cortexStorage } from './storage.ts';
 import { cortexPal } from './cortex-pal.ts';
 import Roster from './roster.vue';
 import Character from './character.vue';
 import DiceRoller from './dice-roller.vue';
+import StudioPanel from './studio-panel.vue';
 import AppHeader from './app-header.vue';
 import AppFooter from './app-footer.vue';
 import SessionNav from './session-nav.vue';
@@ -31,7 +33,10 @@ const editing = ref<any>( null );
 const viewY = ref<number | null>( null );
 const dicePool = ref( new cortexPal.DicePool() );
 const isRollerOpen = ref( false );
-const rollerPosition = ref( 'left' );
+const rollerPosition = ref( 'right' );
+const isStudioPanelOpen = ref( true );
+const studioPanelTab = ref<'properties' | 'roller'>( 'properties' );
+const panelPosition = ref<'left' | 'right'>( 'right' );
 const mobileActiveView = ref( 'sheet' );
 const storeReady = ref( false );
 const storeError = ref<any>( null );
@@ -53,6 +58,7 @@ const baseURL = computed( () => window.location.href.replace( '/index.html', '/'
 const year = computed( () => ( new Date() ).getFullYear() );
 const characterIndex = computed( () => characters.value.findIndex( ( character: any ) => character.id === characterID.value ) );
 const character = computed( () => characters.value[ characterIndex.value ] );
+const canPlay = computed( () => Boolean( character.value || openCharacterIDs.value.length ) );
 
 const { canUndo, canRedo, initHistory, commitHistorySnapshot, validateEditing, undo, redo } = useHistory( {
 	mode, character, characters, characterIndex, editing,
@@ -124,6 +130,19 @@ onMounted( async () => {
 
 // ---- methods: view ----
 function setMode( m: string, sub: string | null, updateHash = true ) {
+	if ( m === 'character' && sub === 'play' ) {
+		if ( !openCharacterIDs.value.length && characters.value.length ) {
+			if ( characterID.value ) {
+				openCharacterIDs.value = [ characterID.value ];
+			} else {
+				openCharacterIDs.value = [ characters.value[ 0 ].id ];
+			}
+			saveOpenCharacterIDs();
+		}
+		if ( ( !characterID.value || !openCharacterIDs.value.includes( characterID.value ) ) && openCharacterIDs.value.length ) {
+			characterID.value = openCharacterIDs.value[ 0 ];
+		}
+	}
 	if ( m === 'character' && !character.value ) return;
 	if ( m !== 'character' || sub !== 'edit' ) {
 		commitHistorySnapshot();
@@ -132,6 +151,13 @@ function setMode( m: string, sub: string | null, updateHash = true ) {
 	mode.value = m;
 	submode.value = sub;
 	if ( m === 'character' && sub === 'play' ) {
+		isStudioPanelOpen.value = true;
+		studioPanelTab.value = 'roller';
+		isRollerOpen.value = true;
+		mobileActiveView.value = 'sheet';
+	} else if ( m === 'character' && sub === 'edit' ) {
+		isStudioPanelOpen.value = true;
+		studioPanelTab.value = 'properties';
 		isRollerOpen.value = true;
 		mobileActiveView.value = 'sheet';
 	} else {
@@ -167,7 +193,7 @@ function parseRouteHash() {
 	} else {
 		setMode( 'roster', null, false );
 		if ( window.location.hash !== '#/roster' ) {
-			window.location.hash = '#/roster';
+			window.history.replaceState( null, '', '#/roster' );
 		}
 	}
 	nextTick( () => { isHandlingHash.value = false; } );
@@ -182,26 +208,58 @@ function updateRouteHash() {
 		target = `#/character/${characterID.value}/${submode.value || 'edit'}`;
 	}
 	if ( window.location.hash !== target ) {
-		window.location.hash = target;
+		window.history.replaceState( null, '', target );
 	}
 }
 
 function toggleRoller() {
-	isRollerOpen.value = !isRollerOpen.value;
-	if ( isRollerOpen.value ) {
-		mobileActiveView.value = 'roller';
+	isStudioPanelOpen.value = !isStudioPanelOpen.value;
+	isRollerOpen.value = isStudioPanelOpen.value;
+	if ( isStudioPanelOpen.value ) {
+		if ( submode.value === 'play' ) {
+			studioPanelTab.value = 'roller';
+			mobileActiveView.value = 'roller';
+		} else {
+			studioPanelTab.value = 'properties';
+			mobileActiveView.value = 'sheet';
+		}
 	} else {
 		mobileActiveView.value = 'sheet';
 	}
 }
 
-function toggleRollerPosition() {
-	rollerPosition.value = rollerPosition.value === 'left' ? 'right' : 'left';
+function handleToggleStudio( tab: 'properties' | 'roller' ) {
+	if ( isStudioPanelOpen.value && studioPanelTab.value === tab ) {
+		isStudioPanelOpen.value = false;
+		isRollerOpen.value = false;
+		mobileActiveView.value = 'sheet';
+	} else {
+		isStudioPanelOpen.value = true;
+		isRollerOpen.value = true;
+		studioPanelTab.value = tab;
+		if ( tab === 'roller' ) {
+			mobileActiveView.value = 'roller';
+		} else {
+			mobileActiveView.value = 'sheet';
+		}
+	}
+}
+
+function togglePanelPosition() {
+	panelPosition.value = panelPosition.value === 'right' ? 'left' : 'right';
+	rollerPosition.value = panelPosition.value;
 	persist();
+}
+
+function toggleRollerPosition() {
+	togglePanelPosition();
 }
 
 function addDieToRoller( dieData: any ) {
 	dicePool.value.add( dieData );
+	isStudioPanelOpen.value = true;
+	studioPanelTab.value = 'roller';
+	isRollerOpen.value = true;
 	let label;
 	if ( Array.isArray( dieData ) ) {
 		const poolName = dieData[ 0 ]?.source || 'Challenge Pool';
@@ -324,6 +382,7 @@ function recordCharOrder( characterData: any ) {
 // internal ids + preferences.
 function resolveStoredCharacter( c: any ) {
 	if ( !c || typeof c !== 'object' ) return c;
+	cortexMigration.migratePlacement( c );
 	cortexFunctions.ensureTraitSetIds( c );
 	let ref: any = null;
 	const t = c.sheet && c.sheet.template;
@@ -451,12 +510,72 @@ function setModeForChar( charId: string, sub: string ) {
 }
 
 // DATA
-function createCharacter( isTemplate = false ) {
+function createCharacter( isTemplate: boolean | string = false, templateId?: string | null ) {
+	let asTemplate = false;
+	let targetTemplateId: string | null = null;
+	if ( typeof isTemplate === 'boolean' ) {
+		asTemplate = isTemplate;
+		targetTemplateId = templateId || null;
+	} else if ( typeof isTemplate === 'string' ) {
+		targetTemplateId = isTemplate;
+		asTemplate = false;
+	}
+
+	if ( targetTemplateId ) {
+		const template = characters.value.find( ( c: any ) => c.id === targetTemplateId );
+		if ( template ) {
+			const currentRef = template.sheet && template.sheet.template
+				? ( typeof template.sheet.template === 'string' ? template.sheet.template : template.sheet.template.id )
+				: null;
+			const reuse = currentRef && !cortexFunctions.findSpotlightTemplate( currentRef ) ? currentRef : ( 'custom-' + template.id );
+			const entry = cortexFunctions.extractSheetTemplate(
+				template,
+				{
+					id: reuse,
+					version: 1,
+					title: template.game || template.name || 'Template'
+				}
+			);
+			sheetTemplates.value = cortexStorage.upsertTemplate( sheetTemplates.value, JSON.parse( JSON.stringify( entry ) ) );
+
+			const now = ( new Date() ).toISOString();
+			const entity = {
+				id: cortexFunctions.generateUUID(),
+				isTemplate: asTemplate,
+				name: asTemplate ? ( template.name || 'New Template' ) : '',
+				game: template.game || template.name || '',
+				dateCreated: now,
+				dateModified: now,
+				dateTouched: now,
+				sets: {},
+				template: { id: entry.id, version: entry.version || 1 }
+			};
+			const characterData: any = cortexFunctions.materializeCharacter( entity, entry.character );
+			characterData.sheet = { template: { id: entry.id, version: entry.version || 1 } };
+			cortexFunctions.ensureTraitSetIds( characterData );
+			cortexFunctions.assignLids( characterData );
+			recordCharOrder( characterData );
+
+			characters.value.push( characterData );
+			characterID.value = characterData.id;
+			if ( !openCharacterIDs.value.includes( characterData.id ) ) {
+				openCharacterIDs.value.push( characterData.id );
+			}
+			saveOpenCharacterIDs();
+			initHistory();
+			setMode( 'character', submode.value ?? 'edit', true );
+
+			saveLocalData();
+			showToast( asTemplate ? `Created template from "${template.name || 'Template'}"` : `Created sheet from "${template.name || 'Template'}"` );
+			return;
+		}
+	}
+
 	const characterData = structuredClone( cortexFunctions.defaultCharacter );
 
 	characterData.id = cortexFunctions.generateUUID();
-	characterData.isTemplate = isTemplate;
-	if ( isTemplate ) {
+	characterData.isTemplate = asTemplate;
+	if ( asTemplate ) {
 		characterData.name = 'New Template';
 	}
 
@@ -483,33 +602,7 @@ function createTemplate() {
 }
 
 function createFromTemplate( templateId: string ) {
-	const template = characters.value.find( ( c: any ) => c.id === templateId );
-	if ( !template ) return;
-
-	const characterData = JSON.parse( JSON.stringify( template ) );
-	characterData.id = cortexFunctions.generateUUID();
-	characterData.isTemplate = false;
-	characterData.name = '';
-	characterData.game = template.game || template.name || '';
-	cortexFunctions.stripInternalIds( characterData );
-	cortexFunctions.ensureTraitSetIds( characterData );
-	cortexFunctions.assignLids( characterData );
-	recordCharOrder( characterData );
-	characterData.dateCreated  = ( new Date() ).toISOString();
-	characterData.dateModified = ( new Date() ).toISOString();
-	characterData.dateTouched  = ( new Date() ).toISOString();
-
-	characters.value.push( characterData );
-	characterID.value = characterData.id;
-	if ( !openCharacterIDs.value.includes( characterData.id ) ) {
-		openCharacterIDs.value.push( characterData.id );
-	}
-	saveOpenCharacterIDs();
-	initHistory();
-	setMode( 'character', 'edit', true );
-
-	saveLocalData();
-	showToast( 'Created character from template' );
+	createCharacter( false, templateId );
 }
 
 function createFromSpotlight( spotlightItem: any, asTemplate = false, openPrint = false ) {
@@ -680,6 +773,7 @@ function importCharacter( characterData: any ) {
 	// sparse overlay. No template link: legacy path renders the
 	// file exactly as-is (D17 sacred).
 	let incoming = characterData;
+	cortexMigration.migratePlacement( incoming );
 	const tref = incoming && incoming.sheet && incoming.sheet.template;
 	if ( tref && typeof tref === 'object' ) {
 		let tplEntry = null;
@@ -839,10 +933,10 @@ async function exportAllCharacters() {
 function updateCharacter( characterData: any ) {
 	const c = characters.value.findIndex( ( savedCharacter: any ) => savedCharacter.id === characterData.id );
 
-	if ( c === -1 ) return;
+	if ( c === -1 ) return Promise.resolve();
 
 	characterData.dateModified = ( new Date() ).toISOString();
-	characterData.dateTouched  = ( new Date() ).toISOString();
+	characterData.dateTouched = ( new Date() ).toISOString();
 	cortexFunctions.assignLids( characterData );
 
 	characters.value[ c ] = characterData;
@@ -850,10 +944,11 @@ function updateCharacter( characterData: any ) {
 
 	recordCharOrder( characterData );
 	touchCharacter( characterData.id );
-	saveLocalData();
+	const saved = saveLocalData();
 	if ( !editing.value || !editing.value.length ) {
 		commitHistorySnapshot();
 	}
+	return saved;
 }
 
 // history (initHistory / commitHistorySnapshot / validateEditing / undo / redo)
@@ -899,21 +994,27 @@ function touchCharacter( id: string ) {
 }
 
 function selectElement( selector: any ) {
-	let nextSelector = selector;
-	if ( cortexFunctions.arraysMatch( editing.value, selector ) ) {
-		nextSelector = [];
+	// Re-clicking the open element keeps its editor open (it never toggles
+	// shut); deselect via Done, Escape, or clicking empty canvas instead.
+	if ( Array.isArray( selector ) && selector.length && cortexFunctions.arraysMatch( editing.value, selector ) ) {
+		isStudioPanelOpen.value = true;
+		studioPanelTab.value = 'properties';
+		return;
 	}
 
 	commitHistorySnapshot();
-	editing.value = nextSelector;
+	editing.value = selector;
 
-	// Mobile: an opened editor renders as a bottom sheet, which
-	// the on-screen keyboard can cover. Bring it into view once
-	// mounted (plus focusin cover below for keyboard animation).
-	if ( nextSelector.length && mode.value === 'character' && submode.value === 'edit' &&
+	if ( selector.length > 0 ) {
+		isStudioPanelOpen.value = true;
+		studioPanelTab.value = 'properties';
+	}
+
+	// Mobile: bring active panel into view
+	if ( selector.length && mode.value === 'character' && submode.value === 'edit' &&
 	     window.matchMedia && window.matchMedia( '(max-width: 768px)' ).matches ) {
 		nextTick( () => {
-			const open = document.querySelector( '.editor.open' ) || document.querySelector( 'aside.editor' );
+			const open = document.querySelector( '.studio-panel' ) || document.querySelector( '.editor.open' ) || document.querySelector( 'aside.editor' );
 			if ( open && open.scrollIntoView ) {
 				try { open.scrollIntoView( { block: 'nearest' } ); } catch ( err ) {}
 			}
@@ -923,7 +1024,7 @@ function selectElement( selector: any ) {
 
 function handleGlobalPointerDown( event: Event ) {
 	mouseDownInsideEditor.value = Boolean(
-		event && event.target && ( event.target as any ).closest && ( event.target as any ).closest( '.editor, .modal, .sidebar' )
+		event && event.target && ( event.target as any ).closest && ( event.target as any ).closest( '.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn' )
 	);
 }
 
@@ -931,7 +1032,7 @@ function handleMainClick( event: Event ) {
 	if ( mouseDownInsideEditor.value ) {
 		return;
 	}
-	if ( event && event.target && ( event.target as any ).closest && ( event.target as any ).closest( '.editor, .modal, .sidebar' ) ) {
+	if ( event && event.target && ( event.target as any ).closest && ( event.target as any ).closest( '.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn' ) ) {
 		return;
 	}
 	const selection = window.getSelection ? window.getSelection() : null;
@@ -943,6 +1044,24 @@ function handleMainClick( event: Event ) {
 
 function clearSelected() {
 	selectElement( [] );
+}
+
+function removeTrait( traitSetID: number, traitID: number ) {
+	clearSelected();
+	if ( !character.value ) return;
+	const char = character.value;
+	const entry = cortexFunctions.resolveTemplateFor( char, sheetTemplates.value );
+	cortexFunctions.removeTraitFromSheet( char, entry, traitSetID, traitID );
+	updateCharacter( char );
+}
+
+function removeTraitSet( traitSetID: number ) {
+	clearSelected();
+	if ( !character.value ) return;
+	const char = character.value;
+	const entry = cortexFunctions.resolveTemplateFor( char, sheetTemplates.value );
+	cortexFunctions.removeTraitSetFromSheet( char, entry, traitSetID );
+	updateCharacter( char );
 }
 
 // Mobile: when the on-screen keyboard opens on an editor field,
@@ -974,7 +1093,8 @@ async function bootFromStorage() {
 		await ensureSpotlightTemplates();
 		characters.value = ( stored.characters || [] ).map( ( c: any ) => resolveStoredCharacter( c ) );
 		playViewMode.value = stored.playViewMode || 'split';
-		rollerPosition.value = stored.rollerPosition || 'left';
+		panelPosition.value = ( stored.rollerPosition === 'left' || stored.rollerPosition === 'right' ) ? stored.rollerPosition : 'right';
+		rollerPosition.value = panelPosition.value;
 		openCharacterIDs.value = ( stored.openCharacterIDs || [] ).filter(
 			( id: string ) => characters.value.some( ( c: any ) => c.id === id )
 		);
@@ -1052,7 +1172,7 @@ async function persist() {
 }
 
 function saveLocalData() {
-	persist();
+	return persist();
 }
 
 // The mounted proxy is the documented debug/test handle (legacy.md). With
@@ -1086,46 +1206,66 @@ defineExpose( {
 		:mode="mode"
 		:submode="submode"
 		:hasCharacter="!!character"
+		:canPlay="canPlay"
 		:canUndo="canUndo"
 		:canRedo="canRedo"
-		:isRollerOpen="isRollerOpen"
-		:rollerCount="dicePool.items.length"
 		@navigate="setMode"
-		@toggleRoller="toggleRoller"
 		@undo="undo"
 		@redo="redo"
 	/>
 
-			<!-- PLAY SHELL: ROLLER CO-PANEL + SHEET VIEWPORT -->
-			<div class="play-shell" :class="{ 'roller-open': isRollerOpen && mode === 'character' && submode === 'play', 'roller-right': rollerPosition === 'right' }">
-			<!-- DICE ROLLER CO-PANEL (collapse / open left / open right) -->
-			<aside class="sidebar" :class="{ 'open': isRollerOpen && mode === 'character' && submode === 'play', 'mobile-visible': mobileActiveView === 'roller', 'position-right': rollerPosition === 'right' }">
-				<div class="sidebar-inner">
-					<dice-roller
-						v-if="mode === 'character' && submode === 'play'"
-						:open="isRollerOpen || mobileActiveView === 'roller'"
-						:pool="dicePool"
-						:position="rollerPosition"
-						@close="isRollerOpen = false; mobileActiveView = 'sheet'"
-						@togglePosition="toggleRollerPosition"
-						@addDie="addDieToRoller"
-						@removeDie="removeDieFromRoller"
-						@clearPool="clearDicePool"
-					></dice-roller>
-				</div>
-			</aside>
+			<!-- PLAY SHELL: STUDIO PANEL (INSPECTOR + ROLLER) + SHEET VIEWPORT -->
+			<div
+				class="play-shell"
+				:class="{
+					'panel-open': isStudioPanelOpen && mode === 'character' && submode !== 'print',
+					'panel-right': panelPosition === 'right',
+					'panel-left': panelPosition === 'left',
+					'roller-open': isStudioPanelOpen && mode === 'character' && submode !== 'print',
+					'roller-right': panelPosition === 'right'
+				}"
+			>
+				<!-- STUDIO PANEL: PROPERTIES INSPECTOR & DICE ROLLER -->
+				<studio-panel
+					v-if="mode === 'character' && submode !== 'print'"
+					:character="character"
+					:editing="editing"
+					:submode="submode"
+					:mode="mode"
+					:isOpen="isStudioPanelOpen"
+					:position="panelPosition"
+					:panelTab="studioPanelTab"
+					:dicePool="dicePool"
+					:viewY="viewY"
+					@update:panelTab="studioPanelTab = $event"
+					@update:isOpen="isStudioPanelOpen = $event; isRollerOpen = $event"
+					@togglePosition="togglePanelPosition"
+					@selectElement="selectElement"
+					@updateCharacter="updateCharacter"
+					@removeTrait="removeTrait"
+					@removeTraitSet="removeTraitSet"
+					@saveSheetTemplate="saveSheetTemplate"
+					@exportSheetTemplate="exportSheetTemplate"
+					@addDie="addDieToRoller"
+					@removeDie="removeDieFromRoller"
+					@clearPool="clearDicePool"
+				/>
 
-			<div class="sheet-column">
+				<div class="sheet-column">
 			<session-nav
 				v-if="mode === 'character' && submode !== 'print'"
 				:openCharacters="openCharacters"
 				:characterID="characterID"
 				:submode="submode"
 				:playViewMode="playViewMode"
+				:isStudioPanelOpen="isStudioPanelOpen"
+				:studioPanelTab="studioPanelTab"
+				:rollerCount="dicePool.items.length"
 				@focus="focusCharacter"
 				@close="closeOpenCharacter"
 				@add="isAddCharacterModalOpen = true"
 				@setPlayView="setPlayViewMode"
+				@toggleStudio="handleToggleStudio"
 			/>
 
 			<main class="main" ref="main" @scroll="setViewY"
@@ -1139,7 +1279,7 @@ defineExpose( {
 						<i class="fas fa-id-card"></i> Sheet
 					</button>
 					<button :class="{ active: mobileActiveView === 'roller' }" @click.stop="mobileActiveView = 'roller'">
-						<i class="fas fa-dice"></i> Roller <span class="tab-badge" v-if="dicePool.items.length > 0">{{ dicePool.items.length }}</span>
+						<i class="fas fa-dice-d20"></i> Roller <span class="tab-badge" v-if="dicePool.items.length > 0">{{ dicePool.items.length }}</span>
 					</button>
 				</div>
 			
@@ -1155,14 +1295,10 @@ defineExpose( {
 				<roster
 						v-if="mode === 'roster'"
 						:characters="characters"
-						:openCharacterIDs="openCharacterIDs"
 						@createCharacter="createCharacter"
-						@createTemplate="createTemplate"
 						@createFromTemplate="createFromTemplate"
 						@toggleTemplate="toggleTemplate"
 						@loadCharacter="loadCharacter"
-						@openAlongside="openAlongside"
-						@resumeSession="resumeSession"
 						@duplicateCharacter="duplicateCharacter"
 						@exportCharacter="exportCharacter"
 						@exportAllCharacters="exportAllCharacters"

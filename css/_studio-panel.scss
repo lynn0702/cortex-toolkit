@@ -1,0 +1,316 @@
+// STUDIO SIDE PANEL & DOCKED INSPECTOR STYLES
+
+:root {
+	--studio-panel-width: 23rem;
+}
+
+// Side Panel container: pinned to the side
+.studio-panel {
+	@extend %no-print;
+	position: fixed;
+	top: var(--header-size);
+	bottom: var(--header-size);
+	width: var(--studio-panel-width);
+	background: #0f172a;
+	color: #f8fafc;
+	z-index: var(--z-frame);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+	transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&.position-right {
+		right: 0;
+		left: auto;
+		border-left: 1px solid rgba(255, 255, 255, 0.1);
+		transform: translateX(0);
+
+		&.panel-collapsed {
+			transform: translateX(100%);
+			pointer-events: none;
+		}
+	}
+
+	&.position-left {
+		left: 0;
+		right: auto;
+		border-right: 1px solid rgba(255, 255, 255, 0.1);
+		transform: translateX(0);
+
+		&.panel-collapsed {
+			transform: translateX(-100%);
+			pointer-events: none;
+		}
+	}
+}
+
+
+// Push sheet column when space allows (>= 1400px)
+@media screen and (min-width: 1400px) {
+	.play-shell.panel-open.panel-right .sheet-column {
+		margin-right: var(--studio-panel-width);
+		margin-left: 0;
+	}
+
+	.play-shell.panel-open.panel-left .sheet-column {
+		margin-left: var(--studio-panel-width);
+		margin-right: 0;
+	}
+}
+
+// Below 1400px: Overlay drawer, sheet stays centered without margin shift
+@media screen and (max-width: 1399px) {
+	.play-shell .sheet-column {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+
+	.studio-panel {
+		box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
+	}
+}
+
+// Mobile (< 768px): Full width drawer
+@media screen and (max-width: 768px) {
+	.studio-panel {
+		top: calc(var(--header-size) + 42px);
+		bottom: var(--header-size);
+		width: 100%;
+	}
+}
+
+.studio-panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.6rem 0.8rem;
+	background: #1e293b;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	flex-shrink: 0;
+}
+
+.studio-panel-tabs {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.studio-tab-btn {
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	color: #94a3b8;
+	font-size: 0.8rem;
+	font-weight: 600;
+	padding: 0.35rem 0.65rem;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	transition: all 0.15s ease;
+
+	&:hover {
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	&.active {
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.12);
+		border-color: rgba(255, 255, 255, 0.2);
+	}
+
+	.studio-tab-badge {
+		background: var(--color-interactive, #0284c7);
+		color: #ffffff;
+		font-size: 0.7rem;
+		padding: 0.1rem 0.35rem;
+		border-radius: 9999px;
+		font-weight: 700;
+	}
+}
+
+.studio-panel-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+
+	.studio-action-btn {
+		background: transparent;
+		border: none;
+		color: #94a3b8;
+		padding: 0.35rem 0.5rem;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.85rem;
+
+		&:hover {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.1);
+		}
+	}
+}
+
+.studio-breadcrumb-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem 0.8rem;
+	background: #0f172a;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	font-size: 0.75rem;
+	flex-shrink: 0;
+
+	.studio-breadcrumb {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		color: #cbd5e1;
+		font-weight: 600;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.crumb-link {
+			color: #94a3b8;
+			cursor: pointer;
+			&:hover {
+				color: #38bdf8;
+				text-decoration: underline;
+			}
+		}
+
+		.crumb-sep {
+			font-size: 0.65rem;
+			color: #64748b;
+		}
+
+		.crumb-current {
+			color: #ffffff;
+		}
+	}
+
+	.studio-btn-subtle {
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		color: #cbd5e1;
+		padding: 0.2rem 0.5rem;
+		border-radius: 3px;
+		font-size: 0.7rem;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+
+		&:hover {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.15);
+		}
+	}
+}
+
+.studio-panel-body {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative;
+	min-height: 0;
+
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 3px;
+	}
+
+	.studio-tab-pane {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	// Docked editor adaptation inside studio panel
+	.editor {
+		position: static !important;
+		width: 100% !important;
+		max-height: none !important;
+		box-shadow: none !important;
+		border-radius: 0 !important;
+		padding: 0.75rem !important;
+		background: transparent !important;
+		backdrop-filter: none !important;
+		transform: none !important;
+		opacity: 1 !important;
+		display: block !important;
+		border: none !important;
+
+		.editor-arrow {
+			display: none !important;
+		}
+
+		.editor-controls {
+			position: static !important;
+			display: flex !important;
+			flex-direction: row !important;
+			justify-content: flex-end !important;
+			align-items: center !important;
+			gap: 0.6rem !important;
+			margin-bottom: 0.6rem !important;
+			padding-bottom: 0.4rem !important;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+			// The 'X' close button is redundant with the breadcrumb 'Done' button
+			button:first-child:not(.editor-copy):not(.editor-delete):not(.editor-delete-confirm):not(.editor-revert) {
+				display: none !important;
+			}
+
+			button {
+				font-size: 1.05rem !important;
+				padding: 0.2rem 0.35rem !important;
+				opacity: 0.8;
+				transition: opacity 0.15s ease;
+
+				&:hover {
+					opacity: 1;
+				}
+			}
+		}
+
+		.editor-inner {
+			max-height: none !important;
+			overflow: visible !important;
+			padding: 0 !important;
+		}
+	}
+
+	.dice-roller-sidebar {
+		border: none !important;
+		box-shadow: none !important;
+		background: transparent !important;
+		width: 100% !important;
+		height: 100% !important;
+
+		.roller-header {
+			display: none !important;
+		}
+
+		.roller-body {
+			background: #ffffff;
+			height: 100%;
+			overflow-y: auto;
+		}
+	}
+}
+
+// Active trait selection focus highlight on sheet
+.trait.is-selected,
+.trait.selected {
+	outline: 2px solid var(--color-interactive, #0284c7) !important;
+	outline-offset: 2px !important;
+	border-radius: 3px !important;
+}
+
+.trait-set.is-selected {
+	box-shadow: 0 0 0 2px var(--color-interactive, #0284c7) !important;
+}

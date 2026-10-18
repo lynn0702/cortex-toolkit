@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import type { Character, TraitSet, Trait, CortexToolkitCustom } from './model.ts';
+import { getView, ensureView, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	columnsForPage as gridColumnsForPage,
 	getTraitSetColumn as gridTraitSetColumn,
@@ -10,13 +10,10 @@ import {
 	getSpotlightSections as gridGetSpotlightSections,
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
 	getSpotlightGridCells as gridGetSpotlightGridCells,
+	getTrackClusterGroups as gridGetTrackClusterGroups,
 	type SpotlightSection,
 	type SpotlightCell,
 } from './spotlight-grid.ts';
-import NameEditor from './name-editor.vue';
-import PortraitEditor from './portrait-editor.vue';
-import TraitEditor from './trait-editor.vue';
-import TraitSetEditor from './trait-set-editor.vue';
 import TraitSetBlock from './trait-set-block.vue';
 import StyleGallery from './style-gallery.vue';
 import PrintToolbar from './print-toolbar.vue';
@@ -55,8 +52,8 @@ const name = computed( () => props.character?.name ?? '' );
 const description = computed( () => props.character?.description ?? '' );
 const player = computed( () => props.character?.player ?? '' );
 const pronouns = computed( () => props.character?.pronouns ?? '' );
-const nickname = computed( () => props.character?.nickname ?? props.character?.custom?.cortexToolkit?.nickname ?? '' );
-const hasNickname = computed( () => Boolean( nickname.value || ( isSpotlightStyle.value && props.character?.custom?.cortexToolkit?.hasNickname ) ) );
+const nickname = computed( () => props.character?.nickname ?? getView( props.character )?.nickname ?? '' );
+const hasNickname = computed( () => Boolean( nickname.value || ( isSpotlightStyle.value && getView( props.character )?.hasNickname ) ) );
 const plotPoints = computed( () => Number( props.character?.plotPoints ) || 0 );
 const portrait = computed( () => props.character?.portrait ?? null );
 const effectivePortraitUrl = computed( () => portrait.value?.url || '' );
@@ -66,38 +63,41 @@ const traitSets = computed( () => props.character?.traitSets ?? [] );
 
 const ringTraitSetIndex = computed( () => {
 	let idx = traitSets.value.findIndex( ( ts ) => {
-		const body = ts.custom?.cortexToolkit?.style?.body;
+		const view = getView( ts );
+		const body = view?.style?.body;
 		if ( body === 'portrait-ring' || body === 'attributes' ) return true;
 		if ( cortexFunctions.getRingTrait( ts ) === true ) return true;
-		if ( ts.custom?.cortexToolkit?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
+		if ( view?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
 		return false;
 	} );
 	if ( idx !== -1 ) return idx;
 
 	idx = traitSets.value.findIndex( ( ts ) => {
-		const isAttr = ts.custom?.cortexToolkit?.isAttributes ||
+		const view = getView( ts );
+		const isAttr = view?.isAttributes ||
 			ts.nounSingular?.toLowerCase() === 'attribute' ||
 			ts.name?.trim().toLowerCase() === 'attributes';
 		if ( !isAttr ) return false;
 		if ( cortexFunctions.getRingTrait( ts ) === false ) return false;
-		const body = ts.custom?.cortexToolkit?.style?.body;
+		const body = view?.style?.body;
 		return !body || body === 'default' || body === 'attributes' || body === 'portrait-ring';
 	} );
 	return idx;
 } );
 
 const explicitRingSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
-	const body = ts.custom?.cortexToolkit?.style?.body;
+	const view = getView( ts );
+	const body = view?.style?.body;
 	if ( body === 'portrait-ring' || body === 'attributes' ) return true;
 	if ( cortexFunctions.getRingTrait( ts ) === true ) return true;
-	if ( ts.custom?.cortexToolkit?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
+	if ( view?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
 	return false;
 } ) );
 
 const hasRingTrait = computed( () => {
 	if ( isSpotlightStyle.value ) return false;
 	if ( explicitRingSetIndex.value !== -1 ) return true;
-	const pSize = portrait.value?.custom?.cortexToolkit?.size;
+	const pSize = getView( portrait.value )?.size;
 	if ( pSize === 'spotlight' || pSize === 'none' ) return false;
 	return ringTraitSetIndex.value !== -1;
 } );
@@ -106,7 +106,8 @@ const ringTraitID = computed( () => ( hasRingTrait.value ? ringTraitSetIndex.val
 const ringTraitSet = computed( () => ( hasRingTrait.value ? traitSets.value[ ringTraitID.value ] : null ) );
 const isRingChallengePool = computed( () => {
 	const ts = ringTraitSet.value;
-	return Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
+	const view = getView( ts );
+	return Boolean( view?.isChallengePool || view?.challengePool );
 } );
 const ringNounSingular = computed( () => {
 	const ts = ringTraitSet.value;
@@ -126,24 +127,28 @@ const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
 	if ( st ) return Number( st.value ) || 8;
 	const attrSet = ringTraitSet.value;
-	if ( attrSet?.custom?.cortexToolkit?.scaleDie ) {
-		return Number( attrSet.custom.cortexToolkit.scaleDie );
+	const attrView = getView( attrSet );
+	if ( attrView?.scaleDie ) {
+		return Number( attrView.scaleDie );
 	}
-	if ( props.character?.custom?.cortexToolkit?.scale ) {
-		return Number( props.character.custom.cortexToolkit.scale );
+	const charView = getView( props.character );
+	if ( charView?.scale ) {
+		return Number( charView.scale );
 	}
 	return 0;
 } );
 // (ring: attributes ring + scale die + drag now live in ring-attributes.vue)
 
 const pageCount = computed( () => {
-	if ( props.character?.custom?.cortexToolkit?.pageCount ) {
-		return Math.max( 1, Number( props.character.custom.cortexToolkit.pageCount ) );
+	const charView = getView( props.character );
+	if ( charView?.pageCount ) {
+		return Math.max( 1, Number( charView.pageCount ) );
 	}
 	let maxPage = 1;
 	for ( const ts of ( props.character?.traitSets || [] ) ) {
-		if ( ts.custom?.cortexToolkit?.page && ts.custom.cortexToolkit.page > maxPage ) {
-			maxPage = ts.custom.cortexToolkit.page;
+		const p = getView( ts )?.page;
+		if ( p && p > maxPage ) {
+			maxPage = p;
 		}
 	}
 	return maxPage;
@@ -153,9 +158,16 @@ const sheetStyle = computed( () => {
 	if ( props.submode === 'print' && printStyle.value ) {
 		return printStyle.value;
 	}
-	const explicit = props.character?.custom?.cortexToolkit?.sheetStyle;
+	const charView = getView( props.character );
+	const explicit = charView?.sheetStyle;
 	if ( explicit ) return explicit;
-	if ( props.character?.custom?.cortexToolkit?.style?.hasAttributes === false ) {
+	if ( charView?.style?.hasAttributes === false ) {
+		return 'spotlight';
+	}
+	if ( charView?.spotlight ) {
+		return 'spotlight';
+	}
+	if ( ( props.character as any )?.sheet?.template ) {
 		return 'spotlight';
 	}
 	return 'classic';
@@ -166,7 +178,7 @@ const isPrintSubmode = computed( () => props.submode === 'print' || designerPrin
 const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotlightStyle.value );
 const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
 const effectivePrintBlank = computed( () => isPrintSubmode.value && printBlank.value );
-const pageJustification = computed( () => props.character?.custom?.cortexToolkit?.pageJustification || 'top-base' );
+const pageJustification = computed( () => getView( props.character )?.pageJustification || 'top-base' );
 
 const nameEditorInitialTab = computed( () => {
 	if ( isSelected( [ 'page' ] ) ) return 'page';
@@ -175,13 +187,24 @@ const nameEditorInitialTab = computed( () => {
 	return 'sheet';
 } );
 
-const columnCount = computed( () => ( Number( props.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2 ) );
+const pageOrientation = computed( () => {
+	const charView = getView( props.character );
+	const o = charView?.pageOrientation || charView?.orientation;
+	return o === 'landscape' ? 'landscape' : 'portrait';
+} );
+const isLandscape = computed( () => pageOrientation.value === 'landscape' );
+
+const columnCount = computed( () => {
+	const c = Number( getView( props.character )?.columns );
+	return ( c === 2 || c === 3 ) ? c : 2;
+} );
 
 const hasHeaderPortrait = computed( () => {
 	if ( !isSpotlightStyle.value ) return false;
-	const size = portrait.value?.custom?.cortexToolkit?.size;
+	const pView = getView( portrait.value );
+	const size = pView?.size;
 	if ( size === 'none' ) return false;
-	const loc = portrait.value?.custom?.cortexToolkit?.location;
+	const loc = pView?.location;
 	if ( loc && loc !== 'header' ) return false;
 	return true;
 } );
@@ -209,17 +232,25 @@ const printPages = computed( () => {
 } );
 
 const hasAnyWatermark = computed( () => {
-	const wm = props.character?.custom?.cortexToolkit?.watermark;
+	const wm = getView( props.character )?.watermark;
 	return Boolean( wm?.enabled && wm?.url );
 } );
 
-const columnAlignmentMode = computed( () => props.character?.custom?.cortexToolkit?.columnAlignment || 'top-base' );
+const columnAlignmentMode = computed( () => getView( props.character )?.columnAlignment || 'top-base' );
 
 const characterSheetStyle = computed( () => {
-	const ctk: CortexToolkitCustom = props.character?.custom?.cortexToolkit || {};
-	const offsets = ctk.columnOffsets || {};
+	const ctk: ViewBag = getView( props.character ) || {};
 	const style: Record<string, string> = {};
 
+	if ( isLandscape.value ) {
+		style[ '--page-width' ] = '297.1mm';
+		style[ '--page-height' ] = '210mm';
+	} else {
+		style[ '--page-width' ] = '210mm';
+		style[ '--page-height' ] = '297.1mm';
+	}
+
+	const offsets = ctk.columnOffsets || {};
 	if ( ctk.columnAlignment === 'custom' ) {
 		style[ '--column-left-offset' ] = ( Number( offsets.left ) || 0 ) + 'px';
 		style[ '--column-center-offset' ] = ( Number( offsets.center ) || 0 ) + 'px';
@@ -252,7 +283,7 @@ function openPageEditor() { selectElement( [ 'page' ] ); }
 function openDiceEditor() { selectElement( [ 'dice' ] ); }
 
 function applyFonts() {
-	const ctk = props.character?.custom?.cortexToolkit;
+	const ctk = getView( props.character );
 	if ( !ctk || typeof cortexFunctions === 'undefined' ) return;
 	if ( ctk.theme?.fonts ) {
 		if ( ctk.theme.fonts.heading && cortexFunctions.loadGoogleFont ) cortexFunctions.loadGoogleFont( ctk.theme.fonts.heading );
@@ -281,7 +312,7 @@ function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets
 function shouldShowClassicPortrait() {
 	if ( isSpotlightStyle.value ) return false;
 	if ( explicitRingSetIndex.value !== -1 ) return true;
-	const s = portrait.value?.custom?.cortexToolkit?.size;
+	const s = getView( portrait.value )?.size;
 	if ( s === 'none' || s === 'spotlight' ) return false;
 	return true;
 }
@@ -289,16 +320,18 @@ function shouldShowClassicPortrait() {
 function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number ) {
 	if ( isSpotlightStyle.value ) return false;
 	if ( pageIndex !== 1 ) return false;
-	const s = portrait.value?.custom?.cortexToolkit?.size;
-	const loc = portrait.value?.custom?.cortexToolkit?.location;
+	const pView = getView( portrait.value );
+	const s = pView?.size;
+	const loc = pView?.location;
 	if ( s === 'spotlight' && loc === pageLocation ) return true;
 	return false;
 }
 
 function columnsForPage( pageIndex: number ) { return gridColumnsForPage( props.character, pageIndex, columnCount.value ); }
-function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex, columnsForPage( pageIndex ) ); }
+function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex ); }
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
 function getSpotlightGridCells( section: SpotlightSection ) { return gridGetSpotlightGridCells( section ); }
+function getTrackClusterGroups( items: any[] ) { return gridGetTrackClusterGroups( items ); }
 
 function renderNameHtml( value: unknown ) {
 	if ( !value ) return '';
@@ -308,10 +341,8 @@ function renderNameHtml( value: unknown ) {
 function removeHeaderPortrait() {
 	const character = props.character as Character;
 	if ( !character.portrait ) character.portrait = {};
-	if ( !character.portrait.custom ) character.portrait.custom = {};
-	if ( !character.portrait.custom.cortexToolkit ) character.portrait.custom.cortexToolkit = {};
 	character.portrait.url = '';
-	character.portrait.custom.cortexToolkit.size = 'none';
+	ensureView( character.portrait ).size = 'none';
 	updateCharacter( character );
 	if ( isSelected( [ 'portrait' ] ) ) {
 		selectElement( [] );
@@ -321,10 +352,9 @@ function removeHeaderPortrait() {
 function addHeaderPortrait() {
 	const character = props.character as Character;
 	if ( !character.portrait ) character.portrait = {};
-	if ( !character.portrait.custom ) character.portrait.custom = {};
-	if ( !character.portrait.custom.cortexToolkit ) character.portrait.custom.cortexToolkit = {};
-	character.portrait.custom.cortexToolkit.size = 'spotlight';
-	character.portrait.custom.cortexToolkit.location = 'header';
+	const pView = ensureView( character.portrait );
+	pView.size = 'spotlight';
+	pView.location = 'header';
 	updateCharacter( character );
 	selectElement( [ 'portrait' ] );
 }
@@ -341,16 +371,22 @@ function clearSelected() {
 }
 
 // EDITING
-function addTraitSet( location: string, page = 1, span: number | string = 1 ) {
+function addTraitSet( trackOrLocation: number | string = 1, page = 1, span: number | string = 1 ) {
 	const character = props.character as Character;
 
 	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
-	traitSet.custom.cortexToolkit.location = location ?? 'left';
-	traitSet.custom.cortexToolkit.page = page ?? 1;
-	if ( span === 'full' || Number( span ) >= columnCount.value ) {
-		traitSet.custom.cortexToolkit.colSpan = 'full';
-		traitSet.custom.cortexToolkit.columnSpan = 'full';
+	let track: 1 | 2 | 3 = 1;
+	if ( trackOrLocation === 2 || trackOrLocation === 'center' || ( trackOrLocation === 'right' && !isSpotlightStyle.value ) ) {
+		track = 2;
+	} else if ( trackOrLocation === 3 || trackOrLocation === 'right' ) {
+		track = 3;
 	}
+	const tsView = ensureView( traitSet );
+	tsView.track = track;
+	tsView.page = page ?? 1;
+	const sp = ( span === 'full' || Number( span ) >= 3 ) ? 3 : ( Number( span ) === 2 ? 2 : 1 );
+	tsView.span = sp;
+
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	traitSet.traits.push( structuredClone( cortexFunctions.defaultTrait ) );
 
@@ -383,20 +419,21 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	traitSet.name = styleEntry.name || 'New trait set';
 	traitSet.nounSingular = styleEntry.sing || 'Trait';
 	traitSet.nounPlural = styleEntry.plur || 'Traits';
-	traitSet.custom.cortexToolkit.style = { header: styleId, body: styleId };
-	Object.assign( traitSet.custom.cortexToolkit.features, styleDefaults.features );
+	const tsView = ensureView( traitSet );
+	tsView.style = { header: styleId, body: styleId };
+	tsView.features = Object.assign( tsView.features || {}, styleDefaults.features );
 	if ( styleDefaults.multiDie ) {
-		traitSet.custom.cortexToolkit.multiDie = true;
+		tsView.multiDie = true;
 	}
-	traitSet.custom.cortexToolkit.location = location ?? 'left';
-	traitSet.custom.cortexToolkit.page = page ?? 1;
+	tsView.location = location ?? 'left';
+	tsView.page = page ?? 1;
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	if ( styleId === 'pips' ) {
-		traitSet.custom.cortexToolkit.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
+		tsView.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
 	}
 	if ( styleId === 'session-record' || styleId === 'angled-lines' ) {
-		traitSet.custom.cortexToolkit.sessionRecord = { count: 20 };
-		traitSet.custom.cortexToolkit.reservedSlots = 20;
+		tsView.sessionRecord = { count: 20 };
+		tsView.reservedSlots = 20;
 	}
 	if ( styleId !== 'pips' && styleId !== 'notes' && styleId !== 'image' &&
 	     styleId !== 'session-record' && styleId !== 'angled-lines' ) {
@@ -473,14 +510,14 @@ function renderNotesText( text: unknown ) {
 }
 
 function hasWatermark( pageIndex: number ) {
-	const wm = props.character?.custom?.cortexToolkit?.watermark;
+	const wm = getView( props.character )?.watermark;
 	if ( !wm || !wm.enabled || !wm.url ) return false;
 	if ( !wm.page || wm.page === 'all' ) return true;
 	return Number( wm.page ) === Number( pageIndex );
 }
 
 function getWatermarkStyle( pageIndex: number ) {
-	const wm = props.character?.custom?.cortexToolkit?.watermark;
+	const wm = getView( props.character )?.watermark;
 	if ( !wm ) return '';
 	const url = cortexFunctions.safeImageUrl( wm.url );
 	if ( !url ) return '';
@@ -494,7 +531,22 @@ function safeImageUrl( url: unknown ) {
 }
 
 function print() {
+	let cleanup: ( () => void ) | null = null;
+	if ( isLandscape.value ) {
+		const style = document.createElement( 'style' );
+		style.id = 'dynamic-print-page';
+		style.textContent = '@page { size: landscape; margin: 8mm; }';
+		document.head.appendChild( style );
+		cleanup = () => {
+			style.remove();
+			window.removeEventListener( 'afterprint', cleanup! );
+		};
+		window.addEventListener( 'afterprint', cleanup, { once: true } );
+	}
 	window.print();
+	if ( cleanup ) {
+		setTimeout( cleanup, 1000 );
+	}
 }
 
 onMounted( () => {
@@ -507,7 +559,7 @@ watch( () => props.character, () => {
 </script>
 
 <template>
-	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
+	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
 	
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
@@ -526,34 +578,14 @@ watch( () => props.character, () => {
 			@update:printPageView="printPageView = $event"
 		/>
 
-		<!-- EDIT / THEME TOOLBAR -->
-		<div class="edit-toolbar" v-if="submode === 'edit'">
-			<div class="toolbar-group">
-				<button type="button" class="btn-toolbar-theme" :class="{ active: isSelected(['name']) }" @click.stop="openSheetEditor" title="Sheet Details &amp; Watermark">
-					<i class="fas fa-id-card"></i> Sheet
-				</button>
-				<button type="button" class="btn-toolbar-theme" :class="{ active: isSelected(['page']) }" @click.stop="openPageEditor" title="Page Justification &amp; Layout">
-					<i class="fas fa-columns"></i> Page
-				</button>
-				<button type="button" class="btn-toolbar-theme" :class="{ active: isSelected(['theme']) }" @click.stop="openThemeEditor" title="Typography &amp; Theme Colors">
-					<i class="fas fa-font"></i> Fonts &amp; Colors
-				</button>
-				<button type="button" class="btn-toolbar-theme" :class="{ active: isSelected(['dice']) }" @click.stop="openDiceEditor" title="Visual Dice Appearance Editor">
-					<i class="fas fa-dice-d20"></i> Dice
-				</button>
-				<button type="button" class="btn-toolbar-theme" v-if="!designerPrintPreview" @click.stop="showStyleGallery = true" title="Browse trait set styles and add one to the sheet">
-					<i class="fas fa-plus"></i> Add Set
-				</button>
-			</div>
-		</div>
 
-		<div class="pages">
+		<div class="pages" :class="['orientation-' + pageOrientation]">
 
 			<!-- PAGE (SUPPORTS MULTI-PAGE) -->
 			<div
 				v-for="pageIndex in printPages"
 				:key="'page-' + pageIndex"
-				:class="['page', 'page-' + pageIndex, 'page-justification-' + pageJustification]"
+				:class="['page', 'page-' + pageIndex, 'orientation-' + pageOrientation, 'page-justification-' + pageJustification]"
 			>
 				<div
 					v-if="hasWatermark(pageIndex)"
@@ -608,7 +640,7 @@ watch( () => props.character, () => {
 							<!-- CENTER BOX: DESCRIPTION (TRAIT SET STYLE) -->
 							<div class="spotlight-header-desc-box trait-set-box" @click.stop="selectElement(['name'])">
 								<div class="spotlight-cell-header">
-									<span class="spotlight-cell-label">DESCRIPTION</span>
+									<label for="spotlight-header-desc" class="spotlight-cell-label">DESCRIPTION</label>
 									<button
 										v-if="!hasHeaderPortrait && submode === 'edit' && !designerPrintPreview"
 										type="button"
@@ -621,9 +653,12 @@ watch( () => props.character, () => {
 								</div>
 								<textarea
 									v-if="submode === 'edit' && !designerPrintPreview"
+									id="spotlight-header-desc"
+									name="spotlightHeaderDesc"
 									class="spotlight-desc-textarea"
 									v-model="descriptionText"
 									placeholder="Character description..."
+									aria-label="Character description"
 									@click.stop
 								></textarea>
 								<div class="desc-content" v-else-if="!printBlank && description" v-html="renderText(description)"></div>
@@ -644,14 +679,13 @@ watch( () => props.character, () => {
 								<img
 									v-if="effectivePortraitUrl"
 									class="portrait-small-image"
-									:class="'portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'center')"
+									:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'center')"
 									:src="safeImageUrl(effectivePortraitUrl)"
 									alt="Portrait / Logo"
 								/>
-								<div v-else class="portrait-small-placeholder" @click.stop="(submode === 'edit' && !designerPrintPreview) ? selectElement(['name']) : null" title="Click to edit title or upload logo">
-									<span class="spotlight-game-tag" v-if="game">{{ game }}</span>
-									<span class="spotlight-logo-icon" v-else><i class="fas fa-id-badge"></i></span>
-									<span class="spotlight-add-hint" v-if="submode === 'edit' && !designerPrintPreview">Click to edit title</span>
+								<div v-else class="portrait-small-placeholder" title="Click to add portrait">
+									<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
+									<span class="spotlight-add-hint" v-if="submode === 'edit' && !designerPrintPreview">Click to add portrait</span>
 								</div>
 
 								<button
@@ -717,31 +751,6 @@ watch( () => props.character, () => {
 
 							</div>
 						</div>
-
-						<transition name="editor" appear>
-							<NameEditor
-								:character="character"
-								:open="isSelected(['name']) || isSelected(['theme']) || isSelected(['page']) || isSelected(['dice'])"
-								v-show="submode === 'edit' && (isSelected(['name']) || isSelected(['theme']) || isSelected(['page']) || isSelected(['dice']))"
-								:initialTab="nameEditorInitialTab"
-								@selectElement="selectElement"
-								@updateCharacter="updateCharacter"
-								@saveSheetTemplate="emit('saveSheetTemplate')"
-								@exportSheetTemplate="emit('exportSheetTemplate')"
-							></NameEditor>
-						</transition>
-
-						<transition name="editor" appear>
-							<PortraitEditor
-								v-if="isSpotlightStyle"
-								:character="character"
-								:open="isSelected(['portrait'])"
-								v-show="submode === 'edit' && isSelected(['portrait'])"
-								@selectElement="selectElement"
-								@updateCharacter="updateCharacter"
-							></PortraitEditor>
-						</transition>
-
 					</header>
 
 					<!-- PAGE 2+ HEADER -->
@@ -760,38 +769,99 @@ watch( () => props.character, () => {
 								:class="['columns', 'spotlight-columns', 'spotlight-full-width']"
 							>
 								<div :class="['spotlight-column', 'spotlight-full-column']">
-									<template v-for="{ traitSet, index: s } in section.itemsByColumn.full" :key="s">
-										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" 											@addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
-						</template>
+									<template v-for="{ traitSet, index: s } in (section.itemsByColumn.full || section.itemsByColumn[1])" :key="s">
+										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
+									</template>
 								</div>
 							</div>
 							<div
 								v-else
-								:class="['columns', 'spotlight-columns', 'spotlight-grid', 'columns-' + section.trackCount]"
+								:class="['columns', 'spotlight-columns', 'spotlight-grid', 'columns-3']"
 								:style="getSpotlightGridStyle(section)"
 							>
-								<TraitSetBlock
-									v-for="cell in getSpotlightGridCells(section)"
-									:key="cell.s"
-									:character="character" :traitSetID="cell.s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" :style="cell.style" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
-								></TraitSetBlock>
+								<div
+									v-for="trackNum in [1, 2, 3]"
+									:key="trackNum"
+									:class="['spotlight-column-stack', 'track-' + trackNum]"
+									:style="{ gridColumn: trackNum, display: (section.widths && section.widths[trackNum - 1] === 0 && !(section.itemsByColumn[trackNum] && section.itemsByColumn[trackNum].length)) ? 'none' : 'flex' }"
+								>
+									<template v-for="(group, gIdx) in getTrackClusterGroups(section.itemsByColumn[trackNum] || [])" :key="gIdx">
+										<div
+											v-if="group.isCluster"
+											class="spotlight-cluster-band"
+											:style="{ display: 'grid', gridTemplateColumns: `repeat(${group.items.length}, minmax(0, 1fr))` }"
+										>
+											<TraitSetBlock
+												v-for="item in group.items"
+												:key="item.index"
+												:character="character"
+												:traitSetID="item.index"
+												:submode="submode"
+												:editing="editing"
+												:viewY="viewY"
+												:printBlank="effectivePrintBlank"
+												:designerPrintPreview="designerPrintPreview"
+												:printStyle="printStyle"
+												:class="{ 'trait-set-content': getView(item.traitSet)?.flex === false }"
+												@selectElement="selectElement"
+												@updateCharacter="updateCharacter"
+												@removeTrait="removeTrait"
+												@removeTraitSet="removeTraitSet"
+												@addTrait="addTrait"
+												@addDieToRoller="emit('addDieToRoller', $event)"
+											></TraitSetBlock>
+										</div>
+										<template v-else>
+											<TraitSetBlock
+												v-for="item in group.items"
+												:key="item.index"
+												:character="character"
+												:traitSetID="item.index"
+												:submode="submode"
+												:editing="editing"
+												:viewY="viewY"
+												:printBlank="effectivePrintBlank"
+												:designerPrintPreview="designerPrintPreview"
+												:printStyle="printStyle"
+												:class="{ 'trait-set-content': getView(item.traitSet)?.flex === false }"
+												@selectElement="selectElement"
+												@updateCharacter="updateCharacter"
+												@removeTrait="removeTrait"
+												@removeTraitSet="removeTraitSet"
+												@addTrait="addTrait"
+												@addDieToRoller="emit('addDieToRoller', $event)"
+											></TraitSetBlock>
+										</template>
+									</template>
+								</div>
 							</div>
 						</template>
 
 						<!-- BUTTON: ADD TRAIT SET IN SPOTLIGHT MODE -->
-						<div class="spotlight-add-set-bar" v-if="submode === 'edit' && !designerPrintPreview">
-							<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet('left', pageIndex, 1)">
-								<i class="fas fa-plus"></i> Col 1 Set
-							</button>
-							<button type="button" class="btn-spotlight-add" v-if="columnCount === 3" @click.stop="addTraitSet('center', pageIndex, 1)">
-								<i class="fas fa-plus"></i> Col 2 Set
-							</button>
-							<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet('right', pageIndex, 1)">
-								<i class="fas fa-plus"></i> {{ columnCount === 3 ? 'Col 3' : 'Col 2' }} Set
-							</button>
-							<button type="button" class="btn-spotlight-add span-full-btn" @click.stop="addTraitSet('left', pageIndex, 'full')">
-								<i class="fas fa-arrows-alt-h"></i> Full Width Set
-							</button>
+						<div
+							class="spotlight-add-set-bar columns-3"
+							v-if="submode === 'edit' && !designerPrintPreview"
+						>
+							<div class="add-set-slot slot-col-1">
+								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(1, pageIndex, 1)">
+									<i class="fas fa-plus"></i> Track 1 Set
+								</button>
+							</div>
+							<div class="add-set-slot slot-col-2">
+								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(2, pageIndex, 1)">
+									<i class="fas fa-plus"></i> Track 2 Set
+								</button>
+							</div>
+							<div class="add-set-slot slot-col-3">
+								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(3, pageIndex, 1)">
+									<i class="fas fa-plus"></i> Track 3 Set
+								</button>
+							</div>
+							<div class="add-set-slot slot-center">
+								<button type="button" class="btn-spotlight-add span-full-btn" @click.stop="addTraitSet(1, pageIndex, 3)">
+									<i class="fas fa-arrows-alt-h"></i> Full Width Set
+								</button>
+							</div>
 						</div>
 					</div>
 
@@ -811,12 +881,12 @@ watch( () => props.character, () => {
 								<img
 									v-if="effectivePortraitUrl"
 									class="portrait-small-image"
-									:class="'portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'top-center')"
+									:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'top-center')"
 									:src="safeImageUrl(effectivePortraitUrl)"
 									alt="Portrait"
 								/>
 								<div v-else class="portrait-small-placeholder">
-									<i class="fas fa-user"></i>
+									<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
 								</div>
 							</div>
 
@@ -826,8 +896,8 @@ watch( () => props.character, () => {
 								<div :class="{ 'portrait-inner': true, 'selected': isSelected(['portrait']) }"
 									@click.stop="selectElement([ 'portrait' ])"
 								>
-									<div :class="'portrait-circle portrait-alignment-' + (portrait?.custom?.cortexToolkit?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
-										<div class="portrait-placeholder" v-if="!effectivePortraitUrl"><i class="fas fa-user"></i></div>
+									<div :class="'portrait-circle portrait-alignment-' + (getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
+										<img class="portrait-placeholder" v-if="!effectivePortraitUrl" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
 									</div>
 								</div>
 
@@ -846,16 +916,6 @@ watch( () => props.character, () => {
 									@removeTrait="removeTrait"
 								/>
 
-								<transition name="editor" appear>
-									<PortraitEditor
-										:character="character"
-										:open="isSelected(['portrait'])"
-										v-show="submode === 'edit' && isSelected(['portrait'])"
-										@selectElement="selectElement"
-										@updateCharacter="updateCharacter"
-									></PortraitEditor>
-								</transition>
-	
 							</div>
 
 							<!-- ATTRIBUTES -->
@@ -894,26 +954,12 @@ watch( () => props.character, () => {
 									</div>
 								</div>
 								</transition>
-
-								<transition name="editor" appear>
-									<TraitSetEditor
-										:character="character"
-										:open="isSelected(['traitSet', ringTraitID])"
-										v-show="submode === 'edit' && isSelected(['traitSet', ringTraitID])"
-										:traitSetID="ringTraitID"
-										:viewY="viewY"
-										@selectElement="selectElement"
-										@updateCharacter="updateCharacter"
-										@removeTraitSet="removeTraitSet"
-									></TraitSetEditor>
-								</transition>
-
 							</div>
 								
 
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
-									v-if="s !== ringTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
+									v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
 									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
@@ -941,7 +987,7 @@ watch( () => props.character, () => {
 					<div class="classic-full-band" v-if="!isSpotlightStyle && hasClassicFullSets(pageIndex)">
 						<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 							<TraitSetBlock
-								v-if="s !== ringTraitID && ((traitSet.custom?.cortexToolkit?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
+								v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
 								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>

@@ -1,5 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getSpotlightSections } from './spotlight-grid.ts';
+import { getView, ensureView } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
@@ -81,13 +83,13 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const styleBody = computed({
 		get: () => {
-			const body = traitSet.value?.custom?.cortexToolkit?.style?.body;
+			const body = getView( traitSet.value )?.style?.body;
 			if ( body === 'portrait-ring' || body === 'attributes' ) {
 				return 'portrait-ring';
 			}
 			// Backwards compatibility: default Attributes trait set to Ring when no style (or default) is specified
 			if ( !body || body === 'default' ) {
-				if ( traitSet.value?.custom?.cortexToolkit?.location === 'attributes' ||
+				if ( getView( traitSet.value )?.location === 'attributes' ||
 					( isAttributesSet.value && cortexFunctions.getRingTrait( traitSet.value ) !== false ) ) {
 					return 'portrait-ring';
 				}
@@ -99,46 +101,43 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				// 1. Unset ring on any other trait sets in this character
 				props.character.traitSets.forEach( ( ts: any, idx: number ) => {
 					if ( idx !== props.traitSetID ) {
-						const tsBody = ts.custom?.cortexToolkit?.style?.body;
-						if ( tsBody === 'portrait-ring' || tsBody === 'attributes' || ts.custom?.cortexToolkit?.location === 'attributes' || cortexFunctions.getRingTrait( ts ) ) {
-							if ( !ts.custom ) ts.custom = {};
-							if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
-							if ( !ts.custom.cortexToolkit.style ) ts.custom.cortexToolkit.style = {};
-							ts.custom.cortexToolkit.style.body = 'default';
-							ts.custom.cortexToolkit.style.header = 'default';
-							ts.custom.cortexToolkit.location = 'right';
-							ts.custom.cortexToolkit.ringTrait = false;
+						const tsBody = getView( ts )?.style?.body;
+						if ( tsBody === 'portrait-ring' || tsBody === 'attributes' || getView( ts )?.location === 'attributes' || cortexFunctions.getRingTrait( ts ) ) {
+							const view = ensureView( ts );
+							if ( !view.style ) view.style = {};
+							view.style.body = 'default';
+							view.style.header = 'default';
+							view.location = 'right';
+							view.ringTrait = false;
 						}
 					}
 				});
 
 				// 2. Set ring on this trait set
-				if ( !traitSet.value.custom ) traitSet.value.custom = {};
-				if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-				if ( !traitSet.value.custom.cortexToolkit.style ) traitSet.value.custom.cortexToolkit.style = {};
-				traitSet.value.custom.cortexToolkit.style.body = 'portrait-ring';
-				traitSet.value.custom.cortexToolkit.style.header = 'portrait-ring';
-				traitSet.value.custom.cortexToolkit.location = 'attributes';
-				traitSet.value.custom.cortexToolkit.ringTrait = true;
-				traitSet.value.custom.cortexToolkit.isAttributes = true;
+				const view = ensureView( traitSet.value );
+				if ( !view.style ) view.style = {};
+				view.style.body = 'portrait-ring';
+				view.style.header = 'portrait-ring';
+				view.location = 'attributes';
+				view.ringTrait = true;
+				view.isAttributes = true;
 			} else {
-				if ( !traitSet.value.custom ) traitSet.value.custom = {};
-				if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-				if ( !traitSet.value.custom.cortexToolkit.style ) traitSet.value.custom.cortexToolkit.style = {};
-				traitSet.value.custom.cortexToolkit.style.body = value;
-				traitSet.value.custom.cortexToolkit.style.header = value;
-				if ( traitSet.value.custom.cortexToolkit.location === 'attributes' ) {
-					traitSet.value.custom.cortexToolkit.location = 'right';
+				const view = ensureView( traitSet.value );
+				if ( !view.style ) view.style = {};
+				view.style.body = value;
+				view.style.header = value;
+				if ( view.location === 'attributes' ) {
+					view.location = 'right';
 				}
-				traitSet.value.custom.cortexToolkit.ringTrait = false;
+				view.ringTrait = false;
 				// Spotlight PDF styles: seed the feature flags their layouts need.
-				if ( !traitSet.value.custom.cortexToolkit.features ) {
-					traitSet.value.custom.cortexToolkit.features = { description: false, sfx: false, subtraits: false };
+				if ( !view.features ) {
+					view.features = { description: false, sfx: false, subtraits: false };
 				}
 				const styleDefaults = cortexFunctions.defaultFeaturesForStyle( value );
-				Object.assign( traitSet.value.custom.cortexToolkit.features, styleDefaults.features );
+				Object.assign( view.features, styleDefaults.features );
 				if ( styleDefaults.multiDie ) {
-					traitSet.value.custom.cortexToolkit.multiDie = true;
+					view.multiDie = true;
 				}
 			}
 			updateCharacter( props.character );
@@ -148,10 +147,10 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const isRing = computed( () => styleBody.value === 'portrait-ring' );
 
 	const isAttributesSet = computed( () => Boolean(
-		traitSet.value?.custom?.cortexToolkit?.location === 'attributes' ||
-		traitSet.value?.custom?.cortexToolkit?.isAttributes ||
-		traitSet.value?.custom?.cortexToolkit?.style?.body === 'attributes' ||
-		traitSet.value?.custom?.cortexToolkit?.style?.body === 'portrait-ring' ||
+		getView( traitSet.value )?.location === 'attributes' ||
+		getView( traitSet.value )?.isAttributes ||
+		getView( traitSet.value )?.style?.body === 'attributes' ||
+		getView( traitSet.value )?.style?.body === 'portrait-ring' ||
 		traitSet.value?.nounSingular?.toLowerCase() === 'attribute' ||
 		traitSet.value?.name?.trim().toLowerCase() === 'attributes'
 	) );
@@ -162,32 +161,35 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const pageNumber = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.page ?? 1,
+		get: () => getView( traitSet.value )?.page ?? 1,
 		set: ( val: number ) => {
-			if ( !traitSet.value.custom ) traitSet.value.custom = {};
-			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-			traitSet.value.custom.cortexToolkit.page = val;
-			if ( val > 1 && ( !props.character.custom?.cortexToolkit?.pageCount || props.character.custom.cortexToolkit.pageCount < val ) ) {
-				if ( !props.character.custom ) props.character.custom = {};
-				if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-				props.character.custom.cortexToolkit.pageCount = val;
+			ensureView( traitSet.value ).page = val;
+			if ( val > 1 && ( !getView( props.character )?.pageCount || Number( getView( props.character )?.pageCount ) < val ) ) {
+				ensureView( props.character ).pageCount = val;
 			}
 			updateCharacter();
 		}
 	});
 
-	const columnLocation = computed( () => {
-		const loc = traitSet.value?.custom?.cortexToolkit?.location;
-		if ( loc === 'center' && characterColumnCount.value === 3 ) return 'center';
-		return loc === 'right' ? 'right' : 'left';
-	});
+	const characterColumnCount = computed( () => {
+		const c = Number( getView( props.character )?.columns );
+		return ( c === 2 || c === 3 ) ? c : 2;
+	} );
 
-	const characterColumnCount = computed( () => Number( props.character?.custom?.cortexToolkit?.columns ) === 3 ? 3 : 2 );
+	const columnLocation = computed( () => {
+		const loc = String( getView( traitSet.value )?.location || '' ).toLowerCase().trim();
+		if ( characterColumnCount.value === 3 ) {
+			if ( loc === 'center' || loc === '2' || loc === 'col-2' ) return 'center';
+			if ( loc === 'right' || loc === '3' || loc === 'col-3' ) return 'right';
+			return 'left';
+		}
+		return ( loc === 'right' || loc === '2' ) ? 'right' : 'left';
+	});
 
 	// Track count for THIS set's page (page 2 may override via columnsPage2).
 	const setTrackCount = computed( () => {
-		if ( ( traitSet.value?.custom?.cortexToolkit?.page ?? 1 ) === 2 ) {
-			const override = Number( props.character?.custom?.cortexToolkit?.columnsPage2 );
+		if ( ( getView( traitSet.value )?.page ?? 1 ) === 2 ) {
+			const override = Number( getView( props.character )?.columnsPage2 );
 			if ( override === 2 || override === 3 ) return override;
 		}
 		return characterColumnCount.value;
@@ -195,7 +197,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const isFullWidthSpan = computed({
 		get: () => {
-			const span = traitSet.value?.custom?.cortexToolkit?.colSpan ?? traitSet.value?.custom?.cortexToolkit?.columnSpan;
+			const span = getView( traitSet.value )?.span ?? getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
 			return span === 'full' || Number( span ) >= setTrackCount.value;
 		},
 		set: ( val: boolean ) => {
@@ -209,7 +211,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const colSpan = computed({
 		get: () => {
-			const span = traitSet.value?.custom?.cortexToolkit?.colSpan ?? traitSet.value?.custom?.cortexToolkit?.columnSpan;
+			const span = getView( traitSet.value )?.span ?? getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
 			if ( span === 'full' ) return setTrackCount.value;
 			return Number( span ) || 1;
 		},
@@ -221,7 +223,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// Starts a fresh row band before this set so consecutive bands can
 	// carry different column shares (e.g. 66/34 above 40/60).
 	const rowBreak = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.rowBreak === true,
+		get: () => getView( traitSet.value )?.rowBreak === true,
 		set: ( val: boolean ) => { setCustomProperty( 'rowBreak', val ? true : null ); }
 	});
 
@@ -233,26 +235,83 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// Template traits by name not currently on this sheet (D19 restore menu).
 	const restorableTraitNames = computed( () => cortexFunctions.restorableTraits( props.character, templateEntry.value, props.traitSetID ) );
 
-	// Column width share for Spotlight rows (percent of the row this
-	// set's column takes; unset/null = equal share). Mates in the other
-	// column(s) flex to fill whatever is left, forming a row band.
-	const colWidth = computed({
-		get: () => {
-			const w = Number( traitSet.value?.custom?.cortexToolkit?.colWidth );
-			return ( w >= 10 && w <= 90 ) ? Math.round( w ) : null;
-		},
-		set: ( val: number | null ) => {
-			if ( val === null || val === undefined || String( val ) === '' ) {
-				setCustomProperty( 'colWidth', null );
-				return;
+	// Track (1 | 2 | 3), Span (1 | 2 | 3), Band Widths ([w1, w2, w3]), Flex (filler)
+	function getBandAnchorSet(): TraitSet | null {
+		const sets = props.character?.traitSets || [];
+		const p = getView( traitSet.value )?.page || 1;
+		const sections = getSpotlightSections( sets, p );
+		for ( const sec of sections ) {
+			if ( sec.ordered.some( ( item: any ) => item.index === props.traitSetID ) ) {
+				return sec.ordered[0]?.traitSet || null;
 			}
-			const w = Math.min( 90, Math.max( 10, Math.round( Number( val ) || 50 ) ) );
-			setCustomProperty( 'colWidth', w );
+		}
+		return traitSet.value;
+	}
+
+	const track = computed({
+		get: (): 1 | 2 | 3 => {
+			const tr = getView( traitSet.value )?.track;
+			if ( tr === 1 || tr === 2 || tr === 3 ) return tr;
+			const loc = String( getView( traitSet.value )?.location || '' ).toLowerCase().trim();
+			if ( loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2' ) return 2;
+			if ( loc === 'right' || loc === '3' || loc === 'col-3' ) return 3;
+			return 1;
+		},
+		set: ( val: number ) => {
+			const tr = ( val === 2 || val === 3 ) ? val : 1;
+			setCustomProperty( 'track', tr );
+			const ctk = getView( traitSet.value );
+			if ( ctk && ctk.location !== 'header' && ctk.location !== undefined ) {
+				delete ctk.location;
+			}
 		}
 	});
 
+	const span = computed({
+		get: (): 1 | 2 | 3 => {
+			const sp = getView( traitSet.value )?.span;
+			if ( sp === 1 || sp === 2 || sp === 3 ) return sp;
+			const raw = getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
+			if ( raw === 'full' || Number( raw ) >= 3 ) return 3;
+			if ( Number( raw ) === 2 ) return 2;
+			return 1;
+		},
+		set: ( val: number ) => {
+			const sp = ( val === 2 || val === 3 ) ? val : 1;
+			setCustomProperty( 'span', sp );
+			const ctk = getView( traitSet.value );
+			if ( ctk ) {
+				delete ctk.colSpan;
+				delete ctk.columnSpan;
+			}
+		}
+	});
+
+	const bandWidths = computed({
+		get: (): [number, number, number] => {
+			const anchor = getBandAnchorSet();
+			const w = getView( anchor )?.widths;
+			if ( Array.isArray( w ) && w.length === 3 ) {
+				return [ Number( w[0] ), Number( w[1] ), Number( w[2] ) ];
+			}
+			return [ 33.333, 33.333, 33.334 ];
+		},
+		set: ( val: [number, number, number] ) => {
+			const anchor = getBandAnchorSet() || traitSet.value;
+			if ( anchor ) {
+				ensureView( anchor ).widths = [ Number( val[0] ), Number( val[1] ), Number( val[2] ) ];
+				updateCharacter( props.character );
+			}
+		}
+	});
+
+	const flex = computed({
+		get: () => getView( traitSet.value )?.flex !== false,
+		set: ( val: boolean ) => { setCustomProperty( 'flex', val ? null : false ); }
+	});
+
 	const headerRight = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.headerRight ?? '',
+		get: () => getView( traitSet.value )?.headerRight ?? '',
 		set: ( val: string ) => { setCustomProperty( 'headerRight', val ); }
 	});
 
@@ -260,24 +319,24 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const canMoveDown = computed( () => findMoveTarget( 1 ) !== -1 );
 
 	const isSpotlightSheet = computed( () => {
-		const explicit = props.character?.custom?.cortexToolkit?.sheetStyle;
+		const explicit = getView( props.character )?.sheetStyle;
 		if ( explicit ) return explicit === 'spotlight';
-		return props.character?.custom?.cortexToolkit?.style?.hasAttributes === false;
+		return getView( props.character )?.style?.hasAttributes === false;
 	});
 
 	const ringSpread = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.arcSpread ?? 100,
+		get: () => getView( traitSet.value )?.ringConfig?.arcSpread ?? 100,
 		set: ( val: number ) => { setRingConfig( 'arcSpread', Number( val ) ); }
 	});
 
 	const ringDistance = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.arcDistance ?? 0,
+		get: () => getView( traitSet.value )?.ringConfig?.arcDistance ?? 0,
 		set: ( val: number ) => { setRingConfig( 'arcDistance', Number( val ) ); }
 	});
 
 	const ringAngle = computed({
 		get: () => {
-			const cfg = traitSet.value?.custom?.cortexToolkit?.ringConfig;
+			const cfg = getView( traitSet.value )?.ringConfig;
 			return cfg?.arcAngle ?? ( cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90 );
 		},
 		set: ( val: number ) => { setRingConfig( 'arcAngle', Number( val ) ); }
@@ -293,7 +352,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const scaleAngle = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleAngle ?? 0,
+		get: () => getView( traitSet.value )?.ringConfig?.scaleAngle ?? 0,
 		set: ( val: number ) => { setRingConfig( 'scaleAngle', Number( val ) ); }
 	});
 
@@ -307,71 +366,67 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const scaleDistance = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleDistance ?? 0,
+		get: () => getView( traitSet.value )?.ringConfig?.scaleDistance ?? 0,
 		set: ( val: number ) => { setRingConfig( 'scaleDistance', Number( val ) ); }
 	});
 
 	const ringScaleY = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleDieY ?? 0,
+		get: () => getView( traitSet.value )?.ringConfig?.scaleDieY ?? 0,
 		set: ( val: number ) => { setRingConfig( 'scaleDieY', Number( val ) ); }
 	});
 
 	const ringScaleX = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.ringConfig?.scaleDieX ?? 0,
+		get: () => getView( traitSet.value )?.ringConfig?.scaleDieX ?? 0,
 		set: ( val: number ) => { setRingConfig( 'scaleDieX', Number( val ) ); }
 	});
 
 	const scaleDieValue = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.scaleDie || props.character?.custom?.cortexToolkit?.scale || 0,
+		get: () => getView( traitSet.value )?.scaleDie || getView( props.character )?.scale || 0,
 		set: ( val: number ) => {
-			if ( !traitSet.value.custom ) traitSet.value.custom = {};
-			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-			traitSet.value.custom.cortexToolkit.scaleDie = val;
-			if ( !props.character.custom ) props.character.custom = {};
-			if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-			props.character.custom.cortexToolkit.scale = val;
+			ensureView( traitSet.value ).scaleDie = val;
+			ensureView( props.character ).scale = val;
 			updateCharacter( props.character );
 		}
 	});
 
 	const imageURL = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.url ?? '',
+		get: () => getView( traitSet.value )?.imageConfig?.url ?? '',
 		set: ( val: string ) => { setImageConfig( 'url', val ); }
 	});
 
 	const imageAlignment = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.alignment ?? 'center',
+		get: () => getView( traitSet.value )?.imageConfig?.alignment ?? 'center',
 		set: ( val: string ) => { setImageConfig( 'alignment', val ); }
 	});
 
 	const imageHeight = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.height ?? 'auto',
+		get: () => getView( traitSet.value )?.imageConfig?.height ?? 'auto',
 		set: ( val: string ) => { setImageConfig( 'height', val ); }
 	});
 
 	const imageCaption = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.imageConfig?.caption ?? '',
+		get: () => getView( traitSet.value )?.imageConfig?.caption ?? '',
 		set: ( val: string ) => { setImageConfig( 'caption', val ); }
 	});
 
 	const featureDescription = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.features?.description ),
+		get: () => Boolean( getView( traitSet.value )?.features?.description ),
 		set: ( value: boolean ) => { setFeature( 'description', value ); }
 	});
 
 	const featureSubtraits = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.features?.subtraits ),
+		get: () => Boolean( getView( traitSet.value )?.features?.subtraits ),
 		set: ( value: boolean ) => { setFeature( 'subtraits', value ); }
 	});
 
 	const featureSFX = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.features?.sfx ),
+		get: () => Boolean( getView( traitSet.value )?.features?.sfx ),
 		set: ( value: boolean ) => { setFeature( 'sfx', value ); }
 	});
 
 	const includeOut = computed({
 		get: () => {
-			const cfg = traitSet.value?.custom?.cortexToolkit?.stressConfig;
+			const cfg = getView( traitSet.value )?.stressConfig;
 			if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 			return true;
 		},
@@ -382,10 +437,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		get: () => cortexFunctions.getTraitSetRatings( traitSet.value ),
 		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
-			if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-			if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-			props.character.traitSets[s].custom.cortexToolkit.ratingScale = scale;
-
+			ctkFor( s ).ratingScale = scale;
 			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 		}
 	});
@@ -394,21 +446,26 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		get: () => cortexFunctions.getSubtraitRatings( traitSet.value ),
 		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
-			if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-			if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-			props.character.traitSets[s].custom.cortexToolkit.subtraitRatingScale = scale;
+			ctkFor( s ).subtraitRatingScale = scale;
 			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 		}
 	});
 
 	const multiDie = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.multiDie ),
+		get: () => Boolean( getView( traitSet.value )?.multiDie ),
 		set: ( value: boolean ) => { setCustomProperty( 'multiDie', value ); }
+	});
+
+	// Pool sets add a whole trait pool to the roller on click, and their
+	// dice are never flagged as resources (e.g. Growth Pool).
+	const isPool = computed({
+		get: () => Boolean( getView( traitSet.value )?.pool ),
+		set: ( value: boolean ) => { setCustomProperty( 'pool', value ? true : null ); }
 	});
 
 	const setDie = computed({
 		get: () => {
-			const d = Number( traitSet.value?.custom?.cortexToolkit?.setDie );
+			const d = Number( getView( traitSet.value )?.setDie );
 			return ( d > 0 ) ? d : null;
 		},
 		set: ( value: number | null ) => { setCustomProperty( 'setDie', ( Number( value ) > 0 ) ? value : null ); }
@@ -416,8 +473,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const isChallengePool = computed({
 		get: () => Boolean(
-			traitSet.value?.custom?.cortexToolkit?.isChallengePool ||
-			traitSet.value?.custom?.cortexToolkit?.challengePool
+			getView( traitSet.value )?.isChallengePool ||
+			getView( traitSet.value )?.challengePool
 		),
 		set: ( value: boolean ) => {
 			setCustomProperty( 'isChallengePool', value );
@@ -426,13 +483,13 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const notesContent = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.notes ?? ( traitSet.value?.description ?? '' ),
+		get: () => getView( traitSet.value )?.notes ?? ( traitSet.value?.description ?? '' ),
 		set: ( value: string ) => { setCustomProperty( 'notes', value ); }
 	});
 
 	const reservedSlots = computed({
 		get: () => {
-			const val = traitSet.value?.custom?.cortexToolkit?.reservedSlots;
+			const val = getView( traitSet.value )?.reservedSlots;
 			return ( val !== undefined && val !== null && String( val ) !== '' ) ? Number( val ) : '';
 		},
 		set: ( val: number | '' ) => {
@@ -442,42 +499,42 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const sharedHinder = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.sharedHinder ),
+		get: () => Boolean( getView( traitSet.value )?.sharedHinder ),
 		set: ( val: boolean ) => { setCustomProperty( 'sharedHinder', Boolean( val ) ); }
 	});
 
 	const sharedHinderText = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.sharedHinderText ?? '',
+		get: () => getView( traitSet.value )?.sharedHinderText ?? '',
 		set: ( val: string ) => { setCustomProperty( 'sharedHinderText', val ); }
 	});
 
 	const traitColumns = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.traitColumns ?? 1,
+		get: () => getView( traitSet.value )?.traitColumns ?? 1,
 		set: ( val: number ) => { setCustomProperty( 'traitColumns', parseInt( String( val ), 10 ) || 1 ); }
 	});
 
 	const hasAttachedStress = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.attachedStress?.enabled ),
+		get: () => Boolean( getView( traitSet.value )?.attachedStress?.enabled ),
 		set: ( val: boolean ) => { setAttachedStressProperty( 'enabled', Boolean( val ) ); }
 	});
 
 	const attachedStressLabel = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.label ?? 'Stress',
+		get: () => getView( traitSet.value )?.attachedStress?.label ?? 'Stress',
 		set: ( val: string ) => { setAttachedStressProperty( 'label', val ); }
 	});
 
 	const attachedStressScale = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.attachedStress?.scale ?? [ 4, 6, 8, 10, 12 ],
+		get: () => getView( traitSet.value )?.attachedStress?.scale ?? [ 4, 6, 8, 10, 12 ],
 		set: ( scale: number[] ) => { setAttachedStressProperty( 'scale', scale ); }
 	});
 
 	const attachedStressOut = computed({
-		get: () => Boolean( traitSet.value?.custom?.cortexToolkit?.attachedStress?.includeOut ),
+		get: () => Boolean( getView( traitSet.value )?.attachedStress?.includeOut ),
 		set: ( val: boolean ) => { setAttachedStressProperty( 'includeOut', Boolean( val ) ); }
 	});
 
 	const ratingPosition = computed({
-		get: () => traitSet.value?.ratingPosition || traitSet.value?.custom?.cortexToolkit?.ratingPosition || 'inline',
+		get: () => traitSet.value?.ratingPosition || getView( traitSet.value )?.ratingPosition || 'inline',
 		set: ( val: 'inline' | 'above' | 'below' | 'none' ) => {
 			setProperty( 'ratingPosition', val );
 			setCustomProperty( 'ratingPosition', val );
@@ -485,7 +542,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const isStatementSet = computed({
-		get: () => Boolean( traitSet.value?.statement ?? traitSet.value?.custom?.cortexToolkit?.statement ),
+		get: () => Boolean( traitSet.value?.statement ?? getView( traitSet.value )?.statement ),
 		set: ( val: boolean ) => {
 			setProperty( 'statement', Boolean( val ) );
 			setCustomProperty( 'statement', Boolean( val ) );
@@ -493,7 +550,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const hasQuestionedPip = computed({
-		get: () => Boolean( traitSet.value?.hasQuestionedPip ?? traitSet.value?.custom?.cortexToolkit?.hasQuestionedPip ),
+		get: () => Boolean( traitSet.value?.hasQuestionedPip ?? getView( traitSet.value )?.hasQuestionedPip ),
 		set: ( val: boolean ) => {
 			setProperty( 'hasQuestionedPip', Boolean( val ) );
 			setCustomProperty( 'hasQuestionedPip', Boolean( val ) );
@@ -501,7 +558,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const hasCounterColumn = computed({
-		get: () => Boolean( traitSet.value?.hasCounterColumn ?? traitSet.value?.custom?.cortexToolkit?.hasCounterColumn ),
+		get: () => Boolean( traitSet.value?.hasCounterColumn ?? getView( traitSet.value )?.hasCounterColumn ),
 		set: ( val: boolean ) => {
 			setProperty( 'hasCounterColumn', Boolean( val ) );
 			setCustomProperty( 'hasCounterColumn', Boolean( val ) );
@@ -509,7 +566,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const counterLabel = computed({
-		get: () => traitSet.value?.counterLabel || traitSet.value?.custom?.cortexToolkit?.counterLabel || 'XP',
+		get: () => traitSet.value?.counterLabel || getView( traitSet.value )?.counterLabel || 'XP',
 		set: ( val: string ) => {
 			setProperty( 'counterLabel', val );
 			setCustomProperty( 'counterLabel', val );
@@ -517,51 +574,52 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const pipCount = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.count ?? 25,
+		get: () => getView( traitSet.value )?.pips?.count ?? 25,
 		set: ( val: number ) => { setPipProperty( 'count', Math.max( 1, parseInt( String( val ), 10 ) || 25 ) ); }
 	});
 
 	const pipsPerRow = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.perRow ?? 5,
+		get: () => getView( traitSet.value )?.pips?.perRow ?? 5,
 		set: ( val: number ) => { setPipProperty( 'perRow', Math.max( 1, parseInt( String( val ), 10 ) || 5 ) ); }
 	});
 
 	const pipsConnected = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.connected !== false,
+		get: () => getView( traitSet.value )?.pips?.connected !== false,
 		set: ( val: any ) => { setPipProperty( 'connected', Boolean( val ) ); }
 	});
 
 	const pipsFilled = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.pips?.filled ?? 0,
+		get: () => getView( traitSet.value )?.pips?.filled ?? 0,
 		set: ( val: number ) => { setPipProperty( 'filled', Math.max( 0, parseInt( String( val ), 10 ) || 0 ) ); }
 	});
 
 	const sessionRecordCount = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.sessionRecord?.count ??
-			traitSet.value?.custom?.cortexToolkit?.reservedSlots ??
-			( traitSet.value?.traits ? traitSet.value.traits.length : 0 ) ?? 20,
+		get: () => {
+			const v = getView( traitSet.value );
+			const configured = Number( v?.sessionRecord?.count ?? v?.sessionRecord?.boxCount ?? v?.reservedSlots ) || 0;
+			const traitsLen = traitSet.value?.traits ? traitSet.value.traits.length : 0;
+			return configured || Math.max( 20, traitsLen );
+		},
 		set: ( val: number ) => {
 			const count = Math.max( 1, parseInt( String( val ), 10 ) || 20 );
-			if ( !traitSet.value.custom ) traitSet.value.custom = {};
-			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-			if ( !traitSet.value.custom.cortexToolkit.sessionRecord ) {
-				traitSet.value.custom.cortexToolkit.sessionRecord = {};
+			const view = ensureView( traitSet.value );
+			if ( !view.sessionRecord ) {
+				view.sessionRecord = {};
 			}
-			traitSet.value.custom.cortexToolkit.sessionRecord.count = count;
-			traitSet.value.custom.cortexToolkit.reservedSlots = count;
+			view.sessionRecord.count = count;
+			view.reservedSlots = count;
 			updateCharacter( props.character );
 		}
 	});
 
 	const sessionRecordOrientation = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.sessionRecord?.orientation === 'horizontal' ? 'horizontal' : 'vertical',
+		get: () => getView( traitSet.value )?.sessionRecord?.orientation === 'horizontal' ? 'horizontal' : 'vertical',
 		set: ( val: 'horizontal' | 'vertical' ) => {
-			if ( !traitSet.value.custom ) traitSet.value.custom = {};
-			if ( !traitSet.value.custom.cortexToolkit ) traitSet.value.custom.cortexToolkit = {};
-			if ( !traitSet.value.custom.cortexToolkit.sessionRecord ) {
-				traitSet.value.custom.cortexToolkit.sessionRecord = {};
+			const view = ensureView( traitSet.value );
+			if ( !view.sessionRecord ) {
+				view.sessionRecord = {};
 			}
-			traitSet.value.custom.cortexToolkit.sessionRecord.orientation = ( val === 'horizontal' ) ? 'horizontal' : 'vertical';
+			view.sessionRecord.orientation = ( val === 'horizontal' ) ? 'horizontal' : 'vertical';
 			updateCharacter( props.character );
 		}
 	});
@@ -576,19 +634,19 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const allowsTraitColumns = computed( () => ![ 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'dice-ladder', 'labeled-fields' ].includes( styleBody.value ) );
 
 	const editorDock = computed({
-		get: () => traitSet.value?.custom?.cortexToolkit?.editorDock === 'right' ? 'right' : 'left',
+		get: () => getView( traitSet.value )?.editorDock === 'right' ? 'right' : 'left',
 		set: ( val: 'left' | 'right' ) => { setCustomProperty( 'editorDock', val === 'right' ? 'right' : 'left' ); }
 	});
 
 	// Set header placement + alignment (generic; applies to every style).
 	const headerMode = computed({
-		get: () => ( traitSet.value?.custom?.cortexToolkit?.header === 'top' ? 'top' : 'sidebar' ),
+		get: () => ( getView( traitSet.value )?.header === 'top' ? 'top' : 'sidebar' ),
 		set: ( val: 'sidebar' | 'top' ) => { setCustomProperty( 'header', val === 'top' ? 'top' : 'sidebar' ); }
 	});
 
 	const headerAlign = computed({
 		get: () => {
-			const a = traitSet.value?.custom?.cortexToolkit?.headerAlign;
+			const a = getView( traitSet.value )?.headerAlign;
 			return a === 'center' || a === 'right' ? a : 'left';
 		},
 		set: ( val: 'left' | 'center' | 'right' ) => { setCustomProperty( 'headerAlign', val === 'center' || val === 'right' ? val : 'left' ); }
@@ -597,7 +655,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// Branched Skills connectors (per-specialty arrows) are optional.
 	const branchArrows = computed({
 		get: () => {
-			const v = traitSet.value?.custom?.cortexToolkit?.branchArrows;
+			const v = getView( traitSet.value )?.branchArrows;
 			return v !== false;
 		},
 		set: ( val: boolean ) => { setCustomProperty( 'branchArrows', Boolean( val ) ); }
@@ -638,12 +696,9 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	}
 
-	// Ensure + return this set's `custom.cortexToolkit` compartment (typed).
+	// Ensure + return this set's view bag (typed).
 	function ctkFor( s: number ): CortexToolkitCustom {
-		const ts = props.character.traitSets[ s ];
-		if ( !ts.custom ) ts.custom = {};
-		if ( !ts.custom.cortexToolkit ) ts.custom.cortexToolkit = {};
-		return ts.custom.cortexToolkit;
+		return ensureView( props.character.traitSets[ s ] );
 	}
 
 	function setProperty( key: keyof TraitSet, value: any ) {
@@ -693,9 +748,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	function setColumn( col: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		props.character.traitSets[s].custom.cortexToolkit.location = col;
+		ctkFor( s ).location = col;
 		updateCharacter( props.character );
 	}
 
@@ -729,18 +782,18 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	function isFullWidthSetByIndex( idx: any ) {
 		if ( !isSpotlightSheet.value ) return false;
-		const ctk = props.character?.traitSets?.[ idx ]?.custom?.cortexToolkit;
-		const span = ctk?.colSpan ?? ctk?.columnSpan;
+		const ctk = getView( props.character?.traitSets?.[ idx ] );
+		const span = ctk?.span ?? ctk?.colSpan ?? ctk?.columnSpan;
 		return span === 'full' || Number( span ) >= characterColumnCount.value;
 	}
 
 	function pageOfSet( idx: any ) {
-		const page = props.character?.traitSets?.[ idx ]?.custom?.cortexToolkit?.page;
+		const page = getView( props.character?.traitSets?.[ idx ] )?.page;
 		return page === undefined || page === null ? 1 : page;
 	}
 
 	function columnOfSet( idx: any ) {
-		const loc = props.character?.traitSets?.[ idx ]?.custom?.cortexToolkit?.location;
+		const loc = getView( props.character?.traitSets?.[ idx ] )?.location;
 		if ( loc === 'center' && characterColumnCount.value === 3 ) return 'center';
 		return loc === 'right' ? 'right' : 'left';
 	}
@@ -770,10 +823,9 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	function setRingConfig( key: keyof RingConfig, value: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit.ringConfig ) {
-			props.character.traitSets[s].custom.cortexToolkit.ringConfig = {
+		const ctk = ctkFor( s );
+		if ( !ctk.ringConfig ) {
+			ctk.ringConfig = {
 				arcAngle: -90,
 				arcSpread: 100,
 				arcDistance: 0,
@@ -784,15 +836,13 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				arcSlide: 0
 			};
 		}
-		ctkFor( s ).ringConfig![ key ] = value;
+		ctk.ringConfig[ key ] = value;
 		updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 	}
 
 	function resetRingPlacement() {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		props.character.traitSets[s].custom.cortexToolkit.ringConfig = {
+		ctkFor( s ).ringConfig = {
 			arcAngle: -90,
 			arcSpread: 100,
 			arcDistance: 0,
@@ -807,30 +857,22 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	function setFeature( featureID: keyof SetFeatures, value: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) props.character.traitSets[s].custom = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) props.character.traitSets[s].custom.cortexToolkit = {};
-		if ( !props.character.traitSets[s].custom.cortexToolkit.features ) {
-			props.character.traitSets[s].custom.cortexToolkit.features = {
+		const ctk = ctkFor( s );
+		if ( !ctk.features ) {
+			ctk.features = {
 				description: false,
 				sfx: false,
 				subtraits: false
 			};
 		}
-		ctkFor( s ).features![ featureID ] = value;
+		ctk.features[ featureID ] = value;
 
 		updateCharacter( props.character );
 	}
 
 	function setCustomProperty( key: string, value: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) {
-			props.character.traitSets[s].custom = {};
-		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) {
-			props.character.traitSets[s].custom.cortexToolkit = {};
-		}
-		props.character.traitSets[s].custom.cortexToolkit[ key ] = value;
-
+		ctkFor( s )[ key ] = value;
 		updateCharacter( props.character );
 	}
 
@@ -838,7 +880,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// style's named regions; defaults resolve centrally per style.
 	// Inputs bind :value/@change (and placeholder) to it.
 	function styleLabel( key: string ) {
-		const labels = traitSet.value?.custom?.cortexToolkit?.labels;
+		const labels = getView( traitSet.value )?.labels;
 		if ( labels && labels[ key ] !== undefined && labels[ key ] !== null && String( labels[ key ] ).length ) {
 			return labels[ key ];
 		}
@@ -847,49 +889,33 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	function setStyleLabel( key: string, value: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) {
-			props.character.traitSets[s].custom = {};
+		const ctk = ctkFor( s );
+		if ( !ctk.labels || typeof ctk.labels !== 'object' ) {
+			ctk.labels = {};
 		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) {
-			props.character.traitSets[s].custom.cortexToolkit = {};
-		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit.labels ||
-		     typeof props.character.traitSets[s].custom.cortexToolkit.labels !== 'object' ) {
-			props.character.traitSets[s].custom.cortexToolkit.labels = {};
-		}
-		props.character.traitSets[s].custom.cortexToolkit.labels[ key ] = value;
+		ctk.labels[ key ] = value;
 
 		updateCharacter( props.character );
 	}
 
 	function setStressConfig( key: keyof StressConfig, value: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) {
-			props.character.traitSets[s].custom = {};
+		const ctk = ctkFor( s );
+		if ( !ctk.stressConfig ) {
+			ctk.stressConfig = {};
 		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) {
-			props.character.traitSets[s].custom.cortexToolkit = {};
-		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit.stressConfig ) {
-			props.character.traitSets[s].custom.cortexToolkit.stressConfig = {};
-		}
-		ctkFor( s ).stressConfig![ key ] = value;
+		ctk.stressConfig[ key ] = value;
 
 		updateCharacter( props.character );
 	}
 
 	function setImageConfig( key: keyof ImageConfig, value: any ) {
 		let s = props.traitSetID;
-		if ( !props.character.traitSets[s].custom ) {
-			props.character.traitSets[s].custom = {};
+		const ctk = ctkFor( s );
+		if ( !ctk.imageConfig ) {
+			ctk.imageConfig = {};
 		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit ) {
-			props.character.traitSets[s].custom.cortexToolkit = {};
-		}
-		if ( !props.character.traitSets[s].custom.cortexToolkit.imageConfig ) {
-			props.character.traitSets[s].custom.cortexToolkit.imageConfig = {};
-		}
-		ctkFor( s ).imageConfig![ key ] = value;
+		ctk.imageConfig[ key ] = value;
 
 		updateCharacter( props.character );
 	}
@@ -1178,11 +1204,12 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
 		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
 		ringTrait, pageNumber, columnLocation, characterColumnCount, setTrackCount, isFullWidthSpan, colSpan,
-		rowBreak, templateEntry, restorableTraitNames, colWidth, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
+		track, span, bandWidths, flex,
+		rowBreak, templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
-		multiDie, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
+		multiDie, isPool, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
 		hasAttachedStress, attachedStressLabel, attachedStressScale, attachedStressOut, ratingPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled,
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,

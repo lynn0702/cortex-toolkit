@@ -70,13 +70,13 @@ function removeEffect() {
 		<div class="editor-fields">
 
 			<div class="editor-field">
-				<label>SFX Name</label>
-				<input type="text" v-model="name">
+				<label :for="'sfx-name-' + traitSetID + '-' + (traitID !== null ? traitID : 'set') + '-' + effectID">SFX Name</label>
+				<input type="text" :id="'sfx-name-' + traitSetID + '-' + (traitID !== null ? traitID : 'set') + '-' + effectID" name="sfxName" v-model="name">
 			</div>
 
 			<div class="editor-field">
-				<label>SFX Description</label>
-				<textarea v-model="description"></textarea>
+				<label :for="'sfx-desc-' + traitSetID + '-' + (traitID !== null ? traitID : 'set') + '-' + effectID">SFX Description</label>
+				<textarea :id="'sfx-desc-' + traitSetID + '-' + (traitID !== null ? traitID : 'set') + '-' + effectID" name="sfxDescription" v-model="description"></textarea>
 			</div>
 
 			<div class="editor-button-container">

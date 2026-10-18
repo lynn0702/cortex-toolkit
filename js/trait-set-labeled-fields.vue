@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitEditor from './trait-editor.vue';
 
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
@@ -10,7 +10,7 @@ const {
 </script>
 
 <template>
-	<div class="trait-labeled-fields" v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'labeled-fields'">
+	<div class="trait-labeled-fields" v-if="getView(traitSet)?.style?.body === 'labeled-fields'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
 				<div :class="{ 'trait-inner': true, 'field-block': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
@@ -27,20 +27,6 @@ const {
 					<span class="field-text field-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Click to add text...</span>
 					<span class="field-text" v-else></span>
 				</div>
-				<transition name="editor" appear>
-					<TraitEditor
-						v-if="!item.isPlaceholder"
-						:character="character"
-						:open="isSelected(['trait', s, item.originalIndex])"
-						v-show="submode === 'edit' && isSelected(['trait', s, item.originalIndex])"
-						:traitSetID="s"
-						:traitID="item.originalIndex"
-						:viewY="viewY"
-						@selectElement="selectElement"
-						@updateCharacter="updateCharacter"
-						@removeTrait="removeTrait"
-					></TraitEditor>
-				</transition>
 			</div>
 		</template>
 		<transition appear>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { getView, ensureView } from './model.ts';
 
 const props = defineProps<{
 	character: any;
@@ -28,7 +29,7 @@ const imageURL = computed( {
 
 const size = computed( {
 	get() {
-		return props.character?.portrait?.custom?.cortexToolkit?.size ?? 'classic';
+		return getView( props.character?.portrait )?.size ?? 'classic';
 	},
 	set( value: string ) {
 		setCustomProperty( 'size', value );
@@ -37,7 +38,7 @@ const size = computed( {
 
 const location = computed( {
 	get() {
-		return props.character?.portrait?.custom?.cortexToolkit?.location ?? 'header';
+		return getView( props.character?.portrait )?.location ?? 'header';
 	},
 	set( value: string ) {
 		setCustomProperty( 'location', value );
@@ -46,7 +47,7 @@ const location = computed( {
 
 const alignment = computed( {
 	get() {
-		return props.character?.portrait?.custom?.cortexToolkit?.alignment ?? 'top-center';
+		return getView( props.character?.portrait )?.alignment ?? 'top-center';
 	},
 	set( value: string ) {
 		setAlignment( value );
@@ -60,10 +61,9 @@ function selectElement( selector: any[] ) {
 function ensurePortraitStruct() {
 	if ( !props.character ) return;
 	if ( !props.character.portrait ) {
-		props.character.portrait = structuredClone( cortexFunctions.defaultCharacter.portrait || { url: '', custom: { cortexToolkit: {} } } );
+		props.character.portrait = structuredClone( cortexFunctions.defaultCharacter.portrait || { url: '', view: {} } );
 	}
-	if ( !props.character.portrait.custom ) props.character.portrait.custom = {};
-	if ( !props.character.portrait.custom.cortexToolkit ) props.character.portrait.custom.cortexToolkit = {};
+	ensureView( props.character.portrait );
 }
 
 function uploadStart() {
@@ -79,20 +79,20 @@ function setImageURL( url: string ) {
 function removePortrait() {
 	ensurePortraitStruct();
 	props.character.portrait.url = '';
-	props.character.portrait.custom.cortexToolkit.size = 'none';
+	ensureView( props.character.portrait ).size = 'none';
 	updateCharacter( props.character );
 	selectElement( [] );
 }
 
 function setCustomProperty( key: string, value: any ) {
 	ensurePortraitStruct();
-	props.character.portrait.custom.cortexToolkit[ key ] = value;
+	ensureView( props.character.portrait )[ key ] = value;
 	updateCharacter( props.character );
 }
 
 function setAlignment( value: string ) {
 	ensurePortraitStruct();
-	props.character.portrait.custom.cortexToolkit.alignment = value;
+	ensureView( props.character.portrait ).alignment = value;
 	updateCharacter( props.character );
 }
 
@@ -140,8 +140,8 @@ function updateCharacter( character: any ) {
 				<div class="editor-fields">
 
 					<div class="editor-field">
-						<label>Portrait Size / Style</label>
-						<select v-model="size">
+						<label for="portrait-field-size">Portrait Size / Style</label>
+						<select id="portrait-field-size" name="portraitSize" v-model="size">
 							<option value="classic">Classic</option>
 							<option value="spotlight">Small Portrait</option>
 							<option value="none">Hidden</option>
@@ -149,8 +149,8 @@ function updateCharacter( character: any ) {
 					</div>
 
 					<div class="editor-field" v-if="size !== 'none'">
-						<label>Placement</label>
-						<select v-model="location">
+						<label for="portrait-field-location">Placement</label>
+						<select id="portrait-field-location" name="portraitLocation" v-model="location">
 							<option value="header">Header</option>
 							<option value="right">Right Column</option>
 							<option value="left">Left Column</option>
@@ -159,7 +159,7 @@ function updateCharacter( character: any ) {
 
 					<div class="editor-field" v-if="size !== 'none'">
 
-						<label>Image Source</label>
+						<div class="editor-label">Image Source</div>
 
 						<img class="portrait-preview"
 							v-if="hasImage"
@@ -178,13 +178,13 @@ function updateCharacter( character: any ) {
 							</div>
 						</div>
 
-						<input class="portrait-input" type="file" ref="inputFile" @change="uploadProcess" accept="image/*">
+						<input id="portrait-field-file" name="portraitFile" class="portrait-input" type="file" ref="inputFile" @change="uploadProcess" accept="image/*">
 
 						<div class="editor-upload-error" v-if="uploadError">{{ uploadError }}</div>
 
 						<div style="margin-top: 0.5rem;">
-							<label style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
-							<input type="text" v-model.lazy="imageURL" placeholder="https://example.com/portrait.jpg">
+							<label for="portrait-field-url" style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
+							<input id="portrait-field-url" name="portraitUrl" type="text" v-model.lazy="imageURL" placeholder="https://example.com/portrait.jpg">
 						</div>
 
 						<div class="editor-button-container" v-if="hasImage" style="margin-top: 0.75rem;">
@@ -199,7 +199,7 @@ function updateCharacter( character: any ) {
 
 					<div class="editor-field" v-if="hasImage && size !== 'none'">
 
-						<label>Alignment / Focus</label>
+						<div class="editor-label">Alignment / Focus</div>
 
 						<div class="editor-portrait-alignment">
 							<div @click.stop="setAlignment('top-left')"      :class="{'active': alignment === 'top-left' }"></div>

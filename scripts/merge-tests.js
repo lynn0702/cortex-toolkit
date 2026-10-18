@@ -16,7 +16,7 @@ function tpl() {
     id: 'test-template', title: 'Test', version: 1,
     character: {
       id: 'tpl-char', name: '', game: 'Test Game',
-      custom: { cortexToolkit: { columns: 2, sheetStyle: 'spotlight' } },
+      view: { columns: 2, sheetStyle: 'spotlight' },
       traitSets: [
         {
           id: 'distinctions', name: 'Distinctions', description: '', nounSingular: 'Distinction', nounPlural: 'Distinctions',
@@ -26,7 +26,7 @@ function tpl() {
             { name: '', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
           ],
           sfx: [], tags: [],
-          custom: { cortexToolkit: { location: 'left', style: { header: 'distinctions', body: 'distinctions' }, reservedSlots: 3 } },
+          view: { location: 'left', style: { header: 'distinctions', body: 'distinctions' }, reservedSlots: 3 },
         },
         {
           id: 'attributes', name: 'Attributes', description: '', nounSingular: 'Attribute', nounPlural: 'Attributes',
@@ -34,7 +34,7 @@ function tpl() {
             { name: 'Physical', value: 8, dice: [8], description: '', traits: [{ name: 'Lifting', value: 6, dice: [6], description: '', traits: [], sfx: [], tags: [], custom: {} }], sfx: [], tags: [], custom: {} },
           ],
           sfx: [], tags: [],
-          custom: { cortexToolkit: { location: 'right' } },
+          view: { location: 'right' },
         },
       ],
     },
@@ -43,14 +43,14 @@ function tpl() {
 
 // ---- D3 three-state at scalar + nested level.
 {
-  const m = F.mergeTemplateIntoCharacter({ id: 'c1', game: 'My Game', custom: { cortexToolkit: { columns: 3 } }, traitSets: [] }, tpl());
+  const m = F.mergeTemplateIntoCharacter({ id: 'c1', game: 'My Game', view: { columns: 3 }, traitSets: [] }, tpl());
   ok(m.game === 'My Game', 'D3 value wins (game)');
-  ok(m.custom.cortexToolkit.columns === 3, 'D3 value wins (nested columns)');
-  ok(m.custom.cortexToolkit.sheetStyle === 'spotlight', 'D3 absent inherits (sheetStyle)');
+  ok(m.view.columns === 3, 'D3 value wins (nested columns)');
+  ok(m.view.sheetStyle === 'spotlight', 'D3 absent inherits (sheetStyle)');
   const m2 = F.mergeTemplateIntoCharacter({ id: 'c1', game: null, traitSets: [] }, tpl());
   ok(m2.game === null, 'D3 null stays cleared (no inherit)');
-  const m3 = F.mergeTemplateIntoCharacter({ id: 'c1', custom: { cortexToolkit: { sheetStyle: null } }, traitSets: [] }, tpl());
-  ok(m3.custom.cortexToolkit.sheetStyle === null, 'D3 null stays cleared (nested)');
+  const m3 = F.mergeTemplateIntoCharacter({ id: 'c1', view: { sheetStyle: null }, traitSets: [] }, tpl());
+  ok(m3.view.sheetStyle === null, 'D3 null stays cleared (nested)');
 }
 
 // ---- D3 sheet link never merges (D9).
@@ -172,11 +172,11 @@ function tpl() {
 // ---- reservedSlots: inherited, overridden, stripped when equal.
 {
   const m = F.mergeTemplateIntoCharacter({ id: 'c1', traitSets: [{ id: 'distinctions' }] }, tpl());
-  ok(m.traitSets[0].custom.cortexToolkit.reservedSlots === 3, 'reservedSlots inherited (print rows intact)');
-  const m2 = F.mergeTemplateIntoCharacter({ id: 'c1', traitSets: [{ id: 'distinctions', custom: { cortexToolkit: { reservedSlots: 5 } } }] }, tpl());
-  ok(m2.traitSets[0].custom.cortexToolkit.reservedSlots === 5, 'reservedSlots override wins');
+  ok(m.traitSets[0].view.reservedSlots === 3, 'reservedSlots inherited (print rows intact)');
+  const m2 = F.mergeTemplateIntoCharacter({ id: 'c1', traitSets: [{ id: 'distinctions', view: { reservedSlots: 5 } }] }, tpl());
+  ok(m2.traitSets[0].view.reservedSlots === 5, 'reservedSlots override wins');
   const s2 = F.stripCharacterToDeltas(m2, tpl());
-  ok(s2.traitSets[0].custom.cortexToolkit.reservedSlots === 5, 'reservedSlots override survives strip');
+  ok(s2.traitSets[0].view.reservedSlots === 5, 'reservedSlots override survives strip');
   const s1 = F.stripCharacterToDeltas(m, tpl());
   ok(s1.traitSets === undefined, 'pristine sets vanish entirely (maximal sparseness)');
 }

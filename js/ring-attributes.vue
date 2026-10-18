@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import TraitEditor from './trait-editor.vue';
+import { getView, ensureView } from './model.ts';
 
 const props = defineProps<{
 	character: any;
@@ -36,17 +36,17 @@ const attributes = computed( () => {
 } );
 const isRingChallengePool = computed( () => {
 	const ts = ringTraitSet.value;
-	return Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
+	return Boolean( getView( ts )?.isChallengePool || getView( ts )?.challengePool );
 } );
 const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
 	if ( st ) return Number( st.value ) || 8;
 	const attrSet = ringTraitSet.value;
-	if ( attrSet?.custom?.cortexToolkit?.scaleDie ) {
-		return Number( attrSet.custom.cortexToolkit.scaleDie );
+	if ( getView( attrSet )?.scaleDie ) {
+		return Number( getView( attrSet )?.scaleDie );
 	}
-	if ( props.character?.custom?.cortexToolkit?.scale ) {
-		return Number( props.character.custom.cortexToolkit.scale );
+	if ( getView( props.character )?.scale ) {
+		return Number( getView( props.character )?.scale );
 	}
 	return 0;
 } );
@@ -55,7 +55,7 @@ const isOtherEditorOpen = computed( () => Boolean( props.editing && props.editin
 
 const ringConfig = computed( () => {
 	const attrSet = ringTraitSet.value;
-	const cfg = attrSet?.custom?.cortexToolkit?.ringConfig;
+	const cfg = getView( attrSet )?.ringConfig;
 	const baseArcAngle = cfg?.arcAngle ?? ( cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90 );
 	const baseScaleAngle = cfg?.scaleAngle ?? 0;
 	return {
@@ -145,7 +145,7 @@ function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any
 	if ( isRingDragging.value ) return;
 	if ( props.submode === 'play' ) {
 		const ts = props.character.traitSets[ ringTraitIDVal ];
-		const isChallenge = Boolean( ts?.custom?.cortexToolkit?.isChallengePool || ts?.custom?.cortexToolkit?.challengePool );
+		const isChallenge = Boolean( getView( ts )?.isChallengePool || getView( ts )?.challengePool );
 		if ( isChallenge ) {
 			const diceToAdd: any[] = [];
 			const poolName = ( ts?.name && ts.name !== 'Attributes' ) ? ts.name : ( props.character.name || 'Challenge Pool' );
@@ -294,10 +294,9 @@ function startRingDrag( event: any, targetType: string ) {
 function setRingConfigProp( key: string, value: any ) {
 	const attrSet = ringTraitSet.value;
 	if ( attrSet ) {
-		if ( !attrSet.custom ) attrSet.custom = {};
-		if ( !attrSet.custom.cortexToolkit ) attrSet.custom.cortexToolkit = {};
-		if ( !attrSet.custom.cortexToolkit.ringConfig ) {
-			attrSet.custom.cortexToolkit.ringConfig = {
+		const view = ensureView( attrSet );
+		if ( !view.ringConfig ) {
+			view.ringConfig = {
 				arcAngle: -90,
 				arcSpread: 100,
 				arcDistance: 0,
@@ -307,7 +306,7 @@ function setRingConfigProp( key: string, value: any ) {
 				scaleDieY: 0
 			};
 		}
-		attrSet.custom.cortexToolkit.ringConfig[ key ] = value;
+		( view.ringConfig as any )[ key ] = value;
 	}
 }
 
@@ -315,9 +314,7 @@ function setScaleDieValue( val: any ) {
 	const num = Number( val ) || 0;
 	const attrSet = ringTraitSet.value;
 	if ( attrSet ) {
-		if ( !attrSet.custom ) attrSet.custom = {};
-		if ( !attrSet.custom.cortexToolkit ) attrSet.custom.cortexToolkit = {};
-		attrSet.custom.cortexToolkit.scaleDie = num;
+		ensureView( attrSet ).scaleDie = num;
 
 		const stIndex = attrSet.traits.findIndex( ( t: any ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
 		if ( num === 0 ) {
@@ -328,9 +325,7 @@ function setScaleDieValue( val: any ) {
 			attrSet.traits[ stIndex ].value = num;
 		}
 	}
-	if ( !props.character.custom ) props.character.custom = {};
-	if ( !props.character.custom.cortexToolkit ) props.character.custom.cortexToolkit = {};
-	props.character.custom.cortexToolkit.scale = num;
+	ensureView( props.character ).scale = num;
 	updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 }
 
@@ -384,20 +379,6 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 					>{{ attribute.name }}</div>
 
 				</div>
-
-				<transition name="editor" appear>
-					<TraitEditor
-						:character="character"
-						:open="isSelected(['trait', ringTraitID, a])"
-						v-show="submode === 'edit' && isSelected(['trait', ringTraitID, a])"
-						:traitSetID="ringTraitID"
-						:traitID="a"
-						:viewY="viewY"
-						@selectElement="selectElement"
-						@updateCharacter="updateCharacter"
-						@removeTrait="(traitSetID: number, traitID: number) => emit('removeTrait', traitSetID, traitID)"
-					></TraitEditor>
-				</transition>
 
 			</div>
 

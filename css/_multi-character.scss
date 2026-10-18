@@ -132,6 +132,59 @@
 		}
 	}
 
+	.session-nav-right {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-left: auto;
+	}
+
+	.sheet-bar-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		background: #1e293b;
+		color: #94a3b8;
+		padding: 0.35rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.825rem;
+		font-weight: 600;
+		cursor: pointer;
+		border: 1px solid #334155;
+		transition: all 0.2s ease;
+		user-select: none;
+		flex-shrink: 0;
+
+		&:hover {
+			background: #334155;
+			color: #ffffff;
+			border-color: #475569;
+		}
+
+		&.active {
+			background: #0284c7;
+			color: #ffffff;
+			border-color: #38bdf8;
+			box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+		}
+
+		.sheet-bar-dice-count {
+			background: #0284c7;
+			color: #ffffff;
+			font-size: 0.7rem;
+			font-weight: 700;
+			padding: 0.1rem 0.4rem;
+			border-radius: 10px;
+			min-width: 1.1rem;
+			text-align: center;
+			line-height: 1.2;
+		}
+
+		&.active .sheet-bar-dice-count {
+			background: #0369a1;
+		}
+	}
+
 	.session-view-controls {
 		display: flex;
 		align-items: center;

@@ -4,7 +4,7 @@
   "subtitle": "All 17 Trait Set Styles & Features",
   "spotlight": "Toolkit Reference",
   "variant": "Showcase",
-  "pages": 2,
+  "pages": 3,
   "genre": "Reference",
   "description": "Visual regression and style reference template exercising every layout component, header orientation, and die mechanic.",
   "version": 1,
@@ -30,26 +30,21 @@
       "url": "",
       "alt": "Character Portrait",
       "tags": [],
-      "custom": {
-        "cortexToolkit": {
-          "alignment": "center-center",
-          "size": "spotlight",
-          "location": "header"
-        }
+      "view": {
+        "alignment": "center-center",
+        "size": "spotlight",
+        "location": "header"
       }
     },
-    "custom": {
-      "cortexToolkit": {
-        "nickname": "The Everything Sheet",
-        "sheetStyle": "spotlight",
-        "columns": 2,
-        "pageCount": 2,
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
+    "view": {
+      "nickname": "The Everything Sheet",
+      "sheetStyle": "spotlight",
+      "pageCount": 2,
+      "columnAlignment": "top-base",
+      "columnOffsets": {
+        "left": 0,
+        "center": 0,
+        "right": 0
       }
     },
     "sets": {
@@ -60,25 +55,29 @@
         "nounPlural": "Distinctions",
         "ratingPosition": "inline",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "left",
-            "style": {
-              "header": "distinctions",
-              "body": "distinctions"
-            },
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "sharedHinder": true,
-            "reservedSlots": 3,
-            "ratingScale": [
-              8
-            ]
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "distinctions",
+            "body": "distinctions"
+          },
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "sharedHinder": true,
+          "reservedSlots": 3,
+          "ratingScale": [
+            8
+          ],
+          "track": 1,
+          "span": 1,
+          "widths": [
+            50,
+            50,
+            0
+          ]
         },
         "traits": {
           "Walking Style Guide": {
@@ -141,27 +140,26 @@
         "statement": true,
         "hasQuestionedPip": true,
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "default"
-            },
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ]
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "default"
+          },
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "ratingScale": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ],
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Craft": {
@@ -191,24 +189,23 @@
         "nounSingular": "Skill",
         "nounPlural": "Skills",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "left",
-            "style": {
-              "header": "default",
-              "body": "subtrait-columns"
-            },
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": true
-            },
-            "labels": {
-              "left": "SKILL",
-              "right": "SPECIALTIES"
-            }
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "subtrait-columns"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": true
+          },
+          "labels": {
+            "left": "SKILL",
+            "right": "SPECIALTIES"
+          },
+          "track": 1,
+          "span": 1
         },
         "traits": {
           "Engineering": {
@@ -258,36 +255,35 @@
         "nounPlural": "Standings",
         "statement": true,
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "paired-slots"
-            },
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": true
-            },
-            "labels": {
-              "slot0": "COMPLICATION",
-              "slot1": "BONUS"
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "subtraitRatingScale": [
-              6,
-              8,
-              10,
-              12
-            ]
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "paired-slots"
+          },
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": true
+          },
+          "labels": {
+            "slot0": "COMPLICATION",
+            "slot1": "BONUS"
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "subtraitRatingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "The Guild": {
@@ -327,29 +323,29 @@
         "hasCounterColumn": true,
         "counterLabel": "XP",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "left",
-            "header": "top",
-            "headerAlign": "left",
-            "style": {
-              "header": "default",
-              "body": "die-rows"
-            },
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ],
-            "reservedSlots": 3
-          }
+        "view": {
+          "page": 1,
+          "header": "top",
+          "headerAlign": "left",
+          "style": {
+            "header": "default",
+            "body": "die-rows"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "reservedSlots": 3,
+          "track": 1,
+          "span": 1,
+          "cluster": "badges-resources"
         },
         "traits": {
           "First Responder": {
@@ -379,26 +375,25 @@
         "nounSingular": "Talent",
         "nounPlural": "Talents",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
-            "features": {
-              "description": true,
-              "sfx": true,
-              "subtraits": false
-            },
-            "labels": {
-              "col1": "TALENT",
-              "col2": "ACTIVATION",
-              "col3": "EFFECT"
-            },
-            "reservedSlots": 2
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "three-column-table"
+          },
+          "features": {
+            "description": true,
+            "sfx": true,
+            "subtraits": false
+          },
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
+          },
+          "reservedSlots": 2,
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Overclock": {
@@ -430,25 +425,25 @@
         "nounSingular": "Resource",
         "nounPlural": "Resources",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "left",
-            "style": {
-              "header": "default",
-              "body": "dice-count"
-            },
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "multiDie": true,
-            "labels": {
-              "rating": "RATING",
-              "dice": "/ DICE"
-            }
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "dice-count"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "multiDie": true,
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
+          },
+          "track": 1,
+          "span": 1,
+          "cluster": "badges-resources"
         },
         "traits": {
           "Salvage Cache": {
@@ -471,29 +466,28 @@
         "nounSingular": "Stress",
         "nounPlural": "Stress",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 1,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "stress"
-            },
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            },
-            "stressConfig": {
-              "includeOut": true
-            },
-            "ratingScale": [
-              6,
-              8,
-              10,
-              12
-            ]
-          }
+        "view": {
+          "page": 1,
+          "style": {
+            "header": "default",
+            "body": "stress"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "stressConfig": {
+            "includeOut": true
+          },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Physical": {
@@ -520,20 +514,24 @@
         "nounSingular": "Rung",
         "nounPlural": "Rungs",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 2,
-            "location": "left",
-            "style": {
-              "header": "default",
-              "body": "dice-ladder"
-            },
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            }
-          }
+        "view": {
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "dice-ladder"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 1,
+          "span": 1,
+          "widths": [
+            50,
+            50,
+            0
+          ]
         },
         "traits": {
           "Novice": {
@@ -562,20 +560,19 @@
         "nounSingular": "Field",
         "nounPlural": "Fields",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 2,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "labeled-fields"
-            },
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            }
-          }
+        "view": {
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "labeled-fields"
+          },
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Origin": {
@@ -600,20 +597,19 @@
         "nounSingular": "Pip",
         "nounPlural": "Pips",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 2,
-            "location": "left",
-            "style": {
-              "header": "default",
-              "body": "pips"
-            },
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 5,
-              "filled": 4
-            }
-          }
+        "view": {
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "pips"
+          },
+          "pipsConfig": {
+            "rows": 2,
+            "perRow": 5,
+            "filled": 4
+          },
+          "track": 1,
+          "span": 1
         },
         "traits": {}
       },
@@ -623,19 +619,18 @@
         "nounSingular": "Session",
         "nounPlural": "Sessions",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 2,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "orientation": "vertical",
-              "lines": 4
-            }
-          }
+        "view": {
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "session-record"
+          },
+          "sessionRecord": {
+            "orientation": "vertical",
+            "lines": 4
+          },
+          "track": 2,
+          "span": 1
         },
         "traits": {
           "Session 1: The Awakening": {
@@ -663,20 +658,19 @@
         "nounSingular": "Role",
         "nounPlural": "Roles",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 2,
-            "location": "left",
-            "style": {
-              "header": "two-columns-compact",
-              "body": "two-columns-compact"
-            },
-            "features": {
-              "description": false,
-              "sfx": false,
-              "subtraits": false
-            }
-          }
+        "view": {
+          "page": 2,
+          "style": {
+            "header": "two-columns-compact",
+            "body": "two-columns-compact"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 1,
+          "span": 1
         },
         "traits": {
           "Tactician": {
@@ -711,15 +705,225 @@
         "nounSingular": "Note",
         "nounPlural": "Notes",
         "tags": [],
-        "custom": {
-          "cortexToolkit": {
-            "page": 2,
-            "location": "right",
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*"
+        "view": {
+          "page": 2,
+          "style": {
+            "header": "default",
+            "body": "notes"
+          },
+          "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
+          "track": 2,
+          "span": 1
+        },
+        "traits": {}
+      },
+      "Detailed Columns": {
+        "id": "ks-detailed-columns",
+        "description": "",
+        "nounSingular": "Entry",
+        "nounPlural": "Entries",
+        "tags": [],
+        "view": {
+          "page": 3,
+          "style": {
+            "header": "default",
+            "body": "two-columns-detailed"
+          },
+          "features": {
+            "description": true,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 1,
+          "span": 1,
+          "widths": [
+            50,
+            50,
+            0
+          ]
+        },
+        "traits": {
+          "Alpha": {
+            "value": "d8",
+            "description": "First detailed entry.",
+            "tags": [],
+            "custom": {}
+          },
+          "Beta": {
+            "value": "d6",
+            "description": "Second detailed entry.",
+            "tags": [],
+            "custom": {}
+          },
+          "Gamma": {
+            "value": "d10",
+            "description": "Third detailed entry.",
+            "tags": [],
+            "custom": {}
+          },
+          "Delta": {
+            "value": "d8",
+            "description": "Fourth detailed entry.",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Resource Pool": {
+        "id": "ks-resource-pool",
+        "description": "",
+        "nounSingular": "Resource",
+        "nounPlural": "Resources",
+        "tags": [],
+        "view": {
+          "page": 3,
+          "style": {
+            "header": "resources",
+            "body": "resources"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": true
+          },
+          "track": 2,
+          "span": 1
+        },
+        "traits": {
+          "Supply": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {},
+            "traits": {
+              "Ammo": {
+                "value": "d6",
+                "description": "",
+                "tags": [],
+                "custom": {}
+              }
+            }
+          },
+          "Fuel": {
+            "value": "d6",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Intel": {
+            "value": "d10",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Signature Assets": {
+        "id": "ks-assets",
+        "description": "",
+        "nounSingular": "Asset",
+        "nounPlural": "Assets",
+        "tags": [],
+        "view": {
+          "page": 3,
+          "style": {
+            "header": "assets",
+            "body": "assets"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 1,
+          "span": 1
+        },
+        "traits": {
+          "Custom Sidearm": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Survey Kit": {
+            "value": "d6",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Encrypted Comms": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Simple List": {
+        "id": "ks-list",
+        "description": "",
+        "nounSingular": "Item",
+        "nounPlural": "Items",
+        "tags": [],
+        "view": {
+          "page": 3,
+          "style": {
+            "header": "list",
+            "body": "list"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 2,
+          "span": 1
+        },
+        "traits": {
+          "Item One": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Item Two": {
+            "value": "d6",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          },
+          "Item Three": {
+            "value": "d8",
+            "description": "",
+            "tags": [],
+            "custom": {}
+          }
+        }
+      },
+      "Image Set": {
+        "id": "ks-image",
+        "description": "",
+        "nounSingular": "Image",
+        "nounPlural": "Images",
+        "tags": [],
+        "view": {
+          "page": 3,
+          "style": {
+            "header": "default",
+            "body": "image"
+          },
+          "features": {
+            "description": false,
+            "sfx": false,
+            "subtraits": false
+          },
+          "track": 1,
+          "span": 2,
+          "imageConfig": {
+            "url": "",
+            "height": 120,
+            "alignment": "center",
+            "caption": "Image set caption"
           }
         },
         "traits": {}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
-import TraitEditor from './trait-editor.vue';
 
 const {
 	traitSet, s, submode, editing, printBlank, designerPrintPreview, viewY, character,
@@ -12,7 +12,7 @@ const {
 
 <template>
 	<div class="trait-session-record-body"
-		v-if="traitSet?.custom?.cortexToolkit?.style?.body === 'session-record' || traitSet?.custom?.cortexToolkit?.style?.body === 'angled-lines'"
+		v-if="getView(traitSet)?.style?.body === 'session-record' || getView(traitSet)?.style?.body === 'angled-lines'"
 		@click="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
 	>
 		<svg
@@ -75,21 +75,6 @@ const {
 					</div>
 				</div>
 			</div>
-		</transition>
-
-		<transition name="editor" appear>
-			<TraitEditor
-				v-if="editing && editing[0] === 'trait' && editing[1] === s"
-				:character="character"
-				:open="isSelected(['trait', s, editing[2]])"
-				v-show="submode === 'edit' && isSelected(['trait', s, editing[2]])"
-				:traitSetID="s"
-				:traitID="editing[2]"
-				:viewY="viewY"
-				@selectElement="selectElement"
-				@updateCharacter="updateCharacter"
-				@removeTrait="removeTrait"
-			></TraitEditor>
 		</transition>
 	</div>
 </template>

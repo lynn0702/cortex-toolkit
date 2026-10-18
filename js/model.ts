@@ -43,6 +43,7 @@ export interface SetFeatures {
 
 export interface PipsConfig {
 	count?: number;
+	rows?: number;
 	perRow?: number;
 	connected?: boolean;
 	filled?: number;
@@ -50,7 +51,9 @@ export interface PipsConfig {
 
 export interface SessionRecordConfig {
 	count?: number;
+	boxCount?: number;
 	orientation?: 'horizontal' | 'vertical';
+	checked?: number[];
 }
 
 export interface AttachedStressConfig {
@@ -78,11 +81,12 @@ export interface ImageConfig {
 	caption?: string;
 }
 
-/** The character portrait, with the app-typed `custom` carrier. */
+/** The character portrait, with the app-typed `view` and `custom` carriers. */
 export interface Portrait {
 	url?: string;
 	alt?: string;
 	tags?: Tags;
+	view?: ViewBag;
 	custom?: Custom;
 }
 
@@ -90,7 +94,7 @@ export interface StressConfig {
 	includeOut?: boolean;
 }
 
-/** Dice-render styling (`custom.cortexToolkit.diceConfig`). */
+/** Dice-render styling (`view.diceConfig`). */
 export interface DiceConfig {
 	[ k: string ]: unknown;
 	style?: string;
@@ -106,7 +110,13 @@ export interface DiceConfig {
 }
 
 /**
- * The app-only `custom.cortexToolkit` bag. Known keys are typed; the index
+ * The canonical view/presentation bag key.
+ * Routed through a single constant so any future bag rename is a single-line change.
+ */
+export const VIEW_KEY = 'view' as const;
+
+/**
+ * The app presentation `view` bag. Known keys are typed; the index
  * signature keeps it open (`unknown`, not `any`) so a new key is allowed but
  * still has to be narrowed before use.
  */
@@ -119,6 +129,7 @@ export interface CortexToolkitCustom {
 
 	// style-specific config
 	pips?: PipsConfig;
+	pipsConfig?: PipsConfig;
 	sessionRecord?: SessionRecordConfig;
 	attachedStress?: AttachedStressConfig;
 	ringConfig?: RingConfig;
@@ -128,7 +139,12 @@ export interface CortexToolkitCustom {
 	notes?: string;
 
 	// layout
-	location?: 'left' | 'right' | 'center' | 'attributes' | 'header';
+	track?: 1 | 2 | 3;
+	span?: 1 | 2 | 3;
+	widths?: [number, number, number] | number[];
+	flex?: boolean;
+	cluster?: string;
+	location?: 'left' | 'right' | 'center' | 'attributes' | 'header' | 'col-1' | 'col-2' | 'col-3' | 'col-4' | string;
 	/** Set header placement: vertical sidebar label, or a horizontal top bar. */
 	header?: 'sidebar' | 'top';
 	/** Header text alignment (respected in both orientations). */
@@ -169,7 +185,7 @@ export interface CortexToolkitCustom {
 	scaleDie?: number;
 	scale?: number;
 
-	// app-only trait-level flags that live under `trait.custom.cortexToolkit`
+	// app-only trait-level flags that live under `trait.view`
 	spentDice?: number[];
 	rowSpan?: number;
 	questioned?: boolean;
@@ -185,6 +201,8 @@ export interface CortexToolkitCustom {
 	columns?: number;
 	columnsPage2?: number;
 	pageCount?: number;
+	pageOrientation?: 'portrait' | 'landscape';
+	orientation?: 'portrait' | 'landscape';
 	sheetStyle?: 'classic' | 'spotlight';
 	diceConfig?: DiceConfig;
 	watermark?: {
@@ -212,7 +230,43 @@ export interface CortexToolkitCustom {
 	secondaryColor?: string;
 }
 
-/** `trait.custom` — includes a nested `cortexToolkit` compartment. */
+export type ViewBag = CortexToolkitCustom;
+export type ViewConfig = CortexToolkitCustom;
+
+/**
+ * Accessor for the presentation view bag on any character, set, trait, or portrait.
+ * Routes through VIEW_KEY and falls back to legacy custom.cortexToolkit for pre-migration data.
+ */
+export function getView<T = ViewBag>( obj: unknown ): T | undefined {
+	if ( !obj || typeof obj !== 'object' ) return undefined;
+	const record = obj as Record<string, any>;
+	return ( record[ VIEW_KEY ] ?? record.custom?.cortexToolkit ) as T | undefined;
+}
+
+/**
+ * Ensures the presentation view bag exists on an object, migrating legacy custom.cortexToolkit
+ * if present, and returns the mutable view bag.
+ */
+export function ensureView<T = ViewBag>( obj: unknown ): T {
+	if ( !obj || typeof obj !== 'object' ) {
+		throw new TypeError( 'ensureView called on non-object' );
+	}
+	const record = obj as Record<string, any>;
+	if ( !record[ VIEW_KEY ] ) {
+		if ( record.custom && typeof record.custom === 'object' && record.custom.cortexToolkit ) {
+			record[ VIEW_KEY ] = record.custom.cortexToolkit;
+			delete record.custom.cortexToolkit;
+			if ( Object.keys( record.custom ).length === 0 ) {
+				delete record.custom;
+			}
+		} else {
+			record[ VIEW_KEY ] = {};
+		}
+	}
+	return record[ VIEW_KEY ] as T;
+}
+
+/** `trait.custom` — includes legacy nested `cortexToolkit` compartment for back-compat. */
 export interface TraitCustom {
 	[ k: string ]: unknown;
 	checked?: boolean;
@@ -230,7 +284,7 @@ export interface TraitCustom {
 	cortexToolkit?: CortexToolkitCustom;
 }
 
-/** The open `custom` map, refined with our `cortexToolkit` compartment. */
+/** The open `custom` map, with legacy `cortexToolkit` compartment for back-compat. */
 export interface Custom {
 	[ k: string ]: unknown;
 	cortexToolkit?: CortexToolkitCustom;
@@ -245,9 +299,10 @@ export interface CharacterPrefs {
 	[ k: string ]: unknown;
 }
 
-// ---------- app document types (schema shape + typed custom) ----------
+// ---------- app document types (schema shape + typed view & custom) ----------
 
-export type Trait = Omit<GeneratedTrait, 'custom' | 'traits' | 'sfx'> & {
+export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits' | 'sfx'> & {
+	view?: ViewBag;
 	custom?: TraitCustom;
 	traits?: Trait[];
 	sfx?: (Sfx | 'hinder')[];
@@ -264,7 +319,8 @@ export type Trait = Omit<GeneratedTrait, 'custom' | 'traits' | 'sfx'> & {
 	id?: string;
 };
 
-export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'traits' | 'sfx'> & {
+export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'view' | 'traits' | 'sfx'> & {
+	view?: ViewBag;
 	custom?: Custom;
 	traits: Trait[];
 	sfx?: Sfx[];
@@ -274,7 +330,8 @@ export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'traits' | 'sfx'> & {
 	removedTraits?: string[];
 };
 
-export type Character = Omit<GeneratedCharacter, 'custom' | 'traitSets' | 'portrait'> & {
+export type Character = Omit<GeneratedCharacter, 'custom' | 'view' | 'traitSets' | 'portrait'> & {
+	view?: ViewBag;
 	custom?: Custom;
 	traitSets: TraitSet[];
 	portrait: Portrait;
