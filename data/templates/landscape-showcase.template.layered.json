@@ -65,7 +65,8 @@
           },
           "span": 3,
           "header": "top",
-          "headerAlign": "center"
+          "headerAlign": "center",
+          "row": 2
         },
         "traits": {
           "Commander": {
@@ -134,11 +135,8 @@
           },
           "track": 1,
           "span": 2,
-          "widths": [
-            66.666,
-            0,
-            33.334
-          ]
+          "colWidth": 66.666,
+          "row": 3
         },
         "traits": {
           "Engineering": {
@@ -221,7 +219,9 @@
             "subtraits": true
           },
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 3
         },
         "traits": {
           "The Syndicate": {
@@ -287,12 +287,8 @@
           },
           "track": 1,
           "span": 1,
-          "rowBreak": true,
-          "widths": [
-            33.333,
-            66.667,
-            0
-          ]
+          "colWidth": 33.333,
+          "row": 4
         },
         "traits": {
           "Craft": {
@@ -338,7 +334,9 @@
             "subtraits": false
           },
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 66.667,
+          "row": 4
         },
         "traits": {
           "Voidborn Pioneer": {
@@ -394,11 +392,8 @@
           "pool": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            33.333,
-            33.333,
-            33.334
-          ]
+          "colWidth": 33.333,
+          "row": 2
         },
         "traits": {
           "D4": {
@@ -461,7 +456,9 @@
             "subtraits": false
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 2
         },
         "traits": {
           "Fleet Veteran": {
@@ -502,7 +499,9 @@
             "subtraits": false
           },
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 2
         },
         "traits": {
           "Crew Complement": {
@@ -550,12 +549,8 @@
           },
           "track": 1,
           "span": 2,
-          "rowBreak": true,
-          "widths": [
-            66.666,
-            0,
-            33.334
-          ]
+          "colWidth": 66.666,
+          "row": 3
         },
         "traits": {
           "Homeworld": {
@@ -599,7 +594,9 @@
             "perRow": 5,
             "connected": true,
             "filled": 1
-          }
+          },
+          "colWidth": 33.334,
+          "row": 3
         },
         "traits": {
           "Physical": {
@@ -636,7 +633,9 @@
           },
           "notes": "### Equipment\n- **Jump Drive Matrix** (d8)\n- **Thermal Scanner**: Spend 1 PP to detect cloaked ships.",
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 4
         },
         "traits": {}
       },
@@ -666,7 +665,8 @@
           "reservedSlots": 12,
           "span": 3,
           "header": "top",
-          "headerAlign": "right"
+          "headerAlign": "right",
+          "row": 5
         },
         "traits": {}
       }

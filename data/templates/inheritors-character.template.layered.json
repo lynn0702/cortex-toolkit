@@ -73,19 +73,13 @@
             10
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
           "attributesRing": false,
           "track": 1,
           "span": 1,
-          "widths": [
-            28,
-            36,
-            36
-          ]
+          "colWidth": 28,
+          "row": 2
         },
         "traits": {
           "Action": {
@@ -137,13 +131,11 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeD4": true,
-            "includeOut": false
-          },
           "reservedSlots": 1,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 28,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -177,13 +169,12 @@
             8
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 36,
+          "row": 2
         },
         "traits": {
           "Family Tree": {
@@ -278,12 +269,10 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -400,19 +389,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 14,
-          "rowBreak": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            25,
-            50,
-            25
-          ]
+          "colWidth": 25,
+          "row": 5
         },
         "traits": {
           "Acquire": {
@@ -513,13 +495,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 5
         },
         "traits": {},
         "slots": {
@@ -570,7 +551,9 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 25,
+          "row": 5
         },
         "traits": {
           "1 XP": {
@@ -615,7 +598,9 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 25,
+          "row": 6
         },
         "traits": {
           "1 XP": {
@@ -652,11 +637,6 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 5,
-            "perRow": 5,
-            "filled": 0
-          },
           "pips": {
             "count": 25,
             "perRow": 5,
@@ -664,7 +644,9 @@
             "filled": 0
           },
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 25,
+          "row": 7
         },
         "traits": {}
       }

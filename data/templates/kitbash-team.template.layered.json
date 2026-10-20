@@ -67,7 +67,8 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Name": {
@@ -99,7 +100,7 @@
       },
       "Team Resources": {
         "id": "team-resources",
-        "description": "Resources come from backgrounds (page 8) and are available for any PC to use.",
+        "description": "",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
         "tags": [],
@@ -116,10 +117,18 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "default"
+            "body": "dice-count"
           },
+          "ratingScale": [
+            6,
+            8,
+            10,
+            12
+          ],
+          "multiDie": true,
           "reservedSlots": 20,
-          "span": 3
+          "span": 3,
+          "row": 3
         },
         "traits": {},
         "slots": {

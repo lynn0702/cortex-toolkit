@@ -37,9 +37,9 @@ const ctk = (o) => ({ view: o });
 // ---- sections: sets in tracks placed by track index
 {
   const sets = [
-    ctk({ track: 1, widths: [30, 50, 20] }),
-    ctk({ track: 2 }),
-    ctk({ track: 3 })
+    ctk({ track: 1, colWidth: 30 }),
+    ctk({ track: 2, colWidth: 50 }),
+    ctk({ track: 3, colWidth: 20 })
   ];
   const sections = G.getSpotlightSections(sets, 1);
   ok(sections.length === 1 && sections[0].type === 'columns', 'one column band', sections);
@@ -47,7 +47,7 @@ const ctk = (o) => ({ view: o });
   ok(sections[0].itemsByColumn[1].length === 1, 'item in track 1');
   ok(sections[0].itemsByColumn[2].length === 1, 'item in track 2');
   ok(sections[0].itemsByColumn[3].length === 1, 'item in track 3');
-  ok(JSON.stringify(sections[0].widths) === JSON.stringify([30, 50, 20]), 'anchor set widths carried', sections[0].widths);
+  ok(JSON.stringify(sections[0].widths) === JSON.stringify([30, 50, 20]), 'singular colWidths derive band widths', sections[0].widths);
 }
 
 // ---- full-width set (span 3) becomes its own full-width section
@@ -57,11 +57,16 @@ const ctk = (o) => ({ view: o });
   ok(sections.length === 3 && sections[1].type === 'full-width', 'span 3 split out', sections.map(s => s.type));
 }
 
-// ---- rowBreak starts a new band
+// ---- explicit row numbers band sets
 {
-  const sets = [ ctk({ track: 1 }), ctk({ track: 2, rowBreak: true }) ];
+  const sets = [ ctk({ track: 1, row: 1 }), ctk({ track: 2, row: 2 }) ];
   const sections = G.getSpotlightSections(sets, 1);
-  ok(sections.length === 2, 'row break splits bands', sections.length);
+  ok(sections.length === 2, 'row change splits bands', sections.length);
+}
+{
+  const sets = [ ctk({ track: 1, row: 1 }), ctk({ track: 2, row: 1 }) ];
+  const sections = G.getSpotlightSections(sets, 1);
+  ok(sections.length === 1, 'shared row bands together', sections.length);
 }
 
 // ---- grid cells placement (track, span, content-sized rows, no rowspans)
@@ -78,10 +83,17 @@ const ctk = (o) => ({ view: o });
 
 // ---- grid style with explicit widths
 {
-  const sets = [ ctk({ track: 1, widths: [30, 50, 20] }), ctk({ track: 2 }) ];
+  const sets = [ ctk({ track: 1, colWidth: 30 }), ctk({ track: 2, colWidth: 50 }) ];
   const section = G.getSpotlightSections(sets, 1)[0];
   const style = G.getSpotlightGridStyle(section);
-  ok(style === 'grid-template-columns: 30% 50% 20%;', 'grid style emits percentages from band widths', style);
+  ok(style === 'grid-template-columns: 30% 70% 0%;', 'grid style emits percentages from band widths', style);
+}
+
+// ---- triples on sets are no longer read
+{
+  const sets = [ ctk({ track: 1, widths: [10, 80, 10] }), ctk({ track: 2 }) ];
+  const section = G.getSpotlightSections(sets, 1)[0];
+  ok(JSON.stringify(section.widths) === JSON.stringify([50, 50, 0]), 'stale triples ignored', section.widths);
 }
 
 // ---- default equal thirds when no widths declared
@@ -105,6 +117,19 @@ const ctk = (o) => ({ view: o });
   ok(groups[0].isCluster === false && groups[0].items.length === 1, 'first standalone');
   ok(groups[1].isCluster === true && groups[1].clusterId === 'c1' && groups[1].items.length === 2, 'cluster grouped');
   ok(groups[2].isCluster === false && groups[2].items.length === 1, 'last standalone');
+}
+
+// ---- cell groups: spanning sets keep their own grid cells
+{
+  const sets = [
+    ctk({ track: 1, colWidth: 28 }),
+    ctk({ track: 2, span: 2, colWidth: 72 }),
+  ];
+  const section = G.getSpotlightSections(sets, 1)[0];
+  ok(JSON.stringify(section.widths) === JSON.stringify([28, 72, 0]), 'band widths from singulars', section.widths);
+  const groups = G.getSpotlightCellGroups(section);
+  ok(groups.length === 2 && !groups[0].isCluster && !groups[1].isCluster, 'two standalone cells', groups.length);
+  ok(groups[1].cells[0].track === 2 && groups[1].cells[0].span === 2, 'spanning cell keeps track and span', groups[1].cells[0]);
 }
 
 console.log(`spotlight-grid-tests: ${pass} passed, ${fail} failed`);

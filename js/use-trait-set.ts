@@ -451,10 +451,20 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		}
 	}
 
-	function shouldShowStressOut( traitSetArg: TraitSet ) {
-		const cfg = getView( traitSetArg )?.stressConfig;
+	// Generic Out indicator: any stepped track (stress, complications, or any
+	// hack's renamed equivalent) may offer an Out badge. Default off — most
+	// sets aren't complications. Legacy stressConfig.includeOut still wins
+	// when set, so existing templates keep their behavior.
+	function shouldShowOut( traitSetArg: TraitSet ) {
+		const view = getView( traitSetArg );
+		if ( view && typeof view.outIndicator === 'boolean' ) return view.outIndicator;
+		const cfg = view?.stressConfig;
 		if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
-		return true;
+		return false;
+	}
+
+	function shouldShowStressOut( traitSetArg: TraitSet ) {
+		return shouldShowOut( traitSetArg );
 	}
 
 	function isStressOut( trait: Trait ) {
@@ -797,6 +807,29 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return getBranchGroups( traitSetArg, items ).some( ( g: any ) => g.split );
 	}
 
+	// Flank layout (e.g. Solarpunk skills): a subtrait-columns set with
+	// traitColumns 2 spreads skills across outer columns with specialties
+	// down the middle. Explicit left-side specialties (split) win over it.
+	function hasBranchFlank( traitSetArg: TraitSet, items: any[] ) {
+		if ( getView( traitSetArg )?.style?.body !== 'subtrait-columns' ) return false;
+		if ( Number( getView( traitSetArg )?.traitColumns ) !== 2 ) return false;
+		return !hasBranchSplit( traitSetArg, items );
+	}
+
+	function getFlankColumns( traitSetArg: TraitSet, items: any[] ) {
+		const groups = getBranchGroups( traitSetArg, items );
+		const skills = groups.filter( ( g: any ) => g.skillItem );
+		const mid = Math.ceil( skills.length / 2 );
+		const center: any[] = [];
+		groups.forEach( ( g: any ) => {
+			const sIdx = g.skillItem ? g.skillItem.originalIndex : null;
+			( g.subs || [] ).forEach( ( e: any ) => {
+				center.push({ ...e, skillIndex: sIdx, skillItem: g.skillItem });
+			} );
+		} );
+		return { left: skills.slice( 0, mid ), right: skills.slice( mid ), center: center };
+	}
+
 	function getBranchRole( trait: Trait ) {
 		return getView( trait )?.branchRole === 'specialty' ? 'specialty' : 'skill';
 	}
@@ -976,7 +1009,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint,
 		getTraitSetRatings, getSubtraitRatings, getTraitDice, isMultiDieTrait, isResourceTrait,
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleStressClick,
-		handleStressOutClick, shouldShowStressOut, isStressOut, getSharedHinderLines, renderHinderLine,
+		handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, getSharedHinderLines, renderHinderLine,
 		getDistinctionSfxText, getDisplayTraitSfx,
 		hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue,
 		shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
@@ -985,7 +1018,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		sessionHit, sessionLabelTransform, getSessionRecordItems, handleSessionBubbleClick, handleSessionLineClick,
 		ensureSessionRecordTrait, addSessionRecordRow,
 		getImageSetContainerStyle, getImageSetGraphicStyle,
-		getBranchGroups, hasBranchSplit, getBranchRole, getSetDie, getBranchSide, branchSubs, handleBranchFlatClick,
+		getBranchGroups, hasBranchSplit, hasBranchFlank, getFlankColumns, getBranchRole, getSetDie, getBranchSide, branchSubs, handleBranchFlatClick,
 		getStandingComplication, getStandingBonus, getStandingBonusRatings, getSubtraitNameOr,
 		getTalentEffect, getResourceDiceCount, setResourceDiceCount, getResourcePoolDice, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
 		getSessionRecordConfig, getSharedHinderText, getTraitSetSlotCount

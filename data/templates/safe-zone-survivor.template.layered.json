@@ -71,12 +71,10 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Before:": {
@@ -153,18 +151,12 @@
             "right": "Specialties"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 20,
           "track": 1,
           "span": 2,
-          "widths": [
-            33.333,
-            33.333,
-            33.334
-          ]
+          "colWidth": 33.333,
+          "row": 3
         },
         "traits": {
           "Animals": {
@@ -436,14 +428,13 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 3
         },
         "traits": {
           "Analytical": {
@@ -490,13 +481,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 10,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -579,14 +569,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeD4": true,
-            "includeOut": false
-          },
           "notes": "",
           "reservedSlots": 5,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 5
         },
         "traits": {
           "Injured": {
@@ -634,19 +622,12 @@
             "body": "three-column-table"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "rowBreak": true,
           "track": 1,
           "span": 2,
-          "widths": [
-            33.333,
-            33.333,
-            33.334
-          ]
+          "colWidth": 33.333,
+          "row": 6
         },
         "traits": {},
         "slots": {
@@ -695,13 +676,11 @@
           ],
           "multiDie": true,
           "pool": true,
-          "stressConfig": {
-            "includeOut": true
-          },
-          "notes": "",
           "reservedSlots": 5,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 6
         },
         "traits": {
           "D4": {

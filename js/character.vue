@@ -11,6 +11,7 @@ import {
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
 	getSpotlightGridCells as gridGetSpotlightGridCells,
 	getTrackClusterGroups as gridGetTrackClusterGroups,
+	getSpotlightCellGroups as gridGetSpotlightCellGroups,
 	type SpotlightSection,
 	type SpotlightCell,
 } from './spotlight-grid.ts';
@@ -54,6 +55,17 @@ const player = computed( () => props.character?.player ?? '' );
 const pronouns = computed( () => props.character?.pronouns ?? '' );
 const nickname = computed( () => props.character?.nickname ?? getView( props.character )?.nickname ?? '' );
 const hasNickname = computed( () => Boolean( nickname.value || ( isSpotlightStyle.value && getView( props.character )?.hasNickname ) ) );
+// Name-block field labels are editable (Name itself is fixed); games like
+// Strange Towns relabel Pronouns to Ruin. Stored in the character view.
+const nameLabels = computed( () => getView( props.character )?.nameLabels ?? {} );
+function nameLabel( key: 'nickname' | 'pronouns' | 'description', fallback: string ) {
+	const custom = ( nameLabels.value as Record<string, unknown> )[ key ];
+	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim().toUpperCase();
+	return fallback;
+}
+const nicknameLabel = computed( () => nameLabel( 'nickname', 'NICKNAME' ) );
+const pronounsLabel = computed( () => nameLabel( 'pronouns', 'PRONOUNS' ) );
+const descriptionLabel = computed( () => nameLabel( 'description', 'DESCRIPTION' ) );
 const plotPoints = computed( () => Number( props.character?.plotPoints ) || 0 );
 const portrait = computed( () => props.character?.portrait ?? null );
 const effectivePortraitUrl = computed( () => portrait.value?.url || '' );
@@ -332,6 +344,7 @@ function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSect
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
 function getSpotlightGridCells( section: SpotlightSection ) { return gridGetSpotlightGridCells( section ); }
 function getTrackClusterGroups( items: any[] ) { return gridGetTrackClusterGroups( items ); }
+function getSpotlightCellGroups( section: SpotlightSection ) { return gridGetSpotlightCellGroups( section ); }
 
 function renderNameHtml( value: unknown ) {
 	if ( !value ) return '';
@@ -371,6 +384,12 @@ function clearSelected() {
 }
 
 // EDITING
+// New sets land on their own row at the end of the target page.
+function nextRowForPage( character: any, page: number ) {
+	const sections = gridGetSpotlightSections( character?.traitSets || [], page );
+	return sections.length + 1;
+}
+
 function addTraitSet( trackOrLocation: number | string = 1, page = 1, span: number | string = 1 ) {
 	const character = props.character as Character;
 
@@ -386,6 +405,7 @@ function addTraitSet( trackOrLocation: number | string = 1, page = 1, span: numb
 	tsView.page = page ?? 1;
 	const sp = ( span === 'full' || Number( span ) >= 3 ) ? 3 : ( Number( span ) === 2 ? 2 : 1 );
 	tsView.span = sp;
+	tsView.row = nextRowForPage( character, tsView.page );
 
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	traitSet.traits.push( structuredClone( cortexFunctions.defaultTrait ) );
@@ -427,6 +447,7 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	}
 	tsView.location = location ?? 'left';
 	tsView.page = page ?? 1;
+	tsView.row = nextRowForPage( character, tsView.page );
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	if ( styleId === 'pips' ) {
 		tsView.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
@@ -619,7 +640,7 @@ watch( () => props.character, () => {
 								<div class="spotlight-meta-divider"></div>
 
 								<div class="spotlight-meta-nickname-cell" v-if="hasNickname">
-									<span class="spotlight-cell-label">NICKNAME</span>
+									<span class="spotlight-cell-label">{{ nicknameLabel }}</span>
 									<span class="spotlight-nickname-val" v-if="!printBlank && nickname" v-html="renderText(nickname)"></span>
 									<span class="spotlight-blank-line" v-else-if="printBlank"></span>
 									<span class="spotlight-nickname-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
@@ -629,7 +650,7 @@ watch( () => props.character, () => {
 								<div class="spotlight-meta-divider" v-if="hasNickname"></div>
 
 								<div class="spotlight-meta-pronoun-cell">
-									<span class="spotlight-cell-label">PRONOUNS</span>
+									<span class="spotlight-cell-label">{{ pronounsLabel }}</span>
 									<span class="spotlight-pronoun-val" v-if="!printBlank && pronouns" v-html="renderText(pronouns)"></span>
 									<span class="spotlight-blank-line" v-else-if="printBlank"></span>
 									<span class="spotlight-pronoun-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
@@ -640,7 +661,7 @@ watch( () => props.character, () => {
 							<!-- CENTER BOX: DESCRIPTION (TRAIT SET STYLE) -->
 							<div class="spotlight-header-desc-box trait-set-box" @click.stop="selectElement(['name'])">
 								<div class="spotlight-cell-header">
-									<label for="spotlight-header-desc" class="spotlight-cell-label">DESCRIPTION</label>
+									<label for="spotlight-header-desc" class="spotlight-cell-label">{{ descriptionLabel }}</label>
 									<button
 										v-if="!hasHeaderPortrait && submode === 'edit' && !designerPrintPreview"
 										type="button"
@@ -779,61 +800,53 @@ watch( () => props.character, () => {
 								:class="['columns', 'spotlight-columns', 'spotlight-grid', 'columns-3']"
 								:style="getSpotlightGridStyle(section)"
 							>
-								<div
-									v-for="trackNum in [1, 2, 3]"
-									:key="trackNum"
-									:class="['spotlight-column-stack', 'track-' + trackNum]"
-									:style="{ gridColumn: trackNum, display: (section.widths && section.widths[trackNum - 1] === 0 && !(section.itemsByColumn[trackNum] && section.itemsByColumn[trackNum].length)) ? 'none' : 'flex' }"
-								>
-									<template v-for="(group, gIdx) in getTrackClusterGroups(section.itemsByColumn[trackNum] || [])" :key="gIdx">
-										<div
-											v-if="group.isCluster"
-											class="spotlight-cluster-band"
-											:style="{ display: 'grid', gridTemplateColumns: `repeat(${group.items.length}, minmax(0, 1fr))` }"
-										>
-											<TraitSetBlock
-												v-for="item in group.items"
-												:key="item.index"
-												:character="character"
-												:traitSetID="item.index"
-												:submode="submode"
-												:editing="editing"
-												:viewY="viewY"
-												:printBlank="effectivePrintBlank"
-												:designerPrintPreview="designerPrintPreview"
-												:printStyle="printStyle"
-												:class="{ 'trait-set-content': getView(item.traitSet)?.flex === false }"
-												@selectElement="selectElement"
-												@updateCharacter="updateCharacter"
-												@removeTrait="removeTrait"
-												@removeTraitSet="removeTraitSet"
-												@addTrait="addTrait"
-												@addDieToRoller="emit('addDieToRoller', $event)"
-											></TraitSetBlock>
-										</div>
-										<template v-else>
-											<TraitSetBlock
-												v-for="item in group.items"
-												:key="item.index"
-												:character="character"
-												:traitSetID="item.index"
-												:submode="submode"
-												:editing="editing"
-												:viewY="viewY"
-												:printBlank="effectivePrintBlank"
-												:designerPrintPreview="designerPrintPreview"
-												:printStyle="printStyle"
-												:class="{ 'trait-set-content': getView(item.traitSet)?.flex === false }"
-												@selectElement="selectElement"
-												@updateCharacter="updateCharacter"
-												@removeTrait="removeTrait"
-												@removeTraitSet="removeTraitSet"
-												@addTrait="addTrait"
-												@addDieToRoller="emit('addDieToRoller', $event)"
-											></TraitSetBlock>
-										</template>
-									</template>
-								</div>
+								<template v-for="(group, gIdx) in getSpotlightCellGroups(section)" :key="gIdx">
+									<div
+										v-if="group.isCluster"
+										class="spotlight-cluster-band"
+										:style="'grid-column: ' + group.cells[0].track + ' / span ' + group.cells[0].span + '; min-width: 0; display: grid; grid-template-columns: repeat(' + group.items.length + ', minmax(0, 1fr));'"
+									>
+										<TraitSetBlock
+											v-for="item in group.items"
+											:key="item.index"
+											:character="character"
+											:traitSetID="item.index"
+											:submode="submode"
+											:editing="editing"
+											:viewY="viewY"
+											:printBlank="effectivePrintBlank"
+											:designerPrintPreview="designerPrintPreview"
+											:printStyle="printStyle"
+											:class="{ 'trait-set-content': getView(item.traitSet)?.flex === false }"
+											@selectElement="selectElement"
+											@updateCharacter="updateCharacter"
+											@removeTrait="removeTrait"
+											@removeTraitSet="removeTraitSet"
+											@addTrait="addTrait"
+											@addDieToRoller="emit('addDieToRoller', $event)"
+										></TraitSetBlock>
+									</div>
+									<TraitSetBlock
+										v-else
+										:key="group.items[0].index"
+										:character="character"
+										:traitSetID="group.items[0].index"
+										:submode="submode"
+										:editing="editing"
+										:viewY="viewY"
+										:printBlank="effectivePrintBlank"
+										:designerPrintPreview="designerPrintPreview"
+										:printStyle="printStyle"
+										:style="group.cells[0].style"
+										:class="{ 'trait-set-content': getView(group.items[0].traitSet)?.flex === false }"
+										@selectElement="selectElement"
+										@updateCharacter="updateCharacter"
+										@removeTrait="removeTrait"
+										@removeTraitSet="removeTraitSet"
+										@addTrait="addTrait"
+										@addDieToRoller="emit('addDieToRoller', $event)"
+									></TraitSetBlock>
+								</template>
 							</div>
 						</template>
 
@@ -844,17 +857,17 @@ watch( () => props.character, () => {
 						>
 							<div class="add-set-slot slot-col-1">
 								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(1, pageIndex, 1)">
-									<i class="fas fa-plus"></i> Track 1 Set
+									<i class="fas fa-plus"></i> Column 1 Set
 								</button>
 							</div>
 							<div class="add-set-slot slot-col-2">
 								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(2, pageIndex, 1)">
-									<i class="fas fa-plus"></i> Track 2 Set
+									<i class="fas fa-plus"></i> Column 2 Set
 								</button>
 							</div>
 							<div class="add-set-slot slot-col-3">
 								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(3, pageIndex, 1)">
-									<i class="fas fa-plus"></i> Track 3 Set
+									<i class="fas fa-plus"></i> Column 3 Set
 								</button>
 							</div>
 							<div class="add-set-slot slot-center">

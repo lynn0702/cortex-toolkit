@@ -365,7 +365,7 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 
 					<label class="roster-template-picker">
 						<span class="picker-label">Template</span>
-						<select v-model="selectedTemplateId" class="picker-select">
+						<select id="roster-template-picker" name="selectedTemplateId" v-model="selectedTemplateId" class="picker-select" aria-label="Template">
 							<option value="">None</option>
 							<option v-for="tmpl in templateSheets" :key="tmpl.id" :value="tmpl.id">
 								{{ tmpl.name || 'Unnamed Template' }}
@@ -408,7 +408,7 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 			<div class="roster-search" v-if="characters.length > 0">
 				<div class="roster-search-input">
 					<i class="fas fa-search"></i>
-					<input type="text" v-model="rosterSearch" placeholder="Search">
+					<input type="text" id="roster-search" name="rosterSearch" v-model="rosterSearch" placeholder="Search" aria-label="Search characters">
 				</div>
 			</div>
 
@@ -523,7 +523,7 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 			</ul>
 
 			<!-- FILE INPUT -->
-			<input class="roster-input" type="file" ref="inputFile" @change="importGetUploads" multiple>
+			<input class="roster-input" id="roster-import-file" name="importFile" type="file" ref="inputFile" @change="importGetUploads" multiple aria-label="Import character files">
 
 		</div>
 			
@@ -636,7 +636,7 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 					<div class="spotlight-search-row">
 						<div class="spotlight-search-input">
 							<i class="fas fa-search"></i>
-							<input type="text" v-model="spotlightSearch" placeholder="Search templates by name, genre, or mechanics...">
+							<input type="text" id="spotlight-search" name="spotlightSearch" v-model="spotlightSearch" placeholder="Search templates by name, genre, or mechanics..." aria-label="Search templates">
 						</div>
 						<div class="spotlight-filter-tabs">
 							<button type="button" :class="{ active: spotlightFilter === 'all' }" @click="spotlightFilter = 'all'">All ({{ spotlightTemplates.length }})</button>

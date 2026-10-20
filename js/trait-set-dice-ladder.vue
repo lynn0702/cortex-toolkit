@@ -5,13 +5,13 @@ import { injectTraitSet } from './use-trait-set.ts';
 const {
 	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, isSpotlightStyle, renderDieValueForPrint,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, getRatingPosition, isSpotlightStyle, renderDieValueForPrint,
 	handleSingleDieClick
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-dice-ladder" v-if="getView(traitSet)?.style?.body === 'dice-ladder'">
+	<div class="trait-dice-ladder" :class="{ 'rating-vertical': getRatingPosition(traitSet) === 'vertical', 'label-vertical': getView(traitSet)?.labelPosition === 'vertical' }" v-if="getView(traitSet)?.style?.body === 'dice-ladder'">
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div :class="getTraitClasses(item.trait)">
 				<div :class="{ 'trait-inner': true, 'ladder-rung': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"

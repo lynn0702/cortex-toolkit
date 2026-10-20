@@ -10,7 +10,7 @@ const {
 	isSpotlightStyle, isSpotlightPrintStyle,
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
-	handleStressClick, handleStressOutClick, shouldShowStressOut, isStressOut, isMultiDieTrait, getTraitDice,
+	handleStressClick, handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, isMultiDieTrait, getTraitDice,
 	isDieSpent, toggleDieSpentInPlay, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
 	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
@@ -173,6 +173,7 @@ const {
 										@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
 									></span>
+									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">💥 OUT</span>
 								</div>
 							</h2>
 

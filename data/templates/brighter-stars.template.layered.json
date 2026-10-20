@@ -70,18 +70,12 @@
           "ratingScale": [
             8
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            64,
-            36,
-            0
-          ]
+          "colWidth": 64,
+          "row": 2
         },
         "traits": {
           "Purpose:": {
@@ -169,13 +163,12 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 5,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 64,
+          "row": 3
         },
         "traits": {
           "Courage": {
@@ -234,13 +227,12 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 8,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 64,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -311,13 +303,12 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 36,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -363,7 +354,9 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 36,
+          "row": 3
         },
         "traits": {
           "1 XP": {
@@ -408,7 +401,9 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 36,
+          "row": 4
         },
         "traits": {
           "1 XP": {
@@ -445,11 +440,6 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 5,
-            "perRow": 5,
-            "filled": 0
-          },
           "pips": {
             "count": 25,
             "perRow": 5,
@@ -458,7 +448,9 @@
           },
           "reservedSlots": 0,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 36,
+          "row": 5
         },
         "traits": {}
       }

@@ -48,13 +48,13 @@ function toggleBW( e: Event ) {
 			</div>
 
 			<label class="toolbar-checkbox">
-				<input type="checkbox" :checked="printBlank" @change="toggleBlank">
+				<input type="checkbox" id="print-blank-sheet" name="printBlank" :checked="printBlank" @change="toggleBlank">
 								<span><i class="fas fa-pencil-alt"></i> Blank Sheet</span>
 			</label>
 
 			<label class="toolbar-checkbox">
-				<input type="checkbox" :checked="printBW" @change="toggleBW">
-				<span><i class="fas fa-circle-half-stroke"></i> Black &amp; White</span>
+				<input type="checkbox" id="print-black-white" name="printBW" :checked="printBW" @change="toggleBW">
+								<span><i class="fas fa-circle-half-stroke"></i> Black &amp; White</span>
 			</label>
 		</div>
 

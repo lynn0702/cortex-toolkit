@@ -54,7 +54,8 @@
 						"inline",
 						"above",
 						"below",
-						"none"
+						"none",
+						"vertical"
 					],
 					"description": "Placement of trait rating dice relative to trait labels."
 				},
@@ -175,7 +176,8 @@
 						"inline",
 						"above",
 						"below",
-						"none"
+						"none",
+						"vertical"
 					],
 					"description": "Override for rating dice placement on this trait."
 				},

@@ -90,19 +90,13 @@
             "includeOut": false
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": false
-          },
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
           "track": 1,
           "span": 1,
-          "widths": [
-            28,
-            72,
-            0
-          ]
+          "colWidth": 28,
+          "row": 2
         },
         "traits": {
           "Prowess": {
@@ -143,13 +137,12 @@
             8
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 72,
+          "row": 2
         },
         "traits": {
           "Type:": {
@@ -231,19 +224,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
-          "rowBreak": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -293,13 +279,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -346,11 +331,6 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 1,
-            "perRow": 15,
-            "filled": 0
-          },
           "pips": {
             "count": 15,
             "perRow": 15,
@@ -358,7 +338,8 @@
             "filled": 0
           },
           "reservedSlots": 0,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {}
       }

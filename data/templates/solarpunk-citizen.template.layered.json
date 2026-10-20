@@ -74,19 +74,13 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
           "track": 1,
           "span": 1,
-          "widths": [
-            28,
-            72,
-            0
-          ]
+          "colWidth": 28,
+          "row": 2
         },
         "traits": {
           "Mind": {
@@ -123,20 +117,17 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 4,
-            "perRow": 5,
-            "filled": 0
-          },
           "pips": {
-            "count": 20,
+            "count": 15,
             "perRow": 5,
             "connected": true,
             "filled": 0
           },
           "reservedSlots": 0,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 28,
+          "row": 3
         },
         "traits": {}
       },
@@ -163,13 +154,12 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 72,
+          "row": 2
         },
         "traits": {
           "Identity:": {
@@ -266,12 +256,10 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 2,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -326,7 +314,7 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "default"
+            "body": "subtrait-columns"
           },
           "ratingScale": [
             4,
@@ -339,12 +327,10 @@
             6
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 19,
-          "span": 3
+          "span": 3,
+          "row": 5
         },
         "traits": {
           "Craft": {

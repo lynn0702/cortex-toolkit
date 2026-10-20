@@ -71,12 +71,10 @@
           "ratingScale": [
             8
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Alien Background:": {
@@ -149,12 +147,10 @@
             "right": "Specialties"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 7,
-          "span": 3
+          "span": 3,
+          "row": 3
         },
         "traits": {
           "Bout": {
@@ -337,12 +333,10 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 7,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {
           "Alien": {
@@ -401,12 +395,10 @@
             "body": "three-column-table"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
-          "span": 3
+          "span": 3,
+          "row": 5
         },
         "traits": {},
         "slots": {
@@ -460,12 +452,10 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -516,12 +506,10 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 10,
-          "span": 3
+          "span": 3,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -602,12 +590,10 @@
             "orientation": "horizontal"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 20,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {}
       }

@@ -71,12 +71,10 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Role": {
@@ -149,18 +147,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            23,
-            25,
-            52
-          ]
+          "colWidth": 23,
+          "row": 3
         },
         "traits": {
           "Diplomacy": {
@@ -208,13 +200,11 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeD4": true,
-            "includeOut": false
-          },
           "reservedSlots": 2,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 25,
+          "row": 3
         },
         "traits": {
           "Frostbite": {
@@ -276,14 +266,13 @@
             "includeOut": false
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": false
-          },
           "notes": "",
           "reservedSlots": 6,
           "attributesRing": false,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 52,
+          "row": 3
         },
         "traits": {
           "Brawn": {
@@ -350,12 +339,10 @@
             6
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 19,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {
           "Craft": {
@@ -482,18 +469,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            35,
-            32.5,
-            32.5
-          ]
+          "colWidth": 35,
+          "row": 5
         },
         "traits": {},
         "slots": {
@@ -533,7 +514,9 @@
           },
           "reservedSlots": 3,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 32.5,
+          "row": 5
         },
         "traits": {},
         "slots": {
@@ -583,14 +566,10 @@
             12
           ],
           "reservedSlots": 2,
-          "rowBreak": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            25,
-            50,
-            25
-          ]
+          "colWidth": 25,
+          "row": 6
         },
         "traits": {
           "Gift of": {
@@ -630,7 +609,9 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 6
         },
         "traits": {
           "1 XP": {
@@ -675,7 +656,9 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 7
         },
         "traits": {
           "1 XP": {
@@ -713,11 +696,6 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 5,
-            "perRow": 4,
-            "filled": 0
-          },
           "pips": {
             "count": 20,
             "perRow": 4,
@@ -725,7 +703,9 @@
             "filled": 0
           },
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 25,
+          "row": 6
         },
         "traits": {}
       }

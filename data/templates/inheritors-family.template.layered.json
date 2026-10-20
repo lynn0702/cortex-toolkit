@@ -67,7 +67,8 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Name": {
@@ -123,11 +124,8 @@
           },
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Name": {
@@ -182,7 +180,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Name": {
@@ -238,7 +238,9 @@
             "body": "labeled-fields"
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Name": {
@@ -293,7 +295,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Name": {
@@ -349,7 +353,8 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "span": 3
+          "span": 3,
+          "row": 5
         },
         "traits": {
           "Name": {
@@ -405,11 +410,8 @@
           },
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 6
         },
         "traits": {
           "Name": {
@@ -465,7 +467,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 6
         },
         "traits": {
           "Name": {
@@ -521,7 +525,9 @@
             "body": "labeled-fields"
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 7
         },
         "traits": {
           "Name": {
@@ -577,7 +583,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 7
         },
         "traits": {
           "Name": {
@@ -634,11 +642,8 @@
           },
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Name": {
@@ -703,7 +708,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Name": {
@@ -769,7 +776,9 @@
             "body": "labeled-fields"
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Name": {
@@ -835,7 +844,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Name": {
@@ -901,7 +912,9 @@
             "body": "labeled-fields"
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Name": {
@@ -967,7 +980,9 @@
             "body": "labeled-fields"
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Name": {

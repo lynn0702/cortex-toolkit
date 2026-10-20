@@ -74,19 +74,13 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
           "attributesRing": false,
           "track": 1,
           "span": 1,
-          "widths": [
-            28,
-            36,
-            36
-          ]
+          "colWidth": 28,
+          "row": 2
         },
         "traits": {
           "Agility": {
@@ -144,13 +138,11 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
-          "notes": "",
-          "reservedSlots": 3,
+          "reservedSlots": 6,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 72,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -218,13 +210,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 28,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -283,13 +274,11 @@
             "right": "Specialties"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
-          "notes": "",
           "reservedSlots": 19,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 72,
+          "row": 3
         },
         "traits": {
           "Craft": {
@@ -527,6 +516,7 @@
         "description": "",
         "nounSingular": "Die",
         "nounPlural": "Dice",
+        "ratingPosition": "vertical",
         "tags": [],
         "view": {
           "features": {
@@ -536,7 +526,7 @@
           },
           "page": 1,
           "style": {
-            "header": "dice-ladder",
+            "header": "default",
             "body": "dice-ladder"
           },
           "ratingScale": [
@@ -546,9 +536,11 @@
             10,
             12
           ],
-          "reservedSlots": 5,
+          "labelPosition": "vertical",
+          "reservedSlots": 2,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -558,21 +550,6 @@
             "custom": {}
           },
           "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -584,6 +561,7 @@
         "description": "",
         "nounSingular": "Die",
         "nounPlural": "Dice",
+        "ratingPosition": "vertical",
         "tags": [],
         "view": {
           "features": {
@@ -593,7 +571,7 @@
           },
           "page": 1,
           "style": {
-            "header": "dice-ladder",
+            "header": "default",
             "body": "dice-ladder"
           },
           "ratingScale": [
@@ -603,33 +581,15 @@
             10,
             12
           ],
-          "reservedSlots": 5,
+          "labelPosition": "vertical",
+          "reservedSlots": 1,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "row": 5
         },
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
             "description": "",
             "tags": [],
             "custom": {}
@@ -656,18 +616,14 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 2,
-            "perRow": 12,
-            "filled": 0
-          },
           "pips": {
             "count": 24,
             "perRow": 12,
             "connected": true,
             "filled": 0
           },
-          "span": 3
+          "span": 3,
+          "row": 6
         },
         "traits": {}
       },
@@ -697,18 +653,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            33.333,
-            33.333,
-            33.334
-          ]
+          "colWidth": 33.333,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -764,13 +714,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -826,13 +775,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -880,13 +828,12 @@
             "body": "three-column-table"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
           "track": 1,
-          "span": 2
+          "span": 2,
+          "colWidth": 33.333,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -929,11 +876,6 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 2,
-            "perRow": 6,
-            "filled": 0
-          },
           "pips": {
             "count": 12,
             "perRow": 6,
@@ -942,7 +884,9 @@
           },
           "reservedSlots": 0,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 3
         },
         "traits": {}
       },
@@ -967,7 +911,9 @@
           },
           "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 4
         },
         "traits": {}
       }

@@ -31,7 +31,7 @@ const {
 	pipCount, pipsPerRow, pipsFilled, pipsConnected,
 	sessionRecordCount, sessionRecordOrientation, clearAllSessionBubbles, fillAllSessionBubbles,
 	nounSingular, nounPlural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
-	ratingPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
+	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
 	selectElement, duplicateTraitSet, promptDeleteTraitSet, targetValue
 } = api;
@@ -135,9 +135,9 @@ const {
 						<textarea :id="'trait-set-desc-' + traitSetID" name="traitSetDescription" v-model="description"></textarea>
 					</div>
 
-					<!-- STRESS OPTIONS -->
-					<div class="editor-field" v-if="styleBody === 'stress'">
-						<div class="editor-label">Stress Markers</div>
+					<!-- OUT MARKER (generic stepped-track indicator, default off) -->
+					<div class="editor-field" v-if="styleBody === 'stress' || styleBody === 'default'">
+						<div class="editor-label">Out Marker</div>
 						<div class="editor-toggles">
 							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-out'" name="stressOut" :true-value="true" :false-value="false" v-model="includeOut"></div>
 							<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Include 💥 Out Marker</label></div>
@@ -308,7 +308,17 @@ const {
 							<option value="above">Above</option>
 							<option value="below">Below</option>
 							<option value="none">None</option>
+							<option value="vertical">Vertical</option>
 						</select>
+					</div>
+
+					<!-- LABEL POSITION (ladder rung names, horizontal or rotated vertical) -->
+					<div class="editor-field" v-if="styleBody === 'dice-ladder'">
+						<div class="editor-label">Label Position</div>
+						<div class="editor-button-group">
+							<button type="button" class="editor-group-btn" :class="{ active: labelPosition === 'horizontal' }" @click.stop="labelPosition = 'horizontal'">Horizontal</button>
+							<button type="button" class="editor-group-btn" :class="{ active: labelPosition === 'vertical' }" @click.stop="labelPosition = 'vertical'">Vertical</button>
+						</div>
 					</div>
 
 					<!-- STATEMENT MODE -->

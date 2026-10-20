@@ -135,6 +135,8 @@ export interface CortexToolkitCustom {
 	ringConfig?: RingConfig;
 	imageConfig?: ImageConfig;
 	stressConfig?: StressConfig;
+	/** Generic Out indicator for any stepped track; default off. Supersedes stressConfig.includeOut when set. */
+	outIndicator?: boolean;
 	labels?: Record<string, string>;
 	notes?: string;
 
@@ -150,9 +152,13 @@ export interface CortexToolkitCustom {
 	/** Header text alignment (respected in both orientations). */
 	headerAlign?: 'left' | 'center' | 'right';
 	page?: number;
+	/** Explicit row number within the page (1-based). Sets sharing a page and row band together. */
+	row?: number | null;
 	colSpan?: number | 'full';
 	columnSpan?: number | 'full';
+	/** @deprecated superseded by explicit row; read for legacy migration only. */
 	rowBreak?: boolean | null;
+	/** This set's singular share of its band's columns (e.g. 28 of a 28/72 split). Band widths derive from members. */
 	colWidth?: number | null;
 	editorDock?: 'left' | 'right';
 	headerRight?: string;
@@ -164,7 +170,9 @@ export interface CortexToolkitCustom {
 	blankSlots?: number | null;
 
 	// behavior / labels
-	ratingPosition?: 'inline' | 'above' | 'below' | 'none';
+	ratingPosition?: 'inline' | 'above' | 'below' | 'none' | 'vertical';
+	/** Rung label direction on ladder layouts: horizontal text or rotated vertical. */
+	labelPosition?: 'horizontal' | 'vertical';
 	statement?: boolean;
 	hasQuestionedPip?: boolean;
 	hasCounterColumn?: boolean;

@@ -66,18 +66,12 @@
             10
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            25,
-            50,
-            25
-          ]
+          "colWidth": 25,
+          "row": 2
         },
         "traits": {
           "Hammerhead One": {
@@ -178,15 +172,14 @@
             8
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "sharedHinder": true,
           "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Resource Support Vehicle": {
@@ -231,13 +224,12 @@
             6
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 25,
+          "row": 2
         },
         "traits": {
           "Unassigned Resources": {

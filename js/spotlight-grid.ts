@@ -76,42 +76,30 @@ export function spotlightSpanForSet( traitSet: TraitSet ): 1 | 2 | 3 {
 	return 1;
 }
 
-// Compute band widths [w1, w2, w3] from anchor set, declared widths, or defaults.
+// Compute band widths [w1, w2, w3] from per-set singular colWidth shares.
+// Widths belong to the band, not to any one set: each member declares only
+// its own share (e.g. Attributes 28, Distinctions 72); the band derives the
+// columns. Triples on sets are no longer read (removed corpus-wide).
 function computeBandWidths( items: SpotlightSectionItem[] ): [number, number, number] {
 	if ( !items.length ) return [33.333, 33.333, 33.334];
 
-	// 1. Anchor set widths
-	const anchorCtk = getView( items[0]?.traitSet );
-	if ( Array.isArray( anchorCtk?.widths ) && anchorCtk.widths.length === 3 ) {
-		return [ Number( anchorCtk.widths[0] ), Number( anchorCtk.widths[1] ), Number( anchorCtk.widths[2] ) ];
-	}
-
-	// 2. Any set in band declares widths
-	for ( const item of items ) {
-		const ctk = getView( item.traitSet );
-		if ( Array.isArray( ctk?.widths ) && ctk.widths.length === 3 ) {
-			return [ Number( ctk.widths[0] ), Number( ctk.widths[1] ), Number( ctk.widths[2] ) ];
-		}
-	}
-
-	// 3. Legacy colWidth declarations
 	const declared: ( number | null )[] = [ null, null, null ];
 	for ( const item of items ) {
 		const ctk = getView( item.traitSet );
 		const w = Number( ctk?.colWidth );
-		if ( w >= 10 && w <= 90 ) {
+		if ( Number.isFinite( w ) && w > 0 && w <= 100 ) {
 			const tr = spotlightTrackForSet( item.traitSet );
 			if ( declared[ tr - 1 ] === null ) {
-				declared[ tr - 1 ] = Math.round( w );
+				declared[ tr - 1 ] = w;
 			}
 		}
 	}
 
 	// Determine if track 3 is present or active
 	const hasTrack3 = items.some( item => spotlightTrackForSet( item.traitSet ) === 3 );
-	const isLegacyTwoTrack = !hasTrack3 && declared[2] === null;
+	const isTwoTrack = !hasTrack3 && declared[2] === null;
 
-	if ( isLegacyTwoTrack ) {
+	if ( isTwoTrack ) {
 		if ( declared[0] !== null ) return [ declared[0], 100 - declared[0], 0 ];
 		if ( declared[1] !== null ) return [ 100 - declared[1], declared[1], 0 ];
 		return [ 50, 50, 0 ];
@@ -134,8 +122,18 @@ function computeBandWidths( items: SpotlightSectionItem[] ): [number, number, nu
 	return [ 33.333, 33.333, 33.334 ];
 }
 
-// Bands a page's sets into full-width sections and column bands. A row break
-// starts a fresh band so consecutive bands can carry different column shares.
+// Bands a page's sets into full-width sections and column bands. Bands are
+// explicit rows: sets sharing a page and row number band together; a set
+// without a row continues the previous set's band. Consecutive bands carry
+// their own column shares.
+export function spotlightRowForSet( traitSet: TraitSet ): number | null {
+	const raw: unknown = getView( traitSet )?.row;
+	if ( raw === undefined || raw === null || raw === '' ) return null;
+	const n = Number( raw );
+	if ( !Number.isFinite( n ) || n < 1 ) return null;
+	return Math.floor( n );
+}
+
 export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number ): SpotlightSection[] {
 	const pageSets: SpotlightSectionItem[] = [];
 	( traitSets || [] ).forEach( ( traitSet, s ) => {
@@ -155,6 +153,7 @@ export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number )
 
 	const sections: SpotlightSection[] = [];
 	let currentCols: SpotlightSection | null = null;
+	let currentRow: number | null = null;
 
 	const finalizeSection = ( sec: SpotlightSection ) => {
 		sec.widths = computeBandWidths( sec.ordered );
@@ -162,7 +161,6 @@ export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number )
 
 	pageSets.forEach( item => {
 		const ts = item.traitSet;
-		const ctk = getView( ts ) || {};
 		const span = spotlightSpanForSet( ts );
 		const isFullWidth = ( span === 3 );
 
@@ -171,6 +169,7 @@ export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number )
 				finalizeSection( currentCols );
 				sections.push( currentCols );
 				currentCols = null;
+				currentRow = null;
 			}
 			sections.push({
 				type: 'full-width',
@@ -185,11 +184,14 @@ export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number )
 			return;
 		}
 
-		if ( !currentCols ) currentCols = newSection();
-		else if ( ctk.rowBreak === true ) {
-			finalizeSection( currentCols );
-			sections.push( currentCols );
+		const row = spotlightRowForSet( ts ) ?? currentRow ?? 1;
+		if ( !currentCols || row !== currentRow ) {
+			if ( currentCols ) {
+				finalizeSection( currentCols );
+				sections.push( currentCols );
+			}
 			currentCols = newSection();
+			currentRow = row;
 		}
 		currentCols.ordered.push( item );
 		const tr = spotlightTrackForSet( ts );
@@ -227,6 +229,65 @@ export function getSpotlightGridCells( section: SpotlightSection ): SpotlightCel
 		cells.push({ s: entry.index, col: track, track, span, style: st });
 	} );
 	return cells;
+}
+
+export interface SpotlightCellGroup {
+	isCluster: boolean;
+	clusterId?: string;
+	items: SpotlightSectionItem[];
+	cells: SpotlightCell[];
+}
+
+// Section content as render groups: consecutive same-cluster sets share one
+// cluster band; every other set is placed by its own grid cell (track/span),
+// so spanning sets actually span. Cluster bands take the first member's cell.
+export function getSpotlightCellGroups( section: SpotlightSection ): SpotlightCellGroup[] {
+	const cells = getSpotlightGridCells( section );
+	const byIndex = new Map<number, SpotlightCell>();
+	cells.forEach( ( cell ) => byIndex.set( cell.s, cell ) );
+	const groups: SpotlightCellGroup[] = [];
+	let current: SpotlightCellGroup | null = null;
+	( section.ordered || [] ).forEach( ( item ) => {
+		const clusterId = getView( item.traitSet )?.cluster;
+		const cell = byIndex.get( item.index );
+		if ( !cell ) return;
+		if ( clusterId && current && current.isCluster && current.clusterId === clusterId ) {
+			current.items.push( item );
+			current.cells.push( cell );
+		} else {
+			if ( current ) groups.push( current );
+			current = clusterId
+				? { isCluster: true, clusterId, items: [ item ], cells: [ cell ] }
+				: { isCluster: false, items: [ item ], cells: [ cell ] };
+		}
+	} );
+	if ( current ) groups.push( current );
+	return groups;
+}
+
+// Simulate sparse grid auto-flow for one band: members in order claim
+// tracks, stacking below on conflict. Returns the 0-based visual row per
+// member. Same-track adjacency stacks (no split); overlapping spans push
+// down. Mirrors what the renderer resolves from explicit row data.
+export function simulateVisualRows( members: { track: number; span: number }[] ): number[] {
+	const taken: Set<number>[] = [ new Set(), new Set(), new Set() ];
+	const rows: number[] = [];
+	for ( const m of members ) {
+		const track = Math.max( 1, Math.min( 3, m.track || 1 ) );
+		let span = Math.max( 1, Math.min( 3, m.span || 1 ) );
+		if ( track + span - 1 > 3 ) span = 4 - track;
+		let r = 0;
+		for ( ;; r++ ) {
+			let free = true;
+			for ( let t = track; t < track + span; t++ ) {
+				if ( taken[t - 1].has( r ) ) { free = false; break; }
+			}
+			if ( free ) break;
+		}
+		for ( let t = track; t < track + span; t++ ) taken[t - 1].add( r );
+		rows.push( r );
+	}
+	return rows;
 }
 
 // Groups sibling sets within a column stack that share a cluster id into a cluster band.

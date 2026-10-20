@@ -73,11 +73,8 @@
           ],
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Walking Style Guide": {
@@ -159,7 +156,9 @@
             12
           ],
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Craft": {
@@ -205,7 +204,9 @@
             "right": "SPECIALTIES"
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Engineering": {
@@ -283,7 +284,9 @@
             12
           ],
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "The Guild": {
@@ -345,7 +348,9 @@
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "cluster": "badges-resources"
+          "cluster": "badges-resources",
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "First Responder": {
@@ -393,7 +398,9 @@
           },
           "reservedSlots": 2,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Overclock": {
@@ -443,7 +450,9 @@
           },
           "track": 1,
           "span": 1,
-          "cluster": "badges-resources"
+          "cluster": "badges-resources",
+          "colWidth": 50,
+          "row": 5
         },
         "traits": {
           "Salvage Cache": {
@@ -477,9 +486,7 @@
             "sfx": false,
             "subtraits": false
           },
-          "stressConfig": {
-            "includeOut": true
-          },
+          "outIndicator": true,
           "ratingScale": [
             6,
             8,
@@ -487,7 +494,9 @@
             12
           ],
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 5
         },
         "traits": {
           "Physical": {
@@ -527,11 +536,8 @@
           },
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Novice": {
@@ -572,7 +578,9 @@
             "subtraits": false
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Origin": {
@@ -603,13 +611,16 @@
             "header": "default",
             "body": "pips"
           },
-          "pipsConfig": {
-            "rows": 2,
+          "pips": {
+            "count": 10,
             "perRow": 5,
+            "connected": true,
             "filled": 4
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {}
       },
@@ -630,7 +641,9 @@
             "lines": 4
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Session 1: The Awakening": {
@@ -670,7 +683,9 @@
             "subtraits": false
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Tactician": {
@@ -713,7 +728,9 @@
           },
           "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {}
       },
@@ -736,11 +753,8 @@
           },
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Alpha": {
@@ -787,7 +801,9 @@
             "subtraits": true
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Supply": {
@@ -836,7 +852,9 @@
             "subtraits": false
           },
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Custom Sidearm": {
@@ -877,7 +895,9 @@
             "subtraits": false
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Item One": {
@@ -924,7 +944,9 @@
             "height": 120,
             "alignment": "center",
             "caption": "Image set caption"
-          }
+          },
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {}
       }

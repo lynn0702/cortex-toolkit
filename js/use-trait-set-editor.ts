@@ -1,6 +1,6 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getSpotlightSections } from './spotlight-grid.ts';
+import { getSpotlightSections, spotlightTrackForSet } from './spotlight-grid.ts';
 import { getView, ensureView } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
 
@@ -220,11 +220,33 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	});
 
-	// Starts a fresh row band before this set so consecutive bands can
-	// carry different column shares (e.g. 66/34 above 40/60).
-	const rowBreak = computed({
-		get: () => getView( traitSet.value )?.rowBreak === true,
-		set: ( val: boolean ) => { setCustomProperty( 'rowBreak', val ? true : null ); }
+	// Explicit row number within the page (1-based). Sets sharing a page
+	// and row band together; each band carries its own column shares.
+	// Falls back to the engine-derived band position so sheets without
+	// stored rows (older snapshots, hand-authored files) still read true.
+	function effectiveRowOf( index: number | undefined ) {
+		if ( index === null || index === undefined || index < 0 ) return 1;
+		const sets = props.character?.traitSets || [];
+		const self = sets[ index ];
+		const p = getView( self )?.page || 1;
+		const sections = getSpotlightSections( sets, p );
+		for ( let i = 0; i < sections.length; i++ ) {
+			if ( ( sections[i].ordered || [] ).some( ( item: any ) => item.index === index ) ) return i + 1;
+		}
+		return 1;
+	}
+
+	const setRow = computed({
+		get: () => {
+			const raw = getView( traitSet.value )?.row;
+			const n = Number( raw );
+			if ( Number.isFinite( n ) && n >= 1 ) return Math.floor( n );
+			return effectiveRowOf( props.traitSetID );
+		},
+		set: ( val: number ) => {
+			const n = Number.isFinite( Number( val ) ) ? Math.max( 1, Math.floor( Number( val ) ) ) : 1;
+			setCustomProperty( 'row', n );
+		}
 	});
 
 	const templateEntry = computed( () => {
@@ -236,16 +258,18 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const restorableTraitNames = computed( () => cortexFunctions.restorableTraits( props.character, templateEntry.value, props.traitSetID ) );
 
 	// Track (1 | 2 | 3), Span (1 | 2 | 3), Band Widths ([w1, w2, w3]), Flex (filler)
-	function getBandAnchorSet(): TraitSet | null {
+	// Widths belong to the band: the bar below displays the band's engine
+	// widths and distributes edits back as singular per-set shares.
+	function getBandSection(): any | null {
 		const sets = props.character?.traitSets || [];
 		const p = getView( traitSet.value )?.page || 1;
 		const sections = getSpotlightSections( sets, p );
 		for ( const sec of sections ) {
-			if ( sec.ordered.some( ( item: any ) => item.index === props.traitSetID ) ) {
-				return sec.ordered[0]?.traitSet || null;
+			if ( ( sec.ordered || [] ).some( ( item: any ) => item.index === props.traitSetID ) ) {
+				return sec;
 			}
 		}
-		return traitSet.value;
+		return null;
 	}
 
 	const track = computed({
@@ -289,19 +313,26 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const bandWidths = computed({
 		get: (): [number, number, number] => {
-			const anchor = getBandAnchorSet();
-			const w = getView( anchor )?.widths;
+			const w = getBandSection()?.widths;
 			if ( Array.isArray( w ) && w.length === 3 ) {
 				return [ Number( w[0] ), Number( w[1] ), Number( w[2] ) ];
 			}
 			return [ 33.333, 33.333, 33.334 ];
 		},
 		set: ( val: [number, number, number] ) => {
-			const anchor = getBandAnchorSet() || traitSet.value;
-			if ( anchor ) {
-				ensureView( anchor ).widths = [ Number( val[0] ), Number( val[1] ), Number( val[2] ) ];
-				updateCharacter( props.character );
+			const sec = getBandSection();
+			if ( !sec ) return;
+			const vals = [ Number( val[0] ), Number( val[1] ), Number( val[2] ) ];
+			for ( const item of ( sec.ordered || [] ) ) {
+				const ts = props.character?.traitSets?.[ item.index ];
+				if ( !ts ) continue;
+				const tr = spotlightTrackForSet( ts );
+				const share = vals[ tr - 1 ];
+				const view = ensureView( ts );
+				if ( Number.isFinite( share ) && share > 0 ) view.colWidth = share;
+				else delete view.colWidth;
 			}
+			updateCharacter( props.character );
 		}
 	});
 
@@ -315,8 +346,22 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( val: string ) => { setCustomProperty( 'headerRight', val ); }
 	});
 
-	const canMoveUp = computed( () => findMoveTarget( -1 ) !== -1 );
-	const canMoveDown = computed( () => findMoveTarget( 1 ) !== -1 );
+	// Highest effective row on this set's page (for capping row moves).
+	const maxPageRow = computed( () => {
+		let max = 1;
+		const sets = props.character?.traitSets || [];
+		const p = getView( traitSet.value )?.page || 1;
+		sets.forEach( ( ts: any, idx: number ) => {
+			if ( ( getView( ts )?.page || 1 ) !== p ) return;
+			const raw = Number( getView( ts )?.row );
+			const r = Number.isFinite( raw ) && raw >= 1 ? Math.floor( raw ) : effectiveRowOf( idx );
+			if ( r > max ) max = r;
+		} );
+		return Math.max( 1, max );
+	} );
+
+	const canMoveUp = computed( () => setRow.value > 1 );
+	const canMoveDown = computed( () => setRow.value <= maxPageRow.value );
 
 	const isSpotlightSheet = computed( () => {
 		const explicit = getView( props.character )?.sheetStyle;
@@ -424,13 +469,17 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( value: boolean ) => { setFeature( 'sfx', value ); }
 	});
 
+	// Generic Out indicator (default off); legacy stressConfig.includeOut
+	// still wins when set so existing templates keep their behavior.
 	const includeOut = computed({
 		get: () => {
-			const cfg = getView( traitSet.value )?.stressConfig;
+			const view = getView( traitSet.value );
+			if ( view && typeof view.outIndicator === 'boolean' ) return view.outIndicator;
+			const cfg = view?.stressConfig;
 			if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
-			return true;
+			return false;
 		},
-		set: ( value: boolean ) => { setStressConfig( 'includeOut', value ); }
+		set: ( value: boolean ) => { setCustomProperty( 'outIndicator', Boolean( value ) ); }
 	});
 
 	const ratingScale = computed({
@@ -535,10 +584,17 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const ratingPosition = computed({
 		get: () => traitSet.value?.ratingPosition || getView( traitSet.value )?.ratingPosition || 'inline',
-		set: ( val: 'inline' | 'above' | 'below' | 'none' ) => {
+		set: ( val: 'inline' | 'above' | 'below' | 'none' | 'vertical' ) => {
 			setProperty( 'ratingPosition', val );
 			setCustomProperty( 'ratingPosition', val );
 		}
+	});
+
+	// Ladder rung label direction: horizontal text or rotated vertical
+	// (sidebar-style) for narrow tracks such as Initiative and Hero Dice.
+	const labelPosition = computed({
+		get: () => getView( traitSet.value )?.labelPosition === 'vertical' ? 'vertical' : 'horizontal',
+		set: ( val: 'horizontal' | 'vertical' ) => { setCustomProperty( 'labelPosition', val === 'vertical' ? 'vertical' : null ); }
 	});
 
 	const isStatementSet = computed({
@@ -752,73 +808,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		updateCharacter( props.character );
 	}
 
+	// Move Up / Move Down shift the set one row within its page.
 	function moveTraitSetUp() {
-		let s = props.traitSetID;
-		let targetIdx = findMoveTarget( -1 );
-		if ( targetIdx === -1 ) return;
-
-		let character = props.character;
-		let temp = character.traitSets[s];
-		character.traitSets[s] = character.traitSets[targetIdx];
-		character.traitSets[targetIdx] = temp;
-
-		updateCharacter( character );
-		selectElement([ 'traitSet', targetIdx ]);
+		if ( setRow.value <= 1 ) return;
+		setRow.value = setRow.value - 1;
 	}
 
 	function moveTraitSetDown() {
-		let s = props.traitSetID;
-		let targetIdx = findMoveTarget( 1 );
-		if ( targetIdx === -1 ) return;
-
-		let character = props.character;
-		let temp = character.traitSets[s];
-		character.traitSets[s] = character.traitSets[targetIdx];
-		character.traitSets[targetIdx] = temp;
-
-		updateCharacter( character );
-		selectElement([ 'traitSet', targetIdx ]);
-	}
-
-	function isFullWidthSetByIndex( idx: any ) {
-		if ( !isSpotlightSheet.value ) return false;
-		const ctk = getView( props.character?.traitSets?.[ idx ] );
-		const span = ctk?.span ?? ctk?.colSpan ?? ctk?.columnSpan;
-		return span === 'full' || Number( span ) >= characterColumnCount.value;
-	}
-
-	function pageOfSet( idx: any ) {
-		const page = getView( props.character?.traitSets?.[ idx ] )?.page;
-		return page === undefined || page === null ? 1 : page;
-	}
-
-	function columnOfSet( idx: any ) {
-		const loc = getView( props.character?.traitSets?.[ idx ] )?.location;
-		if ( loc === 'center' && characterColumnCount.value === 3 ) return 'center';
-		return loc === 'right' ? 'right' : 'left';
-	}
-
-	// Reorder target for Move Up (-1) / Move Down (+1). Full-width sets
-	// are row breaks: column sets can never cross them (or pages), and a
-	// full-width set moves one adjacent step so breaks stay deliberate.
-	function findMoveTarget( dir: any ) {
-		const sets = props.character?.traitSets || [];
-		const s = props.traitSetID;
-		if ( s === null || s === undefined || s < 0 || s >= sets.length ) return -1;
-		const selfPage = pageOfSet( s );
-		if ( isFullWidthSetByIndex( s ) ) {
-			const n = s + dir;
-			if ( n < 0 || n >= sets.length ) return -1;
-			if ( pageOfSet( n ) !== selfPage ) return -1;
-			return n;
-		}
-		const col = columnOfSet( s );
-		for ( let i = s + dir; i >= 0 && i < sets.length; i += dir ) {
-			if ( pageOfSet( i ) !== selfPage ) return -1;
-			if ( isFullWidthSetByIndex( i ) ) return -1;
-			if ( columnOfSet( i ) === col ) return i;
-		}
-		return -1;
+		setRow.value = setRow.value + 1;
 	}
 
 	function setRingConfig( key: keyof RingConfig, value: any ) {
@@ -1205,18 +1202,18 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
 		ringTrait, pageNumber, columnLocation, characterColumnCount, setTrackCount, isFullWidthSpan, colSpan,
 		track, span, bandWidths, flex,
-		rowBreak, templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
+		setRow, maxPageRow, templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		multiDie, isPool, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
-		hasAttachedStress, attachedStressLabel, attachedStressScale, attachedStressOut, ratingPosition, isStatementSet,
+		hasAttachedStress, attachedStressLabel, attachedStressScale, attachedStressOut, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled,
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
-		duplicateTraitSet, restoreTrait, setColumn, moveTraitSetUp, moveTraitSetDown, isFullWidthSetByIndex,
-		pageOfSet, columnOfSet, findMoveTarget, setRingConfig, resetRingPlacement, setFeature,
+		duplicateTraitSet, restoreTrait, setColumn, moveTraitSetUp, moveTraitSetDown,
+		setRingConfig, resetRingPlacement, setFeature,
 		setCustomProperty, styleLabel, setStyleLabel, setStressConfig, setImageConfig, uploadImageStart,
 		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset, getDieDisplayValue,

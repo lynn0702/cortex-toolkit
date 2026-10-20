@@ -76,11 +76,8 @@
           "reservedSlots": 5,
           "track": 1,
           "span": 1,
-          "widths": [
-            22,
-            39,
-            39
-          ]
+          "colWidth": 22,
+          "row": 2
         },
         "traits": {
           "D4": {
@@ -148,13 +145,12 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 39,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -227,13 +223,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
           "track": 1,
-          "span": 2
+          "span": 2,
+          "colWidth": 22,
+          "row": 3
         },
         "traits": {
           "Ambition": {
@@ -295,7 +290,9 @@
           ],
           "reservedSlots": 6,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 39,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -359,13 +356,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
           "track": 1,
-          "span": 2
+          "span": 2,
+          "colWidth": 22,
+          "row": 4
         },
         "traits": {
           "Self": {
@@ -418,19 +414,11 @@
             10,
             12
           ],
-          "stressConfig": {
-            "includeD4": true,
-            "includeOut": false
-          },
           "reservedSlots": 5,
-          "rowBreak": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            24,
-            48,
-            28
-          ]
+          "colWidth": 24,
+          "row": 5
         },
         "traits": {
           "Angry": {
@@ -485,13 +473,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 10,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 48,
+          "row": 5
         },
         "traits": {
           "Azure Sympathy": {
@@ -553,8 +540,10 @@
         "ratingPosition": "above",
         "tags": [],
         "view": {
-          "track": 1,
-          "span": 1
+          "track": 3,
+          "span": 1,
+          "colWidth": 28,
+          "row": 5
         },
         "traits": {},
         "slots": {

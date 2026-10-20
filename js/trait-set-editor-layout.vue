@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
-	isRing, pageNumber, track, span, bandWidths, rowBreak, flex,
+	isRing, pageNumber, track, span, bandWidths, setRow, maxPageRow, flex,
 	canMoveUp, canMoveDown, moveTraitSetUp, moveTraitSetDown,
 	editorDock, isSpotlightSheet, targetValue
 } = injectTraitSetEditor();
@@ -23,11 +24,81 @@ function isPresetActive( preset: [number, number, number] ): boolean {
 		Math.round( current[2] ) === Math.round( preset[2] );
 }
 
-function updateTrackWidth( index: number, event: Event ) {
-	const val = Math.max( 0, Math.min( 100, Number( ( event.target as HTMLInputElement ).value ) || 0 ) );
-	const copy: [number, number, number] = [ bandWidths.value[0], bandWidths.value[1], bandWidths.value[2] ];
-	copy[ index ] = val;
-	bandWidths.value = copy;
+// Widths bar: one bar, two dividers, three sections. Dividers cannot cross.
+// Dragging redistributes between neighbors; the third section stays fixed.
+const widthsBar = ref<HTMLElement | null>( null );
+const draggingDivider = ref<0 | 1 | null>( null );
+
+const widthsBase = computed( () => {
+	const raw = [ Number( bandWidths.value[0] ) || 0, Number( bandWidths.value[1] ) || 0, Number( bandWidths.value[2] ) || 0 ];
+	const sum = raw[0] + raw[1] + raw[2];
+	if ( sum <= 0 ) return [ 33.333, 33.333, 33.334 ];
+	return raw;
+} );
+
+const widthsTotal = computed( () => widthsBase.value[0] + widthsBase.value[1] + widthsBase.value[2] );
+const dividerA = computed( () => ( widthsBase.value[0] / widthsTotal.value ) * 100 );
+const dividerB = computed( () => ( ( widthsBase.value[0] + widthsBase.value[1] ) / widthsTotal.value ) * 100 );
+
+function barPercent( event: PointerEvent ) {
+	const el = widthsBar.value;
+	if ( !el ) return 0;
+	const rect = el.getBoundingClientRect();
+	if ( rect.width <= 0 ) return 0;
+	return Math.max( 0, Math.min( 100, ( ( event.clientX - rect.left ) / rect.width ) * 100 ) );
+}
+
+// Widths are shares of one band: the combined total can never exceed 100.
+// Over-totals (e.g. hand-typed 28/90/0) scale down proportionally.
+function writeWidths( a: number, b: number, c: number ) {
+	let na = Math.max( 0, Math.round( a ) );
+	let nb = Math.max( 0, Math.round( b ) );
+	let nc = Math.max( 0, Math.round( c ) );
+	const total = na + nb + nc;
+	if ( total > 100 ) {
+		na = Math.round( ( na / total ) * 100 );
+		nb = Math.round( ( nb / total ) * 100 );
+		nc = Math.max( 0, 100 - na - nb );
+	}
+	bandWidths.value = [ na, nb, nc ];
+}
+
+function startDividerDrag( which: 0 | 1, event: PointerEvent ) {
+	draggingDivider.value = which;
+	( event.target as HTMLElement ).setPointerCapture?.( event.pointerId );
+	moveDivider( event );
+	event.preventDefault();
+}
+
+function moveDivider( event: PointerEvent ) {
+	if ( draggingDivider.value === null ) return;
+	const q = barPercent( event );
+	const [ a, b, c ] = widthsBase.value;
+	const total = a + b + c;
+	const toRaw = ( pct: number ) => ( pct / 100 ) * total;
+	if ( draggingDivider.value === 0 ) {
+		const na = Math.max( 0, Math.min( a + b, toRaw( q ) ) );
+		writeWidths( na, a + b - na, c );
+	} else {
+		const nab = Math.max( a, Math.min( total, toRaw( q ) ) );
+		writeWidths( a, nab - a, total - nab );
+	}
+}
+
+function endDividerDrag() {
+	draggingDivider.value = null;
+}
+
+function nudgeDivider( which: 0 | 1, delta: number ) {
+	const [ a, b, c ] = widthsBase.value;
+	const total = a + b + c;
+	if ( which === 0 ) {
+		const na = Math.max( 0, Math.min( a + b, a + delta ) );
+		writeWidths( na, a + b - na, c );
+	} else {
+		const nab = Math.max( a, Math.min( total, a + b + delta ) );
+		writeWidths( a, nab - a, total - nab );
+	}
 }
 </script>
 
@@ -75,9 +146,9 @@ function updateTrackWidth( index: number, event: Event ) {
 		</div>
 	</div>
 
-	<!-- TRACK -->
+	<!-- COLUMN (sheet track) -->
 	<div class="editor-field" v-if="!isRing">
-		<div class="editor-label">Track</div>
+		<div class="editor-label">Column</div>
 		<div class="editor-button-group">
 			<button
 				v-for="t in [1, 2, 3]"
@@ -87,7 +158,7 @@ function updateTrackWidth( index: number, event: Event ) {
 				:class="{ active: track === t }"
 				@click.stop="track = t"
 			>
-				Track {{ t }}
+				Column {{ t }}
 			</button>
 		</div>
 	</div>
@@ -109,8 +180,8 @@ function updateTrackWidth( index: number, event: Event ) {
 		</div>
 	</div>
 
-	<!-- WIDTHS -->
-	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+	<!-- WIDTHS (band shares; hidden for full-width sets) -->
+	<div class="editor-field" v-if="!isRing && isSpotlightSheet && span !== 3">
 		<div class="editor-label">Widths</div>
 		<div class="editor-button-group">
 			<button
@@ -124,60 +195,86 @@ function updateTrackWidth( index: number, event: Event ) {
 				{{ p.label }}
 			</button>
 		</div>
-		<div class="editor-button-group" style="margin-top: 0.35rem; display: flex; gap: 0.4rem;">
-			<input
-				type="number"
-				min="0"
-				max="100"
-				:value="Math.round( bandWidths[0] )"
-				@change.stop="updateTrackWidth( 0, $event )"
-				class="editor-input"
-				style="width: 33%; text-align: center;"
-				title="Track 1 width percent"
-			>
-			<input
-				type="number"
-				min="0"
-				max="100"
-				:value="Math.round( bandWidths[1] )"
-				@change.stop="updateTrackWidth( 1, $event )"
-				class="editor-input"
-				style="width: 33%; text-align: center;"
-				title="Track 2 width percent"
-			>
-			<input
-				type="number"
-				min="0"
-				max="100"
-				:value="Math.round( bandWidths[2] )"
-				@change.stop="updateTrackWidth( 2, $event )"
-				class="editor-input"
-				style="width: 33%; text-align: center;"
-				title="Track 3 width percent"
-			>
+		<div class="widths-bar" ref="widthsBar">
+			<div class="widths-seg widths-seg-0" :style="{ width: dividerA + '%' }">
+				<span v-if="dividerA >= 14">{{ Math.round( bandWidths[0] ) }}</span>
+			</div>
+			<div class="widths-seg widths-seg-1" :style="{ width: ( dividerB - dividerA ) + '%' }">
+				<span v-if="( dividerB - dividerA ) >= 14">{{ Math.round( bandWidths[1] ) }}</span>
+			</div>
+			<div class="widths-seg widths-seg-2" :style="{ width: ( 100 - dividerB ) + '%' }">
+				<span v-if="( 100 - dividerB ) >= 14">{{ Math.round( bandWidths[2] ) }}</span>
+			</div>
+			<div
+				class="widths-handle"
+				:style="{ left: dividerA + '%' }"
+				@pointerdown.stop="startDividerDrag( 0, $event )"
+				@pointermove.stop="moveDivider( $event )"
+				@pointerup.stop="endDividerDrag()"
+				@pointercancel.stop="endDividerDrag()"
+				@keydown.left.prevent="nudgeDivider( 0, -1 )"
+				@keydown.right.prevent="nudgeDivider( 0, 1 )"
+				tabindex="0"
+				role="slider"
+				aria-label="Column 1 and 2 divider"
+				aria-valuemin="0"
+				aria-valuemax="100"
+				:aria-valuenow="Math.round( dividerA )"
+				title="Drag to split columns 1 and 2"
+			></div>
+			<div
+				class="widths-handle"
+				:style="{ left: dividerB + '%' }"
+				@pointerdown.stop="startDividerDrag( 1, $event )"
+				@pointermove.stop="moveDivider( $event )"
+				@pointerup.stop="endDividerDrag()"
+				@pointercancel.stop="endDividerDrag()"
+				@keydown.left.prevent="nudgeDivider( 1, -1 )"
+				@keydown.right.prevent="nudgeDivider( 1, 1 )"
+				tabindex="0"
+				role="slider"
+				aria-label="Column 2 and 3 divider"
+				aria-valuemin="0"
+				aria-valuemax="100"
+				:aria-valuenow="Math.round( dividerB )"
+				title="Drag to split columns 2 and 3"
+			></div>
 		</div>
 	</div>
 
-	<!-- NEW BAND -->
+	<!-- ROW (sets sharing a page and row band together) -->
 	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
-		<div class="editor-label">New Band</div>
+		<div class="editor-label">Row</div>
 		<div class="editor-button-group">
 			<button
 				type="button"
 				class="editor-group-btn"
-				:class="{ active: !rowBreak }"
-				@click.stop="rowBreak = false"
+				:disabled="!canMoveUp"
+				@click.stop="moveTraitSetUp"
+				title="Move to previous row"
 			>
-				Continue
+				<i class="fas fa-arrow-up"></i>
 			</button>
 			<button
 				type="button"
 				class="editor-group-btn"
-				:class="{ active: rowBreak }"
-				@click.stop="rowBreak = true"
+				:class="{ active: true }"
+				title="Row number within the page"
 			>
-				New Band
+				{{ setRow }}
 			</button>
+			<button
+				type="button"
+				class="editor-group-btn"
+				:disabled="!canMoveDown"
+				@click.stop="moveTraitSetDown"
+				title="Move to next row"
+			>
+				<i class="fas fa-arrow-down"></i>
+			</button>
+		</div>
+		<div class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem;">
+			Row {{ setRow }} · Column {{ track }}{{ span > 1 ? '–' + Math.min( 3, track + span - 1 ) : '' }}
 		</div>
 	</div>
 

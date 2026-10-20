@@ -93,19 +93,13 @@
             "includeOut": false
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": false
-          },
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
           "track": 1,
           "span": 1,
-          "widths": [
-            36,
-            64,
-            0
-          ]
+          "colWidth": 36,
+          "row": 2
         },
         "traits": {
           "Physical": {
@@ -152,13 +146,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 14,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 36,
+          "row": 3
         },
         "traits": {
           "Crowd Control": {
@@ -254,13 +247,12 @@
             8
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 64,
+          "row": 2
         },
         "traits": {
           "Your Life Before:": {
@@ -355,13 +347,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 7,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 64,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -429,16 +420,8 @@
             "body": "pips"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 0,
-          "pipsConfig": {
-            "rows": 2,
-            "perRow": 10,
-            "filled": 0
-          },
           "pips": {
             "count": 20,
             "perRow": 10,
@@ -446,7 +429,9 @@
             "filled": 0
           },
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 64,
+          "row": 4
         },
         "traits": {}
       },
@@ -479,12 +464,10 @@
             12
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 4,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {},
         "slots": {

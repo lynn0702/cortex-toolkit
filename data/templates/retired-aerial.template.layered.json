@@ -74,18 +74,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 7,
           "track": 1,
           "span": 1,
-          "widths": [
-            28,
-            72,
-            0
-          ]
+          "colWidth": 28,
+          "row": 2
         },
         "traits": {
           "Allegiance": {
@@ -148,13 +142,12 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 2,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 72,
+          "row": 2
         },
         "traits": {
           "Archetype:": {
@@ -226,13 +219,12 @@
             6
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 28,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -288,7 +280,9 @@
           ],
           "reservedSlots": 1,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 28,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -332,13 +326,12 @@
             "right": "Specialties"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 9,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 72,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -477,7 +470,8 @@
             "orientation": "horizontal"
           },
           "reservedSlots": 20,
-          "span": 3
+          "span": 3,
+          "row": 5
         },
         "traits": {
           "Training": {

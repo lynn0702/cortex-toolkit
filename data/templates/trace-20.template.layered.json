@@ -74,18 +74,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            30,
-            50,
-            20
-          ]
+          "colWidth": 30,
+          "row": 2
         },
         "traits": {
           "Solo": {
@@ -130,13 +124,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 7,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 30,
+          "row": 3
         },
         "traits": {
           "Forensics": {
@@ -200,13 +193,12 @@
             10
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 8,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 30,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -283,13 +275,12 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 50,
+          "row": 2
         },
         "traits": {
           "Distinction #1:": {
@@ -352,13 +343,12 @@
           },
           "ratingScale": [],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
           "track": 2,
-          "span": 2
+          "span": 2,
+          "colWidth": 50,
+          "row": 3
         },
         "traits": {
           "Talent #1:": {
@@ -411,10 +401,6 @@
             "body": "stress"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeD4": true,
-            "includeOut": false
-          },
           "notes": "",
           "reservedSlots": 5,
           "ratingScale": [
@@ -425,7 +411,9 @@
             12
           ],
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Afraid": {
@@ -483,13 +471,11 @@
           ],
           "multiDie": true,
           "pool": true,
-          "stressConfig": {
-            "includeOut": true
-          },
-          "notes": "",
           "reservedSlots": 5,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 20,
+          "row": 4
         },
         "traits": {
           "D4": {

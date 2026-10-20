@@ -97,7 +97,8 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Neighborhood": {
@@ -147,18 +148,12 @@
             12
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
           "track": 1,
           "span": 2,
-          "widths": [
-            33.333,
-            33.333,
-            33.334
-          ]
+          "colWidth": 33.333,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -223,13 +218,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 5,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 4
         },
         "traits": {
           "Corruption": {
@@ -286,13 +280,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 5
         },
         "traits": {},
         "slots": {
@@ -340,13 +333,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 5,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 4
         },
         "traits": {
           "Big Shot": {
@@ -434,13 +426,12 @@
             "count": 15
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 15,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 3
         },
         "traits": {}
       },
@@ -465,7 +456,9 @@
           },
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 5
         },
         "traits": {},
         "slots": {

@@ -3,7 +3,7 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
 	styleBody, imageURL, imageFileInput, uploadError, imageAlignment, imageHeight, imageCaption,
-	uploadImageStart, uploadImageProcess, removeImage
+	uploadImageStart, uploadImageProcess, removeImage, traitSetID
 } = injectTraitSetEditor();
 </script>
 
@@ -27,13 +27,13 @@ const {
 			</div>
 		</div>
 
-		<input type="file" ref="imageFileInput" style="display:none" @change="uploadImageProcess" accept="image/*">
+		<input type="file" :id="'trait-set-' + traitSetID + '-image-file'" name="imageFile" ref="imageFileInput" style="display:none" @change="uploadImageProcess" accept="image/*" aria-label="Upload image file">
 
 		<div class="editor-upload-error" v-if="uploadError">{{ uploadError }}</div>
 
 		<div style="margin-top: 0.5rem;">
-			<label style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
-			<input type="text" v-model.lazy="imageURL" placeholder="https://example.com/illustration.jpg">
+			<label :for="'trait-set-' + traitSetID + '-image-url'" style="font-size: 0.75rem; color: #64748b;">Or Image URL</label>
+			<input type="text" :id="'trait-set-' + traitSetID + '-image-url'" name="imageURL" v-model.lazy="imageURL" placeholder="https://example.com/illustration.jpg">
 		</div>
 	</div>
 
@@ -53,8 +53,8 @@ const {
 	</div>
 
 	<div class="editor-field" v-if="styleBody === 'image'">
-		<label>Display Height</label>
-		<select v-model="imageHeight">
+		<label :for="'trait-set-' + traitSetID + '-image-height'">Display Height</label>
+		<select :id="'trait-set-' + traitSetID + '-image-height'" name="imageHeight" v-model="imageHeight">
 			<option value="auto">Auto / Proportional</option>
 			<option value="120px">Small (120px)</option>
 			<option value="180px">Medium (180px)</option>
@@ -64,7 +64,7 @@ const {
 	</div>
 
 	<div class="editor-field" v-if="styleBody === 'image'">
-		<label>Caption</label>
-		<input type="text" v-model="imageCaption" placeholder="Optional image caption...">
+		<label :for="'trait-set-' + traitSetID + '-image-caption'">Caption</label>
+		<input type="text" :id="'trait-set-' + traitSetID + '-image-caption'" name="imageCaption" v-model="imageCaption" placeholder="Optional image caption...">
 	</div>
 </template>

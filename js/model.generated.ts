@@ -146,7 +146,7 @@ export interface TraitSet {
   /**
    * Placement of trait rating dice relative to trait labels.
    */
-  ratingPosition?: ("inline" | "above" | "below" | "none") | null;
+  ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
   /**
    * Whether traits in this set feature a statement box alongside the trait name.
    */
@@ -203,7 +203,7 @@ export interface Trait {
   /**
    * Override for rating dice placement on this trait.
    */
-  ratingPosition?: ("inline" | "above" | "below" | "none") | null;
+  ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
   /**
    * Any child traits attached this parent trait.
    */

@@ -66,9 +66,10 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(sets.Badges.hasCounterColumn === true && sets.Badges.counterLabel === 'XP', 'counter column kept');
   const tctk = sets.Talents.view;
   ok(tctk.span === 3 && tctk.colSpan === undefined && tctk.columnSpan === undefined, 'talents has span: 3');
-  ok(sets.Standing.view.rowBreak === true &&
-    JSON.stringify(sets.Standing.view.widths) === JSON.stringify([40, 60, 0]) &&
-    sets.Standing.view.colWidth === undefined, 'standing has rowBreak: true and widths: [40, 60, 0]');
+  ok(sets.Standing.view.row === 4 &&
+    sets.Standing.view.rowBreak === undefined &&
+    sets.Standing.view.colWidth === 40 &&
+    sets.Standing.view.widths === undefined, 'standing has visual row 4 and singular colWidth 40');
   ok(sets.Attributes.view.attributesRing === false, 'ring flag kept');
   ok(L.character.view.columns === undefined &&
     L.character.view.watermark.opacity === 0.08, 'columns removed from sheet custom, watermark kept');
@@ -81,11 +82,12 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(blob.indexOf('"_lid"') === -1 && blob.indexOf('"removedTraits"') === -1, 'no lids or tombstones');
 }
 
-// ---- 3. Leading blanks keep their positions (strange-towns distinctions __N).
+// ---- 3. Leading blanks keep their positions (strange-towns distinctions ___).
+// Ruin is a name-block field, not a distinction trait: all three rows are blanks.
 {
   const L = readLayered('spotlight-strange-towns');
   const keys = Object.keys(L.character.sets.Distinctions.slots || {});
-  ok(JSON.stringify(keys) === JSON.stringify(['0', '1']), 'leading slots indexed 0,1', keys);
+  ok(JSON.stringify(keys) === JSON.stringify(['0', '1', '2']), 'leading slots indexed 0,1,2', keys);
   const back = M.unmigrateTemplateEntry(L).data;
   const orig = T.find((t) => t.id === 'spotlight-strange-towns');
   const pat = (ts) => ts.traits.map((t) => (t.name && t.name.length ? 'N' : '_')).join('');

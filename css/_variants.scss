@@ -66,8 +66,9 @@
 			gap: 0.35rem;
 
 			.trait-name {
-				flex: 0 0 5.25rem;
+				flex: 0 0 auto;
 				text-align: left;
+				white-space: nowrap;
 			}
 
 			.statement-pip {
@@ -1141,6 +1142,41 @@
 			border-right: .3rem solid var(--color-primary);
 		}
 	}
+
+	// FLANK LAYOUT (skills in the outer columns, specialties down the
+	// middle, e.g. Solarpunk). Engaged by traitColumns 2; explicit
+	// left-side specialties (split above) take precedence.
+	.branch-flank-head {
+		grid-template-columns: 1fr 1.4fr 1fr;
+		span:nth-child(2) { text-align: center; }
+		span:last-child { text-align: right; }
+	}
+
+	.branch-flank-grid {
+		display: grid;
+		grid-template-columns: 1fr 1.4fr 1fr;
+		column-gap: .6rem;
+		align-items: start;
+	}
+
+	.branch-flank-col {
+		display: flex;
+		flex-direction: column;
+		row-gap: .4rem;
+	}
+
+	.branch-flank-center {
+		display: flex;
+		flex-direction: column;
+		row-gap: .3rem;
+		.branch-slot::before,
+		.branch-slot::after {
+			display: none;
+		}
+		.branch-slot {
+			padding-left: .45rem;
+		}
+	}
 }
 
 // TALENTS TABLE (TALENT / ACTIVATION / EFFECT)
@@ -1554,6 +1590,40 @@
 			&:not(.active) { color: var(--color-separator); }
 		}
 	}
+
+	// Vertical rating array: one die per rung with its d4–d12 options
+	// stacked (e.g. Initiative tracks, Hero Dice) for narrow columns.
+	.trait-dice-ladder.rating-vertical {
+		.ladder-rung {
+			flex-direction: row;
+			align-items: center;
+			column-gap: .5rem;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		.ladder-name {
+			flex: 0 0 auto;
+		}
+
+		.trait-value {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			row-gap: .15rem;
+			white-space: normal;
+		}
+	}
+
+	// Rotated rung labels (sidebar-style) for narrow vertical tracks.
+	.trait-dice-ladder.label-vertical {
+		.ladder-name {
+			writing-mode: vertical-lr;
+			transform: rotate(180deg);
+			line-height: 1;
+			overflow-wrap: break-word;
+		}
+	}
 }
 
 // DOSSIER FIELDS (STACKED LABELED BLOCKS)
@@ -1661,4 +1731,15 @@
 
 .trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header { align-items: flex-start; }
 .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header { align-items: flex-end; }
+
+// UNRATED TRACKS STAY VISIBLE (sheet, print, pencil). Rated rows print only
+// the circled die; rows with no rating yet keep the full track so one can be
+// circled. Without this, unrated rows (and blank pencil sheets) render bare.
+.trait-set .trait-value:not(:has(> .c.active)),
+.trait-set .subtrait-value:not(:has(> .c.active)) {
+	> .c:not(.active),
+	> span:not(.active) {
+		display: initial;
+	}
+}
 

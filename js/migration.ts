@@ -10,6 +10,7 @@
  */
 
 import { cloneDeep } from './clone-deep.ts';
+import { simulateVisualRows } from './spotlight-grid.ts';
 
 export const cortexMigration = {
 
@@ -898,8 +899,38 @@ export const cortexMigration = {
 			} );
 			if ( currentBand.length ) bands.push( currentBand );
 
-			bands.forEach( band => {
+			// Rows are visual and header-inclusive: the page header occupies
+			// row 1, so content bands start at row 2. Bands that auto-flow
+			// into several visual rows split accordingly. Explicit rows are
+			// never overwritten; sets without one join a new band past the
+			// highest explicit row.
+			let explicitMax = 1;
+			for ( const set of pageSets ) {
+				const r = Number( ( set.view || set.custom?.cortexToolkit )?.row );
+				if ( Number.isFinite( r ) && r > explicitMax ) explicitMax = Math.floor( r );
+			}
+			const anyExplicit = pageSets.some( ( set: any ) => {
+				const r = Number( ( set.view || set.custom?.cortexToolkit )?.row );
+				return Number.isFinite( r ) && r >= 1;
+			} );
+			let nextRow = 2;
+			bands.forEach( ( band ) => {
 				if ( !band.length ) return;
+				const visual = simulateVisualRows( band.map( ( set: any ) => {
+					const bag = set.view || set.custom?.cortexToolkit || {};
+				 return { track: bag.track, span: bag.span };
+				} ) );
+				const depth = Math.max( ...visual ) + 1;
+				band.forEach( ( set: any, i: number ) => {
+					const bag = set.view || set.custom?.cortexToolkit;
+					if ( !bag || typeof bag !== 'object' ) return;
+					const hasRow = Number.isFinite( Number( bag.row ) ) && Number( bag.row ) >= 1;
+					if ( !hasRow ) {
+						bag.row = anyExplicit ? explicitMax + 1 : nextRow + visual[i];
+					}
+					delete bag.rowBreak;
+				} );
+				nextRow += depth;
 				const firstSet = band[0];
 				if ( !firstSet.view ) firstSet.view = firstSet.custom?.cortexToolkit || {};
 				const firstCtk = firstSet.view;
@@ -913,10 +944,22 @@ export const cortexMigration = {
 					delete firstCtk.columnSpan;
 					delete firstCtk.colWidth;
 					delete firstCtk.rowSpan;
+					delete firstCtk.widths;
 					return;
 				}
 
-				const declared: ( number | null )[] = [ null, null, null ];
+				// Widths belong to the band: each set keeps only its singular
+				// share (colWidth). A leftover triple converts once — the
+				// effective triple (first found, what the old renderer used)
+				// seeds members that lack a share — then all triples go.
+				let effective: number[] | null = null;
+				for ( const set of band ) {
+					const w = ( set.view || set.custom?.cortexToolkit )?.widths;
+					if ( Array.isArray( w ) && w.length === 3 ) {
+						effective = [ Number( w[0] ), Number( w[1] ), Number( w[2] ) ];
+						break;
+					}
+				}
 
 				band.forEach( set => {
 					if ( !set.view ) set.view = set.custom?.cortexToolkit || {};
@@ -945,37 +988,14 @@ export const cortexMigration = {
 					delete ctk.colSpan;
 					delete ctk.columnSpan;
 
-					const w = Number( ctk.colWidth );
-					if ( w >= 10 && w <= 90 ) {
-						const tr = ctk.track as 1 | 2 | 3;
-						if ( declared[ tr - 1 ] === null ) declared[ tr - 1 ] = Math.round( w );
+					if ( ctk.colWidth === undefined && effective ) {
+						const tr = ( ctk.track === 2 || ctk.track === 3 ) ? ctk.track : 1;
+						const share = Number( effective[ tr - 1 ] );
+						if ( Number.isFinite( share ) && share > 0 ) ctk.colWidth = share;
 					}
-					delete ctk.colWidth;
 					delete ctk.rowSpan;
+					delete ctk.widths;
 				} );
-
-				if ( !Array.isArray( firstCtk.widths ) || firstCtk.widths.length !== 3 ) {
-					if ( trackCount === 2 ) {
-						if ( declared[0] !== null ) firstCtk.widths = [ declared[0], 100 - declared[0], 0 ];
-						else if ( declared[1] !== null ) firstCtk.widths = [ 100 - declared[1], declared[1], 0 ];
-						else firstCtk.widths = [ 50, 50, 0 ];
-					} else {
-						const declaredCount = declared.filter( ( d ): d is number => d !== null ).length;
-						if ( declaredCount > 0 ) {
-							const sumDeclared = declared.reduce( ( a: number, b ) => a + ( b || 0 ), 0 );
-							const remaining = Math.max( 0, 100 - sumDeclared );
-							const emptyCount = 3 - declaredCount;
-							const share = emptyCount > 0 ? Math.round( remaining / emptyCount * 100 ) / 100 : 0;
-							firstCtk.widths = [
-								declared[0] !== null ? declared[0] : share,
-								declared[1] !== null ? declared[1] : share,
-								declared[2] !== null ? declared[2] : share,
-							];
-						} else {
-							firstCtk.widths = [ 33.333, 33.333, 33.334 ];
-						}
-					}
-				}
 			} );
 		} );
 

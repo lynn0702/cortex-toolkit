@@ -96,12 +96,10 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -385,12 +383,10 @@ const cortexSpotlightTemplates = [
               "right": "Specialties"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 7,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         },
         {
@@ -498,12 +494,10 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 7,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         },
         {
@@ -569,12 +563,10 @@ const cortexSpotlightTemplates = [
               "body": "three-column-table"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         },
         {
@@ -639,12 +631,10 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -781,12 +771,10 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 10,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         },
         {
@@ -817,12 +805,10 @@ const cortexSpotlightTemplates = [
               "orientation": "horizontal"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 20,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         }
       ],
@@ -960,18 +946,12 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              64,
-              36,
-              0
-            ]
+            "colWidth": 64,
+            "row": 2
           }
         },
         {
@@ -1055,13 +1035,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 64,
+            "row": 3
           }
         },
         {
@@ -1177,13 +1156,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 8,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 64,
+            "row": 4
           }
         },
         {
@@ -1245,13 +1223,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 2
           }
         },
         {
@@ -1313,7 +1290,9 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 3
           }
         },
         {
@@ -1375,7 +1354,9 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 4
           }
         },
         {
@@ -1398,11 +1379,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 5,
-              "perRow": 5,
-              "filled": 0
-            },
             "pips": {
               "count": 25,
               "perRow": 5,
@@ -1411,7 +1387,9 @@ const cortexSpotlightTemplates = [
             },
             "reservedSlots": 0,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 5
           }
         }
       ],
@@ -1542,18 +1520,12 @@ const cortexSpotlightTemplates = [
             "sharedHinder": true,
             "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              66,
-              34,
-              0
-            ]
+            "colWidth": 66,
+            "row": 2
           }
         },
         {
@@ -1651,13 +1623,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 66,
+            "row": 3
           }
         },
         {
@@ -1721,13 +1692,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 34,
+            "row": 2
           }
         },
         {
@@ -1790,14 +1760,13 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 34,
+            "row": 3
           }
         },
         {
@@ -2031,19 +2000,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              40,
-              60,
-              0
-            ]
+            "colWidth": 40,
+            "row": 4
           }
         },
         {
@@ -2078,13 +2040,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 17,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 60,
+            "row": 4
           }
         },
         {
@@ -2130,12 +2091,10 @@ const cortexSpotlightTemplates = [
               "body": "three-column-table"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 2,
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         }
       ],
@@ -2281,7 +2240,8 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -2372,18 +2332,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
             "track": 1,
             "span": 2,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -2469,13 +2423,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 4
           }
         },
         {
@@ -2539,13 +2492,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 5
           }
         },
         {
@@ -2684,13 +2636,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 4
           }
         },
         {
@@ -2719,13 +2670,12 @@ const cortexSpotlightTemplates = [
               "count": 15
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 15,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -2783,7 +2733,9 @@ const cortexSpotlightTemplates = [
             },
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 5
           }
         }
       ],
@@ -2911,18 +2863,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "track": 1,
             "span": 1,
-            "widths": [
-              33,
-              67,
-              0
-            ]
+            "colWidth": 33,
+            "row": 2
           }
         },
         {
@@ -3018,14 +2964,13 @@ const cortexSpotlightTemplates = [
               ],
               "includeOut": false
             },
-            "stressConfig": {
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 5,
             "attributesRing": false,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 33,
+            "row": 3
           }
         },
         {
@@ -3124,13 +3069,12 @@ const cortexSpotlightTemplates = [
             "subtraitRatingScale": [
               8
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 1,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 67,
+            "row": 2
           }
         },
         {
@@ -3236,14 +3180,13 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 2,
             "span": 1,
-            "traitColumns": 3
+            "traitColumns": 3,
+            "colWidth": 67,
+            "row": 3
           }
         },
         {
@@ -3295,13 +3238,12 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 2,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 67,
+            "row": 4
           }
         },
         {
@@ -3327,16 +3269,8 @@ const cortexSpotlightTemplates = [
               "body": "pips"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 0,
-            "pipsConfig": {
-              "rows": 20,
-              "perRow": 1,
-              "filled": 0
-            },
             "pips": {
               "count": 20,
               "perRow": 1,
@@ -3344,7 +3278,9 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 67,
+            "row": 5
           }
         }
       ],
@@ -3474,19 +3410,13 @@ const cortexSpotlightTemplates = [
               "includeOut": false
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              36,
-              64,
-              0
-            ]
+            "colWidth": 36,
+            "row": 2
           }
         },
         {
@@ -3660,13 +3590,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 14,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 3
           }
         },
         {
@@ -3763,13 +3692,12 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 64,
+            "row": 2
           }
         },
         {
@@ -3880,13 +3808,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 7,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 64,
+            "row": 3
           }
         },
         {
@@ -3912,16 +3839,8 @@ const cortexSpotlightTemplates = [
               "body": "pips"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 0,
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 10,
-              "filled": 0
-            },
             "pips": {
               "count": 20,
               "perRow": 10,
@@ -3929,7 +3848,9 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 64,
+            "row": 4
           }
         },
         {
@@ -4005,12 +3926,10 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         }
       ],
@@ -4220,18 +4139,12 @@ const cortexSpotlightTemplates = [
               10
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              25,
-              50,
-              25
-            ]
+            "colWidth": 25,
+            "row": 2
           }
         },
         {
@@ -4289,15 +4202,14 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -4419,13 +4331,12 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 2
           }
         }
       ],
@@ -4545,19 +4456,13 @@ const cortexSpotlightTemplates = [
               10
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              36,
-              36
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -4601,13 +4506,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
             "reservedSlots": 1,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -4707,13 +4610,12 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 36,
+            "row": 2
           }
         },
         {
@@ -4879,12 +4781,10 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         },
         {
@@ -5058,19 +4958,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 14,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              25,
-              50,
-              25
-            ]
+            "colWidth": 25,
+            "row": 5
           }
         },
         {
@@ -5143,13 +5036,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 5
           }
         },
         {
@@ -5211,7 +5103,9 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 5
           }
         },
         {
@@ -5273,7 +5167,9 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 6
           }
         },
         {
@@ -5296,11 +5192,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 5,
-              "perRow": 5,
-              "filled": 0
-            },
             "pips": {
               "count": 25,
               "perRow": 5,
@@ -5308,7 +5199,9 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 7
           }
         }
       ],
@@ -5449,7 +5342,8 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -5537,11 +5431,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -5628,7 +5519,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -5715,7 +5608,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -5802,7 +5697,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -5889,7 +5786,8 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         },
         {
@@ -5977,11 +5875,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 6
           }
         },
         {
@@ -6068,7 +5963,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 6
           }
         },
         {
@@ -6155,7 +6052,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 7
           }
         },
         {
@@ -6242,7 +6141,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 7
           }
         },
         {
@@ -6350,11 +6251,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -6461,7 +6359,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -6568,7 +6468,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -6675,7 +6577,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -6782,7 +6686,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -6889,7 +6795,9 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         }
       ],
@@ -7011,18 +6919,12 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -7086,13 +6988,12 @@ const cortexSpotlightTemplates = [
               10
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -7174,13 +7075,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 2
           }
         },
         {
@@ -7243,19 +7143,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -7320,13 +7213,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -7423,7 +7314,9 @@ const cortexSpotlightTemplates = [
             "pool": true,
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -7472,12 +7365,10 @@ const cortexSpotlightTemplates = [
               "body": "labeled-fields"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         },
         {
@@ -7525,7 +7416,8 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         },
         {
@@ -7573,7 +7465,8 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "span": 3
+            "span": 3,
+            "row": 6
           }
         }
       ],
@@ -7704,13 +7597,14 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
           "id": "team-resources",
           "name": "Team Resources",
-          "description": "Resources come from backgrounds (page 8) and are available for any PC to use.",
+          "description": "",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
           "tags": [],
@@ -7930,10 +7824,18 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "default"
+              "body": "dice-count"
             },
+            "ratingScale": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "multiDie": true,
             "reservedSlots": 20,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         }
       ],
@@ -8081,18 +7983,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              64,
-              36,
-              0
-            ]
+            "colWidth": 64,
+            "row": 2
           }
         },
         {
@@ -8155,13 +8051,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 2
           }
         },
         {
@@ -8266,13 +8161,11 @@ const cortexSpotlightTemplates = [
               "includeOut": false
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "attributesRing": false,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         },
         {
@@ -8407,18 +8300,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 10,
             "track": 1,
             "span": 1,
-            "widths": [
-              64,
-              36,
-              0
-            ]
+            "colWidth": 64,
+            "row": 4
           }
         },
         {
@@ -8515,7 +8402,9 @@ const cortexSpotlightTemplates = [
             "pool": true,
             "reservedSlots": 5,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 4
           }
         },
         {
@@ -8599,7 +8488,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 36,
+            "row": 5
           }
         }
       ],
@@ -8720,12 +8611,10 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -8793,12 +8682,10 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         },
         {
@@ -8892,18 +8779,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
             "track": 1,
             "span": 1,
-            "widths": [
-              38,
-              62,
-              0
-            ]
+            "colWidth": 38,
+            "row": 4
           }
         },
         {
@@ -8968,13 +8849,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 38,
+            "row": 5
           }
         },
         {
@@ -9058,13 +8938,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 1,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 62,
+            "row": 4
           }
         },
         {
@@ -9094,14 +8973,10 @@ const cortexSpotlightTemplates = [
               "orientation": "horizontal"
             },
             "reservedSlots": 10,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              62,
-              38,
-              0
-            ]
+            "colWidth": 62,
+            "row": 6
           }
         },
         {
@@ -9168,7 +9043,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 38,
+            "row": 6
           }
         }
       ],
@@ -9326,18 +9203,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 7,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              72,
-              0
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -9439,13 +9310,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -9557,13 +9427,12 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -9619,7 +9488,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 2,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 4
           }
         },
         {
@@ -9675,7 +9546,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 2,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 5
           }
         },
         {
@@ -10051,13 +9924,12 @@ const cortexSpotlightTemplates = [
               "right": "Specialties"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 16,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 3
           }
         }
       ],
@@ -10215,18 +10087,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 7,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              72,
-              0
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -10304,13 +10170,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 2,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -10390,13 +10255,12 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -10442,7 +10306,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 1,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 4
           }
         },
         {
@@ -10671,13 +10537,12 @@ const cortexSpotlightTemplates = [
               "right": "Specialties"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 9,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 3
           }
         },
         {
@@ -10739,7 +10604,8 @@ const cortexSpotlightTemplates = [
               "orientation": "horizontal"
             },
             "reservedSlots": 20,
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         }
       ],
@@ -10860,12 +10726,10 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -11325,18 +11189,12 @@ const cortexSpotlightTemplates = [
               "right": "Specialties"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 20,
             "track": 1,
             "span": 2,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -11400,14 +11258,13 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -11541,13 +11398,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 10,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 4
           }
         },
         {
@@ -11631,14 +11487,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 5
           }
         },
         {
@@ -11693,19 +11547,12 @@ const cortexSpotlightTemplates = [
               "body": "three-column-table"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "rowBreak": true,
             "track": 1,
             "span": 2,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 6
           }
         },
         {
@@ -11800,13 +11647,11 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": true,
             "pool": true,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 6
           }
         }
       ],
@@ -11961,12 +11806,10 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -12067,12 +11910,10 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         },
         {
@@ -12165,11 +12006,8 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 1,
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -12261,7 +12099,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 1,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -12353,7 +12193,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 1,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 5
           }
         },
         {
@@ -12445,7 +12287,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 1,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 5
           }
         },
         {
@@ -12537,7 +12381,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 1,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 6
           }
         },
         {
@@ -12629,7 +12475,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 1,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 6
           }
         },
         {
@@ -12716,11 +12564,8 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 5,
             "track": 1,
             "span": 1,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -12806,7 +12651,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -12892,7 +12739,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 2
           }
         },
         {
@@ -12978,7 +12827,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -13064,7 +12915,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -13150,7 +13003,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -13236,7 +13091,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 4
           }
         },
         {
@@ -13322,7 +13179,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 4
           }
         },
         {
@@ -13408,7 +13267,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 4
           }
         },
         {
@@ -13435,7 +13296,8 @@ const cortexSpotlightTemplates = [
               "body": "notes"
             },
             "notes": "",
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         }
       ],
@@ -13556,12 +13418,10 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
-            "span": 3
+            "span": 3,
+            "row": 2
           }
         },
         {
@@ -13627,18 +13487,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              23,
-              25,
-              52
-            ]
+            "colWidth": 23,
+            "row": 3
           }
         },
         {
@@ -13693,13 +13547,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
             "reservedSlots": 2,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 3
           }
         },
         {
@@ -13813,14 +13665,13 @@ const cortexSpotlightTemplates = [
               "includeOut": false
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 6,
             "attributesRing": false,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 52,
+            "row": 3
           }
         },
         {
@@ -14049,12 +13900,10 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 19,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         },
         {
@@ -14118,18 +13967,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              35,
-              32.5,
-              32.5
-            ]
+            "colWidth": 35,
+            "row": 5
           }
         },
         {
@@ -14185,7 +14028,9 @@ const cortexSpotlightTemplates = [
             },
             "reservedSlots": 3,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 32.5,
+            "row": 5
           }
         },
         {
@@ -14241,14 +14086,10 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              25,
-              50,
-              25
-            ]
+            "colWidth": 25,
+            "row": 6
           }
         },
         {
@@ -14310,7 +14151,9 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 6
           }
         },
         {
@@ -14372,7 +14215,9 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 7
           }
         },
         {
@@ -14395,11 +14240,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 5,
-              "perRow": 4,
-              "filled": 0
-            },
             "pips": {
               "count": 20,
               "perRow": 4,
@@ -14407,7 +14247,9 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 6
           }
         }
       ],
@@ -14525,19 +14367,13 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              72,
-              0
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -14560,20 +14396,17 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 4,
-              "perRow": 5,
-              "filled": 0
-            },
             "pips": {
-              "count": 20,
+              "count": 15,
               "perRow": 5,
               "connected": true,
               "filled": 0
             },
             "reservedSlots": 0,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -14675,13 +14508,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -14751,12 +14583,10 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 2,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         },
         {
@@ -14972,7 +14802,7 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "default"
+              "body": "subtrait-columns"
             },
             "ratingScale": [
               4,
@@ -14985,12 +14815,10 @@ const cortexSpotlightTemplates = [
               6
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 19,
-            "span": 3
+            "span": 3,
+            "row": 5
           }
         }
       ],
@@ -15106,19 +14934,13 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              72,
-              0
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -15184,13 +15006,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -15263,7 +15084,8 @@ const cortexSpotlightTemplates = [
               6
             ],
             "reservedSlots": 4,
-            "span": 3
+            "span": 3,
+            "row": 3
           }
         },
         {
@@ -15485,7 +15307,8 @@ const cortexSpotlightTemplates = [
             ],
             "subtraitRatingScale": [],
             "reservedSlots": 9,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         }
       ],
@@ -15635,11 +15458,8 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 5,
             "track": 1,
             "span": 1,
-            "widths": [
-              22,
-              39,
-              39
-            ]
+            "colWidth": 22,
+            "row": 2
           }
         },
         {
@@ -15705,13 +15525,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 39,
+            "row": 2
           }
         },
         {
@@ -15806,13 +15625,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
             "track": 1,
-            "span": 2
+            "span": 2,
+            "colWidth": 22,
+            "row": 3
           }
         },
         {
@@ -15906,7 +15724,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 6,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 39,
+            "row": 3
           }
         },
         {
@@ -15981,13 +15801,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "track": 1,
-            "span": 2
+            "span": 2,
+            "colWidth": 22,
+            "row": 4
           }
         },
         {
@@ -16072,19 +15891,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
             "reservedSlots": 5,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              24,
-              48,
-              28
-            ]
+            "colWidth": 24,
+            "row": 5
           }
         },
         {
@@ -16216,13 +16027,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 10,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 48,
+            "row": 5
           }
         },
         {
@@ -16276,8 +16086,10 @@ const cortexSpotlightTemplates = [
           ],
           "sfx": [],
           "view": {
-            "track": 1,
-            "span": 1
+            "track": 3,
+            "span": 1,
+            "colWidth": 28,
+            "row": 5
           }
         }
       ],
@@ -16393,19 +16205,13 @@ const cortexSpotlightTemplates = [
               10
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              36,
-              36
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -16453,16 +16259,22 @@ const cortexSpotlightTemplates = [
               "sfx": []
             },
             {
-              "name": "Ruin:",
-              "value": 8,
+              "name": "",
+              "value": 0,
               "dice": [],
               "description": "",
               "tags": [],
-              "custom": {},
+              "custom": {
+                "traits": {
+                  "SFX": {
+                    "traits": {
+                      "Hinder": {}
+                    }
+                  }
+                }
+              },
               "traits": [],
-              "sfx": [
-                "hinder"
-              ]
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -16483,13 +16295,11 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -16583,19 +16393,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              36,
-              36
-            ]
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -16687,13 +16490,11 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
             "reservedSlots": 6,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 72,
+            "row": 3
           }
         },
         {
@@ -16743,14 +16544,10 @@ const cortexSpotlightTemplates = [
               8
             ],
             "reservedSlots": 2,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              25,
-              50,
-              25
-            ]
+            "colWidth": 25,
+            "row": 4
           }
         },
         {
@@ -16815,7 +16612,9 @@ const cortexSpotlightTemplates = [
             ],
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -16826,46 +16625,6 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Dice",
           "tags": [],
           "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
             {
               "name": "",
               "value": 0,
@@ -16886,7 +16645,7 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "dice-ladder",
+              "header": "default",
               "body": "dice-ladder"
             },
             "ratingScale": [
@@ -16896,9 +16655,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "reservedSlots": 5,
+            "reservedSlots": 1,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 25,
+            "row": 4
           }
         }
       ],
@@ -16921,6 +16682,9 @@ const cortexSpotlightTemplates = [
           "left": 0,
           "center": 0,
           "right": 0
+        },
+        "nameLabels": {
+          "pronouns": "Ruin"
         }
       }
     }
@@ -17046,19 +16810,13 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              36,
-              36
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -17124,13 +16882,11 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
-            "reservedSlots": 3,
+            "reservedSlots": 6,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -17200,13 +16956,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -17645,13 +17400,11 @@ const cortexSpotlightTemplates = [
               "right": "Specialties"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
             "reservedSlots": 19,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 72,
+            "row": 3
           }
         },
         {
@@ -17660,38 +17413,9 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Die",
           "nounPlural": "Dice",
+          "ratingPosition": "vertical",
           "tags": [],
           "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
             {
               "name": "",
               "value": 0,
@@ -17722,7 +17446,7 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "dice-ladder",
+              "header": "default",
               "body": "dice-ladder"
             },
             "ratingScale": [
@@ -17732,9 +17456,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "reservedSlots": 5,
+            "labelPosition": "vertical",
+            "reservedSlots": 2,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "row": 4
           }
         },
         {
@@ -17743,48 +17469,9 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Die",
           "nounPlural": "Dice",
+          "ratingPosition": "vertical",
           "tags": [],
           "traits": [
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "value": 0,
-              "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
-              "traits": [],
-              "sfx": []
-            },
             {
               "name": "",
               "value": 0,
@@ -17805,7 +17492,7 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "dice-ladder",
+              "header": "default",
               "body": "dice-ladder"
             },
             "ratingScale": [
@@ -17815,9 +17502,11 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "reservedSlots": 5,
+            "labelPosition": "vertical",
+            "reservedSlots": 1,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "row": 5
           }
         },
         {
@@ -17843,18 +17532,14 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 12,
-              "filled": 0
-            },
             "pips": {
               "count": 24,
               "perRow": 12,
               "connected": true,
               "filled": 0
             },
-            "span": 3
+            "span": 3,
+            "row": 6
           }
         },
         {
@@ -17930,18 +17615,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -18017,13 +17696,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -18099,13 +17777,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 2
           }
         },
         {
@@ -18170,13 +17847,12 @@ const cortexSpotlightTemplates = [
               "body": "three-column-table"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "track": 1,
-            "span": 2
+            "span": 2,
+            "colWidth": 33.333,
+            "row": 3
           }
         },
         {
@@ -18199,11 +17875,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 2,
-              "perRow": 6,
-              "filled": 0
-            },
             "pips": {
               "count": 12,
               "perRow": 6,
@@ -18212,7 +17883,9 @@ const cortexSpotlightTemplates = [
             },
             "reservedSlots": 0,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -18239,7 +17912,9 @@ const cortexSpotlightTemplates = [
             },
             "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 4
           }
         }
       ],
@@ -18355,19 +18030,13 @@ const cortexSpotlightTemplates = [
               10
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              72,
-              0
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -18451,13 +18120,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 5,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 28,
+            "row": 3
           }
         },
         {
@@ -18554,13 +18222,12 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -18613,13 +18280,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 2,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 3
           }
         },
         {
@@ -18674,7 +18340,8 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         }
       ],
@@ -18808,19 +18475,13 @@ const cortexSpotlightTemplates = [
               "includeOut": false
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
             "track": 1,
             "span": 1,
-            "widths": [
-              28,
-              72,
-              0
-            ]
+            "colWidth": 28,
+            "row": 2
           }
         },
         {
@@ -18907,13 +18568,12 @@ const cortexSpotlightTemplates = [
               8
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 72,
+            "row": 2
           }
         },
         {
@@ -18984,19 +18644,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
-            "rowBreak": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -19067,13 +18720,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 4,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -19099,11 +18751,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 1,
-              "perRow": 15,
-              "filled": 0
-            },
             "pips": {
               "count": 15,
               "perRow": 15,
@@ -19111,7 +18758,8 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "reservedSlots": 0,
-            "span": 3
+            "span": 3,
+            "row": 4
           }
         }
       ],
@@ -19229,18 +18877,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "widths": [
-              30,
-              50,
-              20
-            ]
+            "colWidth": 30,
+            "row": 2
           }
         },
         {
@@ -19342,13 +18984,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 7,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 30,
+            "row": 3
           }
         },
         {
@@ -19471,13 +19112,12 @@ const cortexSpotlightTemplates = [
               10
             ],
             "multiDie": true,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 8,
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 30,
+            "row": 4
           }
         },
         {
@@ -19543,13 +19183,12 @@ const cortexSpotlightTemplates = [
               "body": "distinctions"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 3,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -19635,13 +19274,12 @@ const cortexSpotlightTemplates = [
             },
             "ratingScale": [],
             "multiDie": false,
-            "stressConfig": {
-              "includeOut": true
-            },
             "notes": "",
             "reservedSlots": 6,
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -19716,10 +19354,6 @@ const cortexSpotlightTemplates = [
               "body": "stress"
             },
             "multiDie": false,
-            "stressConfig": {
-              "includeD4": true,
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 5,
             "ratingScale": [
@@ -19730,7 +19364,9 @@ const cortexSpotlightTemplates = [
               12
             ],
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -19825,13 +19461,11 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": true,
             "pool": true,
-            "stressConfig": {
-              "includeOut": true
-            },
-            "notes": "",
             "reservedSlots": 5,
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 20,
+            "row": 4
           }
         }
       ],
@@ -19974,11 +19608,8 @@ const cortexSpotlightTemplates = [
             ],
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -20044,7 +19675,9 @@ const cortexSpotlightTemplates = [
               12
             ],
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -20133,7 +19766,9 @@ const cortexSpotlightTemplates = [
               "right": "SPECIALTIES"
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -20216,7 +19851,9 @@ const cortexSpotlightTemplates = [
               12
             ],
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -20283,7 +19920,9 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3,
             "track": 1,
             "span": 1,
-            "cluster": "badges-resources"
+            "cluster": "badges-resources",
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -20339,7 +19978,9 @@ const cortexSpotlightTemplates = [
             },
             "reservedSlots": 2,
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -20395,7 +20036,9 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "cluster": "badges-resources"
+            "cluster": "badges-resources",
+            "colWidth": 50,
+            "row": 5
           }
         },
         {
@@ -20448,9 +20091,7 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "stressConfig": {
-              "includeOut": true
-            },
+            "outIndicator": true,
             "ratingScale": [
               6,
               8,
@@ -20458,7 +20099,9 @@ const cortexSpotlightTemplates = [
               12
             ],
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 5
           }
         },
         {
@@ -20514,11 +20157,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -20572,7 +20212,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -20590,13 +20232,16 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "pips"
             },
-            "pipsConfig": {
-              "rows": 2,
+            "pips": {
+              "count": 10,
               "perRow": 5,
+              "connected": true,
               "filled": 4
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -20649,7 +20294,9 @@ const cortexSpotlightTemplates = [
               "lines": 4
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -20714,7 +20361,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -20734,7 +20383,9 @@ const cortexSpotlightTemplates = [
             },
             "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 4
           }
         },
         {
@@ -20800,11 +20451,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "widths": [
-              50,
-              50,
-              0
-            ]
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -20870,7 +20518,9 @@ const cortexSpotlightTemplates = [
               "subtraits": true
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 2
           }
         },
         {
@@ -20925,7 +20575,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 1,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -20980,7 +20632,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 50,
+            "row": 3
           }
         },
         {
@@ -21010,7 +20664,9 @@ const cortexSpotlightTemplates = [
               "height": 120,
               "alignment": "center",
               "caption": "Image set caption"
-            }
+            },
+            "colWidth": 50,
+            "row": 4
           }
         }
       ],
@@ -21131,7 +20787,8 @@ const cortexSpotlightTemplates = [
             },
             "span": 3,
             "header": "top",
-            "headerAlign": "center"
+            "headerAlign": "center",
+            "row": 2
           }
         },
         {
@@ -21250,11 +20907,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 2,
-            "widths": [
-              66.666,
-              0,
-              33.334
-            ]
+            "colWidth": 66.666,
+            "row": 3
           }
         },
         {
@@ -21343,7 +20997,9 @@ const cortexSpotlightTemplates = [
               "subtraits": true
             },
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -21402,12 +21058,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 1,
-            "rowBreak": true,
-            "widths": [
-              33.333,
-              66.667,
-              0
-            ]
+            "colWidth": 33.333,
+            "row": 4
           }
         },
         {
@@ -21464,7 +21116,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 2,
-            "span": 2
+            "span": 2,
+            "colWidth": 66.667,
+            "row": 4
           }
         },
         {
@@ -21552,11 +21206,8 @@ const cortexSpotlightTemplates = [
             "pool": true,
             "track": 1,
             "span": 1,
-            "widths": [
-              33.333,
-              33.333,
-              33.334
-            ]
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -21611,7 +21262,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 2,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.333,
+            "row": 2
           }
         },
         {
@@ -21672,7 +21325,9 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 2
           }
         },
         {
@@ -21728,12 +21383,8 @@ const cortexSpotlightTemplates = [
             },
             "track": 1,
             "span": 2,
-            "rowBreak": true,
-            "widths": [
-              66.666,
-              0,
-              33.334
-            ]
+            "colWidth": 66.666,
+            "row": 3
           }
         },
         {
@@ -21790,7 +21441,9 @@ const cortexSpotlightTemplates = [
               "perRow": 5,
               "connected": true,
               "filled": 1
-            }
+            },
+            "colWidth": 33.334,
+            "row": 3
           }
         },
         {
@@ -21810,7 +21463,9 @@ const cortexSpotlightTemplates = [
             },
             "notes": "### Equipment\n- **Jump Drive Matrix** (d8)\n- **Thermal Scanner**: Spend 1 PP to detect cloaked ships.",
             "track": 3,
-            "span": 1
+            "span": 1,
+            "colWidth": 33.334,
+            "row": 4
           }
         },
         {
@@ -21842,7 +21497,8 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 12,
             "span": 3,
             "header": "top",
-            "headerAlign": "right"
+            "headerAlign": "right",
+            "row": 5
           }
         }
       ],

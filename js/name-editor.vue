@@ -197,6 +197,39 @@ const pronouns = computed( {
 	},
 } );
 
+function nameLabelFor( key: 'nickname' | 'pronouns' | 'description' ) {
+	const bag = getView( props.character )?.nameLabels;
+	const val = ( bag as Record<string, unknown> | undefined )?.[ key ];
+	return typeof val === 'string' ? val : '';
+}
+
+function setNameLabel( key: 'nickname' | 'pronouns' | 'description', val: string ) {
+	const view = ensureView( props.character );
+	const bag = ( ( view as Record<string, unknown> ).nameLabels ??= {} ) as Record<string, unknown>;
+	if ( val.trim().length ) {
+		bag[ key ] = val.trim();
+	} else {
+		delete bag[ key ];
+		if ( !Object.keys( bag ).length ) delete ( view as Record<string, unknown> ).nameLabels;
+	}
+	updateCharacter( props.character );
+}
+
+const nicknameLabel = computed( {
+	get() { return nameLabelFor( 'nickname' ); },
+	set( val: string ) { setNameLabel( 'nickname', val ); },
+} );
+
+const pronounsLabel = computed( {
+	get() { return nameLabelFor( 'pronouns' ); },
+	set( val: string ) { setNameLabel( 'pronouns', val ); },
+} );
+
+const descriptionLabel = computed( {
+	get() { return nameLabelFor( 'description' ); },
+	set( val: string ) { setNameLabel( 'description', val ); },
+} );
+
 const notes = computed( {
 	get() {
 		return props.character?.notes ?? '';
@@ -672,6 +705,15 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<label for="char-field-description">Description / Bio</label>
 							<textarea id="char-field-description" name="description" v-model="description" rows="3" placeholder="Character narrative background..."></textarea>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Field Labels</div>
+							<div class="editor-button-group" style="display: flex; gap: 0.4rem;">
+								<input type="text" id="char-field-nickname-label" name="nicknameLabel" v-model="nicknameLabel" class="editor-input" style="width: 34%; text-align: center;" placeholder="Nickname" title="Nickname field label" aria-label="Nickname field label">
+								<input type="text" id="char-field-pronouns-label" name="pronounsLabel" v-model="pronounsLabel" class="editor-input" style="width: 33%; text-align: center;" placeholder="Pronouns" title="Pronouns field label" aria-label="Pronouns field label">
+								<input type="text" id="char-field-description-label" name="descriptionLabel" v-model="descriptionLabel" class="editor-input" style="width: 33%; text-align: center;" placeholder="Description" title="Description field label" aria-label="Description field label">
+							</div>
 						</div>
 
 						<div class="editor-field">

@@ -72,12 +72,10 @@
             6
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Food": {
@@ -128,12 +126,10 @@
             6
           ],
           "multiDie": true,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 3
         },
         "traits": {
           "Medicine": {
@@ -194,11 +190,8 @@
           "reservedSlots": 1,
           "track": 1,
           "span": 1,
-          "widths": [
-            50,
-            50,
-            0
-          ]
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Name:": {
@@ -268,7 +261,9 @@
           ],
           "reservedSlots": 1,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 4
         },
         "traits": {
           "Name:": {
@@ -338,7 +333,9 @@
           ],
           "reservedSlots": 1,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 5
         },
         "traits": {
           "Name:": {
@@ -408,7 +405,9 @@
           ],
           "reservedSlots": 1,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 5
         },
         "traits": {
           "Name:": {
@@ -478,7 +477,9 @@
           ],
           "reservedSlots": 1,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 6
         },
         "traits": {
           "Name:": {
@@ -548,7 +549,9 @@
           ],
           "reservedSlots": 1,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 50,
+          "row": 6
         },
         "traits": {
           "Name:": {
@@ -613,11 +616,8 @@
           "reservedSlots": 5,
           "track": 1,
           "span": 1,
-          "widths": [
-            33.333,
-            33.333,
-            33.334
-          ]
+          "colWidth": 33.333,
+          "row": 2
         },
         "traits": {
           "Morale": {
@@ -679,7 +679,9 @@
           ],
           "reservedSlots": 5,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 2
         },
         "traits": {
           "Morale": {
@@ -741,7 +743,9 @@
           ],
           "reservedSlots": 5,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 2
         },
         "traits": {
           "Morale": {
@@ -803,7 +807,9 @@
           ],
           "reservedSlots": 5,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 3
         },
         "traits": {
           "Morale": {
@@ -865,7 +871,9 @@
           ],
           "reservedSlots": 5,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 3
         },
         "traits": {
           "Morale": {
@@ -927,7 +935,9 @@
           ],
           "reservedSlots": 5,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 3
         },
         "traits": {
           "Morale": {
@@ -989,7 +999,9 @@
           ],
           "reservedSlots": 5,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 4
         },
         "traits": {
           "Morale": {
@@ -1051,7 +1063,9 @@
           ],
           "reservedSlots": 5,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.333,
+          "row": 4
         },
         "traits": {
           "Morale": {
@@ -1113,7 +1127,9 @@
           ],
           "reservedSlots": 5,
           "track": 3,
-          "span": 1
+          "span": 1,
+          "colWidth": 33.334,
+          "row": 4
         },
         "traits": {
           "Morale": {
@@ -1168,7 +1184,8 @@
             "body": "notes"
           },
           "notes": "",
-          "span": 3
+          "span": 3,
+          "row": 5
         },
         "traits": {}
       }

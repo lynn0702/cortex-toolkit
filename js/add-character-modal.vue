@@ -37,7 +37,7 @@ function targetValue( e: Event ) {
 				<p>Select another character, titan mech, vehicle, or companion to open alongside your active sheet.</p>
 				<div class="session-modal-search">
 					<i class="fas fa-search"></i>
-					<input type="text" :value="search" @input="emit('update:search', targetValue($event))" placeholder="Filter characters...">
+					<input type="text" id="session-character-search" name="sessionCharacterSearch" :value="search" @input="emit('update:search', targetValue($event))" placeholder="Filter characters..." aria-label="Filter characters">
 				</div>
 			</div>
 

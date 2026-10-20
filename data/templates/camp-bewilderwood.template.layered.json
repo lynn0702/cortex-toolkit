@@ -69,18 +69,12 @@
           "sharedHinder": true,
           "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
           "span": 1,
-          "widths": [
-            66,
-            34,
-            0
-          ]
+          "colWidth": 66,
+          "row": 2
         },
         "traits": {
           "HERITAGE:": {
@@ -164,13 +158,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 5,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 66,
+          "row": 3
         },
         "traits": {
           "Bravery": {
@@ -236,13 +229,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 34,
+          "row": 2
         },
         "traits": {},
         "slots": {
@@ -290,14 +282,13 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 34,
+          "row": 3
         },
         "traits": {
           "Mental": {
@@ -352,19 +343,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
-          "rowBreak": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            40,
-            60,
-            0
-          ]
+          "colWidth": 40,
+          "row": 4
         },
         "traits": {},
         "slots": {
@@ -507,13 +491,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 17,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 60,
+          "row": 4
         },
         "traits": {}
       },
@@ -536,12 +519,10 @@
             "body": "three-column-table"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 2,
-          "span": 3
+          "span": 3,
+          "row": 5
         },
         "traits": {},
         "slots": {

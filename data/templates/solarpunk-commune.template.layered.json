@@ -72,19 +72,13 @@
             8
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
           "track": 1,
           "span": 1,
-          "widths": [
-            28,
-            72,
-            0
-          ]
+          "colWidth": 28,
+          "row": 2
         },
         "traits": {
           "Resources": {
@@ -127,13 +121,12 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 72,
+          "row": 2
         },
         "traits": {
           "Unity:": {
@@ -203,7 +196,8 @@
             6
           ],
           "reservedSlots": 4,
-          "span": 3
+          "span": 3,
+          "row": 3
         },
         "traits": {},
         "slots": {
@@ -259,7 +253,8 @@
           ],
           "subtraitRatingScale": [],
           "reservedSlots": 9,
-          "span": 3
+          "span": 3,
+          "row": 4
         },
         "traits": {},
         "slots": {

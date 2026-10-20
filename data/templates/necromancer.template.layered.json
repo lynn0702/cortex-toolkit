@@ -71,12 +71,10 @@
             "body": "distinctions"
           },
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 2
         },
         "traits": {
           "Job:": {
@@ -151,12 +149,10 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
-          "span": 3
+          "span": 3,
+          "row": 3
         },
         "traits": {
           "My Life": {
@@ -203,18 +199,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 6,
           "track": 1,
           "span": 1,
-          "widths": [
-            38,
-            62,
-            0
-          ]
+          "colWidth": 38,
+          "row": 4
         },
         "traits": {
           "Diplomat": {
@@ -277,13 +267,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 3,
           "track": 1,
-          "span": 1
+          "span": 1,
+          "colWidth": 38,
+          "row": 5
         },
         "traits": {},
         "slots": {
@@ -329,13 +318,12 @@
             12
           ],
           "multiDie": false,
-          "stressConfig": {
-            "includeOut": true
-          },
           "notes": "",
           "reservedSlots": 1,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 62,
+          "row": 4
         },
         "traits": {
           "Necromancy": {
@@ -400,14 +388,10 @@
             "orientation": "horizontal"
           },
           "reservedSlots": 10,
-          "rowBreak": true,
           "track": 1,
           "span": 1,
-          "widths": [
-            62,
-            38,
-            0
-          ]
+          "colWidth": 62,
+          "row": 6
         },
         "traits": {}
       },
@@ -441,7 +425,9 @@
           ],
           "reservedSlots": 3,
           "track": 2,
-          "span": 1
+          "span": 1,
+          "colWidth": 38,
+          "row": 6
         },
         "traits": {
           "Deathmark": {

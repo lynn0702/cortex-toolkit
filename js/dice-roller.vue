@@ -610,7 +610,7 @@ function copyOutput() {
 				<!-- RESOURCE ROLL MODE TOGGLE (when resources are staged) -->
 				<div class="roller-toggle-row" v-if="hasResourceDice">
 					<label class="roller-toggle-label" title="Toggle between rolling resources in the main action pool vs. rolling them separately">
-						<input type="checkbox" v-model="combineResources">
+						<input type="checkbox" id="roller-combine-resources" name="combineResources" v-model="combineResources">
 						<span class="toggle-text">Roll Resources in Normal Pool</span>
 					</label>
 					<span class="toggle-hint">
@@ -620,15 +620,15 @@ function copyOutput() {
 
 				<div class="roller-options-row">
 					<div class="roller-option">
-						<label>Keep</label>
-						<select v-model.number="keep">
+						<label for="roller-keep-count">Keep</label>
+						<select id="roller-keep-count" name="keepCount" v-model.number="keep" aria-label="Dice to keep">
 							<option v-for="n in 8" :key="n" :value="n">{{ n }}</option>
 						</select>
 					</div>
 
 					<div class="roller-option">
-						<label>Hitch On</label>
-						<select v-model.number="hitchOn">
+						<label for="roller-hitch-on">Hitch On</label>
+						<select id="roller-hitch-on" name="hitchOn" v-model.number="hitchOn" aria-label="Hitch on">
 							<option :value="1">1</option>
 							<option :value="2">1–2</option>
 						</select>
