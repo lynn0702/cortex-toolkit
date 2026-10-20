@@ -197,13 +197,13 @@ const pronouns = computed( {
 	},
 } );
 
-function nameLabelFor( key: 'nickname' | 'pronouns' | 'description' ) {
+function nameLabelFor( key: 'nickname' | 'pronouns' | 'description' | 'player' | 'portraitCaption' | 'plotPoints' ) {
 	const bag = getView( props.character )?.nameLabels;
 	const val = ( bag as Record<string, unknown> | undefined )?.[ key ];
 	return typeof val === 'string' ? val : '';
 }
 
-function setNameLabel( key: 'nickname' | 'pronouns' | 'description', val: string ) {
+function setNameLabel( key: 'nickname' | 'pronouns' | 'description' | 'player' | 'portraitCaption' | 'plotPoints', val: string ) {
 	const view = ensureView( props.character );
 	const bag = ( ( view as Record<string, unknown> ).nameLabels ??= {} ) as Record<string, unknown>;
 	if ( val.trim().length ) {
@@ -228,6 +228,21 @@ const pronounsLabel = computed( {
 const descriptionLabel = computed( {
 	get() { return nameLabelFor( 'description' ); },
 	set( val: string ) { setNameLabel( 'description', val ); },
+} );
+
+const playerLabel = computed( {
+	get() { return nameLabelFor( 'player' ); },
+	set( val: string ) { setNameLabel( 'player', val ); },
+} );
+
+const portraitCaptionLabel = computed( {
+	get() { return nameLabelFor( 'portraitCaption' ); },
+	set( val: string ) { setNameLabel( 'portraitCaption', val ); },
+} );
+
+const plotPointsLabel = computed( {
+	get() { return nameLabelFor( 'plotPoints' ); },
+	set( val: string ) { setNameLabel( 'plotPoints', val ); },
 } );
 
 const notes = computed( {
@@ -686,6 +701,11 @@ function updateCharacter( character: any ) {
 								<input type="text" id="char-field-nickname-label" name="nicknameLabel" v-model="nicknameLabel" class="editor-input" style="width: 34%; text-align: center;" placeholder="Nickname" title="Nickname field label" aria-label="Nickname field label">
 								<input type="text" id="char-field-pronouns-label" name="pronounsLabel" v-model="pronounsLabel" class="editor-input" style="width: 33%; text-align: center;" placeholder="Pronouns" title="Pronouns field label" aria-label="Pronouns field label">
 								<input type="text" id="char-field-description-label" name="descriptionLabel" v-model="descriptionLabel" class="editor-input" style="width: 33%; text-align: center;" placeholder="Description" title="Description field label" aria-label="Description field label">
+							</div>
+							<div class="editor-button-group" style="display: flex; gap: 0.4rem; margin-top: 0.4rem;">
+								<input type="text" id="char-field-player-label" name="playerLabel" v-model="playerLabel" class="editor-input" style="width: 34%; text-align: center;" placeholder="Player:" title="Player word" aria-label="Player word">
+								<input type="text" id="char-field-caption-label" name="portraitCaptionLabel" v-model="portraitCaptionLabel" class="editor-input" style="width: 33%; text-align: center;" placeholder="Caption" title="Portrait caption" aria-label="Portrait caption">
+								<input type="text" id="char-field-pp-label" name="plotPointsLabel" v-model="plotPointsLabel" class="editor-input" style="width: 33%; text-align: center;" placeholder="PP" title="Plot points badge word" aria-label="Plot points badge word">
 							</div>
 						</div>
 

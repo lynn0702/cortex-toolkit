@@ -45,7 +45,6 @@
         "description": "Rescue craft airframes, systems, and handling",
         "nounSingular": "Hammerhead Attribute",
         "nounPlural": "Hammerhead Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -78,76 +77,43 @@
         "traits": {
           "Hammerhead One": {
             "description": "More agile, possesses more precise sensors and instruments.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Systems": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "Engines": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Frame": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               }
             }
           },
           "Hammerhead Two": {
             "description": "Faster, more power and range.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Systems": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Engines": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "Frame": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               }
             }
           },
           "Hammerhead Three": {
             "description": "Bigger, tougher, and more rugged.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Systems": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Engines": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Frame": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               }
             }
           }
@@ -158,7 +124,6 @@
         "description": "Factory blessings and fleet reputation",
         "nounSingular": "Vehicle Distinction",
         "nounPlural": "Vehicle Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -187,22 +152,13 @@
         },
         "traits": {
           "Resource Support Vehicle": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Top of the Line": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Broad-Spectrum Sensors": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           }
         }
       },
@@ -211,7 +167,6 @@
         "description": "Staged supplies, support teams, and fleet backup",
         "nounSingular": "Resource Pool",
         "nounPlural": "Resource Pools",
-        "tags": [],
         "view": {
           "traitColumns": 2,
           "features": {
@@ -235,50 +190,36 @@
             "top": 0,
             "width": "25%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "Unassigned Resources": {
             "value": "7d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Tactical Support": {
             "value": "4d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Medical Supplies": {
             "value": "4d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "IT/Network Support": {
             "value": "4d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Food/Shelter": {
             "value": "4d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Land/Sea/Air Support": {
             "value": "4d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           }
         }
       }

@@ -49,10 +49,8 @@
     "sets": {
       "Your Generation": {
         "id": "your-generation",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -68,44 +66,18 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         }
       },
       "Parents' Generation": {
         "id": "parents-generation-a",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -127,44 +99,18 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         }
       },
       "Parents' Generation~2": {
         "id": "parents-generation-b",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -186,45 +132,19 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "Parents' Generation"
       },
       "Grandparents' Generation": {
         "id": "grandparents-generation-a",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -246,44 +166,18 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         }
       },
       "Grandparents' Generation~2": {
         "id": "grandparents-generation-b",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -305,45 +199,19 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "Grandparents' Generation"
       },
       "Wild Card Branch": {
         "id": "wild-card-a",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -359,44 +227,18 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         }
       },
       "Wild Card Branch~2": {
         "id": "wild-card-b",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -418,45 +260,19 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "Wild Card Branch"
       },
       "Wild Card Branch~3": {
         "id": "wild-card-c",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -478,45 +294,19 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "Wild Card Branch"
       },
       "Wild Card Branch~4": {
         "id": "wild-card-d",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -538,45 +328,19 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "Wild Card Branch"
       },
       "Wild Card Branch~5": {
         "id": "wild-card-e",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -598,45 +362,19 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "Wild Card Branch"
       },
       "GMC": {
         "id": "gmc-a",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -658,54 +396,20 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to PCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to GMCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Relationship to PCs": {},
+          "Relationship to GMCs": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         }
       },
       "GMC~2": {
         "id": "gmc-b",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -727,55 +431,21 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to PCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to GMCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Relationship to PCs": {},
+          "Relationship to GMCs": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "GMC"
       },
       "GMC~3": {
         "id": "gmc-c",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -797,55 +467,21 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to PCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to GMCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Relationship to PCs": {},
+          "Relationship to GMCs": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "GMC"
       },
       "GMC~4": {
         "id": "gmc-d",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -867,55 +503,21 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to PCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to GMCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Relationship to PCs": {},
+          "Relationship to GMCs": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "GMC"
       },
       "GMC~5": {
         "id": "gmc-e",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -937,55 +539,21 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to PCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to GMCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Relationship to PCs": {},
+          "Relationship to GMCs": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "GMC"
       },
       "GMC~6": {
         "id": "gmc-f",
-        "description": "",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -1007,46 +575,14 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to PCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Relationship to GMCs": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fame": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Features": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Deed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Current Fate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Relationship to PCs": {},
+          "Relationship to GMCs": {},
+          "Description": {},
+          "Fame": {},
+          "Features": {},
+          "Deed": {},
+          "Current Fate": {}
         },
         "label": "GMC"
       }

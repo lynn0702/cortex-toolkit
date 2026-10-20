@@ -55,7 +55,6 @@
         "description": "Core attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -98,21 +97,9 @@
           }
         },
         "traits": {
-          "Mental": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Physical": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Social": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Mental": {},
+          "Physical": {},
+          "Social": {}
         }
       },
       "Distinctions": {
@@ -120,7 +107,6 @@
         "description": "Mundane, Offbeat, and Strange facets of town life",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -149,8 +135,6 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
             "custom": {
               "traits": {
                 "SFX": {
@@ -162,8 +146,6 @@
             }
           },
           "1": {
-            "description": "",
-            "tags": [],
             "custom": {
               "traits": {
                 "SFX": {
@@ -175,8 +157,6 @@
             }
           },
           "2": {
-            "description": "",
-            "tags": [],
             "custom": {
               "traits": {
                 "SFX": {
@@ -194,7 +174,6 @@
         "description": "Town archetypes and societal roles",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -238,36 +217,12 @@
           }
         },
         "traits": {
-          "Enforcer": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Entrepreneur": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Rebel": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sage": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Shepherd": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Townie": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Enforcer": {},
+          "Entrepreneur": {},
+          "Rebel": {},
+          "Sage": {},
+          "Shepherd": {},
+          "Townie": {}
         }
       },
       "Relationships": {
@@ -275,7 +230,6 @@
         "description": "Bonds and ties within the town",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -305,44 +259,18 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {}
         }
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -388,25 +316,17 @@
         "traits": {},
         "slots": {
           "0": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "1": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           }
         }
       },
       "Complications": {
         "id": "complications",
-        "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -455,29 +375,15 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Strange Die": {
         "id": "strange-die",
-        "description": "",
         "nounSingular": "Die",
         "nounPlural": "Dice",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -506,11 +412,7 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {}
         }
       }
     }

@@ -49,10 +49,8 @@
     "sets": {
       "Growth Pool": {
         "id": "growth-pool",
-        "description": "",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -79,45 +77,39 @@
             "top": 0,
             "width": "22%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "D4": {
             "value": "d4",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
             "value": "d10",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
             "value": "d12",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
@@ -129,7 +121,6 @@
         "description": "Origin of the magical calamity and personal burden",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -160,9 +151,6 @@
         "slots": {
           "0": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -173,9 +161,6 @@
           },
           "1": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -186,9 +171,6 @@
           },
           "2": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -205,7 +187,6 @@
         "nounSingular": "Value",
         "nounPlural": "Values",
         "statement": true,
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -250,44 +231,18 @@
           }
         },
         "traits": {
-          "Ambition": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Responsibility": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Belonging": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Popularity": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Empathy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Secrecy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Ambition": {},
+          "Responsibility": {},
+          "Belonging": {},
+          "Popularity": {},
+          "Empathy": {},
+          "Secrecy": {}
         }
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -329,36 +284,12 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {}
         }
       },
       "Affiliations": {
@@ -367,7 +298,6 @@
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
         "statement": true,
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -412,34 +342,16 @@
           }
         },
         "traits": {
-          "Self": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Family": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "School": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Coven": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Self": {},
+          "Family": {},
+          "School": {},
+          "Coven": {}
         }
       },
       "Stress": {
         "id": "stress",
-        "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -483,31 +395,11 @@
           }
         },
         "traits": {
-          "Angry": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Depressed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Exhausted": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Insecure": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Injured": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Angry": {},
+          "Depressed": {},
+          "Exhausted": {},
+          "Insecure": {},
+          "Injured": {}
         }
       },
       "Crafts": {
@@ -515,7 +407,6 @@
         "description": "Mutated magical expressions and spellcasting disciplines",
         "nounSingular": "Craft",
         "nounPlural": "Crafts",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -545,63 +436,22 @@
           }
         },
         "traits": {
-          "Azure Sympathy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Black Wards": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Bronze Mending": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Crimson Passion": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Golden Inspiration": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Orange Flare": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Pink Fidelity": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Purple Veils": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Verdant Conjuration": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "White Purification": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Azure Sympathy": {},
+          "Black Wards": {},
+          "Bronze Mending": {},
+          "Crimson Passion": {},
+          "Golden Inspiration": {},
+          "Orange Flare": {},
+          "Pink Fidelity": {},
+          "Purple Veils": {},
+          "Verdant Conjuration": {},
+          "White Purification": {}
         }
       },
       "SFX": {
         "id": "sfx",
         "nounSingular": "SFX",
         "nounPlural": "SFX",
-        "tags": [],
         "view": {
           "place": {
             "left": "72%",
@@ -626,26 +476,10 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {}
         }
       }
     }

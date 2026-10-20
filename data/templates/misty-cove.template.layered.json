@@ -52,7 +52,6 @@
         "description": "Coastal heritage, town role, and personal quirk",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -83,44 +82,23 @@
         },
         "traits": {
           "Extraordinary:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  },
-                  "3": {
-                    "custom": {}
-                  },
-                  "4": {
-                    "custom": {}
-                  },
-                  "5": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {},
+                  "3": {},
+                  "4": {},
+                  "5": {}
                 }
               }
             }
           },
-          "Backstory:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Role:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Backstory:": {},
+          "Role:": {}
         }
       },
       "Signature Assets": {
@@ -128,7 +106,6 @@
         "description": "Heirlooms and keepsakes from the misty coast",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -172,21 +149,9 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Attributes": {
@@ -195,7 +160,6 @@
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
         "statement": true,
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -250,31 +214,11 @@
           }
         },
         "traits": {
-          "Anger": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Desire": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fear": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Joy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sorrow": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Anger": {},
+          "Desire": {},
+          "Fear": {},
+          "Joy": {},
+          "Sorrow": {}
         }
       },
       "Relationships": {
@@ -282,7 +226,6 @@
         "description": "Bonds and rivalries with local residents",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -335,64 +278,22 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "6": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "7": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "8": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "9": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {}
         }
       },
       "Growth Pool": {
         "id": "growth-pool",
-        "description": "",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -421,45 +322,39 @@
             "top": 2,
             "width": "36%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "D4": {
             "value": "d4",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
             "value": "d10",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
             "value": "d12",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
@@ -468,10 +363,8 @@
       },
       "Complications": {
         "id": "complications",
-        "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -513,31 +406,11 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {}
         }
       }
     }

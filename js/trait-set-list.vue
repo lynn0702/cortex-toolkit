@@ -12,9 +12,9 @@ const {
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
 	handleStressClick, handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, isMultiDieTrait, getTraitDice,
 	isDieSpent, toggleDieSpentInPlay, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
-	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue,
+	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
-	getDisplayTraitSfx, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
+	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
 } = injectTraitSet();
 </script>
 
@@ -114,7 +114,7 @@ const {
 									@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
 								></span>
-								<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">💥 OUT</span>
+								<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 							<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
 							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1"></div>
@@ -146,7 +146,7 @@ const {
 									@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
 								></span>
-								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">💥 OUT</span>
+								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
 						<!-- STRESS LABEL -->
@@ -163,17 +163,17 @@ const {
 									:class="{
 										'attached-stress-die': true,
 										'c': true,
-										'active': !printBlank && getAttachedStressValue(item.trait) === size
+										'active': !printBlank && getAttachedStressValue(item.trait, traitSet) === size
 									}"
 									@click.stop="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									v-html="renderDieValueForPrint(size, !printBlank && getAttachedStressValue(item.trait) === size)"
+									v-html="renderDieValueForPrint(size, !printBlank && getAttachedStressValue(item.trait, traitSet) === size)"
 								></span>
 								<span
 									v-if="shouldShowAttachedStressOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && isAttachedStressOut(item.trait) }"
+									:class="{ 'stress-out-badge': true, 'active': !printBlank && isAttachedStressOut(item.trait, traitSet) }"
 									@click.stop="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
 									title="Out"
-								>💥 OUT</span>
+								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
 						<!-- DESCRIPTION -->
@@ -211,8 +211,8 @@ const {
 						</div>
 						<!-- SUBTRAITS -->
 						<div v-if="partsGridFor(traitSet).cells.subtraits" class="trait-part trait-part-subtraits" :style="partCellStyle(partsGridFor(traitSet), 'subtraits')">
-							<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (item.trait.traits?.length || printBlank)">
-								<li class="subtrait" v-for="(subtrait, u) in (item.trait.traits?.length ? item.trait.traits : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
+							<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
+								<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
 									<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
 									<span class="subtrait-name" v-else>
 										<span class="trait-blank-line subtrait-blank-line"></span>
@@ -230,10 +230,10 @@ const {
 						</div>
 						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
 						<div class="distinction-sfx-slot" style="grid-column: 1 / -1;" v-if="getView(traitSet)?.style?.body === 'distinctions' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
-							<div class="distinction-sfx-badge">SFX</div>
+							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
 							<div class="distinction-sfx-line">
 								<span class="sfx-bullet">•</span>
-								<span class="sfx-prefix">SFX:</span>
+								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
 								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
 								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
@@ -333,7 +333,7 @@ const {
 										@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
 									></span>
-									<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">💥 OUT</span>
+									<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
 
 								<!-- LIST STYLE: NO VALUE -->
@@ -376,7 +376,7 @@ const {
 										@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
 									></span>
-									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">💥 OUT</span>
+									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
 							</h2>
 
@@ -393,8 +393,8 @@ const {
 							</div>
 						</template>
 
-						<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (item.trait.traits?.length || printBlank)">
-							<li class="subtrait" v-for="(subtrait, u) in (item.trait.traits?.length ? item.trait.traits : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
+						<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
+							<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
 								<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
 								<span class="subtrait-name" v-else>
 									<span class="trait-blank-line subtrait-blank-line"></span>
@@ -412,10 +412,10 @@ const {
 
 						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
 						<div class="distinction-sfx-slot" v-if="getView(traitSet)?.style?.body === 'distinctions' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
-							<div class="distinction-sfx-badge">SFX</div>
+							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
 							<div class="distinction-sfx-line">
 								<span class="sfx-bullet">•</span>
-								<span class="sfx-prefix">SFX:</span>
+								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
 								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
 								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
@@ -436,17 +436,17 @@ const {
 									:class="{
 										'attached-stress-die': true,
 										'c': true,
-										'active': !printBlank && getAttachedStressValue(item.trait) === size
+										'active': !printBlank && getAttachedStressValue(item.trait, traitSet) === size
 									}"
 									@click.stop="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									v-html="renderDieValueForPrint(size, !printBlank && getAttachedStressValue(item.trait) === size)"
+									v-html="renderDieValueForPrint(size, !printBlank && getAttachedStressValue(item.trait, traitSet) === size)"
 								></span>
 								<span
 									v-if="shouldShowAttachedStressOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && isAttachedStressOut(item.trait) }"
+									:class="{ 'stress-out-badge': true, 'active': !printBlank && isAttachedStressOut(item.trait, traitSet) }"
 									@click.stop="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
 									title="Out"
-								>💥 OUT</span>
+								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
 

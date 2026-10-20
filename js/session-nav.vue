@@ -16,7 +16,7 @@ const emit = defineEmits<{
 	( e: 'close', id: string ): void;
 	( e: 'add' ): void;
 	( e: 'setPlayView', mode: string ): void;
-	( e: 'toggleStudio', tab: 'properties' | 'roller' ): void;
+	( e: 'toggleStudio', tab: 'properties' | 'roller' | 'json' ): void;
 }>();
 
 function safeImageUrl( url: any ) {

@@ -3,7 +3,7 @@ import { getView } from './model.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 import SfxEditor from './sfx-editor.vue';
 
-const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacter } = injectTraitSetEditor();
+const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacter, styleLabel, setStyleLabel, targetValue } = injectTraitSetEditor();
 </script>
 
 <template>
@@ -11,6 +11,17 @@ const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacte
 	<div class="editor-field" v-if="getView(traitSet)?.features?.sfx">
 
 		<div class="editor-label">Trait Set SFX</div>
+
+		<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
+			<div style="flex: 1;">
+				<label :for="'trait-set-' + traitSetID + '-sfx-badge'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Badge Word</label>
+				<input type="text" :id="'trait-set-' + traitSetID + '-sfx-badge'" name="sfxBadge" :value="styleLabel('sfxBadge')" @change="setStyleLabel('sfxBadge', targetValue($event))" :placeholder="styleLabel('sfxBadge')">
+			</div>
+			<div style="flex: 1;">
+				<label :for="'trait-set-' + traitSetID + '-sfx-prefix'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Line Prefix</label>
+				<input type="text" :id="'trait-set-' + traitSetID + '-sfx-prefix'" name="sfxPrefix" :value="styleLabel('sfxPrefix')" @change="setStyleLabel('sfxPrefix', targetValue($event))" :placeholder="styleLabel('sfxPrefix')">
+			</div>
+		</div>
 
 		<div class="editor-subgroups">
 

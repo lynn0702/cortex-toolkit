@@ -52,7 +52,6 @@
         "description": "Occult lineage, taboo practice, and philosophical motivation",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -76,9 +75,6 @@
         "traits": {
           "Job:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -89,9 +85,6 @@
           },
           "Necromancy:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -102,9 +95,6 @@
           },
           "Desire:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -121,7 +111,6 @@
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
         "statement": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -162,21 +151,9 @@
           }
         },
         "traits": {
-          "My Life": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "The World": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "The Demi-Monde": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "My Life": {},
+          "The World": {},
+          "The Demi-Monde": {}
         }
       },
       "Roles": {
@@ -184,7 +161,6 @@
         "description": "Dark magical callings and practices",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -216,36 +192,12 @@
           }
         },
         "traits": {
-          "Diplomat": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fighter": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Guardian": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Healer": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sneak": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Transporter": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Diplomat": {},
+          "Fighter": {},
+          "Guardian": {},
+          "Healer": {},
+          "Sneak": {},
+          "Transporter": {}
         }
       },
       "Signature Assets": {
@@ -253,7 +205,6 @@
         "description": "Occult relics, grimoires, and dark instruments",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -299,21 +250,9 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Ability": {
@@ -321,7 +260,6 @@
         "description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
         "nounSingular": "Ability",
         "nounPlural": "Abilities",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -352,15 +290,8 @@
         },
         "traits": {
           "Necromancy": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "Descriptor Tags:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
+              "Descriptor Tags:": {},
               "SFX": {
                 "traits": {
                   "Been There": {
@@ -374,15 +305,9 @@
                   }
                 },
                 "slots": {
-                  "3": {
-                    "custom": {}
-                  },
-                  "4": {
-                    "custom": {}
-                  },
-                  "5": {
-                    "custom": {}
-                  }
+                  "3": {},
+                  "4": {},
+                  "5": {}
                 }
               }
             }
@@ -391,10 +316,8 @@
       },
       "Session Record": {
         "id": "session-record",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -424,10 +347,8 @@
       },
       "Complications": {
         "id": "complications",
-        "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -472,22 +393,12 @@
         },
         "traits": {
           "Deathmark": {
-            "description": "Deathmark",
-            "tags": [],
-            "custom": {}
+            "description": "Deathmark"
           }
         },
         "slots": {
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {},
+          "2": {}
         }
       }
     }

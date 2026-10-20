@@ -38,15 +38,11 @@ const cortexSpotlightTemplates = [
           "description": "Core alien background, job, and personality",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Alien Background:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -56,9 +52,6 @@ const cortexSpotlightTemplates = [
               "name": "Alien Role/Job:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -68,9 +61,6 @@ const cortexSpotlightTemplates = [
               "name": "Personality/Quirk:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -105,22 +95,16 @@ const cortexSpotlightTemplates = [
           "description": "Core baseline d6 skills with branching d8+ specialties",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Bout",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -131,8 +115,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -146,16 +128,11 @@ const cortexSpotlightTemplates = [
               "name": "Chat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -166,8 +143,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -181,16 +156,11 @@ const cortexSpotlightTemplates = [
               "name": "Find",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -201,8 +171,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -216,16 +184,11 @@ const cortexSpotlightTemplates = [
               "name": "Make",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -236,8 +199,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -251,16 +212,11 @@ const cortexSpotlightTemplates = [
               "name": "Play",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -271,8 +227,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -286,16 +240,11 @@ const cortexSpotlightTemplates = [
               "name": "Operate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -306,8 +255,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -321,16 +268,11 @@ const cortexSpotlightTemplates = [
               "name": "Work",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -341,8 +283,6 @@ const cortexSpotlightTemplates = [
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
                   "traits": [],
                   "sfx": [],
                   "view": {
@@ -390,15 +330,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Value",
           "nounPlural": "Values",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "Alien",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -406,9 +342,6 @@ const cortexSpotlightTemplates = [
               "name": "Conformity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -416,9 +349,6 @@ const cortexSpotlightTemplates = [
               "name": "Materialism",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -426,9 +356,6 @@ const cortexSpotlightTemplates = [
               "name": "Paranoia",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -436,9 +363,6 @@ const cortexSpotlightTemplates = [
               "name": "Patriotism",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -446,9 +370,6 @@ const cortexSpotlightTemplates = [
               "name": "Secrecy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -456,9 +377,6 @@ const cortexSpotlightTemplates = [
               "name": "Spirituality",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -510,15 +428,11 @@ const cortexSpotlightTemplates = [
           "description": "Specialized alien abilities and tech modules",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -526,9 +440,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -536,9 +447,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -546,9 +454,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -573,6 +478,11 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
+            },
+            "labels": {
+              "col1": "TALENT",
+              "col2": "ACTIVATION",
+              "col3": "EFFECT"
             }
           }
         },
@@ -582,15 +492,11 @@ const cortexSpotlightTemplates = [
           "description": "Alien equipment and concealed devices",
           "nounSingular": "Signature Asset / Tech",
           "nounPlural": "Signature Assets / Tech",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -598,9 +504,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -608,9 +511,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -666,15 +566,11 @@ const cortexSpotlightTemplates = [
           "description": "Connections to human contacts, superiors, and rivals",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -682,9 +578,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -692,9 +585,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -702,9 +592,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -712,9 +599,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -722,9 +606,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -732,9 +613,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -742,9 +620,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -752,9 +627,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -762,9 +634,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -816,7 +685,6 @@ const cortexSpotlightTemplates = [
           "description": "Session track and progression log",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -907,23 +775,16 @@ const cortexSpotlightTemplates = [
           "description": "Crew role, quality, and personal drive",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Purpose:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -931,17 +792,11 @@ const cortexSpotlightTemplates = [
               "name": "Quality:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -949,17 +804,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -999,15 +848,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Value",
           "nounPlural": "Values",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "Courage",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1015,9 +860,6 @@ const cortexSpotlightTemplates = [
               "name": "Curiosity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1025,9 +867,6 @@ const cortexSpotlightTemplates = [
               "name": "Hope",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1035,9 +874,6 @@ const cortexSpotlightTemplates = [
               "name": "Logic",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1045,9 +881,6 @@ const cortexSpotlightTemplates = [
               "name": "Peace",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -1090,15 +923,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1106,9 +935,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1116,9 +942,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1126,9 +949,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1136,9 +956,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1146,9 +963,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1156,9 +970,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1166,9 +977,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -1225,15 +1033,11 @@ const cortexSpotlightTemplates = [
           "description": "Specialized starship equipment and personal gear",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1241,9 +1045,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1251,9 +1052,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -1304,40 +1102,29 @@ const cortexSpotlightTemplates = [
         {
           "id": "personal-milestones",
           "name": "Personal Milestones",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "1 XP",
               "value": 0,
               "dice": [],
-              "description": "",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "3 XP",
               "value": 0,
               "dice": [],
-              "description": "",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "10 XP",
               "value": 0,
               "dice": [],
-              "description": "",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -1382,40 +1169,29 @@ const cortexSpotlightTemplates = [
         {
           "id": "group-milestones",
           "name": "Group Milestones",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "1 XP",
               "value": 0,
               "dice": [],
-              "description": "",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "3 XP",
               "value": 0,
               "dice": [],
-              "description": "",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "10 XP",
               "value": 0,
               "dice": [],
-              "description": "",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -1463,7 +1239,6 @@ const cortexSpotlightTemplates = [
           "description": "Experience points bubble track",
           "nounSingular": "XP",
           "nounPlural": "XP",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -1552,16 +1327,12 @@ const cortexSpotlightTemplates = [
           "description": "Camp background, camper reputation, and hidden destiny",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "HERITAGE:",
               "value": 8,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -1574,10 +1345,7 @@ const cortexSpotlightTemplates = [
               "name": "DESTINY:",
               "value": 8,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -1590,10 +1358,7 @@ const cortexSpotlightTemplates = [
               "name": "CAMP REPUTATION:",
               "value": 8,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -1662,17 +1427,13 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Values",
           "statement": true,
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Bravery",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1680,11 +1441,8 @@ const cortexSpotlightTemplates = [
               "name": "Community",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1692,11 +1450,8 @@ const cortexSpotlightTemplates = [
               "name": "Curiosity",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1704,11 +1459,8 @@ const cortexSpotlightTemplates = [
               "name": "Friendship",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1716,11 +1468,8 @@ const cortexSpotlightTemplates = [
               "name": "Mischief",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -1777,16 +1526,12 @@ const cortexSpotlightTemplates = [
           "description": "Treasured camper keepsakes and scavenged relics",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1794,9 +1539,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1804,9 +1546,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -1860,15 +1599,11 @@ const cortexSpotlightTemplates = [
           "description": "Core camper capability ratings",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Mental",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1876,9 +1611,6 @@ const cortexSpotlightTemplates = [
               "name": "Physical",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -1886,9 +1618,6 @@ const cortexSpotlightTemplates = [
               "name": "Social",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -1945,24 +1674,17 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Standings",
           "statement": true,
           "ratingPosition": "inline",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "COMPLICATION",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -1970,9 +1692,6 @@ const cortexSpotlightTemplates = [
                   "name": "BONUS",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -1983,18 +1702,12 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "COMPLICATION",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -2002,9 +1715,6 @@ const cortexSpotlightTemplates = [
                   "name": "BONUS",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2015,18 +1725,12 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "COMPLICATION",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -2034,9 +1738,6 @@ const cortexSpotlightTemplates = [
                   "name": "BONUS",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2047,18 +1748,12 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "COMPLICATION",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -2066,9 +1761,6 @@ const cortexSpotlightTemplates = [
                   "name": "BONUS",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2079,18 +1771,12 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "COMPLICATION",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -2098,9 +1784,6 @@ const cortexSpotlightTemplates = [
                   "name": "BONUS",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2111,18 +1794,12 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
               "statement": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "COMPLICATION",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -2130,9 +1807,6 @@ const cortexSpotlightTemplates = [
                   "name": "BONUS",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2175,6 +1849,10 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "40%",
               "height": 1
+            },
+            "labels": {
+              "slot0": "COMPLICATION",
+              "slot1": "BONUS"
             }
           }
         },
@@ -2186,7 +1864,6 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Badges",
           "hasCounterColumn": true,
           "counterLabel": "XP",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -2226,15 +1903,11 @@ const cortexSpotlightTemplates = [
           "description": "Camper knacks and signature tricks",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2242,9 +1915,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -2263,7 +1933,12 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 2
+            "reservedSlots": 2,
+            "labels": {
+              "col1": "TALENT",
+              "col2": "ACTIVATION",
+              "col3": "EFFECT"
+            }
           }
         }
       ],
@@ -2326,17 +2001,11 @@ const cortexSpotlightTemplates = [
           "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Neighborhood",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {
-                "stress": 0
-              },
               "traits": [],
               "sfx": []
             },
@@ -2344,11 +2013,6 @@ const cortexSpotlightTemplates = [
               "name": "Crew",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {
-                "stress": 0
-              },
               "traits": [],
               "sfx": []
             },
@@ -2356,11 +2020,6 @@ const cortexSpotlightTemplates = [
               "name": "The Family",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {
-                "stress": 0
-              },
               "traits": [],
               "sfx": []
             }
@@ -2429,15 +2088,11 @@ const cortexSpotlightTemplates = [
           "description": "Syndicate operational pools and assets",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2445,9 +2100,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2455,9 +2107,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2465,9 +2114,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2475,9 +2121,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2485,9 +2128,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -2518,6 +2158,10 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "66.663%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         },
@@ -2527,15 +2171,11 @@ const cortexSpotlightTemplates = [
           "description": "Gain a PP when you use a drive rated at d4.",
           "nounSingular": "Drive",
           "nounPlural": "Drives",
-          "tags": [],
           "traits": [
             {
               "name": "Corruption",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2543,9 +2183,6 @@ const cortexSpotlightTemplates = [
               "name": "Greed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2553,9 +2190,6 @@ const cortexSpotlightTemplates = [
               "name": "Omerta",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2563,9 +2197,6 @@ const cortexSpotlightTemplates = [
               "name": "Retribution",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2573,9 +2204,6 @@ const cortexSpotlightTemplates = [
               "name": "Violence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -2632,15 +2260,11 @@ const cortexSpotlightTemplates = [
           "description": "Personal weapons, vehicles, and syndicate perks",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2648,9 +2272,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2658,9 +2279,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -2716,23 +2334,16 @@ const cortexSpotlightTemplates = [
           "description": "Syndicate roles with specialized criminal expertise",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Big Shot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2743,17 +2354,11 @@ const cortexSpotlightTemplates = [
               "name": "Brains",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2764,17 +2369,11 @@ const cortexSpotlightTemplates = [
               "name": "Enforcer",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2785,17 +2384,11 @@ const cortexSpotlightTemplates = [
               "name": "Thief",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2806,17 +2399,11 @@ const cortexSpotlightTemplates = [
               "name": "Wheelman",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -2853,6 +2440,10 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "66.667%",
               "height": 1
+            },
+            "labels": {
+              "left": "SKILL",
+              "right": "SPECIALTIES"
             }
           }
         },
@@ -2862,7 +2453,6 @@ const cortexSpotlightTemplates = [
           "description": "Session tracking and milestone progression",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -2895,18 +2485,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "role-sfx",
           "name": "Role SFX",
-          "description": "",
           "nounSingular": "SFX",
           "nounPlural": "SFX",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2914,9 +2499,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -2924,9 +2506,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -3015,15 +2594,11 @@ const cortexSpotlightTemplates = [
           "description": "Prime vocations and endarch callings",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Warrior",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3031,9 +2606,6 @@ const cortexSpotlightTemplates = [
               "name": "Priest",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3041,9 +2613,6 @@ const cortexSpotlightTemplates = [
               "name": "Scout",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3051,9 +2620,6 @@ const cortexSpotlightTemplates = [
               "name": "Other",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -3109,15 +2675,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Courage",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3125,9 +2687,6 @@ const cortexSpotlightTemplates = [
               "name": "Grace",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3135,9 +2694,6 @@ const cortexSpotlightTemplates = [
               "name": "Guile",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3145,9 +2701,6 @@ const cortexSpotlightTemplates = [
               "name": "Reason",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3155,9 +2708,6 @@ const cortexSpotlightTemplates = [
               "name": "Vigor",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -3228,23 +2778,16 @@ const cortexSpotlightTemplates = [
           "description": "Ancestral endarch patron and its three bound powers",
           "nounSingular": "Endarch Distinction",
           "nounPlural": "Endarch Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Power 1",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -3252,9 +2795,6 @@ const cortexSpotlightTemplates = [
                   "name": "Power 2",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -3262,9 +2802,6 @@ const cortexSpotlightTemplates = [
                   "name": "Power 3",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -3275,22 +2812,13 @@ const cortexSpotlightTemplates = [
                   "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4."
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
                   "name": "Summon",
@@ -3334,7 +2862,6 @@ const cortexSpotlightTemplates = [
           "description": "Manifested eidolon form: base trait, scale, powers, highlights",
           "nounSingular": "Eidolon Trait",
           "nounPlural": "Eidolon Traits",
-          "tags": [],
           "traits": [
             {
               "name": "Base Trait",
@@ -3344,8 +2871,6 @@ const cortexSpotlightTemplates = [
                 10
               ],
               "description": "d10 d10 or d4 d4",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3353,9 +2878,6 @@ const cortexSpotlightTemplates = [
               "name": "Scale",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3363,9 +2885,6 @@ const cortexSpotlightTemplates = [
               "name": "Power 1",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3373,9 +2892,6 @@ const cortexSpotlightTemplates = [
               "name": "Power 2",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3383,9 +2899,6 @@ const cortexSpotlightTemplates = [
               "name": "Power 3",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3393,9 +2906,6 @@ const cortexSpotlightTemplates = [
               "name": "Highlight Attribute 1",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3403,9 +2913,6 @@ const cortexSpotlightTemplates = [
               "name": "Highlight Attribute 2",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -3448,15 +2955,11 @@ const cortexSpotlightTemplates = [
           "description": "Chosen calling and personal definition",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Role Distinction",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -3466,9 +2969,6 @@ const cortexSpotlightTemplates = [
               "name": "Freeform Distinction",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -3507,7 +3007,6 @@ const cortexSpotlightTemplates = [
           "description": "Experience points bubble track",
           "nounSingular": "XP",
           "nounPlural": "XP",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -3593,15 +3092,11 @@ const cortexSpotlightTemplates = [
           "description": "Body, mind, and presence under pressure",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Physical",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3609,9 +3104,6 @@ const cortexSpotlightTemplates = [
               "name": "Mental",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3619,9 +3111,6 @@ const cortexSpotlightTemplates = [
               "name": "Social",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -3692,15 +3181,11 @@ const cortexSpotlightTemplates = [
           "description": "Rescue disciplines and vehicle qualifications",
           "nounSingular": "Training Package",
           "nounPlural": "Training Packages",
-          "tags": [],
           "traits": [
             {
               "name": "Crowd Control",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3708,9 +3193,6 @@ const cortexSpotlightTemplates = [
               "name": "Emergency Medical",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3718,9 +3200,6 @@ const cortexSpotlightTemplates = [
               "name": "Firefighting",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3728,9 +3207,6 @@ const cortexSpotlightTemplates = [
               "name": "Hammerhead Pilot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3738,9 +3214,6 @@ const cortexSpotlightTemplates = [
               "name": "HAZMAT",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3748,9 +3221,6 @@ const cortexSpotlightTemplates = [
               "name": "High-Altitude Recovery",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3758,9 +3228,6 @@ const cortexSpotlightTemplates = [
               "name": "Legal Specialist",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3768,9 +3235,6 @@ const cortexSpotlightTemplates = [
               "name": "Logistics",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3778,9 +3242,6 @@ const cortexSpotlightTemplates = [
               "name": "Marine Recovery",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3788,9 +3249,6 @@ const cortexSpotlightTemplates = [
               "name": "Network Specialist",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3798,9 +3256,6 @@ const cortexSpotlightTemplates = [
               "name": "Mechanic",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3808,9 +3263,6 @@ const cortexSpotlightTemplates = [
               "name": "Tactical Response",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3818,9 +3270,6 @@ const cortexSpotlightTemplates = [
               "name": "Technical Analyst",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -3828,9 +3277,6 @@ const cortexSpotlightTemplates = [
               "name": "Urban Recovery",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -3885,15 +3331,11 @@ const cortexSpotlightTemplates = [
           "description": "Origin, true nature, and defining quirk",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Your Life Before:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -3914,9 +3356,6 @@ const cortexSpotlightTemplates = [
               "name": "Your Approach/Attitude:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -3937,9 +3376,6 @@ const cortexSpotlightTemplates = [
               "name": "Your Quirk/Quality:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -3990,7 +3426,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "",
@@ -3998,8 +3433,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "saved my life",
               "statement": "saved my life",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4009,8 +3442,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "owes me big",
               "statement": "owes me big",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4020,8 +3451,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "is a troublemaker",
               "statement": "is a troublemaker",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4031,8 +3460,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "knows their stuff",
               "statement": "knows their stuff",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4042,8 +3469,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "is a liability",
               "statement": "is a liability",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4053,8 +3478,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "is dependable",
               "statement": "is dependable",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4064,8 +3487,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "is good for a laugh",
               "statement": "is good for a laugh",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -4120,7 +3541,6 @@ const cortexSpotlightTemplates = [
           "description": "Experience points bubble track",
           "nounSingular": "XP",
           "nounPlural": "XP",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -4159,15 +3579,11 @@ const cortexSpotlightTemplates = [
           "description": "Threat clocks and escalating disaster pools",
           "nounSingular": "Crisis Pool",
           "nounPlural": "Crisis Pools",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4175,9 +3591,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4185,9 +3598,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4195,9 +3605,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -4302,23 +3709,17 @@ const cortexSpotlightTemplates = [
           "description": "Rescue craft airframes, systems, and handling",
           "nounSingular": "Hammerhead Attribute",
           "nounPlural": "Hammerhead Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Hammerhead One",
               "value": 0,
               "dice": [],
               "description": "More agile, possesses more precise sensors and instruments.",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Systems",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4326,9 +3727,6 @@ const cortexSpotlightTemplates = [
                   "name": "Engines",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4336,9 +3734,6 @@ const cortexSpotlightTemplates = [
                   "name": "Frame",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -4350,16 +3745,11 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Faster, more power and range.",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Systems",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4367,9 +3757,6 @@ const cortexSpotlightTemplates = [
                   "name": "Engines",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4377,9 +3764,6 @@ const cortexSpotlightTemplates = [
                   "name": "Frame",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -4391,16 +3775,11 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Bigger, tougher, and more rugged.",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Systems",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4408,9 +3787,6 @@ const cortexSpotlightTemplates = [
                   "name": "Engines",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4418,9 +3794,6 @@ const cortexSpotlightTemplates = [
                   "name": "Frame",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -4465,15 +3838,11 @@ const cortexSpotlightTemplates = [
           "description": "Factory blessings and fleet reputation",
           "nounSingular": "Vehicle Distinction",
           "nounPlural": "Vehicle Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Resource Support Vehicle",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4481,9 +3850,6 @@ const cortexSpotlightTemplates = [
               "name": "Top of the Line",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4491,9 +3857,6 @@ const cortexSpotlightTemplates = [
               "name": "Broad-Spectrum Sensors",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -4532,7 +3895,6 @@ const cortexSpotlightTemplates = [
           "description": "Staged supplies, support teams, and fleet backup",
           "nounSingular": "Resource Pool",
           "nounPlural": "Resource Pools",
-          "tags": [],
           "traits": [
             {
               "name": "Unassigned Resources",
@@ -4546,9 +3908,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4561,9 +3920,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4576,9 +3932,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4591,9 +3944,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4606,9 +3956,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4621,9 +3968,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -4652,6 +3996,10 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "25%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         }
@@ -4708,15 +4056,11 @@ const cortexSpotlightTemplates = [
           "description": "Gain a PP when you include your d4 attribute in your dice pool.",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Action",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4724,9 +4068,6 @@ const cortexSpotlightTemplates = [
               "name": "Heritage",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4734,9 +4075,6 @@ const cortexSpotlightTemplates = [
               "name": "Science",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -4744,9 +4082,6 @@ const cortexSpotlightTemplates = [
               "name": "Weird",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -4798,18 +4133,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "stress",
           "name": "Stress",
-          "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -4864,15 +4194,11 @@ const cortexSpotlightTemplates = [
           "description": "Bloodline heritage, archetype, and personal stance",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Family Tree",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
@@ -4881,10 +4207,7 @@ const cortexSpotlightTemplates = [
                   "description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset."
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -4892,23 +4215,14 @@ const cortexSpotlightTemplates = [
               "name": "Approach to Conflict",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -4916,23 +4230,14 @@ const cortexSpotlightTemplates = [
               "name": "Personality/Quirk",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -4971,23 +4276,16 @@ const cortexSpotlightTemplates = [
           "description": "Powers granted by bloodline and relics",
           "nounSingular": "Ability",
           "nounPlural": "Abilities",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Effect Tags:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -4995,25 +4293,16 @@ const cortexSpotlightTemplates = [
                   "name": "Limit:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
               ],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -5021,17 +4310,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Effect Tags:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -5039,25 +4322,16 @@ const cortexSpotlightTemplates = [
                   "name": "Limit:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
               ],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -5065,17 +4339,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Effect Tags:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -5083,25 +4351,16 @@ const cortexSpotlightTemplates = [
                   "name": "Limit:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
               ],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -5168,15 +4427,11 @@ const cortexSpotlightTemplates = [
           "description": "Training and mundane competencies",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Acquire",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5184,9 +4439,6 @@ const cortexSpotlightTemplates = [
               "name": "Build",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5194,9 +4446,6 @@ const cortexSpotlightTemplates = [
               "name": "Charm",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5204,9 +4453,6 @@ const cortexSpotlightTemplates = [
               "name": "Fight",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5214,9 +4460,6 @@ const cortexSpotlightTemplates = [
               "name": "Investigate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5224,9 +4467,6 @@ const cortexSpotlightTemplates = [
               "name": "Move",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5234,9 +4474,6 @@ const cortexSpotlightTemplates = [
               "name": "Perform",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5244,9 +4481,6 @@ const cortexSpotlightTemplates = [
               "name": "Pilot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5254,9 +4488,6 @@ const cortexSpotlightTemplates = [
               "name": "Shoot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5264,9 +4495,6 @@ const cortexSpotlightTemplates = [
               "name": "Sneak",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5274,9 +4502,6 @@ const cortexSpotlightTemplates = [
               "name": "Study",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5284,9 +4509,6 @@ const cortexSpotlightTemplates = [
               "name": "Survive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5294,9 +4516,6 @@ const cortexSpotlightTemplates = [
               "name": "Treat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5304,9 +4523,6 @@ const cortexSpotlightTemplates = [
               "name": "Trick",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -5349,15 +4565,11 @@ const cortexSpotlightTemplates = [
           "description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
           "nounSingular": "Heirloom",
           "nounPlural": "Heirlooms",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5365,9 +4577,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5375,9 +4584,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5385,9 +4591,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -5426,10 +4629,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "personal-milestones",
           "name": "Personal Milestones",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "1 XP",
@@ -5437,9 +4638,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "3 XP",
@@ -5447,9 +4646,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "10 XP",
@@ -5457,9 +4654,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -5504,10 +4699,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "group-milestones",
           "name": "Group Milestones",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "1 XP",
@@ -5515,9 +4708,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "3 XP",
@@ -5525,9 +4716,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "10 XP",
@@ -5535,9 +4724,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -5582,10 +4769,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "xp",
           "name": "XP",
-          "description": "",
           "nounSingular": "Pip",
           "nounPlural": "Pips",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -5670,18 +4855,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "your-generation",
           "name": "Your Generation",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5689,9 +4869,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5699,9 +4876,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5709,9 +4883,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5719,9 +4890,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5729,9 +4897,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -5755,18 +4920,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "parents-generation-a",
           "name": "Parents' Generation",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5774,9 +4934,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5784,9 +4941,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5794,9 +4948,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5804,9 +4955,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5814,9 +4962,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -5846,18 +4991,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "parents-generation-b",
           "name": "Parents' Generation",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5865,9 +5005,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5875,9 +5012,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5885,9 +5019,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5895,9 +5026,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5905,9 +5033,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -5937,18 +5062,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "grandparents-generation-a",
           "name": "Grandparents' Generation",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5956,9 +5076,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5966,9 +5083,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5976,9 +5090,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5986,9 +5097,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -5996,9 +5104,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6028,18 +5133,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "grandparents-generation-b",
           "name": "Grandparents' Generation",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6047,9 +5147,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6057,9 +5154,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6067,9 +5161,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6077,9 +5168,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6087,9 +5175,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6119,18 +5204,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "wild-card-a",
           "name": "Wild Card Branch",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6138,9 +5218,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6148,9 +5225,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6158,9 +5232,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6168,9 +5239,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6178,9 +5246,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6204,18 +5269,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "wild-card-b",
           "name": "Wild Card Branch",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6223,9 +5283,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6233,9 +5290,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6243,9 +5297,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6253,9 +5304,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6263,9 +5311,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6295,18 +5340,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "wild-card-c",
           "name": "Wild Card Branch",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6314,9 +5354,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6324,9 +5361,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6334,9 +5368,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6344,9 +5375,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6354,9 +5382,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6386,18 +5411,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "wild-card-d",
           "name": "Wild Card Branch",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6405,9 +5425,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6415,9 +5432,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6425,9 +5439,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6435,9 +5446,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6445,9 +5453,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6477,18 +5482,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "wild-card-e",
           "name": "Wild Card Branch",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6496,9 +5496,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6506,9 +5503,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6516,9 +5510,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6526,9 +5517,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6536,9 +5524,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6568,18 +5553,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "gmc-a",
           "name": "GMC",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6587,9 +5567,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to PCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6597,9 +5574,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to GMCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6607,9 +5581,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6617,9 +5588,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6627,9 +5595,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6637,9 +5602,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6647,9 +5609,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6679,18 +5638,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "gmc-b",
           "name": "GMC",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6698,9 +5652,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to PCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6708,9 +5659,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to GMCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6718,9 +5666,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6728,9 +5673,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6738,9 +5680,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6748,9 +5687,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6758,9 +5694,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6790,18 +5723,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "gmc-c",
           "name": "GMC",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6809,9 +5737,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to PCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6819,9 +5744,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to GMCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6829,9 +5751,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6839,9 +5758,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6849,9 +5765,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6859,9 +5772,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6869,9 +5779,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -6901,18 +5808,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "gmc-d",
           "name": "GMC",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6920,9 +5822,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to PCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6930,9 +5829,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to GMCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6940,9 +5836,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6950,9 +5843,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6960,9 +5850,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6970,9 +5857,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -6980,9 +5864,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7012,18 +5893,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "gmc-e",
           "name": "GMC",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7031,9 +5907,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to PCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7041,9 +5914,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to GMCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7051,9 +5921,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7061,9 +5928,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7071,9 +5935,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7081,9 +5942,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7091,9 +5949,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7123,18 +5978,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "gmc-f",
           "name": "GMC",
-          "description": "",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7142,9 +5992,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to PCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7152,9 +5999,6 @@ const cortexSpotlightTemplates = [
               "name": "Relationship to GMCs",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7162,9 +6006,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7172,9 +6013,6 @@ const cortexSpotlightTemplates = [
               "name": "Fame",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7182,9 +6020,6 @@ const cortexSpotlightTemplates = [
               "name": "Features",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7192,9 +6027,6 @@ const cortexSpotlightTemplates = [
               "name": "Deed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7202,9 +6034,6 @@ const cortexSpotlightTemplates = [
               "name": "Current Fate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7291,15 +6120,11 @@ const cortexSpotlightTemplates = [
           "description": "Origin, motivation, and crime-fighting persona",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Personality:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -7309,9 +6134,6 @@ const cortexSpotlightTemplates = [
               "name": "Past:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -7321,9 +6143,6 @@ const cortexSpotlightTemplates = [
               "name": "Quirk:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -7366,15 +6185,11 @@ const cortexSpotlightTemplates = [
           "description": "Operating mode ratings",
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
-          "tags": [],
           "traits": [
             {
               "name": "Personal:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7382,9 +6197,6 @@ const cortexSpotlightTemplates = [
               "name": "Group:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7392,9 +6204,6 @@ const cortexSpotlightTemplates = [
               "name": "World:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7449,15 +6258,11 @@ const cortexSpotlightTemplates = [
           "description": "Master and expert professional skills",
           "nounSingular": "Specialty",
           "nounPlural": "Specialties",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7465,9 +6270,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7475,9 +6277,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7485,9 +6284,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7495,9 +6291,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7538,15 +6331,11 @@ const cortexSpotlightTemplates = [
           "description": "Heroic gear and vehicles",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7554,9 +6343,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7564,9 +6350,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7605,18 +6388,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "stress",
           "name": "Stress",
-          "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "Physical",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7624,9 +6402,6 @@ const cortexSpotlightTemplates = [
               "name": "Mental",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7634,9 +6409,6 @@ const cortexSpotlightTemplates = [
               "name": "Social",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7688,17 +6460,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "growth-pool",
           "name": "Growth Pool",
-          "description": "",
           "nounSingular": "Growth Die",
           "nounPlural": "Growth Dice",
-          "tags": [],
           "traits": [
             {
               "name": "D4",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -7709,8 +6477,6 @@ const cortexSpotlightTemplates = [
               "name": "D6",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -7721,8 +6487,6 @@ const cortexSpotlightTemplates = [
               "name": "D8",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -7733,8 +6497,6 @@ const cortexSpotlightTemplates = [
               "name": "D10",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -7745,8 +6507,6 @@ const cortexSpotlightTemplates = [
               "name": "D12",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -7783,6 +6543,10 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         },
@@ -7792,15 +6556,11 @@ const cortexSpotlightTemplates = [
           "description": "Modular powers, SFX triggers, and shutdown limits",
           "nounSingular": "Power Set",
           "nounPlural": "Power Sets",
-          "tags": [],
           "traits": [
             {
               "name": "Powers",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7808,9 +6568,6 @@ const cortexSpotlightTemplates = [
               "name": "Limits",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7838,18 +6595,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "power-set-2",
           "name": "Power Set 2",
-          "description": "",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "Powers",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7857,9 +6609,6 @@ const cortexSpotlightTemplates = [
               "name": "Limits",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7884,18 +6633,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "power-set-3",
           "name": "Power Set 3",
-          "description": "",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "Powers",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -7903,9 +6647,6 @@ const cortexSpotlightTemplates = [
               "name": "Limits",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -7987,15 +6728,11 @@ const cortexSpotlightTemplates = [
           "description": "As a group, decide on the following information.",
           "nounSingular": "Detail",
           "nounPlural": "Details",
-          "tags": [],
           "traits": [
             {
               "name": "Name",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8003,9 +6740,6 @@ const cortexSpotlightTemplates = [
               "name": "Location",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8013,9 +6747,6 @@ const cortexSpotlightTemplates = [
               "name": "Description",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8023,9 +6754,6 @@ const cortexSpotlightTemplates = [
               "name": "Benefits",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8033,9 +6761,6 @@ const cortexSpotlightTemplates = [
               "name": "Drawbacks",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -8059,18 +6784,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "team-resources",
           "name": "Team Resources",
-          "description": "",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8078,9 +6798,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8088,9 +6805,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8098,9 +6812,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8108,9 +6819,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8118,9 +6826,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8128,9 +6833,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8138,9 +6840,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8148,9 +6847,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8158,9 +6854,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8168,9 +6861,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8178,9 +6868,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8188,9 +6875,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8198,9 +6882,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8208,9 +6889,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8218,9 +6896,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8228,9 +6903,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8238,9 +6910,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8248,9 +6917,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8258,9 +6924,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -8287,7 +6950,11 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": true,
-            "reservedSlots": 20
+            "reservedSlots": 20,
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
+            }
           }
         }
       ],
@@ -8350,47 +7017,28 @@ const cortexSpotlightTemplates = [
           "description": "Coastal heritage, town role, and personal quirk",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Extraordinary:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -8398,9 +7046,6 @@ const cortexSpotlightTemplates = [
               "name": "Backstory:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8408,9 +7053,6 @@ const cortexSpotlightTemplates = [
               "name": "Role:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -8451,15 +7093,11 @@ const cortexSpotlightTemplates = [
           "description": "Heirlooms and keepsakes from the misty coast",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8467,9 +7105,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8477,9 +7112,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -8534,15 +7166,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "Anger",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8550,9 +7178,6 @@ const cortexSpotlightTemplates = [
               "name": "Desire",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8560,9 +7185,6 @@ const cortexSpotlightTemplates = [
               "name": "Fear",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8570,9 +7192,6 @@ const cortexSpotlightTemplates = [
               "name": "Joy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8580,9 +7199,6 @@ const cortexSpotlightTemplates = [
               "name": "Sorrow",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -8648,15 +7264,11 @@ const cortexSpotlightTemplates = [
           "description": "Bonds and rivalries with local residents",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8664,9 +7276,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8674,9 +7283,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8684,9 +7290,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8694,9 +7297,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8704,9 +7304,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8714,9 +7311,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8724,9 +7318,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8734,9 +7325,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8744,9 +7332,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -8806,17 +7391,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "growth-pool",
           "name": "Growth Pool",
-          "description": "",
           "nounSingular": "Growth Die",
           "nounPlural": "Growth Dice",
-          "tags": [],
           "traits": [
             {
               "name": "D4",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -8827,8 +7408,6 @@ const cortexSpotlightTemplates = [
               "name": "D6",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -8839,8 +7418,6 @@ const cortexSpotlightTemplates = [
               "name": "D8",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -8851,8 +7428,6 @@ const cortexSpotlightTemplates = [
               "name": "D10",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -8863,8 +7438,6 @@ const cortexSpotlightTemplates = [
               "name": "D12",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -8901,24 +7474,23 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "36%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         },
         {
           "id": "complications",
           "name": "Complications",
-          "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8926,9 +7498,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8936,9 +7505,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8946,9 +7512,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -8956,9 +7519,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -9064,15 +7624,11 @@ const cortexSpotlightTemplates = [
           "description": "Occult lineage, taboo practice, and philosophical motivation",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Job:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -9082,9 +7638,6 @@ const cortexSpotlightTemplates = [
               "name": "Necromancy:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -9094,9 +7647,6 @@ const cortexSpotlightTemplates = [
               "name": "Desire:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -9132,15 +7682,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "My Life",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9148,9 +7694,6 @@ const cortexSpotlightTemplates = [
               "name": "The World",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9158,9 +7701,6 @@ const cortexSpotlightTemplates = [
               "name": "The Demi-Monde",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -9212,15 +7752,11 @@ const cortexSpotlightTemplates = [
           "description": "Dark magical callings and practices",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Diplomat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9228,9 +7764,6 @@ const cortexSpotlightTemplates = [
               "name": "Fighter",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9238,9 +7771,6 @@ const cortexSpotlightTemplates = [
               "name": "Guardian",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9248,9 +7778,6 @@ const cortexSpotlightTemplates = [
               "name": "Healer",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9258,9 +7785,6 @@ const cortexSpotlightTemplates = [
               "name": "Sneak",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9268,9 +7792,6 @@ const cortexSpotlightTemplates = [
               "name": "Transporter",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -9313,15 +7834,11 @@ const cortexSpotlightTemplates = [
           "description": "Occult relics, grimoires, and dark instruments",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9329,9 +7846,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9339,9 +7853,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -9397,23 +7908,16 @@ const cortexSpotlightTemplates = [
           "description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
           "nounSingular": "Ability",
           "nounPlural": "Abilities",
-          "tags": [],
           "traits": [
             {
               "name": "Necromancy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Descriptor Tags:",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -9432,22 +7936,13 @@ const cortexSpotlightTemplates = [
                   "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -9485,10 +7980,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "session-record",
           "name": "Session Record",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -9520,18 +8013,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "complications",
           "name": "Complications",
-          "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "tags": [],
           "traits": [
             {
               "name": "Deathmark",
               "value": 0,
               "dice": [],
               "description": "Deathmark",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9539,9 +8028,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9549,9 +8035,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -9660,15 +8143,11 @@ const cortexSpotlightTemplates = [
           "description": "Enduring principles of the golden era",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "tags": [],
           "traits": [
             {
               "name": "Allegiance",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9676,9 +8155,6 @@ const cortexSpotlightTemplates = [
               "name": "Glory",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9686,9 +8162,6 @@ const cortexSpotlightTemplates = [
               "name": "Integrity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9696,9 +8169,6 @@ const cortexSpotlightTemplates = [
               "name": "Knowledge",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9706,9 +8176,6 @@ const cortexSpotlightTemplates = [
               "name": "Novelty",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9716,9 +8183,6 @@ const cortexSpotlightTemplates = [
               "name": "Power",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9726,9 +8190,6 @@ const cortexSpotlightTemplates = [
               "name": "Riches",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -9783,28 +8244,18 @@ const cortexSpotlightTemplates = [
           "description": "Past glory, modern civilian life, and the call to return",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Archetype",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 "hinder"
               ]
@@ -9813,23 +8264,14 @@ const cortexSpotlightTemplates = [
               "name": "Retirement",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -9837,23 +8279,14 @@ const cortexSpotlightTemplates = [
               "name": "Satisfaction",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -9892,7 +8325,6 @@ const cortexSpotlightTemplates = [
           "description": "Stashed tech, vintage vehicles, and old connections (5d6 each)",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "",
@@ -9904,9 +8336,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9920,9 +8349,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9936,9 +8362,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9952,9 +8375,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -9968,9 +8388,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -10026,18 +8443,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10045,9 +8457,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -10104,18 +8513,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "aging-complications",
           "name": "Aging Complications",
-          "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10123,9 +8527,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -10185,23 +8586,16 @@ const cortexSpotlightTemplates = [
           "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Craft",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10212,17 +8606,11 @@ const cortexSpotlightTemplates = [
               "name": "Fight",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10233,17 +8621,11 @@ const cortexSpotlightTemplates = [
               "name": "Fly",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10254,17 +8636,11 @@ const cortexSpotlightTemplates = [
               "name": "Focus",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10275,17 +8651,11 @@ const cortexSpotlightTemplates = [
               "name": "Influence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10296,17 +8666,11 @@ const cortexSpotlightTemplates = [
               "name": "Know",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10317,17 +8681,11 @@ const cortexSpotlightTemplates = [
               "name": "Labor",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10338,17 +8696,11 @@ const cortexSpotlightTemplates = [
               "name": "Move",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10359,17 +8711,11 @@ const cortexSpotlightTemplates = [
               "name": "Notice",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10380,17 +8726,11 @@ const cortexSpotlightTemplates = [
               "name": "Perform",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10401,17 +8741,11 @@ const cortexSpotlightTemplates = [
               "name": "Sneak",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10422,17 +8756,11 @@ const cortexSpotlightTemplates = [
               "name": "Survive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10443,17 +8771,11 @@ const cortexSpotlightTemplates = [
               "name": "Throw",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10464,17 +8786,11 @@ const cortexSpotlightTemplates = [
               "name": "Tinker",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10485,17 +8801,11 @@ const cortexSpotlightTemplates = [
               "name": "Treat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10506,17 +8816,11 @@ const cortexSpotlightTemplates = [
               "name": "Trick",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -10622,15 +8926,11 @@ const cortexSpotlightTemplates = [
           "description": "The aviator's code and sky ethics",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "tags": [],
           "traits": [
             {
               "name": "Allegiance",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10638,9 +8938,6 @@ const cortexSpotlightTemplates = [
               "name": "Glory",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10648,9 +8945,6 @@ const cortexSpotlightTemplates = [
               "name": "Integrity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10658,9 +8952,6 @@ const cortexSpotlightTemplates = [
               "name": "Knowledge",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10668,9 +8959,6 @@ const cortexSpotlightTemplates = [
               "name": "Novelty",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10678,9 +8966,6 @@ const cortexSpotlightTemplates = [
               "name": "Power",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10688,9 +8973,6 @@ const cortexSpotlightTemplates = [
               "name": "Riches",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -10745,29 +9027,19 @@ const cortexSpotlightTemplates = [
           "description": "Aerial legend and grounded retirement",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Archetype:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -10775,23 +9047,14 @@ const cortexSpotlightTemplates = [
               "name": "Retirement:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -10830,7 +9093,6 @@ const cortexSpotlightTemplates = [
           "description": "Custom aircraft and aviator resources (5d6 each)",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "",
@@ -10842,9 +9104,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10858,9 +9117,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -10874,9 +9130,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -10932,18 +9185,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "signature-asset",
           "name": "Signature Asset",
-          "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -11003,23 +9251,16 @@ const cortexSpotlightTemplates = [
           "description": "Flight and tactical skills (d4-d6) with veteran specialties (d8-d12)",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11030,17 +9271,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11051,17 +9286,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11072,17 +9301,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11093,17 +9316,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11114,17 +9331,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11135,17 +9346,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11156,17 +9361,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11177,17 +9376,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11239,15 +9432,12 @@ const cortexSpotlightTemplates = [
           "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "Training",
               "value": 0,
               "dice": [],
               "description": "Training",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11256,8 +9446,6 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Adventuring Triumph",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11266,8 +9454,6 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Retirement",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -11353,15 +9539,11 @@ const cortexSpotlightTemplates = [
           "description": "Pre-fall life, current survival role, and future hope",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Before:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -11371,9 +9553,6 @@ const cortexSpotlightTemplates = [
               "name": "Now:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -11383,9 +9562,6 @@ const cortexSpotlightTemplates = [
               "name": "Future:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -11420,23 +9596,16 @@ const cortexSpotlightTemplates = [
           "description": "Practical survival disciplines (d4-d6) with specialized traits (d8-d12)",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Animals",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11447,17 +9616,11 @@ const cortexSpotlightTemplates = [
               "name": "Athletics",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11468,17 +9631,11 @@ const cortexSpotlightTemplates = [
               "name": "Big Guns",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11489,17 +9646,11 @@ const cortexSpotlightTemplates = [
               "name": "Covert",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11510,17 +9661,11 @@ const cortexSpotlightTemplates = [
               "name": "Craft",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11531,17 +9676,11 @@ const cortexSpotlightTemplates = [
               "name": "Creativity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11552,17 +9691,11 @@ const cortexSpotlightTemplates = [
               "name": "Drive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11573,17 +9706,11 @@ const cortexSpotlightTemplates = [
               "name": "Focus",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11594,17 +9721,11 @@ const cortexSpotlightTemplates = [
               "name": "Guns",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11615,17 +9736,11 @@ const cortexSpotlightTemplates = [
               "name": "Influence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11636,17 +9751,11 @@ const cortexSpotlightTemplates = [
               "name": "Knowledge",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11657,17 +9766,11 @@ const cortexSpotlightTemplates = [
               "name": "Mechanic",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11678,17 +9781,11 @@ const cortexSpotlightTemplates = [
               "name": "Melee",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11699,17 +9796,11 @@ const cortexSpotlightTemplates = [
               "name": "Notice",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11720,17 +9811,11 @@ const cortexSpotlightTemplates = [
               "name": "Operate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11741,17 +9826,11 @@ const cortexSpotlightTemplates = [
               "name": "Pilot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11762,17 +9841,11 @@ const cortexSpotlightTemplates = [
               "name": "Survival",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11783,17 +9856,11 @@ const cortexSpotlightTemplates = [
               "name": "Thrown",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11804,17 +9871,11 @@ const cortexSpotlightTemplates = [
               "name": "Treatment",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11825,17 +9886,11 @@ const cortexSpotlightTemplates = [
               "name": "Unarmed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -11887,15 +9942,11 @@ const cortexSpotlightTemplates = [
           "description": "Core survival attributes",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Analytical",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11903,9 +9954,6 @@ const cortexSpotlightTemplates = [
               "name": "Forceful",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11913,9 +9961,6 @@ const cortexSpotlightTemplates = [
               "name": "Quiet",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -11959,15 +10004,11 @@ const cortexSpotlightTemplates = [
           "description": "Ties to fellow survivors in the camp",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11975,9 +10016,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11985,9 +10023,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -11995,9 +10030,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12005,9 +10037,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12015,9 +10044,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12025,9 +10051,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12035,9 +10058,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12045,9 +10065,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12055,9 +10072,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -12100,15 +10114,11 @@ const cortexSpotlightTemplates = [
           "description": "Survivor stress and trauma",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "Injured",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12116,9 +10126,6 @@ const cortexSpotlightTemplates = [
               "name": "Isolated",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12126,9 +10133,6 @@ const cortexSpotlightTemplates = [
               "name": "Sick",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12136,9 +10140,6 @@ const cortexSpotlightTemplates = [
               "name": "Tired",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12146,9 +10147,6 @@ const cortexSpotlightTemplates = [
               "name": "Upset",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -12191,15 +10189,11 @@ const cortexSpotlightTemplates = [
           "description": "Survivor tricks and knacks",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12207,9 +10201,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12217,9 +10208,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -12244,6 +10232,11 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "66.663%",
               "height": 1
+            },
+            "labels": {
+              "col1": "TALENT",
+              "col2": "ACTIVATION",
+              "col3": "EFFECT"
             }
           }
         },
@@ -12253,14 +10246,11 @@ const cortexSpotlightTemplates = [
           "description": "Survivor growth dice",
           "nounSingular": "Growth Die",
           "nounPlural": "Growth Dice",
-          "tags": [],
           "traits": [
             {
               "name": "D4",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -12271,8 +10261,6 @@ const cortexSpotlightTemplates = [
               "name": "D6",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -12283,8 +10271,6 @@ const cortexSpotlightTemplates = [
               "name": "D8",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -12295,8 +10281,6 @@ const cortexSpotlightTemplates = [
               "name": "D10",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -12307,8 +10291,6 @@ const cortexSpotlightTemplates = [
               "name": "D12",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -12345,6 +10327,10 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "33.334%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         }
@@ -12408,7 +10394,6 @@ const cortexSpotlightTemplates = [
           "description": "Building Benefits:",
           "nounSingular": "Essential Stockpile",
           "nounPlural": "Essential Stockpiles",
-          "tags": [],
           "traits": [
             {
               "name": "Food",
@@ -12427,9 +10412,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12450,9 +10432,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12473,9 +10452,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -12509,7 +10485,6 @@ const cortexSpotlightTemplates = [
           "description": "Building Benefits:",
           "nounSingular": "Non-Essential Stockpile",
           "nounPlural": "Non-Essential Stockpiles",
-          "tags": [],
           "traits": [
             {
               "name": "Medicine",
@@ -12528,9 +10503,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12551,9 +10523,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -12574,9 +10543,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -12607,26 +10573,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "building-1",
           "name": "Building 1",
-          "description": "",
           "nounSingular": "Building",
           "nounPlural": "Buildings",
-          "tags": [],
           "traits": [
             {
               "name": "Name:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "d6 Benefit:",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12634,9 +10592,6 @@ const cortexSpotlightTemplates = [
                   "name": "d8 Benefit:",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12644,9 +10599,6 @@ const cortexSpotlightTemplates = [
                   "name": "d10 Benefit:",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12654,9 +10606,6 @@ const cortexSpotlightTemplates = [
                   "name": "d12 Benefit:",
                   "value": 12,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -12703,26 +10652,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "building-2",
           "name": "Building 2",
-          "description": "",
           "nounSingular": "Building",
           "nounPlural": "Buildings",
-          "tags": [],
           "traits": [
             {
               "name": "Name:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "d6 Benefit:",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12730,9 +10671,6 @@ const cortexSpotlightTemplates = [
                   "name": "d8 Benefit:",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12740,9 +10678,6 @@ const cortexSpotlightTemplates = [
                   "name": "d10 Benefit:",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12750,9 +10685,6 @@ const cortexSpotlightTemplates = [
                   "name": "d12 Benefit:",
                   "value": 12,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -12799,26 +10731,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "building-3",
           "name": "Building 3",
-          "description": "",
           "nounSingular": "Building",
           "nounPlural": "Buildings",
-          "tags": [],
           "traits": [
             {
               "name": "Name:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "d6 Benefit:",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12826,9 +10750,6 @@ const cortexSpotlightTemplates = [
                   "name": "d8 Benefit:",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12836,9 +10757,6 @@ const cortexSpotlightTemplates = [
                   "name": "d10 Benefit:",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12846,9 +10764,6 @@ const cortexSpotlightTemplates = [
                   "name": "d12 Benefit:",
                   "value": 12,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -12895,26 +10810,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "building-4",
           "name": "Building 4",
-          "description": "",
           "nounSingular": "Building",
           "nounPlural": "Buildings",
-          "tags": [],
           "traits": [
             {
               "name": "Name:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "d6 Benefit:",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12922,9 +10829,6 @@ const cortexSpotlightTemplates = [
                   "name": "d8 Benefit:",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12932,9 +10836,6 @@ const cortexSpotlightTemplates = [
                   "name": "d10 Benefit:",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -12942,9 +10843,6 @@ const cortexSpotlightTemplates = [
                   "name": "d12 Benefit:",
                   "value": 12,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -12991,26 +10889,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "building-5",
           "name": "Building 5",
-          "description": "",
           "nounSingular": "Building",
           "nounPlural": "Buildings",
-          "tags": [],
           "traits": [
             {
               "name": "Name:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "d6 Benefit:",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -13018,9 +10908,6 @@ const cortexSpotlightTemplates = [
                   "name": "d8 Benefit:",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -13028,9 +10915,6 @@ const cortexSpotlightTemplates = [
                   "name": "d10 Benefit:",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -13038,9 +10922,6 @@ const cortexSpotlightTemplates = [
                   "name": "d12 Benefit:",
                   "value": 12,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -13087,26 +10968,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "building-6",
           "name": "Building 6",
-          "description": "",
           "nounSingular": "Building",
           "nounPlural": "Buildings",
-          "tags": [],
           "traits": [
             {
               "name": "Name:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "d6 Benefit:",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -13114,9 +10987,6 @@ const cortexSpotlightTemplates = [
                   "name": "d8 Benefit:",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -13124,9 +10994,6 @@ const cortexSpotlightTemplates = [
                   "name": "d10 Benefit:",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -13134,9 +11001,6 @@ const cortexSpotlightTemplates = [
                   "name": "d12 Benefit:",
                   "value": 12,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -13183,20 +11047,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-1",
           "name": "Survivor 1",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13204,9 +11063,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13214,9 +11070,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13224,9 +11077,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13234,9 +11084,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13273,20 +11120,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-2",
           "name": "Survivor 2",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13294,9 +11136,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13304,9 +11143,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13314,9 +11150,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13324,9 +11157,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13363,20 +11193,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-3",
           "name": "Survivor 3",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13384,9 +11209,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13394,9 +11216,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13404,9 +11223,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13414,9 +11230,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13453,20 +11266,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-4",
           "name": "Survivor 4",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13474,9 +11282,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13484,9 +11289,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13494,9 +11296,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13504,9 +11303,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13543,20 +11339,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-5",
           "name": "Survivor 5",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13564,9 +11355,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13574,9 +11362,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13584,9 +11369,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13594,9 +11376,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13633,20 +11412,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-6",
           "name": "Survivor 6",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13654,9 +11428,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13664,9 +11435,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13674,9 +11442,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13684,9 +11449,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13723,20 +11485,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-7",
           "name": "Survivor 7",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13744,9 +11501,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13754,9 +11508,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13764,9 +11515,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13774,9 +11522,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13813,20 +11558,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-8",
           "name": "Survivor 8",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13834,9 +11574,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13844,9 +11581,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13854,9 +11588,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13864,9 +11595,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13903,20 +11631,15 @@ const cortexSpotlightTemplates = [
         {
           "id": "survivor-9",
           "name": "Survivor 9",
-          "description": "",
           "nounSingular": "Survivor",
           "nounPlural": "Survivors",
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Morale",
               "value": 0,
               "dice": [],
-              "description": "",
               "questioned": false,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13924,9 +11647,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13934,9 +11654,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13944,9 +11661,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -13954,9 +11668,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -13993,10 +11704,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "colony-projects",
           "name": "Notes",
-          "description": "",
           "nounSingular": "Note",
           "nounPlural": "Notes",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -14075,15 +11784,11 @@ const cortexSpotlightTemplates = [
           "description": "Cover identity, espionage specialization, and personal objective",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Role",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -14093,9 +11798,6 @@ const cortexSpotlightTemplates = [
               "name": "Background",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -14105,9 +11807,6 @@ const cortexSpotlightTemplates = [
               "name": "Personality",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -14142,15 +11841,11 @@ const cortexSpotlightTemplates = [
           "description": "Operational deployment modes",
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
-          "tags": [],
           "traits": [
             {
               "name": "Diplomacy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14158,9 +11853,6 @@ const cortexSpotlightTemplates = [
               "name": "Discovery",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14168,9 +11860,6 @@ const cortexSpotlightTemplates = [
               "name": "Defense",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14224,18 +11913,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "complications",
           "name": "Complications",
-          "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "tags": [],
           "traits": [
             {
               "name": "Frostbite",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14243,9 +11927,6 @@ const cortexSpotlightTemplates = [
               "name": "Hypothermia",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14300,15 +11981,11 @@ const cortexSpotlightTemplates = [
           "description": "Core operative capabilities and physical resilience",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Brawn",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14316,9 +11993,6 @@ const cortexSpotlightTemplates = [
               "name": "Endurance",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14326,9 +12000,6 @@ const cortexSpotlightTemplates = [
               "name": "Grace",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14336,9 +12007,6 @@ const cortexSpotlightTemplates = [
               "name": "Grit",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14346,9 +12014,6 @@ const cortexSpotlightTemplates = [
               "name": "Mettle",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14356,9 +12021,6 @@ const cortexSpotlightTemplates = [
               "name": "Smarts",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14428,15 +12090,11 @@ const cortexSpotlightTemplates = [
           "description": "Black-ops competencies and d6 specialties",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Craft",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14444,9 +12102,6 @@ const cortexSpotlightTemplates = [
               "name": "Drive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14454,9 +12109,6 @@ const cortexSpotlightTemplates = [
               "name": "Fight",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14464,9 +12116,6 @@ const cortexSpotlightTemplates = [
               "name": "Fix",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14474,9 +12123,6 @@ const cortexSpotlightTemplates = [
               "name": "Fly",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14484,9 +12130,6 @@ const cortexSpotlightTemplates = [
               "name": "Focus",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14494,9 +12137,6 @@ const cortexSpotlightTemplates = [
               "name": "Influence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14504,9 +12144,6 @@ const cortexSpotlightTemplates = [
               "name": "Know",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14514,9 +12151,6 @@ const cortexSpotlightTemplates = [
               "name": "Labor",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14524,9 +12158,6 @@ const cortexSpotlightTemplates = [
               "name": "Move",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14534,9 +12165,6 @@ const cortexSpotlightTemplates = [
               "name": "Notice",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14544,9 +12172,6 @@ const cortexSpotlightTemplates = [
               "name": "Operate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14554,9 +12179,6 @@ const cortexSpotlightTemplates = [
               "name": "Perform",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14564,9 +12186,6 @@ const cortexSpotlightTemplates = [
               "name": "Shoot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14574,9 +12193,6 @@ const cortexSpotlightTemplates = [
               "name": "Sneak",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14584,9 +12200,6 @@ const cortexSpotlightTemplates = [
               "name": "Survive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14594,9 +12207,6 @@ const cortexSpotlightTemplates = [
               "name": "Throw",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14604,9 +12214,6 @@ const cortexSpotlightTemplates = [
               "name": "Treat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14614,9 +12221,6 @@ const cortexSpotlightTemplates = [
               "name": "Trick",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14657,15 +12261,11 @@ const cortexSpotlightTemplates = [
           "description": "Classified spy gear and experimental equipment",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14673,9 +12273,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14683,9 +12280,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14744,18 +12338,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "talents",
           "name": "Talents",
-          "description": "",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14763,9 +12352,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14773,9 +12359,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14798,24 +12381,24 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "65%",
               "height": 1
+            },
+            "labels": {
+              "col1": "TALENT",
+              "col2": "ACTIVATION",
+              "col3": "EFFECT"
             }
           }
         },
         {
           "id": "gifts",
           "name": "Gifts",
-          "description": "",
           "nounSingular": "Gift",
           "nounPlural": "Gifts",
-          "tags": [],
           "traits": [
             {
               "name": "Gift of",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -14823,9 +12406,6 @@ const cortexSpotlightTemplates = [
               "name": "Gift of~2",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -14883,10 +12463,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "milestones",
           "name": "Milestones",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "1 XP",
@@ -14894,9 +12472,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "3 XP",
@@ -14904,9 +12480,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "10 XP",
@@ -14914,9 +12488,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -14961,10 +12533,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "milestones-b",
           "name": "Milestones",
-          "description": "",
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
-          "tags": [],
           "traits": [
             {
               "name": "1 XP",
@@ -14972,9 +12542,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "3 XP",
@@ -14982,9 +12550,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             },
             {
               "name": "10 XP",
@@ -14992,9 +12558,7 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "when ",
               "traits": [],
-              "sfx": [],
-              "tags": [],
-              "custom": {}
+              "sfx": []
             }
           ],
           "sfx": [],
@@ -15039,10 +12603,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "xp",
           "name": "XP",
-          "description": "",
           "nounSingular": "Pip",
           "nounPlural": "Pips",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -15130,15 +12692,11 @@ const cortexSpotlightTemplates = [
           "description": "SolarPunk holistic community attributes",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Mind",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15146,9 +12704,6 @@ const cortexSpotlightTemplates = [
               "name": "Body",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15156,9 +12711,6 @@ const cortexSpotlightTemplates = [
               "name": "Connection",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -15211,10 +12763,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "session-record",
           "name": "Session Record",
-          "description": "",
           "nounSingular": "Session",
           "nounPlural": "Sessions",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -15249,29 +12799,19 @@ const cortexSpotlightTemplates = [
           "description": "Ecological calling, community role, and personal purpose",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Identity:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -15279,23 +12819,14 @@ const cortexSpotlightTemplates = [
               "name": "Community:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -15303,23 +12834,14 @@ const cortexSpotlightTemplates = [
               "name": "Purpose:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -15358,22 +12880,15 @@ const cortexSpotlightTemplates = [
           "description": "Sustainable tech, tools, and eco-craft",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -15381,16 +12896,10 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -15453,15 +12962,11 @@ const cortexSpotlightTemplates = [
           "description": "Ecological competencies (d4-d12) and d6 craft specialties",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Craft",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15469,9 +12974,6 @@ const cortexSpotlightTemplates = [
               "name": "Drive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15479,9 +12981,6 @@ const cortexSpotlightTemplates = [
               "name": "Fight",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15489,9 +12988,6 @@ const cortexSpotlightTemplates = [
               "name": "Fix",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15499,9 +12995,6 @@ const cortexSpotlightTemplates = [
               "name": "Fly",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15509,9 +13002,6 @@ const cortexSpotlightTemplates = [
               "name": "Focus",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15519,9 +13009,6 @@ const cortexSpotlightTemplates = [
               "name": "Influence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15529,9 +13016,6 @@ const cortexSpotlightTemplates = [
               "name": "Know",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15539,9 +13023,6 @@ const cortexSpotlightTemplates = [
               "name": "Labor",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15549,9 +13030,6 @@ const cortexSpotlightTemplates = [
               "name": "Move",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15559,9 +13037,6 @@ const cortexSpotlightTemplates = [
               "name": "Notice",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15569,9 +13044,6 @@ const cortexSpotlightTemplates = [
               "name": "Operate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15579,9 +13051,6 @@ const cortexSpotlightTemplates = [
               "name": "Perform",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15589,9 +13058,6 @@ const cortexSpotlightTemplates = [
               "name": "Shoot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15599,9 +13065,6 @@ const cortexSpotlightTemplates = [
               "name": "Sneak",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15609,9 +13072,6 @@ const cortexSpotlightTemplates = [
               "name": "Survive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15619,9 +13079,6 @@ const cortexSpotlightTemplates = [
               "name": "Throw",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15629,9 +13086,6 @@ const cortexSpotlightTemplates = [
               "name": "Treat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15639,9 +13093,6 @@ const cortexSpotlightTemplates = [
               "name": "Trick",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -15673,7 +13124,11 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 19
+            "reservedSlots": 19,
+            "labels": {
+              "left": "SKILL",
+              "right": "SPECIALTIES"
+            }
           }
         }
       ],
@@ -15736,15 +13191,11 @@ const cortexSpotlightTemplates = [
           "description": "Collective settlement strengths",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Resources",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15752,9 +13203,6 @@ const cortexSpotlightTemplates = [
               "name": "Security",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15762,9 +13210,6 @@ const cortexSpotlightTemplates = [
               "name": "Connections",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -15818,15 +13263,11 @@ const cortexSpotlightTemplates = [
           "description": "Settlement unity, organization, and morale",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Unity:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -15836,9 +13277,6 @@ const cortexSpotlightTemplates = [
               "name": "Organization:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -15848,9 +13286,6 @@ const cortexSpotlightTemplates = [
               "name": "Morale:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -15888,18 +13323,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15907,9 +13337,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15917,9 +13344,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -15927,9 +13351,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -15978,26 +13399,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "skills",
           "name": "Skills",
-          "description": "",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16008,17 +13421,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16029,17 +13436,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16050,17 +13451,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16071,17 +13466,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16092,17 +13481,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16113,17 +13496,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16134,17 +13511,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16155,17 +13526,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -16192,7 +13557,11 @@ const cortexSpotlightTemplates = [
               8
             ],
             "subtraitRatingScale": [],
-            "reservedSlots": 9
+            "reservedSlots": 9,
+            "labels": {
+              "left": "SKILL",
+              "right": "SPECIALTIES"
+            }
           }
         }
       ],
@@ -16252,17 +13621,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "growth-pool",
           "name": "Growth Pool",
-          "description": "",
           "nounSingular": "Growth Die",
           "nounPlural": "Growth Dice",
-          "tags": [],
           "traits": [
             {
               "name": "D4",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -16273,8 +13638,6 @@ const cortexSpotlightTemplates = [
               "name": "D6",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -16285,8 +13648,6 @@ const cortexSpotlightTemplates = [
               "name": "D8",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -16297,8 +13658,6 @@ const cortexSpotlightTemplates = [
               "name": "D10",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -16309,8 +13668,6 @@ const cortexSpotlightTemplates = [
               "name": "D12",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -16345,6 +13702,10 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "22%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         },
@@ -16354,15 +13715,11 @@ const cortexSpotlightTemplates = [
           "description": "Origin of the magical calamity and personal burden",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -16372,9 +13729,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -16384,9 +13738,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -16428,15 +13779,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Value",
           "nounPlural": "Values",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "Ambition",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16444,9 +13791,6 @@ const cortexSpotlightTemplates = [
               "name": "Responsibility",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16454,9 +13798,6 @@ const cortexSpotlightTemplates = [
               "name": "Belonging",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16464,9 +13805,6 @@ const cortexSpotlightTemplates = [
               "name": "Popularity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16474,9 +13812,6 @@ const cortexSpotlightTemplates = [
               "name": "Empathy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16484,9 +13819,6 @@ const cortexSpotlightTemplates = [
               "name": "Secrecy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -16539,18 +13871,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16558,9 +13885,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16568,9 +13892,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16578,9 +13899,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16588,9 +13906,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16598,9 +13913,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -16653,15 +13965,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "Self",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16669,9 +13977,6 @@ const cortexSpotlightTemplates = [
               "name": "Family",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16679,9 +13984,6 @@ const cortexSpotlightTemplates = [
               "name": "School",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16689,9 +13991,6 @@ const cortexSpotlightTemplates = [
               "name": "Coven",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -16744,18 +14043,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "stress",
           "name": "Stress",
-          "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "Angry",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16763,9 +14057,6 @@ const cortexSpotlightTemplates = [
               "name": "Depressed",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16773,9 +14064,6 @@ const cortexSpotlightTemplates = [
               "name": "Exhausted",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16783,9 +14071,6 @@ const cortexSpotlightTemplates = [
               "name": "Insecure",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16793,9 +14078,6 @@ const cortexSpotlightTemplates = [
               "name": "Injured",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -16850,15 +14132,11 @@ const cortexSpotlightTemplates = [
           "description": "Mutated magical expressions and spellcasting disciplines",
           "nounSingular": "Craft",
           "nounPlural": "Crafts",
-          "tags": [],
           "traits": [
             {
               "name": "Azure Sympathy",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16866,9 +14144,6 @@ const cortexSpotlightTemplates = [
               "name": "Black Wards",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16876,9 +14151,6 @@ const cortexSpotlightTemplates = [
               "name": "Bronze Mending",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16886,9 +14158,6 @@ const cortexSpotlightTemplates = [
               "name": "Crimson Passion",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16896,9 +14165,6 @@ const cortexSpotlightTemplates = [
               "name": "Golden Inspiration",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16906,9 +14172,6 @@ const cortexSpotlightTemplates = [
               "name": "Orange Flare",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16916,9 +14179,6 @@ const cortexSpotlightTemplates = [
               "name": "Pink Fidelity",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16926,9 +14186,6 @@ const cortexSpotlightTemplates = [
               "name": "Purple Veils",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16936,9 +14193,6 @@ const cortexSpotlightTemplates = [
               "name": "Verdant Conjuration",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -16946,9 +14200,6 @@ const cortexSpotlightTemplates = [
               "name": "White Purification",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -16988,15 +14239,11 @@ const cortexSpotlightTemplates = [
           "name": "SFX",
           "nounSingular": "SFX",
           "nounPlural": "SFX",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17004,9 +14251,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17014,9 +14258,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17024,9 +14265,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17115,15 +14353,11 @@ const cortexSpotlightTemplates = [
           "description": "Core attributes",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Mental",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17131,9 +14365,6 @@ const cortexSpotlightTemplates = [
               "name": "Physical",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17141,9 +14372,6 @@ const cortexSpotlightTemplates = [
               "name": "Social",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17197,14 +14425,11 @@ const cortexSpotlightTemplates = [
           "description": "Mundane, Offbeat, and Strange facets of town life",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
               "custom": {
                 "traits": {
                   "SFX": {
@@ -17221,8 +14446,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
               "custom": {
                 "traits": {
                   "SFX": {
@@ -17239,8 +14462,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
               "custom": {
                 "traits": {
                   "SFX": {
@@ -17287,15 +14508,11 @@ const cortexSpotlightTemplates = [
           "description": "Town archetypes and societal roles",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Enforcer",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17303,9 +14520,6 @@ const cortexSpotlightTemplates = [
               "name": "Entrepreneur",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17313,9 +14527,6 @@ const cortexSpotlightTemplates = [
               "name": "Rebel",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17323,9 +14534,6 @@ const cortexSpotlightTemplates = [
               "name": "Sage",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17333,9 +14541,6 @@ const cortexSpotlightTemplates = [
               "name": "Shepherd",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17343,9 +14548,6 @@ const cortexSpotlightTemplates = [
               "name": "Townie",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17400,15 +14602,11 @@ const cortexSpotlightTemplates = [
           "description": "Bonds and ties within the town",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17416,9 +14614,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17426,9 +14621,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17436,9 +14628,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17446,9 +14635,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17456,9 +14642,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17495,18 +14678,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17514,9 +14692,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17568,18 +14743,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "complications",
           "name": "Complications",
-          "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17587,9 +14757,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17597,9 +14764,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17655,18 +14819,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "strange-die",
           "name": "Strange Die",
-          "description": "",
           "nounSingular": "Die",
           "nounPlural": "Dice",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17762,15 +14921,11 @@ const cortexSpotlightTemplates = [
           "description": "Core hero ratings with Vitality and Willpower",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Agility",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17778,9 +14933,6 @@ const cortexSpotlightTemplates = [
               "name": "Alertness",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17788,9 +14940,6 @@ const cortexSpotlightTemplates = [
               "name": "Intelligence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17798,9 +14947,6 @@ const cortexSpotlightTemplates = [
               "name": "Strength",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17808,9 +14954,6 @@ const cortexSpotlightTemplates = [
               "name": "Vitality",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17818,9 +14961,6 @@ const cortexSpotlightTemplates = [
               "name": "Willpower",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -17876,15 +15016,11 @@ const cortexSpotlightTemplates = [
           "description": "Multiversal origin, champion archetype, and personal drive",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -17894,9 +15030,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -17906,9 +15039,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -17948,15 +15078,11 @@ const cortexSpotlightTemplates = [
           "description": "Artifacts and multiversal gear",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17964,9 +15090,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17974,9 +15097,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -17984,9 +15104,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18025,23 +15142,16 @@ const cortexSpotlightTemplates = [
           "description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Craft",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18052,17 +15162,11 @@ const cortexSpotlightTemplates = [
               "name": "Drive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18073,17 +15177,11 @@ const cortexSpotlightTemplates = [
               "name": "Fight",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18094,17 +15192,11 @@ const cortexSpotlightTemplates = [
               "name": "Fix",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18115,17 +15207,11 @@ const cortexSpotlightTemplates = [
               "name": "Fly",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18136,17 +15222,11 @@ const cortexSpotlightTemplates = [
               "name": "Focus",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18157,17 +15237,11 @@ const cortexSpotlightTemplates = [
               "name": "Influence",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18178,17 +15252,11 @@ const cortexSpotlightTemplates = [
               "name": "Know",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18199,17 +15267,11 @@ const cortexSpotlightTemplates = [
               "name": "Labor",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18220,17 +15282,11 @@ const cortexSpotlightTemplates = [
               "name": "Move",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18241,17 +15297,11 @@ const cortexSpotlightTemplates = [
               "name": "Notice",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18262,17 +15312,11 @@ const cortexSpotlightTemplates = [
               "name": "Operate",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18283,17 +15327,11 @@ const cortexSpotlightTemplates = [
               "name": "Perform",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18304,17 +15342,11 @@ const cortexSpotlightTemplates = [
               "name": "Shoot",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18325,17 +15357,11 @@ const cortexSpotlightTemplates = [
               "name": "Sneak",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18346,17 +15372,11 @@ const cortexSpotlightTemplates = [
               "name": "Survive",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18367,17 +15387,11 @@ const cortexSpotlightTemplates = [
               "name": "Throw",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18388,17 +15402,11 @@ const cortexSpotlightTemplates = [
               "name": "Treat",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18409,17 +15417,11 @@ const cortexSpotlightTemplates = [
               "name": "Trick",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "",
                   "value": 0,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -18467,19 +15469,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "initiative",
           "name": "Initiative",
-          "description": "",
           "nounSingular": "Die",
           "nounPlural": "Dice",
           "ratingPosition": "vertical",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18487,9 +15484,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18526,19 +15520,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "hero-dice",
           "name": "Hero Dice",
-          "description": "",
           "nounSingular": "Die",
           "nounPlural": "Dice",
           "ratingPosition": "vertical",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18578,7 +15567,6 @@ const cortexSpotlightTemplates = [
           "description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
           "nounSingular": "Point",
           "nounPlural": "Points",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -18608,28 +15596,21 @@ const cortexSpotlightTemplates = [
           "description": "SFX: • SFX: • Limit:",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "SFX 1",
-                  "description": ""
+                  "name": "SFX 1"
                 },
                 {
-                  "name": "SFX 2",
-                  "description": ""
+                  "name": "SFX 2"
                 },
                 {
-                  "name": "Limit",
-                  "description": ""
+                  "name": "Limit"
                 }
               ]
             },
@@ -18637,9 +15618,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18647,9 +15625,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18691,28 +15666,21 @@ const cortexSpotlightTemplates = [
           "description": "SFX: • SFX: • Limit:",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "SFX 1",
-                  "description": ""
+                  "name": "SFX 1"
                 },
                 {
-                  "name": "SFX 2",
-                  "description": ""
+                  "name": "SFX 2"
                 },
                 {
-                  "name": "Limit",
-                  "description": ""
+                  "name": "Limit"
                 }
               ]
             },
@@ -18720,9 +15688,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18730,9 +15695,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18774,28 +15736,21 @@ const cortexSpotlightTemplates = [
           "description": "SFX: • SFX: • Limit:",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "SFX 1",
-                  "description": ""
+                  "name": "SFX 1"
                 },
                 {
-                  "name": "SFX 2",
-                  "description": ""
+                  "name": "SFX 2"
                 },
                 {
-                  "name": "Limit",
-                  "description": ""
+                  "name": "Limit"
                 }
               ]
             },
@@ -18803,9 +15758,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18813,9 +15765,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18857,15 +15806,11 @@ const cortexSpotlightTemplates = [
           "description": "Name, Activation, and Effect",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18873,9 +15818,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18883,9 +15825,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -18893,9 +15832,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -18920,16 +15856,19 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "66.663%",
               "height": 1
+            },
+            "labels": {
+              "col1": "TALENT",
+              "col2": "ACTIVATION",
+              "col3": "EFFECT"
             }
           }
         },
         {
           "id": "session-record",
           "name": "Session Record",
-          "description": "",
           "nounSingular": "Session",
           "nounPlural": "Sessions",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -18961,10 +15900,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "leveling-up",
           "name": "Leveling Up",
-          "description": "",
           "nounSingular": "Option",
           "nounPlural": "Options",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -19049,15 +15986,11 @@ const cortexSpotlightTemplates = [
           "description": "Neural synchronization and handler capabilities",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "tags": [],
           "traits": [
             {
               "name": "Prowess",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19065,9 +15998,6 @@ const cortexSpotlightTemplates = [
               "name": "Control",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19075,9 +16005,6 @@ const cortexSpotlightTemplates = [
               "name": "Renown",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19131,15 +16058,11 @@ const cortexSpotlightTemplates = [
           "description": "Combat roles and tactical responsibilities",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Backup",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19147,9 +16070,6 @@ const cortexSpotlightTemplates = [
               "name": "Blaster",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19157,9 +16077,6 @@ const cortexSpotlightTemplates = [
               "name": "Boss",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19167,9 +16084,6 @@ const cortexSpotlightTemplates = [
               "name": "Brain",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19177,9 +16091,6 @@ const cortexSpotlightTemplates = [
               "name": "Brawler",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19234,15 +16145,11 @@ const cortexSpotlightTemplates = [
           "description": "Personal identity, public persona, and driving aspiration",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Identity:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -19263,9 +16170,6 @@ const cortexSpotlightTemplates = [
               "name": "Persona:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -19286,9 +16190,6 @@ const cortexSpotlightTemplates = [
               "name": "Aspiration:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -19338,15 +16239,11 @@ const cortexSpotlightTemplates = [
           "description": "Handler cockpit gear and personal assets",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19354,9 +16251,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19395,18 +16289,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "complications",
           "name": "Complications",
-          "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19414,9 +16303,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19506,15 +16392,11 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
           "ratingPosition": "below",
-          "tags": [],
           "traits": [
             {
               "name": "Prowess",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19522,9 +16404,6 @@ const cortexSpotlightTemplates = [
               "name": "Control",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19532,9 +16411,6 @@ const cortexSpotlightTemplates = [
               "name": "Renown",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19593,28 +16469,18 @@ const cortexSpotlightTemplates = [
           "description": "Chassis type, operational history, and battle stance",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Type:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 },
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -19622,9 +16488,6 @@ const cortexSpotlightTemplates = [
               "name": "History:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -19641,16 +16504,10 @@ const cortexSpotlightTemplates = [
               "name": "Battle:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             }
@@ -19687,15 +16544,11 @@ const cortexSpotlightTemplates = [
           "description": "Colossal kaiju-annihilation weaponry",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19703,9 +16556,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19713,9 +16563,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19723,9 +16570,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19765,15 +16609,11 @@ const cortexSpotlightTemplates = [
           "description": "Secondary titan systems and ordnance",
           "nounSingular": "Power",
           "nounPlural": "Powers",
-          "tags": [],
           "traits": [
             {
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19781,9 +16621,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19791,9 +16628,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19801,9 +16635,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -19840,10 +16671,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "session-record",
           "name": "Session Record",
-          "description": "",
           "nounSingular": "Session",
           "nounPlural": "Sessions",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -19928,15 +16757,11 @@ const cortexSpotlightTemplates = [
           "description": "Team configuration ratings",
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
-          "tags": [],
           "traits": [
             {
               "name": "Solo",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19944,9 +16769,6 @@ const cortexSpotlightTemplates = [
               "name": "Partner",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -19954,9 +16776,6 @@ const cortexSpotlightTemplates = [
               "name": "Squad",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20011,15 +16830,11 @@ const cortexSpotlightTemplates = [
           "description": "Civic investigation disciplines",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Forensics",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20027,9 +16842,6 @@ const cortexSpotlightTemplates = [
               "name": "Investigation",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20037,9 +16849,6 @@ const cortexSpotlightTemplates = [
               "name": "Legal",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20047,9 +16856,6 @@ const cortexSpotlightTemplates = [
               "name": "Medicine",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20057,9 +16863,6 @@ const cortexSpotlightTemplates = [
               "name": "Psychology",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20067,9 +16870,6 @@ const cortexSpotlightTemplates = [
               "name": "Tactics",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20077,9 +16877,6 @@ const cortexSpotlightTemplates = [
               "name": "Technology",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20120,7 +16917,6 @@ const cortexSpotlightTemplates = [
           "description": "Civic assets, contacts, and backup",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "",
@@ -20129,9 +16925,6 @@ const cortexSpotlightTemplates = [
                 10,
                 10
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20142,9 +16935,6 @@ const cortexSpotlightTemplates = [
                 8,
                 8
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20155,9 +16945,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20168,9 +16955,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20178,9 +16962,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20188,9 +16969,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20198,9 +16976,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20208,9 +16983,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20263,15 +17035,11 @@ const cortexSpotlightTemplates = [
           "description": "Defining history, drive, and complication",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Distinction #1:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -20281,9 +17049,6 @@ const cortexSpotlightTemplates = [
               "name": "Distinction #2:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -20293,9 +17058,6 @@ const cortexSpotlightTemplates = [
               "name": "Distinction #3:",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -20336,15 +17098,11 @@ const cortexSpotlightTemplates = [
           "description": "Training tricks and case-cracking knacks",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "Talent #1:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20352,9 +17110,6 @@ const cortexSpotlightTemplates = [
               "name": "Talent #2:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20362,9 +17117,6 @@ const cortexSpotlightTemplates = [
               "name": "Talent #3:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20372,9 +17124,6 @@ const cortexSpotlightTemplates = [
               "name": "Talent #4:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20382,9 +17131,6 @@ const cortexSpotlightTemplates = [
               "name": "Talent #5:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20392,9 +17138,6 @@ const cortexSpotlightTemplates = [
               "name": "Talent #6:",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20429,15 +17172,11 @@ const cortexSpotlightTemplates = [
           "description": "Emotional and physical pressure tracks",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "Afraid",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20445,9 +17184,6 @@ const cortexSpotlightTemplates = [
               "name": "Angry",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20455,9 +17191,6 @@ const cortexSpotlightTemplates = [
               "name": "Anxious",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20465,9 +17198,6 @@ const cortexSpotlightTemplates = [
               "name": "Exhausted",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20475,9 +17205,6 @@ const cortexSpotlightTemplates = [
               "name": "Injured",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20518,14 +17245,11 @@ const cortexSpotlightTemplates = [
           "description": "Base d6 d6",
           "nounSingular": "Growth Die",
           "nounPlural": "Growth Dice",
-          "tags": [],
           "traits": [
             {
               "name": "D4",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -20536,8 +17260,6 @@ const cortexSpotlightTemplates = [
               "name": "D6",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -20548,8 +17270,6 @@ const cortexSpotlightTemplates = [
               "name": "D8",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -20560,8 +17280,6 @@ const cortexSpotlightTemplates = [
               "name": "D10",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -20572,8 +17290,6 @@ const cortexSpotlightTemplates = [
               "name": "D12",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -20610,6 +17326,10 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "20%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         }
@@ -20670,7 +17390,6 @@ const cortexSpotlightTemplates = [
       "portrait": {
         "url": "",
         "alt": "Character Portrait",
-        "tags": [],
         "view": {
           "alignment": "center-center",
           "size": "spotlight",
@@ -20681,18 +17400,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-distinctions",
           "name": "Distinctions",
-          "description": "",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Walking Style Guide",
               "value": 8,
               "dice": [],
               "description": "Every layout edge case deserves a test.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
@@ -20706,17 +17421,11 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder",
                 {
-                  "name": "",
-                  "description": "",
-                  "tags": [],
-                  "custom": {}
+                  "name": ""
                 }
               ]
             },
@@ -20724,9 +17433,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 "hinder"
@@ -20787,20 +17493,16 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-values-statements",
           "name": "Values",
-          "description": "",
           "nounSingular": "Value",
           "nounPlural": "Values",
           "statement": true,
           "hasQuestionedPip": true,
-          "tags": [],
           "traits": [
             {
               "name": "Craft",
               "value": 10,
               "dice": [],
               "description": "Form and function are inseparable.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20810,8 +17512,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "Ship early, refine relentlessly.",
               "questioned": true,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -20819,9 +17519,6 @@ const cortexSpotlightTemplates = [
               "name": "Clarity",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20870,25 +17567,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-subtrait-columns",
           "name": "Skills",
-          "description": "",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Engineering",
               "value": 10,
               "dice": [],
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Clockwork",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -20896,9 +17586,6 @@ const cortexSpotlightTemplates = [
                   "name": "Aetherics",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -20909,16 +17596,11 @@ const cortexSpotlightTemplates = [
               "name": "Navigation",
               "value": 8,
               "dice": [],
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Star Charts",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -20929,9 +17611,6 @@ const cortexSpotlightTemplates = [
               "name": "Diplomacy",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -20963,27 +17642,20 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-paired-slots",
           "name": "Standing",
-          "description": "",
           "nounSingular": "Standing",
           "nounPlural": "Standings",
           "statement": true,
-          "tags": [],
           "traits": [
             {
               "name": "The Guild",
               "value": 8,
               "dice": [],
               "description": "They owe me a drydock bay.",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Complication",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -20991,9 +17663,6 @@ const cortexSpotlightTemplates = [
                   "name": "Bonus",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -21004,9 +17673,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21050,20 +17716,16 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-die-rows",
           "name": "Badges",
-          "description": "",
           "nounSingular": "Badge",
           "nounPlural": "Badges",
           "hasCounterColumn": true,
           "counterLabel": "XP",
-          "tags": [],
           "traits": [
             {
               "name": "First Responder",
               "value": 8,
               "dice": [],
               "xp": 3,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21072,8 +17734,6 @@ const cortexSpotlightTemplates = [
               "value": 6,
               "dice": [],
               "xp": 1,
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21081,9 +17741,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21121,18 +17778,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-three-col-table",
           "name": "Talents",
-          "description": "",
           "nounSingular": "Talent",
           "nounPlural": "Talents",
-          "tags": [],
           "traits": [
             {
               "name": "Overclock",
               "value": 0,
               "dice": [],
               "description": "Spend 1 PP when rolling Engineering.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -21145,9 +17798,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21181,10 +17831,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-dice-count",
           "name": "Resources",
-          "description": "",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "Salvage Cache",
@@ -21194,8 +17842,6 @@ const cortexSpotlightTemplates = [
                 8,
                 8
               ],
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21206,8 +17852,6 @@ const cortexSpotlightTemplates = [
                 6,
                 6
               ],
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21241,18 +17885,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-stress",
           "name": "Stress",
-          "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "Physical",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21260,8 +17899,6 @@ const cortexSpotlightTemplates = [
               "name": "Mental",
               "value": 0,
               "dice": [],
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21269,9 +17906,6 @@ const cortexSpotlightTemplates = [
               "name": "Social",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21306,18 +17940,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-dice-ladder",
           "name": "Growth Ladder",
-          "description": "",
           "nounSingular": "Rung",
           "nounPlural": "Rungs",
-          "tags": [],
           "traits": [
             {
               "name": "Novice",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21325,9 +17954,6 @@ const cortexSpotlightTemplates = [
               "name": "Adept",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21335,9 +17961,6 @@ const cortexSpotlightTemplates = [
               "name": "Master",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21365,18 +17988,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-labeled-fields",
           "name": "Dossier",
-          "description": "",
           "nounSingular": "Field",
           "nounPlural": "Fields",
-          "tags": [],
           "traits": [
             {
               "name": "Origin",
               "value": 0,
               "dice": [],
               "description": "Outer Rim Shipyard #4",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21385,8 +18004,6 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Restore the lost fleet",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21394,8 +18011,6 @@ const cortexSpotlightTemplates = [
               "name": "Quirk",
               "value": 0,
               "dice": [],
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21423,10 +18038,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-pips",
           "name": "Progress Track",
-          "description": "",
           "nounSingular": "Pip",
           "nounPlural": "Pips",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -21452,18 +18065,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-session-record",
           "name": "Session Record",
-          "description": "",
           "nounSingular": "Session",
           "nounPlural": "Sessions",
-          "tags": [],
           "traits": [
             {
               "name": "Session 1: The Awakening",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21471,8 +18079,6 @@ const cortexSpotlightTemplates = [
               "name": "Session 2: Crossing the Threshold",
               "value": 0,
               "dice": [],
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21480,9 +18086,6 @@ const cortexSpotlightTemplates = [
               "name": "",
               "value": 0,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21509,18 +18112,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-two-col-compact",
           "name": "Roles (Compact Two-Column)",
-          "description": "",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Tactician",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21528,9 +18126,6 @@ const cortexSpotlightTemplates = [
               "name": "Outrider",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21538,9 +18133,6 @@ const cortexSpotlightTemplates = [
               "name": "Scholar",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21548,9 +18140,6 @@ const cortexSpotlightTemplates = [
               "name": "Sentinel",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21578,10 +18167,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-notes",
           "name": "Notes",
-          "description": "",
           "nounSingular": "Note",
           "nounPlural": "Notes",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -21602,18 +18189,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-detailed-columns",
           "name": "Detailed Columns",
-          "description": "",
           "nounSingular": "Entry",
           "nounPlural": "Entries",
-          "tags": [],
           "traits": [
             {
               "name": "Alpha",
               "value": 8,
               "dice": [],
               "description": "First detailed entry.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21622,8 +18205,6 @@ const cortexSpotlightTemplates = [
               "value": 6,
               "dice": [],
               "description": "Second detailed entry.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21632,8 +18213,6 @@ const cortexSpotlightTemplates = [
               "value": 10,
               "dice": [],
               "description": "Third detailed entry.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21642,8 +18221,6 @@ const cortexSpotlightTemplates = [
               "value": 8,
               "dice": [],
               "description": "Fourth detailed entry.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21671,26 +18248,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-resource-pool",
           "name": "Resource Pool",
-          "description": "",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "Supply",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Ammo",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -21701,9 +18270,6 @@ const cortexSpotlightTemplates = [
               "name": "Fuel",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21711,9 +18277,6 @@ const cortexSpotlightTemplates = [
               "name": "Intel",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21741,18 +18304,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-assets",
           "name": "Signature Assets",
-          "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "tags": [],
           "traits": [
             {
               "name": "Custom Sidearm",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21760,9 +18318,6 @@ const cortexSpotlightTemplates = [
               "name": "Survey Kit",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21770,9 +18325,6 @@ const cortexSpotlightTemplates = [
               "name": "Encrypted Comms",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21800,18 +18352,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-list",
           "name": "Simple List",
-          "description": "",
           "nounSingular": "Item",
           "nounPlural": "Items",
-          "tags": [],
           "traits": [
             {
               "name": "Item One",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21819,9 +18366,6 @@ const cortexSpotlightTemplates = [
               "name": "Item Two",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -21829,9 +18373,6 @@ const cortexSpotlightTemplates = [
               "name": "Item Three",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -21859,10 +18400,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "ks-image",
           "name": "Image Set",
-          "description": "",
           "nounSingular": "Image",
           "nounPlural": "Images",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -21941,18 +18480,14 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-roles",
           "name": "Roles & Masteries",
-          "description": "",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "tags": [],
           "traits": [
             {
               "name": "Commander",
               "value": 8,
               "dice": [],
               "description": "Direct allies and coordinate tactical movement.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -21966,8 +18501,6 @@ const cortexSpotlightTemplates = [
               "value": 8,
               "dice": [],
               "description": "Bypass security systems and move undetected.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -21981,8 +18514,6 @@ const cortexSpotlightTemplates = [
               "value": 8,
               "dice": [],
               "description": "Analyze technical anomalies and reverse-engineer artifacts.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -22012,26 +18543,18 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-skills",
           "name": "Skills & Specialties",
-          "description": "",
           "nounSingular": "Skill",
           "nounPlural": "Skills",
-          "tags": [],
           "traits": [
             {
               "name": "Engineering",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Clockwork",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -22039,9 +18562,6 @@ const cortexSpotlightTemplates = [
                   "name": "Aetherics",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -22052,17 +18572,11 @@ const cortexSpotlightTemplates = [
               "name": "Navigation",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Star Charts",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -22070,9 +18584,6 @@ const cortexSpotlightTemplates = [
                   "name": "Sub-Light",
                   "value": 10,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -22083,17 +18594,11 @@ const cortexSpotlightTemplates = [
               "name": "Diplomacy",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "High Society",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -22101,9 +18606,6 @@ const cortexSpotlightTemplates = [
                   "name": "Street Smart",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -22128,33 +18630,29 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "66.666%",
               "height": 1
+            },
+            "labels": {
+              "left": "SKILL",
+              "right": "SPECIALTIES"
             }
           }
         },
         {
           "id": "ls-standing",
           "name": "Standing",
-          "description": "",
           "nounSingular": "Standing",
           "nounPlural": "Standings",
-          "tags": [],
           "traits": [
             {
               "name": "The Syndicate",
               "value": 8,
               "dice": [],
-              "description": "",
               "statement": "Debts are never forgotten.",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Complication",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -22162,9 +18660,6 @@ const cortexSpotlightTemplates = [
                   "name": "Bonus",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -22175,18 +18670,12 @@ const cortexSpotlightTemplates = [
               "name": "The Vanguard",
               "value": 6,
               "dice": [],
-              "description": "",
               "statement": "Honor bound to protect.",
-              "tags": [],
-              "custom": {},
               "traits": [
                 {
                   "name": "Complication",
                   "value": 6,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 },
@@ -22194,9 +18683,6 @@ const cortexSpotlightTemplates = [
                   "name": "Bonus",
                   "value": 8,
                   "dice": [],
-                  "description": "",
-                  "tags": [],
-                  "custom": {},
                   "traits": [],
                   "sfx": []
                 }
@@ -22221,16 +18707,18 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
+            },
+            "labels": {
+              "slot0": "COMPLICATION",
+              "slot1": "BONUS"
             }
           }
         },
         {
           "id": "ls-values",
           "name": "Values",
-          "description": "",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "tags": [],
           "traits": [
             {
               "name": "Craft",
@@ -22238,8 +18726,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "Form and function are inseparable.",
               "statement": "Form and function are inseparable.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -22249,8 +18735,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "Ship early, refine relentlessly.",
               "statement": "Ship early, refine relentlessly.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -22260,8 +18744,6 @@ const cortexSpotlightTemplates = [
               "dice": [],
               "description": "Truth cuts through ambiguity.",
               "statement": "Truth cuts through ambiguity.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -22283,24 +18765,25 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.333%",
               "height": 1
+            },
+            "labels": {
+              "col1": "TALENT",
+              "col2": "ACTIVATION",
+              "col3": "EFFECT"
             }
           }
         },
         {
           "id": "ls-distinctions",
           "name": "Distinctions",
-          "description": "",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "tags": [],
           "traits": [
             {
               "name": "Voidborn Pioneer",
               "value": 8,
               "dice": [],
               "description": "Accustomed to zero-G and cold vacuum.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -22314,8 +18797,6 @@ const cortexSpotlightTemplates = [
               "value": 8,
               "dice": [],
               "description": "Upgraded with experimental neural cyberware.",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": [
                 {
@@ -22350,17 +18831,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-growth",
           "name": "Growth Pool",
-          "description": "",
           "nounSingular": "Growth Die",
           "nounPlural": "Growth Dice",
-          "tags": [],
           "traits": [
             {
               "name": "D4",
               "value": 4,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22371,8 +18848,6 @@ const cortexSpotlightTemplates = [
               "name": "D6",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22383,8 +18858,6 @@ const cortexSpotlightTemplates = [
               "name": "D8",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22395,8 +18868,6 @@ const cortexSpotlightTemplates = [
               "name": "D10",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22407,8 +18878,6 @@ const cortexSpotlightTemplates = [
               "name": "D12",
               "value": 12,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22435,24 +18904,23 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         },
         {
           "id": "ls-badges",
           "name": "Badges & Commendations",
-          "description": "",
           "nounSingular": "Badge",
           "nounPlural": "Badges",
-          "tags": [],
           "traits": [
             {
               "name": "Fleet Veteran",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -22460,9 +18928,6 @@ const cortexSpotlightTemplates = [
               "name": "High Jump",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -22470,9 +18935,6 @@ const cortexSpotlightTemplates = [
               "name": "Master Hacker",
               "value": 10,
               "dice": [],
-              "description": "",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -22500,17 +18962,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-resources",
           "name": "Resources & Supplies",
-          "description": "",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "tags": [],
           "traits": [
             {
               "name": "Crew Complement",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22521,8 +18979,6 @@ const cortexSpotlightTemplates = [
               "name": "Emergency Fuel",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22533,8 +18989,6 @@ const cortexSpotlightTemplates = [
               "name": "Intel Network",
               "value": 8,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22559,24 +19013,24 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.334%",
               "height": 1
+            },
+            "labels": {
+              "rating": "RATING",
+              "dice": "/ DICE"
             }
           }
         },
         {
           "id": "ls-dossier",
           "name": "Personnel Dossier",
-          "description": "",
           "nounSingular": "Field",
           "nounPlural": "Fields",
-          "tags": [],
           "traits": [
             {
               "name": "Homeworld",
               "value": 0,
               "dice": [],
               "description": "Kepler-452b Core Colony",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -22585,8 +19039,6 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Level 5 Special Access",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             },
@@ -22595,8 +19047,6 @@ const cortexSpotlightTemplates = [
               "value": 0,
               "dice": [],
               "description": "Independent Free-Trader Collective",
-              "tags": [],
-              "custom": {},
               "traits": [],
               "sfx": []
             }
@@ -22624,17 +19074,13 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-stress",
           "name": "Stress",
-          "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "tags": [],
           "traits": [
             {
               "name": "Physical",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22646,8 +19092,6 @@ const cortexSpotlightTemplates = [
               "name": "Mental",
               "value": 6,
               "dice": [],
-              "description": "",
-              "tags": [],
               "traits": [],
               "sfx": [],
               "view": {
@@ -22685,10 +19129,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-notes",
           "name": "Field Notes",
-          "description": "",
           "nounSingular": "Note",
           "nounPlural": "Notes",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {
@@ -22709,10 +19151,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "ls-session-record",
           "name": "Mission Chronicle",
-          "description": "",
           "nounSingular": "Session",
           "nounPlural": "Sessions",
-          "tags": [],
           "traits": [],
           "sfx": [],
           "view": {

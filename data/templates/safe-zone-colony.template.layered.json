@@ -52,7 +52,6 @@
         "description": "Building Benefits:",
         "nounSingular": "Essential Stockpile",
         "nounPlural": "Essential Stockpiles",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -77,24 +76,15 @@
         "traits": {
           "Food": {
             "value": "12d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Water": {
             "value": "12d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Shelter": {
             "value": "12d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           }
         }
       },
@@ -103,7 +93,6 @@
         "description": "Building Benefits:",
         "nounSingular": "Non-Essential Stockpile",
         "nounPlural": "Non-Essential Stockpiles",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -128,33 +117,22 @@
         "traits": {
           "Medicine": {
             "value": "12d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Protection": {
             "value": "12d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Tools": {
             "value": "12d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           }
         }
       },
       "Building 1": {
         "id": "building-1",
-        "description": "",
         "nounSingular": "Building",
         "nounPlural": "Buildings",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -191,33 +169,18 @@
         },
         "traits": {
           "Name:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "d6 Benefit:": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "d8 Benefit:": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "d10 Benefit:": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "d12 Benefit:": {
-                "value": "d12",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d12"
               }
             }
           }
@@ -225,10 +188,8 @@
       },
       "Building 2": {
         "id": "building-2",
-        "description": "",
         "nounSingular": "Building",
         "nounPlural": "Buildings",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -265,33 +226,18 @@
         },
         "traits": {
           "Name:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "d6 Benefit:": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "d8 Benefit:": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "d10 Benefit:": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "d12 Benefit:": {
-                "value": "d12",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d12"
               }
             }
           }
@@ -299,10 +245,8 @@
       },
       "Building 3": {
         "id": "building-3",
-        "description": "",
         "nounSingular": "Building",
         "nounPlural": "Buildings",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -339,33 +283,18 @@
         },
         "traits": {
           "Name:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "d6 Benefit:": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "d8 Benefit:": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "d10 Benefit:": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "d12 Benefit:": {
-                "value": "d12",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d12"
               }
             }
           }
@@ -373,10 +302,8 @@
       },
       "Building 4": {
         "id": "building-4",
-        "description": "",
         "nounSingular": "Building",
         "nounPlural": "Buildings",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -413,33 +340,18 @@
         },
         "traits": {
           "Name:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "d6 Benefit:": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "d8 Benefit:": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "d10 Benefit:": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "d12 Benefit:": {
-                "value": "d12",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d12"
               }
             }
           }
@@ -447,10 +359,8 @@
       },
       "Building 5": {
         "id": "building-5",
-        "description": "",
         "nounSingular": "Building",
         "nounPlural": "Buildings",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -487,33 +397,18 @@
         },
         "traits": {
           "Name:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "d6 Benefit:": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "d8 Benefit:": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "d10 Benefit:": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "d12 Benefit:": {
-                "value": "d12",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d12"
               }
             }
           }
@@ -521,10 +416,8 @@
       },
       "Building 6": {
         "id": "building-6",
-        "description": "",
         "nounSingular": "Building",
         "nounPlural": "Buildings",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -561,33 +454,18 @@
         },
         "traits": {
           "Name:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "d6 Benefit:": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "d8 Benefit:": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "d10 Benefit:": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               },
               "d12 Benefit:": {
-                "value": "d12",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d12"
               }
             }
           }
@@ -595,11 +473,9 @@
       },
       "Survivor 1": {
         "id": "survivor-1",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -629,43 +505,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 2": {
         "id": "survivor-2",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -695,43 +551,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 3": {
         "id": "survivor-3",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -761,43 +597,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 4": {
         "id": "survivor-4",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -827,43 +643,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 5": {
         "id": "survivor-5",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -893,43 +689,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 6": {
         "id": "survivor-6",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -959,43 +735,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 7": {
         "id": "survivor-7",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -1025,43 +781,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 8": {
         "id": "survivor-8",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -1091,43 +827,23 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Survivor 9": {
         "id": "survivor-9",
-        "description": "",
         "nounSingular": "Survivor",
         "nounPlural": "Survivors",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -1157,42 +873,22 @@
         },
         "traits": {
           "Morale": {
-            "description": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         },
         "slots": {
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Notes": {
         "id": "colony-projects",
-        "description": "",
         "nounSingular": "Note",
         "nounPlural": "Notes",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",

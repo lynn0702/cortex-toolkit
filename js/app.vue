@@ -35,7 +35,7 @@ const dicePool = ref( new cortexPal.DicePool() );
 const isRollerOpen = ref( false );
 const rollerPosition = ref( 'right' );
 const isStudioPanelOpen = ref( true );
-const studioPanelTab = ref<'properties' | 'roller'>( 'properties' );
+	const studioPanelTab = ref<'properties' | 'roller' | 'json'>( 'properties' );
 const panelPosition = ref<'left' | 'right'>( 'right' );
 const mobileActiveView = ref( 'sheet' );
 const storeReady = ref( false );
@@ -228,7 +228,7 @@ function toggleRoller() {
 	}
 }
 
-function handleToggleStudio( tab: 'properties' | 'roller' ) {
+function handleToggleStudio( tab: 'properties' | 'roller' | 'json' ) {
 	if ( isStudioPanelOpen.value && studioPanelTab.value === tab ) {
 		isStudioPanelOpen.value = false;
 		isRollerOpen.value = false;
@@ -1187,6 +1187,7 @@ defineExpose( {
 	localData, characters, characterID, openCharacterIDs, sheetTemplates, prefs,
 	playViewMode, isAddCharacterModalOpen, sessionCharacterSearch, mode, submode,
 	editing, viewY, dicePool, isRollerOpen, rollerPosition, mobileActiveView,
+	isStudioPanelOpen, studioPanelTab, panelPosition,
 	toastMessage, history, historyIndex, storeReady, storeError,
 	character, openCharacters, availableToOpen, pendingTemplateUpdate,
 	canUndo, canRedo, safeImageUrl,
@@ -1243,11 +1244,12 @@ defineExpose( {
 					:panelTab="studioPanelTab"
 					:dicePool="dicePool"
 					:viewY="viewY"
-					@update:panelTab="studioPanelTab = $event"
-					@update:isOpen="isStudioPanelOpen = $event; isRollerOpen = $event"
-					@togglePosition="togglePanelPosition"
-					@selectElement="selectElement"
-					@updateCharacter="updateCharacter"
+				@update:panelTab="studioPanelTab = $event"
+				@update:isOpen="isStudioPanelOpen = $event; isRollerOpen = $event"
+				@togglePosition="togglePanelPosition"
+				@selectElement="selectElement"
+				@updateCharacter="updateCharacter"
+				@applyJson="importCharacter"
 					@removeTrait="removeTrait"
 					@removeTraitSet="removeTraitSet"
 					@saveSheetTemplate="saveSheetTemplate"

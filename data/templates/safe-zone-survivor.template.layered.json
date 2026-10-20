@@ -52,7 +52,6 @@
         "description": "Pre-fall life, current survival role, and future hope",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -76,9 +75,6 @@
         "traits": {
           "Before:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -89,9 +85,6 @@
           },
           "Now:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -102,9 +95,6 @@
           },
           "Future:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -120,7 +110,6 @@
         "description": "Practical survival disciplines (d4-d6) with specialized traits (d8-d12)",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -159,243 +148,103 @@
         },
         "traits": {
           "Animals": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Athletics": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Big Guns": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Covert": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Craft": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Creativity": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Drive": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Focus": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Guns": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Influence": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Knowledge": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Mechanic": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Melee": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Notice": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Operate": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Pilot": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Survival": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Thrown": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Treatment": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Unarmed": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           }
         }
@@ -405,7 +254,6 @@
         "description": "Core survival attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -438,21 +286,9 @@
           }
         },
         "traits": {
-          "Analytical": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Forceful": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Quiet": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Analytical": {},
+          "Forceful": {},
+          "Quiet": {}
         }
       },
       "Relationships": {
@@ -460,7 +296,6 @@
         "description": "Ties to fellow survivors in the camp",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -493,56 +328,16 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "6": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "7": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "8": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "9": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {}
         }
       },
       "Stress": {
@@ -550,7 +345,6 @@
         "description": "Survivor stress and trauma",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -582,31 +376,11 @@
           }
         },
         "traits": {
-          "Injured": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Isolated": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sick": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Tired": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Upset": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Injured": {},
+          "Isolated": {},
+          "Sick": {},
+          "Tired": {},
+          "Upset": {}
         }
       },
       "Talents": {
@@ -614,7 +388,6 @@
         "description": "Survivor tricks and knacks",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -634,25 +407,18 @@
             "top": 4,
             "width": "66.663%",
             "height": 1
+          },
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
           }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Growth Pool": {
@@ -660,7 +426,6 @@
         "description": "Survivor growth dice",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -689,45 +454,39 @@
             "top": 4,
             "width": "33.334%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "D4": {
             "value": "d4",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
             "value": "d10",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
             "value": "d12",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }

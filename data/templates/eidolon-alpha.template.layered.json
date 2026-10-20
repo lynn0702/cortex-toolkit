@@ -45,7 +45,6 @@
         "description": "Prime vocations and endarch callings",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -89,26 +88,10 @@
           }
         },
         "traits": {
-          "Warrior": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Priest": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Scout": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Other": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Warrior": {},
+          "Priest": {},
+          "Scout": {},
+          "Other": {}
         }
       },
       "Attributes": {
@@ -117,7 +100,6 @@
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -177,31 +159,11 @@
           }
         },
         "traits": {
-          "Courage": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Grace": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Guile": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Reason": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Vigor": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Courage": {},
+          "Grace": {},
+          "Guile": {},
+          "Reason": {},
+          "Vigor": {}
         }
       },
       "Endarch Distinction": {
@@ -209,7 +171,6 @@
         "description": "Ancestral endarch patron and its three bound powers",
         "nounSingular": "Endarch Distinction",
         "nounPlural": "Endarch Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -241,27 +202,15 @@
         "slots": {
           "0": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Power 1": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Power 2": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Power 3": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "SFX": {
                 "traits": {
@@ -273,15 +222,9 @@
                   }
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  },
-                  "3": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {},
+                  "3": {}
                 }
               }
             }
@@ -293,7 +236,6 @@
         "description": "Manifested eidolon form: base trait, scale, powers, highlights",
         "nounSingular": "Eidolon Trait",
         "nounPlural": "Eidolon Traits",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -328,45 +270,25 @@
           "Base Trait": {
             "value": "2d10",
             "pool": true,
-            "description": "d10 d10 or d4 d4",
-            "tags": [],
-            "custom": {}
+            "description": "d10 d10 or d4 d4"
           },
           "Scale": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Power 1": {
-            "value": "d12",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d12"
           },
           "Power 2": {
-            "value": "d12",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d12"
           },
           "Power 3": {
-            "value": "d12",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d12"
           },
           "Highlight Attribute 1": {
-            "value": "d12",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d12"
           },
           "Highlight Attribute 2": {
-            "value": "d12",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d12"
           }
         }
       },
@@ -375,7 +297,6 @@
         "description": "Chosen calling and personal definition",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -403,9 +324,6 @@
         "traits": {
           "Role Distinction": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -416,9 +334,6 @@
           },
           "Freeform Distinction": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -434,7 +349,6 @@
         "description": "Experience points bubble track",
         "nounSingular": "XP",
         "nounPlural": "XP",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",

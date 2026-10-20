@@ -5,6 +5,7 @@ import TraitSetEditor from './trait-set-editor.vue';
 import PortraitEditor from './portrait-editor.vue';
 import NameEditor from './name-editor.vue';
 import DiceRoller from './dice-roller.vue';
+import JsonEditor from './json-editor.vue';
 
 const props = withDefaults( defineProps<{
 	character?: any;
@@ -13,7 +14,7 @@ const props = withDefaults( defineProps<{
 	mode?: string;
 	isOpen?: boolean;
 	position?: 'left' | 'right';
-	panelTab?: 'properties' | 'roller';
+	panelTab?: 'properties' | 'roller' | 'json';
 	dicePool?: any;
 	viewY?: number | null;
 }>(), {
@@ -26,11 +27,12 @@ const props = withDefaults( defineProps<{
 } );
 
 const emit = defineEmits<{
-	( e: 'update:panelTab', tab: 'properties' | 'roller' ): void;
+	( e: 'update:panelTab', tab: 'properties' | 'roller' | 'json' ): void;
 	( e: 'update:isOpen', open: boolean ): void;
 	( e: 'togglePosition' ): void;
 	( e: 'selectElement', selector: any[] ): void;
 	( e: 'updateCharacter', character: any ): void;
+	( e: 'applyJson', parsed: any ): void;
 	( e: 'removeTrait', traitSetID: number, traitID: number ): void;
 	( e: 'removeTraitSet', traitSetID: number ): void;
 	( e: 'saveSheetTemplate' ): void;
@@ -122,6 +124,14 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 				>
 					<i class="fas fa-dice-d20"></i> Roller
 					<span class="studio-tab-badge" v-if="diceCount > 0">{{ diceCount }}</span>
+				</button>
+				<button
+					type="button"
+					class="studio-tab-btn"
+					:class="{ active: panelTab === 'json' }"
+					@click="emit('update:panelTab', 'json')"
+				>
+					<i class="fas fa-code"></i> JSON
 				</button>
 			</div>
 
@@ -250,6 +260,19 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 					@removeDie="emit('removeDie', $event)"
 					@clearPool="emit('clearPool')"
 				/>
+			</div>
+
+			<!-- JSON PANE -->
+			<div v-show="panelTab === 'json'" class="studio-tab-pane">
+				<JsonEditor
+					v-if="character"
+					:key="'json-' + (character.id || 'none')"
+					:character="character"
+					@applyJson="emit('applyJson', $event)"
+				/>
+				<div v-else class="studio-empty-state">
+					<p>No character active.</p>
+				</div>
 			</div>
 		</div>
 	</aside>

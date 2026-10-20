@@ -39,6 +39,72 @@ export const cortexMigration = {
 		return !( typeof name === 'string' && name.length );
 	},
 
+	// Attached stress lives as an ordinary companion subtrait named for the
+	// set's stress label (default "Stress"); absent means no stress. These
+	// are the retired storage keys it replaces (custom.stress / trait.stress
+	// / custom.isStressOut), converted wherever old data enters.
+	stressCompanionLabel: function( set: any ) {
+		const bag = ( set && ( set.view || ( set.custom && set.custom.cortexToolkit ) ) ) || {};
+		const labels = bag.labels;
+		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+		const legacy = bag.attachedStress;
+		if ( legacy && typeof legacy === 'object' && typeof legacy.label === 'string' && legacy.label.length ) return legacy.label;
+		return 'Stress';
+	},
+
+	// Array-form trait: fold retired stress keys into a companion subtrait.
+	migrateStressKeys: function( tr: any, label: string ) {
+		if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
+		const custom = ( tr.custom && typeof tr.custom === 'object' ) ? tr.custom : null;
+		const raw = ( custom && typeof custom.stress === 'number' ) ? custom.stress
+			: ( typeof tr.stress === 'number' ? tr.stress : 0 );
+		const outFlag = Boolean( custom && custom.isStressOut === true );
+		if ( custom ) {
+			delete custom.stress;
+			delete custom.isStressOut;
+			if ( Object.keys( custom ).length === 0 ) delete tr.custom;
+		}
+		if ( typeof tr.stress === 'number' ) delete tr.stress;
+		if ( !raw && !outFlag ) return;
+		if ( !Array.isArray( tr.traits ) ) tr.traits = [];
+		let companion = tr.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === label );
+		if ( !companion ) {
+			companion = { name: label, value: 0, dice: [] };
+			tr.traits.push( companion );
+		}
+		if ( raw > 0 && !( typeof companion.value === 'number' && companion.value > 0 ) &&
+			!( Array.isArray( companion.dice ) && companion.dice.length ) ) {
+			companion.value = raw;
+			companion.dice = [];
+		}
+		if ( outFlag ) companion.isOut = true;
+	},
+
+	// Layered-form trait: same fold into the traits map (dice shorthand).
+	migrateLayeredStressKeys: function( tr: any, label: string ) {
+		if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
+		const custom = ( tr.custom && typeof tr.custom === 'object' ) ? tr.custom : null;
+		const raw = ( custom && typeof custom.stress === 'number' ) ? custom.stress
+			: ( typeof tr.stress === 'number' ? tr.stress : 0 );
+		const outFlag = Boolean( custom && custom.isStressOut === true );
+		if ( custom ) {
+			delete custom.stress;
+			delete custom.isStressOut;
+			if ( Object.keys( custom ).length === 0 ) delete tr.custom;
+		}
+		if ( typeof tr.stress === 'number' ) delete tr.stress;
+		if ( !raw && !outFlag ) return;
+		if ( !tr.traits || typeof tr.traits !== 'object' || Array.isArray( tr.traits ) ) tr.traits = {};
+		const existing = tr.traits[label];
+		if ( existing === undefined || existing === null ) {
+			if ( raw > 0 && !outFlag ) tr.traits[label] = 'd' + raw;
+			else if ( raw > 0 ) tr.traits[label] = { value: 'd' + raw, isOut: true };
+			else tr.traits[label] = { isOut: true };
+		} else if ( outFlag && typeof existing === 'object' && !Array.isArray( existing ) ) {
+			existing.isOut = true;
+		}
+	},
+
 	isFillerDescription: function( text: unknown ) {
 		return typeof text === 'string' && this.FILLER_DESCRIPTIONS.indexOf( text ) !== -1;
 	},
@@ -76,12 +142,13 @@ export const cortexMigration = {
 			}
 		};
 
-		const normalizeTraitsArray = ( traits: any ) => {
+		const normalizeTraitsArray = ( traits: any, label: string ) => {
 			if ( !Array.isArray( traits ) ) return;
 			traits.forEach( ( tr: any ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				normalizeNode( tr );
-				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits );
+				this.migrateStressKeys( tr, label );
+				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits, label );
 				if ( Array.isArray( tr.sfx ) ) {
 					tr.sfx.forEach( ( s: any ) => {
 						if ( s && typeof s === 'object' ) normalizeNode( s );
@@ -93,7 +160,7 @@ export const cortexMigration = {
 		const normalizeSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
-			normalizeTraitsArray( set.traits );
+			normalizeTraitsArray( set.traits, this.stressCompanionLabel( set ) );
 			if ( Array.isArray( set.sfx ) ) {
 				set.sfx.forEach( ( s: any ) => {
 					if ( s && typeof s === 'object' ) normalizeNode( s );
@@ -101,20 +168,22 @@ export const cortexMigration = {
 			}
 		};
 
-		const normalizeLayeredTraits = ( traits: any ) => {
+		const normalizeLayeredTraits = ( traits: any, label: string ) => {
 			if ( !traits || typeof traits !== 'object' || Array.isArray( traits ) ) return;
 			Object.values( traits ).forEach( ( tr: any ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				normalizeNode( tr );
-				if ( tr.traits ) normalizeLayeredTraits( tr.traits );
+				this.migrateLayeredStressKeys( tr, label );
+				if ( tr.traits ) normalizeLayeredTraits( tr.traits, label );
 			} );
 		};
 
 		const normalizeLayeredSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
-			if ( set.traits ) normalizeLayeredTraits( set.traits );
-			if ( set.slots ) normalizeLayeredTraits( set.slots );
+			const label = this.stressCompanionLabel( set );
+			if ( set.traits ) normalizeLayeredTraits( set.traits, label );
+			if ( set.slots ) normalizeLayeredTraits( set.slots, label );
 		};
 
 		normalizeNode( obj );
@@ -181,20 +250,20 @@ export const cortexMigration = {
 			}
 			if ( sfx && typeof sfx === 'object' && !Array.isArray( sfx ) ) {
 				const key = sfx.name;
-				if ( typeof key !== 'string' || !key.length ) {
-					const node: any = {};
-					if ( typeof sfx.description === 'string' && sfx.description.length ) node.description = sfx.description;
-					if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
-					if ( sfx.custom !== undefined ) node.custom = cloneDeep( sfx.custom );
-					slots[String( i )] = node;
-					return;
-				}
+			if ( typeof key !== 'string' || !key.length ) {
 				const node: any = {};
-				if ( typeof sfx.description === 'string' && sfx.description.length && !this.isFillerDescription( sfx.description ) ) {
-					node.description = sfx.description;
-				}
+				if ( typeof sfx.description === 'string' && sfx.description.length ) node.description = sfx.description;
 				if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
-				if ( sfx.custom !== undefined ) node.custom = cloneDeep( sfx.custom );
+				if ( sfx.custom !== undefined && !( typeof sfx.custom === 'object' && !Array.isArray( sfx.custom ) && !Object.keys( sfx.custom ).length ) ) node.custom = cloneDeep( sfx.custom );
+				slots[String( i )] = node;
+				return;
+			}
+			const node: any = {};
+			if ( typeof sfx.description === 'string' && sfx.description.length && !this.isFillerDescription( sfx.description ) ) {
+				node.description = sfx.description;
+			}
+			if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
+			if ( sfx.custom !== undefined && !( typeof sfx.custom === 'object' && !Array.isArray( sfx.custom ) && !Object.keys( sfx.custom ).length ) ) node.custom = cloneDeep( sfx.custom );
 				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate sfx ' + JSON.stringify( key ) + ', last wins' );
 				map[key] = node;
 				return;
@@ -520,7 +589,7 @@ export const cortexMigration = {
 	// Scalar trait keys carried verbatim (presence preserved) in templates.
 	TEMPLATE_TRAIT_SCALARS: ['description', 'statement', 'questioned', 'xp', 'counter', 'ratingPosition', 'tags'] as string[],
 
-	migrateTemplateTrait: function( old: any, warnings: string[], path: string ): any {
+	migrateTemplateTrait: function( old: any, warnings: string[], path: string, stressLabel?: string ): any {
 		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
 			this.warn( warnings, path + ': dropped non-object trait' );
 			return null;
@@ -534,19 +603,45 @@ export const cortexMigration = {
 			node.value = dice[0];
 		}
 		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
-			if ( old[k] !== undefined ) {
-				node[k] = ( Array.isArray( old[k] ) ) ? old[k].slice() : old[k];
-			}
+			if ( old[k] === undefined ) return;
+			// Canonical emit: empty scaffolding stays out (absence carries
+			// the same meaning); every other scalar keeps presence.
+			if ( k === 'tags' && Array.isArray( old[k] ) && !old[k].length ) return;
+			if ( k === 'description' && old[k] === '' ) return;
+			node[k] = ( Array.isArray( old[k] ) ) ? old[k].slice() : old[k];
 		} );
 		if ( old.view !== undefined ) node.view = cloneDeep( old.view );
-		if ( old.custom !== undefined ) node.custom = cloneDeep( old.custom );
+		if ( old.custom !== undefined ) {
+			const rest = Object.keys( old.custom ).filter( ( ck: string ) => ck !== 'stress' && ck !== 'isStressOut' );
+			if ( rest.length ) {
+				node.custom = {};
+				rest.forEach( ( ck: string ) => { node.custom[ck] = cloneDeep( old.custom[ck] ); } );
+			}
+		}
 		if ( old.id !== undefined ) {
 			this.warn( warnings, path + ': dropped trait-level id (D1)' );
 		}
-		const subs = this.splitTemplateTraits( old.traits, warnings, path );
+		const subs = this.splitTemplateTraits( old.traits, warnings, path, stressLabel );
 		if ( subs && ( Object.keys( subs.map ).length || Object.keys( subs.slots ).length ) ) {
 			if ( Object.keys( subs.map ).length ) node.traits = subs.map;
 			if ( Object.keys( subs.slots ).length ) node.slots = subs.slots;
+		}
+		// Retired stress keys become a companion subtrait (addendum
+		// 2026-10-20); zero/absent means no stress.
+		const label = ( typeof stressLabel === 'string' && stressLabel.length ) ? stressLabel : 'Stress';
+		const customBag = ( old.custom && typeof old.custom === 'object' ) ? old.custom : {};
+		const stressRaw = ( typeof customBag.stress === 'number' ) ? customBag.stress
+			: ( typeof old.stress === 'number' ? old.stress : 0 );
+		const stressOut = customBag.isStressOut === true;
+		if ( stressRaw > 0 || stressOut ) {
+			if ( !node.traits ) node.traits = {};
+			if ( node.traits[label] === undefined || node.traits[label] === null ) {
+				if ( stressRaw > 0 && !stressOut ) node.traits[label] = 'd' + stressRaw;
+				else if ( stressRaw > 0 ) node.traits[label] = { value: 'd' + stressRaw, isOut: true };
+				else node.traits[label] = { isOut: true };
+			} else if ( stressOut && typeof node.traits[label] === 'object' && !Array.isArray( node.traits[label] ) ) {
+				node.traits[label].isOut = true;
+			}
 		}
 		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
 			if ( !node.traits ) node.traits = {};
@@ -558,15 +653,15 @@ export const cortexMigration = {
 	// Split an old traits array into named map (source order) + slots object
 	// keyed by 0-based position in the full trait order. Pure SFX containers
 	// take no position (addressed, not positional).
-	splitTemplateTraits: function( traits: any, warnings: string[], path: string ) {
+	splitTemplateTraits: function( traits: any, warnings: string[], path: string, stressLabel?: string ) {
 		const map: any = {}, slots: any = {};
 		( Array.isArray( traits ) ? traits : [] ).forEach( ( tr: any, i: number ) => {
 			if ( tr && typeof tr === 'object' && !Array.isArray( tr ) && typeof tr.name === 'string' && tr.name.length ) {
 				const key = tr.name;
 				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate trait ' + JSON.stringify( key ) + ', last wins' );
-				map[key] = this.migrateTemplateTrait( tr, warnings, path + '/' + key );
+				map[key] = this.migrateTemplateTrait( tr, warnings, path + '/' + key, stressLabel );
 			} else if ( tr && typeof tr === 'object' && !Array.isArray( tr ) ) {
-				slots[String( i )] = this.migrateTemplateTrait( tr, warnings, path + '/slot' + i );
+				slots[String( i )] = this.migrateTemplateTrait( tr, warnings, path + '/slot' + i, stressLabel );
 			} else {
 				this.warn( warnings, path + ': dropped non-object trait entry' );
 			}
@@ -605,9 +700,13 @@ export const cortexMigration = {
 		const set: any = {};
 		Object.keys( old ).forEach( ( k: string ) => {
 			if ( k === 'name' || k === 'traits' || k === 'sfx' || k === 'removedTraits' ) return;
+			// Canonical emit: empty scaffolding stays out.
+			if ( k === 'tags' && Array.isArray( old[k] ) && !old[k].length ) return;
+			if ( k === 'description' && old[k] === '' ) return;
+			if ( k === 'custom' && old[k] && typeof old[k] === 'object' && !Object.keys( old[k] ).length ) return;
 			set[k] = cloneDeep( old[k] );
 		} );
-		const split = this.splitTemplateTraits( old.traits, warnings, here );
+		const split = this.splitTemplateTraits( old.traits, warnings, here, this.stressCompanionLabel( old ) );
 		set.traits = split.map;
 		if ( Object.keys( split.slots ).length ) set.slots = split.slots;
 		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
@@ -713,7 +812,7 @@ export const cortexMigration = {
 		}
 		if ( typeof node === 'string' ) {
 			const d = this.unmigrateDieString( node, warnings, here );
-			return { name: name, value: d.value, dice: d.dice, description: '', traits: [], sfx: [], tags: [], custom: {} };
+			return { name: name, value: d.value, dice: d.dice, traits: [], sfx: [] };
 		}
 		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) {
 			this.warn( warnings, here + ': malformed trait, dropped' );
@@ -738,7 +837,6 @@ export const cortexMigration = {
 			return self.unmigrateTemplateTrait( e.key, subs[e.key], warnings, here );
 		} );
 		tr.sfx = this.unmigrateSfxArray( node, warnings, here );
-		if ( tr.tags === undefined ) tr.tags = [];
 		return tr;
 	},
 
@@ -755,17 +853,15 @@ export const cortexMigration = {
 		return Object.keys( slots ).every( k => contentKeys( slots[k] ) );
 	},
 
-	// Presence-preserved sfx rebuild. Named entries without tags/custom stay
-	// tagless (as authored); blank slots regain the old required keys.
+	// Presence-preserved sfx rebuild. Entries carry only authored keys;
+	// empty scaffolding stays out (renderers treat absence as empty).
 	unmigrateSfxEntry: function( k: string, s: any, isSlot: boolean ): any {
 		if ( !isSlot && s && typeof s === 'object' && !Array.isArray( s ) && Object.keys( s ).length === 0 && k === 'Hinder' ) return 'hinder';
 		const o: any = { name: isSlot ? '' : k };
 		const src = ( s && typeof s === 'object' && !Array.isArray( s ) ) ? s : {};
-		o.description = src.description !== undefined ? src.description : '';
+		if ( src.description !== undefined ) o.description = src.description;
 		if ( src.tags !== undefined ) o.tags = cloneDeep( src.tags );
-		else if ( isSlot ) o.tags = [];
 		if ( src.custom !== undefined ) o.custom = cloneDeep( src.custom );
-		else if ( isSlot ) o.custom = {};
 		return o;
 	},
 
@@ -812,7 +908,6 @@ export const cortexMigration = {
 			return self.unmigrateTemplateTrait( e.key, subs[e.key], warnings, here );
 		} );
 		ts.sfx = this.unmigrateSfxArray( set, warnings, here );
-		if ( ts.tags === undefined ) ts.tags = [];
 		return ts;
 	},
 

@@ -1,6 +1,6 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getSpotlightSections, buildParts, formatPct, parsePct } from './spotlight-grid.ts';
+import { getSpotlightSections, buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
 import { getView, ensureView } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
 
@@ -275,6 +275,102 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return w === null || w >= 99.9;
 	} );
 
+	// Trait-part cells (view.parts): the generator spec shared by rebuilds
+	// and the default comparison, so hand-tuned widths survive control
+	// changes and Reset restores exactly what the generator would emit.
+	function partsSpec() {
+		const view = getView( traitSet.value ) || {};
+		const scale = Array.isArray( ( view as any ).ratingScale ) && ( view as any ).ratingScale.length
+			? ( view as any ).ratingScale : [ 4, 6, 8, 10, 12 ];
+		const legacyStress = ( view as any ).attachedStress;
+		const stressOn = partsHaveStress() || Boolean( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled );
+		const sScale = ( legacyStress && typeof legacyStress === 'object' &&
+			( ( Array.isArray( legacyStress.scale ) && legacyStress.scale.length && legacyStress.scale ) ||
+			( Array.isArray( legacyStress.ratingScale ) && legacyStress.ratingScale.length && legacyStress.ratingScale ) ) ) ||
+			[ 4, 6, 8, 10, 12 ];
+		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
+		const statement = Boolean( ( traitSet.value as any )?.statement ?? ( view as any ).statement );
+		const features = ( view as any ).features || {};
+		return {
+			rating,
+			ratingDice: scale.length,
+			stressDice: stressOn ? sScale.length : 0,
+			description: Boolean( features.description ) && !statement && rating !== 'above',
+			sfx: Boolean( features.sfx ),
+			subtraits: Boolean( features.subtraits ),
+		};
+	}
+
+	type PartCellEdit = { key: string; left: number; width: number; top: number; height: number };
+
+	// Explicit part cells in stable part order. Absent = generated layout.
+	const partCells = computed( (): PartCellEdit[] => {
+		const parts = getView( traitSet.value )?.parts;
+		if ( !parts || typeof parts !== 'object' ) return [];
+		const out: PartCellEdit[] = [];
+		for ( const key of KNOWN_PARTS as readonly string[] ) {
+			const cell = ( parts as Record<string, any> )[key];
+			if ( !cell || typeof cell !== 'object' ) continue;
+			const left = parsePct( cell.left );
+			const width = parsePct( cell.width );
+			out.push( {
+				key,
+				left: left === null ? 0 : Math.round( left * 1000 ) / 1000,
+				width: width === null ? 100 : Math.round( width * 1000 ) / 1000,
+				top: Number.isInteger( cell.top ) && cell.top >= 0 ? cell.top : 0,
+				height: Number.isInteger( cell.height ) && cell.height >= 1 ? cell.height : 1,
+			} );
+		}
+		return out;
+	} );
+
+	// Explicit part cells: hand-tuning shows whenever a parts layout
+	// exists (generated or hand-tuned); Reset restores the default.
+	const hasParts = computed( () => {
+		const parts = getView( traitSet.value )?.parts;
+		return Boolean( parts && typeof parts === 'object' && Object.keys( parts ).length );
+	} );
+
+	// Non-default explicit parts: Reset restores the generated layout.
+	const hasCustomParts = computed( () => {
+		const parts = getView( traitSet.value )?.parts;
+		if ( !parts || typeof parts !== 'object' ) return false;
+		const canon = ( o: Record<string, unknown> ) => {
+			const out: Record<string, unknown> = {};
+			Object.keys( o ).sort().forEach( ( k ) => { out[k] = o[k]; } );
+			return JSON.stringify( out );
+		};
+		return canon( parts as Record<string, unknown> ) !== canon( buildParts( partsSpec() ) as Record<string, unknown> );
+	} );
+
+	function setPartCell( key: string, field: 'left' | 'width' | 'top' | 'height', val: number ) {
+		const view = ensureView( traitSet.value );
+		if ( !view.parts || typeof view.parts !== 'object' ) {
+			view.parts = buildParts( partsSpec() );
+		}
+		const cells = view.parts as Record<string, any>;
+		if ( !cells[key] || typeof cells[key] !== 'object' ) {
+			cells[key] = { left: '0%', top: 0, width: '100%', height: 1 };
+		}
+		const cell = cells[key];
+		if ( field === 'left' ) {
+			const n = Number.isFinite( Number( val ) ) ? Math.max( 0, Math.min( 100, Number( val ) ) ) : 0;
+			cell.left = formatPct( Math.round( n * 10 ) / 10 );
+		} else if ( field === 'width' ) {
+			const n = Number.isFinite( Number( val ) ) ? Math.max( 1, Math.min( 100, Number( val ) ) ) : 100;
+			cell.width = formatPct( Math.round( n * 10 ) / 10 );
+		} else if ( field === 'top' ) {
+			cell.top = Number.isInteger( Number( val ) ) ? Math.max( 0, Number( val ) ) : 0;
+		} else {
+			cell.height = Number.isInteger( Number( val ) ) ? Math.max( 1, Number( val ) ) : 1;
+		}
+		updateCharacter( props.character );
+	}
+
+	function resetParts() {
+		rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none' );
+	}
+
 	const templateEntry = computed( () => {
 		const root = inst?.proxy?.$root as any;
 		return cortexFunctions.resolveTemplateFor( props.character, root ? root.sheetTemplates : null );
@@ -495,24 +591,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// the legacy flag (no parts form); bespoke bodies are left alone.
 	function rebuildParts( rating: 'inline' | 'above' | 'below' | 'none' ) {
 		const view = ensureView( traitSet.value );
-		const scale = Array.isArray( view.ratingScale ) && view.ratingScale.length
-			? view.ratingScale : [ 4, 6, 8, 10, 12 ];
 		const legacyStress = view.attachedStress;
-		const stressOn = partsHaveStress() || Boolean( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled );
-		const sScale = ( legacyStress && typeof legacyStress === 'object' &&
-			( ( Array.isArray( legacyStress.scale ) && legacyStress.scale.length && legacyStress.scale ) ||
-			( Array.isArray( legacyStress.ratingScale ) && legacyStress.ratingScale.length && legacyStress.ratingScale ) ) ) ||
-			[ 4, 6, 8, 10, 12 ];
-		const statement = Boolean( ( traitSet.value as any )?.statement ?? view.statement );
-		const features = view.features || {};
-		view.parts = buildParts( {
-			rating,
-			ratingDice: scale.length,
-			stressDice: stressOn ? sScale.length : 0,
-			description: Boolean( features.description ) && !statement && rating !== 'above',
-			sfx: Boolean( features.sfx ),
-			subtraits: Boolean( features.subtraits ),
-		} );
+		view.parts = buildParts( { ...partsSpec(), rating } );
 		if ( traitSet.value && typeof traitSet.value === 'object' ) delete ( traitSet.value as any ).ratingPosition;
 		delete view.ratingPosition;
 		if ( !legacyStress ) delete view.attachedStress;
@@ -576,6 +656,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		},
 		set: ( val: string ) => {
 			const view = ensureView( traitSet.value );
+			const prev = getView( traitSet.value )?.labels?.stress
+				|| ( ( view.attachedStress as any )?.label ?? 'Stress' );
 			const legacy = view.attachedStress;
 			if ( legacy && typeof legacy === 'object' && ( ( legacy as any ).scale || ( legacy as any ).ratingScale ) ) {
 				( legacy as any ).label = val;
@@ -583,6 +665,18 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				if ( !view.labels || typeof view.labels !== 'object' ) view.labels = {};
 				if ( typeof val === 'string' && val.length ) view.labels.stress = val;
 				else delete view.labels.stress;
+			}
+			// Keep stress companions (subtraits named for the label) glued
+			// to the label: rename matches, never clobbering an occupant.
+			const next = ( typeof val === 'string' && val.length ) ? val : 'Stress';
+			if ( next !== prev && Array.isArray( ( traitSet.value as any )?.traits ) ) {
+				( traitSet.value as any ).traits.forEach( ( tr: any ) => {
+					if ( !tr || typeof tr !== 'object' || !Array.isArray( tr.traits ) ) return;
+					const hit = tr.traits.findIndex( ( st: any ) => st && typeof st === 'object' && st.name === prev );
+					if ( hit === -1 ) return;
+					const occupied = tr.traits.some( ( st: any ) => st && typeof st === 'object' && st.name === next );
+					if ( !occupied ) tr.traits[ hit ].name = next;
+				} );
 			}
 			updateCharacter( props.character );
 		}
@@ -807,6 +901,17 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 		updateCharacter( character );
 		selectElement([ 'traitSet', s + 1 ]);
+	}
+
+	const setJsonCopied = ref( false );
+
+	function copyTraitSetJson() {
+		const set = props.character?.traitSets?.[ props.traitSetID ];
+		if ( !set ) return;
+		navigator.clipboard.writeText( JSON.stringify( set, null, 2 ) ).then( () => {
+			setJsonCopied.value = true;
+			setTimeout( () => { setJsonCopied.value = false; }, 2000 );
+		} );
 	}
 
 	function restoreTrait( name: string ) {
@@ -1162,6 +1267,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
 		ringTrait, pageNumber, isFullWidthSpan,
 		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
+		partCells, hasParts, hasCustomParts, setPartCell, resetParts,
 		templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
@@ -1172,7 +1278,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
-		duplicateTraitSet, restoreTrait, moveTraitSetUp, moveTraitSetDown,
+		duplicateTraitSet, copyTraitSetJson, setJsonCopied, restoreTrait, moveTraitSetUp, moveTraitSetDown,
 		setRingConfig, resetRingPlacement, setFeature,
 		setCustomProperty, styleLabel, setStyleLabel, setImageConfig, uploadImageStart,
 		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,

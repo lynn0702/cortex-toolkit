@@ -351,6 +351,16 @@ function checkTemplateFile(where, data) {
       continue;
     }
     if (set._lid !== undefined) err(`${where}/${name}: _lid is app-local, never in files`);
+    // Identity (2026-10-20): the map key is the address, the set id the
+    // stable identity — rename the key freely, never the id. Suffixed
+    // duplicate keys resolve through their label.
+    if (typeof set.id !== 'string' || !set.id.length) {
+      err(`${where}/${name}: set needs a stable id (join key)`);
+    }
+    const tilde = name.indexOf('~');
+    if (tilde !== -1 && set.label !== name.slice(0, tilde)) {
+      err(`${where}/${name}: suffixed duplicate key needs label ${JSON.stringify(name.slice(0, tilde))}`);
+    }
     if (set.removedTraits !== undefined || set.removedSets !== undefined) {
       err(`${where}/${name}: tombstones are gone, use local nulls`);
     }

@@ -53,7 +53,6 @@
         "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -111,27 +110,9 @@
           }
         },
         "traits": {
-          "Neighborhood": {
-            "description": "",
-            "tags": [],
-            "custom": {
-              "stress": 0
-            }
-          },
-          "Crew": {
-            "description": "",
-            "tags": [],
-            "custom": {
-              "stress": 0
-            }
-          },
-          "The Family": {
-            "description": "",
-            "tags": [],
-            "custom": {
-              "stress": 0
-            }
-          }
+          "Neighborhood": {},
+          "Crew": {},
+          "The Family": {}
         }
       },
       "Resources": {
@@ -139,7 +120,6 @@
         "description": "Syndicate operational pools and assets",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -165,40 +145,20 @@
             "top": 1,
             "width": "66.663%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {}
         }
       },
       "Drives": {
@@ -206,7 +166,6 @@
         "description": "Gain a PP when you use a drive rated at d4.",
         "nounSingular": "Drive",
         "nounPlural": "Drives",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -252,31 +211,11 @@
           }
         },
         "traits": {
-          "Corruption": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Greed": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Omerta": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Retribution": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Violence": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Corruption": {},
+          "Greed": {},
+          "Omerta": {},
+          "Retribution": {},
+          "Violence": {}
         }
       },
       "Signature Assets": {
@@ -284,7 +223,6 @@
         "description": "Personal weapons, vehicles, and syndicate perks",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -330,21 +268,9 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Roles & Specialties": {
@@ -352,7 +278,6 @@
         "description": "Syndicate roles with specialized criminal expertise",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -381,67 +306,36 @@
             "top": 2,
             "width": "66.667%",
             "height": 1
+          },
+          "labels": {
+            "left": "SKILL",
+            "right": "SPECIALTIES"
           }
         },
         "traits": {
           "Big Shot": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Brains": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Enforcer": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Thief": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Wheelman": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           }
         }
@@ -451,7 +345,6 @@
         "description": "Session tracking and milestone progression",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -482,10 +375,8 @@
       },
       "Role SFX": {
         "id": "role-sfx",
-        "description": "",
         "nounSingular": "SFX",
         "nounPlural": "SFX",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -509,21 +400,9 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       }
     }

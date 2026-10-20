@@ -52,7 +52,6 @@
         "description": "Neural synchronization and handler capabilities",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -95,21 +94,9 @@
           }
         },
         "traits": {
-          "Prowess": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Control": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Renown": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Prowess": {},
+          "Control": {},
+          "Renown": {}
         }
       },
       "Roles": {
@@ -117,7 +104,6 @@
         "description": "Combat roles and tactical responsibilities",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -161,31 +147,11 @@
           }
         },
         "traits": {
-          "Backup": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Blaster": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Boss": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Brain": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Brawler": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Backup": {},
+          "Blaster": {},
+          "Boss": {},
+          "Brain": {},
+          "Brawler": {}
         }
       },
       "Distinctions": {
@@ -193,7 +159,6 @@
         "description": "Personal identity, public persona, and driving aspiration",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -221,9 +186,6 @@
         "traits": {
           "Identity:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -242,9 +204,6 @@
           },
           "Persona:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -263,9 +222,6 @@
           },
           "Aspiration:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -289,7 +245,6 @@
         "description": "Handler cockpit gear and personal assets",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -321,24 +276,14 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {}
         }
       },
       "Complications": {
         "id": "complications",
-        "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -363,16 +308,8 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {}
         }
       }
     }

@@ -4,9 +4,15 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 const {
 	isRing, pageNumber,
 	hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
+	partCells, hasParts, hasCustomParts, setPartCell, resetParts,
 	canMoveUp, canMoveDown, moveTraitSetUp, moveTraitSetDown,
 	editorDock, isSpotlightSheet, isFullWidthSpan, targetValue
 } = injectTraitSetEditor();
+
+const PART_TITLES: Record<string, string> = {
+	name: 'Name', rating: 'Rating', description: 'Description', sfx: 'SFX',
+	subtraits: 'Subtraits', stressLabel: 'Stress Label', stress: 'Stress'
+};
 </script>
 
 <template>
@@ -117,6 +123,47 @@ const {
 		<div class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem;">
 			<span v-if="hasPlace">Left {{ placeLeft }}% · Width {{ placeWidth }}% · Top {{ placeTop }} · Height {{ placeHeight }}</span>
 			<span v-else>Full width · stacked in document order</span>
+		</div>
+	</div>
+
+	<!-- PART WIDTHS (trait-row cells, hand-tuned proportions) -->
+	<div class="editor-field" v-if="!isRing && isSpotlightSheet && hasParts">
+		<div class="editor-label">Part Widths</div>
+		<div class="editor-button-group" style="margin-bottom: 0.4rem;" v-if="hasCustomParts">
+			<button
+				type="button"
+				class="editor-group-btn"
+				@click.stop="resetParts"
+				title="Restore generated proportions"
+			>
+				Reset
+			</button>
+		</div>
+		<div v-for="cell in partCells" :key="cell.key" style="margin-bottom: 0.4rem;">
+			<div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.2rem;">{{ PART_TITLES[cell.key] || cell.key }}</div>
+			<div style="display: flex; gap: 0.5rem; margin-bottom: 0.25rem;">
+				<div style="flex: 1;">
+					<label :for="'trait-set-part-left-' + cell.key" style="font-size: 0.65rem; color: #64748b; display: block; margin-bottom: 0.15rem;">Left %</label>
+					<input type="number" :id="'trait-set-part-left-' + cell.key" :name="'partLeft_' + cell.key" min="0" max="100" step="0.5" :value="cell.left" @change="setPartCell(cell.key, 'left', Number(targetValue($event)))">
+				</div>
+				<div style="flex: 1;">
+					<label :for="'trait-set-part-width-' + cell.key" style="font-size: 0.65rem; color: #64748b; display: block; margin-bottom: 0.15rem;">Width %</label>
+					<input type="number" :id="'trait-set-part-width-' + cell.key" :name="'partWidth_' + cell.key" min="1" max="100" step="0.5" :value="cell.width" @change="setPartCell(cell.key, 'width', Number(targetValue($event)))">
+				</div>
+			</div>
+			<div style="display: flex; gap: 0.5rem;">
+				<div style="flex: 1;">
+					<label :for="'trait-set-part-top-' + cell.key" style="font-size: 0.65rem; color: #64748b; display: block; margin-bottom: 0.15rem;">Top</label>
+					<input type="number" :id="'trait-set-part-top-' + cell.key" :name="'partTop_' + cell.key" min="0" step="1" :value="cell.top" @change="setPartCell(cell.key, 'top', Number(targetValue($event)))">
+				</div>
+				<div style="flex: 1;">
+					<label :for="'trait-set-part-height-' + cell.key" style="font-size: 0.65rem; color: #64748b; display: block; margin-bottom: 0.15rem;">Height</label>
+					<input type="number" :id="'trait-set-part-height-' + cell.key" :name="'partHeight_' + cell.key" min="1" step="1" :value="cell.height" @change="setPartCell(cell.key, 'height', Number(targetValue($event)))">
+				</div>
+			</div>
+		</div>
+		<div class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem;">
+			<span v-for="cell in partCells" :key="'hint-' + cell.key">{{ (PART_TITLES[cell.key] || cell.key) }} {{ cell.width }}% · </span>
 		</div>
 	</div>
 

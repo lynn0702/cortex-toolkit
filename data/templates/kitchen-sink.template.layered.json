@@ -29,7 +29,6 @@
     "portrait": {
       "url": "",
       "alt": "Character Portrait",
-      "tags": [],
       "view": {
         "alignment": "center-center",
         "size": "spotlight",
@@ -50,10 +49,8 @@
     "sets": {
       "Distinctions": {
         "id": "ks-distinctions",
-        "description": "",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -107,8 +104,6 @@
           "Walking Style Guide": {
             "value": "d8",
             "description": "Every layout edge case deserves a test.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -124,27 +119,19 @@
         "slots": {
           "1": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  }
+                  "1": {}
                 }
               }
             }
           },
           "2": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -157,12 +144,10 @@
       },
       "Values": {
         "id": "ks-values-statements",
-        "description": "",
         "nounSingular": "Value",
         "nounPlural": "Values",
         "statement": true,
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -205,31 +190,22 @@
         "traits": {
           "Craft": {
             "value": "d10",
-            "description": "Form and function are inseparable.",
-            "tags": [],
-            "custom": {}
+            "description": "Form and function are inseparable."
           },
           "Speed": {
             "value": "d8",
             "description": "Ship early, refine relentlessly.",
-            "questioned": true,
-            "tags": [],
-            "custom": {}
+            "questioned": true
           },
           "Clarity": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           }
         }
       },
       "Skills": {
         "id": "ks-subtrait-columns",
-        "description": "",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -255,51 +231,33 @@
         "traits": {
           "Engineering": {
             "value": "d10",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Clockwork": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Aetherics": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               }
             }
           },
           "Navigation": {
             "value": "d8",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Star Charts": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               }
             }
           },
           "Diplomacy": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           }
         }
       },
       "Standing": {
         "id": "ks-paired-slots",
-        "description": "",
         "nounSingular": "Standing",
         "nounPlural": "Standings",
         "statement": true,
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -338,40 +296,26 @@
           "The Guild": {
             "value": "d8",
             "description": "They owe me a drydock bay.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Complication": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "Bonus": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               }
             }
           }
         },
         "slots": {
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {}
         }
       },
       "Badges": {
         "id": "ks-die-rows",
-        "description": "",
         "nounSingular": "Badge",
         "nounPlural": "Badges",
         "hasCounterColumn": true,
         "counterLabel": "XP",
-        "tags": [],
         "view": {
           "page": 1,
           "header": "top",
@@ -403,31 +347,21 @@
         "traits": {
           "First Responder": {
             "value": "d8",
-            "xp": 3,
-            "tags": [],
-            "custom": {}
+            "xp": 3
           },
           "Trailblazer": {
             "value": "d6",
-            "xp": 1,
-            "tags": [],
-            "custom": {}
+            "xp": 1
           }
         },
         "slots": {
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {}
         }
       },
       "Talents": {
         "id": "ks-three-col-table",
-        "description": "",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -455,8 +389,6 @@
         "traits": {
           "Overclock": {
             "description": "Spend 1 PP when rolling Engineering.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -469,19 +401,13 @@
           }
         },
         "slots": {
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {}
         }
       },
       "Resources": {
         "id": "ks-dice-count",
-        "description": "",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -509,24 +435,18 @@
         "traits": {
           "Salvage Cache": {
             "value": "3d8",
-            "pool": true,
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "Contacts": {
             "value": "2d6",
-            "pool": true,
-            "tags": [],
-            "custom": {}
+            "pool": true
           }
         }
       },
       "Stress": {
         "id": "ks-stress",
-        "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -554,29 +474,18 @@
         },
         "traits": {
           "Physical": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
-          "Mental": {
-            "tags": [],
-            "custom": {}
-          },
+          "Mental": {},
           "Social": {
-            "value": "d12",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d12"
           }
         }
       },
       "Growth Ladder": {
         "id": "ks-dice-ladder",
-        "description": "",
         "nounSingular": "Rung",
         "nounPlural": "Rungs",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -597,31 +506,20 @@
         },
         "traits": {
           "Novice": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "Adept": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Master": {
-            "value": "d10",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d10"
           }
         }
       },
       "Dossier": {
         "id": "ks-labeled-fields",
-        "description": "",
         "nounSingular": "Field",
         "nounPlural": "Fields",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -642,27 +540,18 @@
         },
         "traits": {
           "Origin": {
-            "description": "Outer Rim Shipyard #4",
-            "tags": [],
-            "custom": {}
+            "description": "Outer Rim Shipyard #4"
           },
           "Drive": {
-            "description": "Restore the lost fleet",
-            "tags": [],
-            "custom": {}
+            "description": "Restore the lost fleet"
           },
-          "Quirk": {
-            "tags": [],
-            "custom": {}
-          }
+          "Quirk": {}
         }
       },
       "Progress Track": {
         "id": "ks-pips",
-        "description": "",
         "nounSingular": "Pip",
         "nounPlural": "Pips",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -686,10 +575,8 @@
       },
       "Session Record": {
         "id": "ks-session-record",
-        "description": "",
         "nounSingular": "Session",
         "nounPlural": "Sessions",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -709,30 +596,18 @@
         },
         "traits": {
           "Session 1: The Awakening": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
-          "Session 2: Crossing the Threshold": {
-            "tags": [],
-            "custom": {}
-          }
+          "Session 2: Crossing the Threshold": {}
         },
         "slots": {
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "2": {}
         }
       },
       "Roles (Compact Two-Column)": {
         "id": "ks-two-col-compact",
-        "description": "",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -753,37 +628,23 @@
         },
         "traits": {
           "Tactician": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Outrider": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "Scholar": {
-            "value": "d10",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d10"
           },
           "Sentinel": {
-            "value": "d4",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d4"
           }
         }
       },
       "Notes": {
         "id": "ks-notes",
-        "description": "",
         "nounSingular": "Note",
         "nounPlural": "Notes",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -802,10 +663,8 @@
       },
       "Detailed Columns": {
         "id": "ks-detailed-columns",
-        "description": "",
         "nounSingular": "Entry",
         "nounPlural": "Entries",
-        "tags": [],
         "view": {
           "page": 3,
           "style": {
@@ -827,36 +686,26 @@
         "traits": {
           "Alpha": {
             "value": "d8",
-            "description": "First detailed entry.",
-            "tags": [],
-            "custom": {}
+            "description": "First detailed entry."
           },
           "Beta": {
             "value": "d6",
-            "description": "Second detailed entry.",
-            "tags": [],
-            "custom": {}
+            "description": "Second detailed entry."
           },
           "Gamma": {
             "value": "d10",
-            "description": "Third detailed entry.",
-            "tags": [],
-            "custom": {}
+            "description": "Third detailed entry."
           },
           "Delta": {
             "value": "d8",
-            "description": "Fourth detailed entry.",
-            "tags": [],
-            "custom": {}
+            "description": "Fourth detailed entry."
           }
         }
       },
       "Resource Pool": {
         "id": "ks-resource-pool",
-        "description": "",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "tags": [],
         "view": {
           "page": 3,
           "style": {
@@ -878,38 +727,24 @@
         "traits": {
           "Supply": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Ammo": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               }
             }
           },
           "Fuel": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "Intel": {
-            "value": "d10",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d10"
           }
         }
       },
       "Signature Assets": {
         "id": "ks-assets",
-        "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "tags": [],
         "view": {
           "page": 3,
           "style": {
@@ -930,31 +765,20 @@
         },
         "traits": {
           "Custom Sidearm": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Survey Kit": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "Encrypted Comms": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           }
         }
       },
       "Simple List": {
         "id": "ks-list",
-        "description": "",
         "nounSingular": "Item",
         "nounPlural": "Items",
-        "tags": [],
         "view": {
           "page": 3,
           "style": {
@@ -975,31 +799,20 @@
         },
         "traits": {
           "Item One": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "Item Two": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "Item Three": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           }
         }
       },
       "Image Set": {
         "id": "ks-image",
-        "description": "",
         "nounSingular": "Image",
         "nounPlural": "Images",
-        "tags": [],
         "view": {
           "page": 3,
           "style": {

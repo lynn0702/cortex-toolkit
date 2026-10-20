@@ -52,7 +52,6 @@
         "description": "Body, mind, and presence under pressure",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -112,21 +111,9 @@
           }
         },
         "traits": {
-          "Physical": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Mental": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Social": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Physical": {},
+          "Mental": {},
+          "Social": {}
         }
       },
       "Training Packages": {
@@ -134,7 +121,6 @@
         "description": "Rescue disciplines and vehicle qualifications",
         "nounSingular": "Training Package",
         "nounPlural": "Training Packages",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -178,76 +164,20 @@
           }
         },
         "traits": {
-          "Crowd Control": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Emergency Medical": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Firefighting": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Hammerhead Pilot": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "HAZMAT": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "High-Altitude Recovery": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Legal Specialist": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Logistics": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Marine Recovery": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Network Specialist": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Mechanic": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Tactical Response": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Technical Analyst": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Urban Recovery": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Crowd Control": {},
+          "Emergency Medical": {},
+          "Firefighting": {},
+          "Hammerhead Pilot": {},
+          "HAZMAT": {},
+          "High-Altitude Recovery": {},
+          "Legal Specialist": {},
+          "Logistics": {},
+          "Marine Recovery": {},
+          "Network Specialist": {},
+          "Mechanic": {},
+          "Tactical Response": {},
+          "Technical Analyst": {},
+          "Urban Recovery": {}
         }
       },
       "Distinctions": {
@@ -255,7 +185,6 @@
         "description": "Origin, true nature, and defining quirk",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -283,9 +212,6 @@
         "traits": {
           "Your Life Before:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -304,9 +230,6 @@
           },
           "Your Approach/Attitude:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -325,9 +248,6 @@
           },
           "Your Quirk/Quality:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -352,7 +272,6 @@
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
         "statement": true,
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -399,45 +318,31 @@
         "slots": {
           "0": {
             "description": "saved my life",
-            "statement": "saved my life",
-            "tags": [],
-            "custom": {}
+            "statement": "saved my life"
           },
           "1": {
             "description": "owes me big",
-            "statement": "owes me big",
-            "tags": [],
-            "custom": {}
+            "statement": "owes me big"
           },
           "2": {
             "description": "is a troublemaker",
-            "statement": "is a troublemaker",
-            "tags": [],
-            "custom": {}
+            "statement": "is a troublemaker"
           },
           "3": {
             "description": "knows their stuff",
-            "statement": "knows their stuff",
-            "tags": [],
-            "custom": {}
+            "statement": "knows their stuff"
           },
           "4": {
             "description": "is a liability",
-            "statement": "is a liability",
-            "tags": [],
-            "custom": {}
+            "statement": "is a liability"
           },
           "5": {
             "description": "is dependable",
-            "statement": "is dependable",
-            "tags": [],
-            "custom": {}
+            "statement": "is dependable"
           },
           "6": {
             "description": "is good for a laugh",
-            "statement": "is good for a laugh",
-            "tags": [],
-            "custom": {}
+            "statement": "is good for a laugh"
           }
         }
       },
@@ -446,7 +351,6 @@
         "description": "Experience points bubble track",
         "nounSingular": "XP",
         "nounPlural": "XP",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -483,7 +387,6 @@
         "description": "Threat clocks and escalating disaster pools",
         "nounSingular": "Crisis Pool",
         "nounPlural": "Crisis Pools",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -524,26 +427,10 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {}
         }
       }
     }

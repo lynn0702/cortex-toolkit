@@ -52,7 +52,6 @@
         "description": "Core hero ratings with Vitality and Willpower",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -97,36 +96,12 @@
           }
         },
         "traits": {
-          "Agility": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Alertness": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Intelligence": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Strength": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Vitality": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Willpower": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Agility": {},
+          "Alertness": {},
+          "Intelligence": {},
+          "Strength": {},
+          "Vitality": {},
+          "Willpower": {}
         }
       },
       "Distinctions": {
@@ -134,7 +109,6 @@
         "description": "Multiversal origin, champion archetype, and personal drive",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -164,9 +138,6 @@
         "slots": {
           "0": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -177,9 +148,6 @@
           },
           "1": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -190,9 +158,6 @@
           },
           "2": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -208,7 +173,6 @@
         "description": "Artifacts and multiversal gear",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -237,26 +201,10 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {}
         }
       },
       "Skills & Specialties": {
@@ -264,7 +212,6 @@
         "description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -302,242 +249,107 @@
         },
         "traits": {
           "Craft": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Drive": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Fight": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Fix": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Fly": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Focus": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Influence": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Know": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Labor": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Move": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Notice": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Operate": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Perform": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Shoot": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Sneak": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Survive": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Throw": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Treat": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "Trick": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           }
         }
       },
       "Initiative": {
         "id": "initiative",
-        "description": "",
         "nounSingular": "Die",
         "nounPlural": "Dice",
         "ratingPosition": "vertical",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -567,25 +379,15 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {}
         }
       },
       "Hero Dice": {
         "id": "hero-dice",
-        "description": "",
         "nounSingular": "Die",
         "nounPlural": "Dice",
         "ratingPosition": "vertical",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -615,11 +417,7 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {}
         }
       },
       "Life Points": {
@@ -627,7 +425,6 @@
         "description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
         "nounSingular": "Point",
         "nounPlural": "Points",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -655,7 +452,6 @@
         "description": "SFX: • SFX: • Limit:",
         "nounSingular": "Power",
         "nounPlural": "Powers",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -688,9 +484,6 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -701,16 +494,8 @@
               }
             }
           },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {},
+          "2": {}
         }
       },
       "Power Set 2": {
@@ -718,7 +503,6 @@
         "description": "SFX: • SFX: • Limit:",
         "nounSingular": "Power",
         "nounPlural": "Powers",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -751,9 +535,6 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -764,16 +545,8 @@
               }
             }
           },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {},
+          "2": {}
         }
       },
       "Power Set 3": {
@@ -781,7 +554,6 @@
         "description": "SFX: • SFX: • Limit:",
         "nounSingular": "Power",
         "nounPlural": "Powers",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -814,9 +586,6 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -827,16 +596,8 @@
               }
             }
           },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {},
+          "2": {}
         }
       },
       "Talents": {
@@ -844,7 +605,6 @@
         "description": "Name, Activation, and Effect",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -864,38 +624,25 @@
             "top": 1,
             "width": "66.663%",
             "height": 1
+          },
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
           }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {}
         }
       },
       "Session Record": {
         "id": "session-record",
-        "description": "",
         "nounSingular": "Session",
         "nounPlural": "Sessions",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -925,10 +672,8 @@
       },
       "Leveling Up": {
         "id": "leveling-up",
-        "description": "",
         "nounSingular": "Option",
         "nounPlural": "Options",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",

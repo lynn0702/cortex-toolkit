@@ -44,10 +44,8 @@
     "sets": {
       "Roles & Masteries": {
         "id": "ls-roles",
-        "description": "",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -67,8 +65,6 @@
           "Commander": {
             "value": "d8",
             "description": "Direct allies and coordinate tactical movement.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -82,8 +78,6 @@
           "Infiltrator": {
             "value": "d8",
             "description": "Bypass security systems and move undetected.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -97,8 +91,6 @@
           "Specialist": {
             "value": "d8",
             "description": "Analyze technical anomalies and reverse-engineer artifacts.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -113,10 +105,8 @@
       },
       "Skills & Specialties": {
         "id": "ls-skills",
-        "description": "",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -133,66 +123,43 @@
             "top": 1,
             "width": "66.666%",
             "height": 1
+          },
+          "labels": {
+            "left": "SKILL",
+            "right": "SPECIALTIES"
           }
         },
         "traits": {
           "Engineering": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Clockwork": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Aetherics": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               }
             }
           },
           "Navigation": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Star Charts": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Sub-Light": {
-                "value": "d10",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d10"
               }
             }
           },
           "Diplomacy": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "High Society": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Street Smart": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               }
             }
           }
@@ -200,10 +167,8 @@
       },
       "Standing": {
         "id": "ls-standing",
-        "description": "",
         "nounSingular": "Standing",
         "nounPlural": "Standings",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -220,48 +185,34 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
+          },
+          "labels": {
+            "slot0": "COMPLICATION",
+            "slot1": "BONUS"
           }
         },
         "traits": {
           "The Syndicate": {
             "value": "d8",
-            "description": "",
             "statement": "Debts are never forgotten.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Complication": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               },
               "Bonus": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               }
             }
           },
           "The Vanguard": {
             "value": "d6",
-            "description": "",
             "statement": "Honor bound to protect.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "Complication": {
-                "value": "d6",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d6"
               },
               "Bonus": {
-                "value": "d8",
-                "description": "",
-                "tags": [],
-                "custom": {}
+                "value": "d8"
               }
             }
           }
@@ -269,10 +220,8 @@
       },
       "Values": {
         "id": "ls-values",
-        "description": "",
         "nounSingular": "Value",
         "nounPlural": "Values",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -289,38 +238,35 @@
             "top": 2,
             "width": "33.333%",
             "height": 1
+          },
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
           }
         },
         "traits": {
           "Craft": {
             "value": "d8",
             "description": "Form and function are inseparable.",
-            "statement": "Form and function are inseparable.",
-            "tags": [],
-            "custom": {}
+            "statement": "Form and function are inseparable."
           },
           "Speed": {
             "value": "d8",
             "description": "Ship early, refine relentlessly.",
-            "statement": "Ship early, refine relentlessly.",
-            "tags": [],
-            "custom": {}
+            "statement": "Ship early, refine relentlessly."
           },
           "Clarity": {
             "value": "d6",
             "description": "Truth cuts through ambiguity.",
-            "statement": "Truth cuts through ambiguity.",
-            "tags": [],
-            "custom": {}
+            "statement": "Truth cuts through ambiguity."
           }
         }
       },
       "Distinctions": {
         "id": "ls-distinctions",
-        "description": "",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "page": 1,
           "style": {
@@ -345,8 +291,6 @@
           "Voidborn Pioneer": {
             "value": "d8",
             "description": "Accustomed to zero-G and cold vacuum.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -360,8 +304,6 @@
           "Cybernetic Maverick": {
             "value": "d8",
             "description": "Upgraded with experimental neural cyberware.",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -376,10 +318,8 @@
       },
       "Growth Pool": {
         "id": "ls-growth",
-        "description": "",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -398,45 +338,39 @@
             "top": 0,
             "width": "33.333%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "D4": {
             "value": "d4",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
             "value": "d10",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
             "value": "d12",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
@@ -445,10 +379,8 @@
       },
       "Badges & Commendations": {
         "id": "ls-badges",
-        "description": "",
         "nounSingular": "Badge",
         "nounPlural": "Badges",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -469,31 +401,20 @@
         },
         "traits": {
           "Fleet Veteran": {
-            "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d8"
           },
           "High Jump": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "Master Hacker": {
-            "value": "d10",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d10"
           }
         }
       },
       "Resources & Supplies": {
         "id": "ls-resources",
-        "description": "",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -510,29 +431,27 @@
             "top": 0,
             "width": "33.334%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "Crew Complement": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 4
             }
           },
           "Emergency Fuel": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 3
             }
           },
           "Intel Network": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 2
             }
@@ -541,10 +460,8 @@
       },
       "Personnel Dossier": {
         "id": "ls-dossier",
-        "description": "",
         "nounSingular": "Field",
         "nounPlural": "Fields",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -565,28 +482,20 @@
         },
         "traits": {
           "Homeworld": {
-            "description": "Kepler-452b Core Colony",
-            "tags": [],
-            "custom": {}
+            "description": "Kepler-452b Core Colony"
           },
           "Security Clearance": {
-            "description": "Level 5 Special Access",
-            "tags": [],
-            "custom": {}
+            "description": "Level 5 Special Access"
           },
           "Affiliation": {
-            "description": "Independent Free-Trader Collective",
-            "tags": [],
-            "custom": {}
+            "description": "Independent Free-Trader Collective"
           }
         }
       },
       "Stress": {
         "id": "ls-stress",
-        "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -614,8 +523,6 @@
         "traits": {
           "Physical": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "pipCount": 5,
               "pips": 1
@@ -623,8 +530,6 @@
           },
           "Mental": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "pipCount": 5,
               "pips": 0
@@ -634,10 +539,8 @@
       },
       "Field Notes": {
         "id": "ls-notes",
-        "description": "",
         "nounSingular": "Note",
         "nounPlural": "Notes",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {
@@ -656,10 +559,8 @@
       },
       "Mission Chronicle": {
         "id": "ls-session-record",
-        "description": "",
         "nounSingular": "Session",
         "nounPlural": "Sessions",
-        "tags": [],
         "view": {
           "page": 2,
           "style": {

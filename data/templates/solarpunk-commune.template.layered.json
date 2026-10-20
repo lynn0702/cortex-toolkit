@@ -52,7 +52,6 @@
         "description": "Collective settlement strengths",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -95,21 +94,9 @@
           }
         },
         "traits": {
-          "Resources": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Security": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Connections": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Resources": {},
+          "Security": {},
+          "Connections": {}
         }
       },
       "Distinctions": {
@@ -117,7 +104,6 @@
         "description": "Settlement unity, organization, and morale",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -147,9 +133,6 @@
         "traits": {
           "Unity:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -160,9 +143,6 @@
           },
           "Organization:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -173,9 +153,6 @@
           },
           "Morale:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -188,10 +165,8 @@
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -234,37 +209,23 @@
         "traits": {},
         "slots": {
           "0": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "1": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "2": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           },
           "3": {
-            "value": "d6",
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "value": "d6"
           }
         }
       },
       "Skills": {
         "id": "skills",
-        "description": "",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -283,116 +244,57 @@
             8
           ],
           "subtraitRatingScale": [],
-          "reservedSlots": 9
+          "reservedSlots": 9,
+          "labels": {
+            "left": "SKILL",
+            "right": "SPECIALTIES"
+          }
         },
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "1": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "2": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "3": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "4": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "5": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "6": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "7": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           },
           "8": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
-              "0": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "0": {}
             }
           }
         }

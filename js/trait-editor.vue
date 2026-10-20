@@ -258,20 +258,48 @@ const shouldShowStressOut = computed( () => {
 
 const isOut = computed( () => Boolean( trait.value?.value > 12 || trait.value?.isOut === true ) );
 
+const outLabel = computed( () => {
+	const labels = getView( traitSet.value )?.labels;
+	if ( labels && typeof labels.out === 'string' && labels.out.length ) return labels.out;
+	return cortexFunctions.labelDefaultForStyle( getView( traitSet.value )?.style?.body, 'out' ) || '💥 OUT';
+} );
+
 const availableValues = computed( () => cortexFunctions.getTraitSetRatings( traitSet.value ) );
 
 const hasAttachedStress = computed( () => Boolean( getView( traitSet.value )?.attachedStress?.enabled ) );
-const attachedStressLabel = computed( () => getView( traitSet.value )?.attachedStress?.label || 'Stress' );
+const attachedStressLabel = computed( () => {
+	const labels = getView( traitSet.value )?.labels;
+	if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+	return getView( traitSet.value )?.attachedStress?.label || 'Stress';
+} );
 const attachedStressScale = computed( () => getView( traitSet.value )?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ] );
+
+const attachedStressCompanion = computed( () => {
+	const subs = trait.value?.traits;
+	if ( !Array.isArray( subs ) ) return undefined;
+	return subs.find( ( st: any ) => st && typeof st === 'object' && st.name === attachedStressLabel.value );
+} );
 
 const attachedStressValue = computed( {
 	get() {
+		if ( attachedStressCompanion.value ) {
+			const dice = cortexFunctions.getTraitDice( attachedStressCompanion.value );
+			return dice[0] || 0;
+		}
 		return trait.value?.custom?.stress ?? trait.value?.stress ?? 0;
 	},
 	set( val: any ) {
-		if ( !trait.value.custom ) trait.value.custom = {};
-		trait.value.custom.stress = val;
-		updateCharacter( props.character );
+		const character = props.character;
+		const t = character.traitSets[ props.traitSetID ].traits[ props.traitID ];
+		if ( !Array.isArray( t.traits ) ) t.traits = [];
+		let companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === attachedStressLabel.value );
+		if ( val ) {
+			if ( companion ) cortexFunctions.setTraitDice( companion, [ val ] );
+			else t.traits.push( { name: attachedStressLabel.value, value: val, dice: [] } );
+		} else if ( companion ) {
+			t.traits.splice( t.traits.indexOf( companion ), 1 );
+		}
+		updateCharacter( character );
 	},
 } );
 
@@ -440,13 +468,18 @@ function setHinder( val: any ) {
 
 function setAttachedStress( val: any ) {
 	const character = props.character;
-	const s = props.traitSetID;
-	const t = props.traitID;
-	if ( !character.traitSets[ s ].traits[ t ].custom ) {
-		character.traitSets[ s ].traits[ t ].custom = {};
+	const t = character.traitSets[ props.traitSetID ].traits[ props.traitID ];
+	if ( !Array.isArray( t.traits ) ) t.traits = [];
+	const label = attachedStressLabel.value;
+	const companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === label );
+	const current = companion ? ( cortexFunctions.getTraitDice( companion )[0] || 0 ) : 0;
+	if ( current === val ) {
+		if ( companion ) t.traits.splice( t.traits.indexOf( companion ), 1 );
+	} else if ( companion ) {
+		cortexFunctions.setTraitDice( companion, [ val ] );
+	} else {
+		t.traits.push( { name: label, value: val, dice: [] } );
 	}
-	const current = character.traitSets[ s ].traits[ t ].custom.stress ?? character.traitSets[ s ].traits[ t ].stress ?? 0;
-	character.traitSets[ s ].traits[ t ].custom.stress = ( current === val ) ? 0 : val;
 	updateCharacter( character );
 }
 
@@ -893,7 +926,7 @@ function getDieDisplayValue( val: any ) {
 								@click.stop="toggleOutValue"
 								title="Out"
 							>
-								<span>💥 OUT</span>
+								<span>{{ outLabel }}</span>
 							</li>
 						</ul>
 

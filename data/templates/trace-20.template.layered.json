@@ -52,7 +52,6 @@
         "description": "Team configuration ratings",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -96,21 +95,9 @@
           }
         },
         "traits": {
-          "Solo": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Partner": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Squad": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Solo": {},
+          "Partner": {},
+          "Squad": {}
         }
       },
       "Roles": {
@@ -118,7 +105,6 @@
         "description": "Civic investigation disciplines",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -148,41 +134,13 @@
           }
         },
         "traits": {
-          "Forensics": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Investigation": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Legal": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Medicine": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Psychology": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Tactics": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Technology": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Forensics": {},
+          "Investigation": {},
+          "Legal": {},
+          "Medicine": {},
+          "Psychology": {},
+          "Tactics": {},
+          "Technology": {}
         }
       },
       "Resources": {
@@ -190,7 +148,6 @@
         "description": "Civic assets, contacts, and backup",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -235,52 +192,24 @@
         "slots": {
           "0": {
             "value": "2d10",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "1": {
             "value": "2d8",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "2": {
             "value": "2d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
           "3": {
             "value": "2d6",
-            "pool": true,
-            "description": "",
-            "tags": [],
-            "custom": {}
+            "pool": true
           },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "6": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "7": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {}
         }
       },
       "Distinctions": {
@@ -288,7 +217,6 @@
         "description": "Defining history, drive, and complication",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -318,9 +246,6 @@
         "traits": {
           "Distinction #1:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -331,9 +256,6 @@
           },
           "Distinction #2:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -344,9 +266,6 @@
           },
           "Distinction #3:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -362,7 +281,6 @@
         "description": "Training tricks and case-cracking knacks",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -386,36 +304,12 @@
           }
         },
         "traits": {
-          "Talent #1:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Talent #2:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Talent #3:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Talent #4:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Talent #5:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Talent #6:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Talent #1:": {},
+          "Talent #2:": {},
+          "Talent #3:": {},
+          "Talent #4:": {},
+          "Talent #5:": {},
+          "Talent #6:": {}
         }
       },
       "Stress": {
@@ -423,7 +317,6 @@
         "description": "Emotional and physical pressure tracks",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -453,31 +346,11 @@
           }
         },
         "traits": {
-          "Afraid": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Angry": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Anxious": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Exhausted": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Injured": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Afraid": {},
+          "Angry": {},
+          "Anxious": {},
+          "Exhausted": {},
+          "Injured": {}
         }
       },
       "Growth Pool": {
@@ -485,7 +358,6 @@
         "description": "Base d6 d6",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -514,45 +386,39 @@
             "top": 2,
             "width": "20%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "D4": {
             "value": "d4",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 0
             }
           },
           "D6": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 2
             }
           },
           "D8": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 0
             }
           },
           "D10": {
             "value": "d10",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 0
             }
           },
           "D12": {
             "value": "d12",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 0
             }

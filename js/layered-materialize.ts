@@ -108,7 +108,7 @@ function sfxArrayFrom(container: unknown): unknown[] | undefined {
 		const o = raw && typeof raw === "object" ? (raw as TraitObject) : {};
 		const entry: Record<string, unknown> = { name: "" };
 		entry.description = typeof o.description === "string" ? o.description : "";
-		entry.tags = o.tags !== undefined ? clone(o.tags) : [];
+		if (o.tags !== undefined) entry.tags = clone(o.tags);
 		if (o.view !== undefined) entry.view = clone(o.view);
 		if (o.custom !== undefined) entry.custom = clone(o.custom);
 		out.push(entry);
@@ -344,20 +344,59 @@ export function materializeCharacter(
 		: ( Array.isArray(file.traitSets) ? ( file.traitSets as LegacySet[] ) : [] );
 	const used = new Set<string>();
 	const traitSets: LegacySet[] = [];
+	// Stable identity: when both sides carry a set id, the ids must agree
+	// for a name match to hold. A renamed set (new key, kept id) heals onto
+	// its template presentation; a same-named stranger stays a custom set.
+	// Missing ids on either side stay name-matched (legacy-tolerant).
+	const idOf = (s: unknown) => {
+		const id = (s as Record<string, unknown> | null)?.id;
+		return typeof id === "string" && id.length ? id : "";
+	};
+	const presById = new Map<string, LegacySet>();
+	for (const pset of presentationSets) {
+		const pid = idOf(pset);
+		if (pid && !presById.has(pid)) presById.set(pid, pset);
+	}
+	const orphans: LegacySet[] = [];
 	for (const pset of presentationSets) {
 		const name = typeof pset.name === "string" ? pset.name : "";
 		if (!name.length) {
 			traitSets.push(clone(pset));
 			continue;
 		}
-		if (!Object.prototype.hasOwnProperty.call(sets, name)) {
-			traitSets.push(clone(pset)); // inherited presentation
-			continue;
+		if (Object.prototype.hasOwnProperty.call(sets, name)) {
+			used.add(name);
+			const eset = sets[name];
+			if (eset === null) continue; // removed
+			const eid = idOf(eset);
+			if (!(eid && idOf(pset)) || eid === idOf(pset)) {
+				traitSets.push(buildSet(pset, eset as SetObject, name));
+				continue;
+			}
 		}
-		used.add(name);
-		const eset = sets[name];
-		if (eset === null) continue; // removed
-		traitSets.push(buildSet(pset, eset, name));
+		// No compatible entity set under this address: hold the slot for a
+		// possible id-healed rename; otherwise inherit below.
+		orphans.push(pset);
+	}
+	for (const pset of orphans) {
+		const pid = idOf(pset);
+		let healed = "";
+		if (pid) {
+			for (const [ename, eset] of Object.entries(sets)) {
+				if (used.has(ename) || ename === "SFX" || eset === null) continue;
+				if (idOf(eset) === pid) { healed = ename; break; }
+			}
+		}
+		if (healed) {
+			used.add(healed);
+			const folded = buildSet(pset, sets[healed] as SetObject, healed);
+			// The entity key is the display truth (the rename); the template
+			// supplies presentation and position.
+			(folded as Record<string, unknown>).name = healed;
+			traitSets.push(folded);
+		} else {
+			traitSets.push(clone(pset)); // inherited presentation
+		}
 	}
 	for (const [name, eset] of Object.entries(sets)) {
 		if (used.has(name) || name === "SFX") continue;
@@ -381,17 +420,17 @@ function sfxContainerFrom(arr: unknown[]): Record<string, unknown> {
 			if (traits[k] === undefined) traits[k] = {};
 			return;
 		}
-		if (e && typeof e === "object" && !Array.isArray(e)) {
-			const src = e as Record<string, unknown>;
-			const name = typeof src.name === "string" ? src.name : "";
-			const o: Record<string, unknown> = {};
-			o.description = src.description !== undefined ? clone(src.description) : "";
-			if (src.tags !== undefined) o.tags = clone(src.tags);
-			if (src.view !== undefined) o.view = clone(src.view);
-			if (src.custom !== undefined) o.custom = clone(src.custom);
-			if (!name.length) slots[String(i)] = o;
-			else traits[name] = o;
-		}
+	if (e && typeof e === "object" && !Array.isArray(e)) {
+		const src = e as Record<string, unknown>;
+		const name = typeof src.name === "string" ? src.name : "";
+		const o: Record<string, unknown> = {};
+		o.description = src.description !== undefined ? clone(src.description) : "";
+		if (src.tags !== undefined) o.tags = clone(src.tags);
+		if (src.view !== undefined) o.view = clone(src.view);
+		if (src.custom !== undefined) o.custom = clone(src.custom);
+		if (!name.length) slots[String(i)] = o;
+		else traits[name] = o;
+	}
 	});
 	const c: Record<string, unknown> = {};
 	if (Object.keys(traits).length) c.traits = traits;
@@ -413,6 +452,12 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 	for (const [k, v] of Object.entries(t)) {
 		if (k === "name" || k === "traits" || k === "sfx" || k === "dice" || k === "value" ||
 			k === "_lid" || k === "id" || k === "removedTraits") continue;
+		// Canonical emit: empty custom/tags stay out (absence carries the
+		// same meaning). description "" is KEPT: in a delta it is an
+		// explicit clear of an inherited description. Explicit nulls
+		// (removals, unrated) are kept.
+		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v) && !Object.keys(v).length) continue;
+		if (k === "tags" && Array.isArray(v) && !v.length) continue;
 		(node as Record<string, unknown>)[k] = clone(v);
 	}
 	const subs: Record<string, TraitRaw> = {};
@@ -431,8 +476,11 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 function layeredSetFrom(set: LegacySet): SetObject {
 	const s: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(set)) {
-		if (k === "name" || k === "traits" || k === "sfx" || k === "id" ||
+		// Set id is the stable join key (kept); trait-level ids stay out.
+		if (k === "name" || k === "traits" || k === "sfx" ||
 			k === "removedTraits" || k === "removedSets") continue;
+		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v) && !Object.keys(v as Record<string, unknown>).length) continue;
+		if (k === "tags" && Array.isArray(v) && !v.length) continue;
 		s[k] = clone(v);
 	}
 	const traits: Record<string, TraitRaw> = {};
@@ -450,10 +498,10 @@ function layeredSetFrom(set: LegacySet): SetObject {
 
 /**
  * Serialize a legacy render character to the layered entity (content + any
- * per-entity overrides, all preserved). Set/trait ids and app-local `_lid`
- * are dropped; `sheet` (the template ref) is left to the caller. This is the
- * lossless inverse of `materializeCharacter` when folded back onto the same
- * template.
+ * per-entity overrides, all preserved). Set ids are kept (stable join key);
+ * trait-level ids and app-local `_lid` are dropped; `sheet` (the template
+ * ref) is left to the caller. This is the lossless inverse of
+ * `materializeCharacter` when folded back onto the same template.
  */
 export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unknown> {
 	const entity: Record<string, unknown> = {};
@@ -462,9 +510,15 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 		entity[k] = clone(v);
 	}
 	const sets: Record<string, SetObject> = {};
+	const seen: Record<string, number> = {};
 	for (const set of Array.isArray(ch.traitSets) ? (ch.traitSets as LegacySet[]) : []) {
 		if (!set || typeof set.name !== "string" || !set.name.length) continue;
-		sets[set.name] = layeredSetFrom(set);
+		// Duplicate display names (GMC x6) take suffixed keys in document
+		// order, mirroring the template convention — otherwise all but one
+		// would collide on the same key and be lost.
+		seen[set.name] = (seen[set.name] || 0) + 1;
+		const key = seen[set.name] === 1 ? set.name : set.name + "~" + seen[set.name];
+		sets[key] = layeredSetFrom(set);
 	}
 	entity.sets = sets;
 	return entity;

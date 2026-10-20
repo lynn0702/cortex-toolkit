@@ -52,7 +52,6 @@
         "description": "Cover identity, espionage specialization, and personal objective",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -76,9 +75,6 @@
         "traits": {
           "Role": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -89,9 +85,6 @@
           },
           "Background": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -102,9 +95,6 @@
           },
           "Personality": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -120,7 +110,6 @@
         "description": "Operational deployment modes",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -166,29 +155,15 @@
           }
         },
         "traits": {
-          "Diplomacy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Discovery": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Defense": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Diplomacy": {},
+          "Discovery": {},
+          "Defense": {}
         }
       },
       "Complications": {
         "id": "complications",
-        "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -232,16 +207,8 @@
           }
         },
         "traits": {
-          "Frostbite": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Hypothermia": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Frostbite": {},
+          "Hypothermia": {}
         }
       },
       "Attributes & Stress": {
@@ -249,7 +216,6 @@
         "description": "Core operative capabilities and physical resilience",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -308,36 +274,12 @@
           }
         },
         "traits": {
-          "Brawn": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Endurance": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Grace": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Grit": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Mettle": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Smarts": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Brawn": {},
+          "Endurance": {},
+          "Grace": {},
+          "Grit": {},
+          "Mettle": {},
+          "Smarts": {}
         }
       },
       "Skills & Specialties": {
@@ -345,7 +287,6 @@
         "description": "Black-ops competencies and d6 specialties",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -375,101 +316,25 @@
           "reservedSlots": 19
         },
         "traits": {
-          "Craft": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Drive": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fight": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fix": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fly": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Focus": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Influence": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Know": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Labor": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Move": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Notice": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Operate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Perform": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Shoot": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sneak": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Survive": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Throw": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Treat": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Trick": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Craft": {},
+          "Drive": {},
+          "Fight": {},
+          "Fix": {},
+          "Fly": {},
+          "Focus": {},
+          "Influence": {},
+          "Know": {},
+          "Labor": {},
+          "Move": {},
+          "Notice": {},
+          "Operate": {},
+          "Perform": {},
+          "Shoot": {},
+          "Sneak": {},
+          "Survive": {},
+          "Throw": {},
+          "Treat": {},
+          "Trick": {}
         }
       },
       "Signature Assets": {
@@ -477,7 +342,6 @@
         "description": "Classified spy gear and experimental equipment",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -529,29 +393,15 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Talents": {
         "id": "talents",
-        "description": "",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -569,33 +419,24 @@
             "top": 3,
             "width": "65%",
             "height": 1
+          },
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
           }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Gifts": {
         "id": "gifts",
-        "description": "",
         "nounSingular": "Gift",
         "nounPlural": "Gifts",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -645,24 +486,14 @@
           }
         },
         "traits": {
-          "Gift of": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Gift of~2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Gift of": {},
+          "Gift of~2": {}
         }
       },
       "Milestones": {
         "id": "milestones",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -702,28 +533,20 @@
         },
         "traits": {
           "1 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "3 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "10 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           }
         }
       },
       "Milestones~2": {
         "id": "milestones-b",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -763,29 +586,21 @@
         },
         "traits": {
           "1 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "3 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "10 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           }
         },
         "label": "Milestones"
       },
       "XP": {
         "id": "xp",
-        "description": "",
         "nounSingular": "Pip",
         "nounPlural": "Pips",
-        "tags": [],
         "view": {
           "features": {
             "description": false,

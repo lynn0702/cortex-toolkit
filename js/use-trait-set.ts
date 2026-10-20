@@ -513,8 +513,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return renderText( clean );
 	}
 
-	function getDistinctionSfxText( trait: Trait ) {
-		if ( !trait?.sfx || !trait.sfx.length ) return '';
+	function getDistinctionSfxText( trait: Trait ) {		if ( !trait?.sfx || !trait.sfx.length ) return '';
 		const nonHinder = trait.sfx.filter( ( sfx: any ) => sfx !== 'hinder' && ( typeof sfx !== 'object' || sfx.name?.toLowerCase() !== 'hinder' ) );
 		if ( !nonHinder.length ) return '';
 		const first = nonHinder[0];
@@ -523,6 +522,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			return `${first.name}: ${first.description}`;
 		}
 		return first.description || first.name || '';
+	}
+
+	// Chrome words with label hooks (view.labels.*); static defaults live
+	// in the central label registry, so every on-sheet word is settable
+	// in data. Only the hinder sentence keeps a constructed default (it
+	// interpolates the live trait), overridable wholesale via
+	// labels.hinderSentence.
+	function getHinderSentence( traitSetArg: TraitSet, trait: Trait ) {
+		const labels = getView( traitSetArg )?.labels;
+		if ( labels && typeof labels.hinderSentence === 'string' && labels.hinderSentence.length ) return labels.hinderSentence;
+		return 'Gain a PP when you switch out this ' + ( traitSetArg.nounSingular && traitSetArg.nounSingular.length ? traitSetArg.nounSingular.toLowerCase() : 'trait' ) + '’s d' + ( trait.value || 8 ) + ' for a d4.';
 	}
 
 	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
@@ -537,7 +547,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 				return {
 					name: 'Hinder',
 					isHinder: true,
-					description: 'Gain a PP when you switch out this ' + ( traitSetArg.nounSingular && traitSetArg.nounSingular.length ? traitSetArg.nounSingular.toLowerCase() : 'trait' ) + '’s d' + ( trait.value || 8 ) + ' for a d4.'
+					description: getHinderSentence( traitSetArg, trait )
 				};
 			}
 			return typeof sfx === 'object' ? sfx : { name: sfx, description: '' };
@@ -565,34 +575,78 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return [ 4, 6, 8, 10, 12 ];
 	}
 
-	function getAttachedStressValue( trait: Trait ) {
-		return trait?.custom?.stress ?? trait?.stress ?? 0;
+	function getAttachedStressValue( trait: Trait, traitSetArg?: TraitSet ) {
+		const companion = traitSetArg ? getStressCompanion( traitSetArg, trait ) : undefined;
+		if ( companion ) return getTraitDice( companion )[0] || 0;
+		return ( trait as any )?.custom?.stress ?? ( trait as any )?.stress ?? 0;
+	}
+
+	// The stress companion is an ordinary subtrait named for the set's
+	// stress label (default "Stress"). It renders in the stress cells, not
+	// in the subtrait list; absent means no stress (sparse).
+	function getStressCompanion( traitSetArg: TraitSet, trait: Trait ) {
+		const subs = ( trait as any )?.traits;
+		if ( !Array.isArray( subs ) ) return undefined;
+		const name = getAttachedStressLabel( traitSetArg );
+		return subs.find( ( st: any ) => st && typeof st === 'object' && st.name === name );
+	}
+
+	function isStressCompanion( traitSetArg: TraitSet, subName: unknown ) {
+		return hasAttachedStress( traitSetArg ) && subName === getAttachedStressLabel( traitSetArg );
+	}
+
+	function visibleSubtraits( traitSetArg: TraitSet, trait: Trait ) {
+		const subs = ( trait as any )?.traits;
+		if ( !Array.isArray( subs ) ) return [];
+		if ( !hasAttachedStress( traitSetArg ) ) return subs;
+		return subs.filter( ( st: any ) => !isStressCompanion( traitSetArg, st?.name ) );
 	}
 
 	function shouldShowAttachedStressOut( traitSetArg: TraitSet ) {
 		return Boolean( getView( traitSetArg )?.attachedStress?.includeOut );
 	}
 
-	function isAttachedStressOut( trait: Trait ) {
-		return Boolean( trait?.custom?.isStressOut || ( getAttachedStressValue( trait ) > 12 ) );
+	function isAttachedStressOut( trait: Trait, traitSetArg?: TraitSet ) {
+		const companion = traitSetArg ? getStressCompanion( traitSetArg, trait ) : undefined;
+		if ( companion ) return Boolean( ( companion as any ).isOut ) || ( ( getTraitDice( companion as Trait )[0] || 0 ) > 12 );
+		return Boolean( ( trait as any )?.custom?.isStressOut || ( getAttachedStressValue( trait ) > 12 ) );
 	}
 
 	function handleAttachedStressClick( sArg: any, t: any, size: number ) {
 		if ( props.submode === 'print' ) return;
-		const trait = props.character.traitSets[sArg]?.traits?.[t];
+		const set = props.character.traitSets[sArg];
+		const trait = set?.traits?.[t];
 		if ( !trait ) return;
-		if ( !trait.custom ) trait.custom = {};
-		const cur = trait.custom.stress ?? trait.stress ?? 0;
-		trait.custom.stress = ( cur === size ) ? 0 : size;
+		const name = getAttachedStressLabel( set );
+		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
+		const idx = trait.traits.findIndex( ( st: any ) => st && typeof st === 'object' && st.name === name );
+		const cur = idx !== -1 ? ( getTraitDice( trait.traits[idx] )[0] || 0 ) : 0;
+		if ( cur === size ) {
+			if ( idx !== -1 ) trait.traits.splice( idx, 1 );
+		} else if ( idx !== -1 ) {
+			cortexFunctions.setTraitDice( trait.traits[idx], [ size ] );
+		} else {
+			trait.traits.push( { name, value: size, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} } );
+		}
 		updateCharacter( props.character );
 	}
 
 	function handleAttachedStressOutClick( sArg: any, t: any ) {
 		if ( props.submode === 'print' ) return;
-		const trait = props.character.traitSets[sArg]?.traits?.[t];
+		const set = props.character.traitSets[sArg];
+		const trait = set?.traits?.[t];
 		if ( !trait ) return;
-		if ( !trait.custom ) trait.custom = {};
-		trait.custom.isStressOut = !trait.custom.isStressOut;
+		const name = getAttachedStressLabel( set );
+		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
+		let companion: any = trait.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === name );
+		if ( !companion ) {
+			companion = { name, value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} };
+			trait.traits.push( companion );
+		}
+		companion.isOut = !companion.isOut;
+		if ( !companion.isOut && !( ( getTraitDice( companion )[0] || 0 ) > 0 ) ) {
+			trait.traits.splice( trait.traits.indexOf( companion ), 1 );
+		}
 		updateCharacter( props.character );
 	}
 
@@ -932,8 +986,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( sub && sub.name && String( sub.name ).trim().length ) {
 			return sub.name;
 		}
-		const style = getView( traitSetArg )?.style?.body;
-		return cortexFunctions.labelDefaultForStyle( style, 'slot' + index );
+		return getTraitSetLabel( traitSetArg, 'slot' + index );
 	}
 
 	function getTalentEffect( trait: Trait ) {
@@ -1060,8 +1113,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		getTraitSetRatings, getSubtraitRatings, getTraitDice, isMultiDieTrait, isResourceTrait,
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleStressClick,
 		handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, getSharedHinderLines, renderHinderLine,
-		getDistinctionSfxText, getDisplayTraitSfx,
+		getDistinctionSfxText, getDisplayTraitSfx, getHinderSentence,
 		hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue,
+		getStressCompanion, isStressCompanion, visibleSubtraits,
 		shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
 		getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
 		getSessionRecordCount, isSessionHorizontal, sessionViewBox, sessionSpine, sessionBubble, sessionLine,

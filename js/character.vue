@@ -51,15 +51,26 @@ const nickname = computed( () => props.character?.nickname ?? getView( props.cha
 const hasNickname = computed( () => Boolean( nickname.value || ( isSpotlightStyle.value && getView( props.character )?.hasNickname ) ) );
 // Name-block field labels are editable (Name itself is fixed); games like
 // Strange Towns relabel Pronouns to Ruin. Stored in the character view.
+// Labels that render uppercase (nickname/pronouns/description) go through
+// nameLabel; words that keep their own case (Player:, PP) use nameWord.
 const nameLabels = computed( () => getView( props.character )?.nameLabels ?? {} );
 function nameLabel( key: 'nickname' | 'pronouns' | 'description', fallback: string ) {
 	const custom = ( nameLabels.value as Record<string, unknown> )[ key ];
 	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim().toUpperCase();
 	return fallback;
 }
+function nameWord( key: 'player' | 'portraitCaption' | 'plotPoints', fallback: string ) {
+	const custom = ( nameLabels.value as Record<string, unknown> )[ key ];
+	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim();
+	return fallback;
+}
 const nicknameLabel = computed( () => nameLabel( 'nickname', 'NICKNAME' ) );
 const pronounsLabel = computed( () => nameLabel( 'pronouns', 'PRONOUNS' ) );
 const descriptionLabel = computed( () => nameLabel( 'description', 'DESCRIPTION' ) );
+const playerLabel = computed( () => nameWord( 'player', 'PLAYER:' ) );
+const playerLabelClassic = computed( () => nameWord( 'player', 'Player:' ) );
+const portraitCaption = computed( () => nameWord( 'portraitCaption', '' ) );
+const plotPointsLabel = computed( () => nameWord( 'plotPoints', 'PP' ) );
 const plotPoints = computed( () => Number( props.character?.plotPoints ) || 0 );
 const portrait = computed( () => props.character?.portrait ?? null );
 const effectivePortraitUrl = computed( () => portrait.value?.url || '' );
@@ -610,7 +621,7 @@ watch( () => props.character, () => {
 								<div class="spotlight-meta-name-cell">
 									<div class="spotlight-cell-header">
 										<span class="spotlight-cell-label">NAME</span>
-										<span class="spotlight-cell-sublabel" v-if="player && !printBlank">PLAYER: {{ player }}</span>
+										<span class="spotlight-cell-sublabel" v-if="player && !printBlank">{{ playerLabel }} {{ player }}</span>
 									</div>
 									<div class="spotlight-cell-content name-content" v-if="!printBlank && name" v-html="renderNameHtml(name)"></div>
 									<div class="spotlight-blank-line" v-else-if="printBlank"></div>
@@ -671,34 +682,36 @@ watch( () => props.character, () => {
 							</div>
 
 							<!-- RIGHT BOX: PORTRAIT (25% OF HEADER WIDTH, HALF SIZE, REMOVABLE) -->
-							<div
-								v-if="hasHeaderPortrait"
-								class="spotlight-header-portrait-box"
-								:class="{ 'selected': isSelected(['portrait']), 'has-image': Boolean(effectivePortraitUrl) }"
-								@click.stop="selectElement(['portrait'])"
-								title="Click to edit portrait"
-							>
-								<img
-									v-if="effectivePortraitUrl"
-									class="portrait-small-image"
-									:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'center')"
-									:src="safeImageUrl(effectivePortraitUrl)"
-									alt="Portrait / Logo"
-								/>
-								<div v-else class="portrait-small-placeholder" title="Click to add portrait">
-									<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
-									<span class="spotlight-add-hint" v-if="submode === 'edit'">Click to add portrait</span>
-								</div>
-
-								<button
-									v-if="submode === 'edit'"
-									type="button"
-									class="btn-remove-header-portrait"
-									@click.stop="removeHeaderPortrait"
-									title="Remove portrait"
+							<div v-if="hasHeaderPortrait" class="spotlight-header-portrait-wrap">
+								<div
+									class="spotlight-header-portrait-box"
+									:class="{ 'selected': isSelected(['portrait']), 'has-image': Boolean(effectivePortraitUrl) }"
+									@click.stop="selectElement(['portrait'])"
+									title="Click to edit portrait"
 								>
-									<i class="fas fa-trash-alt"></i>
-								</button>
+									<img
+										v-if="effectivePortraitUrl"
+										class="portrait-small-image"
+										:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'center')"
+										:src="safeImageUrl(effectivePortraitUrl)"
+										alt="Portrait / Logo"
+									/>
+									<div v-else class="portrait-small-placeholder" title="Click to add portrait">
+										<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
+										<span class="spotlight-add-hint" v-if="submode === 'edit'">Click to add portrait</span>
+									</div>
+
+									<button
+										v-if="submode === 'edit'"
+										type="button"
+										class="btn-remove-header-portrait"
+										@click.stop="removeHeaderPortrait"
+										title="Remove portrait"
+									>
+										<i class="fas fa-trash-alt"></i>
+									</button>
+								</div>
+								<div v-if="portraitCaption" class="spotlight-portrait-caption">{{ portraitCaption }}</div>
 							</div>
 						</div>
 
@@ -727,7 +740,7 @@ watch( () => props.character, () => {
 								<div class="character-meta">
 						
 									<div class="character-player" v-if="player && player.length">
-										<span class="meta-label">Player:</span> <span>{{ player }}</span>
+										<span class="meta-label">{{ playerLabelClassic }}</span> <span>{{ player }}</span>
 									</div>
 
 									<div class="character-pronouns" v-if="pronouns.length">
@@ -739,7 +752,7 @@ watch( () => props.character, () => {
 									</div>
 
 									<div class="character-pp-badge" v-if="submode === 'play'">
-										<span class="pp-badge-label">PP</span>
+										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
 										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
 										<span class="pp-count">{{ plotPoints }}</span>
 										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>

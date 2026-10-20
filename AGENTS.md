@@ -94,7 +94,7 @@ prompt, the prompt wins for that session — then update this file.
 
 1. `npm run build` passes with no errors or warnings.
 2. `npm run check` (`vue-tsc --noEmit`) passes.
-3. `npm test` passes all 7 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`).
+3. `npm test` passes all 8 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`, `export`).
 4. `npm run validate` passes with 0 errors and 0 warnings.
 5. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
 6. `grep -rn 'v-html' js/` — every site accounted for per Security rules.

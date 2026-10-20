@@ -52,7 +52,6 @@
         "description": "As a group, decide on the following information.",
         "nounSingular": "Detail",
         "nounPlural": "Details",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -68,39 +67,17 @@
           }
         },
         "traits": {
-          "Name": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Location": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Description": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Benefits": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Drawbacks": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Name": {},
+          "Location": {},
+          "Description": {},
+          "Benefits": {},
+          "Drawbacks": {}
         }
       },
       "Team Resources": {
         "id": "team-resources",
-        "description": "",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -122,110 +99,34 @@
             12
           ],
           "multiDie": true,
-          "reservedSlots": 20
+          "reservedSlots": 20,
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
+          }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "6": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "7": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "8": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "9": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "10": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "11": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "12": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "13": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "14": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "15": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "16": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "17": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "18": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "19": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {},
+          "10": {},
+          "11": {},
+          "12": {},
+          "13": {},
+          "14": {},
+          "15": {},
+          "16": {},
+          "17": {},
+          "18": {},
+          "19": {}
         }
       }
     }

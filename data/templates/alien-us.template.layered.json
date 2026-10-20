@@ -52,7 +52,6 @@
         "description": "Core alien background, job, and personality",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -75,9 +74,6 @@
         },
         "traits": {
           "Alien Background:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -87,9 +83,6 @@
             }
           },
           "Alien Role/Job:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -99,9 +92,6 @@
             }
           },
           "Personality/Quirk:": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -117,7 +107,6 @@
         "description": "Core baseline d6 skills with branching d8+ specialties",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -148,20 +137,13 @@
         },
         "traits": {
           "Bout": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -169,20 +151,13 @@
             }
           },
           "Chat": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -190,20 +165,13 @@
             }
           },
           "Find": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -211,20 +179,13 @@
             }
           },
           "Make": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -232,20 +193,13 @@
             }
           },
           "Play": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -253,20 +207,13 @@
             }
           },
           "Operate": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -274,20 +221,13 @@
             }
           },
           "Work": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "slots": {
               "0": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "left"
                 }
               },
               "1": {
-                "description": "",
-                "tags": [],
                 "view": {
                   "branchSide": "right"
                 }
@@ -302,7 +242,6 @@
         "nounSingular": "Value",
         "nounPlural": "Values",
         "statement": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -343,41 +282,13 @@
           }
         },
         "traits": {
-          "Alien": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Conformity": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Materialism": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Paranoia": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Patriotism": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Secrecy": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Spirituality": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Alien": {},
+          "Conformity": {},
+          "Materialism": {},
+          "Paranoia": {},
+          "Patriotism": {},
+          "Secrecy": {},
+          "Spirituality": {}
         }
       },
       "Talents": {
@@ -385,7 +296,6 @@
         "description": "Specialized alien abilities and tech modules",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -405,30 +315,19 @@
             "top": 3,
             "width": "50%",
             "height": 1
+          },
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
           }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {}
         }
       },
       "Signature Assets / Tech": {
@@ -436,7 +335,6 @@
         "description": "Alien equipment and concealed devices",
         "nounSingular": "Signature Asset / Tech",
         "nounPlural": "Signature Assets / Tech",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -482,21 +380,9 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Relationships": {
@@ -504,7 +390,6 @@
         "description": "Connections to human contacts, superiors, and rivals",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -546,56 +431,16 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "6": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "7": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "8": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "9": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {},
+          "8": {},
+          "9": {}
         }
       },
       "Session Record": {
@@ -603,7 +448,6 @@
         "description": "Session track and progression log",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",

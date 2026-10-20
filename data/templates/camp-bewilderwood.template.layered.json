@@ -52,7 +52,6 @@
         "description": "Camp background, camper reputation, and hidden destiny",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -105,10 +104,7 @@
         "traits": {
           "HERITAGE:": {
             "value": "d8",
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -121,10 +117,7 @@
           },
           "DESTINY:": {
             "value": "d8",
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -137,10 +130,7 @@
           },
           "CAMP REPUTATION:": {
             "value": "d8",
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -160,7 +150,6 @@
         "nounPlural": "Values",
         "statement": true,
         "hasQuestionedPip": true,
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -207,39 +196,24 @@
         },
         "traits": {
           "Bravery": {
-            "description": "",
             "statement": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           },
           "Community": {
-            "description": "",
             "statement": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           },
           "Curiosity": {
-            "description": "",
             "statement": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           },
           "Friendship": {
-            "description": "",
             "statement": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           },
           "Mischief": {
-            "description": "",
             "statement": "",
-            "questioned": false,
-            "tags": [],
-            "custom": {}
+            "questioned": false
           }
         }
       },
@@ -248,7 +222,6 @@
         "description": "Treasured camper keepsakes and scavenged relics",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -293,21 +266,10 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "statement": "",
-            "tags": [],
-            "custom": {}
+            "statement": ""
           },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1": {},
+          "2": {}
         }
       },
       "Attributes": {
@@ -315,7 +277,6 @@
         "description": "Core camper capability ratings",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -359,21 +320,9 @@
           }
         },
         "traits": {
-          "Mental": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Physical": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Social": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Mental": {},
+          "Physical": {},
+          "Social": {}
         }
       },
       "Standing": {
@@ -383,7 +332,6 @@
         "nounPlural": "Standings",
         "statement": true,
         "ratingPosition": "inline",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -418,116 +366,54 @@
             "top": 2,
             "width": "40%",
             "height": 1
+          },
+          "labels": {
+            "slot0": "COMPLICATION",
+            "slot1": "BONUS"
           }
         },
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "COMPLICATION": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "BONUS": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "COMPLICATION": {},
+              "BONUS": {}
             }
           },
           "1": {
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "COMPLICATION": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "BONUS": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "COMPLICATION": {},
+              "BONUS": {}
             }
           },
           "2": {
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "COMPLICATION": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "BONUS": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "COMPLICATION": {},
+              "BONUS": {}
             }
           },
           "3": {
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "COMPLICATION": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "BONUS": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "COMPLICATION": {},
+              "BONUS": {}
             }
           },
           "4": {
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "COMPLICATION": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "BONUS": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "COMPLICATION": {},
+              "BONUS": {}
             }
           },
           "5": {
-            "description": "",
             "statement": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "COMPLICATION": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "BONUS": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              }
+              "COMPLICATION": {},
+              "BONUS": {}
             }
           }
         }
@@ -539,7 +425,6 @@
         "nounPlural": "Badges",
         "hasCounterColumn": true,
         "counterLabel": "XP",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -577,7 +462,6 @@
         "description": "Camper knacks and signature tricks",
         "nounSingular": "Talent",
         "nounPlural": "Talents",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -591,20 +475,17 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 2
+          "reservedSlots": 2,
+          "labels": {
+            "col1": "TALENT",
+            "col2": "ACTIVATION",
+            "col3": "EFFECT"
+          }
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {}
         }
       }
     }

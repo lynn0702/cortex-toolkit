@@ -52,7 +52,6 @@
         "description": "SolarPunk holistic community attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -97,29 +96,15 @@
           }
         },
         "traits": {
-          "Mind": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Body": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Connection": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Mind": {},
+          "Body": {},
+          "Connection": {}
         }
       },
       "Session Record": {
         "id": "session-record",
-        "description": "",
         "nounSingular": "Session",
         "nounPlural": "Sessions",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -152,7 +137,6 @@
         "description": "Ecological calling, community role, and personal purpose",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -182,63 +166,42 @@
         "traits": {
           "Identity:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {}
                 }
               }
             }
           },
           "Community:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {}
                 }
               }
             }
           },
           "Purpose:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {}
                 }
               }
             }
@@ -250,7 +213,6 @@
         "description": "Sustainable tech, tools, and eco-craft",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -304,31 +266,21 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {},
                 "slots": {
-                  "0": {
-                    "custom": {}
-                  }
+                  "0": {}
                 }
               }
             }
           },
           "1": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {},
                 "slots": {
-                  "0": {
-                    "custom": {}
-                  }
+                  "0": {}
                 }
               }
             }
@@ -340,7 +292,6 @@
         "description": "Ecological competencies (d4-d12) and d6 craft specialties",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -367,104 +318,32 @@
           ],
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 19
+          "reservedSlots": 19,
+          "labels": {
+            "left": "SKILL",
+            "right": "SPECIALTIES"
+          }
         },
         "traits": {
-          "Craft": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Drive": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fight": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fix": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fly": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Focus": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Influence": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Know": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Labor": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Move": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Notice": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Operate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Perform": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Shoot": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sneak": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Survive": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Throw": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Treat": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Trick": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Craft": {},
+          "Drive": {},
+          "Fight": {},
+          "Fix": {},
+          "Fly": {},
+          "Focus": {},
+          "Influence": {},
+          "Know": {},
+          "Labor": {},
+          "Move": {},
+          "Notice": {},
+          "Operate": {},
+          "Perform": {},
+          "Shoot": {},
+          "Sneak": {},
+          "Survive": {},
+          "Throw": {},
+          "Treat": {},
+          "Trick": {}
         }
       }
     }

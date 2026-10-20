@@ -52,7 +52,6 @@
         "description": "Crew role, quality, and personal drive",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -82,36 +81,26 @@
         "traits": {
           "Purpose:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  }
+                  "1": {}
                 }
               }
             }
           },
           "Quality:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  }
+                  "1": {}
                 }
               }
             }
@@ -120,18 +109,13 @@
         "slots": {
           "2": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  }
+                  "1": {}
                 }
               }
             }
@@ -144,7 +128,6 @@
         "nounSingular": "Value",
         "nounPlural": "Values",
         "statement": true,
-        "tags": [],
         "hasQuestionedPip": true,
         "view": {
           "features": {
@@ -175,31 +158,11 @@
           }
         },
         "traits": {
-          "Courage": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Curiosity": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Hope": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Logic": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Peace": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Courage": {},
+          "Curiosity": {},
+          "Hope": {},
+          "Logic": {},
+          "Peace": {}
         }
       },
       "Relationships": {
@@ -208,7 +171,6 @@
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
         "statement": true,
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -255,46 +217,14 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "5": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "6": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "7": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {},
+          "5": {},
+          "6": {},
+          "7": {}
         }
       },
       "Signature Assets": {
@@ -302,7 +232,6 @@
         "description": "Specialized starship equipment and personal gear",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -346,29 +275,15 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Personal Milestones": {
         "id": "personal-milestones",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -407,29 +322,15 @@
           }
         },
         "traits": {
-          "1 XP": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3 XP": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "10 XP": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1 XP": {},
+          "3 XP": {},
+          "10 XP": {}
         }
       },
       "Group Milestones": {
         "id": "group-milestones",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -468,21 +369,9 @@
           }
         },
         "traits": {
-          "1 XP": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3 XP": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "10 XP": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "1 XP": {},
+          "3 XP": {},
+          "10 XP": {}
         }
       },
       "XP": {
@@ -490,7 +379,6 @@
         "description": "Experience points bubble track",
         "nounSingular": "XP",
         "nounPlural": "XP",
-        "tags": [],
         "view": {
           "features": {
             "description": false,

@@ -52,7 +52,6 @@
         "description": "Origin, motivation, and crime-fighting persona",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -84,9 +83,6 @@
         "traits": {
           "Personality:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -97,9 +93,6 @@
           },
           "Past:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -110,9 +103,6 @@
           },
           "Quirk:": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -128,7 +118,6 @@
         "description": "Operating mode ratings",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -172,21 +161,9 @@
           }
         },
         "traits": {
-          "Personal:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Group:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "World:": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Personal:": {},
+          "Group:": {},
+          "World:": {}
         }
       },
       "Specialties": {
@@ -194,7 +171,6 @@
         "description": "Master and expert professional skills",
         "nounSingular": "Specialty",
         "nounPlural": "Specialties",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -225,31 +201,11 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "4": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {},
+          "4": {}
         }
       },
       "Signature Assets": {
@@ -257,7 +213,6 @@
         "description": "Heroic gear and vehicles",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -289,29 +244,15 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {}
         }
       },
       "Stress": {
         "id": "stress",
-        "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -355,29 +296,15 @@
           }
         },
         "traits": {
-          "Physical": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Mental": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Social": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Physical": {},
+          "Mental": {},
+          "Social": {}
         }
       },
       "Growth Pool": {
         "id": "growth-pool",
-        "description": "",
         "nounSingular": "Growth Die",
         "nounPlural": "Growth Dice",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -406,45 +333,39 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
+          },
+          "labels": {
+            "rating": "RATING",
+            "dice": "/ DICE"
           }
         },
         "traits": {
           "D4": {
             "value": "d4",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
             "value": "d6",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
             "value": "d8",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
             "value": "d10",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
             "value": "d12",
-            "description": "",
-            "tags": [],
             "view": {
               "poolCount": 1
             }
@@ -456,7 +377,6 @@
         "description": "Modular powers, SFX triggers, and shutdown limits",
         "nounSingular": "Power Set",
         "nounPlural": "Power Sets",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -476,24 +396,14 @@
           "reservedSlots": 3
         },
         "traits": {
-          "Powers": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Limits": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Powers": {},
+          "Limits": {}
         }
       },
       "Power Set 2": {
         "id": "power-set-2",
-        "description": "",
         "nounSingular": "Power",
         "nounPlural": "Powers",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -510,24 +420,14 @@
           }
         },
         "traits": {
-          "Powers": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Limits": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Powers": {},
+          "Limits": {}
         }
       },
       "Power Set 3": {
         "id": "power-set-3",
-        "description": "",
         "nounSingular": "Power",
         "nounPlural": "Powers",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -544,16 +444,8 @@
           }
         },
         "traits": {
-          "Powers": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Limits": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Powers": {},
+          "Limits": {}
         }
       }
     }

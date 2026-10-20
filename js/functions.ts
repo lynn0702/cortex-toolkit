@@ -211,8 +211,19 @@ export const cortexFunctions = {
 	labelDefaultForStyle: function( style: string | undefined, key: string ) {
 		const map = style ? this.defaultTraitSetLabels[ style ] : undefined;
 		if ( map && map[ key ] !== undefined ) return map[ key ];
+		if ( ( this.commonLabelDefaults as Record<string, string> )[ key ] !== undefined ) {
+			return ( this.commonLabelDefaults as Record<string, string> )[ key ];
+		}
 		return '';
 	},
+
+	// Chrome words shared by every set body; settable via view.labels.*.
+	commonLabelDefaults: {
+		out: '💥 OUT',
+		sfxBadge: 'SFX',
+		sfxPrefix: 'SFX:',
+		hinderSentence: '',
+	} as Record<string, string>,
 
 	getTraitDice: function( trait: Trait ) {
 		if ( !trait ) return [];
@@ -435,7 +446,10 @@ export const cortexFunctions = {
 
 	// Strip app-local and forbidden-below-set keys for export: _lid
 	// everywhere below set level, plus any stray trait-level `id` (D1).
-	// Set-level ids are the join key and are always kept.
+	// Set-level ids are the stable join key and are always kept: the array
+	// merge joins sets by id, and the layered materializer heals renames by
+	// id (name is the address, id the identity — rename the name freely,
+	// never the id).
 	stripInternalIds: function( node: { traitSets?: TraitSet[]; traits?: Trait[] } ) {
 		const walkTraits = ( traits: Trait[] | undefined ) => {
 			if ( !Array.isArray( traits ) ) return;
@@ -962,9 +976,15 @@ export const cortexFunctions = {
 				const r = this.pruneValue( bval[k], oval[k], null );
 				if ( !r.drop ) out[k] = r.keep;
 			}
-			if ( !Object.keys( out ).length ) return { drop: true };
-			if ( Object.keys( out ).every( kk => kk === 'id' || kk === 'name' ) ) return { drop: true };
-			return { keep: out };
+		if ( !Object.keys( out ).length ) return { drop: true };
+		if ( Object.keys( out ).every( kk => kk === 'id' || kk === 'name' ) ) {
+			// Join keys + name alone still drop — unless the name moved. A
+			// rename is display truth, not inheritance, and must survive.
+			const bName = ( bval && typeof bval === 'object' && !Array.isArray( bval ) ) ? ( bval as any ).name : undefined;
+			if ( out.name !== undefined && bName !== undefined && out.name !== bName ) return { keep: out };
+			return { drop: true };
+		}
+		return { keep: out };
 		}
 		return { keep: cloneDeep( oval ) };
 	},
@@ -1026,13 +1046,15 @@ export const cortexFunctions = {
 			if ( !o || typeof o !== 'object' ) { sparse.push( cloneDeep( o ) ); return; }
 			const b = ( typeof o.id === 'string' && o.id.length ) ? baseById.get( o.id ) : null;
 			if ( !b ) { sparse.push( cloneDeep( o ) ); return; } // custom set: whole
-			const r = this.pruneValue( b, o, null );
-			const pruned = r.drop ? { id: o.id } : r.keep;
-			pruned.id = o.id;
-			// Fully-inherited sets (join keys + bare name stubs only) drop
-			// entirely — absent means inherit whole. Arrangement order lives
-			// in the preference layer, not here.
-			if ( !stubOnly( pruned ) ) sparse.push( pruned );
+		const r = this.pruneValue( b, o, null );
+		const pruned = r.drop ? { id: o.id } : r.keep;
+		pruned.id = o.id;
+		// Fully-inherited sets (join keys + bare name stubs only) drop
+		// entirely — absent means inherit whole. Arrangement order lives
+		// in the preference layer, not here. A renamed set is never bare:
+		// the name is display truth and must survive even with no other
+		// overrides, or the rename silently vanishes on save.
+		if ( !stubOnly( pruned ) || o.name !== b.name ) sparse.push( pruned );
 		} );
 		return sparse;
 	},
@@ -1046,12 +1068,34 @@ export const cortexFunctions = {
 		return r.drop ? {} : r.keep;
 	},
 
+	// Canonical file emit: drop empty custom/tags everywhere in a delta
+	// tree. description "" is KEPT: in a delta it is an explicit clear of
+	// an inherited description. Explicit nulls, join keys, and name stubs
+	// are kept.
+	pruneEmptyScaffolding: function( node: any ) {
+		if ( !node || typeof node !== 'object' ) return node;
+		if ( Array.isArray( node ) ) {
+			node.forEach( ( el: any ) => this.pruneEmptyScaffolding( el ) );
+			return node;
+		}
+		if ( node.custom && typeof node.custom === 'object' && !Array.isArray( node.custom ) &&
+			!Object.keys( node.custom ).length ) {
+			delete node.custom;
+		}
+		if ( Array.isArray( node.tags ) && !node.tags.length ) delete node.tags;
+		Object.keys( node ).forEach( ( k: string ) => {
+			if ( node[k] && typeof node[k] === 'object' ) this.pruneEmptyScaffolding( node[k] );
+		} );
+		return node;
+	},
+
 	// Export form: sparse character (overrides only) + embedded full
 	// template object, so the file is self-contained and hand-editable.
 	// Without a resolvable template the character exports exactly as today.
 	stripCharacterForExport: function( character: any, templateEntry: any ) {
 		const clean = this.stripCharacterToDeltas( character, templateEntry );
 		this.stripInternalIds( clean );
+		this.pruneEmptyScaffolding( clean );
 		if ( templateEntry && templateEntry.id ) {
 			clean.sheet = { template: cloneDeep( templateEntry ) };
 		}

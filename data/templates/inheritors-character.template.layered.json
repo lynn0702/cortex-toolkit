@@ -52,7 +52,6 @@
         "description": "Gain a PP when you include your d4 attribute in your dice pool.",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
@@ -96,34 +95,16 @@
           }
         },
         "traits": {
-          "Action": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Heritage": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Science": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Weird": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Action": {},
+          "Heritage": {},
+          "Science": {},
+          "Weird": {}
         }
       },
       "Stress": {
         "id": "stress",
-        "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -168,11 +149,7 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {}
         }
       },
       "Distinctions": {
@@ -180,7 +157,6 @@
         "description": "Bloodline heritage, archetype, and personal stance",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "tags": [],
         "view": {
           "features": {
             "description": true,
@@ -210,9 +186,6 @@
         "traits": {
           "Family Tree": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
@@ -222,51 +195,35 @@
                   }
                 },
                 "slots": {
-                  "2": {
-                    "custom": {}
-                  }
+                  "2": {}
                 }
               }
             }
           },
           "Approach to Conflict": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {}
                 }
               }
             }
           },
           "Personality/Quirk": {
             "value": "d8",
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
               "SFX": {
                 "traits": {
                   "Hinder": {}
                 },
                 "slots": {
-                  "1": {
-                    "custom": {}
-                  },
-                  "2": {
-                    "custom": {}
-                  }
+                  "1": {},
+                  "2": {}
                 }
               }
             }
@@ -278,7 +235,6 @@
         "description": "Powers granted by bloodline and relics",
         "nounSingular": "Ability",
         "nounPlural": "Abilities",
-        "tags": [],
         "view": {
           "traitColumns": 3,
           "features": {
@@ -336,85 +292,40 @@
         "traits": {},
         "slots": {
           "0": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "Effect Tags:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "Limit:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
+              "Effect Tags:": {},
+              "Limit:": {},
               "SFX": {
                 "traits": {},
                 "slots": {
-                  "0": {
-                    "custom": {}
-                  },
-                  "1": {
-                    "custom": {}
-                  }
+                  "0": {},
+                  "1": {}
                 }
               }
             }
           },
           "1": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "Effect Tags:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "Limit:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
+              "Effect Tags:": {},
+              "Limit:": {},
               "SFX": {
                 "traits": {},
                 "slots": {
-                  "0": {
-                    "custom": {}
-                  },
-                  "1": {
-                    "custom": {}
-                  }
+                  "0": {},
+                  "1": {}
                 }
               }
             }
           },
           "2": {
-            "description": "",
-            "tags": [],
-            "custom": {},
             "traits": {
-              "Effect Tags:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
-              "Limit:": {
-                "description": "",
-                "tags": [],
-                "custom": {}
-              },
+              "Effect Tags:": {},
+              "Limit:": {},
               "SFX": {
                 "traits": {},
                 "slots": {
-                  "0": {
-                    "custom": {}
-                  },
-                  "1": {
-                    "custom": {}
-                  }
+                  "0": {},
+                  "1": {}
                 }
               }
             }
@@ -426,7 +337,6 @@
         "description": "Training and mundane competencies",
         "nounSingular": "Skill",
         "nounPlural": "Skills",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -458,76 +368,20 @@
           }
         },
         "traits": {
-          "Acquire": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Build": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Charm": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Fight": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Investigate": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Move": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Perform": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Pilot": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Shoot": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Sneak": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Study": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Survive": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Treat": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "Trick": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "Acquire": {},
+          "Build": {},
+          "Charm": {},
+          "Fight": {},
+          "Investigate": {},
+          "Move": {},
+          "Perform": {},
+          "Pilot": {},
+          "Shoot": {},
+          "Sneak": {},
+          "Study": {},
+          "Survive": {},
+          "Treat": {},
+          "Trick": {}
         }
       },
       "Heirlooms": {
@@ -535,7 +389,6 @@
         "description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
         "nounSingular": "Heirloom",
         "nounPlural": "Heirlooms",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -567,34 +420,16 @@
         },
         "traits": {},
         "slots": {
-          "0": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "1": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "2": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          },
-          "3": {
-            "description": "",
-            "tags": [],
-            "custom": {}
-          }
+          "0": {},
+          "1": {},
+          "2": {},
+          "3": {}
         }
       },
       "Personal Milestones": {
         "id": "personal-milestones",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -634,28 +469,20 @@
         },
         "traits": {
           "1 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "3 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "10 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           }
         }
       },
       "Group Milestones": {
         "id": "group-milestones",
-        "description": "",
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
-        "tags": [],
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -695,28 +522,20 @@
         },
         "traits": {
           "1 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "3 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           },
           "10 XP": {
-            "description": "when ",
-            "tags": [],
-            "custom": {}
+            "description": "when "
           }
         }
       },
       "XP": {
         "id": "xp",
-        "description": "",
         "nounSingular": "Pip",
         "nounPlural": "Pips",
-        "tags": [],
         "view": {
           "features": {
             "description": false,
