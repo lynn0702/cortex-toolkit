@@ -61,14 +61,11 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "labeled-fields",
             "body": "labeled-fields"
-          },
-          "span": 3,
-          "row": 2
+          }
         },
         "traits": {
           "Name": {
@@ -113,7 +110,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -126,9 +122,7 @@
             12
           ],
           "multiDie": true,
-          "reservedSlots": 20,
-          "span": 3,
-          "row": 3
+          "reservedSlots": 20
         },
         "traits": {},
         "slots": {

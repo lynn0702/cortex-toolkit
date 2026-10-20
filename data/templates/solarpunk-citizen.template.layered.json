@@ -52,7 +52,6 @@
         "description": "SolarPunk holistic community attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -65,7 +64,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -77,10 +75,26 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Mind": {
@@ -124,10 +138,12 @@
             "filled": 0
           },
           "reservedSlots": 0,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "28%",
+            "height": 1
+          }
         },
         "traits": {}
       },
@@ -156,10 +172,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Identity:": {
@@ -232,7 +250,6 @@
         "description": "Sustainable tech, tools, and eco-craft",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "header": "top",
@@ -243,7 +260,6 @@
             "sfx": true,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -258,8 +274,32 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 2,
-          "span": 3,
-          "row": 4
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "76%",
+              "height": 1
+            },
+            "rating": {
+              "left": "76%",
+              "top": 0,
+              "width": "24%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "sfx": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -310,7 +350,6 @@
             "sfx": false,
             "subtraits": true
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -328,9 +367,7 @@
           ],
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 19,
-          "span": 3,
-          "row": 5
+          "reservedSlots": 19
         },
         "traits": {
           "Craft": {

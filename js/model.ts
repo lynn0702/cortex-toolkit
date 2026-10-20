@@ -60,6 +60,7 @@ export interface AttachedStressConfig {
 	enabled?: boolean;
 	label?: string;
 	scale?: number[];
+	ratingScale?: number[];
 	includeOut?: boolean;
 }
 
@@ -94,9 +95,36 @@ export interface StressConfig {
 	includeOut?: boolean;
 }
 
+/**
+ * Nested-grid placement (`view.place`): a set's cell in its page grid.
+ * `left`/`width` are percent of the parent width stored as "%" strings
+ * (decimals allowed); `top`/`height` are relative row units (integers,
+ * `top >= 0`, `height >= 1`). `height` is a floor, not a cage: rows are
+ * content-sized and grow. Omitted entirely for a full-width set stacked
+ * in document order (sparse).
+ */
+export interface PlaceRect {
+	left: string;
+	top: number;
+	width: string;
+	height: number;
+}
+
+/**
+ * Trait-part cell (`view.parts.<part>`): a part's cell in the trait's own
+ * grid, percent of the set's width. Same shape as `PlaceRect`.
+ * Known parts: name, rating, description, sfx, subtraits, stressLabel,
+ * stress. Anything else is a validation error.
+ */
+export interface PartCell {
+	left: string;
+	top: number;
+	width: string;
+	height: number;
+}
+
 /** Dice-render styling (`view.diceConfig`). */
-export interface DiceConfig {
-	[ k: string ]: unknown;
+export interface DiceConfig {	[ k: string ]: unknown;
 	style?: string;
 	backgroundType?: string;
 	background?: string;
@@ -140,9 +168,19 @@ export interface CortexToolkitCustom {
 	labels?: Record<string, string>;
 	notes?: string;
 
-	// layout
+	// layout: nested grids with explicit coordinates (2026-10-19).
+	// A set carries view.place {left, top, width, height} (percent-of-
+	// parent "%" strings + relative row units) and view.parts places
+	// trait parts as cells in the trait's grid. Both are sparse: omitted
+	// for full-width document-order stacking (place) and legacy flex
+	// trait rows (parts).
+	place?: PlaceRect;
+	parts?: Record<string, PartCell>;
+	/** @deprecated superseded by place; read for legacy migration only. */
 	track?: 1 | 2 | 3;
+	/** @deprecated superseded by place; read for legacy migration only. */
 	span?: 1 | 2 | 3;
+	/** @deprecated superseded by place; read for legacy migration only. */
 	widths?: [number, number, number] | number[];
 	flex?: boolean;
 	cluster?: string;
@@ -152,13 +190,13 @@ export interface CortexToolkitCustom {
 	/** Header text alignment (respected in both orientations). */
 	headerAlign?: 'left' | 'center' | 'right';
 	page?: number;
-	/** Explicit row number within the page (1-based). Sets sharing a page and row band together. */
+	/** @deprecated superseded by place.top; read for legacy migration only. */
 	row?: number | null;
 	colSpan?: number | 'full';
 	columnSpan?: number | 'full';
 	/** @deprecated superseded by explicit row; read for legacy migration only. */
 	rowBreak?: boolean | null;
-	/** This set's singular share of its band's columns (e.g. 28 of a 28/72 split). Band widths derive from members. */
+	/** @deprecated superseded by place; read for legacy migration only. */
 	colWidth?: number | null;
 	editorDock?: 'left' | 'right';
 	headerRight?: string;
@@ -170,6 +208,7 @@ export interface CortexToolkitCustom {
 	blankSlots?: number | null;
 
 	// behavior / labels
+	/** @deprecated superseded by parts; read for legacy migration only (kept for vertical ladders). */
 	ratingPosition?: 'inline' | 'above' | 'below' | 'none' | 'vertical';
 	/** Rung label direction on ladder layouts: horizontal text or rotated vertical. */
 	labelPosition?: 'horizontal' | 'vertical';

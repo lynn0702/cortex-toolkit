@@ -52,7 +52,6 @@
         "description": "Neural synchronization and handler capabilities",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -65,7 +64,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6,
             8,
@@ -75,10 +73,26 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Prowess": {
@@ -103,7 +117,6 @@
         "description": "Combat roles and tactical responsibilities",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -116,7 +129,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -127,10 +139,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Backup": {
@@ -183,10 +211,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Identity:": {
@@ -282,10 +312,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 2,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 3
+          "place": {
+            "left": "28%",
+            "top": 1,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -315,7 +347,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -328,9 +359,7 @@
             10,
             12
           ],
-          "reservedSlots": 2,
-          "span": 3,
-          "row": 4
+          "reservedSlots": 2
         },
         "traits": {},
         "slots": {

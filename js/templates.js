@@ -86,7 +86,6 @@ const cortexSpotlightTemplates = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "location": "left",
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -97,9 +96,7 @@ const cortexSpotlightTemplates = [
               8
             ],
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "reservedSlots": 3
           }
         },
         {
@@ -365,7 +362,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "location": "center",
             "page": 1,
             "style": {
               "header": "default",
@@ -384,9 +380,7 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 7,
-            "span": 3,
-            "row": 3
+            "reservedSlots": 7
           }
         },
         {
@@ -396,7 +390,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Value",
           "nounPlural": "Values",
           "statement": true,
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -480,7 +473,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -496,8 +488,20 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 7,
-            "span": 3,
-            "row": 4
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -556,7 +560,6 @@ const cortexSpotlightTemplates = [
               "sfx": true,
               "subtraits": false
             },
-            "location": "right",
             "page": 1,
             "style": {
               "header": "default",
@@ -565,8 +568,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "span": 3,
-            "row": 5
+            "place": {
+              "left": "50%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -575,7 +582,6 @@ const cortexSpotlightTemplates = [
           "description": "Alien equipment and concealed devices",
           "nounSingular": "Signature Asset / Tech",
           "nounPlural": "Signature Assets / Tech",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -618,7 +624,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 2,
             "style": {
               "header": "default",
@@ -633,8 +638,26 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "76%",
+                "height": 1
+              },
+              "rating": {
+                "left": "76%",
+                "top": 0,
+                "width": "24%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -643,7 +666,6 @@ const cortexSpotlightTemplates = [
           "description": "Connections to human contacts, superiors, and rivals",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -757,7 +779,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "center",
             "page": 2,
             "style": {
               "header": "default",
@@ -773,8 +794,20 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 10,
-            "span": 3,
-            "row": 3
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -794,7 +827,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "right",
             "page": 2,
             "style": {
               "header": "default",
@@ -807,8 +839,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 20,
-            "span": 3,
-            "row": 4
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         }
       ],
@@ -948,10 +984,12 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 64,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "64%",
+              "height": 1
+            }
           }
         },
         {
@@ -1037,10 +1075,12 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 64,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "64%",
+              "height": 1
+            }
           }
         },
         {
@@ -1050,7 +1090,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
           "statement": true,
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -1158,10 +1197,26 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 8,
-            "track": 1,
-            "span": 1,
-            "colWidth": 64,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "64%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1170,7 +1225,6 @@ const cortexSpotlightTemplates = [
           "description": "Specialized starship equipment and personal gear",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -1225,10 +1279,26 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 2
+            "place": {
+              "left": "64%",
+              "top": 0,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1238,7 +1308,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
           "tags": [],
-          "ratingPosition": "none",
           "traits": [
             {
               "name": "1 XP",
@@ -1286,13 +1355,28 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingPosition": "none",
             "ratingScale": [],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 3
+            "place": {
+              "left": "64%",
+              "top": 1,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1302,7 +1386,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
           "tags": [],
-          "ratingPosition": "none",
           "traits": [
             {
               "name": "1 XP",
@@ -1350,13 +1433,28 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingPosition": "none",
             "ratingScale": [],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 4
+            "place": {
+              "left": "64%",
+              "top": 2,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1386,10 +1484,12 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "reservedSlots": 0,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 5
+            "place": {
+              "left": "64%",
+              "top": 3,
+              "width": "36%",
+              "height": 1
+            }
           }
         }
       ],
@@ -1452,7 +1552,6 @@ const cortexSpotlightTemplates = [
           "description": "Camp background, camper reputation, and hidden destiny",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -1516,16 +1615,43 @@ const cortexSpotlightTemplates = [
               "header": "distinctions",
               "body": "distinctions"
             },
-            "ratingPosition": "inline",
             "sharedHinder": true,
             "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 66,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "66%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "sfx": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1536,7 +1662,6 @@ const cortexSpotlightTemplates = [
           "nounPlural": "Values",
           "statement": true,
           "hasQuestionedPip": true,
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -1614,7 +1739,6 @@ const cortexSpotlightTemplates = [
             },
             "statement": true,
             "hasQuestionedPip": true,
-            "ratingPosition": "inline",
             "ratingScale": [
               4,
               6,
@@ -1625,10 +1749,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 66,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "66%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1637,7 +1777,6 @@ const cortexSpotlightTemplates = [
           "description": "Treasured camper keepsakes and scavenged relics",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -1684,7 +1823,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "above",
             "ratingScale": [
               6,
               8,
@@ -1694,10 +1832,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 34,
-            "row": 2
+            "place": {
+              "left": "66%",
+              "top": 0,
+              "width": "34%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -1706,7 +1860,6 @@ const cortexSpotlightTemplates = [
           "description": "Core camper capability ratings",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -1752,7 +1905,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -1763,10 +1915,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 2,
-            "span": 1,
-            "colWidth": 34,
-            "row": 3
+            "place": {
+              "left": "66%",
+              "top": 1,
+              "width": "34%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -2002,10 +2170,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "track": 1,
-            "span": 1,
-            "colWidth": 40,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "40%",
+              "height": 1
+            }
           }
         },
         {
@@ -2042,10 +2212,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 17,
-            "track": 2,
-            "span": 1,
-            "colWidth": 60,
-            "row": 4
+            "place": {
+              "left": "40%",
+              "top": 2,
+              "width": "60%",
+              "height": 1
+            }
           }
         },
         {
@@ -2084,7 +2256,6 @@ const cortexSpotlightTemplates = [
               "sfx": true,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -2092,9 +2263,7 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 2,
-            "span": 3,
-            "row": 5
+            "reservedSlots": 2
           }
         }
       ],
@@ -2203,7 +2372,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "headerRight": "Character File",
             "traitColumns": 3,
             "page": 1,
@@ -2218,30 +2386,41 @@ const cortexSpotlightTemplates = [
             ],
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's die rating for a d4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
-            "attachedStress": {
-              "enabled": true,
-              "label": "Stress",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "42%",
+                "height": 1
+              },
+              "rating": {
+                "left": "42%",
+                "top": 0,
+                "width": "18%",
+                "height": 1
+              },
+              "stressLabel": {
+                "left": "60%",
+                "top": 0,
+                "width": "13%",
+                "height": 1
+              },
+              "stress": {
+                "left": "73%",
+                "top": 0,
+                "width": "27%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -2334,10 +2513,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "notes": "",
             "reservedSlots": 6,
-            "track": 1,
-            "span": 2,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "66.663%",
+              "height": 1
+            }
           }
         },
         {
@@ -2346,7 +2527,6 @@ const cortexSpotlightTemplates = [
           "description": "Gain a PP when you use a drive rated at d4.",
           "nounSingular": "Drive",
           "nounPlural": "Drives",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -2414,7 +2594,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -2425,10 +2604,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "33.333%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -2437,7 +2632,6 @@ const cortexSpotlightTemplates = [
           "description": "Personal weapons, vehicles, and syndicate perks",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -2494,10 +2688,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "33.333%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "76%",
+                "height": 1
+              },
+              "rating": {
+                "left": "76%",
+                "top": 0,
+                "width": "24%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -2638,10 +2848,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 4
+            "place": {
+              "left": "33.333%",
+              "top": 2,
+              "width": "66.667%",
+              "height": 1
+            }
           }
         },
         {
@@ -2672,10 +2884,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 15,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.663%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -2732,10 +2946,12 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 5
+            "place": {
+              "left": "33.333%",
+              "top": 3,
+              "width": "66.667%",
+              "height": 1
+            }
           }
         }
       ],
@@ -2799,7 +3015,6 @@ const cortexSpotlightTemplates = [
           "description": "Prime vocations and endarch callings",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -2865,10 +3080,26 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 4,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -2877,7 +3108,6 @@ const cortexSpotlightTemplates = [
           "description": "Elemental selfhood with highlight circles and stress",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "hasQuestionedPip": true,
           "tags": [],
           "traits": [
@@ -2952,25 +3182,44 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "STRESS",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
             "notes": "",
             "reservedSlots": 5,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "30%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "stressLabel": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              },
+              "stress": {
+                "left": "0%",
+                "top": 3,
+                "width": "100%",
+                "height": 1
+              }
+            },
+            "labels": {
+              "stress": "STRESS"
+            }
           }
         },
         {
@@ -3071,10 +3320,12 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 1,
-            "track": 2,
-            "span": 1,
-            "colWidth": 67,
-            "row": 2
+            "place": {
+              "left": "30%",
+              "top": 0,
+              "width": "60%",
+              "height": 1
+            }
           }
         },
         {
@@ -3182,11 +3433,13 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
             "traitColumns": 3,
-            "colWidth": 67,
-            "row": 3
+            "place": {
+              "left": "30%",
+              "top": 1,
+              "width": "60%",
+              "height": 1
+            }
           }
         },
         {
@@ -3240,10 +3493,12 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 2,
-            "track": 2,
-            "span": 1,
-            "colWidth": 67,
-            "row": 4
+            "place": {
+              "left": "30%",
+              "top": 2,
+              "width": "60%",
+              "height": 1
+            }
           }
         },
         {
@@ -3277,10 +3532,12 @@ const cortexSpotlightTemplates = [
               "connected": false,
               "filled": 0
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 67,
-            "row": 5
+            "place": {
+              "left": "90%",
+              "top": 0,
+              "width": "10%",
+              "height": 4
+            }
           }
         }
       ],
@@ -3336,7 +3593,6 @@ const cortexSpotlightTemplates = [
           "description": "Body, mind, and presence under pressure",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -3382,7 +3638,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -3390,33 +3645,45 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "STRESS",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 36,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "stressLabel": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              },
+              "stress": {
+                "left": "0%",
+                "top": 3,
+                "width": "100%",
+                "height": 1
+              }
+            },
+            "labels": {
+              "stress": "STRESS"
+            }
           }
         },
         {
@@ -3425,7 +3692,6 @@ const cortexSpotlightTemplates = [
           "description": "Rescue disciplines and vehicle qualifications",
           "nounSingular": "Training Package",
           "nounPlural": "Training Packages",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -3581,7 +3847,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -3592,10 +3857,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 14,
-            "track": 1,
-            "span": 1,
-            "colWidth": 36,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -3694,10 +3975,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 64,
-            "row": 2
+            "place": {
+              "left": "36%",
+              "top": 0,
+              "width": "64%",
+              "height": 1
+            }
           }
         },
         {
@@ -3707,7 +3990,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
           "statement": true,
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -3810,10 +4092,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 7,
-            "track": 2,
-            "span": 1,
-            "colWidth": 64,
-            "row": 3
+            "place": {
+              "left": "36%",
+              "top": 1,
+              "width": "64%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -3847,10 +4145,12 @@ const cortexSpotlightTemplates = [
               "connected": true,
               "filled": 0
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 64,
-            "row": 4
+            "place": {
+              "left": "36%",
+              "top": 2,
+              "width": "64%",
+              "height": 1
+            }
           }
         },
         {
@@ -3859,7 +4159,6 @@ const cortexSpotlightTemplates = [
           "description": "Threat clocks and escalating disaster pools",
           "nounSingular": "Crisis Pool",
           "nounPlural": "Crisis Pools",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -3913,7 +4212,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 2,
             "style": {
               "header": "default",
@@ -3928,8 +4226,20 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "notes": "",
             "reservedSlots": 4,
-            "span": 3,
-            "row": 2
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         }
       ],
@@ -4141,10 +4451,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 25,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "25%",
+              "height": 1
+            }
           }
         },
         {
@@ -4206,10 +4518,12 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3,
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "25%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -4333,10 +4647,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "notes": "",
             "reservedSlots": 6,
-            "track": 3,
-            "span": 1,
-            "colWidth": 25,
-            "row": 2
+            "place": {
+              "left": "75%",
+              "top": 0,
+              "width": "25%",
+              "height": 1
+            }
           }
         }
       ],
@@ -4392,7 +4708,6 @@ const cortexSpotlightTemplates = [
           "description": "Gain a PP when you include your d4 attribute in your dice pool.",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -4448,7 +4763,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -4459,10 +4773,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 4,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -4471,7 +4801,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -4507,10 +4836,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -4612,10 +4957,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 2,
-            "colWidth": 36,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -4624,7 +4971,6 @@ const cortexSpotlightTemplates = [
           "description": "Powers granted by bloodline and relics",
           "nounSingular": "Ability",
           "nounPlural": "Abilities",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -4768,7 +5114,6 @@ const cortexSpotlightTemplates = [
               "sfx": true,
               "subtraits": true
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -4783,8 +5128,38 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "span": 3,
-            "row": 4
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              },
+              "sfx": {
+                "left": "0%",
+                "top": 3,
+                "width": "100%",
+                "height": 1
+              },
+              "subtraits": {
+                "left": "0%",
+                "top": 4,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -4960,10 +5335,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 14,
-            "track": 1,
-            "span": 1,
-            "colWidth": 25,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "25%",
+              "height": 1
+            }
           }
         },
         {
@@ -5038,10 +5415,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 5
+            "place": {
+              "left": "25%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -5051,7 +5430,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
           "tags": [],
-          "ratingPosition": "none",
           "traits": [
             {
               "name": "1 XP",
@@ -5099,13 +5477,28 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingPosition": "none",
             "ratingScale": [],
             "reservedSlots": 3,
-            "track": 3,
-            "span": 1,
-            "colWidth": 25,
-            "row": 5
+            "place": {
+              "left": "75%",
+              "top": 3,
+              "width": "25%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -5115,7 +5508,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
           "tags": [],
-          "ratingPosition": "none",
           "traits": [
             {
               "name": "1 XP",
@@ -5163,13 +5555,28 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingPosition": "none",
             "ratingScale": [],
             "reservedSlots": 3,
-            "track": 3,
-            "span": 1,
-            "colWidth": 25,
-            "row": 6
+            "place": {
+              "left": "75%",
+              "top": 4,
+              "width": "25%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -5198,10 +5605,12 @@ const cortexSpotlightTemplates = [
               "connected": true,
               "filled": 0
             },
-            "track": 3,
-            "span": 1,
-            "colWidth": 25,
-            "row": 7
+            "place": {
+              "left": "75%",
+              "top": 5,
+              "width": "25%",
+              "height": 1
+            }
           }
         }
       ],
@@ -5336,14 +5745,11 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            },
-            "span": 3,
-            "row": 2
+            }
           }
         },
         {
@@ -5429,10 +5835,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -5518,10 +5926,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -5607,10 +6017,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -5696,10 +6108,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -5780,14 +6194,11 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            },
-            "span": 3,
-            "row": 5
+            }
           }
         },
         {
@@ -5873,10 +6284,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 6
+            "place": {
+              "left": "0%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -5962,10 +6375,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 6
+            "place": {
+              "left": "50%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6051,10 +6466,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 7
+            "place": {
+              "left": "0%",
+              "top": 5,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6140,10 +6557,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 7
+            "place": {
+              "left": "50%",
+              "top": 5,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6249,10 +6668,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6358,10 +6779,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6467,10 +6890,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6576,10 +7001,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6685,10 +7112,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -6794,10 +7223,12 @@ const cortexSpotlightTemplates = [
               "header": "labeled-fields",
               "body": "labeled-fields"
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         }
       ],
@@ -6921,10 +7352,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -6933,7 +7366,6 @@ const cortexSpotlightTemplates = [
           "description": "Operating mode ratings",
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -6981,7 +7413,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -6990,10 +7421,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "33.333%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -7077,10 +7524,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 2
+            "place": {
+              "left": "66.666%",
+              "top": 0,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -7145,10 +7594,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -7157,7 +7608,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -7205,7 +7655,6 @@ const cortexSpotlightTemplates = [
               "header": "stress",
               "body": "stress"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -7214,10 +7663,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "33.333%",
+              "top": 1,
+              "width": "33.333%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -7313,10 +7778,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "pool": true,
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.666%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -7358,7 +7825,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "labeled-fields",
@@ -7366,9 +7832,7 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 4
+            "reservedSlots": 3
           }
         },
         {
@@ -7410,14 +7874,11 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            },
-            "span": 3,
-            "row": 5
+            }
           }
         },
         {
@@ -7459,14 +7920,11 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            },
-            "span": 3,
-            "row": 6
+            }
           }
         }
       ],
@@ -7591,14 +8049,11 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            },
-            "span": 3,
-            "row": 2
+            }
           }
         },
         {
@@ -7820,7 +8275,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -7833,9 +8287,7 @@ const cortexSpotlightTemplates = [
               12
             ],
             "multiDie": true,
-            "reservedSlots": 20,
-            "span": 3,
-            "row": 3
+            "reservedSlots": 20
           }
         }
       ],
@@ -7985,10 +8437,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 64,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "64%",
+              "height": 1
+            }
           }
         },
         {
@@ -7997,7 +8451,6 @@ const cortexSpotlightTemplates = [
           "description": "Heirlooms and keepsakes from the misty coast",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -8043,7 +8496,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "above",
             "ratingScale": [
               6,
               8,
@@ -8053,10 +8505,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 2
+            "place": {
+              "left": "64%",
+              "top": 0,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -8066,7 +8534,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
           "statement": true,
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -8127,7 +8594,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -8141,31 +8607,39 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "STRESS",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
             "attributesRing": false,
-            "span": 3,
-            "row": 3
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              },
+              "rating": {
+                "left": "30%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              },
+              "stressLabel": {
+                "left": "60%",
+                "top": 0,
+                "width": "13%",
+                "height": 1
+              },
+              "stress": {
+                "left": "73%",
+                "top": 0,
+                "width": "27%",
+                "height": 1
+              }
+            },
+            "labels": {
+              "stress": "STRESS"
+            }
           }
         },
         {
@@ -8174,7 +8648,6 @@ const cortexSpotlightTemplates = [
           "description": "Bonds and rivalries with local residents",
           "nounSingular": "Relationship",
           "nounPlural": "Relationships",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -8302,10 +8775,32 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 10,
-            "track": 1,
-            "span": 1,
-            "colWidth": 64,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "64%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -8401,10 +8896,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "pool": true,
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 4
+            "place": {
+              "left": "64%",
+              "top": 2,
+              "width": "36%",
+              "height": 1
+            }
           }
         },
         {
@@ -8413,7 +8910,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -8479,7 +8975,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "above",
             "ratingScale": [
               6,
               8,
@@ -8487,10 +8982,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
-            "colWidth": 36,
-            "row": 5
+            "place": {
+              "left": "64%",
+              "top": 3,
+              "width": "36%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         }
       ],
@@ -8604,7 +9115,6 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "location": "left",
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -8612,9 +9122,7 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "reservedSlots": 3
           }
         },
         {
@@ -8624,7 +9132,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
           "statement": true,
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -8667,7 +9174,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -8684,8 +9190,20 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "span": 3,
-            "row": 3
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -8781,10 +9299,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "track": 1,
-            "span": 1,
-            "colWidth": 38,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "38%",
+              "height": 1
+            }
           }
         },
         {
@@ -8793,7 +9313,6 @@ const cortexSpotlightTemplates = [
           "description": "Occult relics, grimoires, and dark instruments",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -8841,7 +9360,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "above",
             "ratingScale": [
               6,
               8,
@@ -8851,10 +9369,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 38,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "38%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -8940,10 +9474,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 1,
-            "track": 2,
-            "span": 1,
-            "colWidth": 62,
-            "row": 4
+            "place": {
+              "left": "38%",
+              "top": 2,
+              "width": "62%",
+              "height": 1
+            }
           }
         },
         {
@@ -8973,10 +9509,12 @@ const cortexSpotlightTemplates = [
               "orientation": "horizontal"
             },
             "reservedSlots": 10,
-            "track": 1,
-            "span": 1,
-            "colWidth": 62,
-            "row": 6
+            "place": {
+              "left": "0%",
+              "top": 4,
+              "width": "62%",
+              "height": 1
+            }
           }
         },
         {
@@ -8985,7 +9523,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -9033,7 +9570,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "above",
             "ratingScale": [
               4,
               6,
@@ -9042,10 +9578,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 38,
-            "row": 6
+            "place": {
+              "left": "62%",
+              "top": 4,
+              "width": "38%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         }
       ],
@@ -9108,7 +9660,6 @@ const cortexSpotlightTemplates = [
           "description": "Enduring principles of the golden era",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -9194,7 +9745,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -9205,10 +9755,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 7,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -9312,10 +9878,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -9324,7 +9892,6 @@ const cortexSpotlightTemplates = [
           "description": "Stashed tech, vintage vehicles, and old connections (5d6 each)",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -9422,17 +9989,38 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6
             ],
             "multiDie": true,
             "notes": "",
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -9441,7 +10029,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -9479,7 +10066,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -9487,10 +10073,32 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -9499,7 +10107,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -9537,7 +10144,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -9545,10 +10151,32 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -9926,10 +10554,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 16,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 3
+            "place": {
+              "left": "28%",
+              "top": 1,
+              "width": "72%",
+              "height": 1
+            }
           }
         }
       ],
@@ -9992,7 +10622,6 @@ const cortexSpotlightTemplates = [
           "description": "The aviator's code and sky ethics",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -10078,7 +10707,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -10089,10 +10717,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 7,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -10172,10 +10816,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 2,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -10184,7 +10830,6 @@ const cortexSpotlightTemplates = [
           "description": "Custom aircraft and aviator resources (5d6 each)",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -10250,17 +10895,38 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6
             ],
             "multiDie": true,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -10269,7 +10935,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -10297,7 +10962,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -10305,10 +10969,32 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -10539,10 +11225,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 9,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 3
+            "place": {
+              "left": "28%",
+              "top": 1,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -10593,7 +11281,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -10603,9 +11290,7 @@ const cortexSpotlightTemplates = [
               "count": 20,
               "orientation": "horizontal"
             },
-            "reservedSlots": 20,
-            "span": 3,
-            "row": 5
+            "reservedSlots": 20
           }
         }
       ],
@@ -10719,7 +11404,6 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "location": "left",
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -10727,9 +11411,7 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "reservedSlots": 3
           }
         },
         {
@@ -11191,10 +11873,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 20,
-            "track": 1,
-            "span": 2,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "66.663%",
+              "height": 1
+            }
           }
         },
         {
@@ -11261,10 +11945,12 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.663%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -11400,10 +12086,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 10,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 4
+            "place": {
+              "left": "66.66%",
+              "top": 2,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -11489,10 +12177,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 5
+            "place": {
+              "left": "66.66%",
+              "top": 3,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -11549,10 +12239,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 2,
-            "colWidth": 33.333,
-            "row": 6
+            "place": {
+              "left": "0%",
+              "top": 4,
+              "width": "66.663%",
+              "height": 1
+            }
           }
         },
         {
@@ -11648,10 +12340,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "pool": true,
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 6
+            "place": {
+              "left": "66.663%",
+              "top": 4,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         }
       ],
@@ -11796,7 +12490,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -11807,9 +12500,7 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": true,
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "reservedSlots": 3
           }
         },
         {
@@ -11900,7 +12591,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -11911,9 +12601,7 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": true,
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 3
+            "reservedSlots": 3
           }
         },
         {
@@ -12004,10 +12692,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -12098,10 +12788,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -12192,10 +12884,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -12286,10 +12980,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 5
+            "place": {
+              "left": "50%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -12380,10 +13076,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 6
+            "place": {
+              "left": "0%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -12474,10 +13172,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 6
+            "place": {
+              "left": "50%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -12562,10 +13262,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -12650,10 +13352,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "33.333%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -12738,10 +13442,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 2
+            "place": {
+              "left": "66.666%",
+              "top": 0,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -12826,10 +13532,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -12914,10 +13622,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "33.333%",
+              "top": 1,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -13002,10 +13712,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.666%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -13090,10 +13802,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -13178,10 +13892,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 4
+            "place": {
+              "left": "33.333%",
+              "top": 2,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -13266,10 +13982,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 4
+            "place": {
+              "left": "66.666%",
+              "top": 2,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -13289,15 +14007,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 2,
             "style": {
               "header": "default",
               "body": "notes"
             },
-            "notes": "",
-            "span": 3,
-            "row": 5
+            "notes": ""
           }
         }
       ],
@@ -13411,7 +14126,6 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "location": "left",
             "page": 1,
             "style": {
               "header": "distinctions",
@@ -13419,9 +14133,7 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3,
-            "span": 3,
-            "row": 2
+            "reservedSlots": 3
           }
         },
         {
@@ -13430,7 +14142,6 @@ const cortexSpotlightTemplates = [
           "description": "Operational deployment modes",
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -13478,7 +14189,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -13489,10 +14199,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 23,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "23%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -13501,7 +14227,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -13539,7 +14264,6 @@ const cortexSpotlightTemplates = [
               "header": "stress",
               "body": "stress"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -13548,10 +14272,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "track": 2,
-            "span": 1,
-            "colWidth": 25,
-            "row": 3
+            "place": {
+              "left": "23%",
+              "top": 1,
+              "width": "25%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -13560,7 +14300,6 @@ const cortexSpotlightTemplates = [
           "description": "Core operative capabilities and physical resilience",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -13645,33 +14384,42 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "Stress",
-              "ratingScale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                4,
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
             "attributesRing": false,
-            "track": 3,
-            "span": 1,
-            "colWidth": 52,
-            "row": 3
+            "place": {
+              "left": "48%",
+              "top": 1,
+              "width": "52%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              },
+              "rating": {
+                "left": "30%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              },
+              "stressLabel": {
+                "left": "60%",
+                "top": 0,
+                "width": "13%",
+                "height": 1
+              },
+              "stress": {
+                "left": "73%",
+                "top": 0,
+                "width": "27%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -13883,7 +14631,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -13901,9 +14648,7 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 19,
-            "span": 3,
-            "row": 4
+            "reservedSlots": 19
           }
         },
         {
@@ -13912,7 +14657,6 @@ const cortexSpotlightTemplates = [
           "description": "Classified spy gear and experimental equipment",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -13969,10 +14713,32 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 35,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "35%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "76%",
+                "height": 1
+              },
+              "rating": {
+                "left": "76%",
+                "top": 0,
+                "width": "24%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -14027,10 +14793,12 @@ const cortexSpotlightTemplates = [
               "body": "three-column-table"
             },
             "reservedSlots": 3,
-            "track": 2,
-            "span": 2,
-            "colWidth": 32.5,
-            "row": 5
+            "place": {
+              "left": "35%",
+              "top": 3,
+              "width": "65%",
+              "height": 1
+            }
           }
         },
         {
@@ -14039,7 +14807,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Gift",
           "nounPlural": "Gifts",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -14077,7 +14844,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -14086,10 +14852,32 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "track": 1,
-            "span": 1,
-            "colWidth": 25,
-            "row": 6
+            "place": {
+              "left": "0%",
+              "top": 4,
+              "width": "25%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -14099,7 +14887,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
           "tags": [],
-          "ratingPosition": "none",
           "traits": [
             {
               "name": "1 XP",
@@ -14147,13 +14934,28 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingPosition": "none",
             "ratingScale": [],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 6
+            "place": {
+              "left": "25%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -14163,7 +14965,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Milestone",
           "nounPlural": "Milestones",
           "tags": [],
-          "ratingPosition": "none",
           "traits": [
             {
               "name": "1 XP",
@@ -14211,13 +15012,28 @@ const cortexSpotlightTemplates = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingPosition": "none",
             "ratingScale": [],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 7
+            "place": {
+              "left": "50%",
+              "top": 5,
+              "width": "50%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -14246,10 +15062,12 @@ const cortexSpotlightTemplates = [
               "connected": false,
               "filled": 0
             },
-            "track": 3,
-            "span": 1,
-            "colWidth": 25,
-            "row": 6
+            "place": {
+              "left": "75%",
+              "top": 4,
+              "width": "25%",
+              "height": 1
+            }
           }
         }
       ],
@@ -14312,7 +15130,6 @@ const cortexSpotlightTemplates = [
           "description": "SolarPunk holistic community attributes",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -14358,7 +15175,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -14370,10 +15186,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -14403,10 +15235,12 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "reservedSlots": 0,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            }
           }
         },
         {
@@ -14510,10 +15344,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -14522,7 +15358,6 @@ const cortexSpotlightTemplates = [
           "description": "Sustainable tech, tools, and eco-craft",
           "nounSingular": "Signature Asset",
           "nounPlural": "Signature Assets",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -14570,7 +15405,6 @@ const cortexSpotlightTemplates = [
               "sfx": true,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -14585,8 +15419,32 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 2,
-            "span": 3,
-            "row": 4
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "76%",
+                "height": 1
+              },
+              "rating": {
+                "left": "76%",
+                "top": 0,
+                "width": "24%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "sfx": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -14798,7 +15656,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -14816,9 +15673,7 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 19,
-            "span": 3,
-            "row": 5
+            "reservedSlots": 19
           }
         }
       ],
@@ -14881,7 +15736,6 @@ const cortexSpotlightTemplates = [
           "description": "Collective settlement strengths",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -14927,7 +15781,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -14937,10 +15790,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -15008,10 +15877,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -15020,7 +15891,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -15074,7 +15944,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -15084,8 +15953,26 @@ const cortexSpotlightTemplates = [
               6
             ],
             "reservedSlots": 4,
-            "span": 3,
-            "row": 3
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "94%",
+                "height": 1
+              },
+              "rating": {
+                "left": "94%",
+                "top": 0,
+                "width": "6%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -15295,7 +16182,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -15306,9 +16192,7 @@ const cortexSpotlightTemplates = [
               8
             ],
             "subtraitRatingScale": [],
-            "reservedSlots": 9,
-            "span": 3,
-            "row": 4
+            "reservedSlots": 9
           }
         }
       ],
@@ -15456,10 +16340,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "pool": true,
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 22,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "22%",
+              "height": 1
+            }
           }
         },
         {
@@ -15527,10 +16413,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 2,
-            "colWidth": 39,
-            "row": 2
+            "place": {
+              "left": "22%",
+              "top": 0,
+              "width": "78%",
+              "height": 1
+            }
           }
         },
         {
@@ -15540,7 +16428,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Value",
           "nounPlural": "Values",
           "statement": true,
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -15627,10 +16514,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "track": 1,
-            "span": 2,
-            "colWidth": 22,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "61%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -15639,7 +16542,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -15715,7 +16617,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "above",
             "ratingScale": [
               6,
               8,
@@ -15723,10 +16624,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 6,
-            "track": 3,
-            "span": 1,
-            "colWidth": 39,
-            "row": 3
+            "place": {
+              "left": "61%",
+              "top": 1,
+              "width": "39%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -15736,7 +16653,6 @@ const cortexSpotlightTemplates = [
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
           "statement": true,
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -15803,10 +16719,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "track": 1,
-            "span": 2,
-            "colWidth": 22,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -15815,7 +16747,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Stress",
           "nounPlural": "Stress",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -15883,7 +16814,6 @@ const cortexSpotlightTemplates = [
               "header": "stress",
               "body": "stress"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -15892,10 +16822,26 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 24,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "24%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -16029,10 +16975,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 10,
-            "track": 2,
-            "span": 1,
-            "colWidth": 48,
-            "row": 5
+            "place": {
+              "left": "24%",
+              "top": 3,
+              "width": "48%",
+              "height": 1
+            }
           }
         },
         {
@@ -16040,7 +16988,6 @@ const cortexSpotlightTemplates = [
           "name": "SFX",
           "nounSingular": "SFX",
           "nounPlural": "SFX",
-          "ratingPosition": "above",
           "tags": [],
           "traits": [
             {
@@ -16086,10 +17033,26 @@ const cortexSpotlightTemplates = [
           ],
           "sfx": [],
           "view": {
-            "track": 3,
-            "span": 1,
-            "colWidth": 28,
-            "row": 5
+            "place": {
+              "left": "72%",
+              "top": 3,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "rating": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "name": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         }
       ],
@@ -16152,7 +17115,6 @@ const cortexSpotlightTemplates = [
           "description": "Core attributes",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -16198,7 +17160,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -16208,10 +17169,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -16296,10 +17273,12 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "reservedSlots": 3,
-            "track": 2,
-            "span": 2,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -16308,7 +17287,6 @@ const cortexSpotlightTemplates = [
           "description": "Town archetypes and societal roles",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -16384,7 +17362,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -16395,10 +17372,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -16491,10 +17484,12 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": false,
             "reservedSlots": 6,
-            "track": 2,
-            "span": 2,
-            "colWidth": 72,
-            "row": 3
+            "place": {
+              "left": "28%",
+              "top": 1,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -16503,7 +17498,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Asset",
           "nounPlural": "Assets",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -16539,15 +17533,36 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               8
             ],
             "reservedSlots": 2,
-            "track": 1,
-            "span": 1,
-            "colWidth": 25,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "25%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -16556,7 +17571,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Complication",
           "nounPlural": "Complications",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -16602,7 +17616,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -16611,10 +17624,32 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "25%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -16656,10 +17691,12 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 1,
-            "track": 3,
-            "span": 1,
-            "colWidth": 25,
-            "row": 4
+            "place": {
+              "left": "75%",
+              "top": 2,
+              "width": "25%",
+              "height": 1
+            }
           }
         }
       ],
@@ -16725,7 +17762,6 @@ const cortexSpotlightTemplates = [
           "description": "Core hero ratings with Vitality and Willpower",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -16801,7 +17837,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -16813,10 +17848,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 6,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -16883,10 +17934,12 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "reservedSlots": 6,
-            "track": 2,
-            "span": 2,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -16958,10 +18011,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            }
           }
         },
         {
@@ -17401,10 +18456,12 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "reservedSlots": 19,
-            "track": 2,
-            "span": 2,
-            "colWidth": 72,
-            "row": 3
+            "place": {
+              "left": "28%",
+              "top": 1,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -17458,9 +18515,12 @@ const cortexSpotlightTemplates = [
             ],
             "labelPosition": "vertical",
             "reservedSlots": 2,
-            "track": 1,
-            "span": 1,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -17504,9 +18564,12 @@ const cortexSpotlightTemplates = [
             ],
             "labelPosition": "vertical",
             "reservedSlots": 1,
-            "track": 1,
-            "span": 1,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -17526,7 +18589,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -17537,9 +18599,7 @@ const cortexSpotlightTemplates = [
               "perRow": 12,
               "connected": true,
               "filled": 0
-            },
-            "span": 3,
-            "row": 6
+            }
           }
         },
         {
@@ -17617,10 +18677,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -17698,10 +18760,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "33.333%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -17779,10 +18843,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 2
+            "place": {
+              "left": "66.666%",
+              "top": 0,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -17849,10 +18915,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "track": 1,
-            "span": 2,
-            "colWidth": 33.333,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "66.663%",
+              "height": 1
+            }
           }
         },
         {
@@ -17882,10 +18950,12 @@ const cortexSpotlightTemplates = [
               "filled": 0
             },
             "reservedSlots": 0,
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.663%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -17911,10 +18981,12 @@ const cortexSpotlightTemplates = [
               "body": "notes"
             },
             "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 4
+            "place": {
+              "left": "66.66%",
+              "top": 2,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         }
       ],
@@ -17977,7 +19049,6 @@ const cortexSpotlightTemplates = [
           "description": "Neural synchronization and handler capabilities",
           "nounSingular": "Attribute",
           "nounPlural": "Attributes",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -18023,7 +19094,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
@@ -18033,10 +19103,26 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -18045,7 +19131,6 @@ const cortexSpotlightTemplates = [
           "description": "Combat roles and tactical responsibilities",
           "nounSingular": "Role",
           "nounPlural": "Roles",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -18111,7 +19196,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -18122,10 +19206,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "28%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -18224,10 +19324,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -18282,10 +19384,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 2,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 3
+            "place": {
+              "left": "28%",
+              "top": 1,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -18326,7 +19430,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -18339,9 +19442,7 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "reservedSlots": 2,
-            "span": 3,
-            "row": 4
+            "reservedSlots": 2
           }
         }
       ],
@@ -18478,10 +19579,12 @@ const cortexSpotlightTemplates = [
             "notes": "",
             "reservedSlots": 3,
             "attributesRing": false,
-            "track": 1,
-            "span": 1,
-            "colWidth": 28,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            }
           }
         },
         {
@@ -18570,10 +19673,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 1,
-            "colWidth": 72,
-            "row": 2
+            "place": {
+              "left": "28%",
+              "top": 0,
+              "width": "72%",
+              "height": 1
+            }
           }
         },
         {
@@ -18646,10 +19751,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -18722,10 +19829,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -18745,7 +19854,6 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "location": "left",
             "page": 1,
             "style": {
               "header": "default",
@@ -18757,9 +19865,7 @@ const cortexSpotlightTemplates = [
               "connected": true,
               "filled": 0
             },
-            "reservedSlots": 0,
-            "span": 3,
-            "row": 4
+            "reservedSlots": 0
           }
         }
       ],
@@ -18822,7 +19928,6 @@ const cortexSpotlightTemplates = [
           "description": "Team configuration ratings",
           "nounSingular": "Affiliation",
           "nounPlural": "Affiliations",
-          "ratingPosition": "below",
           "tags": [],
           "traits": [
             {
@@ -18868,7 +19973,6 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               4,
               6,
@@ -18879,10 +19983,26 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
-            "colWidth": 30,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -18986,10 +20106,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 7,
-            "track": 1,
-            "span": 1,
-            "colWidth": 30,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "30%",
+              "height": 1
+            }
           }
         },
         {
@@ -18998,7 +20120,6 @@ const cortexSpotlightTemplates = [
           "description": "Civic assets, contacts, and backup",
           "nounSingular": "Resource",
           "nounPlural": "Resources",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -19114,10 +20235,26 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "notes": "",
             "reservedSlots": 8,
-            "track": 1,
-            "span": 1,
-            "colWidth": 30,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "30%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "82%",
+                "height": 1
+              },
+              "rating": {
+                "left": "82%",
+                "top": 0,
+                "width": "18%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -19185,10 +20322,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "track": 2,
-            "span": 2,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "30%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            }
           }
         },
         {
@@ -19276,10 +20415,12 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "track": 2,
-            "span": 2,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "30%",
+              "top": 1,
+              "width": "70%",
+              "height": 1
+            }
           }
         },
         {
@@ -19363,10 +20504,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "30%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -19462,10 +20605,12 @@ const cortexSpotlightTemplates = [
             "multiDie": true,
             "pool": true,
             "reservedSlots": 5,
-            "track": 3,
-            "span": 1,
-            "colWidth": 20,
-            "row": 4
+            "place": {
+              "left": "80%",
+              "top": 2,
+              "width": "20%",
+              "height": 1
+            }
           }
         }
       ],
@@ -19539,7 +20684,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Distinction",
           "nounPlural": "Distinctions",
-          "ratingPosition": "inline",
           "tags": [],
           "traits": [
             {
@@ -19606,10 +20750,38 @@ const cortexSpotlightTemplates = [
             "ratingScale": [
               8
             ],
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "94%",
+                "height": 1
+              },
+              "rating": {
+                "left": "94%",
+                "top": 0,
+                "width": "6%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "sfx": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -19618,7 +20790,6 @@ const cortexSpotlightTemplates = [
           "description": "",
           "nounSingular": "Value",
           "nounPlural": "Values",
-          "ratingPosition": "inline",
           "statement": true,
           "hasQuestionedPip": true,
           "tags": [],
@@ -19674,10 +20845,26 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "70%",
+                "height": 1
+              },
+              "rating": {
+                "left": "70%",
+                "top": 0,
+                "width": "30%",
+                "height": 1
+              }
+            }
           }
         },
         {
@@ -19765,10 +20952,12 @@ const cortexSpotlightTemplates = [
               "left": "SKILL",
               "right": "SPECIALTIES"
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -19850,10 +21039,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -19918,11 +21109,13 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 3,
-            "track": 1,
-            "span": 1,
             "cluster": "badges-resources",
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -19977,10 +21170,12 @@ const cortexSpotlightTemplates = [
               "col3": "EFFECT"
             },
             "reservedSlots": 2,
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20034,11 +21229,13 @@ const cortexSpotlightTemplates = [
               "rating": "RATING",
               "dice": "/ DICE"
             },
-            "track": 1,
-            "span": 1,
             "cluster": "badges-resources",
-            "colWidth": 50,
-            "row": 5
+            "place": {
+              "left": "0%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20098,10 +21295,12 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 5
+            "place": {
+              "left": "50%",
+              "top": 3,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20155,10 +21354,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20211,10 +21412,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20238,10 +21441,12 @@ const cortexSpotlightTemplates = [
               "connected": true,
               "filled": 4
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20293,10 +21498,12 @@ const cortexSpotlightTemplates = [
               "orientation": "vertical",
               "lines": 4
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20360,10 +21567,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20382,10 +21591,12 @@ const cortexSpotlightTemplates = [
               "body": "notes"
             },
             "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20449,10 +21660,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20517,10 +21730,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 2
+            "place": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20574,10 +21789,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20631,10 +21848,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 50,
-            "row": 3
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
           }
         },
         {
@@ -20657,23 +21876,25 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 2,
             "imageConfig": {
               "url": "",
               "height": 120,
               "alignment": "center",
               "caption": "Image set caption"
             },
-            "colWidth": 50,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
           }
         }
       ],
       "view": {
         "nickname": "The Everything Sheet",
         "sheetStyle": "spotlight",
-        "pageCount": 2,
+        "pageCount": 3,
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -20774,7 +21995,6 @@ const cortexSpotlightTemplates = [
           "sfx": [],
           "view": {
             "page": 1,
-            "location": "left",
             "style": {
               "header": "default",
               "body": "default"
@@ -20785,10 +22005,8 @@ const cortexSpotlightTemplates = [
               "sfx": true,
               "subtraits": false
             },
-            "span": 3,
             "header": "top",
-            "headerAlign": "center",
-            "row": 2
+            "headerAlign": "center"
           }
         },
         {
@@ -20905,10 +22123,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "track": 1,
-            "span": 2,
-            "colWidth": 66.666,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "66.666%",
+              "height": 1
+            }
           }
         },
         {
@@ -20996,10 +22216,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": true
             },
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.666%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -21056,10 +22278,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 4
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -21115,10 +22339,12 @@ const cortexSpotlightTemplates = [
               "sfx": true,
               "subtraits": false
             },
-            "track": 2,
-            "span": 2,
-            "colWidth": 66.667,
-            "row": 4
+            "place": {
+              "left": "33.333%",
+              "top": 2,
+              "width": "66.667%",
+              "height": 1
+            }
           }
         },
         {
@@ -21204,10 +22430,12 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": true,
             "pool": true,
-            "track": 1,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -21261,10 +22489,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 2,
-            "span": 1,
-            "colWidth": 33.333,
-            "row": 2
+            "place": {
+              "left": "33.333%",
+              "top": 0,
+              "width": "33.333%",
+              "height": 1
+            }
           }
         },
         {
@@ -21324,10 +22554,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 2
+            "place": {
+              "left": "66.666%",
+              "top": 0,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -21381,10 +22613,12 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 1,
-            "span": 2,
-            "colWidth": 66.666,
-            "row": 3
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "66.666%",
+              "height": 1
+            }
           }
         },
         {
@@ -21434,16 +22668,18 @@ const cortexSpotlightTemplates = [
               "sfx": false,
               "subtraits": false
             },
-            "track": 3,
-            "span": 1,
             "pips": {
               "count": 10,
               "perRow": 5,
               "connected": true,
               "filled": 1
             },
-            "colWidth": 33.334,
-            "row": 3
+            "place": {
+              "left": "66.666%",
+              "top": 1,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -21462,10 +22698,12 @@ const cortexSpotlightTemplates = [
               "body": "notes"
             },
             "notes": "### Equipment\n- **Jump Drive Matrix** (d8)\n- **Thermal Scanner**: Spend 1 PP to detect cloaked ships.",
-            "track": 3,
-            "span": 1,
-            "colWidth": 33.334,
-            "row": 4
+            "place": {
+              "left": "66.66%",
+              "top": 2,
+              "width": "33.334%",
+              "height": 1
+            }
           }
         },
         {
@@ -21479,7 +22717,6 @@ const cortexSpotlightTemplates = [
           "sfx": [],
           "view": {
             "page": 2,
-            "location": "left",
             "style": {
               "header": "default",
               "body": "session-record"
@@ -21495,10 +22732,8 @@ const cortexSpotlightTemplates = [
               ]
             },
             "reservedSlots": 12,
-            "span": 3,
             "header": "top",
-            "headerAlign": "right",
-            "row": 5
+            "headerAlign": "right"
           }
         }
       ],
@@ -21512,9 +22747,7 @@ const cortexSpotlightTemplates = [
           "left": 0,
           "center": 0,
           "right": 0
-        },
-        "columns": 3,
-        "columnsPage2": 3
+        }
       }
     }
   }

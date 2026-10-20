@@ -39,7 +39,7 @@
     "view": {
       "nickname": "The Everything Sheet",
       "sheetStyle": "spotlight",
-      "pageCount": 2,
+      "pageCount": 3,
       "columnAlignment": "top-base",
       "columnOffsets": {
         "left": 0,
@@ -53,7 +53,6 @@
         "description": "",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "page": 1,
@@ -71,10 +70,38 @@
           "ratingScale": [
             8
           ],
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "94%",
+              "height": 1
+            },
+            "rating": {
+              "left": "94%",
+              "top": 0,
+              "width": "6%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "sfx": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Walking Style Guide": {
@@ -133,7 +160,6 @@
         "description": "",
         "nounSingular": "Value",
         "nounPlural": "Values",
-        "ratingPosition": "inline",
         "statement": true,
         "hasQuestionedPip": true,
         "tags": [],
@@ -155,10 +181,26 @@
             10,
             12
           ],
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "50%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Craft": {
@@ -203,10 +245,12 @@
             "left": "SKILL",
             "right": "SPECIALTIES"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Engineering": {
@@ -283,10 +327,12 @@
             10,
             12
           ],
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "50%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "The Guild": {
@@ -346,11 +392,13 @@
             12
           ],
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
           "cluster": "badges-resources",
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "First Responder": {
@@ -397,10 +445,12 @@
             "col3": "EFFECT"
           },
           "reservedSlots": 2,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "50%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Overclock": {
@@ -448,11 +498,13 @@
             "rating": "RATING",
             "dice": "/ DICE"
           },
-          "track": 1,
-          "span": 1,
           "cluster": "badges-resources",
-          "colWidth": 50,
-          "row": 5
+          "place": {
+            "left": "0%",
+            "top": 3,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Salvage Cache": {
@@ -493,10 +545,12 @@
             10,
             12
           ],
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 5
+          "place": {
+            "left": "50%",
+            "top": 3,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Physical": {
@@ -534,10 +588,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Novice": {
@@ -577,10 +633,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "50%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Origin": {
@@ -617,10 +675,12 @@
             "connected": true,
             "filled": 4
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {}
       },
@@ -640,10 +700,12 @@
             "orientation": "vertical",
             "lines": 4
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "50%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Session 1: The Awakening": {
@@ -682,10 +744,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Tactician": {
@@ -727,10 +791,12 @@
             "body": "notes"
           },
           "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "50%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {}
       },
@@ -751,10 +817,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Alpha": {
@@ -800,10 +868,12 @@
             "sfx": false,
             "subtraits": true
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "50%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Supply": {
@@ -851,10 +921,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Custom Sidearm": {
@@ -894,10 +966,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "50%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Item One": {
@@ -937,16 +1011,18 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 2,
           "imageConfig": {
             "url": "",
             "height": 120,
             "alignment": "center",
             "caption": "Image set caption"
           },
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "100%",
+            "height": 1
+          }
         },
         "traits": {}
       }

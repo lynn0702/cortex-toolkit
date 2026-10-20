@@ -1,6 +1,6 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getSpotlightSections, spotlightTrackForSet } from './spotlight-grid.ts';
+import { getSpotlightSections, buildParts, formatPct, parsePct } from './spotlight-grid.ts';
 import { getView, ensureView } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
 
@@ -176,50 +176,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return ( c === 2 || c === 3 ) ? c : 2;
 	} );
 
-	const columnLocation = computed( () => {
-		const loc = String( getView( traitSet.value )?.location || '' ).toLowerCase().trim();
-		if ( characterColumnCount.value === 3 ) {
-			if ( loc === 'center' || loc === '2' || loc === 'col-2' ) return 'center';
-			if ( loc === 'right' || loc === '3' || loc === 'col-3' ) return 'right';
-			return 'left';
-		}
-		return ( loc === 'right' || loc === '2' ) ? 'right' : 'left';
-	});
-
-	// Track count for THIS set's page (page 2 may override via columnsPage2).
-	const setTrackCount = computed( () => {
-		if ( ( getView( traitSet.value )?.page ?? 1 ) === 2 ) {
-			const override = Number( getView( props.character )?.columnsPage2 );
-			if ( override === 2 || override === 3 ) return override;
-		}
-		return characterColumnCount.value;
-	});
-
-	const isFullWidthSpan = computed({
-		get: () => {
-			const span = getView( traitSet.value )?.span ?? getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
-			return span === 'full' || Number( span ) >= setTrackCount.value;
-		},
-		set: ( val: boolean ) => {
-			if ( val ) {
-				setCustomProperty( 'colSpan', 'full' );
-			} else {
-				setCustomProperty( 'colSpan', 1 );
-			}
-		}
-	});
-
-	const colSpan = computed({
-		get: () => {
-			const span = getView( traitSet.value )?.span ?? getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
-			if ( span === 'full' ) return setTrackCount.value;
-			return Number( span ) || 1;
-		},
-		set: ( val: number | 'full' ) => {
-			setCustomProperty( 'colSpan', val === 'full' ? 'full' : Math.max( 1, Number( val ) || 1 ) );
-		}
-	});
-
 	// Explicit row number within the page (1-based). Sets sharing a page
 	// and row band together; each band carries its own column shares.
 	// Falls back to the engine-derived band position so sheets without
@@ -236,18 +192,95 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return 1;
 	}
 
-	const setRow = computed({
+	// Visual section sequence of this set within its page (0-based): the
+	// row slot it renders in. Used to seed explicit coordinates.
+	function sectionSeqOf( index: number | undefined ) {
+		return effectiveRowOf( index ) - 1;
+	}
+
+	// Ensure an explicit place, seeding from the current visual slot so
+	// the set does not jump when it gains coordinates.
+	function ensurePlace() {
+		const view = ensureView( traitSet.value );
+		if ( !view.place || typeof view.place !== 'object' ) {
+			view.place = { left: '0%', top: sectionSeqOf( props.traitSetID ), width: '100%', height: 1 };
+		}
+		const place = view.place as { left?: unknown; top?: unknown; width?: unknown; height?: unknown };
+		if ( typeof place.left === 'number' ) place.left = formatPct( place.left );
+		if ( typeof place.width === 'number' ) place.width = formatPct( place.width );
+		if ( !Number.isInteger( place.top ) || ( place.top as number ) < 0 ) place.top = sectionSeqOf( props.traitSetID );
+		if ( !Number.isInteger( place.height ) || ( place.height as number ) < 1 ) place.height = 1;
+		return view.place as { left: string; top: number; width: string; height: number };
+	}
+
+	// Explicit coordinates (view.place). Absent = full-width stacked in
+	// document order (sparse).
+	const hasPlace = computed( () => {
+		const place = getView( traitSet.value )?.place;
+		return Boolean( place && typeof place === 'object' && !Array.isArray( place ) );
+	} );
+
+	const placeLeft = computed( {
 		get: () => {
-			const raw = getView( traitSet.value )?.row;
-			const n = Number( raw );
-			if ( Number.isFinite( n ) && n >= 1 ) return Math.floor( n );
-			return effectiveRowOf( props.traitSetID );
+			const v = parsePct( getView( traitSet.value )?.place?.left );
+			return v === null ? 0 : Math.round( v * 1000 ) / 1000;
 		},
 		set: ( val: number ) => {
-			const n = Number.isFinite( Number( val ) ) ? Math.max( 1, Math.floor( Number( val ) ) ) : 1;
-			setCustomProperty( 'row', n );
+			const n = Number.isFinite( Number( val ) ) ? Math.max( 0, Math.min( 100, Number( val ) ) ) : 0;
+			ensurePlace().left = formatPct( Math.round( n * 10 ) / 10 );
+			updateCharacter( props.character );
 		}
-	});
+	} );
+
+	const placeWidth = computed( {
+		get: () => {
+			const v = parsePct( getView( traitSet.value )?.place?.width );
+			return v === null ? 100 : Math.round( v * 1000 ) / 1000;
+		},
+		set: ( val: number ) => {
+			const n = Number.isFinite( Number( val ) ) ? Math.max( 1, Math.min( 100, Number( val ) ) ) : 100;
+			ensurePlace().width = formatPct( Math.round( n * 10 ) / 10 );
+			updateCharacter( props.character );
+		}
+	} );
+
+	const placeTop = computed( {
+		get: () => {
+			const raw = getView( traitSet.value )?.place?.top;
+			if ( Number.isInteger( raw ) && ( raw as number ) >= 0 ) return raw as number;
+			return sectionSeqOf( props.traitSetID );
+		},
+		set: ( val: number ) => {
+			const n = Number.isInteger( Number( val ) ) ? Math.max( 0, Number( val ) ) : 0;
+			ensurePlace().top = n;
+			updateCharacter( props.character );
+		}
+	} );
+
+	const placeHeight = computed( {
+		get: () => {
+			const raw = getView( traitSet.value )?.place?.height;
+			if ( Number.isInteger( raw ) && ( raw as number ) >= 1 ) return raw as number;
+			return 1;
+		},
+		set: ( val: number ) => {
+			const n = Number.isInteger( Number( val ) ) ? Math.max( 1, Number( val ) ) : 1;
+			ensurePlace().height = n;
+			updateCharacter( props.character );
+		}
+	} );
+
+	function clearPlace() {
+		const view = getView( traitSet.value );
+		if ( view && typeof view === 'object' ) delete ( view as Record<string, unknown> ).place;
+		updateCharacter( props.character );
+	}
+
+	const isFullWidthSpan = computed( () => {
+		if ( !hasPlace.value ) return true;
+		const w = parsePct( getView( traitSet.value )?.place?.width );
+		return w === null || w >= 99.9;
+	} );
 
 	const templateEntry = computed( () => {
 		const root = inst?.proxy?.$root as any;
@@ -257,111 +290,13 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// Template traits by name not currently on this sheet (D19 restore menu).
 	const restorableTraitNames = computed( () => cortexFunctions.restorableTraits( props.character, templateEntry.value, props.traitSetID ) );
 
-	// Track (1 | 2 | 3), Span (1 | 2 | 3), Band Widths ([w1, w2, w3]), Flex (filler)
-	// Widths belong to the band: the bar below displays the band's engine
-	// widths and distributes edits back as singular per-set shares.
-	function getBandSection(): any | null {
-		const sets = props.character?.traitSets || [];
-		const p = getView( traitSet.value )?.page || 1;
-		const sections = getSpotlightSections( sets, p );
-		for ( const sec of sections ) {
-			if ( ( sec.ordered || [] ).some( ( item: any ) => item.index === props.traitSetID ) ) {
-				return sec;
-			}
-		}
-		return null;
-	}
-
-	const track = computed({
-		get: (): 1 | 2 | 3 => {
-			const tr = getView( traitSet.value )?.track;
-			if ( tr === 1 || tr === 2 || tr === 3 ) return tr;
-			const loc = String( getView( traitSet.value )?.location || '' ).toLowerCase().trim();
-			if ( loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2' ) return 2;
-			if ( loc === 'right' || loc === '3' || loc === 'col-3' ) return 3;
-			return 1;
-		},
-		set: ( val: number ) => {
-			const tr = ( val === 2 || val === 3 ) ? val : 1;
-			setCustomProperty( 'track', tr );
-			const ctk = getView( traitSet.value );
-			if ( ctk && ctk.location !== 'header' && ctk.location !== undefined ) {
-				delete ctk.location;
-			}
-		}
-	});
-
-	const span = computed({
-		get: (): 1 | 2 | 3 => {
-			const sp = getView( traitSet.value )?.span;
-			if ( sp === 1 || sp === 2 || sp === 3 ) return sp;
-			const raw = getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
-			if ( raw === 'full' || Number( raw ) >= 3 ) return 3;
-			if ( Number( raw ) === 2 ) return 2;
-			return 1;
-		},
-		set: ( val: number ) => {
-			const sp = ( val === 2 || val === 3 ) ? val : 1;
-			setCustomProperty( 'span', sp );
-			const ctk = getView( traitSet.value );
-			if ( ctk ) {
-				delete ctk.colSpan;
-				delete ctk.columnSpan;
-			}
-		}
-	});
-
-	const bandWidths = computed({
-		get: (): [number, number, number] => {
-			const w = getBandSection()?.widths;
-			if ( Array.isArray( w ) && w.length === 3 ) {
-				return [ Number( w[0] ), Number( w[1] ), Number( w[2] ) ];
-			}
-			return [ 33.333, 33.333, 33.334 ];
-		},
-		set: ( val: [number, number, number] ) => {
-			const sec = getBandSection();
-			if ( !sec ) return;
-			const vals = [ Number( val[0] ), Number( val[1] ), Number( val[2] ) ];
-			for ( const item of ( sec.ordered || [] ) ) {
-				const ts = props.character?.traitSets?.[ item.index ];
-				if ( !ts ) continue;
-				const tr = spotlightTrackForSet( ts );
-				const share = vals[ tr - 1 ];
-				const view = ensureView( ts );
-				if ( Number.isFinite( share ) && share > 0 ) view.colWidth = share;
-				else delete view.colWidth;
-			}
-			updateCharacter( props.character );
-		}
-	});
-
-	const flex = computed({
-		get: () => getView( traitSet.value )?.flex !== false,
-		set: ( val: boolean ) => { setCustomProperty( 'flex', val ? null : false ); }
-	});
-
 	const headerRight = computed({
 		get: () => getView( traitSet.value )?.headerRight ?? '',
 		set: ( val: string ) => { setCustomProperty( 'headerRight', val ); }
 	});
 
-	// Highest effective row on this set's page (for capping row moves).
-	const maxPageRow = computed( () => {
-		let max = 1;
-		const sets = props.character?.traitSets || [];
-		const p = getView( traitSet.value )?.page || 1;
-		sets.forEach( ( ts: any, idx: number ) => {
-			if ( ( getView( ts )?.page || 1 ) !== p ) return;
-			const raw = Number( getView( ts )?.row );
-			const r = Number.isFinite( raw ) && raw >= 1 ? Math.floor( raw ) : effectiveRowOf( idx );
-			if ( r > max ) max = r;
-		} );
-		return Math.max( 1, max );
-	} );
-
-	const canMoveUp = computed( () => setRow.value > 1 );
-	const canMoveDown = computed( () => setRow.value <= maxPageRow.value );
+	const canMoveUp = computed( () => placeTop.value > 0 );
+	const canMoveDown = computed( () => true );
 
 	const isSpotlightSheet = computed( () => {
 		const explicit = getView( props.character )?.sheetStyle;
@@ -562,31 +497,116 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( val: number ) => { setCustomProperty( 'traitColumns', parseInt( String( val ), 10 ) || 1 ); }
 	});
 
+	// Rebuild this set's trait-part layout, preserving its stress setup,
+	// dice counts, features, and statement mode. Vertical ladders keep
+	// the legacy flag (no parts form); bespoke bodies are left alone.
+	function rebuildParts( rating: 'inline' | 'above' | 'below' | 'none' ) {
+		const view = ensureView( traitSet.value );
+		const scale = Array.isArray( view.ratingScale ) && view.ratingScale.length
+			? view.ratingScale : [ 4, 6, 8, 10, 12 ];
+		const legacyStress = view.attachedStress;
+		const stressOn = partsHaveStress() || Boolean( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled );
+		const sScale = ( legacyStress && typeof legacyStress === 'object' &&
+			( ( Array.isArray( legacyStress.scale ) && legacyStress.scale.length && legacyStress.scale ) ||
+			( Array.isArray( legacyStress.ratingScale ) && legacyStress.ratingScale.length && legacyStress.ratingScale ) ) ) ||
+			[ 4, 6, 8, 10, 12 ];
+		const statement = Boolean( ( traitSet.value as any )?.statement ?? view.statement );
+		const features = view.features || {};
+		view.parts = buildParts( {
+			rating,
+			ratingDice: scale.length,
+			stressDice: stressOn ? sScale.length : 0,
+			description: Boolean( features.description ) && !statement && rating !== 'above',
+			sfx: Boolean( features.sfx ),
+			subtraits: Boolean( features.subtraits ),
+		} );
+		if ( traitSet.value && typeof traitSet.value === 'object' ) delete ( traitSet.value as any ).ratingPosition;
+		delete view.ratingPosition;
+		if ( !legacyStress ) delete view.attachedStress;
+		updateCharacter( props.character );
+	}
+
+	function partsHaveStress() {
+		const parts = getView( traitSet.value )?.parts;
+		return Boolean( parts && typeof parts === 'object' && ( parts as Record<string, unknown> ).stress );
+	}
+
+	function currentRatingPosition(): 'inline' | 'above' | 'below' | 'none' | 'vertical' {
+		const parts = getView( traitSet.value )?.parts;
+		if ( parts && typeof parts === 'object' ) {
+			const cells = parts as Record<string, { top?: unknown }>;
+			if ( !cells.rating ) return 'none';
+			const rTop = Number( cells.rating.top ) || 0;
+			const nTop = cells.name ? ( Number( cells.name.top ) || 0 ) : 0;
+			if ( rTop === 0 && nTop === 0 ) return 'inline';
+			if ( rTop === 0 ) return 'above';
+			return 'below';
+		}
+		const legacy = ( traitSet.value as any )?.ratingPosition || getView( traitSet.value )?.ratingPosition;
+		if ( legacy === 'above' || legacy === 'below' || legacy === 'none' || legacy === 'vertical' ) return legacy;
+		return 'inline';
+	}
+
 	const hasAttachedStress = computed({
-		get: () => Boolean( getView( traitSet.value )?.attachedStress?.enabled ),
-		set: ( val: boolean ) => { setAttachedStressProperty( 'enabled', Boolean( val ) ); }
+		get: () => {
+			if ( partsHaveStress() ) return true;
+			return Boolean( getView( traitSet.value )?.attachedStress?.enabled );
+		},
+		set: ( val: boolean ) => {
+			const view = ensureView( traitSet.value );
+			const legacy = view.attachedStress;
+			if ( legacy && typeof legacy === 'object' && ( ( legacy as any ).scale || ( legacy as any ).ratingScale ) ) {
+				// Customized stress tracks stay legacy; only the switch flips.
+				( legacy as any ).enabled = Boolean( val );
+				updateCharacter( props.character );
+				return;
+			}
+			if ( !val ) {
+				if ( legacy && typeof legacy === 'object' ) ( legacy as any ).enabled = false;
+				const parts = getView( traitSet.value )?.parts;
+				if ( parts && typeof parts === 'object' ) {
+					delete ( parts as Record<string, unknown> ).stressLabel;
+					delete ( parts as Record<string, unknown> ).stress;
+				}
+				updateCharacter( props.character );
+				return;
+			}
+			rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none' );
+		}
 	});
 
 	const attachedStressLabel = computed({
-		get: () => getView( traitSet.value )?.attachedStress?.label ?? 'Stress',
-		set: ( val: string ) => { setAttachedStressProperty( 'label', val ); }
-	});
-
-	const attachedStressScale = computed({
-		get: () => getView( traitSet.value )?.attachedStress?.scale ?? [ 4, 6, 8, 10, 12 ],
-		set: ( scale: number[] ) => { setAttachedStressProperty( 'scale', scale ); }
-	});
-
-	const attachedStressOut = computed({
-		get: () => Boolean( getView( traitSet.value )?.attachedStress?.includeOut ),
-		set: ( val: boolean ) => { setAttachedStressProperty( 'includeOut', Boolean( val ) ); }
+		get: () => {
+			const labels = getView( traitSet.value )?.labels;
+			if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+			return getView( traitSet.value )?.attachedStress?.label ?? 'Stress';
+		},
+		set: ( val: string ) => {
+			const view = ensureView( traitSet.value );
+			const legacy = view.attachedStress;
+			if ( legacy && typeof legacy === 'object' && ( ( legacy as any ).scale || ( legacy as any ).ratingScale ) ) {
+				( legacy as any ).label = val;
+			} else {
+				if ( !view.labels || typeof view.labels !== 'object' ) view.labels = {};
+				if ( typeof val === 'string' && val.length ) view.labels.stress = val;
+				else delete view.labels.stress;
+			}
+			updateCharacter( props.character );
+		}
 	});
 
 	const ratingPosition = computed({
-		get: () => traitSet.value?.ratingPosition || getView( traitSet.value )?.ratingPosition || 'inline',
+		get: () => currentRatingPosition(),
 		set: ( val: 'inline' | 'above' | 'below' | 'none' | 'vertical' ) => {
-			setProperty( 'ratingPosition', val );
-			setCustomProperty( 'ratingPosition', val );
+			if ( val === 'vertical' ) {
+				const view = ensureView( traitSet.value );
+				delete view.parts;
+				( traitSet.value as any ).ratingPosition = val;
+				view.ratingPosition = val;
+				updateCharacter( props.character );
+				return;
+			}
+			rebuildParts( val );
 		}
 	});
 
@@ -808,14 +828,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		updateCharacter( props.character );
 	}
 
-	// Move Up / Move Down shift the set one row within its page.
+	// Move Up / Move Down shift the set one row unit within its page.
 	function moveTraitSetUp() {
-		if ( setRow.value <= 1 ) return;
-		setRow.value = setRow.value - 1;
+		if ( placeTop.value <= 0 ) return;
+		placeTop.value = placeTop.value - 1;
 	}
 
 	function moveTraitSetDown() {
-		setRow.value = setRow.value + 1;
+		placeTop.value = placeTop.value + 1;
 	}
 
 	function setRingConfig( key: keyof RingConfig, value: any ) {
@@ -1060,42 +1080,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		updateCharacter( props.character );
 	}
 
-	function ensureAttachedStressStruct() {
-		const ctk = ctkFor( props.traitSetID );
-		if ( !ctk.attachedStress ) {
-			ctk.attachedStress = {
-				enabled: false,
-				label: 'Stress',
-				scale: [ 4, 6, 8, 10, 12 ],
-				includeOut: false
-			};
-		}
-	}
-
-	function setAttachedStressProperty( key: keyof AttachedStressConfig, value: any ) {
-		ensureAttachedStressStruct();
-		let s = props.traitSetID;
-		ctkFor( s ).attachedStress![ key ] = value;
-		updateCharacter( props.character );
-	}
-
-	function toggleAttachedStressScale( dieSize: any ) {
-		ensureAttachedStressStruct();
-		let s = props.traitSetID;
-		let currentScale = [ ...( ctkFor( s ).attachedStress!.scale || [ 4, 6, 8, 10, 12 ] ) ];
-		let idx = currentScale.indexOf( dieSize );
-		if ( idx > -1 ) {
-			if ( currentScale.length > 1 ) {
-				currentScale.splice( idx, 1 );
-			}
-		} else {
-			currentScale.push( dieSize );
-			currentScale.sort( ( a, b ) => a - b );
-		}
-		ctkFor( s ).attachedStress!.scale = currentScale;
-		updateCharacter( props.character );
-	}
-
 	function checkAnchorPosition() {
 		if ( !rootEl.value || !rootEl.value.parentElement ) return;
 
@@ -1200,14 +1184,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const api: TraitSetEditorApi = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
 		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
-		ringTrait, pageNumber, columnLocation, characterColumnCount, setTrackCount, isFullWidthSpan, colSpan,
-		track, span, bandWidths, flex,
-		setRow, maxPageRow, templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
+		ringTrait, pageNumber, characterColumnCount, isFullWidthSpan,
+		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
+		templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		multiDie, isPool, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
-		hasAttachedStress, attachedStressLabel, attachedStressScale, attachedStressOut, ratingPosition, labelPosition, isStatementSet,
+		hasAttachedStress, attachedStressLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled,
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
@@ -1217,8 +1201,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		setCustomProperty, styleLabel, setStyleLabel, setStressConfig, setImageConfig, uploadImageStart,
 		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset, getDieDisplayValue,
-		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty, ensureAttachedStressStruct,
-		setAttachedStressProperty, toggleAttachedStressScale, checkAnchorPosition, checkScrollPosition,
+		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty,
+		checkAnchorPosition, checkScrollPosition,
 		clearAllSessionBubbles, fillAllSessionBubbles
 	};
 

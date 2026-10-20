@@ -55,7 +55,6 @@
         "description": "Core attributes",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -68,7 +67,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6,
             8,
@@ -78,10 +76,26 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Mental": {
@@ -125,10 +139,12 @@
           },
           "multiDie": false,
           "reservedSlots": 3,
-          "track": 2,
-          "span": 2,
-          "colWidth": 72,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -178,7 +194,6 @@
         "description": "Town archetypes and societal roles",
         "nounSingular": "Role",
         "nounPlural": "Roles",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -191,7 +206,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -202,10 +216,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Enforcer": {
@@ -266,10 +296,12 @@
           ],
           "multiDie": false,
           "reservedSlots": 6,
-          "track": 2,
-          "span": 2,
-          "colWidth": 72,
-          "row": 3
+          "place": {
+            "left": "28%",
+            "top": 1,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -310,7 +342,6 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -323,15 +354,36 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             8
           ],
           "reservedSlots": 2,
-          "track": 1,
-          "span": 1,
-          "colWidth": 25,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "25%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -354,7 +406,6 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -367,7 +418,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -376,10 +426,32 @@
             12
           ],
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "25%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -425,10 +497,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 3,
-          "span": 1,
-          "colWidth": 25,
-          "row": 4
+          "place": {
+            "left": "75%",
+            "top": 2,
+            "width": "25%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {

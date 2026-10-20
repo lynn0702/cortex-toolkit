@@ -39,9 +39,7 @@
         "left": 0,
         "center": 0,
         "right": 0
-      },
-      "columns": 3,
-      "columnsPage2": 3
+      }
     },
     "sets": {
       "Roles & Masteries": {
@@ -52,7 +50,6 @@
         "tags": [],
         "view": {
           "page": 1,
-          "location": "left",
           "style": {
             "header": "default",
             "body": "default"
@@ -63,10 +60,8 @@
             "sfx": true,
             "subtraits": false
           },
-          "span": 3,
           "header": "top",
-          "headerAlign": "center",
-          "row": 2
+          "headerAlign": "center"
         },
         "traits": {
           "Commander": {
@@ -133,10 +128,12 @@
             "sfx": false,
             "subtraits": true
           },
-          "track": 1,
-          "span": 2,
-          "colWidth": 66.666,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "66.666%",
+            "height": 1
+          }
         },
         "traits": {
           "Engineering": {
@@ -218,10 +215,12 @@
             "sfx": false,
             "subtraits": true
           },
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 3
+          "place": {
+            "left": "66.666%",
+            "top": 1,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "The Syndicate": {
@@ -285,10 +284,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Craft": {
@@ -333,10 +334,12 @@
             "sfx": true,
             "subtraits": false
           },
-          "track": 2,
-          "span": 2,
-          "colWidth": 66.667,
-          "row": 4
+          "place": {
+            "left": "33.333%",
+            "top": 2,
+            "width": "66.667%",
+            "height": 1
+          }
         },
         "traits": {
           "Voidborn Pioneer": {
@@ -390,10 +393,12 @@
           },
           "multiDie": true,
           "pool": true,
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "D4": {
@@ -455,10 +460,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 2
+          "place": {
+            "left": "33.333%",
+            "top": 0,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Fleet Veteran": {
@@ -498,10 +505,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 2
+          "place": {
+            "left": "66.666%",
+            "top": 0,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Crew Complement": {
@@ -547,10 +556,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 1,
-          "span": 2,
-          "colWidth": 66.666,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "66.666%",
+            "height": 1
+          }
         },
         "traits": {
           "Homeworld": {
@@ -587,16 +598,18 @@
             "sfx": false,
             "subtraits": false
           },
-          "track": 3,
-          "span": 1,
           "pips": {
             "count": 10,
             "perRow": 5,
             "connected": true,
             "filled": 1
           },
-          "colWidth": 33.334,
-          "row": 3
+          "place": {
+            "left": "66.666%",
+            "top": 1,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Physical": {
@@ -632,10 +645,12 @@
             "body": "notes"
           },
           "notes": "### Equipment\n- **Jump Drive Matrix** (d8)\n- **Thermal Scanner**: Spend 1 PP to detect cloaked ships.",
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 4
+          "place": {
+            "left": "66.66%",
+            "top": 2,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {}
       },
@@ -647,7 +662,6 @@
         "tags": [],
         "view": {
           "page": 2,
-          "location": "left",
           "style": {
             "header": "default",
             "body": "session-record"
@@ -663,10 +677,8 @@
             ]
           },
           "reservedSlots": 12,
-          "span": 3,
           "header": "top",
-          "headerAlign": "right",
-          "row": 5
+          "headerAlign": "right"
         },
         "traits": {}
       }

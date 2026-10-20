@@ -1,6 +1,7 @@
 import { computed, provide, inject, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView } from './model.ts';
+import { KNOWN_PARTS, partsGrid, type PartGridCell } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
 export interface TraitSetApi {
@@ -138,7 +139,51 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getRatingPosition( traitSetArg: TraitSet ) {
+		const parts = getParts( traitSetArg );
+		if ( parts && parts.rating ) {
+			const rTop = Number( parts.rating.top ) || 0;
+			const nTop = parts.name ? ( Number( parts.name.top ) || 0 ) : 0;
+			if ( rTop === 0 && nTop === 0 ) return 'inline';
+			if ( rTop === 0 ) return 'above';
+			return 'below';
+		}
+		if ( parts ) return 'none';
 		return traitSetArg?.ratingPosition || getView( traitSetArg )?.ratingPosition || 'inline';
+	}
+
+	// Trait-part layout (view.parts), or null for legacy flex rows.
+	// Unknown part names never reach the grid: validation rejects them.
+	function getParts( traitSetArg: TraitSet ) {
+		const parts = getView( traitSetArg )?.parts;
+		if ( !parts || typeof parts !== 'object' || Array.isArray( parts ) ) return null;
+		const known = Object.keys( parts ).filter( ( k ) => ( KNOWN_PARTS as readonly string[] ).includes( k ) );
+		if ( !known.length ) return null;
+		return parts as Record<string, { left: string; top: number; width: string; height: number }>;
+	}
+
+	function partsGridFor( traitSetArg: TraitSet ) {
+		const parts = getParts( traitSetArg );
+		if ( !parts ) return null;
+		return partsGrid( parts );
+	}
+
+	function partCellStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> }, part: string ) {
+		const cell = grid?.cells?.[ part ];
+		if ( !cell ) return '';
+		return `grid-column: ${cell.col} / span ${cell.span}; grid-row: ${cell.row} / span ${cell.rowSpan}; min-width: 0;`;
+	}
+
+	function partsGridStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> } ) {
+		const cols = grid?.columns?.length ? grid.columns : [ 100 ];
+		return 'grid-template-columns: ' + cols.map( ( c ) => `${Math.round( c * 1000 ) / 1000}%` ).join( ' ' ) + ';';
+	}
+
+	// Name and rating share row 0 (inline): the stacked-vs-inline divider rules key off this.
+	function isPartsInline( traitSetArg: TraitSet ) {
+		const grid = partsGridFor( traitSetArg );
+		const name = grid?.cells?.name;
+		const rating = grid?.cells?.rating;
+		return Boolean( grid && name && rating && name.row === 1 && rating.row === 1 );
 	}
 
 	function isStatementSet( traitSetArg: TraitSet ) {
@@ -513,15 +558,24 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function hasAttachedStress( traitSetArg: TraitSet ) {
+		const parts = getParts( traitSetArg );
+		if ( parts ) return Boolean( parts.stress );
 		return Boolean( getView( traitSetArg )?.attachedStress?.enabled );
 	}
 
 	function getAttachedStressLabel( traitSetArg: TraitSet ) {
+		const labels = getView( traitSetArg )?.labels;
+		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
 		return getView( traitSetArg )?.attachedStress?.label || 'Stress';
 	}
 
 	function getAttachedStressScale( traitSetArg: TraitSet ) {
-		return getView( traitSetArg )?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ];
+		const legacy = getView( traitSetArg )?.attachedStress;
+		if ( legacy && typeof legacy === 'object' ) {
+			if ( Array.isArray( legacy.scale ) && legacy.scale.length ) return legacy.scale;
+			if ( Array.isArray( legacy.ratingScale ) && legacy.ratingScale.length ) return legacy.ratingScale;
+		}
+		return [ 4, 6, 8, 10, 12 ];
 	}
 
 	function getAttachedStressValue( trait: Trait ) {
@@ -1004,6 +1058,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		columnCount, sheetStyle, isSpotlightPrintStyle, getView, ensureView,
 		getTraitSetLabel, isSpotlightStyle, isSelected, renderText, renderNotesText, getTraitSetClasses,
 		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
+		getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
 		selectElement, updateCharacter, addTrait, removeTrait, removeTraitSet, getTraitClasses,
 		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint,

@@ -52,7 +52,6 @@
         "description": "Enduring principles of the golden era",
         "nounSingular": "Value",
         "nounPlural": "Values",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -65,7 +64,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -76,10 +74,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 7,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Allegiance": {
@@ -144,10 +158,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Archetype": {
@@ -220,7 +236,6 @@
         "description": "Stashed tech, vintage vehicles, and old connections (5d6 each)",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -235,17 +250,38 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6
           ],
           "multiDie": true,
           "notes": "",
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -291,7 +327,6 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -306,7 +341,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6,
             8,
@@ -314,10 +348,32 @@
             12
           ],
           "reservedSlots": 2,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -338,7 +394,6 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -353,7 +408,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6,
             8,
@@ -361,10 +415,32 @@
             12
           ],
           "reservedSlots": 2,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 5
+          "place": {
+            "left": "0%",
+            "top": 3,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -415,10 +491,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 16,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 3
+          "place": {
+            "left": "28%",
+            "top": 1,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Craft": {

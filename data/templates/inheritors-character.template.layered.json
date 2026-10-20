@@ -52,7 +52,6 @@
         "description": "Gain a PP when you include your d4 attribute in your dice pool.",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -65,7 +64,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -76,10 +74,26 @@
           "notes": "",
           "reservedSlots": 4,
           "attributesRing": false,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Action": {
@@ -109,7 +123,6 @@
         "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -132,10 +145,26 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -171,10 +200,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 2,
-          "colWidth": 36,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Family Tree": {
@@ -247,7 +278,6 @@
         "description": "Powers granted by bloodline and relics",
         "nounSingular": "Ability",
         "nounPlural": "Abilities",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "traitColumns": 3,
@@ -256,7 +286,6 @@
             "sfx": true,
             "subtraits": true
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -271,8 +300,38 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "span": 3,
-          "row": 4
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            },
+            "sfx": {
+              "left": "0%",
+              "top": 3,
+              "width": "100%",
+              "height": 1
+            },
+            "subtraits": {
+              "left": "0%",
+              "top": 4,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -391,10 +450,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 14,
-          "track": 1,
-          "span": 1,
-          "colWidth": 25,
-          "row": 5
+          "place": {
+            "left": "0%",
+            "top": 3,
+            "width": "25%",
+            "height": 1
+          }
         },
         "traits": {
           "Acquire": {
@@ -497,10 +558,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 5
+          "place": {
+            "left": "25%",
+            "top": 3,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -532,7 +595,6 @@
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "ratingPosition": "none",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -547,13 +609,28 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingPosition": "none",
           "ratingScale": [],
           "reservedSlots": 3,
-          "track": 3,
-          "span": 1,
-          "colWidth": 25,
-          "row": 5
+          "place": {
+            "left": "75%",
+            "top": 3,
+            "width": "25%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "1 XP": {
@@ -579,7 +656,6 @@
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "ratingPosition": "none",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -594,13 +670,28 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingPosition": "none",
           "ratingScale": [],
           "reservedSlots": 3,
-          "track": 3,
-          "span": 1,
-          "colWidth": 25,
-          "row": 6
+          "place": {
+            "left": "75%",
+            "top": 4,
+            "width": "25%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "1 XP": {
@@ -643,10 +734,12 @@
             "connected": true,
             "filled": 0
           },
-          "track": 3,
-          "span": 1,
-          "colWidth": 25,
-          "row": 7
+          "place": {
+            "left": "75%",
+            "top": 5,
+            "width": "25%",
+            "height": 1
+          }
         },
         "traits": {}
       }

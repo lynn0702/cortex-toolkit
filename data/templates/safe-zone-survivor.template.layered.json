@@ -64,7 +64,6 @@
           "ratingScale": [
             8
           ],
-          "location": "left",
           "page": 1,
           "style": {
             "header": "distinctions",
@@ -72,9 +71,7 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 3,
-          "span": 3,
-          "row": 2
+          "reservedSlots": 3
         },
         "traits": {
           "Before:": {
@@ -153,10 +150,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 20,
-          "track": 1,
-          "span": 2,
-          "colWidth": 33.333,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "66.663%",
+            "height": 1
+          }
         },
         "traits": {
           "Animals": {
@@ -431,10 +430,12 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 3
+          "place": {
+            "left": "66.663%",
+            "top": 1,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Analytical": {
@@ -483,10 +484,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 10,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 4
+          "place": {
+            "left": "66.66%",
+            "top": 2,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -571,10 +574,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 5
+          "place": {
+            "left": "66.66%",
+            "top": 3,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Injured": {
@@ -624,10 +629,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 2,
-          "colWidth": 33.333,
-          "row": 6
+          "place": {
+            "left": "0%",
+            "top": 4,
+            "width": "66.663%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -677,10 +684,12 @@
           "multiDie": true,
           "pool": true,
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 6
+          "place": {
+            "left": "66.663%",
+            "top": 4,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "D4": {

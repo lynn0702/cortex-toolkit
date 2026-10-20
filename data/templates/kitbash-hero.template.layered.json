@@ -74,10 +74,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Personality:": {
@@ -126,7 +128,6 @@
         "description": "Operating mode ratings",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -141,7 +142,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6,
             8,
@@ -150,10 +150,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 2
+          "place": {
+            "left": "33.333%",
+            "top": 0,
+            "width": "33.333%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Personal:": {
@@ -200,10 +216,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 2
+          "place": {
+            "left": "66.666%",
+            "top": 0,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -262,10 +280,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -291,7 +311,6 @@
         "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -306,7 +325,6 @@
             "header": "stress",
             "body": "stress"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -315,10 +333,26 @@
             12
           ],
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 3
+          "place": {
+            "left": "33.333%",
+            "top": 1,
+            "width": "33.333%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Physical": {
@@ -367,10 +401,12 @@
           "multiDie": true,
           "pool": true,
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 3
+          "place": {
+            "left": "66.666%",
+            "top": 1,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "D4": {
@@ -430,7 +466,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "labeled-fields",
@@ -438,9 +473,7 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 3,
-          "span": 3,
-          "row": 4
+          "reservedSlots": 3
         },
         "traits": {
           "Powers": {
@@ -470,14 +503,11 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "labeled-fields",
             "body": "labeled-fields"
-          },
-          "span": 3,
-          "row": 5
+          }
         },
         "traits": {
           "Powers": {
@@ -507,14 +537,11 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "labeled-fields",
             "body": "labeled-fields"
-          },
-          "span": 3,
-          "row": 6
+          }
         },
         "traits": {
           "Powers": {

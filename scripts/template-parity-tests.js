@@ -65,11 +65,26 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(JSON.stringify(sets.Values.view.ratingScale) === '[4,6,8,10,12]', 'rating scale kept');
   ok(sets.Badges.hasCounterColumn === true && sets.Badges.counterLabel === 'XP', 'counter column kept');
   const tctk = sets.Talents.view;
-  ok(tctk.span === 3 && tctk.colSpan === undefined && tctk.columnSpan === undefined, 'talents has span: 3');
-  ok(sets.Standing.view.row === 4 &&
+  ok(tctk.place === undefined && tctk.span === undefined && tctk.colSpan === undefined && tctk.columnSpan === undefined, 'talents stacks sparsely full-width');
+  ok(JSON.stringify(sets.Standing.view.place) === JSON.stringify({ left: '0%', top: 2, width: '40%', height: 1 }) &&
+    sets.Standing.view.row === undefined &&
     sets.Standing.view.rowBreak === undefined &&
-    sets.Standing.view.colWidth === 40 &&
-    sets.Standing.view.widths === undefined, 'standing has visual row 4 and singular colWidth 40');
+    sets.Standing.view.colWidth === undefined &&
+    sets.Standing.view.widths === undefined &&
+    sets.Standing.view.track === undefined &&
+    sets.Standing.view.span === undefined, 'standing has explicit coordinates, no band keys', sets.Standing.view.place);
+  // Nested grids: flags became parts (inline 70/30, above pushes name down, below adds a row).
+  const dp = sets.Distinctions.view.parts;
+  ok(dp && dp.name.width === '70%' && dp.rating.width === '30%' && dp.rating.top === 0 &&
+    dp.description.top === 1 && dp.sfx.top === 2, 'distinctions inline parts with description + sfx rows', dp);
+  ok(sets.Distinctions.ratingPosition === undefined && sets.Distinctions.view.ratingPosition === undefined, 'distinctions flags removed');
+  const vp = sets.Values.view.parts;
+  ok(vp && vp.name.width === '70%' && vp.rating.width === '30%', 'values inline parts', vp);
+  const sap = sets['Signature Assets'].view.parts;
+  ok(sap && sap.rating.top === 0 && sap.name.top === 1, 'above pushes name to row 1', sap);
+  const atp = sets.Attributes.view.parts;
+  ok(atp && atp.name.top === 0 && atp.rating.top === 1, 'below adds a row', atp);
+  ok(sets.Standing.view.parts === undefined, 'bespoke bodies keep legacy flex (no parts)');
   ok(sets.Attributes.view.attributesRing === false, 'ring flag kept');
   ok(L.character.view.columns === undefined &&
     L.character.view.watermark.opacity === 0.08, 'columns removed from sheet custom, watermark kept');
@@ -102,8 +117,8 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(JSON.stringify(gmcKeys) === JSON.stringify(['GMC', 'GMC~2', 'GMC~3', 'GMC~4', 'GMC~5', 'GMC~6']), 'suffixed keys in order', gmcKeys);
   ok(L.character.sets['GMC~2'].label === 'GMC', 'display name in label');
   ok(L.character.sets['GMC~2'].id === 'gmc-b', 'each instance keeps its id');
-  ok(L.character.sets['GMC'].view.track === 1 &&
-    L.character.sets['GMC~2'].view.track === 2, 'per-instance placement kept');
+  ok(L.character.sets['GMC'].view.place.left === '0%' &&
+    L.character.sets['GMC~2'].view.place.left === '50%', 'per-instance placement kept');
 }
 
 // ---- 5. Blank sfx rows survive with order (retired-crystalline Archetype [_]).

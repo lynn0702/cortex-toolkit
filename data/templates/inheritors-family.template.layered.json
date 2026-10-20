@@ -61,14 +61,11 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "labeled-fields",
             "body": "labeled-fields"
-          },
-          "span": 3,
-          "row": 2
+          }
         },
         "traits": {
           "Name": {
@@ -122,10 +119,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -179,10 +178,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "50%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -237,10 +238,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -294,10 +297,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "50%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -347,14 +352,11 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "labeled-fields",
             "body": "labeled-fields"
-          },
-          "span": 3,
-          "row": 5
+          }
         },
         "traits": {
           "Name": {
@@ -408,10 +410,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 6
+          "place": {
+            "left": "0%",
+            "top": 4,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -466,10 +470,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 6
+          "place": {
+            "left": "50%",
+            "top": 4,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -524,10 +530,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 7
+          "place": {
+            "left": "0%",
+            "top": 5,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -582,10 +590,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 7
+          "place": {
+            "left": "50%",
+            "top": 5,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -640,10 +650,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -707,10 +719,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "50%",
+            "top": 0,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -775,10 +789,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -843,10 +859,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "50%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -911,10 +929,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {
@@ -979,10 +999,12 @@
             "header": "labeled-fields",
             "body": "labeled-fields"
           },
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "50%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name": {

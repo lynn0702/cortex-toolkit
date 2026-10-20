@@ -52,7 +52,6 @@
         "description": "Collective settlement strengths",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -65,7 +64,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -75,10 +73,26 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Resources": {
@@ -123,10 +137,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Unity:": {
@@ -175,7 +191,6 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "header": "top",
@@ -186,7 +201,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -196,8 +210,26 @@
             6
           ],
           "reservedSlots": 4,
-          "span": 3,
-          "row": 3
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "94%",
+              "height": 1
+            },
+            "rating": {
+              "left": "94%",
+              "top": 0,
+              "width": "6%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -241,7 +273,6 @@
             "sfx": false,
             "subtraits": true
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -252,9 +283,7 @@
             8
           ],
           "subtraitRatingScale": [],
-          "reservedSlots": 9,
-          "span": 3,
-          "row": 4
+          "reservedSlots": 9
         },
         "traits": {},
         "slots": {

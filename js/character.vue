@@ -3,15 +3,12 @@ import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
-	columnsForPage as gridColumnsForPage,
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
 	hasClassicFullSets as gridHasClassicFullSets,
 	getSpotlightSections as gridGetSpotlightSections,
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
 	getSpotlightGridCells as gridGetSpotlightGridCells,
-	getTrackClusterGroups as gridGetTrackClusterGroups,
-	getSpotlightCellGroups as gridGetSpotlightCellGroups,
 	type SpotlightSection,
 	type SpotlightCell,
 } from './spotlight-grid.ts';
@@ -339,12 +336,9 @@ function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number 
 	return false;
 }
 
-function columnsForPage( pageIndex: number ) { return gridColumnsForPage( props.character, pageIndex, columnCount.value ); }
 function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex ); }
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
 function getSpotlightGridCells( section: SpotlightSection ) { return gridGetSpotlightGridCells( section ); }
-function getTrackClusterGroups( items: any[] ) { return gridGetTrackClusterGroups( items ); }
-function getSpotlightCellGroups( section: SpotlightSection ) { return gridGetSpotlightCellGroups( section ); }
 
 function renderNameHtml( value: unknown ) {
 	if ( !value ) return '';
@@ -384,28 +378,18 @@ function clearSelected() {
 }
 
 // EDITING
-// New sets land on their own row at the end of the target page.
-function nextRowForPage( character: any, page: number ) {
-	const sections = gridGetSpotlightSections( character?.traitSets || [], page );
-	return sections.length + 1;
-}
-
-function addTraitSet( trackOrLocation: number | string = 1, page = 1, span: number | string = 1 ) {
+// New sets carry no place: they stack full-width in document order, which
+// lands them on their own row at the end of the target page (sparse).
+// Classic sheets keep their left/right columns via location.
+function addTraitSet( page = 1, location?: string ) {
 	const character = props.character as Character;
 
 	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
-	let track: 1 | 2 | 3 = 1;
-	if ( trackOrLocation === 2 || trackOrLocation === 'center' || ( trackOrLocation === 'right' && !isSpotlightStyle.value ) ) {
-		track = 2;
-	} else if ( trackOrLocation === 3 || trackOrLocation === 'right' ) {
-		track = 3;
-	}
 	const tsView = ensureView( traitSet );
-	tsView.track = track;
 	tsView.page = page ?? 1;
-	const sp = ( span === 'full' || Number( span ) >= 3 ) ? 3 : ( Number( span ) === 2 ? 2 : 1 );
-	tsView.span = sp;
-	tsView.row = nextRowForPage( character, tsView.page );
+	if ( !isSpotlightStyle.value && location ) {
+		tsView.location = location;
+	}
 
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	traitSet.traits.push( structuredClone( cortexFunctions.defaultTrait ) );
@@ -445,9 +429,10 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	if ( styleDefaults.multiDie ) {
 		tsView.multiDie = true;
 	}
-	tsView.location = location ?? 'left';
+	if ( !isSpotlightStyle.value ) {
+		tsView.location = location ?? 'left';
+	}
 	tsView.page = page ?? 1;
-	tsView.row = nextRowForPage( character, tsView.page );
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	if ( styleId === 'pips' ) {
 		tsView.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
@@ -782,7 +767,7 @@ watch( () => props.character, () => {
 						</div>
 					</header>
 
-					<!-- SPOTLIGHT MODE LAYOUT (INDEPENDENT COLUMN STACKING & FULL-WIDTH SECTIONS) -->
+					<!-- SPOTLIGHT MODE LAYOUT (NESTED GRIDS, EXPLICIT COORDINATES) -->
 					<div v-if="isSpotlightStyle" class="spotlight-layout">
 						<template v-for="(section, secIdx) in getSpotlightSections(pageIndex)" :key="secIdx">
 							<div
@@ -790,91 +775,49 @@ watch( () => props.character, () => {
 								:class="['columns', 'spotlight-columns', 'spotlight-full-width']"
 							>
 								<div :class="['spotlight-column', 'spotlight-full-column']">
-									<template v-for="{ traitSet, index: s } in (section.itemsByColumn.full || section.itemsByColumn[1])" :key="s">
+									<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
 										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
 									</template>
 								</div>
 							</div>
 							<div
 								v-else
-								:class="['columns', 'spotlight-columns', 'spotlight-grid', 'columns-3']"
+								:class="['columns', 'spotlight-columns', 'spotlight-grid']"
 								:style="getSpotlightGridStyle(section)"
 							>
-								<template v-for="(group, gIdx) in getSpotlightCellGroups(section)" :key="gIdx">
-									<div
-										v-if="group.isCluster"
-										class="spotlight-cluster-band"
-										:style="'grid-column: ' + group.cells[0].track + ' / span ' + group.cells[0].span + '; min-width: 0; display: grid; grid-template-columns: repeat(' + group.items.length + ', minmax(0, 1fr));'"
-									>
-										<TraitSetBlock
-											v-for="item in group.items"
-											:key="item.index"
-											:character="character"
-											:traitSetID="item.index"
-											:submode="submode"
-											:editing="editing"
-											:viewY="viewY"
-											:printBlank="effectivePrintBlank"
-											:designerPrintPreview="designerPrintPreview"
-											:printStyle="printStyle"
-											:class="{ 'trait-set-content': getView(item.traitSet)?.flex === false }"
-											@selectElement="selectElement"
-											@updateCharacter="updateCharacter"
-											@removeTrait="removeTrait"
-											@removeTraitSet="removeTraitSet"
-											@addTrait="addTrait"
-											@addDieToRoller="emit('addDieToRoller', $event)"
-										></TraitSetBlock>
-									</div>
-									<TraitSetBlock
-										v-else
-										:key="group.items[0].index"
-										:character="character"
-										:traitSetID="group.items[0].index"
-										:submode="submode"
-										:editing="editing"
-										:viewY="viewY"
-										:printBlank="effectivePrintBlank"
-										:designerPrintPreview="designerPrintPreview"
-										:printStyle="printStyle"
-										:style="group.cells[0].style"
-										:class="{ 'trait-set-content': getView(group.items[0].traitSet)?.flex === false }"
-										@selectElement="selectElement"
-										@updateCharacter="updateCharacter"
-										@removeTrait="removeTrait"
-										@removeTraitSet="removeTraitSet"
-										@addTrait="addTrait"
-										@addDieToRoller="emit('addDieToRoller', $event)"
-									></TraitSetBlock>
-								</template>
+								<TraitSetBlock
+									v-for="{ traitSet, index: s } in section.ordered"
+									:key="s"
+									:character="character"
+									:traitSetID="s"
+									:submode="submode"
+									:editing="editing"
+									:viewY="viewY"
+									:printBlank="effectivePrintBlank"
+									:designerPrintPreview="designerPrintPreview"
+									:printStyle="printStyle"
+									:style="section.cells[s] && section.cells[s].style"
+									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
+									@selectElement="selectElement"
+									@updateCharacter="updateCharacter"
+									@removeTrait="removeTrait"
+									@removeTraitSet="removeTraitSet"
+									@addTrait="addTrait"
+									@addDieToRoller="emit('addDieToRoller', $event)"
+								></TraitSetBlock>
 							</div>
 						</template>
 
 						<!-- BUTTON: ADD TRAIT SET IN SPOTLIGHT MODE -->
 						<div
-							class="spotlight-add-set-bar columns-3"
+							class="spotlight-add-set-bar"
 							v-if="submode === 'edit' && !designerPrintPreview"
 						>
-							<div class="add-set-slot slot-col-1">
-								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(1, pageIndex, 1)">
-									<i class="fas fa-plus"></i> Column 1 Set
-								</button>
-							</div>
-							<div class="add-set-slot slot-col-2">
-								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(2, pageIndex, 1)">
-									<i class="fas fa-plus"></i> Column 2 Set
-								</button>
-							</div>
-							<div class="add-set-slot slot-col-3">
-								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(3, pageIndex, 1)">
-									<i class="fas fa-plus"></i> Column 3 Set
-								</button>
-							</div>
-							<div class="add-set-slot slot-center">
-								<button type="button" class="btn-spotlight-add span-full-btn" @click.stop="addTraitSet(1, pageIndex, 3)">
-									<i class="fas fa-arrows-alt-h"></i> Full Width Set
-								</button>
-							</div>
+						<div class="add-set-slot slot-center">
+							<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
+								<i class="fas fa-plus"></i> Add Set
+							</button>
+						</div>
 						</div>
 					</div>
 
@@ -984,7 +927,7 @@ watch( () => props.character, () => {
 							>
 								<div class="preview-button-container-inner">
 									<div class="preview-button"
-										@click.stop="addTraitSet( pageLocation, pageIndex )"
+										@click.stop="addTraitSet( pageIndex, pageLocation )"
 									>
 										<span><i class="fas fa-plus"></i> Trait Set{{ pageCount > 1 ? ' (P' + pageIndex + ')' : '' }}</span>
 									</div>

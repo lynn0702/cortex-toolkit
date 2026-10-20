@@ -93,10 +93,12 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 1,
-          "span": 1,
-          "colWidth": 28,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "28%",
+            "height": 1
+          }
         },
         "traits": {
           "Prowess": {
@@ -139,10 +141,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 72,
-          "row": 2
+          "place": {
+            "left": "28%",
+            "top": 0,
+            "width": "72%",
+            "height": 1
+          }
         },
         "traits": {
           "Type:": {
@@ -226,10 +230,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -281,10 +287,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "50%",
+            "top": 1,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -325,7 +333,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -337,9 +344,7 @@
             "connected": true,
             "filled": 0
           },
-          "reservedSlots": 0,
-          "span": 3,
-          "row": 4
+          "reservedSlots": 0
         },
         "traits": {}
       }

@@ -52,7 +52,6 @@
         "description": "Team configuration ratings",
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -65,7 +64,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -76,10 +74,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 30,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "30%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Solo": {
@@ -126,10 +140,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 7,
-          "track": 1,
-          "span": 1,
-          "colWidth": 30,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "30%",
+            "height": 1
+          }
         },
         "traits": {
           "Forensics": {
@@ -174,7 +190,6 @@
         "description": "Civic assets, contacts, and backup",
         "nounSingular": "Resource",
         "nounPlural": "Resources",
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "features": {
@@ -195,10 +210,26 @@
           "multiDie": true,
           "notes": "",
           "reservedSlots": 8,
-          "track": 1,
-          "span": 1,
-          "colWidth": 30,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "30%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "82%",
+              "height": 1
+            },
+            "rating": {
+              "left": "82%",
+              "top": 0,
+              "width": "18%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -277,10 +308,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 2,
-          "colWidth": 50,
-          "row": 2
+          "place": {
+            "left": "30%",
+            "top": 0,
+            "width": "70%",
+            "height": 1
+          }
         },
         "traits": {
           "Distinction #1:": {
@@ -345,10 +378,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
-          "track": 2,
-          "span": 2,
-          "colWidth": 50,
-          "row": 3
+          "place": {
+            "left": "30%",
+            "top": 1,
+            "width": "70%",
+            "height": 1
+          }
         },
         "traits": {
           "Talent #1:": {
@@ -410,10 +445,12 @@
             10,
             12
           ],
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "30%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Afraid": {
@@ -472,10 +509,12 @@
           "multiDie": true,
           "pool": true,
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 20,
-          "row": 4
+          "place": {
+            "left": "80%",
+            "top": 2,
+            "width": "20%",
+            "height": 1
+          }
         },
         "traits": {
           "D4": {

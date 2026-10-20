@@ -52,7 +52,6 @@
         "description": "Camp background, camper reputation, and hidden destiny",
         "nounSingular": "Distinction",
         "nounPlural": "Distinctions",
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "features": {
@@ -65,16 +64,43 @@
             "header": "distinctions",
             "body": "distinctions"
           },
-          "ratingPosition": "inline",
           "sharedHinder": true,
           "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 66,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "66%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            },
+            "sfx": {
+              "left": "0%",
+              "top": 2,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "HERITAGE:": {
@@ -134,7 +160,6 @@
         "nounPlural": "Values",
         "statement": true,
         "hasQuestionedPip": true,
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "features": {
@@ -149,7 +174,6 @@
           },
           "statement": true,
           "hasQuestionedPip": true,
-          "ratingPosition": "inline",
           "ratingScale": [
             4,
             6,
@@ -160,10 +184,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 66,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "66%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Bravery": {
@@ -208,7 +248,6 @@
         "description": "Treasured camper keepsakes and scavenged relics",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "features": {
@@ -221,7 +260,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "above",
           "ratingScale": [
             6,
             8,
@@ -231,10 +269,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 34,
-          "row": 2
+          "place": {
+            "left": "66%",
+            "top": 0,
+            "width": "34%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -261,7 +315,6 @@
         "description": "Core camper capability ratings",
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "features": {
@@ -274,7 +327,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             6,
             8,
@@ -285,10 +337,26 @@
           "notes": "",
           "reservedSlots": 3,
           "attributesRing": false,
-          "track": 2,
-          "span": 1,
-          "colWidth": 34,
-          "row": 3
+          "place": {
+            "left": "66%",
+            "top": 1,
+            "width": "34%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Mental": {
@@ -345,10 +413,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
-          "track": 1,
-          "span": 1,
-          "colWidth": 40,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "40%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -493,10 +563,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 17,
-          "track": 2,
-          "span": 1,
-          "colWidth": 60,
-          "row": 4
+          "place": {
+            "left": "40%",
+            "top": 2,
+            "width": "60%",
+            "height": 1
+          }
         },
         "traits": {}
       },
@@ -512,7 +584,6 @@
             "sfx": true,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -520,9 +591,7 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 2,
-          "span": 3,
-          "row": 5
+          "reservedSlots": 2
         },
         "traits": {},
         "slots": {

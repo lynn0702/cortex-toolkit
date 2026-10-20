@@ -608,6 +608,10 @@ function createFromTemplate( templateId: string ) {
 function createFromSpotlight( spotlightItem: any, asTemplate = false, openPrint = false ) {
 	if ( !spotlightItem || !spotlightItem.character ) return;
 
+	// Old-form templates migrate on the way in (band keys to place,
+	// flags to parts); new-form templates pass through untouched.
+	cortexMigration.migratePlacement( spotlightItem );
+
 	// New character = an empty layered entity folded onto the
 	// template at the seam; nothing is cloned from the array form.
 	const now = ( new Date() ).toISOString();

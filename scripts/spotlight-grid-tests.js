@@ -1,4 +1,4 @@
-// spotlight-grid regression tests (banded layout engine - rule of 3).
+// spotlight-grid regression tests (nested-grid layout, explicit coordinates).
 // Usage: node scripts/spotlight-grid-tests.js  (exit 1 on failure)
 const G = require('../js/spotlight-grid.ts');
 
@@ -10,126 +10,131 @@ function ok(cond, name, extra) {
 
 const ctk = (o) => ({ view: o });
 
-// ---- columnsForPage: always 3 under banded layout engine
+// ---- parsePct / formatPct: the unit rides in the value
 {
-  ok(G.columnsForPage({ view: { columnsPage2: 3 } }, 2, 2) === 3, 'track count is 3');
-  ok(G.columnsForPage({ view: { columnsPage2: 2 } }, 1, 2) === 3, 'page1 track count is 3');
-  ok(G.columnsForPage(null, 2, 2) === 3, 'default track count is 3');
+  ok(G.parsePct('25%') === 25, 'pct string');
+  ok(G.parsePct('32.5%') === 32.5, 'decimal pct');
+  ok(G.parsePct(25) === 25, 'bare number accepted on input');
+  ok(G.parsePct('25') === null, 'unitless string rejected');
+  ok(G.parsePct(null) === null, 'null rejected');
+  ok(G.formatPct(25) === '25%', 'stored form carries unit');
+  ok(G.formatPct(33.333333) === '33.333%', 'three decimals');
 }
 
-// ---- spotlightTrackForSet and spotlightSpanForSet
+// ---- placeOf: sparse full-width stacking + malformed stacks safely
 {
-  ok(G.spotlightTrackForSet(ctk({ track: 1 })) === 1, 'explicit track 1');
-  ok(G.spotlightTrackForSet({ custom: { cortexToolkit: { track: 1 } } }) === 1, 'legacy custom.cortexToolkit track 1 fallback');
-  ok(G.spotlightTrackForSet(ctk({ track: 2 })) === 2, 'explicit track 2');
-  ok(G.spotlightTrackForSet(ctk({ track: 3 })) === 3, 'explicit track 3');
-  ok(G.spotlightTrackForSet(ctk({ location: 'left' })) === 1, 'legacy left -> 1');
-  ok(G.spotlightTrackForSet(ctk({ location: 'center' })) === 2, 'legacy center -> 2');
-  ok(G.spotlightTrackForSet(ctk({ location: 'right' })) === 3, 'legacy right -> 3');
-
-  ok(G.spotlightSpanForSet(ctk({ span: 1 })) === 1, 'span 1');
-  ok(G.spotlightSpanForSet(ctk({ span: 2 })) === 2, 'span 2');
-  ok(G.spotlightSpanForSet(ctk({ span: 3 })) === 3, 'span 3');
-  ok(G.spotlightSpanForSet(ctk({ colSpan: 'full' })) === 3, 'legacy full -> 3');
-  ok(G.spotlightSpanForSet(ctk({ columnSpan: 2 })) === 2, 'legacy 2 -> 2');
+  ok(G.placeOf(ctk({})) === null, 'absent place stacks');
+  ok(JSON.stringify(G.placeOf(ctk({ place: { left: '25%', top: 1, width: '65%', height: 2 } }))) ===
+    JSON.stringify({ left: 25, top: 1, width: 65, height: 2 }), 'place parses');
+  ok(G.placeOf(ctk({ place: { left: 25, top: 0, width: 50, height: 1 } })) !== null, 'bare numbers parse (import-time)');
+  ok(G.placeOf(ctk({ place: { left: '25%', top: 0, width: 0, height: 1 } })) === null, 'zero width invalid');
+  ok(G.placeOf(ctk({ place: { left: '80%', top: 0, width: '30%', height: 1 } })) === null, 'over-wide invalid');
+  ok(G.placeOf(ctk({ place: { left: '0%', top: -1, width: '50%', height: 1 } })) === null, 'negative top invalid');
 }
 
-// ---- sections: sets in tracks placed by track index
+// ---- normalizePlace: bare numbers become "%" strings in place
+{
+  const set = ctk({ place: { left: 25, top: 0, width: 50, height: 1 } });
+  ok(G.normalizePlace(set) === true, 'normalization rewrites');
+  ok(set.view.place.left === '25%' && set.view.place.width === '50%', 'unit stored');
+  ok(G.normalizePlace(ctk({ place: { left: '25%', top: 0, width: '50%', height: 1 } })) === false, 'stored form untouched');
+}
+
+// ---- columnsFromEdges: union intervals, gaps legal
+{
+  ok(JSON.stringify(G.columnsFromEdges([{ left: 0, width: 25 }, { left: 25, width: 75 }])) === JSON.stringify([25, 75]), 'shared edge, no gap');
+  ok(JSON.stringify(G.columnsFromEdges([{ left: 0, width: 30 }, { left: 30, width: 60 }, { left: 90, width: 10 }])) === JSON.stringify([30, 60, 10]), 'sidebar edges');
+  ok(JSON.stringify(G.columnsFromEdges([{ left: 33, width: 67 }])) === JSON.stringify([33, 67]), 'gap survives as interval');
+  ok(JSON.stringify(G.columnsFromEdges([])) === JSON.stringify([100]), 'empty fallback');
+}
+
+// ---- four across: no column count, no special case
+{
+  const sets = [0, 25, 50, 75].map((left) => ctk({ place: { left: left + '%', top: 0, width: '25%', height: 1 } }));
+  const sections = G.getSpotlightSections(sets, 1);
+  ok(sections.length === 1 && sections[0].type === 'grid', 'one grid section', sections.length);
+  ok(G.getSpotlightGridStyle(sections[0]) === 'grid-template-columns: 25% 25% 25% 25%;', 'four equal tracks', G.getSpotlightGridStyle(sections[0]));
+  const cells = G.getSpotlightGridCells(sections[0]);
+  ok(cells.length === 4 && cells[3].col === 4 && cells[3].span === 1, 'fourth cell placed', cells);
+}
+
+// ---- sections: same top groups across document distance, unplaced stack,
+// adjacent placed groups merge into one grid with rows from top edges
 {
   const sets = [
-    ctk({ track: 1, colWidth: 30 }),
-    ctk({ track: 2, colWidth: 50 }),
-    ctk({ track: 3, colWidth: 20 })
+    ctk({ place: { left: '0%', top: 0, width: '33%', height: 1 } }),
+    ctk({ place: { left: '0%', top: 1, width: '33%', height: 1 } }),
+    ctk({ place: { left: '33%', top: 0, width: '67%', height: 1 } }),
   ];
   const sections = G.getSpotlightSections(sets, 1);
-  ok(sections.length === 1 && sections[0].type === 'columns', 'one column band', sections);
-  ok(sections[0].trackCount === 3, 'section trackCount is 3');
-  ok(sections[0].itemsByColumn[1].length === 1, 'item in track 1');
-  ok(sections[0].itemsByColumn[2].length === 1, 'item in track 2');
-  ok(sections[0].itemsByColumn[3].length === 1, 'item in track 3');
-  ok(JSON.stringify(sections[0].widths) === JSON.stringify([30, 50, 20]), 'singular colWidths derive band widths', sections[0].widths);
+  ok(sections.length === 1 && sections[0].type === 'grid', 'adjacent tops merge into one grid', sections.length);
+  ok(sections[0].ordered.length === 3, 'top mates join across distance', sections[0].ordered.length);
+  const cells = G.getSpotlightGridCells(sections[0]);
+  ok(cells[0].col === 1 && cells[1].col === 2, 'column lines from union edges', cells);
+  ok(cells[0].style.includes('grid-row: 1 / 2') && cells[2].style.includes('grid-row: 2 / 3'), 'rows from top edges', [cells[0].style, cells[2].style]);
 }
-
-// ---- full-width set (span 3) becomes its own full-width section
 {
-  const sets = [ ctk({ track: 1 }), ctk({ span: 3 }), ctk({ track: 2 }) ];
+  const sets = [ctk({}), ctk({ place: { left: '0%', top: 0, width: '50%', height: 1 } })];
   const sections = G.getSpotlightSections(sets, 1);
-  ok(sections.length === 3 && sections[1].type === 'full-width', 'span 3 split out', sections.map(s => s.type));
-}
-
-// ---- explicit row numbers band sets
-{
-  const sets = [ ctk({ track: 1, row: 1 }), ctk({ track: 2, row: 2 }) ];
-  const sections = G.getSpotlightSections(sets, 1);
-  ok(sections.length === 2, 'row change splits bands', sections.length);
+  ok(sections.length === 2 && sections[0].type === 'full-width' && sections[1].type === 'grid', 'unplaced stacks in order', sections.map((s) => s.type));
 }
 {
-  const sets = [ ctk({ track: 1, row: 1 }), ctk({ track: 2, row: 1 }) ];
-  const sections = G.getSpotlightSections(sets, 1);
-  ok(sections.length === 1, 'shared row bands together', sections.length);
-}
-
-// ---- grid cells placement (track, span, content-sized rows, no rowspans)
-{
-  const sets = [ ctk({ track: 1, span: 1 }), ctk({ track: 2, span: 2 }) ];
-  const section = G.getSpotlightSections(sets, 1)[0];
-  const cells = G.getSpotlightGridCells(section);
-  ok(cells[0].track === 1 && cells[0].span === 1 && cells[0].col === 1, 'cell 0 track 1 span 1', cells[0]);
-  ok(cells[1].track === 2 && cells[1].span === 2 && cells[1].col === 2, 'cell 1 track 2 span 2', cells[1]);
-  ok(typeof cells[0].style === 'string' && cells[0].style.includes('grid-column: 1 / span 1'), 'grid-column track 1');
-  ok(typeof cells[1].style === 'string' && cells[1].style.includes('grid-column: 2 / span 2'), 'grid-column track 2 span 2');
-  ok(cells[0].rowspan === undefined && cells[1].rowspan === undefined, 'rowspan retired per banded engine');
-}
-
-// ---- grid style with explicit widths
-{
-  const sets = [ ctk({ track: 1, colWidth: 30 }), ctk({ track: 2, colWidth: 50 }) ];
-  const section = G.getSpotlightSections(sets, 1)[0];
-  const style = G.getSpotlightGridStyle(section);
-  ok(style === 'grid-template-columns: 30% 70% 0%;', 'grid style emits percentages from band widths', style);
-}
-
-// ---- triples on sets are no longer read
-{
-  const sets = [ ctk({ track: 1, widths: [10, 80, 10] }), ctk({ track: 2 }) ];
-  const section = G.getSpotlightSections(sets, 1)[0];
-  ok(JSON.stringify(section.widths) === JSON.stringify([50, 50, 0]), 'stale triples ignored', section.widths);
-}
-
-// ---- default equal thirds when no widths declared
-{
-  const sets = [ ctk({ track: 1 }), ctk({ track: 2 }), ctk({ track: 3 }) ];
-  const section = G.getSpotlightSections(sets, 1)[0];
-  const style = G.getSpotlightGridStyle(section);
-  ok(style === 'grid-template-columns: 33.333% 33.333% 33.334%;', 'default equal thirds', style);
-}
-
-// ---- cluster groups
-{
-  const items = [
-    { traitSet: ctk({ name: 'A' }), index: 0 },
-    { traitSet: ctk({ name: 'B', cluster: 'c1' }), index: 1 },
-    { traitSet: ctk({ name: 'C', cluster: 'c1' }), index: 2 },
-    { traitSet: ctk({ name: 'D' }), index: 3 },
+  // Unplaced between placed groups splits the grids.
+  const sets = [
+    ctk({ place: { left: '0%', top: 0, width: '50%', height: 1 } }),
+    ctk({}),
+    ctk({ place: { left: '0%', top: 1, width: '50%', height: 1 } }),
   ];
-  const groups = G.getTrackClusterGroups(items);
-  ok(groups.length === 3, 'cluster groups count', groups.length);
-  ok(groups[0].isCluster === false && groups[0].items.length === 1, 'first standalone');
-  ok(groups[1].isCluster === true && groups[1].clusterId === 'c1' && groups[1].items.length === 2, 'cluster grouped');
-  ok(groups[2].isCluster === false && groups[2].items.length === 1, 'last standalone');
+  const sections = G.getSpotlightSections(sets, 1);
+  ok(sections.length === 3 && sections[1].type === 'full-width', 'unplaced splits grids', sections.map((s) => s.type));
 }
 
-// ---- cell groups: spanning sets keep their own grid cells
+// ---- height is a floor: grid-row span plus min-height, full-height strip
 {
   const sets = [
-    ctk({ track: 1, colWidth: 28 }),
-    ctk({ track: 2, span: 2, colWidth: 72 }),
+    ctk({ place: { left: '0%', top: 0, width: '30%', height: 1 } }),
+    ctk({ place: { left: '30%', top: 0, width: '60%', height: 1 } }),
+    ctk({ place: { left: '0%', top: 1, width: '30%', height: 1 } }),
+    ctk({ place: { left: '90%', top: 0, width: '10%', height: 4 } }),
   ];
-  const section = G.getSpotlightSections(sets, 1)[0];
-  ok(JSON.stringify(section.widths) === JSON.stringify([28, 72, 0]), 'band widths from singulars', section.widths);
-  const groups = G.getSpotlightCellGroups(section);
-  ok(groups.length === 2 && !groups[0].isCluster && !groups[1].isCluster, 'two standalone cells', groups.length);
-  ok(groups[1].cells[0].track === 2 && groups[1].cells[0].span === 2, 'spanning cell keeps track and span', groups[1].cells[0]);
+  const sections = G.getSpotlightSections(sets, 1);
+  ok(sections.length === 1, 'one merged grid', sections.length);
+  const cells = G.getSpotlightGridCells(sections[0]);
+  const strip = cells[2];
+  ok(strip.rowSpan === 4 && strip.style.includes('grid-row: 1 / 4') && strip.style.includes('min-height'), 'strip spans the full height', strip);
+}
+
+// ---- findPlaceOverlaps: strict 2D, shared edges fine, gaps legal
+{
+  const at = (left, top, width, height, index) => ({ index, place: { left, top, width, height } });
+  ok(G.findPlaceOverlaps([at(0, 0, 50, 1, 0), at(50, 0, 50, 1, 1)]).length === 0, 'shared edge, no overlap');
+  ok(G.findPlaceOverlaps([at(0, 0, 60, 1, 0), at(50, 0, 50, 1, 1)]).length === 1, 'horizontal overlap');
+  ok(G.findPlaceOverlaps([at(0, 0, 50, 1, 0), at(0, 1, 50, 1, 1)]).length === 0, 'stacked rows, no overlap');
+  ok(G.findPlaceOverlaps([at(0, 0, 50, 2, 0), at(0, 1, 50, 1, 1)]).length === 1, 'tall overlap');
+}
+
+// ---- buildParts: additive composition
+{
+  const inline = G.buildParts({ rating: 'inline', ratingDice: 5, stressDice: 0, description: false, sfx: false, subtraits: false });
+  ok(inline.name.width === '70%' && inline.rating.width === '30%' && inline.rating.top === 0, 'inline row', inline);
+  const stress = G.buildParts({ rating: 'inline', ratingDice: 5, stressDice: 5, description: false, sfx: false, subtraits: false });
+  ok(stress.name.width === '30%' && stress.rating.width === '30%' && stress.stressLabel.width === '13%' && stress.stress.width === '27%', 'four columns', stress);
+  ok(stress.stress.left === '73%', 'stress starts at 73', stress.stress.left);
+  const below = G.buildParts({ rating: 'below', ratingDice: 5, stressDice: 0, description: true, sfx: false, subtraits: false });
+  ok(below.name.top === 0 && below.rating.top === 1 && below.description.top === 2, 'below adds rows, description after', below);
+  const above = G.buildParts({ rating: 'above', ratingDice: 4, stressDice: 0, description: false, sfx: true, subtraits: false });
+  ok(above.rating.top === 0 && above.name.top === 1 && above.sfx.top === 2, 'above pushes name down, sfx after', above);
+  const none = G.buildParts({ rating: 'none', ratingDice: 0, stressDice: 0, description: false, sfx: false, subtraits: false });
+  ok(none.rating === undefined && none.name.width === '100%', 'none has no rating cell', none);
+  const stacked = G.buildParts({ rating: 'below', ratingDice: 5, stressDice: 5, description: false, sfx: false, subtraits: false });
+  ok(stacked.stressLabel.top === 2 && stacked.stress.top === 3, 'stacked stress rows below', stacked);
+}
+
+// ---- partsGrid: columns from part edges
+{
+  const grid = G.partsGrid({ name: { left: '0%', top: 0, width: '30%', height: 1 }, rating: { left: '30%', top: 0, width: '30%', height: 1 }, stressLabel: { left: '60%', top: 0, width: '13%', height: 1 }, stress: { left: '73%', top: 0, width: '27%', height: 1 } });
+  ok(JSON.stringify(grid.columns) === JSON.stringify([30, 30, 13, 27]), 'part columns', grid.columns);
+  ok(grid.cells.stress.col === 4 && grid.cells.name.row === 1, 'part lines', grid.cells);
 }
 
 console.log(`spotlight-grid-tests: ${pass} passed, ${fail} failed`);

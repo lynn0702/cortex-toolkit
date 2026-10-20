@@ -362,6 +362,124 @@ function checkTemplateFile(where, data) {
   }
 }
 
+// ---- 6. Nested-grid placement (2026-10-19): view.place + view.parts.
+const KNOWN_PARTS = ['name', 'rating', 'description', 'sfx', 'subtraits', 'stressLabel', 'stress'];
+
+function parseStoredPct(v) {
+  if (typeof v !== 'string') return null;
+  const m = v.trim().match(/^(-?\d+(?:\.\d+)?)\s*%$/);
+  if (!m) return null;
+  const n = Number(m[1]);
+  return Number.isFinite(n) ? n : null;
+}
+
+function checkCell(where, cell, label) {
+  if (!cell || typeof cell !== 'object' || Array.isArray(cell)) {
+    err(`${where}: ${label} must be an object`);
+    return null;
+  }
+  let bad = false;
+  for (const k of ['left', 'width']) {
+    if (typeof cell[k] === 'number') {
+      err(`${where}: ${label}.${k} is a bare number, stored form carries the "%" unit`);
+      bad = true;
+    }
+  }
+  const left = parseStoredPct(cell.left);
+  const width = parseStoredPct(cell.width);
+  if (left === null || left < 0 || left > 100) { err(`${where}: ${label}.left must be a "%" string parsing to 0-100`); bad = true; }
+  if (width === null || width <= 0 || width > 100) { err(`${where}: ${label}.width must be a "%" string parsing to 0-100 with width > 0`); bad = true; }
+  if (!Number.isInteger(cell.top) || cell.top < 0) { err(`${where}: ${label}.top must be an integer >= 0`); bad = true; }
+  if (!Number.isInteger(cell.height) || cell.height < 1) { err(`${where}: ${label}.height must be an integer >= 1`); bad = true; }
+  if (left !== null && width !== null && left + width > 100 + 1e-6) { err(`${where}: ${label} exceeds its parent (left + width <= 100)`); bad = true; }
+  return bad ? null : { left, top: cell.top, width, height: cell.height };
+}
+
+function checkSetPlacement(where, setName, set, pageOf) {
+  if (!set || typeof set !== 'object' || Array.isArray(set)) return null;
+  const view = set.view;
+  const hasParts = view && typeof view === 'object' && view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts);
+  const legacyRating = (set.ratingPosition !== undefined && set.ratingPosition !== null)
+    || (view && view.ratingPosition !== undefined && view.ratingPosition !== null);
+  const legacyStress = view && view.attachedStress && typeof view.attachedStress === 'object' && view.attachedStress.enabled;
+  if (hasParts && (legacyRating || legacyStress)) {
+    err(`${where}/${setName}: carries parts and legacy flags (ratingPosition/attachedStress), never both`);
+  }
+  let rect = null;
+  if (view && view.place !== undefined) {
+    rect = checkCell(where, view.place, `place (${setName})`);
+  }
+  if (hasParts) {
+    for (const part of Object.keys(view.parts)) {
+      if (KNOWN_PARTS.indexOf(part) === -1) {
+        err(`${where}/${setName}: unknown part ${JSON.stringify(part)}`);
+        continue;
+      }
+      checkCell(where, view.parts[part], `parts.${part} (${setName})`);
+    }
+  }
+  if (rect) {
+    const page = pageOf(set);
+    return { page, rect, setName };
+  }
+  return null;
+}
+
+function checkOverlaps(where, placed) {
+  const byKey = {};
+  placed.forEach((e) => {
+    const key = e.page + ':' + e.rect.top;
+    (byKey[key] = byKey[key] || []).push(e);
+  });
+  Object.keys(byKey).forEach((key) => {
+    const list = byKey[key];
+    for (let a = 0; a < list.length; a++) {
+      for (let b = a + 1; b < list.length; b++) {
+        const A = list[a].rect, B = list[b].rect;
+        const h = A.left < B.left + B.width - 1e-6 && B.left < A.left + A.width - 1e-6;
+        const v = A.top < B.top + B.height && B.top < A.top + A.height;
+        if (h && v) err(`${where}: overlap on page ${list[a].page} between ${JSON.stringify(list[a].setName)} and ${JSON.stringify(list[b].setName)}`);
+      }
+    }
+  });
+}
+
+// js/templates.js sets.
+{
+  templates.forEach((tpl, ti) => {
+    const ch = tpl && tpl.character;
+    if (!ch || !Array.isArray(ch.traitSets)) return;
+    const where = `templates[${ti}](${tpl.id})`;
+    const placed = [];
+    ch.traitSets.forEach((ts) => {
+      if (!ts || typeof ts !== 'object') return;
+      const hit = checkSetPlacement(where, ts.name || '?', ts, (s) => Number((s.view || {}).page) || 1);
+      if (hit) placed.push(hit);
+    });
+    checkOverlaps(where, placed);
+  });
+}
+
+// data/templates layered sets.
+if (fs.existsSync(dataDir)) {
+  for (const f of fs.readdirSync(dataDir)) {
+    if (!f.endsWith('.template.layered.json')) continue;
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(path.join(dataDir, f), 'utf8'));
+    } catch (e) { continue; }
+    const ch = data && data.character;
+    if (!ch || !ch.sets || typeof ch.sets !== 'object' || Array.isArray(ch.sets)) continue;
+    const where = `data/templates/${f}`;
+    const placed = [];
+    for (const name of Object.keys(ch.sets)) {
+      const hit = checkSetPlacement(where, name, ch.sets[name], (s) => Number((s.view || {}).page) || 1);
+      if (hit) placed.push(hit);
+    }
+    checkOverlaps(where, placed);
+  }
+}
+
 console.log(`validate: ${errors.length} error(s), ${warnings.length} warning(s)`);
 warnings.slice(0, 20).forEach((w) => console.log('  WARN ' + w));
 errors.slice(0, 60).forEach((e) => console.log('  ERR ' + e));

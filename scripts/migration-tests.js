@@ -147,50 +147,70 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
     'unknown size surfaces with warning', w);
 }
 
-// ---- 11. Banded layout engine (Rule of 3) placement migration.
-// Widths are per-set singular shares; leftover triples convert once.
+// ---- 11. Nested-grid placement migration (2026-10-19).
+// Band keys become view.place (top from row, left/width from colWidth
+// shares); full-width sets omit place; flags become view.parts.
 {
   const char = {
-    custom: { cortexToolkit: { columns: 2, columnsPage2: 3 } },
+    view: { columns: 2, columnsPage2: 3 },
     traitSets: [
-      { name: 'A', custom: { cortexToolkit: { page: 1, location: 'left', colWidth: 40 } } },
-      { name: 'B', custom: { cortexToolkit: { page: 1, location: 'right', rowSpan: 2 } } },
-      { name: 'C', custom: { cortexToolkit: { page: 1, location: 'left', colSpan: 'full' } } },
-      { name: 'D', custom: { cortexToolkit: { page: 2, location: 'left', colWidth: 30 } } },
-      { name: 'E', custom: { cortexToolkit: { page: 2, location: 'center', colWidth: 50 } } },
-      { name: 'F', custom: { cortexToolkit: { page: 2, location: 'right', colWidth: 20 } } },
-      { name: 'G', view: { page: 1, track: 1, widths: [28, 72, 0] } },
-      { name: 'H', view: { page: 1, track: 2 } },
+      { name: 'A', view: { page: 1, track: 1, colWidth: 40, row: 2 } },
+      { name: 'B', view: { page: 1, track: 2, row: 2 } },
+      { name: 'C', view: { page: 1, span: 3, row: 3 } },
+      { name: 'D', view: { page: 1, track: 1, colWidth: 30, row: 4, ratingPosition: 'below', ratingScale: [4, 6, 8, 10, 12] } },
+      { name: 'E', view: { page: 1, track: 2, colWidth: 70, row: 4, attachedStress: { enabled: true, label: 'Stress', scale: [4, 6, 8, 10, 12] }, ratingScale: [4, 6, 8, 10, 12] } },
+      { name: 'F', view: { page: 1, track: 1, row: 5, ratingPosition: 'vertical' } },
     ],
   };
-  M.migratePlacement(char);
+  const warnings = M.migratePlacement(char);
   const sets = char.traitSets;
-  // Page 1
-  ok(sets[0].view.track === 1, 'set A track 1');
-  ok(sets[0].view.colWidth === 40, 'singular colWidth kept on set A');
-  ok(sets[0].view.widths === undefined, 'no triple synthesized on set A');
-  ok(sets[0].view.location === undefined, 'location deleted from set A');
-
-  ok(sets[1].view.track === 2, 'set B track 2');
-  ok(sets[1].view.rowSpan === undefined, 'rowSpan deleted from set B');
-
-  ok(sets[2].view.span === 3, 'set C span 3');
-  ok(sets[2].view.colSpan === undefined, 'colSpan deleted from set C');
-
-  // Page 2
-  ok(sets[3].view.track === 1, 'set D track 1');
-  ok(sets[3].view.widths === undefined, 'no triple synthesized on set D');
-  ok(sets[4].view.track === 2, 'set E track 2');
-  ok(sets[5].view.track === 3, 'set F track 3');
-
-  // Leftover triple converts to member shares, then goes away
-  ok(sets[6].view.colWidth === 28, 'triple seeds missing share on set G');
-  ok(sets[7].view.colWidth === 72, 'triple seeds missing share on set H');
-  ok(sets[6].view.widths === undefined && sets[7].view.widths === undefined, 'triples deleted after conversion');
-
+  // Row 2 (top 0): A 0/40 + B 40/60 (undeclared remainder splits two-track).
+  ok(JSON.stringify(sets[0].view.place) === JSON.stringify({ left: '0%', top: 0, width: '40%', height: 1 }), 'set A place', sets[0].view.place);
+  ok(JSON.stringify(sets[1].view.place) === JSON.stringify({ left: '40%', top: 0, width: '60%', height: 1 }), 'set B place', sets[1].view.place);
+  // Full-width C omits place.
+  ok(sets[2].view.place === undefined, 'full-width set omits place');
+  // Below + inline stress become parts; flags removed.
+  ok(sets[3].view.parts && sets[3].view.parts.name.top === 0 && sets[3].view.parts.rating.top === 1, 'below becomes parts rows', sets[3].view.parts);
+  ok(sets[3].view.ratingPosition === undefined, 'ratingPosition removed');
+  ok(sets[4].view.parts && sets[4].view.parts.stress && sets[4].view.parts.stressLabel, 'stress becomes cells', sets[4].view.parts);
+  ok(sets[4].view.attachedStress === undefined, 'attachedStress removed');
+  // Vertical ladders keep the legacy flag.
+  ok(sets[5].view.parts === undefined && sets[5].view.ratingPosition === 'vertical', 'vertical stays legacy');
+  // Band keys are gone everywhere.
+  ok(sets.every((s) => ['track', 'span', 'widths', 'rowBreak', 'colWidth', 'rowSpan', 'colSpan', 'columnSpan', 'row'].every((k) => s.view[k] === undefined)), 'band keys deleted');
   // Sheet level
   ok(char.view.columns === undefined, 'columns deleted from sheet');
   ok(char.view.columnsPage2 === undefined, 'columnsPage2 deleted from sheet');
+  // No collisions in this fixture.
+  ok(warnings.filter((w) => w.indexOf('collision') !== -1).length === 0, 'zero collisions', warnings);
+}
+
+// ---- 11b. Collisions surface, bare numbers normalize, classic untouched.
+{
+  const char = {
+    traitSets: [
+      { name: 'A', view: { page: 1, place: { left: '0%', top: 0, width: '60%', height: 1 } } },
+      { name: 'B', view: { page: 1, place: { left: '50%', top: 0, width: '50%', height: 1 } } },
+      { name: 'C', view: { page: 1, place: { left: 0, top: 1, width: 100, height: 1 } } },
+      { name: 'D', view: { page: 1, location: 'right' } },
+    ],
+  };
+  const warnings = M.migratePlacement(char);
+  ok(warnings.some((w) => w.indexOf('collision') !== -1), 'overlap surfaces', warnings);
+  ok(char.traitSets[2].view.place.left === '0%' && char.traitSets[2].view.place.width === '100%', 'bare numbers normalize to "%" strings', char.traitSets[2].view.place);
+  ok(char.traitSets[3].view.location === 'right' && char.traitSets[3].view.place === undefined, 'classic set untouched');
+}
+
+// ---- 11c. Idempotent: a second pass changes nothing.
+{
+  const char = {
+    traitSets: [
+      { name: 'A', view: { page: 1, place: { left: '0%', top: 0, width: '40%', height: 1 }, parts: { name: { left: '0%', top: 0, width: '100%', height: 1 } } } },
+    ],
+  };
+  const before = JSON.stringify(char);
+  M.migratePlacement(char);
+  ok(JSON.stringify(char) === before, 'second pass is a no-op');
 }
 
 // ---- 12. normalizeView migration seam.

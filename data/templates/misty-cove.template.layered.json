@@ -74,10 +74,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 64,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "64%",
+            "height": 1
+          }
         },
         "traits": {
           "Extraordinary:": {
@@ -126,7 +128,6 @@
         "description": "Heirlooms and keepsakes from the misty coast",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "features": {
@@ -139,7 +140,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "above",
           "ratingScale": [
             6,
             8,
@@ -149,10 +149,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 2
+          "place": {
+            "left": "64%",
+            "top": 0,
+            "width": "36%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -179,7 +195,6 @@
         "nounSingular": "Attribute",
         "nounPlural": "Attributes",
         "statement": true,
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "features": {
@@ -187,7 +202,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -201,31 +215,39 @@
             10,
             12
           ],
-          "attachedStress": {
-            "enabled": true,
-            "label": "STRESS",
-            "ratingScale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "scale": [
-              4,
-              6,
-              8,
-              10,
-              12
-            ],
-            "includeOut": false
-          },
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
           "attributesRing": false,
-          "span": 3,
-          "row": 3
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            },
+            "rating": {
+              "left": "30%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            },
+            "stressLabel": {
+              "left": "60%",
+              "top": 0,
+              "width": "13%",
+              "height": 1
+            },
+            "stress": {
+              "left": "73%",
+              "top": 0,
+              "width": "27%",
+              "height": 1
+            }
+          },
+          "labels": {
+            "stress": "STRESS"
+          }
         },
         "traits": {
           "Anger": {
@@ -260,7 +282,6 @@
         "description": "Bonds and rivalries with local residents",
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "header": "top",
@@ -285,10 +306,32 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 10,
-          "track": 1,
-          "span": 1,
-          "colWidth": 64,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "64%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -373,10 +416,12 @@
           "multiDie": true,
           "pool": true,
           "reservedSlots": 5,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 4
+          "place": {
+            "left": "64%",
+            "top": 2,
+            "width": "36%",
+            "height": 1
+          }
         },
         "traits": {
           "D4": {
@@ -426,7 +471,6 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "features": {
@@ -439,7 +483,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "above",
           "ratingScale": [
             6,
             8,
@@ -447,10 +490,26 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 5
+          "place": {
+            "left": "64%",
+            "top": 3,
+            "width": "36%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {

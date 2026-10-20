@@ -3476,3 +3476,30 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 }
+
+/* Nested-grid trait parts (view.parts, 2026-10-19): the trait row is a
+   grid whose tracks come from the part edges; each cell carries its exact
+   rectangle inline. Rows stay content-sized. */
+.trait-parts {
+	display: grid;
+	row-gap: 0.2rem;
+	align-items: center;
+}
+.trait-parts > .trait-part {
+	min-width: 0;
+	box-sizing: border-box;
+}
+.trait-parts-inline > .trait-part-name {
+	padding-right: 0.35rem;
+}
+.trait-parts-inline > .trait-part-rating {
+	display: flex;
+	justify-content: flex-end;
+}
+.trait-part-stress-label {
+	text-align: center;
+	align-self: center;
+}
+.trait-parts .trait-part-description .trait-description {
+	margin-top: 0 !important;
+}

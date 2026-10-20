@@ -72,10 +72,12 @@
           ],
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 64,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "64%",
+            "height": 1
+          }
         },
         "traits": {
           "Purpose:": {
@@ -165,10 +167,12 @@
           ],
           "notes": "",
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 64,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "64%",
+            "height": 1
+          }
         },
         "traits": {
           "Courage": {
@@ -204,7 +208,6 @@
         "nounSingular": "Relationship",
         "nounPlural": "Relationships",
         "statement": true,
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -229,10 +232,26 @@
           ],
           "notes": "",
           "reservedSlots": 8,
-          "track": 1,
-          "span": 1,
-          "colWidth": 64,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "64%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -283,7 +302,6 @@
         "description": "Specialized starship equipment and personal gear",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "features": {
@@ -305,10 +323,26 @@
           ],
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 2
+          "place": {
+            "left": "64%",
+            "top": 0,
+            "width": "36%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -335,7 +369,6 @@
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "ratingPosition": "none",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -350,13 +383,28 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingPosition": "none",
           "ratingScale": [],
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 3
+          "place": {
+            "left": "64%",
+            "top": 1,
+            "width": "36%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "1 XP": {
@@ -382,7 +430,6 @@
         "nounSingular": "Milestone",
         "nounPlural": "Milestones",
         "tags": [],
-        "ratingPosition": "none",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -397,13 +444,28 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingPosition": "none",
           "ratingScale": [],
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 4
+          "place": {
+            "left": "64%",
+            "top": 2,
+            "width": "36%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "1 XP": {
@@ -447,10 +509,12 @@
             "filled": 0
           },
           "reservedSlots": 0,
-          "track": 2,
-          "span": 1,
-          "colWidth": 36,
-          "row": 5
+          "place": {
+            "left": "64%",
+            "top": 3,
+            "width": "36%",
+            "height": 1
+          }
         },
         "traits": {}
       }

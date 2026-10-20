@@ -27,7 +27,7 @@ const {
 	name, traitSetID, isRing, headerRight, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
 	styleLabel, setStyleLabel, description, includeOut,
 	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
-	hasAttachedStress, attachedStressLabel, attachedStressScale, toggleAttachedStressScale, attachedStressOut,
+	hasAttachedStress, attachedStressLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected,
 	sessionRecordCount, sessionRecordOrientation, clearAllSessionBubbles, fillAllSessionBubbles,
 	nounSingular, nounPlural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
@@ -185,29 +185,9 @@ const {
 							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Attached Stress to Traits</label>
 						</div>
 						<div v-if="hasAttachedStress" style="margin-top: 0.4rem; background: #0f172a; padding: 0.5rem; border-radius: 4px; border: 1px solid #334155;">
-							<div style="margin-bottom: 0.4rem;">
+							<div>
 								<label :for="'trait-set-' + traitSetID + '-stress-label'" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Track Label</label>
 								<input type="text" :id="'trait-set-' + traitSetID + '-stress-label'" name="attachedStressLabel" v-model="attachedStressLabel" placeholder="Stress">
-							</div>
-							<div style="margin-bottom: 0.4rem;">
-								<label style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Dice Rating Scale</label>
-								<div class="editor-scale-options" style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
-									<button
-										v-for="d in [4, 6, 8, 10, 12]"
-										:key="d"
-										type="button"
-										class="btn-scale-step"
-										:class="{ active: attachedStressScale.includes(d) }"
-										@click.stop="toggleAttachedStressScale(d)"
-										style="padding: 0.2rem 0.45rem; font-size: 0.75rem;"
-									>
-										d{{ d }}
-									</button>
-								</div>
-							</div>
-							<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem;">
-								<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress-out'" v-model="attachedStressOut">
-								<label :for="'trait-set-' + traitSetID + '-attached-stress-out'" style="margin: 0; font-size: 0.75rem; color: #cbd5e1; cursor: pointer;">Include 💥 Out Marker</label>
 							</div>
 						</div>
 					</div>

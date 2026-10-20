@@ -109,5 +109,23 @@ function compareRender(render, label) {
   ok(back.traitSets[0].traits[0].value === 0 && (!back.traitSets[0].traits[0].dice || back.traitSets[0].traits[0].dice.length === 0), 'unrated round-trips to value 0', back.traitSets[0].traits[0]);
 }
 
+// ---- 7. place and parts round-trip untouched through the codec.
+{
+  const ch = JSON.parse(JSON.stringify(cortex));
+  ch.traitSets[0].view = {
+    ...(ch.traitSets[0].view || {}),
+    place: { left: '30%', top: 2, width: '60%', height: 1 },
+    parts: { name: { left: '0%', top: 0, width: '70%', height: 1 }, rating: { left: '70%', top: 0, width: '30%', height: 1 } },
+  };
+  const back = materializeCharacter(toLayeredEntity(ch), cortex);
+  ok(JSON.stringify(back.traitSets[0].view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }), 'place survives', back.traitSets[0].view.place);
+  ok(JSON.stringify(back.traitSets[0].view.parts) === JSON.stringify(ch.traitSets[0].view.parts), 'parts survive', back.traitSets[0].view.parts);
+  // An unrelated edit (trait rename) leaves coordinates alone.
+  back.traitSets[0].traits[0].name = 'RENAMED';
+  const back2 = materializeCharacter(toLayeredEntity(back), cortex);
+  ok(JSON.stringify(back2.traitSets[0].view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }), 'place untouched by unrelated edit');
+  ok(JSON.stringify(back2.traitSets[0].view.parts) === JSON.stringify(ch.traitSets[0].view.parts), 'parts untouched by unrelated edit');
+}
+
 console.log(`materialize-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

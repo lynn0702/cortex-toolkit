@@ -62,7 +62,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -73,9 +72,7 @@
           ],
           "multiDie": true,
           "notes": "",
-          "reservedSlots": 3,
-          "span": 3,
-          "row": 2
+          "reservedSlots": 3
         },
         "traits": {
           "Food": {
@@ -116,7 +113,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -127,9 +123,7 @@
           ],
           "multiDie": true,
           "notes": "",
-          "reservedSlots": 3,
-          "span": 3,
-          "row": 3
+          "reservedSlots": 3
         },
         "traits": {
           "Medicine": {
@@ -188,10 +182,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name:": {
@@ -260,10 +256,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 4
+          "place": {
+            "left": "50%",
+            "top": 2,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name:": {
@@ -332,10 +330,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 5
+          "place": {
+            "left": "0%",
+            "top": 3,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name:": {
@@ -404,10 +404,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 5
+          "place": {
+            "left": "50%",
+            "top": 3,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name:": {
@@ -476,10 +478,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 1,
-          "span": 1,
-          "colWidth": 50,
-          "row": 6
+          "place": {
+            "left": "0%",
+            "top": 4,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name:": {
@@ -548,10 +552,12 @@
             12
           ],
           "reservedSlots": 1,
-          "track": 2,
-          "span": 1,
-          "colWidth": 50,
-          "row": 6
+          "place": {
+            "left": "50%",
+            "top": 4,
+            "width": "50%",
+            "height": 1
+          }
         },
         "traits": {
           "Name:": {
@@ -614,10 +620,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -678,10 +686,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 2,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 2
+          "place": {
+            "left": "33.333%",
+            "top": 0,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -742,10 +752,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 2
+          "place": {
+            "left": "66.666%",
+            "top": 0,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -806,10 +818,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -870,10 +884,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 2,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 3
+          "place": {
+            "left": "33.333%",
+            "top": 1,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -934,10 +950,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 3
+          "place": {
+            "left": "66.666%",
+            "top": 1,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -998,10 +1016,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -1062,10 +1082,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 2,
-          "span": 1,
-          "colWidth": 33.333,
-          "row": 4
+          "place": {
+            "left": "33.333%",
+            "top": 2,
+            "width": "33.333%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -1126,10 +1148,12 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 3,
-          "span": 1,
-          "colWidth": 33.334,
-          "row": 4
+          "place": {
+            "left": "66.666%",
+            "top": 2,
+            "width": "33.334%",
+            "height": 1
+          }
         },
         "traits": {
           "Morale": {
@@ -1177,15 +1201,12 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 2,
           "style": {
             "header": "default",
             "body": "notes"
           },
-          "notes": "",
-          "span": 3,
-          "row": 5
+          "notes": ""
         },
         "traits": {}
       }

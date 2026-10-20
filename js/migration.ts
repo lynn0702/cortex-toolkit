@@ -10,11 +10,20 @@
  */
 
 import { cloneDeep } from './clone-deep.ts';
-import { simulateVisualRows } from './spotlight-grid.ts';
+import { buildParts, formatPct } from './spotlight-grid.ts';
 
 export const cortexMigration = {
 
 	DIE_SIZES: [4, 6, 8, 10, 12] as number[],
+
+	// Default rating track when no scale is authored (matches getTraitSetRatings).
+	DEFAULT_SCALE: [4, 6, 8, 10, 12] as number[],
+
+	// Set bodies whose trait rows are the list-family structure (name /
+	// rating / description / sfx / subtraits / attached stress) that
+	// view.parts can express. Bespoke bodies keep the legacy flags.
+	LIST_FAMILY_BODIES: ['default', 'distinctions', 'stress', 'list',
+		'two-columns-compact', 'two-columns-detailed', 'assets', 'resources'] as string[],
 
 	// Seed filler from the original sample files. The terse reference example
 	// (Sendak_Eggers.layered.json) carries no descriptions, so exact-match
@@ -24,7 +33,7 @@ export const cortexMigration = {
 	// Presentation keys resolve via the type layer (Phase-1 item 5) and never
 	// enter entity JSON. Dropped with a per-set warning.
 	PRESENTATION_KEYS: ['nounSingular', 'nounPlural', 'ratingPosition', 'statement',
-		'hasQuestionedPip', 'hasCounterColumn', 'counterLabel'] as string[],
+		'hasQuestionedPip', 'hasCounterColumn', 'counterLabel', 'attachedStress'] as string[],
 
 	isBlankName: function( name: unknown ) {
 		return !( typeof name === 'string' && name.length );
@@ -658,6 +667,15 @@ export const cortexMigration = {
 		if ( Array.isArray( ch.removedSets ) && ch.removedSets.length ) {
 			this.warn( warnings, 'character: template carries removedSets, dropped' );
 		}
+		// Nested-grid placement runs over the built map in document order:
+		// band keys become view.place, legacy flags become view.parts.
+		// The wrapper carries Rule-of-3 track counts (the old engine was
+		// always 3); its view is throwaway.
+		const placeWarnings = this.migratePlacement( {
+			view: { columns: 3, columnsPage2: 3 },
+			traitSets: Object.values( c.sets ),
+		} );
+		placeWarnings.forEach( ( w: string ) => this.warn( warnings, w ) );
 		out.character = c;
 		return { data: out, warnings: warnings };
 	},
@@ -836,9 +854,138 @@ export const cortexMigration = {
 		return { data: out, warnings: warnings };
 	},
 
-	// ---------- Banded Layout Engine (Rule of 3) Placement Migration ----------
-	migratePlacement: function( charObj: any ) {
-		if ( !charObj || typeof charObj !== 'object' ) return;
+	// ---------- Nested-grid placement migration (2026-10-19) ----------
+	// Replaces the band model (track / span / widths / rowBreak): every set
+	// states its own position under view.place {left, top, width, height},
+	// and trait-row internals under view.parts. Old files migrate on
+	// import; the corpus migrates once through the same helpers.
+	//
+	// Per set: top from view.row (visual row, header-inclusive — content
+	// row 2 → top 0); within a row, left is the sum of the colWidth shares
+	// of earlier tracks and width the sum over the spanned tracks, both as
+	// "%" strings. height is 1 everywhere (rows are content-sized; taller
+	// placements are new authoring, not migration). Full-width sets omit
+	// place (sparse stacking in document order). ratingPosition (except
+	// vertical ladders) and attachedStress become parts per the additive
+	// composition rules and are removed. Sets the rules cannot express
+	// (vertical rating, non-default stress scales, bespoke bodies) keep
+	// their legacy flags; the renderer reads both.
+	BAND_KEYS: ['track', 'span', 'widths', 'rowBreak', 'colWidth', 'rowSpan',
+		'colSpan', 'columnSpan', 'row'] as string[],
+
+	hasBandKeys: function( bag: any ): boolean {
+		if ( !bag || typeof bag !== 'object' ) return false;
+		return this.BAND_KEYS.some( ( k: string ) => bag[k] !== undefined );
+	},
+
+	trackOf: function( bag: any, trackCount: number ): 1 | 2 | 3 {
+		if ( bag.track === 1 || bag.track === 2 || bag.track === 3 ) return bag.track;
+		const loc = String( bag.location || '' ).toLowerCase().trim();
+		if ( trackCount === 2 ) return ( loc === 'right' || loc === '2' ) ? 2 : 1;
+		if ( loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2' ) return 2;
+		if ( loc === 'right' || loc === '3' || loc === 'col-3' ) return 3;
+		return 1;
+	},
+
+	spanOf: function( bag: any, trackCount: number ): 1 | 2 | 3 {
+		const raw = bag.span ?? bag.colSpan ?? bag.columnSpan;
+		if ( raw === 'full' || Number( raw ) >= Math.max( 3, trackCount ) ) return 3;
+		if ( Number( raw ) === 2 ) return 2;
+		return 1;
+	},
+
+	// Per-track widths from per-set singular colWidth shares (the last band
+	// rule, preserved): declared shares win, undeclared tracks split the
+	// remainder. Triples on sets are no longer read.
+	bandTrackWidths: function( members: { track: number; colWidth: number | null }[] ): [number, number, number] {
+		const declared: ( number | null )[] = [ null, null, null ];
+		for ( const m of members ) {
+			if ( m.colWidth !== null && Number.isFinite( m.colWidth ) && m.colWidth > 0 && m.colWidth <= 100 ) {
+				if ( declared[ m.track - 1 ] === null ) declared[ m.track - 1 ] = m.colWidth;
+			}
+		}
+		const hasTrack3 = members.some( m => m.track === 3 );
+		if ( !hasTrack3 && declared[2] === null ) {
+			if ( declared[0] !== null ) return [ declared[0], 100 - declared[0], 0 ];
+			if ( declared[1] !== null ) return [ 100 - declared[1], declared[1], 0 ];
+			return [ 50, 50, 0 ];
+		}
+		const count = declared.filter( d => d !== null ).length;
+		if ( count > 0 ) {
+			const sum = declared.reduce( ( a: number, b ) => a + ( b || 0 ), 0 );
+			const remaining = Math.max( 0, 100 - sum );
+			const empty = 3 - count;
+			const share = empty > 0 ? Math.round( remaining / empty * 100 ) / 100 : 0;
+			return [
+				declared[0] !== null ? declared[0] : share,
+				declared[1] !== null ? declared[1] : share,
+				declared[2] !== null ? declared[2] : share,
+			];
+		}
+		return [ 33.333, 33.333, 33.334 ];
+	},
+
+	// Effective rating position across the top-level key and the view bag.
+	effectiveRatingPosition: function( set: any, bag: any ): string | undefined {
+		const v = ( set && set.ratingPosition !== undefined && set.ratingPosition !== null )
+			? set.ratingPosition : bag?.ratingPosition;
+		return ( typeof v === 'string' && v.length ) ? v : undefined;
+	},
+
+	// Convert one set's legacy flags to view.parts. Returns 'parts',
+	// 'legacy', or 'none' (no flags to convert). Non-default stress scales
+	// and vertical ladders stay legacy; anything the composition cannot
+	// express is kept, never invented.
+	migrateSetParts: function( set: any, bag: any ): string {
+		// Explicit parts are never clobbered: a set carrying both keeps
+		// both and validation surfaces it.
+		if ( bag?.parts && typeof bag.parts === 'object' && Object.keys( bag.parts ).length ) return 'none';
+		const rating = this.effectiveRatingPosition( set, bag );
+		const stress = bag?.attachedStress;
+		const stressOn = Boolean( stress && typeof stress === 'object' && stress.enabled );
+		if ( rating === undefined && !stressOn ) return 'none';
+		const body = bag?.style?.body;
+		if ( rating === 'vertical' ) return 'legacy';
+		if ( body !== undefined && this.LIST_FAMILY_BODIES.indexOf( body ) === -1 ) return 'legacy';
+		const scale = Array.isArray( bag?.ratingScale ) && bag.ratingScale.length
+			? bag.ratingScale : this.DEFAULT_SCALE;
+		const sScale = stressOn
+			? ( Array.isArray( stress.scale ) && stress.scale.length ? stress.scale
+				: Array.isArray( stress.ratingScale ) && stress.ratingScale.length ? stress.ratingScale
+				: this.DEFAULT_SCALE )
+			: [];
+		// A customized stress track has no parts form; keep the flags.
+		if ( stressOn && JSON.stringify( [ ...sScale ].sort( ( a: number, b: number ) => a - b ) ) !==
+			JSON.stringify( [ ...this.DEFAULT_SCALE ].sort( ( a: number, b: number ) => a - b ) ) ) {
+			return 'legacy';
+		}
+		const pos = rating === undefined ? 'inline' : rating;
+		if ( pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none' ) return 'legacy';
+		const statement = Boolean( ( set && set.statement ) ?? bag?.statement );
+		const features = bag?.features || {};
+		bag.parts = buildParts( {
+			rating: pos as 'inline' | 'above' | 'below' | 'none',
+			ratingDice: scale.length,
+			stressDice: stressOn ? sScale.length : 0,
+			description: Boolean( features.description ) && !statement && pos !== 'above',
+			sfx: Boolean( features.sfx ),
+			subtraits: Boolean( features.subtraits ),
+		} );
+		// Non-default stress labels ride in the generic labels dict so no
+		// content text is lost; the default ("Stress") stays implicit.
+		if ( stressOn && typeof stress.label === 'string' && stress.label.length && stress.label !== 'Stress' ) {
+			if ( !bag.labels || typeof bag.labels !== 'object' ) bag.labels = {};
+			bag.labels.stress = stress.label;
+		}
+		if ( set && typeof set === 'object' ) delete set.ratingPosition;
+		delete bag.ratingPosition;
+		delete bag.attachedStress;
+		return 'parts';
+	},
+
+	migratePlacement: function( charObj: any ): string[] {
+		const warnings: string[] = [];
+		if ( !charObj || typeof charObj !== 'object' ) return warnings;
 		this.normalizeView( charObj );
 		const char = charObj.character || charObj;
 		const ctkChar = char?.view || char?.custom?.cortexToolkit;
@@ -855,14 +1002,38 @@ export const cortexMigration = {
 			} );
 		}
 
-		if ( !setsList.length ) return;
+		const bagOf = ( set: any ) => set.view || set.custom?.cortexToolkit;
+		const pageOf = ( set: any ) => Number( bagOf( set )?.page ) || 1;
+
+		// Normalize import-time bare numbers to "%" strings everywhere.
+		setsList.forEach( ( set ) => {
+			const bag = bagOf( set );
+			if ( bag && typeof bag === 'object' && bag.place && typeof bag.place === 'object' ) {
+				for ( const k of [ 'left', 'width' ] ) {
+					if ( typeof bag.place[k] === 'number' && Number.isFinite( bag.place[k] ) ) {
+						bag.place[k] = formatPct( bag.place[k] );
+					}
+				}
+				if ( bag.parts && typeof bag.parts === 'object' ) {
+					Object.values( bag.parts ).forEach( ( cell: any ) => {
+						if ( cell && typeof cell === 'object' ) {
+							for ( const k of [ 'left', 'width' ] ) {
+								if ( typeof cell[k] === 'number' && Number.isFinite( cell[k] ) ) {
+									cell[k] = formatPct( cell[k] );
+								}
+							}
+						}
+					} );
+				}
+			}
+		} );
 
 		const legacyCols1 = Number( ctkChar?.columns ) || 2;
 		const legacyCols2 = Number( ctkChar?.columnsPage2 ) || legacyCols1;
 
 		const byPage: Record<number, any[]> = {};
 		setsList.forEach( set => {
-			const p = Number( set?.view?.page ?? set?.custom?.cortexToolkit?.page ) || 1;
+			const p = pageOf( set );
 			( byPage[p] = byPage[p] || [] ).push( set );
 		} );
 
@@ -871,138 +1042,126 @@ export const cortexMigration = {
 			const pageSets = byPage[p];
 			const trackCount = p === 2 ? legacyCols2 : legacyCols1;
 
-			const bands: any[][] = [];
-			let currentBand: any[] = [];
-
-			pageSets.forEach( set => {
-				const sCtk = set.view || set.custom?.cortexToolkit;
-				if ( !sCtk ) {
-					currentBand.push( set );
-					return;
-				}
-				const rawSpan = sCtk.colSpan ?? sCtk.columnSpan ?? sCtk.span;
-				const isFull = rawSpan === 'full' || ( typeof rawSpan === 'number' && rawSpan >= ( sCtk.span ? 3 : trackCount ) );
-
-				if ( isFull ) {
-					if ( currentBand.length ) {
-						bands.push( currentBand );
-						currentBand = [];
-					}
-					bands.push( [ set ] );
-				} else {
-					if ( sCtk.rowBreak === true && currentBand.length ) {
-						bands.push( currentBand );
-						currentBand = [];
-					}
-					currentBand.push( set );
-				}
+			// Bands are explicit (page, row) pairs; sets without a row but
+			// with band keys fall back to rowBreak-delimited bands in
+			// document order (pre-row files).
+			const bands: { row: number | null; members: any[] }[] = [];
+			const explicitRows = pageSets.map( ( set ) => {
+				const r = Number( bagOf( set )?.row );
+				return Number.isFinite( r ) && r >= 1 ? Math.floor( r ) : null;
 			} );
-			if ( currentBand.length ) bands.push( currentBand );
-
-			// Rows are visual and header-inclusive: the page header occupies
-			// row 1, so content bands start at row 2. Bands that auto-flow
-			// into several visual rows split accordingly. Explicit rows are
-			// never overwritten; sets without one join a new band past the
-			// highest explicit row.
-			let explicitMax = 1;
-			for ( const set of pageSets ) {
-				const r = Number( ( set.view || set.custom?.cortexToolkit )?.row );
-				if ( Number.isFinite( r ) && r > explicitMax ) explicitMax = Math.floor( r );
+			const anyExplicit = explicitRows.some( r => r !== null );
+			if ( anyExplicit ) {
+				pageSets.forEach( ( set, i ) => {
+					const r = explicitRows[i];
+					if ( r === null ) {
+						bands.push( { row: null, members: [ set ] } );
+						return;
+					}
+					const band = bands.find( b => b.row === r );
+					if ( band ) band.members.push( set );
+					else bands.push( { row: r, members: [ set ] } );
+				} );
+			} else if ( pageSets.some( ( set ) => this.hasBandKeys( bagOf( set ) ) ) ) {
+				let current: any[] = [];
+				pageSets.forEach( ( set ) => {
+					const bag = bagOf( set );
+					const rawSpan = bag?.span ?? bag?.colSpan ?? bag?.columnSpan;
+					const isFull = rawSpan === 'full' || ( typeof rawSpan === 'number' && rawSpan >= trackCount );
+					if ( isFull && current.length ) {
+						bands.push( { row: null, members: current } );
+						current = [];
+					}
+					if ( bag?.rowBreak === true && current.length ) {
+						bands.push( { row: null, members: current } );
+						current = [];
+					}
+					current.push( set );
+					if ( isFull ) {
+						bands.push( { row: null, members: current } );
+						current = [];
+					}
+				} );
+				if ( current.length ) bands.push( { row: null, members: current } );
 			}
-			const anyExplicit = pageSets.some( ( set: any ) => {
-				const r = Number( ( set.view || set.custom?.cortexToolkit )?.row );
-				return Number.isFinite( r ) && r >= 1;
-			} );
-			let nextRow = 2;
-			bands.forEach( ( band ) => {
-				if ( !band.length ) return;
-				const visual = simulateVisualRows( band.map( ( set: any ) => {
-					const bag = set.view || set.custom?.cortexToolkit || {};
-				 return { track: bag.track, span: bag.span };
+
+			bands.forEach( ( band, bandIdx ) => {
+				// top from the visual row (header-inclusive: content row 2
+				// → top 0); fallback bands stack in document order from 0.
+				// Sets without band keys are never touched here: classic
+				// sets keep their columns, placed sets keep their place.
+				const keyed = band.members.filter( ( set ) => this.hasBandKeys( bagOf( set ) ) );
+				if ( !keyed.length ) return;
+				const top = band.row !== null ? Math.max( 0, band.row - 2 ) : bandIdx;
+				const members = keyed.map( ( set ) => {
+					const bag = bagOf( set ) || {};
+					return { set, track: this.trackOf( bag, trackCount ), span: this.spanOf( bag, trackCount ) };
+				} );
+				members.forEach( ( m ) => {
+					if ( m.track + m.span - 1 > 3 ) m.span = ( 4 - m.track ) as 1 | 2 | 3;
+				} );
+				const widths = this.bandTrackWidths( members.map( ( m ) => {
+					const bag = bagOf( m.set ) || {};
+					const w = Number( bag.colWidth );
+					return { track: m.track, colWidth: Number.isFinite( w ) && w > 0 && w <= 100 ? w : null };
 				} ) );
-				const depth = Math.max( ...visual ) + 1;
-				band.forEach( ( set: any, i: number ) => {
-					const bag = set.view || set.custom?.cortexToolkit;
-					if ( !bag || typeof bag !== 'object' ) return;
-					const hasRow = Number.isFinite( Number( bag.row ) ) && Number( bag.row ) >= 1;
-					if ( !hasRow ) {
-						bag.row = anyExplicit ? explicitMax + 1 : nextRow + visual[i];
+				members.forEach( ( m ) => {
+					if ( !bagOf( m.set ) ) m.set.view = {};
+					const bag = bagOf( m.set );
+					if ( m.span >= 3 ) {
+						// Full-width sets stack sparsely in document order.
+						delete bag.place;
+					} else {
+						const left = m.track === 1 ? 0 : m.track === 2 ? widths[0] : Math.round( ( widths[0] + widths[1] ) * 1000 ) / 1000;
+						const width = Math.round( widths.slice( m.track - 1, m.track - 1 + m.span ).reduce( ( a: number, b: number ) => a + b, 0 ) * 1000 ) / 1000;
+						bag.place = { left: formatPct( left ), top, width: formatPct( width ), height: 1 };
 					}
-					delete bag.rowBreak;
-				} );
-				nextRow += depth;
-				const firstSet = band[0];
-				if ( !firstSet.view ) firstSet.view = firstSet.custom?.cortexToolkit || {};
-				const firstCtk = firstSet.view;
-
-				const firstSpan = firstCtk.span ?? firstCtk.colSpan ?? firstCtk.columnSpan;
-				const isFullBand = ( firstSpan === 'full' || ( typeof firstSpan === 'number' && firstSpan >= ( firstCtk.span ? 3 : trackCount ) ) );
-
-				if ( isFullBand ) {
-					firstCtk.span = 3;
-					delete firstCtk.colSpan;
-					delete firstCtk.columnSpan;
-					delete firstCtk.colWidth;
-					delete firstCtk.rowSpan;
-					delete firstCtk.widths;
-					return;
-				}
-
-				// Widths belong to the band: each set keeps only its singular
-				// share (colWidth). A leftover triple converts once — the
-				// effective triple (first found, what the old renderer used)
-				// seeds members that lack a share — then all triples go.
-				let effective: number[] | null = null;
-				for ( const set of band ) {
-					const w = ( set.view || set.custom?.cortexToolkit )?.widths;
-					if ( Array.isArray( w ) && w.length === 3 ) {
-						effective = [ Number( w[0] ), Number( w[1] ), Number( w[2] ) ];
-						break;
-					}
-				}
-
-				band.forEach( set => {
-					if ( !set.view ) set.view = set.custom?.cortexToolkit || {};
-					const ctk = set.view;
-
-					if ( ctk.track === undefined ) {
-						const loc = String( ctk.location || '' ).toLowerCase().trim();
-						if ( trackCount === 2 ) {
-							ctk.track = ( loc === 'right' || loc === '2' ) ? 2 : 1;
-						} else {
-							if ( loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2' ) ctk.track = 2;
-							else if ( loc === 'right' || loc === '3' || loc === 'col-3' ) ctk.track = 3;
-							else ctk.track = 1;
-						}
-					}
-					if ( ctk.location !== 'header' ) {
-						delete ctk.location;
-					}
-
-					if ( ctk.span === undefined ) {
-						const sp = ctk.colSpan ?? ctk.columnSpan;
-						if ( sp === 'full' || Number( sp ) >= trackCount ) ctk.span = 3;
-						else if ( Number( sp ) === 2 ) ctk.span = 2;
-						else ctk.span = 1;
-					}
-					delete ctk.colSpan;
-					delete ctk.columnSpan;
-
-					if ( ctk.colWidth === undefined && effective ) {
-						const tr = ( ctk.track === 2 || ctk.track === 3 ) ? ctk.track : 1;
-						const share = Number( effective[ tr - 1 ] );
-						if ( Number.isFinite( share ) && share > 0 ) ctk.colWidth = share;
-					}
-					delete ctk.rowSpan;
-					delete ctk.widths;
+					this.BAND_KEYS.forEach( ( k: string ) => delete bag[k] );
+					if ( bag.location !== 'header' && bag.location !== 'attributes' ) delete bag.location;
 				} );
 			} );
+
+			// Trait-row internals below the set level are greenfield
+			// authoring per the composition rules — except the flags they
+			// supersede, which convert here.
+			pageSets.forEach( ( set ) => {
+				const bag = bagOf( set );
+				if ( !bag || typeof bag !== 'object' ) return;
+				this.migrateSetParts( set, bag );
+			} );
+		} );
+
+		// Zero horizontal-interval collisions within any (page, top) row.
+		const placedByKey: Record<string, { index: number; rect: { left: number; top: number; width: number; height: number } }[]> = {};
+		setsList.forEach( ( set, i ) => {
+			const pl = bagOf( set )?.place;
+			if ( !pl || typeof pl !== 'object' ) return;
+			const mL = typeof pl.left === 'string' ? pl.left.match( /^(-?\d+(?:\.\d+)?)\s*%$/ ) : null;
+			const mW = typeof pl.width === 'string' ? pl.width.match( /^(-?\d+(?:\.\d+)?)\s*%$/ ) : null;
+			if ( !mL || !mW || !Number.isInteger( pl.top ) || !Number.isInteger( pl.height ) ) return;
+			const key = pageOf( set ) + ':' + pl.top;
+			( placedByKey[key] = placedByKey[key] || [] ).push( {
+				index: i,
+				rect: { left: Number( mL[1] ), top: pl.top, width: Number( mW[1] ), height: pl.height },
+			} );
+		} );
+		Object.keys( placedByKey ).forEach( ( key ) => {
+			const list = placedByKey[key];
+			for ( let a = 0; a < list.length; a++ ) {
+				for ( let b = a + 1; b < list.length; b++ ) {
+					const A = list[a].rect, B = list[b].rect;
+					if ( A.left < B.left + B.width - 1e-6 && B.left < A.left + A.width - 1e-6 ) {
+						warnings.push( 'page ' + key + ': horizontal collision between sets ' + list[a].index + ' and ' + list[b].index );
+					}
+				}
+			}
 		} );
 
 		if ( ctkChar ) {
 			delete ctkChar.columns;
 			delete ctkChar.columnsPage2;
 		}
+		return warnings;
 	},
 
 };

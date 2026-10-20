@@ -221,4 +221,19 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-10: Explicit `type: "set"` marker — removed; position under `sets` identifies a set.
 - 2026-10-11: "Build exactly what was asked, nothing more" — replaced by the genuinely-helpful rule; it would have forbidden the surfacing work she wants agents to do.
 - 2026-10-11: "v2" naming for the layered-model work — dropped; still 0.x (fork was schema 0.1, site not live yet).
+- 2026-10-19: Layout is nested grids with explicit coordinates. A set
+  carries `view.place {left, top, width, height}`: left/width are
+  percent of the parent width stored as "%" strings, top/height are
+  relative row units, height is a floor (rows stay content-sized,
+  nothing clips). Inside a set, `view.parts` places
+  trait parts (name, rating, description, sfx, subtraits, stressLabel,
+  stress) as cells in the trait's grid, percent of the set. Rating
+  inline adds a column; rating below adds a row; attached stress adds
+  two columns. Supersedes the 2026-10-17/18 band model (track / span /
+  widths / rowBreak): the band model made placement stateful — widths
+  lived on the band's first set and position derived from document
+  order — and could not express trait-row layouts such as Snowfall
+  Initiative's inline attached stress, which existed only as a
+  renderer special case. Print rules unchanged: content-sized rows,
+  multi-column lists balance, traits kept whole.
 

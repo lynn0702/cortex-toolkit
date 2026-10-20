@@ -64,7 +64,6 @@
           "ratingScale": [
             8
           ],
-          "location": "left",
           "page": 1,
           "style": {
             "header": "distinctions",
@@ -72,9 +71,7 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 3,
-          "span": 3,
-          "row": 2
+          "reservedSlots": 3
         },
         "traits": {
           "Job:": {
@@ -124,7 +121,6 @@
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
         "statement": true,
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "header": "top",
@@ -134,7 +130,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "location": "left",
           "page": 1,
           "style": {
             "header": "default",
@@ -151,8 +146,20 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "span": 3,
-          "row": 3
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "My Life": {
@@ -201,10 +208,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
-          "track": 1,
-          "span": 1,
-          "colWidth": 38,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "38%",
+            "height": 1
+          }
         },
         "traits": {
           "Diplomat": {
@@ -244,7 +253,6 @@
         "description": "Occult relics, grimoires, and dark instruments",
         "nounSingular": "Signature Asset",
         "nounPlural": "Signature Assets",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "header": "top",
@@ -259,7 +267,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "above",
           "ratingScale": [
             6,
             8,
@@ -269,10 +276,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 1,
-          "span": 1,
-          "colWidth": 38,
-          "row": 5
+          "place": {
+            "left": "0%",
+            "top": 3,
+            "width": "38%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -320,10 +343,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 1,
-          "track": 2,
-          "span": 1,
-          "colWidth": 62,
-          "row": 4
+          "place": {
+            "left": "38%",
+            "top": 2,
+            "width": "62%",
+            "height": 1
+          }
         },
         "traits": {
           "Necromancy": {
@@ -388,10 +413,12 @@
             "orientation": "horizontal"
           },
           "reservedSlots": 10,
-          "track": 1,
-          "span": 1,
-          "colWidth": 62,
-          "row": 6
+          "place": {
+            "left": "0%",
+            "top": 4,
+            "width": "62%",
+            "height": 1
+          }
         },
         "traits": {}
       },
@@ -400,7 +427,6 @@
         "description": "",
         "nounSingular": "Complication",
         "nounPlural": "Complications",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "header": "top",
@@ -415,7 +441,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "above",
           "ratingScale": [
             4,
             6,
@@ -424,10 +449,26 @@
             12
           ],
           "reservedSlots": 3,
-          "track": 2,
-          "span": 1,
-          "colWidth": 38,
-          "row": 6
+          "place": {
+            "left": "62%",
+            "top": 4,
+            "width": "38%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Deathmark": {

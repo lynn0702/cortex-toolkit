@@ -74,10 +74,12 @@
           "multiDie": true,
           "pool": true,
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 22,
-          "row": 2
+          "place": {
+            "left": "0%",
+            "top": 0,
+            "width": "22%",
+            "height": 1
+          }
         },
         "traits": {
           "D4": {
@@ -147,10 +149,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "track": 2,
-          "span": 2,
-          "colWidth": 39,
-          "row": 2
+          "place": {
+            "left": "22%",
+            "top": 0,
+            "width": "78%",
+            "height": 1
+          }
         },
         "traits": {},
         "slots": {
@@ -201,7 +205,6 @@
         "nounSingular": "Value",
         "nounPlural": "Values",
         "statement": true,
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "features": {
@@ -225,10 +228,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
-          "track": 1,
-          "span": 2,
-          "colWidth": 22,
-          "row": 3
+          "place": {
+            "left": "0%",
+            "top": 1,
+            "width": "61%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Ambition": {
@@ -268,7 +287,6 @@
         "description": "",
         "nounSingular": "Asset",
         "nounPlural": "Assets",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
           "features": {
@@ -281,7 +299,6 @@
             "header": "default",
             "body": "default"
           },
-          "ratingPosition": "above",
           "ratingScale": [
             6,
             8,
@@ -289,10 +306,26 @@
             12
           ],
           "reservedSlots": 6,
-          "track": 3,
-          "span": 1,
-          "colWidth": 39,
-          "row": 3
+          "place": {
+            "left": "61%",
+            "top": 1,
+            "width": "39%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
@@ -334,7 +367,6 @@
         "nounSingular": "Affiliation",
         "nounPlural": "Affiliations",
         "statement": true,
-        "ratingPosition": "inline",
         "tags": [],
         "view": {
           "features": {
@@ -358,10 +390,26 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
-          "track": 1,
-          "span": 2,
-          "colWidth": 22,
-          "row": 4
+          "place": {
+            "left": "0%",
+            "top": 2,
+            "width": "100%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "70%",
+              "height": 1
+            },
+            "rating": {
+              "left": "70%",
+              "top": 0,
+              "width": "30%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Self": {
@@ -391,7 +439,6 @@
         "description": "",
         "nounSingular": "Stress",
         "nounPlural": "Stress",
-        "ratingPosition": "below",
         "tags": [],
         "view": {
           "header": "top",
@@ -406,7 +453,6 @@
             "header": "stress",
             "body": "stress"
           },
-          "ratingPosition": "below",
           "ratingScale": [
             4,
             6,
@@ -415,10 +461,26 @@
             12
           ],
           "reservedSlots": 5,
-          "track": 1,
-          "span": 1,
-          "colWidth": 24,
-          "row": 5
+          "place": {
+            "left": "0%",
+            "top": 3,
+            "width": "24%",
+            "height": 1
+          },
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "rating": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {
           "Angry": {
@@ -475,10 +537,12 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 10,
-          "track": 2,
-          "span": 1,
-          "colWidth": 48,
-          "row": 5
+          "place": {
+            "left": "24%",
+            "top": 3,
+            "width": "48%",
+            "height": 1
+          }
         },
         "traits": {
           "Azure Sympathy": {
@@ -537,13 +601,28 @@
         "id": "sfx",
         "nounSingular": "SFX",
         "nounPlural": "SFX",
-        "ratingPosition": "above",
         "tags": [],
         "view": {
-          "track": 3,
-          "span": 1,
-          "colWidth": 28,
-          "row": 5
+          "place": {
+            "left": "72%",
+            "top": 3,
+            "width": "28%",
+            "height": 1
+          },
+          "parts": {
+            "rating": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "name": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "traits": {},
         "slots": {
