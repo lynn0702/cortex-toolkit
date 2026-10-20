@@ -209,9 +209,15 @@
 
 	// Beats the 1.25rem trait-value diecon rule elsewhere in this file for
 	// print trait rows only (higher specificity wins regardless of order).
+	// Parts cells join it at a hair smaller so narrow fixed tracks (e.g.
+	// a 4-die scale at 24%) clear without wrapping.
 	&.spotlight-print-style .trait-title .diecon {
 		width: 0.9rem;
 		height: 0.9rem;
+	}
+	&.spotlight-print-style .trait-parts .diecon {
+		width: 0.85rem;
+		height: 0.85rem;
 	}
 }
 
@@ -609,60 +615,6 @@
 			align-items: stretch;
 			align-content: start;
 
-			.spotlight-column-stack {
-				display: flex;
-				flex-direction: column;
-				min-width: 0;
-				height: 100%;
-
-				> .trait-set {
-					min-width: 0;
-					width: 100%;
-					margin-bottom: 0;
-					break-inside: avoid;
-					flex: 0 0 auto;
-
-					&:last-child:not(.trait-set-content) {
-						flex: 1 1 auto;
-					}
-
-					+ .trait-set,
-					+ .spotlight-cluster-band {
-						margin-top: -2px;
-					}
-				}
-
-				+ .spotlight-column-stack {
-					margin-left: -2px;
-				}
-			}
-
-			.spotlight-cluster-band {
-				display: grid;
-				width: 100%;
-				min-width: 0;
-				flex: 0 0 auto;
-
-				&:last-child {
-					flex: 1 1 auto;
-				}
-
-				> .trait-set {
-					min-width: 0;
-					width: 100%;
-					margin-bottom: 0;
-					break-inside: avoid;
-
-					+ .trait-set {
-						margin-left: -2px;
-					}
-				}
-
-				+ .trait-set {
-					margin-top: -2px;
-				}
-			}
-
 			> .trait-set {
 				min-width: 0;
 				width: auto;
@@ -840,17 +792,6 @@
 				border-color: #64748b;
 				color: #0f172a;
 			}
-
-			&.span-full-btn {
-				background: #e0f2fe;
-				border-color: #38bdf8;
-				color: #0369a1;
-
-				&:hover {
-					background: #bae6fd;
-					color: #0284c7;
-				}
-			}
 		}
 	}
 
@@ -921,30 +862,14 @@
 			}
 		}
 
-		.trait-set-header-right {
-			width: 1.9rem;
-			min-width: 1.9rem;
-			background: #f8fafc;
-			border-left: 2px solid #111;
-			border-radius: 0 2px 2px 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 0.5rem 0;
-			position: static;
-
-			.trait-set-header-inner {
-				writing-mode: vertical-rl;
-				transform: rotate(180deg);
-				font-size: var(--text-header);
-				font-weight: 900;
-				letter-spacing: 0.12em;
-				text-transform: uppercase;
-				color: var(--color-primary, #0f172a);
-				white-space: nowrap;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-			}
+		// File tag (optional header note, e.g. "Character File"): small
+		// content inside the header bar, never a side strip.
+		.trait-set-header-file {
+			font-size: var(--text-meta);
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			opacity: 0.75;
 		}
 	}
 
@@ -978,7 +903,6 @@
 				text-transform: uppercase;
 				color: #0f172a;
 				min-width: 0;
-				overflow-wrap: break-word;
 
 				&.trait-name-blank {
 					flex: 1 1 auto;
@@ -1769,14 +1693,14 @@
 			justify-content: center;
 			text-align: center;
 			gap: 0.35rem;
-			white-space: nowrap;
+			white-space: normal;
 
 			.trait-name {
 				text-transform: uppercase;
 				font-size: var(--text-trait-title);
 				letter-spacing: 0.03em;
 				font-weight: 800;
-				white-space: nowrap;
+				white-space: normal;
 			}
 		}
 
@@ -2410,6 +2334,9 @@
 
 			.session-label {
 				fill: #000000;
+				/* Labels share the print floor in every mode so the
+				   tilt geometry fits long names in Edit and Print alike. */
+				font-size: 0.8125rem;
 			}
 		}
 	}
@@ -2647,8 +2574,7 @@
 // `.print-bw` to the sheet; grayscale de-saturates every accent (and any
 // coloured glyph) for a true mono print, on screen and on paper.
 // ============================================================
-.character-sheet.submode-print.print-bw,
-.character-sheet.designer-print-preview.print-bw {
+.character-sheet.submode-print.print-bw {
 	filter: grayscale(1) contrast(1.05);
 }
 @media print {
@@ -3492,10 +3418,6 @@ body:has(.character-sheet.submode-print) .main {
 .trait-parts-inline > .trait-part-name {
 	padding-right: 0.35rem;
 }
-.trait-parts-inline > .trait-part-rating {
-	display: flex;
-	justify-content: flex-end;
-}
 .trait-part-stress-label {
 	text-align: center;
 	align-self: center;
@@ -3503,3 +3425,105 @@ body:has(.character-sheet.submode-print) .main {
 .trait-parts .trait-part-description .trait-description {
 	margin-top: 0 !important;
 }
+
+/* Trait-row wrap parity (nested-grid repairs 2026-10-19): narrow rows
+   wrap instead of crushing, in every mode. Mirrors the print title
+   rules for screen: names fill their row, dice wrap below the name
+   when they cannot fit beside it. Stacked (below/above) rows keep
+   their column layout. */
+.character-sheet .trait-title:not(.trait-title-stacked) {
+	flex-wrap: wrap;
+	row-gap: 0.15rem;
+}
+.character-sheet .trait-title:not(.trait-title-stacked) > .trait-name {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.character-sheet .trait-title:not(.trait-title-stacked) > .trait-value {
+	flex: 0 0 auto;
+	min-width: 0;
+}
+/* Parts cells: dice wrap inside rating/stress cells instead of spilling
+   over neighbouring cells. Single-line rows render unchanged. The
+   .character-sheet prefix outranks the dual-mode .trait-value rule
+   (inline-flex, no shrink) so narrow tracks actually wrap. */
+.character-sheet .trait-parts .single-die-value {
+	display: flex;
+	flex-wrap: wrap;
+	flex-shrink: 1;
+	min-width: 0;
+	column-gap: 0.1rem;
+	row-gap: 0.3rem;
+	align-items: center;
+}
+.character-sheet .trait-parts .attached-stress-track {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.15rem;
+	align-items: center;
+}
+/* Rating dice hug the name side: any residual spill goes right, away
+   from the trait name, matching legacy row order. */
+.character-sheet .trait-parts-inline > .trait-part-rating {
+	display: flex;
+	justify-content: flex-start;
+}
+/* Blank-name rows have an empty write-in box, so their dice hold one
+   line and spill left over the empty cell instead of wrapping. (Without
+   this, narrow tracks flap between wrapped and unwrapped run to run on
+   subpixel rounding.) Named rows keep wrapping to protect their text. */
+.character-sheet .trait-parts-inline:has(.trait-part-name .trait-blank-line) .trait-part-rating {
+	justify-content: flex-end;
+}
+.character-sheet .trait-parts-inline:has(.trait-part-name .trait-blank-line) .trait-part-rating .single-die-value {
+	flex-wrap: nowrap;
+}
+
+/* Print density (nested-grid repairs 2026-10-19): one-page sheets must
+   fit the page box. Spacing only — type sizes and content are untouched,
+   and Edit keeps its airier rhythm. Each rule mirrors its base shape so
+   it wins the tie by order. */
+.character-sheet.spotlight-print-style {
+	--text-header: 1rem;
+	.trait-set .trait-set-body { padding-top: 0; padding-bottom: 0; }
+	.trait:not(:last-child) { margin-bottom: 0.02rem; }
+	.trait-set { margin-bottom: 0.05rem; }
+	.trait-set.trait-set-header-top > .trait-set-header { padding-top: 0; padding-bottom: 0; }
+	.trait .trait-asset-card .trait-asset-box { min-height: 1.4rem; }
+	.attached-stress-block { margin-top: 0.2rem; padding-top: 0.1rem; }
+	.attached-stress-block .attached-stress-divider { margin-top: 0.15rem; margin-bottom: 0.15rem; }
+	.attached-stress-block .attached-stress-header { margin-bottom: 0.1rem; }
+	.spotlight-header-meta-box, .spotlight-header-desc-box { padding-top: 0.1rem; padding-bottom: 0.1rem; }
+	/* Header boxes stretch to the portrait circle (aspect-locked); cap it
+	   in print so the header does not eat the page. */
+	.page-header-inner.spotlight-header-card { min-height: 80px; padding: 0.35rem; }
+	.page-header-inner.spotlight-header-card .spotlight-header-portrait-box { max-width: 60px; }
+	/* Stacked (below) titles: tighter name-to-dice gap; centered look kept. */
+	.trait-title.trait-title-stacked:not(.trait-title-statement) { row-gap: 0.05rem; }
+	/* SFX/description leading trims a hair; glyph sizes untouched. */
+	.trait .trait-description { line-height: 1.15; }
+	.trait .trait-sfx li { line-height: 1.15; margin-bottom: 0.05rem; }
+	.trait:not(:last-child) { margin-bottom: 0.03rem; }
+	/* Blank table rows keep a writable floor, but 3.5rem is generous:
+	   filled rows (taller than the floor) render unchanged. */
+	.trait-set-style-three-column-table .three-col-row { min-height: 2rem; }
+}
+
+/* Empty-description and sfx-list spacing (nested-grid repairs): element-
+   empty descriptions (whitespace-only nodes do not count for :has) take
+   no space; populated ones, hints, and blank write-in areas keep element
+   children and render unchanged. SFX lists sit tighter under titles. */
+.character-sheet.spotlight-print-style .trait .trait-sfx { margin-top: 0.05rem; }
+.character-sheet.spotlight-print-style ul.subtraits { margin-top: 0.15rem; margin-bottom: 0; }
+.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait .trait-title { padding-top: 0.1rem; padding-bottom: 0.1rem; }
+.character-sheet.spotlight-print-style .trait .trait-description:not(:has(*)) { display: none; }
+/* Distinctions bordered titles keep their box, with tighter padding. */
+.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait .trait-title { padding-top: 0.15rem; padding-bottom: 0.15rem; }
+/* Empty sfx description placeholders are bare struts (no ruling, unlike
+   the dotted write-in treatment for nameless sfx, which is kept): they
+   take vertical space without showing anything to write on. */
+.character-sheet.spotlight-print-style:not(.print-blank-mode) .sfx-blank-line:empty { display: none; }
+/* Distinctions sfx/descriptions are short phrases; tighter leading fits
+   long sfx blocks (Eidolon) without touching glyph sizes. */
+.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait-sfx li,
+.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait-description { line-height: 1.05; }

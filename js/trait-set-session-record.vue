@@ -3,7 +3,7 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, editing, printBlank, designerPrintPreview, viewY, character,
+	traitSet, s, submode, editing, printBlank, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait,
 	isSessionHorizontal, sessionViewBox, sessionSpine, sessionHit, sessionLine, sessionBubble,
 	sessionLabelTransform, getSessionRecordItems, handleSessionBubbleClick, handleSessionLineClick, addSessionRecordRow
@@ -68,7 +68,7 @@ const {
 		</svg>
 
 		<transition appear>
-			<div class="preview-button-container" v-show="submode === 'edit' && !designerPrintPreview">
+			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addSessionRecordRow( s )">
 						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Row' }}</span>

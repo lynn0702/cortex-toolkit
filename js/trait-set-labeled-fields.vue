@@ -3,7 +3,7 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
+	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, renderText
 } = injectTraitSet();
@@ -24,13 +24,13 @@ const {
 					<span class="field-label" v-else>{{ item.trait.name || '' }}</span>
 					<span class="field-text" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
 					<span class="field-text field-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
-					<span class="field-text field-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Click to add text...</span>
+					<span class="field-text field-hint" v-else-if="submode === 'edit'">Click to add text...</span>
 					<span class="field-text" v-else></span>
 				</div>
 			</div>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-show="submode === 'edit' && !designerPrintPreview">
+			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
 						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>

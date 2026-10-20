@@ -2,7 +2,7 @@ import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, prov
 import { cortexFunctions } from './functions.ts';
 import { getSpotlightSections, buildParts, formatPct, parsePct } from './spotlight-grid.ts';
 import { getView, ensureView } from './model.ts';
-import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, StressConfig, ImageConfig, PipsConfig, AttachedStressConfig } from './model.ts';
+import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
 	[ key: string ]: any;
@@ -171,15 +171,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	});
 
-	const characterColumnCount = computed( () => {
-		const c = Number( getView( props.character )?.columns );
-		return ( c === 2 || c === 3 ) ? c : 2;
-	} );
-
-	// Explicit row number within the page (1-based). Sets sharing a page
-	// and row band together; each band carries its own column shares.
-	// Falls back to the engine-derived band position so sheets without
-	// stored rows (older snapshots, hand-authored files) still read true.
+	// Visual section sequence within the page (1-based) from the layout
+	// engine, so sets without stored coordinates still read true.
 	function effectiveRowOf( index: number | undefined ) {
 		if ( index === null || index === undefined || index < 0 ) return 1;
 		const sets = props.character?.traitSets || [];
@@ -822,12 +815,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	}
 
-	function setColumn( col: any ) {
-		let s = props.traitSetID;
-		ctkFor( s ).location = col;
-		updateCharacter( props.character );
-	}
-
 	// Move Up / Move Down shift the set one row unit within its page.
 	function moveTraitSetUp() {
 		if ( placeTop.value <= 0 ) return;
@@ -911,17 +898,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			ctk.labels = {};
 		}
 		ctk.labels[ key ] = value;
-
-		updateCharacter( props.character );
-	}
-
-	function setStressConfig( key: keyof StressConfig, value: any ) {
-		let s = props.traitSetID;
-		const ctk = ctkFor( s );
-		if ( !ctk.stressConfig ) {
-			ctk.stressConfig = {};
-		}
-		ctk.stressConfig[ key ] = value;
 
 		updateCharacter( props.character );
 	}
@@ -1184,7 +1160,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const api: TraitSetEditorApi = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
 		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
-		ringTrait, pageNumber, characterColumnCount, isFullWidthSpan,
+		ringTrait, pageNumber, isFullWidthSpan,
 		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
 		templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
@@ -1196,9 +1172,9 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
-		duplicateTraitSet, restoreTrait, setColumn, moveTraitSetUp, moveTraitSetDown,
+		duplicateTraitSet, restoreTrait, moveTraitSetUp, moveTraitSetDown,
 		setRingConfig, resetRingPlacement, setFeature,
-		setCustomProperty, styleLabel, setStyleLabel, setStressConfig, setImageConfig, uploadImageStart,
+		setCustomProperty, styleLabel, setStyleLabel, setImageConfig, uploadImageStart,
 		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset, getDieDisplayValue,
 		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty,

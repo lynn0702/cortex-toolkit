@@ -741,7 +741,7 @@
           "ratingScale": [],
           "reservedSlots": 3,
           "place": {
-            "left": "50%",
+            "left": "25%",
             "top": 5,
             "width": "50%",
             "height": 1

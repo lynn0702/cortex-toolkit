@@ -22,7 +22,6 @@ const props = defineProps<{
 	editing?: any;
 	viewY?: number | null;
 	printBlank?: boolean;
-	designerPrintPreview?: boolean;
 	printStyle?: string | null;
 }>();
 
@@ -75,6 +74,7 @@ const bodyComponent = computed( () => {
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>
+					<div class="trait-set-header-file" v-if="getView(traitSet)?.headerRight">{{ getView(traitSet)?.headerRight }}</div>
 				</div>
 			</transition>
 		</div>
@@ -88,13 +88,6 @@ const bodyComponent = computed( () => {
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>
 				</li>
 			</ul>
-		</div>
-
-		<!-- RIGHT HEADER (OPTIONAL VERTICAL LABEL) -->
-		<div class="trait-set-header trait-set-header-right" v-if="getView(traitSet)?.headerRight">
-			<div class="trait-set-header-inner">
-				<div>{{ getView(traitSet)?.headerRight || '' }}</div>
-			</div>
 		</div>
 	</div>
 </template>

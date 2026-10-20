@@ -56,20 +56,15 @@ templates = templates.map(item => {
       }
       const ctk = ts.view;
 
-      // Convert ring/attribute sets to standard column sets
+      // Convert ring/attribute sets to standard sets (placement-agnostic:
+      // coordinates live in view.place, authored per set, not here)
       if (ctk.location === 'attributes' || ctk.style?.body === 'attributes' || ctk.style?.header === 'attributes') {
-        ctk.track = 2;
         if (!ctk.style) ctk.style = {};
         ctk.style.header = 'default';
         ctk.style.body = 'default';
         delete ctk.ringConfig;
         delete ctk.scaleDie;
         ctk.attributesRing = false;
-      }
-
-      // Column spanning for specific spotlight layouts
-      if (item.id === 'spotlight-alien-us' && ts.name === 'Distinctions') {
-        ctk.span = 3;
       }
 
       // Ensure traits are blank empty slots

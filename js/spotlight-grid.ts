@@ -389,3 +389,26 @@ export function partsGrid( parts: Record<string, { left: string; top: number; wi
 	} );
 	return { columns, cells };
 }
+
+export function partCellStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> }, part: string ): string {
+	const cell = grid?.cells?.[ part ];
+	if ( !cell ) return '';
+	return `grid-column: ${cell.col} / span ${cell.span}; grid-row: ${cell.row} / span ${cell.rowSpan}; min-width: 0;`;
+}
+
+// Grid tracks from the part edges. With floorName, the name cell's track
+// is minmax(min-content, 1fr): it renders its stored percent exactly
+// when content fits (fr takes the remainder the fixed tracks leave,
+// which is the data share), and grows to the longest word instead of
+// wrapping mid-word or sliding under dice when it does not.
+// Single-track rows are unaffected. (Note: max(data%, min-content) does
+// NOT parse in Chrome — the whole declaration drops — so the floor is a
+// minmax, never a max.)
+export function partsGridStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> }, floorName = false ): string {
+	const cols = grid?.columns?.length ? grid.columns : [ 100 ];
+	const nameCol = floorName ? grid?.cells?.name?.col : undefined;
+	return 'grid-template-columns: ' + cols.map( ( c, i ) => {
+		if ( nameCol === i + 1 && cols.length > 1 ) return 'minmax(min-content, 1fr)';
+		return `${Math.round( c * 1000 ) / 1000}%`;
+	} ).join( ' ' ) + ';';
+}

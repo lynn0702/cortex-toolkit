@@ -1,7 +1,7 @@
 import { computed, provide, inject, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView } from './model.ts';
-import { KNOWN_PARTS, partsGrid, type PartGridCell } from './spotlight-grid.ts';
+import { KNOWN_PARTS, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
 export interface TraitSetApi {
@@ -15,7 +15,6 @@ export interface TraitSetProps {
 	editing?: unknown[] | null;
 	viewY?: number | null;
 	printBlank?: boolean;
-	designerPrintPreview?: boolean;
 	printStyle?: string | null;
 }
 
@@ -29,7 +28,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	const submode = computed( () => props.submode );
 	const editing = computed( () => props.editing );
 	const printBlank = computed( () => props.printBlank );
-	const designerPrintPreview = computed( () => props.designerPrintPreview );
 	const printStyle = computed( () => props.printStyle );
 	const viewY = computed( () => props.viewY );
 	const columnCount = computed( () => {
@@ -56,7 +54,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	} );
 
 	const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
-	const isSpotlightPrintStyle = computed( () => ( props.submode === 'print' || props.designerPrintPreview ) && isSpotlightStyle.value );
+	const isSpotlightPrintStyle = computed( () => props.submode === 'print' && isSpotlightStyle.value );
 
 	function getTraitSetLabel( traitSetArg: TraitSet, key: string ) {
 		const labels = getView( traitSetArg )?.labels;
@@ -167,17 +165,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return partsGrid( parts );
 	}
 
-	function partCellStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> }, part: string ) {
-		const cell = grid?.cells?.[ part ];
-		if ( !cell ) return '';
-		return `grid-column: ${cell.col} / span ${cell.span}; grid-row: ${cell.row} / span ${cell.rowSpan}; min-width: 0;`;
-	}
-
-	function partsGridStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> } ) {
-		const cols = grid?.columns?.length ? grid.columns : [ 100 ];
-		return 'grid-template-columns: ' + cols.map( ( c ) => `${Math.round( c * 1000 ) / 1000}%` ).join( ' ' ) + ';';
-	}
-
 	// Name and rating share row 0 (inline): the stacked-vs-inline divider rules key off this.
 	function isPartsInline( traitSetArg: TraitSet ) {
 		const grid = partsGridFor( traitSetArg );
@@ -259,7 +246,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function getRenderedTraits( traitSetArg: TraitSet, sArg: number ) {
 		const existing = traitSetArg?.traits || [];
-		const isPrintMode = props.submode === 'print' || props.designerPrintPreview;
+		const isPrintMode = props.submode === 'print';
 
 		if ( !isPrintMode ) {
 			return existing.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx, isPlaceholder: false }) );
@@ -676,7 +663,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( isSessionHorizontal( traitSetArg ) ) {
 			return '0 0 ' + ( 55 + ( n - 1 ) * 28 + 60 ) + ' 140';
 		}
-		return '0 0 260 ' + ( 55 + ( n - 1 ) * 28 + 25 );
+		return '0 0 272 ' + ( 55 + ( n - 1 ) * 28 + 25 );
 	}
 
 	function sessionSpine( traitSetArg: TraitSet ) {
@@ -710,7 +697,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			return { x: ( 55 + index * 28 ) - 14, y: 0, width: 28, height: 140 };
 		}
 		const y = 55 + index * 28;
-		return { x: 20, y: y - 14, width: 232, height: 28 };
+		return { x: 20, y: y - 14, width: 244, height: 28 };
 	}
 
 	function sessionLabelTransform( traitSetArg: TraitSet, index: number ) {
@@ -720,8 +707,16 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			const x = 55 + index * 28;
 			return 'translate(' + ( x + 3 ) + ', 106) rotate(-66.5)';
 		}
+		// Vertical labels run parallel to their line (-14.2°) while they
+		// fit their 28-unit band; longer names flatten (keeping the same
+		// anchor) so the text stays legible and inside the box instead of
+		// overlapping its neighbours or escaping the viewport. Short
+		// labels render exactly as before.
 		const y = 55 + index * 28;
-		return 'translate(36, ' + ( y - 4 ) + ') rotate(-14.2)';
+		const name = ( traitSetArg?.traits || [] )[ index ]?.name || '';
+		const estLen = Math.max( 1, name.length ) * 7.2;
+		const angle = Math.min( 14.2, Math.asin( Math.min( 1, 20 / estLen ) ) * 180 / Math.PI );
+		return 'translate(36, ' + ( y - 4 ) + ') rotate(' + ( Math.round( angle * 10 ) / 10 ) + ')';
 	}
 
 	function getSessionRecordItems( traitSetArg: TraitSet ) {
@@ -1054,7 +1049,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	const api: TraitSetApi = {
-		traitSet, s, traitSets, character, submode, editing, printBlank, designerPrintPreview, printStyle, viewY,
+		traitSet, s, traitSets, character, submode, editing, printBlank, printStyle, viewY,
 		columnCount, sheetStyle, isSpotlightPrintStyle, getView, ensureView,
 		getTraitSetLabel, isSpotlightStyle, isSelected, renderText, renderNotesText, getTraitSetClasses,
 		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,

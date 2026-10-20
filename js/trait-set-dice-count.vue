@@ -3,7 +3,7 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
+	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getTraitSetLabel, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getResourceDiceCount, setResourceDiceCount,
@@ -23,7 +23,7 @@ const {
 					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
 					<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 					<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
-						<template v-if="submode === 'edit' && !designerPrintPreview && !printBlank && !item.trait.name">
+						<template v-if="submode === 'edit' && !printBlank && !item.trait.name">
 							<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 						</template>
 						<template v-else>
@@ -33,7 +33,7 @@ const {
 					<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 
 					<!-- ONLINE (EDIT / PLAY): DYNAMICALLY RENDER THE POOL -->
-					<div class="trait-value multidie-value" v-if="submode !== 'print' && !designerPrintPreview">
+					<div class="trait-value multidie-value" v-if="submode !== 'print'">
 						<div
 							v-for="(dieSize, dIdx) in (item.isPlaceholder ? [6] : getResourcePoolDice(item.trait, traitSet))"
 							:key="dIdx"
@@ -74,7 +74,7 @@ const {
 			</div>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-show="submode === 'edit' && !designerPrintPreview">
+			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
 						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>

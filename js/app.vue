@@ -1169,6 +1169,8 @@ async function persist() {
 	cortexStorage.save( plain ).catch( ( err: any ) => {
 		if ( err && ( err.name === 'QuotaExceededError' || err.code === 22 ) ) {
 			showToast( 'Local storage is full — export a backup, then remove large images.' );
+		} else if ( err && /blocked|unavailable|security|denied|invalidstate/i.test( ( err.name || '' ) + ' ' + ( err.message || '' ) ) ) {
+			showToast( 'Browser storage is blocked — check site settings, then export a backup.' );
 		} else {
 			showToast( 'Could not save changes. Export a backup to be safe.' );
 		}

@@ -3536,7 +3536,7 @@ const cortexSpotlightTemplates = [
               "left": "90%",
               "top": 0,
               "width": "10%",
-              "height": 4
+              "height": 3
             }
           }
         }
@@ -15015,7 +15015,7 @@ const cortexSpotlightTemplates = [
             "ratingScale": [],
             "reservedSlots": 3,
             "place": {
-              "left": "50%",
+              "left": "25%",
               "top": 5,
               "width": "50%",
               "height": 1

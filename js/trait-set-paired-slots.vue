@@ -3,7 +3,7 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
+	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitStatement, renderText, getSubtraitNameOr,
@@ -25,13 +25,13 @@ const {
 						<span class="paired-slot-name-box">
 							<span class="paired-slot-name-text" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 							<span class="paired-slot-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
-							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Name</span>
+							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit'">Name</span>
 							<span class="paired-slot-blank-line" v-else></span>
 						</span>
 						<span class="paired-slot-statement-box">
 							<span class="paired-slot-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
 							<span class="paired-slot-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
-							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Statement</span>
+							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit'">Statement</span>
 							<span class="paired-slot-blank-line" v-else></span>
 						</span>
 					</div>
@@ -76,7 +76,7 @@ const {
 			</div>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-show="submode === 'edit' && !designerPrintPreview">
+			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
 						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>

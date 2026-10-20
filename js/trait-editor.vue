@@ -291,7 +291,6 @@ const cssClass = computed( () => {
 	return cls;
 } );
 
-const parentColumnCount = computed( () => Number( getView( props.character )?.columns ) || 2 );
 const parentIsBranch = computed( () => getView( traitSet.value )?.style?.body === 'subtrait-columns' );
 
 const branchRole = computed( {
@@ -347,8 +346,11 @@ const setDie = computed( () => {
 const hideSkillDice = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setDie.value && !trait.value?.value ) );
 
 const parentIsFullWidth = computed( () => {
-	const span = getView( traitSet.value )?.span ?? getView( traitSet.value )?.colSpan ?? getView( traitSet.value )?.columnSpan;
-	return span === 'full' || Number( span ) >= parentColumnCount.value;
+	const place = getView( traitSet.value )?.place;
+	if ( !place || typeof place !== 'object' ) return true;
+	const raw = ( place as { width?: unknown } ).width;
+	const w = typeof raw === 'string' ? Number( raw.replace( /%/g, '' ) ) : Number( raw );
+	return !Number.isFinite( w ) || w >= 99.9;
 } );
 
 const editorDock = computed( {

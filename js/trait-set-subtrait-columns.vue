@@ -3,7 +3,7 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
+	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitSetLabel, getSetDie,
@@ -31,7 +31,7 @@ const {
 								<div class="branch-main" @click="submode === 'play' && !printBlank && !group.skillItem.isPlaceholder && !group.skillItem.trait.value && getSetDie(traitSet) ? handleSingleDieClick(group.skillItem.trait, getSetDie(traitSet), traitSet, s, group.skillItem.originalIndex) : null">
 									<span class="trait-name" v-if="!printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.name">{{ group.skillItem.trait.name }}</span>
 									<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder || !group.skillItem.trait.name">
-										<template v-if="submode === 'edit' && !designerPrintPreview && !printBlank && !group.skillItem.trait.name">
+										<template v-if="submode === 'edit' && !printBlank && !group.skillItem.trait.name">
 											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 										</template>
 										<template v-else>
@@ -72,7 +72,7 @@ const {
 							</div>
 						</div>
 					</template>
-					<div class="branch-slot-empty" v-if="!getFlankColumns(traitSet, getRenderedTraits(traitSet, s)).center.length && !printBlank && submode === 'edit' && !designerPrintPreview">Select a skill to add specialties</div>
+					<div class="branch-slot-empty" v-if="!getFlankColumns(traitSet, getRenderedTraits(traitSet, s)).center.length && !printBlank && submode === 'edit'">Select a skill to add specialties</div>
 				</div>
 			</div>
 		</template>
@@ -119,12 +119,12 @@ const {
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size" class="c" v-html="renderDieValueForPrint(size, false)"></span>
 								</div>
 							</div>
-							<div class="branch-slot-empty" v-if="!branchSubs(group.subs, 'left').length && !printBlank && !group.skillItem.isPlaceholder && submode === 'edit' && !designerPrintPreview">Select to add specialties</div>
+							<div class="branch-slot-empty" v-if="!branchSubs(group.subs, 'left').length && !printBlank && !group.skillItem.isPlaceholder && submode === 'edit'">Select to add specialties</div>
 						</div>
 						<div class="branch-main" @click="submode === 'play' && !printBlank && !group.skillItem.isPlaceholder && !group.skillItem.trait.value && getSetDie(traitSet) ? handleSingleDieClick(group.skillItem.trait, getSetDie(traitSet), traitSet, s, group.skillItem.originalIndex) : null">
 							<span class="trait-name" v-if="!printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.name">{{ group.skillItem.trait.name }}</span>
 							<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder || !group.skillItem.trait.name">
-								<template v-if="submode === 'edit' && !designerPrintPreview && !printBlank && !group.skillItem.trait.name">
+								<template v-if="submode === 'edit' && !printBlank && !group.skillItem.trait.name">
 									<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 								</template>
 								<template v-else>
@@ -168,7 +168,7 @@ const {
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size" class="c" v-html="renderDieValueForPrint(size, false)"></span>
 								</div>
 							</div>
-							<div class="branch-slot-empty" v-if="!(group.split ? branchSubs(group.subs, 'right') : group.subs).length && !printBlank && !group.skillItem.isPlaceholder && submode === 'edit' && !designerPrintPreview">Select to add specialties</div>
+							<div class="branch-slot-empty" v-if="!(group.split ? branchSubs(group.subs, 'right') : group.subs).length && !printBlank && !group.skillItem.isPlaceholder && submode === 'edit'">Select to add specialties</div>
 						</div>
 					</div>
 				</div>
@@ -210,7 +210,7 @@ const {
 		</template>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-show="submode === 'edit' && !designerPrintPreview">
+			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
 						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>

@@ -245,7 +245,9 @@ export interface CortexToolkitCustom {
 	linkTo?: number;
 
 	// character-scope
+	/** @deprecated no column count under nested grids; deleted on load. */
 	columns?: number;
+	/** @deprecated no column count under nested grids; deleted on load. */
 	columnsPage2?: number;
 	pageCount?: number;
 	pageOrientation?: 'portrait' | 'landscape';

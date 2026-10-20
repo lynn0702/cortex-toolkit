@@ -4,7 +4,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
 
 const {
-	traitSet, s, submode, printBlank, designerPrintPreview, viewY, character,
+	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings,
 	isSpotlightStyle, isSpotlightPrintStyle,
@@ -40,7 +40,7 @@ const {
 				<transition name="trait" appear>
 					<!-- PARTS GRID (explicit trait-part coordinates) -->
 					<div v-if="partsGridFor(traitSet)" :class="{ 'trait-inner': true, 'trait-parts': true, 'trait-parts-inline': isPartsInline(traitSet), 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
-						:style="partsGridStyle(partsGridFor(traitSet))"
+						:style="partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet))"
 						tabindex="0"
 						role="button"
 						@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
@@ -61,7 +61,7 @@ const {
 										<template v-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 											{{ item.trait.name }}
 										</template>
-										<template v-else-if="submode === 'edit' && !designerPrintPreview && !printBlank">
+										<template v-else-if="submode === 'edit' && !printBlank">
 											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 										</template>
 										<template v-else>
@@ -73,7 +73,7 @@ const {
 									<span class="trait-statement-box">
 										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
 										<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-										<span class="trait-statement-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Statement...</span>
+										<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
 										<span class="trait-statement-blank" v-else></span>
 									</span>
 								</template>
@@ -81,7 +81,7 @@ const {
 									<div class="trait-asset-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</div>
 									<div class="trait-asset-desc" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></div>
 									<div class="trait-asset-empty" v-else-if="printBlank || item.isPlaceholder"></div>
-									<div class="trait-asset-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Click to edit asset...</div>
+									<div class="trait-asset-hint" v-else-if="submode === 'edit'">Click to edit asset...</div>
 									<div class="trait-asset-empty" v-else></div>
 								</template>
 								<template v-else>
@@ -93,7 +93,7 @@ const {
 										<template v-else-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 											{{ item.trait.name }}
 										</template>
-										<template v-else-if="submode === 'edit' && !designerPrintPreview && !printBlank">
+										<template v-else-if="submode === 'edit' && !printBlank">
 											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 										</template>
 										<template v-else>
@@ -180,7 +180,7 @@ const {
 						<div v-if="partsGridFor(traitSet).cells.description" class="trait-part trait-part-description" :style="partCellStyle(partsGridFor(traitSet), 'description')">
 							<div class="trait-description">
 								<div v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></div>
-								<div class="desc-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Description...</div>
+								<div class="desc-hint" v-else-if="submode === 'edit'">Description...</div>
 								<div class="desc-blank-area" v-else-if="printBlank || item.isPlaceholder">
 									<div class="desc-blank-line"></div>
 								</div>
@@ -236,7 +236,7 @@ const {
 								<span class="sfx-prefix">SFX:</span>
 								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
-								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
+								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
 								<span class="sfx-blank-line" v-else></span>
 							</div>
 						</div>
@@ -264,7 +264,7 @@ const {
 									<div class="trait-asset-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</div>
 									<div class="trait-asset-desc" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></div>
 									<div class="trait-asset-empty" v-else-if="printBlank || item.isPlaceholder"></div>
-									<div class="trait-asset-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Click to edit asset...</div>
+									<div class="trait-asset-hint" v-else-if="submode === 'edit'">Click to edit asset...</div>
 									<div class="trait-asset-empty" v-else></div>
 								</div>
 							</div>
@@ -287,7 +287,7 @@ const {
 										<template v-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 											{{ item.trait.name }}
 										</template>
-										<template v-else-if="submode === 'edit' && !designerPrintPreview && !printBlank">
+										<template v-else-if="submode === 'edit' && !printBlank">
 											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 										</template>
 										<template v-else>
@@ -299,7 +299,7 @@ const {
 									<span class="trait-statement-box">
 										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
 										<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-										<span class="trait-statement-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Statement...</span>
+										<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
 										<span class="trait-statement-blank" v-else></span>
 									</span>
 								</template>
@@ -314,7 +314,7 @@ const {
 										<template v-else-if="isFixedSystemTrait(traitSet, item.trait) && !item.isPlaceholder">
 											{{ item.trait.name }}
 										</template>
-										<template v-else-if="submode === 'edit' && !designerPrintPreview && !printBlank">
+										<template v-else-if="submode === 'edit' && !printBlank">
 											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
 										</template>
 										<template v-else>
@@ -385,7 +385,7 @@ const {
 								v-if="getView(traitSet)?.features?.description && !isStatementSet(traitSet)"
 							>
 								<div v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></div>
-								<div class="desc-hint" v-else-if="submode === 'edit' && !designerPrintPreview">Description...</div>
+								<div class="desc-hint" v-else-if="submode === 'edit'">Description...</div>
 								<div class="desc-blank-area" v-else-if="printBlank || item.isPlaceholder">
 									<div class="desc-blank-line"></div>
 								</div>
@@ -418,7 +418,7 @@ const {
 								<span class="sfx-prefix">SFX:</span>
 								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
-								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit' && !designerPrintPreview" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
+								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
 								<span class="sfx-blank-line" v-else></span>
 							</div>
 						</div>
@@ -478,7 +478,7 @@ const {
 		<!-- BUTTON: ADD TRAIT -->
 		<transition appear>
 			<div class="preview-button-container"
-				v-show="submode === 'edit' && !designerPrintPreview"
+				v-show="submode === 'edit'"
 			>
 				<div class="preview-button-container-inner">
 					<div class="preview-button"

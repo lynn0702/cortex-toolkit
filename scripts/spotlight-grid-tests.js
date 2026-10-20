@@ -130,11 +130,14 @@ const ctk = (o) => ({ view: o });
   ok(stacked.stressLabel.top === 2 && stacked.stress.top === 3, 'stacked stress rows below', stacked);
 }
 
-// ---- partsGrid: columns from part edges
+// ---- partsGridStyle: data-exact tracks plus the min-content name floor
 {
   const grid = G.partsGrid({ name: { left: '0%', top: 0, width: '30%', height: 1 }, rating: { left: '30%', top: 0, width: '30%', height: 1 }, stressLabel: { left: '60%', top: 0, width: '13%', height: 1 }, stress: { left: '73%', top: 0, width: '27%', height: 1 } });
-  ok(JSON.stringify(grid.columns) === JSON.stringify([30, 30, 13, 27]), 'part columns', grid.columns);
-  ok(grid.cells.stress.col === 4 && grid.cells.name.row === 1, 'part lines', grid.cells);
+  ok(G.partsGridStyle(grid) === 'grid-template-columns: 30% 30% 13% 27%;', 'plain percent tracks', G.partsGridStyle(grid));
+  ok(G.partsGridStyle(grid, true) === 'grid-template-columns: minmax(min-content, 1fr) 30% 13% 27%;', 'name track floors at min-content', G.partsGridStyle(grid, true));
+  const stacked = G.partsGrid({ name: { left: '0%', top: 0, width: '100%', height: 1 }, rating: { left: '0%', top: 1, width: '100%', height: 1 } });
+  ok(G.partsGridStyle(stacked, true) === 'grid-template-columns: 100%;', 'single-track rows unaffected', G.partsGridStyle(stacked, true));
+  ok(G.partCellStyle(grid, 'stress') === 'grid-column: 4 / span 1; grid-row: 1 / span 1; min-width: 0;', 'part cell lines', G.partCellStyle(grid, 'stress'));
 }
 
 console.log(`spotlight-grid-tests: ${pass} passed, ${fail} failed`);

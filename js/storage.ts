@@ -27,6 +27,7 @@ export interface CortexStorage {
 	STORE_NAME: string;
 	RECORD_KEY: string;
 	LEGACY_KEYS: string[];
+	FALLBACK_KEY: string;
 	_dbPromise: Promise<IDBDatabase> | null;
 	_useIDB: boolean;
 	templateKey( t: any ): string;
@@ -57,6 +58,11 @@ export const cortexStorage: CortexStorage = {
 		'cortexPlayViewMode',
 		'cortexRollerPosition',
 	],
+
+	// localStorage fallback holding the FULL record (same shape as the IDB
+	// record) when IndexedDB is unavailable. Unlike the legacy split keys
+	// it keeps snapshots and preferences, so a fallback save loses nothing.
+	FALLBACK_KEY: 'cortexToolkitFallback',
 
 	_dbPromise: null as Promise<IDBDatabase> | null,
 	_useIDB: ( typeof indexedDB !== 'undefined' ),
@@ -155,7 +161,10 @@ export const cortexStorage: CortexStorage = {
 				try {
 					request = indexedDB.open( this.DB_NAME, this.DB_VERSION );
 				} catch ( err ) {
-					this._useIDB = false;
+					// Never poison future saves: a failed open rejects this
+					// attempt only, so a transient lock heals on the next
+					// save instead of failing every save after it.
+					this._dbPromise = null;
 					reject( err );
 					return;
 				}
@@ -167,11 +176,11 @@ export const cortexStorage: CortexStorage = {
 				};
 				request.onsuccess = ( event ) => resolve( ( event.target as IDBOpenDBRequest ).result );
 				request.onerror = () => {
-					this._useIDB = false;
 					this._dbPromise = null;
 					reject( request.error || new Error( 'Could not open local database.' ) );
 				};
 				request.onblocked = () => {
+					this._dbPromise = null;
 					reject( new Error( 'Local database is blocked by another tab.' ) );
 				};
 			} );
@@ -293,7 +302,21 @@ export const cortexStorage: CortexStorage = {
 	},
 
 	async load(): Promise<StorageState> {
-		if ( this._useIDB ) {
+		const empty = (): StorageState => ( { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: this.normalizePreferences( null ), migrated: false } );
+		const fromRecord = ( record: any ): StorageState | null => {
+			if ( !record || !Array.isArray( record.characters ) ) return null;
+			return {
+				characters: this.normalizeCharacters( record.characters ),
+				openCharacterIDs: Array.isArray( record.openCharacterIDs ) ? record.openCharacterIDs : [],
+				playViewMode: record.playViewMode === 'tabs' ? 'tabs' : 'split',
+				rollerPosition: record.rollerPosition === 'right' ? 'right' : 'left',
+				templates: this.normalizeTemplates( record.templates ),
+				preferences: this.normalizePreferences( record.preferences ),
+				migrated: false,
+			};
+		};
+		const idbRecord = async (): Promise<any> => {
+			if ( !this._useIDB ) return null;
 			try {
 				const db = await this.openDB();
 				const record: any = await new Promise( ( resolve, reject ) => {
@@ -303,20 +326,30 @@ export const cortexStorage: CortexStorage = {
 					req.onsuccess = () => resolve( req.result || null );
 					req.onerror = () => reject( req.error || new Error( 'Could not read local database.' ) );
 				} );
-				if ( record && Array.isArray( record.characters ) ) {
-					return {
-						characters: this.normalizeCharacters( record.characters ),
-						openCharacterIDs: Array.isArray( record.openCharacterIDs ) ? record.openCharacterIDs : [],
-						playViewMode: record.playViewMode === 'tabs' ? 'tabs' : 'split',
-						rollerPosition: record.rollerPosition === 'right' ? 'right' : 'left',
-						templates: this.normalizeTemplates( record.templates ),
-						preferences: this.normalizePreferences( record.preferences ),
-						migrated: false,
-					};
-				}
+				return record;
 			} catch ( err ) {
-				// Fall through to legacy payload (or empty state) below.
+				return null;
 			}
+		};
+		const fallbackRecord = (): any => {
+			try {
+				const raw = localStorage.getItem( this.FALLBACK_KEY );
+				if ( !raw ) return null;
+				return JSON.parse( raw );
+			} catch ( err ) {
+				return null;
+			}
+		};
+		// Newest complete record wins: a fallback save written while IDB
+		// was down supersedes a stale IDB copy, and vice versa.
+		const idb = await idbRecord();
+		const fallback = fallbackRecord();
+		const pick = ( idb && fallback )
+			? ( String( fallback.savedAt || '' ) > String( idb.savedAt || '' ) ? fallback : idb )
+			: ( idb || fallback );
+		if ( pick ) {
+			const state = fromRecord( pick );
+			if ( state ) return state;
 		}
 		const legacy = this.readLegacy();
 		if ( legacy.error ) {
@@ -336,7 +369,7 @@ export const cortexStorage: CortexStorage = {
 			}
 			return state;
 		}
-		return { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: this.normalizePreferences( null ), migrated: false };
+		return empty();
 	},
 
 	async save( state ) {
@@ -351,21 +384,27 @@ export const cortexStorage: CortexStorage = {
 			preferences: this.normalizePreferences( state.preferences ),
 		};
 		if ( this._useIDB ) {
-			const db = await this.openDB();
-			await new Promise<void>( ( resolve, reject ) => {
-				const tx = db.transaction( this.STORE_NAME, 'readwrite' );
-				tx.oncomplete = () => resolve();
-				tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
-				tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
-				tx.objectStore( this.STORE_NAME ).put( record, this.RECORD_KEY );
-			} );
-			return { backend: 'indexeddb' };
+			try {
+				const db = await this.openDB();
+				await new Promise<void>( ( resolve, reject ) => {
+					const tx = db.transaction( this.STORE_NAME, 'readwrite' );
+					tx.oncomplete = () => resolve();
+					tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
+					tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
+					tx.objectStore( this.STORE_NAME ).put( record, this.RECORD_KEY );
+				} );
+				try {
+					localStorage.removeItem( this.FALLBACK_KEY );
+				} catch ( err ) {
+					// Best effort; a stale fallback is ignored while IDB reads back.
+				}
+				return { backend: 'indexeddb' };
+			} catch ( err ) {
+				// Fall through to the full-record localStorage fallback below.
+			}
 		}
 		try {
-			localStorage.setItem( 'cortexToolkitData', JSON.stringify( { '0.1': { characters: record.characters } } ) );
-			localStorage.setItem( 'cortexOpenCharacterIDs', JSON.stringify( record.openCharacterIDs ) );
-			localStorage.setItem( 'cortexPlayViewMode', record.playViewMode );
-			localStorage.setItem( 'cortexRollerPosition', record.rollerPosition );
+			localStorage.setItem( this.FALLBACK_KEY, JSON.stringify( record ) );
 			return { backend: 'localstorage' };
 		} catch ( err: any ) {
 			err.isQuotaError = err && ( err.name === 'QuotaExceededError' || err.code === 22 );
@@ -386,6 +425,11 @@ export const cortexStorage: CortexStorage = {
 			} catch ( err ) {
 				// Continue to legacy cleanup below.
 			}
+		}
+		try {
+			localStorage.removeItem( this.FALLBACK_KEY );
+		} catch ( err ) {
+			// Best effort; a stale fallback is ignored while IDB reads back.
 		}
 		this.clearLegacy();
 	},

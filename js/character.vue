@@ -8,9 +8,7 @@ import {
 	hasClassicFullSets as gridHasClassicFullSets,
 	getSpotlightSections as gridGetSpotlightSections,
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
-	getSpotlightGridCells as gridGetSpotlightGridCells,
 	type SpotlightSection,
-	type SpotlightCell,
 } from './spotlight-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
 import StyleGallery from './style-gallery.vue';
@@ -43,7 +41,6 @@ const printPageView = ref<any>( 'all' );
 const printStyle = ref<string | null>( null );
 const printBlank = ref( false );
 const printBW = ref( false );
-const designerPrintPreview = ref( false );
 const showStyleGallery = ref( false );
 
 const name = computed( () => props.character?.name ?? '' );
@@ -183,7 +180,7 @@ const sheetStyle = computed( () => {
 } );
 
 const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
-const isPrintSubmode = computed( () => props.submode === 'print' || designerPrintPreview.value );
+const isPrintSubmode = computed( () => props.submode === 'print' );
 const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotlightStyle.value );
 const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
 const effectivePrintBlank = computed( () => isPrintSubmode.value && printBlank.value );
@@ -338,7 +335,6 @@ function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number 
 
 function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex ); }
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
-function getSpotlightGridCells( section: SpotlightSection ) { return gridGetSpotlightGridCells( section ); }
 
 function renderNameHtml( value: unknown ) {
 	if ( !value ) return '';
@@ -565,7 +561,7 @@ watch( () => props.character, () => {
 </script>
 
 <template>
-	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'designer-print-preview': designerPrintPreview }]" :style="characterSheetStyle">
+	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark }]" :style="characterSheetStyle">
 	
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
@@ -648,7 +644,7 @@ watch( () => props.character, () => {
 								<div class="spotlight-cell-header">
 									<label for="spotlight-header-desc" class="spotlight-cell-label">{{ descriptionLabel }}</label>
 									<button
-										v-if="!hasHeaderPortrait && submode === 'edit' && !designerPrintPreview"
+										v-if="!hasHeaderPortrait && submode === 'edit'"
 										type="button"
 										class="spotlight-add-portrait-link"
 										@click.stop="addHeaderPortrait"
@@ -658,7 +654,7 @@ watch( () => props.character, () => {
 									</button>
 								</div>
 								<textarea
-									v-if="submode === 'edit' && !designerPrintPreview"
+									v-if="submode === 'edit'"
 									id="spotlight-header-desc"
 									name="spotlightHeaderDesc"
 									class="spotlight-desc-textarea"
@@ -691,11 +687,11 @@ watch( () => props.character, () => {
 								/>
 								<div v-else class="portrait-small-placeholder" title="Click to add portrait">
 									<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
-									<span class="spotlight-add-hint" v-if="submode === 'edit' && !designerPrintPreview">Click to add portrait</span>
+									<span class="spotlight-add-hint" v-if="submode === 'edit'">Click to add portrait</span>
 								</div>
 
 								<button
-									v-if="submode === 'edit' && !designerPrintPreview"
+									v-if="submode === 'edit'"
 									type="button"
 									class="btn-remove-header-portrait"
 									@click.stop="removeHeaderPortrait"
@@ -776,7 +772,7 @@ watch( () => props.character, () => {
 							>
 								<div :class="['spotlight-column', 'spotlight-full-column']">
 									<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
-										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
+										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
 									</template>
 								</div>
 							</div>
@@ -794,7 +790,6 @@ watch( () => props.character, () => {
 									:editing="editing"
 									:viewY="viewY"
 									:printBlank="effectivePrintBlank"
-									:designerPrintPreview="designerPrintPreview"
 									:printStyle="printStyle"
 									:style="section.cells[s] && section.cells[s].style"
 									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
@@ -811,7 +806,7 @@ watch( () => props.character, () => {
 						<!-- BUTTON: ADD TRAIT SET IN SPOTLIGHT MODE -->
 						<div
 							class="spotlight-add-set-bar"
-							v-if="submode === 'edit' && !designerPrintPreview"
+							v-if="submode === 'edit'"
 						>
 						<div class="add-set-slot slot-center">
 							<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
@@ -879,10 +874,10 @@ watch( () => props.character, () => {
 
 								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR CHALLENGE POOL (PLAY) -->
 								<transition appear>
-								<div class="preview-button-container"
-									v-if="pageLocation === 'right' && !designerPrintPreview"
-								>
-									<div class="preview-button-container-inner" v-show="submode === 'edit' && !designerPrintPreview">
+							<div class="preview-button-container"
+								v-if="pageLocation === 'right'"
+							>
+									<div class="preview-button-container-inner" v-show="submode === 'edit'">
 										<div class="preview-button"
 											@click.stop="addTrait( ringTraitID )"
 										>
@@ -916,14 +911,14 @@ watch( () => props.character, () => {
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
 									v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
-									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
 
 							<!-- BUTTON: ADD TRAIT SET -->
 							<transition appear>
 							<div class="preview-button-container"
-								v-show="submode === 'edit' && !designerPrintPreview"
+								v-show="submode === 'edit'"
 							>
 								<div class="preview-button-container-inner">
 									<div class="preview-button"
@@ -944,7 +939,7 @@ watch( () => props.character, () => {
 						<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 							<TraitSetBlock
 								v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
-								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :designerPrintPreview="designerPrintPreview" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>
 					</div>

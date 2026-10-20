@@ -277,33 +277,6 @@ const pageCount = computed( {
 	},
 } );
 
-const columnCount = computed( {
-	get() {
-		const c = Number( getView( props.character )?.columns );
-		return ( c === 2 || c === 3 ) ? c : 2;
-	},
-	set( count: any ) {
-		if ( !props.character ) return;
-		ensureView( props.character ).columns = Number( count ) || 2;
-		emit( 'updateCharacter', props.character );
-	},
-} );
-
-// Per-page override: page 2 may run a different column grid.
-// Null/0 = same as page 1.
-const columnsPage2 = computed( {
-	get() {
-		const v = Number( getView( props.character )?.columnsPage2 );
-		return ( v === 2 || v === 3 ) ? v : 0;
-	},
-	set( count: any ) {
-		if ( !props.character ) return;
-		if ( count === 2 || count === 3 ) ensureView( props.character ).columnsPage2 = Number( count );
-		else delete ensureView( props.character ).columnsPage2;
-		emit( 'updateCharacter', props.character );
-	},
-} );
-
 const pageOrientation = computed( {
 	get() {
 		return getView( props.character )?.pageOrientation || getView( props.character )?.orientation || 'portrait';
@@ -829,34 +802,12 @@ function updateCharacter( character: any ) {
 						</div>
 
 						<div class="editor-field">
-							<label for="char-field-column-count">Columns Layout</label>
-							<select id="char-field-column-count" name="columnCount" v-model.number="columnCount">
-								<option :value="2">2 Columns</option>
-								<option :value="3">3 Columns</option>
-							</select>
-							<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem; display: block;">
-								Sets whether the printable sheet layout divides into 2 or 3 parallel columns.
-							</span>
-						</div>
-
-						<div class="editor-field">
 							<label for="char-field-page-count">Page Count</label>
 							<select id="char-field-page-count" name="pageCount" v-model.number="pageCount">
 								<option :value="1">1 Page</option>
 								<option :value="2">2 Pages</option>
+								<option :value="3">3 Pages</option>
 							</select>
-						</div>
-
-						<div class="editor-field" v-if="pageCount > 1">
-							<label for="char-field-columns-p2">Page 2 Columns</label>
-							<select id="char-field-columns-p2" name="columnsPage2" v-model.number="columnsPage2">
-								<option :value="0">Same as page 1 ({{ columnCount }})</option>
-								<option :value="2">2 Columns</option>
-								<option :value="3">3 Columns</option>
-							</select>
-							<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem; display: block;">
-								Lets page 2 run a different grid — e.g. 2-column sheets with a 3-across power set page.
-							</span>
 						</div>
 					</template>
 

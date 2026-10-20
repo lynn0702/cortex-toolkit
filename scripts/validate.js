@@ -78,6 +78,23 @@ templates.forEach((tpl, ti) => {
     };
     checkTraits(ts.traits, `${sw}.traits`, false);
   });
+  // Page-count tripwire (2026-10-18): a pinned pageCount below the highest
+  // set page hides whole sets; a top-level pages disagreement means the
+  // entry metadata and the sheet disagree. Absent pageCount is legal.
+  {
+    let maxPage = 1;
+    ch.traitSets.forEach((ts) => {
+      const p = Number((ts.view || {}).page) || 1;
+      if (p > maxPage) maxPage = p;
+    });
+    const pinned = ch.view && ch.view.pageCount;
+    if (pinned !== undefined && pinned !== null) {
+      if (Number(pinned) < maxPage) err(`${where}: view.pageCount ${pinned} is below highest set page ${maxPage}`);
+      if (tpl.pages !== undefined && tpl.pages !== null && Number(tpl.pages) !== Number(pinned)) {
+        err(`${where}: top-level pages ${tpl.pages} disagrees with view.pageCount ${pinned}`);
+      }
+    }
+  }
 });
 
 // ---- 3. data/templates files: must parse; characters validate structurally.
@@ -472,11 +489,24 @@ if (fs.existsSync(dataDir)) {
     if (!ch || !ch.sets || typeof ch.sets !== 'object' || Array.isArray(ch.sets)) continue;
     const where = `data/templates/${f}`;
     const placed = [];
+    let maxPage = 1;
     for (const name of Object.keys(ch.sets)) {
-      const hit = checkSetPlacement(where, name, ch.sets[name], (s) => Number((s.view || {}).page) || 1);
+      const set = ch.sets[name];
+      if (set && typeof set === 'object' && !Array.isArray(set)) {
+        const p = Number((set.view || {}).page) || 1;
+        if (p > maxPage) maxPage = p;
+      }
+      const hit = checkSetPlacement(where, name, set, (s) => Number((s.view || {}).page) || 1);
       if (hit) placed.push(hit);
     }
     checkOverlaps(where, placed);
+    const pinned = ch.view && ch.view.pageCount;
+    if (pinned !== undefined && pinned !== null) {
+      if (Number(pinned) < maxPage) err(`${where}: view.pageCount ${pinned} is below highest set page ${maxPage}`);
+      if (data.pages !== undefined && data.pages !== null && Number(data.pages) !== Number(pinned)) {
+        err(`${where}: top-level pages ${data.pages} disagrees with view.pageCount ${pinned}`);
+      }
+    }
   }
 }
 
