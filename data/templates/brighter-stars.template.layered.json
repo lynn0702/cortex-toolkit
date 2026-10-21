@@ -1,13 +1,21 @@
 {
   "id": "spotlight-brighter-stars",
   "version": 1,
-  "title": "BrighterStars",
+  "title": "Brighter Stars",
   "subtitle": "Hopepunk Starship Exploration",
-  "spotlight": "BrighterStars",
+  "spotlight": "Brighter Stars",
   "variant": "Character File",
   "pages": 1,
   "genre": "Sci-Fi / Space Exploration",
-  "description": "Crew members aboard the starship Diana venturing into unknown sectors. Features Distinctions with Hinder and SFX, Values with personal statements, Crew Relationships, Signature Assets, Milestones, and an XP bubble grid.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866",
+    "quote": "The mission was supposed to last ten years. There were supposed to be answers at the end of it.",
+    "genre": "Aspirational space opera",
+    "setting": "d6",
+    "prep": "d6",
+    "complexity": "d6",
+    "image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg"
+  },
   "character": {
     "id": "template-spotlight-brighter-stars",
     "isTemplate": true,

@@ -7,7 +7,15 @@
   "variant": "Survivor File",
   "pages": 1,
   "genre": "Post-Apocalyptic / Survival",
-  "description": "Hardened survivors holding the perimeter of the last safe zones against wasteland horrors. Features Distinctions (Before, Now, Future), 20 Skills (d4-d6) & Specialties (d8-d12), Attributes (Analytical, Forceful, Quiet), 10 Relationships, 5 Stress tracks (Injured, Isolated, Sick, Tired, Upset), Talents, and Growth Pool.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+    "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+    "genre": "Post-apocalyptic zombie survival | Base-building",
+    "setting": "d8",
+    "prep": "d8",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
+  },
   "character": {
     "id": "template-spotlight-safe-zone-survivor",
     "isTemplate": true,

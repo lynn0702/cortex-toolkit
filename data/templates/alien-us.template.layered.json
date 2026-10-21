@@ -7,7 +7,15 @@
   "variant": "Character File",
   "pages": 2,
   "genre": "Sci-Fi / Espionage",
-  "description": "Play extraterrestrial operatives living undercover on Earth. Includes Distinctions with Hinder, Skills (d6) with branching Specialties (d8-d12), Values, Talents, Signature Assets/Tech, Relationships, and a 20-step Session Record.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866",
+    "quote": "You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.",
+    "genre": "Cold War Sci-Fi Drama",
+    "setting": "d6",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg"
+  },
   "character": {
     "id": "template-spotlight-alien-us",
     "isTemplate": true,

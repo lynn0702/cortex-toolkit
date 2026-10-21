@@ -1,13 +1,21 @@
 {
   "id": "spotlight-kitbash-team",
   "version": 1,
-  "title": "KitBash - Team File",
+  "title": "Kit Bash! - Team File",
   "subtitle": "Modular Comic Book Superheroes",
-  "spotlight": "KitBash",
+  "spotlight": "Kit Bash!",
   "variant": "Team Roster File",
   "pages": 1,
   "genre": "Comic Book / Superhero",
-  "description": "Headquarters, team resources, and hero roster for superhero alliances in KitBash. Features Team Base details and 20 shared Team Resource boxes.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+    "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+    "genre": "Superhero",
+    "setting": "d6",
+    "prep": "d12",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
+  },
   "character": {
     "id": "template-spotlight-kitbash-team",
     "isTemplate": true,

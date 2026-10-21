@@ -1,13 +1,21 @@
 {
   "id": "spotlight-solarpunk-commune",
   "version": 1,
-  "title": "SolarPunk - Commune File",
+  "title": "Solarpunk - Commune File",
   "subtitle": "Ecological Hope & Community Technology",
-  "spotlight": "SolarPunk",
+  "spotlight": "Solarpunk",
   "variant": "Commune File",
   "pages": 1,
   "genre": "SolarPunk / Settlement",
-  "description": "Bioregional commune worksheet for SolarPunk settings. Tracks Commune Attributes (Resources, Security, Connections — d4 to d8), Commune Distinctions (Unity, Organization, Morale), 4 d6 Signature Assets, and 9 Commune Skills (d6-d8).",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+    "quote": "The corporations took everything. The land, the water, the air.",
+    "genre": "Near-future eco-punk / hopepunk",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
+  },
   "character": {
     "id": "template-spotlight-solarpunk-commune",
     "isTemplate": true,

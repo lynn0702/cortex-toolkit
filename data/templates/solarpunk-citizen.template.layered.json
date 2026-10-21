@@ -1,13 +1,21 @@
 {
   "id": "spotlight-solarpunk-citizen",
   "version": 1,
-  "title": "SolarPunk",
+  "title": "Solarpunk",
   "subtitle": "Ecological Hope & Community Technology",
-  "spotlight": "SolarPunk",
+  "spotlight": "Solarpunk",
   "variant": "Citizen File",
   "pages": 1,
   "genre": "SolarPunk / Sci-Fi / Community",
-  "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Mind, Body, Connection), Distinctions (Identity, Community, Purpose) with SFX, a 20-pip Session Record grid, Signature Assets with SFX, and 19 Skills & d6 Specialties.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+    "quote": "The corporations took everything. The land, the water, the air.",
+    "genre": "Near-future eco-punk / hopepunk",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
+  },
   "character": {
     "id": "template-spotlight-solarpunk-citizen",
     "isTemplate": true,

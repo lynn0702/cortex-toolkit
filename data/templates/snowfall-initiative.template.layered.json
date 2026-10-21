@@ -7,7 +7,15 @@
   "variant": "Agent File",
   "pages": 1,
   "genre": "Spy / Cold War / High-Tech",
-  "description": "Elite operatives conducting clandestine black-ops missions in sub-zero locales. Features Distinctions (Role, Background, Personality), Affiliations (Diplomacy, Discovery, Defense), Complications (Frostbite, Hypothermia), Attributes with Stress (Brawn, Endurance, Grace, Grit, Mettle, Smarts), 19 Skills & d6 Specialties, Signature Assets, Talents, Gifts, Milestones, and an XP track.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/574560/Snowfall-Initiative?manufacturers_id=31866",
+    "quote": "Earth is freezing. Not metaphorically—glaciers are advancing on major cities, temperatures are dropping, and a new ice age has begun.",
+    "genre": "Military sci-fi / Norse portal fantasy",
+    "setting": "d10",
+    "prep": "d8",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/574560.jpg"
+  },
   "character": {
     "id": "template-spotlight-snowfall",
     "isTemplate": true,

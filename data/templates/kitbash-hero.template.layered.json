@@ -1,13 +1,21 @@
 {
   "id": "spotlight-kitbash-hero",
   "version": 1,
-  "title": "KitBash",
+  "title": "Kit Bash!",
   "subtitle": "Modular Comic Book Superheroes",
-  "spotlight": "KitBash",
+  "spotlight": "Kit Bash!",
   "variant": "Hero File",
   "pages": 1,
   "genre": "Comic Book / Superhero",
-  "description": "Comic book heroes customized with modular power sets, affiliations, distinctions, and specialties. Features Affiliations (Personal, Group, World), Distinctions (Personality, Past, Quirk), 3 Power Sets, Specialties, Signature Assets, Stress tracks, and Growth Pool.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+    "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+    "genre": "Superhero",
+    "setting": "d6",
+    "prep": "d12",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
+  },
   "character": {
     "id": "template-spotlight-kitbash-hero",
     "isTemplate": true,

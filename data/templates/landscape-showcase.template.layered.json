@@ -7,7 +7,6 @@
   "variant": "Showcase",
   "pages": 2,
   "genre": "Reference",
-  "description": "Visual reference and layout showcase exercising a 3-column landscape layout with 1, 2, and 3-column spanning trait sets.",
   "character": {
     "id": "template-spotlight-landscape-showcase",
     "isTemplate": true,

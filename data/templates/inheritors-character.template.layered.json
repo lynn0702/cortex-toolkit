@@ -7,7 +7,15 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Superhero / Dynastic Drama",
-  "description": "Descendants inheriting superhuman abilities and ancestral duties from heroic lineages. Features Attributes (Action, Heritage, Science, Weird), Stress, Distinctions with Family Ties SFX, Inherited Abilities, 14 Skills, Heirlooms, Milestones, and an XP grid.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+    "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+    "genre": "Modern Pulp Action-Adventure",
+    "setting": "d6",
+    "prep": "d10",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
+  },
   "character": {
     "id": "template-spotlight-inheritors-char",
     "isTemplate": true,

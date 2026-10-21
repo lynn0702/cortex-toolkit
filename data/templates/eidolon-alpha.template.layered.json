@@ -7,7 +7,9 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Fantasy / Summoning / Mythic",
-  "description": "Vessels of ancient endarchs who manifest living eidolons. Features Roles (Warrior, Priest, Scout, Other), Attributes with Highlight and Stress (Courage, Grace, Guile, Reason, Vigor), Endarch, Role and Freeform Distinctions with Hinder, Endarch SFX with the Summon rite, a Summoned Eidolon power block, and an XP track.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+  },
   "character": {
     "id": "template-spotlight-eidolon-alpha",
     "isTemplate": true,

@@ -7,7 +7,15 @@
   "variant": "Handler File",
   "pages": 1,
   "genre": "Mecha / Kaiju / Military",
-  "description": "Pilots and tactical handlers neural-linked to colossal titan mechs defending humanity from titanic leviathans. Features Handler Attributes (Prowess, Control, Renown — d6 to d10), 5 Roles (Backup, Blaster, Boss, Brain, Brawler), Distinctions (Identity, Persona, Aspiration) with signature SFX, Signature Assets, Complications, and Session Record.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+    "quote": "The city shakes. The bay churns.",
+    "genre": "Kaiju / mech action",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d6",
+    "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
+  },
   "character": {
     "id": "template-spotlight-titans-handler",
     "isTemplate": true,

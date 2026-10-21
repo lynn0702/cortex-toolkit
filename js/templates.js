@@ -11,7 +11,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 2,
     "genre": "Sci-Fi / Espionage",
-    "description": "Play extraterrestrial operatives living undercover on Earth. Includes Distinctions with Hinder, Skills (d6) with branching Specialties (d8-d12), Values, Talents, Signature Assets/Tech, Relationships, and a 20-step Session Record.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -737,18 +736,26 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866",
+      "quote": "You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.",
+      "genre": "Cold War Sci-Fi Drama",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg"
     }
   },
   {
     "id": "spotlight-brighter-stars",
     "version": 1,
-    "title": "BrighterStars",
+    "title": "Brighter Stars",
     "subtitle": "Hopepunk Starship Exploration",
-    "spotlight": "BrighterStars",
+    "spotlight": "Brighter Stars",
     "variant": "Character File",
     "pages": 1,
     "genre": "Sci-Fi / Space Exploration",
-    "description": "Crew members aboard the starship Diana venturing into unknown sectors. Features Distinctions with Hinder and SFX, Values with personal statements, Crew Relationships, Signature Assets, Milestones, and an XP bubble grid.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -1289,6 +1296,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866",
+      "quote": "The mission was supposed to last ten years. There were supposed to be answers at the end of it.",
+      "genre": "Aspirational space opera",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg"
     }
   },
   {
@@ -1300,7 +1316,6 @@ const cortexSpotlightTemplates = [
     "variant": "Camper File",
     "pages": 1,
     "genre": "Supernatural / Youth Mystery",
-    "description": "Young campers uncovering bizarre woods, mythical creatures, and ancient folklore. Features Heritage, Destiny, and Reputation Distinctions, Attributes, Values, Standing dice, Badges, and Signature Assets.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -1963,6 +1978,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866",
+      "quote": "Someone has decided you’re destined for great things. You’re twelve.",
+      "genre": "Supernatural summer camp / YA adventure",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg"
     }
   },
   {
@@ -1974,7 +1998,6 @@ const cortexSpotlightTemplates = [
     "variant": "Mobster File",
     "pages": 1,
     "genre": "Crime / Drama / Noir",
-    "description": "Organized crime syndicate members climbing the ranks of the 1920s-1930s underworld. Features Distinctions with Distinction Stress, Drives, Roles with Specialties, Syndicate Resources, Signature Assets, and Session Record.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -2556,6 +2579,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572308/Cosa-Nostra?manufacturers_id=31866",
+      "quote": "The Castellammarese War is coming. Everyone in the Five Families knows it.",
+      "genre": "Historical Crime Drama",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572308.jpg"
     }
   },
   {
@@ -2567,7 +2599,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Fantasy / Summoning / Mythic",
-    "description": "Vessels of ancient endarchs who manifest living eidolons. Features Roles (Warrior, Priest, Scout, Other), Attributes with Highlight and Stress (Courage, Grace, Guile, Reason, Vigor), Endarch, Role and Freeform Distinctions with Hinder, Endarch SFX with the Summon rite, a Summoned Eidolon power block, and an XP track.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -3054,6 +3085,9 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
     }
   },
   {
@@ -3065,7 +3099,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 2,
     "genre": "Action / Rescue / Drama",
-    "description": "Hammerhead rescue pilots who run toward the crisis. Features Attributes with Stress (Physical, Mental, Social), 14 Training Packages, three Distinctions with Hinder and crisis-pool SFX, seven Relationships, an XP track, and page 2 Crisis Pools. Pair with the Hammerheads Vehicle File template.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -3671,6 +3704,9 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
     }
   },
   {
@@ -3682,7 +3718,6 @@ const cortexSpotlightTemplates = [
     "variant": "Vehicle File",
     "pages": 1,
     "genre": "Action / Rescue / Vehicles",
-    "description": "The three Hammerhead rescue craft and their fleet support web. Features Hammerhead Attributes (Systems/Engines/Frame for Hammerheads One, Two, and Three with fixed starting ratings), three Vehicle Distinctions with shared Hinder, and six multi-die Resource Pools (Unassigned, Tactical, Medical, IT/Network, Food/Shelter, Land/Sea/Air).",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -4018,6 +4053,9 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
     }
   },
   {
@@ -4029,7 +4067,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Superhero / Dynastic Drama",
-    "description": "Descendants inheriting superhuman abilities and ancestral duties from heroic lineages. Features Attributes (Action, Heritage, Science, Weird), Stress, Distinctions with Family Ties SFX, Inherited Abilities, 14 Skills, Heirlooms, Milestones, and an XP grid.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -4820,6 +4857,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+      "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+      "genre": "Modern Pulp Action-Adventure",
+      "setting": "d6",
+      "prep": "d10",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
     }
   },
   {
@@ -4831,7 +4877,6 @@ const cortexSpotlightTemplates = [
     "variant": "Family Tree File",
     "pages": 2,
     "genre": "Superhero / Dynastic Drama",
-    "description": "Family tree worksheet and GMC roster for Inheritors dynasties. Tracks the First Five Branches, Wild Card Branches, and generation relations across PCs, Parents, Grandparents, and Group Family GMCs.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -6082,18 +6127,26 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+      "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+      "genre": "Modern Pulp Action-Adventure",
+      "setting": "d6",
+      "prep": "d10",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
     }
   },
   {
     "id": "spotlight-kitbash-hero",
     "version": 1,
-    "title": "KitBash",
+    "title": "Kit Bash!",
     "subtitle": "Modular Comic Book Superheroes",
-    "spotlight": "KitBash",
+    "spotlight": "Kit Bash!",
     "variant": "Hero File",
     "pages": 1,
     "genre": "Comic Book / Superhero",
-    "description": "Comic book heroes customized with modular power sets, affiliations, distinctions, and specialties. Features Affiliations (Personal, Group, World), Distinctions (Personality, Past, Quirk), 3 Power Sets, Specialties, Signature Assets, Stress tracks, and Growth Pool.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -6690,18 +6743,26 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+      "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+      "genre": "Superhero",
+      "setting": "d6",
+      "prep": "d12",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
     }
   },
   {
     "id": "spotlight-kitbash-team",
     "version": 1,
-    "title": "KitBash - Team File",
+    "title": "Kit Bash! - Team File",
     "subtitle": "Modular Comic Book Superheroes",
-    "spotlight": "KitBash",
+    "spotlight": "Kit Bash!",
     "variant": "Team Roster File",
     "pages": 1,
     "genre": "Comic Book / Superhero",
-    "description": "Headquarters, team resources, and hero roster for superhero alliances in KitBash. Features Team Base details and 20 shared Team Resource boxes.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -6979,6 +7040,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+      "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+      "genre": "Superhero",
+      "setting": "d6",
+      "prep": "d12",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
     }
   },
   {
@@ -6990,7 +7060,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Mystery / Drama / Supernatural",
-    "description": "Residents of a foggy coastal town haunted by secrets and psychic tension. Features Distinctions (Extraordinary, Backstory, Role) with SFX, Emotional Attributes with Statements and Stress (Anger, Desire, Fear, Joy, Sorrow), Relationships, Signature Assets, Growth Pool, and Complications.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -7586,6 +7655,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866",
+      "quote": "The town knows you’re different. They always have.",
+      "genre": "Small-town supernatural drama",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg"
     }
   },
   {
@@ -7597,7 +7675,6 @@ const cortexSpotlightTemplates = [
     "variant": "Caster File",
     "pages": 1,
     "genre": "Dark Fantasy / Occult",
-    "description": "Practitioners of forbidden death magic navigating ancient covenants and terrifying bargains. Features Distinctions (Job, Necromancy, Desire), Affiliations (My Life, The World, The Demi-Monde) with statements, Roles, Necromancy Ability with Effect Tags, SFX and Limit, Signature Assets, Session Record, and Complications.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -8105,6 +8182,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866",
+      "quote": "You didn’t ask for this. You were just trying to live your life.",
+      "genre": "Urban fantasy",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg"
     }
   },
   {
@@ -8116,7 +8202,6 @@ const cortexSpotlightTemplates = [
     "variant": "Crystalline Age",
     "pages": 1,
     "genre": "Superhero / Silver Age Nostalgia",
-    "description": "Veteran heroes of the legendary Crystalline Age stepping back into action after decades of retirement. Features Values, 3 Distinctions (Archetype, Retirement, Satisfaction), 5 Era Resources (5d6), 16 Skills (d4-d6) & Specialties (d8-d12), Signature Assets, and Aging Complications.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -8888,6 +8973,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+      "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+      "genre": "Pulp adventure",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
     }
   },
   {
@@ -8899,7 +8993,6 @@ const cortexSpotlightTemplates = [
     "variant": "Aerial Age",
     "pages": 1,
     "genre": "Dieselpunk / Aviation Adventure",
-    "description": "Sky aces and airborne champions of the Aerial Age dusted off for one more dogfight. Features Values, Archetype & Retirement Distinctions, 5d6 Resources, a Signature Asset, 9 write-in Skills (d4-d6) & Specialties (d8-d12), and a 20-step Session Record.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -9501,6 +9594,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+      "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+      "genre": "Pulp adventure",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
     }
   },
   {
@@ -9512,7 +9614,6 @@ const cortexSpotlightTemplates = [
     "variant": "Survivor File",
     "pages": 1,
     "genre": "Post-Apocalyptic / Survival",
-    "description": "Hardened survivors holding the perimeter of the last safe zones against wasteland horrors. Features Distinctions (Before, Now, Future), 20 Skills (d4-d6) & Specialties (d8-d12), Attributes (Analytical, Forceful, Quiet), 10 Relationships, 5 Stress tracks (Injured, Isolated, Sick, Tired, Upset), Talents, and Growth Pool.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -10356,6 +10457,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+      "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+      "genre": "Post-apocalyptic zombie survival | Base-building",
+      "setting": "d8",
+      "prep": "d8",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
     }
   },
   {
@@ -10367,7 +10477,6 @@ const cortexSpotlightTemplates = [
     "variant": "Colony File",
     "pages": 2,
     "genre": "Post-Apocalyptic / Base Building",
-    "description": "Colony management and stockpile sheet for Safe Zone settlements. Tracks Essential Stockpiles (Food, Water, Shelter — 12d6 each), Non-Essential Stockpiles (Medicine, Protection, Tools — 12d6 each), 6 Colony Buildings with d6-d12 Benefits, 9 Colony Survivors (Morale & Skills/Specialties), and Colony Notes.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -11746,6 +11855,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+      "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+      "genre": "Post-apocalyptic zombie survival | Base-building",
+      "setting": "d8",
+      "prep": "d8",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
     }
   },
   {
@@ -11757,7 +11875,6 @@ const cortexSpotlightTemplates = [
     "variant": "Agent File",
     "pages": 1,
     "genre": "Spy / Cold War / High-Tech",
-    "description": "Elite operatives conducting clandestine black-ops missions in sub-zero locales. Features Distinctions (Role, Background, Personality), Affiliations (Diplomacy, Discovery, Defense), Complications (Frostbite, Hypothermia), Attributes with Stress (Brawn, Endurance, Grace, Grit, Mettle, Smarts), 19 Skills & d6 Specialties, Signature Assets, Talents, Gifts, Milestones, and an XP track.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -12654,18 +12771,26 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574560/Snowfall-Initiative?manufacturers_id=31866",
+      "quote": "Earth is freezing. Not metaphorically—glaciers are advancing on major cities, temperatures are dropping, and a new ice age has begun.",
+      "genre": "Military sci-fi / Norse portal fantasy",
+      "setting": "d10",
+      "prep": "d8",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574560.jpg"
     }
   },
   {
     "id": "spotlight-solarpunk-citizen",
     "version": 1,
-    "title": "SolarPunk",
+    "title": "Solarpunk",
     "subtitle": "Ecological Hope & Community Technology",
-    "spotlight": "SolarPunk",
+    "spotlight": "Solarpunk",
     "variant": "Citizen File",
     "pages": 1,
     "genre": "SolarPunk / Sci-Fi / Community",
-    "description": "Artisans, engineers, and ecologists building a flourishing, sustainable green future together. Features Attributes (Mind, Body, Connection), Distinctions (Identity, Community, Purpose) with SFX, a 20-pip Session Record grid, Signature Assets with SFX, and 19 Skills & d6 Specialties.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -13153,18 +13278,26 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+      "quote": "The corporations took everything. The land, the water, the air.",
+      "genre": "Near-future eco-punk / hopepunk",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
     }
   },
   {
     "id": "spotlight-solarpunk-commune",
     "version": 1,
-    "title": "SolarPunk - Commune File",
+    "title": "Solarpunk - Commune File",
     "subtitle": "Ecological Hope & Community Technology",
-    "spotlight": "SolarPunk",
+    "spotlight": "Solarpunk",
     "variant": "Commune File",
     "pages": 1,
     "genre": "SolarPunk / Settlement",
-    "description": "Bioregional commune worksheet for SolarPunk settings. Tracks Commune Attributes (Resources, Security, Connections — d4 to d8), Commune Distinctions (Unity, Organization, Morale), 4 d6 Signature Assets, and 9 Commune Skills (d6-d8).",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -13586,6 +13719,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+      "quote": "The corporations took everything. The land, the water, the air.",
+      "genre": "Near-future eco-punk / hopepunk",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
     }
   },
   {
@@ -13597,7 +13739,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Fantasy / Eldritch / Arcane",
-    "description": "Mortals touched, cursed, or mutated by runaway magical disasters. Features Growth Pool, Distinctions with Hinder, 6 Values with statements, 4 Affiliations (Self, Family, School, Coven) with statements, 6 Signature Assets, 5 Stress tracks, 10 Arcane Crafts, and 4 SFX boxes.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -14315,6 +14456,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572310/Spellcaught?manufacturers_id=31866",
+      "quote": "High school is already a crucible. Add magic, and someone’s going to get burned.",
+      "genre": "Teenage witches / high school drama",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572310.jpg"
     }
   },
   {
@@ -14326,7 +14476,6 @@ const cortexSpotlightTemplates = [
     "variant": "Townsperson File",
     "pages": 1,
     "genre": "Horror / Small Town / Weird Fiction",
-    "description": "Residents uncovering the bizarre, surreal, and terrifying secrets beneath their peaceful small town. Features Attributes (Mental, Physical, Social — d6 to d10), 6 Roles (Enforcer, Entrepreneur, Rebel, Sage, Shepherd, Townie), Distinctions (Mundane, Offbeat, Strange), 6 Relationships, d8 Signature Assets, Complications, and the Strange Die.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -14883,6 +15032,15 @@ const cortexSpotlightTemplates = [
           "pronouns": "Ruin"
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866",
+      "quote": "There’s something wrong with this town. Maybe it’s the sheriff who never blinks.",
+      "genre": "Weird horror / small-town mystery",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg"
     }
   },
   {
@@ -14894,7 +15052,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 2,
     "genre": "Sci-Fi / Superhero / Multiverse",
-    "description": "Multi-dimensional heroes and champions wielding cosmic power sets to save reality across the Terraverse. Features 2 complete pages: 6 Attributes (Agility through Willpower), Distinctions with Hinder, 19 Skills (d4-d6) & Specialties (d8-d12), Signature Assets (d8-d12), Initiative & Hero Dice ladders, Life Points Track, 3 Power Sets, Talents, Session Record, and Leveling Up table.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -15948,6 +16105,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866",
+      "quote": "Every world is a version of this one. Some are close — a step to the left, a slightly different history.",
+      "genre": "Science fantasy / multiverse adventure",
+      "setting": "d10",
+      "prep": "d10",
+      "complexity": "d10",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg"
     }
   },
   {
@@ -15959,7 +16125,6 @@ const cortexSpotlightTemplates = [
     "variant": "Handler File",
     "pages": 1,
     "genre": "Mecha / Kaiju / Military",
-    "description": "Pilots and tactical handlers neural-linked to colossal titan mechs defending humanity from titanic leviathans. Features Handler Attributes (Prowess, Control, Renown — d6 to d10), 5 Roles (Backup, Blaster, Boss, Brain, Brawler), Distinctions (Identity, Persona, Aspiration) with signature SFX, Signature Assets, Complications, and Session Record.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -16353,6 +16518,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+      "quote": "The city shakes. The bay churns.",
+      "genre": "Kaiju / mech action",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
     }
   },
   {
@@ -16364,7 +16538,6 @@ const cortexSpotlightTemplates = [
     "variant": "Titan Mech File",
     "pages": 1,
     "genre": "Mecha / Kaiju / Military",
-    "description": "Colossal mechanical titan sheet equipped with Titan Attributes & Stress (Prowess, Control, Renown — d6 to d12), Titan Distinctions (Type, History with Underscore/Overcompensate SFX, Battle), 2 Power Set blocks, and a 15-pip Session Record.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -16719,6 +16892,15 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+      "quote": "The city shakes. The bay churns.",
+      "genre": "Kaiju / mech action",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
     }
   },
   {
@@ -16730,7 +16912,6 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Mystery / Procedural / Urban Fantasy",
-    "description": "Investigators of the City of Cortez probing the strange and uncanny. Features Affiliations (Solo, Partner, Squad), 7 Roles (Forensics through Technology), 8 multi-die Resources (starting with 2d10, 2d8, 2d6, 2d6), Distinctions with Hinder, 6 Talents, 5 Stress tracks (Afraid, Angry, Anxious, Exhausted, Injured), and a Growth Pool (Base 2d6).",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -17355,6 +17536,9 @@ const cortexSpotlightTemplates = [
           "right": 0
         }
       }
+    },
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
     }
   },
   {
@@ -17365,7 +17549,6 @@ const cortexSpotlightTemplates = [
     "variant": "Showcase",
     "pages": 3,
     "genre": "Reference",
-    "description": "Visual regression and style reference template exercising every layout component, header orientation, and die mechanic.",
     "version": 1,
     "updatedAt": "2026-10-14T12:00:00.000Z",
     "character": {
@@ -18452,7 +18635,6 @@ const cortexSpotlightTemplates = [
     "variant": "Showcase",
     "pages": 2,
     "genre": "Reference",
-    "description": "Visual reference and layout showcase exercising a 3-column landscape layout with 1, 2, and 3-column spanning trait sets.",
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",

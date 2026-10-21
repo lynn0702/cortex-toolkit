@@ -7,7 +7,9 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Mystery / Procedural / Urban Fantasy",
-  "description": "Investigators of the City of Cortez probing the strange and uncanny. Features Affiliations (Solo, Partner, Squad), 7 Roles (Forensics through Technology), 8 multi-die Resources (starting with 2d10, 2d8, 2d6, 2d6), Distinctions with Hinder, 6 Talents, 5 Stress tracks (Afraid, Angry, Anxious, Exhausted, Injured), and a Growth Pool (Base 2d6).",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+  },
   "character": {
     "id": "template-spotlight-trace-20",
     "isTemplate": true,

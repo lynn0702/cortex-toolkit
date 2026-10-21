@@ -7,7 +7,15 @@
   "variant": "Titan Mech File",
   "pages": 1,
   "genre": "Mecha / Kaiju / Military",
-  "description": "Colossal mechanical titan sheet equipped with Titan Attributes & Stress (Prowess, Control, Renown — d6 to d12), Titan Distinctions (Type, History with Underscore/Overcompensate SFX, Battle), 2 Power Set blocks, and a 15-pip Session Record.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+    "quote": "The city shakes. The bay churns.",
+    "genre": "Kaiju / mech action",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d6",
+    "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
+  },
   "character": {
     "id": "template-spotlight-titans-titan",
     "isTemplate": true,

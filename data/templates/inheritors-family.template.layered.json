@@ -7,7 +7,15 @@
   "variant": "Family Tree File",
   "pages": 2,
   "genre": "Superhero / Dynastic Drama",
-  "description": "Family tree worksheet and GMC roster for Inheritors dynasties. Tracks the First Five Branches, Wild Card Branches, and generation relations across PCs, Parents, Grandparents, and Group Family GMCs.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+    "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+    "genre": "Modern Pulp Action-Adventure",
+    "setting": "d6",
+    "prep": "d10",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
+  },
   "character": {
     "id": "template-spotlight-inheritors-family",
     "isTemplate": true,

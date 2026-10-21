@@ -7,7 +7,15 @@
   "variant": "Crystalline Age",
   "pages": 1,
   "genre": "Superhero / Silver Age Nostalgia",
-  "description": "Veteran heroes of the legendary Crystalline Age stepping back into action after decades of retirement. Features Values, 3 Distinctions (Archetype, Retirement, Satisfaction), 5 Era Resources (5d6), 16 Skills (d4-d6) & Specialties (d8-d12), Signature Assets, and Aging Complications.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+    "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+    "genre": "Pulp adventure",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
+  },
   "character": {
     "id": "template-spotlight-retired-crystalline",
     "isTemplate": true,

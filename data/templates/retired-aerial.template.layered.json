@@ -7,7 +7,15 @@
   "variant": "Aerial Age",
   "pages": 1,
   "genre": "Dieselpunk / Aviation Adventure",
-  "description": "Sky aces and airborne champions of the Aerial Age dusted off for one more dogfight. Features Values, Archetype & Retirement Distinctions, 5d6 Resources, a Signature Asset, 9 write-in Skills (d4-d6) & Specialties (d8-d12), and a 20-step Session Record.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+    "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+    "genre": "Pulp adventure",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
+  },
   "character": {
     "id": "template-spotlight-retired-aerial",
     "isTemplate": true,

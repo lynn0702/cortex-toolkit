@@ -7,7 +7,15 @@
   "variant": "Character File",
   "pages": 2,
   "genre": "Sci-Fi / Superhero / Multiverse",
-  "description": "Multi-dimensional heroes and champions wielding cosmic power sets to save reality across the Terraverse. Features 2 complete pages: 6 Attributes (Agility through Willpower), Distinctions with Hinder, 19 Skills (d4-d6) & Specialties (d8-d12), Signature Assets (d8-d12), Initiative & Hero Dice ladders, Life Points Track, 3 Power Sets, Talents, Session Record, and Leveling Up table.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866",
+    "quote": "Every world is a version of this one. Some are close — a step to the left, a slightly different history.",
+    "genre": "Science fantasy / multiverse adventure",
+    "setting": "d10",
+    "prep": "d10",
+    "complexity": "d10",
+    "image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg"
+  },
   "character": {
     "id": "template-spotlight-terraverse",
     "isTemplate": true,

@@ -7,7 +7,9 @@
   "variant": "Character File",
   "pages": 2,
   "genre": "Action / Rescue / Drama",
-  "description": "Hammerhead rescue pilots who run toward the crisis. Features Attributes with Stress (Physical, Mental, Social), 14 Training Packages, three Distinctions with Hinder and crisis-pool SFX, seven Relationships, an XP track, and page 2 Crisis Pools. Pair with the Hammerheads Vehicle File template.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+  },
   "character": {
     "id": "template-spotlight-hammerheads-character",
     "isTemplate": true,

@@ -7,7 +7,15 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Mystery / Drama / Supernatural",
-  "description": "Residents of a foggy coastal town haunted by secrets and psychic tension. Features Distinctions (Extraordinary, Backstory, Role) with SFX, Emotional Attributes with Statements and Stress (Anger, Desire, Fear, Joy, Sorrow), Relationships, Signature Assets, Growth Pool, and Complications.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866",
+    "quote": "The town knows you’re different. They always have.",
+    "genre": "Small-town supernatural drama",
+    "setting": "d6",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg"
+  },
   "character": {
     "id": "template-spotlight-misty-cove",
     "isTemplate": true,

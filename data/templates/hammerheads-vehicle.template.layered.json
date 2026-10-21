@@ -7,7 +7,9 @@
   "variant": "Vehicle File",
   "pages": 1,
   "genre": "Action / Rescue / Vehicles",
-  "description": "The three Hammerhead rescue craft and their fleet support web. Features Hammerhead Attributes (Systems/Engines/Frame for Hammerheads One, Two, and Three with fixed starting ratings), three Vehicle Distinctions with shared Hinder, and six multi-die Resource Pools (Unassigned, Tactical, Medical, IT/Network, Food/Shelter, Land/Sea/Air).",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+  },
   "character": {
     "id": "template-spotlight-hammerheads-vehicle",
     "isTemplate": true,

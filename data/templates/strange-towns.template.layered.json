@@ -7,7 +7,15 @@
   "variant": "Townsperson File",
   "pages": 1,
   "genre": "Horror / Small Town / Weird Fiction",
-  "description": "Residents uncovering the bizarre, surreal, and terrifying secrets beneath their peaceful small town. Features Attributes (Mental, Physical, Social — d6 to d10), 6 Roles (Enforcer, Entrepreneur, Rebel, Sage, Shepherd, Townie), Distinctions (Mundane, Offbeat, Strange), 6 Relationships, d8 Signature Assets, Complications, and the Strange Die.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866",
+    "quote": "There’s something wrong with this town. Maybe it’s the sheriff who never blinks.",
+    "genre": "Weird horror / small-town mystery",
+    "setting": "d6",
+    "prep": "d6",
+    "complexity": "d6",
+    "image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg"
+  },
   "character": {
     "id": "template-spotlight-strange-towns",
     "isTemplate": true,

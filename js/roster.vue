@@ -2,6 +2,7 @@
 import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView } from './model.ts';
+import RingAttributes from './ring-attributes.vue';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -44,7 +45,6 @@ const characterToDelete = ref<any>( null );
 const showDeleteAllConfirm = ref( false );
 const showSpotlightLibrary = ref( false );
 const spotlightSearch = ref( '' );
-const spotlightFilter = ref( 'all' );
 
 const inputFile = ref<HTMLInputElement | null>( null );
 
@@ -86,18 +86,14 @@ const spotlightTemplates = computed( () => {
 
 const spotlightTemplatesFiltered = computed( () => {
 	let list = spotlightTemplates.value;
-	if ( spotlightFilter.value === '1page' ) {
-		list = list.filter( ( t: any ) => t.pages === 1 );
-	} else if ( spotlightFilter.value === '2page' ) {
-		list = list.filter( ( t: any ) => t.pages >= 2 );
-	}
 	if ( spotlightSearch.value && spotlightSearch.value.trim().length ) {
 		const q = spotlightSearch.value.toLowerCase().trim();
 		list = list.filter( ( t: any ) =>
 			t.title.toLowerCase().includes( q ) ||
 			( t.subtitle && t.subtitle.toLowerCase().includes( q ) ) ||
 			( t.genre && t.genre.toLowerCase().includes( q ) ) ||
-			( t.description && t.description.toLowerCase().includes( q ) )
+			( t.listing && t.listing.genre && t.listing.genre.toLowerCase().includes( q ) ) ||
+			( t.listing && t.listing.quote && t.listing.quote.toLowerCase().includes( q ) )
 		);
 	}
 	return list;
@@ -105,6 +101,30 @@ const spotlightTemplatesFiltered = computed( () => {
 
 function safeImageUrl( url: any ) {
 	return cortexFunctions.safeImageUrl( url );
+}
+
+// Mini character for a library card hero: the listing cover is the
+// portrait, Setting/Prep/Complexity are a three-trait set rendered on
+// the ring by the sheet's own ring component + die icons.
+function cardRingCharacter( tmpl: any ) {
+	const sizeOf = ( v: unknown ) => {
+		const m = /^d(\d+)$/.exec( String( v || '' ) );
+		return m ? Number( m[ 1 ] ) : 0;
+	};
+	const listing = ( tmpl && tmpl.listing ) || {};
+	return {
+		name: tmpl.title,
+		portrait: { url: listing.image || '' },
+		traitSets: [ {
+			id: 'ratings',
+			name: 'Ratings',
+			traits: [
+				{ name: 'Setting', value: sizeOf( listing.setting ), dice: [] },
+				{ name: 'Prep', value: sizeOf( listing.prep ), dice: [] },
+				{ name: 'Complexity', value: sizeOf( listing.complexity ), dice: [] },
+			],
+		} ],
+	};
 }
 
 function openSpotlightLibrary() {
@@ -638,11 +658,6 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 							<i class="fas fa-search"></i>
 							<input type="text" id="spotlight-search" name="spotlightSearch" v-model="spotlightSearch" placeholder="Search templates by name, genre, or mechanics..." aria-label="Search templates">
 						</div>
-						<div class="spotlight-filter-tabs">
-							<button type="button" :class="{ active: spotlightFilter === 'all' }" @click="spotlightFilter = 'all'">All ({{ spotlightTemplates.length }})</button>
-							<button type="button" :class="{ active: spotlightFilter === '1page' }" @click="spotlightFilter = '1page'">1 Page</button>
-							<button type="button" :class="{ active: spotlightFilter === '2page' }" @click="spotlightFilter = '2page'">2 Pages</button>
-						</div>
 					</div>
 				</div>
 
@@ -654,20 +669,29 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 					<div class="spotlight-card" v-for="tmpl in spotlightTemplatesFiltered" :key="tmpl.id">
 						<div class="spotlight-card-header">
 							<div class="spotlight-card-title-group">
-								<h3 class="spotlight-card-title">{{ tmpl.title }}</h3>
+								<h3 class="spotlight-card-title">
+									<a v-if="tmpl.listing && tmpl.listing.url" :href="tmpl.listing.url" target="_blank" rel="noopener">{{ tmpl.title }}</a>
+									<template v-else>{{ tmpl.title }}</template>
+								</h3>
 								<div class="spotlight-card-subtitle">{{ tmpl.subtitle }}</div>
 							</div>
 							<div class="spotlight-card-badges">
-								<span class="badge-page-count" :class="{ 'multi-page': tmpl.pages > 1 }">
-									<i class="fas" :class="tmpl.pages > 1 ? 'fa-copy' : 'fa-file'"></i> {{ tmpl.pages }} Page{{ tmpl.pages > 1 ? 's' : '' }}
-								</span>
-								<span class="badge-orientation" :class="{ landscape: getView(tmpl.character)?.pageOrientation === 'landscape' }">
-									{{ getView(tmpl.character)?.pageOrientation === 'landscape' ? 'Landscape' : 'Portrait' }}
-								</span>
-								<span class="badge-genre">{{ tmpl.genre }}</span>
+								<span class="badge-genre">{{ (tmpl.listing && tmpl.listing.genre) || tmpl.genre }}</span>
 							</div>
 						</div>
-						<p class="spotlight-card-desc">{{ tmpl.description }}</p>
+						<div class="spotlight-card-hero" v-if="tmpl.listing && tmpl.listing.image">
+							<div class="portrait">
+								<div class="portrait-inner">
+									<div class="portrait-circle portrait-alignment-top-center" :style="'background-image: url(' + safeImageUrl(tmpl.listing.image) + ');'"></div>
+								</div>
+								<RingAttributes
+									:character="cardRingCharacter(tmpl)"
+									:editing="[]"
+									:ringTraitID="0"
+								/>
+							</div>
+						</div>
+						<p class="spotlight-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
 						<div class="spotlight-card-traits">
 							<span class="trait-tag" v-for="ts in (tmpl.character.traitSets || [])" :key="ts.name">{{ ts.name }}</span>
 						</div>

@@ -44,6 +44,55 @@ for (const need of ['id', 'name']) {
 if (schema.$defs.trait.properties.id) err('schema trait: trait-level id must be forbidden');
 if (schema.additionalProperties !== false) warn('schema character: additionalProperties not false');
 
+// ---- 1b. Library card copy (2026-10-20): human copy from the publishers'
+// DriveThruRPG listings. Generated entry descriptions are gone; published
+// settings carry a listing block, core-book settings a URL-only one, and
+// the Toolkit Reference showcases none.
+const HANDBOOK_SPOTLIGHTS = ['Eidolon Alpha', 'Hammerheads', 'TRACE 2.0'];
+function checkListing(where, entry) {
+  if (entry.description !== undefined) {
+    err(`${where}: generated entry description removed — cards use listing copy`);
+  }
+  const sp = entry.spotlight;
+  const listing = entry.listing;
+  if (sp === 'Toolkit Reference') {
+    if (listing !== undefined) err(`${where}: showcase entries carry no listing`);
+    return;
+  }
+  if (!listing || typeof listing !== 'object' || Array.isArray(listing)) {
+    err(`${where}: published setting needs a listing block`);
+    return;
+  }
+  if (typeof listing.url !== 'string' || listing.url.indexOf('https://legacy.drivethrurpg.com/product/') !== 0 ||
+      listing.url.indexOf('manufacturers_id=') === -1) {
+    err(`${where}: listing.url must be the live DriveThruRPG product URL`);
+  }
+  const textKeys = ['quote', 'genre', 'setting', 'prep', 'complexity'];
+  if (HANDBOOK_SPOTLIGHTS.indexOf(sp) !== -1) {
+    for (const k of textKeys) {
+      if (listing[k] !== undefined) err(`${where}: core-book setting carries only the Handbook URL (no ${k})`);
+    }
+    if (listing.image !== undefined) err(`${where}: core-book setting has no cover image`);
+    return;
+  }
+  for (const k of textKeys) {
+    if (typeof listing[k] !== 'string' || !listing[k].length) {
+      err(`${where}: listing.${k} is required verbatim text`);
+    }
+  }
+  for (const k of ['setting', 'prep', 'complexity']) {
+    if (typeof listing[k] === 'string' && listing[k].length && !isDiceString(listing[k])) {
+      err(`${where}: listing.${k} must be a dice string (${JSON.stringify(listing[k])})`);
+    }
+  }
+  // Cover image: publisher id + the product id from the entry's own url.
+  const m = /\/product\/(\d+)\//.exec(listing.url || '');
+  const wantImage = m ? 'https://legacy.drivethrurpg.com/images/31866/' + m[1] + '.jpg' : null;
+  if (listing.image !== wantImage) {
+    err(`${where}: listing.image must be the DriveThruRPG cover for the stored url`);
+  }
+}
+
 // ---- 2. Templates vs join rules.
 const templates = require(path.join(root, 'js/templates.js'));
 const seenTplIds = new Set();
@@ -95,6 +144,7 @@ templates.forEach((tpl, ti) => {
       }
     }
   }
+  checkListing(where, tpl);
 });
 
 // ---- 3. data/templates files: must parse; characters validate structurally.
@@ -320,6 +370,7 @@ function checkTemplateFile(where, data) {
     err(`${where}: must be an object`);
     return;
   }
+  checkListing(where, data);
   const ch = data.character;
   if (!ch || typeof ch !== 'object' || Array.isArray(ch)) {
     err(`${where}: entry must wrap character`);

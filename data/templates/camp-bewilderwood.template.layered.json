@@ -7,7 +7,15 @@
   "variant": "Camper File",
   "pages": 1,
   "genre": "Supernatural / Youth Mystery",
-  "description": "Young campers uncovering bizarre woods, mythical creatures, and ancient folklore. Features Heritage, Destiny, and Reputation Distinctions, Attributes, Values, Standing dice, Badges, and Signature Assets.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866",
+    "quote": "Someone has decided you’re destined for great things. You’re twelve.",
+    "genre": "Supernatural summer camp / YA adventure",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg"
+  },
   "character": {
     "id": "template-spotlight-camp-bewilderwood",
     "isTemplate": true,

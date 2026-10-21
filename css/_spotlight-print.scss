@@ -2087,14 +2087,12 @@
 
 	.spotlight-search-row {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
 
 		.spotlight-search-input {
 			position: relative;
-			flex: 1 1 280px;
+			width: 100%;
+			max-width: 560px;
 
 			i {
 				position: absolute;
@@ -2115,35 +2113,6 @@
 					outline: none;
 					border-color: #0284c7;
 					box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-				}
-			}
-		}
-
-		.spotlight-filter-tabs {
-			display: inline-flex;
-			background: #f1f5f9;
-			padding: 3px;
-			border-radius: 6px;
-			gap: 2px;
-
-			button {
-				background: transparent;
-				border: none;
-				padding: 0.4rem 0.85rem;
-				border-radius: 4px;
-				font-size: 0.8rem;
-				font-weight: 600;
-				color: #64748b;
-				cursor: pointer;
-
-				&:hover {
-					color: #0f172a;
-				}
-
-				&.active {
-					background: #ffffff;
-					color: #0f172a;
-					box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 				}
 			}
 		}
@@ -2203,38 +2172,10 @@
 
 			.spotlight-card-badges {
 				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
 				gap: 0.5rem;
 				margin-top: 0.5rem;
-
-				.badge-page-count {
-					font-size: 0.65rem;
-					font-weight: 700;
-					padding: 0.15rem 0.5rem;
-					border-radius: 4px;
-					background: #f1f5f9;
-					color: #475569;
-
-					&.multi-page {
-						background: #e0f2fe;
-						color: #0369a1;
-					}
-				}
-
-				.badge-orientation {
-					font-size: 0.65rem;
-					font-weight: 600;
-					padding: 0.15rem 0.5rem;
-					border-radius: 4px;
-					background: #f8fafc;
-					color: #64748b;
-					border: 1px solid #e2e8f0;
-
-					&.landscape {
-						background: #fef3c7;
-						color: #92400e;
-						border-color: #fde68a;
-					}
-				}
 
 				.badge-genre {
 					font-size: 0.65rem;
@@ -2245,6 +2186,37 @@
 					color: #64748b;
 					border: 1px solid #e2e8f0;
 				}
+			}
+
+			.spotlight-card-title a {
+				color: #0284c7;
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+
+		// Library card hero: the listing cover as the portrait with the
+		// ratings set on the ring — the sheet's own portrait + ring code
+		// paths at card scale. The ring is display-only here.
+		.spotlight-card-hero {
+			width: 220px;
+			margin: 0.25rem 0 0.85rem 0;
+
+			.portrait-circle {
+				border-width: 4px;
+			}
+
+			.attributes-grid,
+			.attribute,
+			.attribute-inner {
+				pointer-events: none;
+			}
+
+			.attribute-inner {
+				cursor: default;
 			}
 		}
 

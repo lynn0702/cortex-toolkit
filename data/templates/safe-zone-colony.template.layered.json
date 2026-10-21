@@ -7,7 +7,15 @@
   "variant": "Colony File",
   "pages": 2,
   "genre": "Post-Apocalyptic / Base Building",
-  "description": "Colony management and stockpile sheet for Safe Zone settlements. Tracks Essential Stockpiles (Food, Water, Shelter — 12d6 each), Non-Essential Stockpiles (Medicine, Protection, Tools — 12d6 each), 6 Colony Buildings with d6-d12 Benefits, 9 Colony Survivors (Morale & Skills/Specialties), and Colony Notes.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+    "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+    "genre": "Post-apocalyptic zombie survival | Base-building",
+    "setting": "d8",
+    "prep": "d8",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
+  },
   "character": {
     "id": "template-spotlight-safe-zone-colony",
     "isTemplate": true,

@@ -7,7 +7,15 @@
   "variant": "Mobster File",
   "pages": 1,
   "genre": "Crime / Drama / Noir",
-  "description": "Organized crime syndicate members climbing the ranks of the 1920s-1930s underworld. Features Distinctions with Distinction Stress, Drives, Roles with Specialties, Syndicate Resources, Signature Assets, and Session Record.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/572308/Cosa-Nostra?manufacturers_id=31866",
+    "quote": "The Castellammarese War is coming. Everyone in the Five Families knows it.",
+    "genre": "Historical Crime Drama",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/572308.jpg"
+  },
   "character": {
     "id": "template-spotlight-cosa-nostra",
     "isTemplate": true,

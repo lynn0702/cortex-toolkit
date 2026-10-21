@@ -162,15 +162,20 @@ textarea:focus-visible {
 // ever show through the numerals themselves.
 //
 // Geometry measured from fonts/cortex-icons.woff (unitsPerEm 1024,
-// ascent 960 / descent 64). Values: die, dx, dy, width, height â€” offsets are
+// ascent 960 / descent 64). Values: die, dx, dy, width, height — offsets are
 // from the centre of the glyph's line box (line-height: 1). If the icon font
 // is ever regenerated, re-measure these.
+//
+// The boxes carry +0.025em of extra height below centre: subpixel rounding
+// at 1x could otherwise leave a 1px sliver of the numeral cut-out
+// uncovered, and on a dark background that sliver reads as a clipped
+// numeral. The pad stays inside every die outline.
 $die-backings:
-	4   -0.0161em  0.0747em  0.2607em  0.3564em,
-	6    0.0010em  0.1680em  0.2891em  0.4297em,
-	8   -0.0078em  0.1504em  0.2852em  0.4336em,
-	10  -0.0313em  0.1563em  0.5293em  0.4336em,
-	12  -0.0181em  0.1504em  0.5322em  0.4414em;
+	4   -0.0161em  0.0872em  0.2607em  0.3814em,
+	6    0.0010em  0.1805em  0.2891em  0.4547em,
+	8   -0.0078em  0.1629em  0.2852em  0.4586em,
+	10  -0.0313em  0.1688em  0.5293em  0.4586em,
+	12  -0.0181em  0.1629em  0.5322em  0.4664em;
 
 // Apply to a `.c` element whose box is centred on its glyph's line box
 // (e.g. display:block + line-height:1, or a flex box centring the text).
@@ -183,9 +188,9 @@ $die-backings:
 		pointer-events: none;
 		// Default (no die-N class) matches the d8 glyph
 		left: calc(50% + -0.0078em);
-		top: calc(50% + 0.1504em);
+		top: calc(50% + 0.1629em);
 		width: 0.2852em;
-		height: 0.4336em;
+		height: 0.4586em;
 		transform: translate(-50%, -50%);
 	}
 	@each $die, $dx, $dy, $w, $h in $die-backings {

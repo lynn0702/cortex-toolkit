@@ -7,7 +7,15 @@
   "variant": "Caster File",
   "pages": 1,
   "genre": "Dark Fantasy / Occult",
-  "description": "Practitioners of forbidden death magic navigating ancient covenants and terrifying bargains. Features Distinctions (Job, Necromancy, Desire), Affiliations (My Life, The World, The Demi-Monde) with statements, Roles, Necromancy Ability with Effect Tags, SFX and Limit, Signature Assets, Session Record, and Complications.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866",
+    "quote": "You didn’t ask for this. You were just trying to live your life.",
+    "genre": "Urban fantasy",
+    "setting": "d8",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg"
+  },
   "character": {
     "id": "template-spotlight-necromancer",
     "isTemplate": true,

@@ -7,7 +7,15 @@
   "variant": "Character File",
   "pages": 1,
   "genre": "Fantasy / Eldritch / Arcane",
-  "description": "Mortals touched, cursed, or mutated by runaway magical disasters. Features Growth Pool, Distinctions with Hinder, 6 Values with statements, 4 Affiliations (Self, Family, School, Coven) with statements, 6 Signature Assets, 5 Stress tracks, 10 Arcane Crafts, and 4 SFX boxes.",
+  "listing": {
+    "url": "https://legacy.drivethrurpg.com/product/572310/Spellcaught?manufacturers_id=31866",
+    "quote": "High school is already a crucible. Add magic, and someone’s going to get burned.",
+    "genre": "Teenage witches / high school drama",
+    "setting": "d6",
+    "prep": "d6",
+    "complexity": "d8",
+    "image": "https://legacy.drivethrurpg.com/images/31866/572310.jpg"
+  },
   "character": {
     "id": "template-spotlight-spellcaught",
     "isTemplate": true,
