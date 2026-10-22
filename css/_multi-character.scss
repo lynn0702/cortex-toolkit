@@ -191,6 +191,13 @@
 		gap: 0.5rem;
 	}
 
+	// Not-wide viewports: sheet-bar panel handles are icons only.
+	@media screen and (max-width: 1399px) {
+		.sheet-bar-btn .sheet-bar-btn-label {
+			display: none;
+		}
+	}
+
 	.session-view-segmented {
 		display: inline-flex;
 		background: #1e293b;

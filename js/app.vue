@@ -151,14 +151,21 @@ function setMode( m: string, sub: string | null, updateHash = true ) {
 	mode.value = m;
 	submode.value = sub;
 	if ( m === 'character' && sub === 'play' ) {
-		isStudioPanelOpen.value = true;
+		// Narrow viewports (overlay drawer): land on the sheet, panel
+		// closed — it would otherwise cover the sheet on arrival. The
+		// Roller handle / mobile Roller tab open it explicitly.
+		const narrow = isNarrowViewport();
+		isStudioPanelOpen.value = !narrow;
 		studioPanelTab.value = 'roller';
-		isRollerOpen.value = true;
+		isRollerOpen.value = !narrow;
 		mobileActiveView.value = 'sheet';
 	} else if ( m === 'character' && sub === 'edit' ) {
-		isStudioPanelOpen.value = true;
+		// Same overlay rule as Play: land on the sheet with the drawer
+		// closed. Tapping any trait opens it explicitly.
+		const narrowEdit = isNarrowViewport();
+		isStudioPanelOpen.value = !narrowEdit;
 		studioPanelTab.value = 'properties';
-		isRollerOpen.value = true;
+		isRollerOpen.value = !narrowEdit;
 		mobileActiveView.value = 'sheet';
 	} else {
 		isRollerOpen.value = false;
@@ -227,7 +234,6 @@ function toggleRoller() {
 		mobileActiveView.value = 'sheet';
 	}
 }
-
 function handleToggleStudio( tab: 'properties' | 'roller' | 'json' ) {
 	if ( isStudioPanelOpen.value && studioPanelTab.value === tab ) {
 		isStudioPanelOpen.value = false;
@@ -245,6 +251,21 @@ function handleToggleStudio( tab: 'properties' | 'roller' | 'json' ) {
 	}
 }
 
+// Mobile play tabs drive the overlay drawer: Sheet closes it, Roller opens
+// it on the roller tab (the drawer no longer opens by default on Play).
+function mobileShowSheet() {
+	mobileActiveView.value = 'sheet';
+	isStudioPanelOpen.value = false;
+	isRollerOpen.value = false;
+}
+
+function mobileShowRoller() {
+	mobileActiveView.value = 'roller';
+	isStudioPanelOpen.value = true;
+	isRollerOpen.value = true;
+	studioPanelTab.value = 'roller';
+}
+
 function togglePanelPosition() {
 	panelPosition.value = panelPosition.value === 'right' ? 'left' : 'right';
 	rollerPosition.value = panelPosition.value;
@@ -255,11 +276,18 @@ function toggleRollerPosition() {
 	togglePanelPosition();
 }
 
+// Below the wide push-aside layout the panel is an overlay drawer.
+function isNarrowViewport() {
+	return Boolean( window.matchMedia && window.matchMedia( '(max-width: 1399px)' ).matches );
+}
+
 function addDieToRoller( dieData: any ) {
 	dicePool.value.add( dieData );
-	isStudioPanelOpen.value = true;
-	studioPanelTab.value = 'roller';
-	isRollerOpen.value = true;
+	if ( !isNarrowViewport() ) {
+		isStudioPanelOpen.value = true;
+		studioPanelTab.value = 'roller';
+		isRollerOpen.value = true;
+	}
 	let label;
 	if ( Array.isArray( dieData ) ) {
 		const poolName = dieData[ 0 ]?.source || 'Challenge Pool';
@@ -1204,7 +1232,8 @@ defineExpose( {
 	exportAllCharacters, updateCharacter, initHistory, commitHistorySnapshot,
 	validateEditing, undo, redo, handleGlobalKeydown, touchCharacter, selectElement,
 	handleGlobalPointerDown, handleMainClick, clearSelected, handleEditorFocusIn,
-	bootFromStorage, persist, saveLocalData,
+	bootFromStorage, persist, saveLocalData, mobileShowSheet, mobileShowRoller,
+	isNarrowViewport, handleToggleStudio,
 } );
 </script>
 
@@ -1283,10 +1312,10 @@ defineExpose( {
 
 				<!-- MOBILE PLAY TABS -->
 				<div class="mobile-play-tabs" v-if="mode === 'character' && submode === 'play'">
-					<button :class="{ active: mobileActiveView === 'sheet' }" @click.stop="mobileActiveView = 'sheet'">
+					<button :class="{ active: mobileActiveView === 'sheet' }" @click.stop="mobileShowSheet">
 						<i class="fas fa-id-card"></i> Sheet
 					</button>
-					<button :class="{ active: mobileActiveView === 'roller' }" @click.stop="mobileActiveView = 'roller'">
+					<button :class="{ active: mobileActiveView === 'roller' }" @click.stop="mobileShowRoller">
 						<i class="fas fa-dice-d20"></i> Roller <span class="tab-badge" v-if="dicePool.items.length > 0">{{ dicePool.items.length }}</span>
 					</button>
 				</div>

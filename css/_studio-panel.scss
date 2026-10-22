@@ -71,6 +71,14 @@
 	}
 }
 
+// Not-wide viewports: panel header buttons are icons only (labels hide;
+// titles carry the names). Matches the JS narrow-viewport line in app.vue.
+@media screen and (max-width: 1399px) {
+	.studio-panel-tabs .studio-tab-label {
+		display: none;
+	}
+}
+
 // Mobile (< 768px): Full width drawer
 @media screen and (max-width: 768px) {
 	.studio-panel {
@@ -78,6 +86,25 @@
 		bottom: var(--header-size);
 		width: 100%;
 	}
+
+	// No side-to-side docking on a full-width drawer: the toggle hides.
+	.studio-panel .studio-action-dock {
+		display: none;
+	}
+}
+
+// Editor flex rows (multi-column label/number inputs) must shrink with the
+// panel: flex items and inputs keep an auto minimum by default, which forced
+// a ~421px floor and sideways scroll on mobile.
+.studio-panel .editor-fields div[style*="flex: 1"] {
+	min-width: 0;
+}
+
+.studio-panel .editor-fields input[type="text"],
+.studio-panel .editor-fields input[type="number"],
+.studio-panel .editor-fields select,
+.studio-panel .editor-fields textarea {
+	min-width: 0;
 }
 
 .studio-panel-header {
@@ -281,6 +308,24 @@
 			max-height: none !important;
 			overflow: visible !important;
 			padding: 0 !important;
+		}
+
+		// The floating editor's scroll-position chevrons describe an inner
+		// scroll region that never scrolls while docked (the panel body
+		// owns scrolling) — without this they float mid-content, looking
+		// like a broken expander.
+		.editor-inner::before,
+		.editor-inner::after {
+			display: none !important;
+		}
+
+		// The floating editor's scroll region (absolute stretch +2rem with
+		// hidden scrollbars) must not leak into the docked panel: there it
+		// is a normal static block and the panel body owns scrolling.
+		&.scrollable > .editor-inner > div {
+			position: static !important;
+			padding: 0 !important;
+			overflow: visible !important;
 		}
 	}
 

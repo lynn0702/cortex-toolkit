@@ -113,16 +113,18 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 					class="studio-tab-btn"
 					:class="{ active: panelTab === 'properties' }"
 					@click="emit('update:panelTab', 'properties')"
+					title="Properties"
 				>
-					<i class="fas fa-sliders"></i> Properties
+					<i class="fas fa-sliders"></i><span class="studio-tab-label">Properties</span>
 				</button>
 				<button
 					type="button"
 					class="studio-tab-btn"
 					:class="{ active: panelTab === 'roller' }"
 					@click="emit('update:panelTab', 'roller')"
+					title="Roller"
 				>
-					<i class="fas fa-dice-d20"></i> Roller
+					<i class="fas fa-dice-d20"></i><span class="studio-tab-label">Roller</span>
 					<span class="studio-tab-badge" v-if="diceCount > 0">{{ diceCount }}</span>
 				</button>
 				<button
@@ -130,15 +132,16 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 					class="studio-tab-btn"
 					:class="{ active: panelTab === 'json' }"
 					@click="emit('update:panelTab', 'json')"
+					title="JSON"
 				>
-					<i class="fas fa-code"></i> JSON
+					<i class="fas fa-code"></i><span class="studio-tab-label">JSON</span>
 				</button>
 			</div>
 
 			<div class="studio-panel-actions">
 				<button
 					type="button"
-					class="studio-action-btn"
+					class="studio-action-btn studio-action-dock"
 					@click="emit('togglePosition')"
 					:title="position === 'right' ? 'Dock left' : 'Dock right'"
 				>
