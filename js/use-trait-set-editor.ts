@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getSpotlightSections, buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, resolveSheetStyle } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
@@ -379,19 +379,12 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// Template traits by name not currently on this sheet (D19 restore menu).
 	const restorableTraitNames = computed( () => cortexFunctions.restorableTraits( props.character, templateEntry.value, props.traitSetID ) );
 
-	const headerRight = computed({
-		get: () => getView( traitSet.value )?.headerRight ?? '',
-		set: ( val: string ) => { setCustomProperty( 'headerRight', val ); }
-	});
-
 	const canMoveUp = computed( () => placeTop.value > 0 );
 	const canMoveDown = computed( () => true );
 
 	const isSpotlightSheet = computed( () => {
-		const explicit = getView( props.character )?.sheetStyle;
-		if ( explicit ) return explicit === 'spotlight';
-		return getView( props.character )?.style?.hasAttributes === false;
-	});
+		return resolveSheetStyle( props.character ) === 'spotlight';
+	} );
 
 	const ringSpread = computed({
 		get: () => getView( traitSet.value )?.ringConfig?.arcSpread ?? 100,
@@ -886,34 +879,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		emit( 'removeTraitSet', props.traitSetID );
 	}
 
-	function duplicateTraitSet() {
-		let character = props.character;
-		let s = props.traitSetID;
-
-		let clone = JSON.parse( JSON.stringify( character.traitSets[s] ) );
-		// A duplicate is a new set: fresh stable id + fresh internal ids
-		// so it never collides with (or shadows) the original in merges.
-		delete clone.id;
-		cortexFunctions.stripInternalIds({ traitSets: [ clone ] });
-		character.traitSets.splice( s + 1, 0, clone );
-		cortexFunctions.ensureTraitSetIds( character );
-		cortexFunctions.assignLids( character );
-
-		updateCharacter( character );
-		selectElement([ 'traitSet', s + 1 ]);
-	}
-
-	const setJsonCopied = ref( false );
-
-	function copyTraitSetJson() {
-		const set = props.character?.traitSets?.[ props.traitSetID ];
-		if ( !set ) return;
-		navigator.clipboard.writeText( JSON.stringify( set, null, 2 ) ).then( () => {
-			setJsonCopied.value = true;
-			setTimeout( () => { setJsonCopied.value = false; }, 2000 );
-		} );
-	}
-
 	function restoreTrait( name: string ) {
 		if ( cortexFunctions.restoreTraitOnSheet( props.character, templateEntry.value, props.traitSetID, name ) ) {
 			updateCharacter( props.character );
@@ -1006,6 +971,17 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 		updateCharacter( props.character );
 	}
+
+	// Labels group content: style-region headings, nouns, stress label, or
+	// hinder sentence. The group hides when nothing in it applies, so no
+	// editor section can render empty.
+	const hasLabelContent = computed( () => {
+		const body = styleBody.value;
+		if ( body === 'subtrait-columns' || body === 'three-column-table' || body === 'dice-count' ) return true;
+		if ( body === 'distinctions' ) return true;
+		if ( hasAttachedStress.value ) return true;
+		return body !== 'notes' && body !== 'image' && body !== 'pips' && body !== 'session-record' && body !== 'angled-lines';
+	} );
 
 	function setImageConfig( key: keyof ImageConfig, value: any ) {
 		let s = props.traitSetID;
@@ -1268,7 +1244,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		ringTrait, pageNumber, isFullWidthSpan,
 		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
 		partCells, hasParts, hasCustomParts, setPartCell, resetParts,
-		templateEntry, restorableTraitNames, headerRight, canMoveUp, canMoveDown, isSpotlightSheet,
+		templateEntry, restorableTraitNames, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
@@ -1278,10 +1254,9 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
-		duplicateTraitSet, copyTraitSetJson, setJsonCopied, restoreTrait, moveTraitSetUp, moveTraitSetDown,
+		restoreTrait, moveTraitSetUp, moveTraitSetDown,
 		setRingConfig, resetRingPlacement, setFeature,
-		setCustomProperty, styleLabel, setStyleLabel, setImageConfig, uploadImageStart,
-		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
+		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart,		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset, getDieDisplayValue,
 		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty,
 		checkAnchorPosition, checkScrollPosition,

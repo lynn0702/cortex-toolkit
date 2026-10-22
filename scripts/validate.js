@@ -145,6 +145,21 @@ templates.forEach((tpl, ti) => {
     }
   }
   checkListing(where, tpl);
+  const hasNameSet = ch.traitSets.some((ts) => ts && ts.view && ts.view.style && ts.view.style.body === 'name');
+  if (!hasNameSet) err(`${where}: template needs a Name set first (the name block is a trait set)`);
+  // Sheet style lives in exactly one place (view.style.sheet); the retired
+  // top-level sheetStyle and the hasAttributes set-type flag are gone.
+  {
+    const cv = (ch.view && typeof ch.view === 'object') ? ch.view : {};
+    if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key (use view.style.sheet)`);
+    const cs = (cv.style && typeof cv.style === 'object') ? cv.style : {};
+    if (cs.hasAttributes !== undefined) err(`${where}: retired view.style.hasAttributes key`);
+    if (cs.sheet !== 'classic' && cs.sheet !== 'spotlight') err(`${where}: view.style.sheet must be classic|spotlight`);
+  }
+  ch.traitSets.forEach((ts, si) => {
+    const bag = (ts && (ts.view || (ts.custom && ts.custom.cortexToolkit))) || {};
+    if (bag.headerRight !== undefined) err(`${where}.traitSets[${si}]: retired headerRight key (2026-10-22)`);
+  });
 });
 
 // ---- 3. data/templates files: must parse; characters validate structurally.
@@ -228,6 +243,10 @@ function checkLayeredTrait(node, where, depth) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
   if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
+  const visLayered = node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
+  if (visLayered !== undefined && visLayered !== 'shown' && visLayered !== 'hidden') {
+    err(`${where}: view.visibility must be shown|hidden`);
+  }
   if (node.select !== undefined) warn(`${where}: select lives on the set, not the trait`);
   if (node.requiresSelect !== undefined) warn(`${where}: requiresSelect lives on the set, not the trait`);
   if (node.traits !== undefined) {
@@ -330,6 +349,10 @@ function checkTemplateTrait(node, where, depth, inSlot) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
   if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
+  const visTemplate = node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
+  if (visTemplate !== undefined && visTemplate !== 'shown' && visTemplate !== 'hidden') {
+    err(`${where}: view.visibility must be shown|hidden`);
+  }
   const kids = (map, label) => {
     if (map === undefined || map === null) return;
     if (!map || typeof map !== 'object' || Array.isArray(map)) {
@@ -359,7 +382,11 @@ function checkSlots(node, where, depth, check) {
   }
   idx.forEach((k) => {
     const s = node.slots[k];
-    if (s && typeof s === 'object' && !Array.isArray(s) && s.name !== undefined) {
+    // Slots are not traits (2026-10-22): empty slot objects are render-time
+    // expansion, never stored. Data-carrying slots stay indexed.
+    if (s && typeof s === 'object' && !Array.isArray(s) && Object.keys(s).length === 0) {
+      err(`${where}.slots[${k}]: empty slot objects are never stored`);
+    } else if (s && typeof s === 'object' && !Array.isArray(s) && s.name !== undefined) {
       err(`${where}.slots[${k}]: slots carry no name key`);
     } else check(s, k);
   });
@@ -402,6 +429,9 @@ function checkTemplateFile(where, data) {
       continue;
     }
     if (set._lid !== undefined) err(`${where}/${name}: _lid is app-local, never in files`);
+    // Retired view keys (2026-10-22): headerRight read nowhere.
+    const setBag = (set.view || (set.custom && set.custom.cortexToolkit)) || {};
+    if (setBag.headerRight !== undefined) err(`${where}/${name}: retired headerRight key`);
     // Identity (2026-10-20): the map key is the address, the set id the
     // stable identity — rename the key freely, never the id. Suffixed
     // duplicate keys resolve through their label.
@@ -561,6 +591,13 @@ if (fs.existsSync(dataDir)) {
       if (hit) placed.push(hit);
     }
     checkOverlaps(where, placed);
+    {
+      const cv = (ch.view && typeof ch.view === 'object') ? ch.view : {};
+      if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key (use view.style.sheet)`);
+      const cs = (cv.style && typeof cv.style === 'object') ? cv.style : {};
+      if (cs.hasAttributes !== undefined) err(`${where}: retired view.style.hasAttributes key`);
+      if (cs.sheet !== 'classic' && cs.sheet !== 'spotlight') err(`${where}: view.style.sheet must be classic|spotlight`);
+    }
     const pinned = ch.view && ch.view.pageCount;
     if (pinned !== undefined && pinned !== null) {
       if (Number(pinned) < maxPage) err(`${where}: view.pageCount ${pinned} is below highest set page ${maxPage}`);

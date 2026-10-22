@@ -4,7 +4,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 
 const {
 	traitSet, s, submode, printBlank, viewY, character,
-	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
+	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitStatement, renderText, getSubtraitNameOr,
 	getStandingComplication, getStandingBonus, getStandingBonusRatings
@@ -18,9 +18,9 @@ const {
 				<div :class="{ 'trait-inner': true, 'paired-slot-row-wrap': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 					tabindex="0"
 					role="button"
-					@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-					@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+					@keydown.enter.prevent="openTraitAt(s, item)"
+					@keydown.space.prevent="openTraitAt(s, item)"
+					@click.stop="openTraitAt(s, item)">
 					<div class="paired-slot-header-row">
 						<span class="paired-slot-name-box">
 							<span class="paired-slot-name-text" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>

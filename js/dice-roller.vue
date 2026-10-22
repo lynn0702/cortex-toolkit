@@ -554,7 +554,7 @@ function copyOutput() {
 							:title="'Add d' + size + ' Scale Die (Keep 3)'"
 							style="background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 5px; cursor: pointer; line-height: 1;"
 						>
-							<span class="c" style="color: #1e293b; font-size: 0.95rem;">{{ getDieDisplayValue(size) }}</span>
+							<span class="c" style="color: #1e293b; font-size: 1.3rem; line-height: 1;">{{ getDieDisplayValue(size) }}</span>
 						</button>
 					</div>
 				</div>
@@ -569,7 +569,7 @@ function copyOutput() {
 							:title="'Add d' + size + ' Resource Die'"
 							style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 2px 5px; cursor: pointer; line-height: 1;"
 						>
-							<span class="c" style="color: #0284c7; font-size: 0.95rem;">{{ getDieDisplayValue(size) }}</span>
+							<span class="c" style="color: #0284c7; font-size: 1.3rem; line-height: 1;">{{ getDieDisplayValue(size) }}</span>
 						</button>
 					</div>
 				</div>

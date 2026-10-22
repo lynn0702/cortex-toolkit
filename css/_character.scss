@@ -914,6 +914,23 @@
 	}
 }
 
+// In-set add buttons fit narrow set columns instead of clipping: the row
+// grows with wrapped text rather than holding a fixed height.
+.trait-set .preview-button-container {
+	> div {
+		height: auto;
+		min-height: var(--button-container-height);
+	}
+
+	.preview-button {
+		max-width: 100%;
+		padding-inline: 1em;
+		white-space: normal;
+		overflow-wrap: anywhere;
+		line-height: 1.3;
+	}
+}
+
 .preview-button {
 	@extend %button;
 	&.preview-button-delete {

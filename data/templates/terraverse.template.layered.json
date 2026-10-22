@@ -37,9 +37,8 @@
       "pageCount": 2,
       "spotlight": "Terraverse",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Attributes": {
         "id": "attributes",
         "description": "Core hero ratings with Vitality and Willpower",
@@ -207,13 +252,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {},
-          "3": {}
-        }
+        "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
@@ -256,101 +295,25 @@
           }
         },
         "traits": {
-          "Craft": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Drive": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Fight": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Fix": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Fly": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Focus": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Influence": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Know": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Labor": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Move": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Notice": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Operate": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Perform": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Shoot": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Sneak": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Survive": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Throw": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Treat": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Trick": {
-            "slots": {
-              "0": {}
-            }
-          }
+          "Craft": {},
+          "Drive": {},
+          "Fight": {},
+          "Fix": {},
+          "Fly": {},
+          "Focus": {},
+          "Influence": {},
+          "Know": {},
+          "Labor": {},
+          "Move": {},
+          "Notice": {},
+          "Operate": {},
+          "Perform": {},
+          "Shoot": {},
+          "Sneak": {},
+          "Survive": {},
+          "Throw": {},
+          "Treat": {},
+          "Trick": {}
         }
       },
       "Initiative": {
@@ -385,11 +348,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {}
-        }
+        "traits": {}
       },
       "Hero Dice": {
         "id": "hero-dice",
@@ -423,10 +382,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {}
-        }
+        "traits": {}
       },
       "Life Points": {
         "id": "life-points",
@@ -501,9 +457,7 @@
                 }
               }
             }
-          },
-          "1": {},
-          "2": {}
+          }
         }
       },
       "Power Set 2": {
@@ -552,9 +506,7 @@
                 }
               }
             }
-          },
-          "1": {},
-          "2": {}
+          }
         }
       },
       "Power Set 3": {
@@ -603,9 +555,7 @@
                 }
               }
             }
-          },
-          "1": {},
-          "2": {}
+          }
         }
       },
       "Talents": {
@@ -639,13 +589,7 @@
             "col3": "EFFECT"
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {},
-          "3": {}
-        }
+        "traits": {}
       },
       "Session Record": {
         "id": "session-record",

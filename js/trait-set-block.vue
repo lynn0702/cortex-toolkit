@@ -74,7 +74,6 @@ const bodyComponent = computed( () => {
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>
-					<div class="trait-set-header-file" v-if="getView(traitSet)?.headerRight">{{ getView(traitSet)?.headerRight }}</div>
 				</div>
 			</transition>
 		</div>

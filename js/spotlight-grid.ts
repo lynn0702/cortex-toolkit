@@ -9,7 +9,7 @@
 // trait parts (name, rating, description, sfx, subtraits, stressLabel,
 // stress) as cells in the trait's grid, percent of the set.
 import type { Character, TraitSet } from './model.ts';
-import { getView } from './model.ts';
+import { getView, isNameSet } from './model.ts';
 
 // Classic flow has left/right tracks only; 'center' (and anything
 // unexpected) folds left so no set ever vanishes.
@@ -30,6 +30,7 @@ export function isFullWidthClassic( traitSet: TraitSet ): boolean {
 export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, pageIndex: number ): boolean {
 	return ( traitSets || [] ).some( ( traitSet, s ) =>
 		s !== ringTraitID &&
+		!isNameSet( traitSet ) &&
 		( ( getView( traitSet )?.page || 1 ) === pageIndex ) &&
 		isFullWidthClassic( traitSet )
 	);
@@ -173,6 +174,8 @@ export interface SpotlightSection {
 export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number ): SpotlightSection[] {
 	const pageSets: SpotlightSectionItem[] = [];
 	( traitSets || [] ).forEach( ( traitSet, s ) => {
+		// The name block renders as the page header, never as a grid cell.
+		if ( isNameSet( traitSet ) ) return;
 		const page = getView( traitSet )?.page || 1;
 		if ( page === pageIndex ) {
 			pageSets.push( { traitSet, index: s } );

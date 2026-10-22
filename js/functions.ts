@@ -1,7 +1,7 @@
 import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
-import { VIEW_KEY, getView, ensureView } from './model.ts';
+import { VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel, resolveSheetStyle, defaultNameHidden } from './model.ts';
 import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
@@ -224,6 +224,41 @@ export const cortexFunctions = {
 		sfxPrefix: 'SFX:',
 		hinderSentence: '',
 	} as Record<string, string>,
+
+	// The name block is the first trait set — see model.isNameSet.
+	isNameSet: function( set: any ) {
+		return isNameSetModel( set );
+	},
+
+	// Read a name-set trait without creating anything (render path).
+	getNameTrait: function( character: any, key: string ) {
+		const sets = character && Array.isArray( character.traitSets ) ? character.traitSets : [];
+		const set = sets.find( ( s: any ) => isNameSetModel( s ) );
+		if ( !set || !Array.isArray( set.traits ) ) return undefined;
+		return set.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === key );
+	},
+
+	// Resolve a name-set trait for editing, creating the set and trait
+	// when absent (legacy files predate the set). Values stay on the
+	// character fields; only label/hidden live here. Created traits hide
+	// only where the style renders no zone for them (game/PP/notes in
+	// spotlight); shown is absence, never a stored word.
+	ensureNameTrait: function( character: any, key: string ) {
+		if ( !character || !Array.isArray( character.traitSets ) ) return null;
+		let set = character.traitSets.find( ( s: any ) => isNameSetModel( s ) );
+		if ( !set ) {
+			set = { id: 'name', name: 'Name', traits: [], sfx: [], view: { style: { header: 'default', body: 'name' } } };
+			character.traitSets.unshift( set );
+		}
+		if ( !Array.isArray( set.traits ) ) set.traits = [];
+		let trait = set.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === key );
+		if ( !trait ) {
+			trait = { name: key, value: 0, dice: [], description: '', traits: [], sfx: [], tags: [] };
+			if ( defaultNameHidden( key, character ) ) trait.view = { hidden: true };
+			set.traits.push( trait );
+		}
+		return trait;
+	},
 
 	getTraitDice: function( trait: Trait ) {
 		if ( !trait ) return [];
@@ -471,13 +506,15 @@ export const cortexFunctions = {
 	// template. Slugs stay readable in raw JSON; uniqueness is per character.
 	ensureTraitSetIds: function( character: any ) {
 		if ( !character || !Array.isArray( character.traitSets ) ) return character;
-		const taken = new Set<string>();
+		// 'name' is reserved for the name block (identity fallback when a
+		// stored set's view bag prunes away); never assign it elsewhere.
+		const taken = new Set<string>( [ 'name' ] );
 		character.traitSets.forEach( ( ts: any ) => {
 			if ( ts && typeof ts.id === 'string' && ts.id.length ) taken.add( ts.id );
 		} );
 		character.traitSets.forEach( ( ts: any ) => {
 			if ( ts && ( typeof ts.id !== 'string' || !ts.id.length ) ) {
-				ts.id = this.slugifySetId( ts.name, taken );
+				ts.id = this.isNameSet( ts ) ? 'name' : this.slugifySetId( ts.name, taken );
 			}
 		} );
 		return character;
@@ -765,7 +802,7 @@ export const cortexFunctions = {
 		const result: any[] = [];
 		const mergeOne = ( b: any, o: any ) => {
 			const c = cloneDeep( b );
-			this.applyOverrides( c, o );
+			this.applyOverrides( c, o, false );
 			return c;
 		};
 		// Blank slots fill positionally from index-aligned overrides (the
@@ -828,7 +865,7 @@ export const cortexFunctions = {
 			if ( j >= 0 ) {
 				consumed.add( j );
 				const c = cloneDeep( b );
-				this.applyOverrides( c, over[j] );
+				this.applyOverrides( c, over[j], false );
 				result.push( c );
 			} else {
 				result.push( cloneDeep( b ) );
@@ -841,10 +878,12 @@ export const cortexFunctions = {
 	},
 
 	// Three-state recursive merge (brief D3): absent inherits, null clears,
-	// values win. Mutates base (callers pass a clone). The `sheet` link
-	// never participates (D9); removedTraits/removedSets are character-local
-	// and replace wholesale (D6).
-	applyOverrides: function( base: any, over: any ) {
+	// values win. Mutates base (callers pass a clone). The top-level
+	// `sheet` link never participates (D9); removedTraits/removedSets are
+	// character-local and replace wholesale (D6). The sheet guard is
+	// root-only so a nested key literally named `sheet` (view.style.sheet)
+	// still merges.
+	applyOverrides: function( base: any, over: any, isRoot?: boolean ) {
 		if ( !over || typeof over !== 'object' || Array.isArray( over ) ) return base;
 		if ( !base || typeof base !== 'object' || Array.isArray( base ) ) return base;
 		// Removals apply even when the array itself is absent from the
@@ -857,7 +896,7 @@ export const cortexFunctions = {
 			base.traits = base.traits.filter( ( tr: any ) => !( tr && tr.name && over.removedTraits.includes( tr.name ) ) );
 		}
 		for ( const key of Object.keys( over ) ) {
-			if ( key === 'sheet' ) continue;
+			if ( key === 'sheet' && isRoot !== false ) continue;
 			const val = over[key];
 			if ( val === null ) { base[key] = null; continue; }
 			if ( key === 'removedTraits' || key === 'removedSets' ) {
@@ -872,7 +911,7 @@ export const cortexFunctions = {
 			} else if ( ( key === 'sfx' || key === 'tags' ) && Array.isArray( val ) && Array.isArray( bval ) ) {
 				base[key] = val.length ? this.unionArrays( bval, val ) : [];
 			} else if ( val && typeof val === 'object' && !Array.isArray( val ) && bval && typeof bval === 'object' && !Array.isArray( bval ) ) {
-				this.applyOverrides( bval, val );
+				this.applyOverrides( bval, val, false );
 			} else {
 				base[key] = cloneDeep( val );
 			}
@@ -1388,7 +1427,6 @@ export const cortexFunctions = {
 		'notes': '',
 		'tags': [],
 		'view': {
-			'sheetStyle': 'spotlight',
 			'columns': 2,
 			'pageCount': 1,
 			'columnAlignment': 'top-base',
@@ -1398,7 +1436,7 @@ export const cortexFunctions = {
 				'right': 0
 			},
 			'style': {
-				'hasAttributes': false,
+				'sheet': 'spotlight',
 			}
 		}
 	},

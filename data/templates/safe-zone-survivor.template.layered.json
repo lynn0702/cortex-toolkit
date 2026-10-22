@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Safe Zone",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Distinctions": {
         "id": "distinctions",
         "description": "Pre-fall life, current survival role, and future hope",
@@ -155,106 +200,26 @@
           }
         },
         "traits": {
-          "Animals": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Athletics": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Big Guns": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Covert": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Craft": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Creativity": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Drive": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Focus": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Guns": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Influence": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Knowledge": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Mechanic": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Melee": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Notice": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Operate": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Pilot": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Survival": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Thrown": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Treatment": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Unarmed": {
-            "slots": {
-              "0": {}
-            }
-          }
+          "Animals": {},
+          "Athletics": {},
+          "Big Guns": {},
+          "Covert": {},
+          "Craft": {},
+          "Creativity": {},
+          "Drive": {},
+          "Focus": {},
+          "Guns": {},
+          "Influence": {},
+          "Knowledge": {},
+          "Mechanic": {},
+          "Melee": {},
+          "Notice": {},
+          "Operate": {},
+          "Pilot": {},
+          "Survival": {},
+          "Thrown": {},
+          "Treatment": {},
+          "Unarmed": {}
         }
       },
       "Attributes": {
@@ -334,19 +299,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {},
-          "3": {},
-          "4": {},
-          "5": {},
-          "6": {},
-          "7": {},
-          "8": {},
-          "9": {}
-        }
+        "traits": {}
       },
       "Stress": {
         "id": "stress",
@@ -422,12 +375,7 @@
             "col3": "EFFECT"
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {}
-        }
+        "traits": {}
       },
       "Growth Pool": {
         "id": "growth-pool",

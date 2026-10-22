@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "SolarPunk",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Attributes": {
         "id": "attributes",
         "description": "SolarPunk holistic community attributes",
@@ -178,10 +223,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -192,10 +233,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -206,10 +243,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -271,29 +304,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
-            "traits": {
-              "SFX": {
-                "traits": {},
-                "slots": {
-                  "0": {}
-                }
-              }
-            }
-          },
-          "1": {
-            "traits": {
-              "SFX": {
-                "traits": {},
-                "slots": {
-                  "0": {}
-                }
-              }
-            }
-          }
-        }
+        "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",

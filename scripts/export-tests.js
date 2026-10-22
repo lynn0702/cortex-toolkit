@@ -77,7 +77,8 @@ function walk(node, fn) {
     }],
   };
   M.normalizeView(legacy);
-  const [brawn, lean, mean] = legacy.traitSets[0].traits;
+  const dset = legacy.traitSets.find((s) => s.name === 'Distinctions');
+  const [brawn, lean, mean] = dset.traits;
   ok(brawn.custom === undefined, 'stress-8: legacy custom gone');
   const bc = brawn.traits.find((t) => t.name === 'Stress');
   ok(bc && bc.value === 8, 'stress-8: companion rated d8', bc);
@@ -132,7 +133,8 @@ function walk(node, fn) {
   ok(set.traits.Lean.custom === undefined && set.traits.Lean.tags === undefined,
     'template: scaffolding out', set.traits.Lean);
   const back = M.unmigrateTemplateEntry(r.data);
-  const traits = back.data.character.traitSets[0].traits;
+  const backDistinctions = back.data.character.traitSets.find((s) => s.id === 'distinctions');
+  const traits = (backDistinctions && backDistinctions.traits) || [];
   const bb = traits.find((t) => t.name === 'Brawn');
   ok(bb && bb.traits && bb.traits.find((t) => t.name === 'Fallout' && t.value === 6), 'round-trip: companion survives', bb && bb.traits);
   ok(bb.custom === undefined && bb.tags === undefined && bb.description === undefined, 'round-trip: scaffolding stays out');
@@ -239,6 +241,25 @@ function walk(node, fn) {
   ok(back.traitSets.length === 2, 'dupes: both survive', back.traitSets.length);
   const names = back.traitSets.map((s) => (s.traits[0] || {}).name).join(',');
   ok(names === 'Kin,Foe', 'dupes: contents pair correctly', names);
+}
+
+// ---- 8. Fresh template renders export no slot objects (blanks expand at
+// render time; nothing blank is stored).
+{
+  const F2 = require('../js/layered-materialize.ts');
+  const render = {
+    id: 'c8', name: 'Fresh',
+    traitSets: [
+      { id: 'distinctions', name: 'Distinctions', view: { reservedSlots: 3 }, traits: [{ name: 'Brawn', value: 8, dice: [8] }], sfx: [] },
+    ],
+  };
+  const ent = F2.toLayeredEntity(render);
+  const names = Object.keys(ent.sets.Distinctions.traits || {});
+  ok(JSON.stringify(names) === JSON.stringify(['Brawn']), 'no blank traits stored', names);
+  ok(!ent.sets.Distinctions.slots, 'no slots map stored');
+  let lids = 0;
+  walk(ent, (n) => { if (n._lid !== undefined) lids++; });
+  ok(lids === 0, 'no internal ids stored', lids);
 }
 
 console.log(`export-tests: ${pass} passed, ${fail} failed`);

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, toRaw } from 'vue';
+import { toLayeredEntity } from './layered-materialize.ts';
 
 const props = defineProps<{
 	character?: any;
@@ -21,7 +22,33 @@ function fill() {
 		filledId.value = '';
 		return;
 	}
-	text.value = JSON.stringify( props.character, null, 2 );
+	// The stored layered shape (name-keyed maps, dice-string ratings):
+	// no materialized slot objects, no internal ids — the document a
+	// person can actually hand-edit.
+	const raw = JSON.parse( JSON.stringify( toRaw( props.character ) ) );
+	let doc: any = null;
+	try {
+		doc = toLayeredEntity( raw as Record<string, unknown> );
+	} catch ( e: any ) {
+		error.value = 'JSON error: ' + String( ( e as Error )?.message || e ).slice( 0, 200 );
+		return;
+	}
+	text.value = JSON.stringify( doc, null, 2 );
+	// Keep the template pin beside the entity (reference only — the full
+	// template object lives in the template store, embedded on file export).
+	const tref = props.character && props.character.sheet && props.character.sheet.template;
+	if ( tref ) {
+		const ref = ( typeof tref === 'string' )
+			? { id: tref }
+			: ( tref && typeof tref === 'object' && typeof tref.id === 'string' && tref.id.length )
+				? { id: tref.id, version: tref.version || 1 }
+				: null;
+		if ( ref ) {
+			const withRef = JSON.parse( text.value );
+			withRef.sheet = { template: ref };
+			text.value = JSON.stringify( withRef, null, 2 );
+		}
+	}
 	error.value = '';
 	filledId.value = props.character.id || '';
 }
@@ -60,7 +87,7 @@ watch( () => props.character && props.character.id, ( id ) => {
 <template>
 	<div class="editor json-editor">
 		<div class="editor-label">Character JSON</div>
-		<div class="editor-hint">Full merged sheet. Apply runs the import path — a syntax error changes nothing on the sheet.</div>
+		<div class="editor-hint">Stored layered form: name-keyed maps, dice strings, no slots, no internal ids. Apply runs the import path — a syntax error changes nothing on the sheet.</div>
 		<div v-if="error" class="json-error" role="alert">{{ error }}</div>
 		<textarea
 			v-model="text"

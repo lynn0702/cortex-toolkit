@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Cosa Nostra",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "hasNickname": true,
       "watermark": {
         "enabled": true,
@@ -56,6 +55,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Distinctions": {
         "id": "distinctions",
         "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
@@ -67,7 +112,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "headerRight": "Character File",
           "traitColumns": 3,
           "page": 1,
           "style": {
@@ -159,15 +203,7 @@
             "dice": "/ DICE"
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {},
-          "3": {},
-          "4": {},
-          "5": {}
-        }
+        "traits": {}
       },
       "Drives": {
         "id": "drives",
@@ -274,12 +310,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {}
-        }
+        "traits": {}
       },
       "Roles & Specialties": {
         "id": "roles-specialties",
@@ -321,31 +352,11 @@
           }
         },
         "traits": {
-          "Big Shot": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Brains": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Enforcer": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Thief": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Wheelman": {
-            "slots": {
-              "0": {}
-            }
-          }
+          "Big Shot": {},
+          "Brains": {},
+          "Enforcer": {},
+          "Thief": {},
+          "Wheelman": {}
         }
       },
       "Session Record": {
@@ -406,12 +417,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {}
-        }
+        "traits": {}
       }
     }
   }

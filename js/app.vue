@@ -234,6 +234,15 @@ function toggleRoller() {
 		mobileActiveView.value = 'sheet';
 	}
 }
+// Single seam for drawer open/close: closing always lands the mobile
+// view back on the sheet, or the sheet stays display:none behind a shut
+// drawer (blank screen until something forces a rerender).
+function setPanelOpen( open: boolean ) {
+	isStudioPanelOpen.value = open;
+	isRollerOpen.value = open;
+	if ( !open ) mobileActiveView.value = 'sheet';
+}
+
 function handleToggleStudio( tab: 'properties' | 'roller' | 'json' ) {
 	if ( isStudioPanelOpen.value && studioPanelTab.value === tab ) {
 		isStudioPanelOpen.value = false;
@@ -818,12 +827,22 @@ function importCharacter( characterData: any ) {
 		const templateChar = tplEntry ? cortexFunctions.findTemplateCharacter( tplEntry ) : null;
 		if ( templateChar ) {
 			// Layered seam: the file's content + overrides fold onto
-			// the template (lossless — presentation is preserved).
-			incoming = cortexFunctions.materializeCharacter( cortexFunctions.toLayeredEntity( incoming ), templateChar );
+			// the template (lossless — presentation is preserved). Input
+			// already in layered form (JSON tab) folds directly.
+			const layered = ( incoming && !Array.isArray( incoming.traitSets ) &&
+				incoming.sets && typeof incoming.sets === 'object' && !Array.isArray( incoming.sets ) )
+				? incoming
+				: cortexFunctions.toLayeredEntity( incoming );
+			incoming = cortexFunctions.materializeCharacter( layered, templateChar );
 			incoming.sheet = { template: { id: tplEntry.id, version: tplEntry.version || 1 } };
 		} else if ( tplEntry ) {
 			incoming = cortexFunctions.mergeTemplateIntoCharacter( incoming, tplEntry );
 		}
+	} else if ( incoming && !Array.isArray( incoming.traitSets ) &&
+		incoming.sets && typeof incoming.sets === 'object' && !Array.isArray( incoming.sets ) ) {
+		// Layered input with no template link: fold standalone (no
+		// presentation base; entity sets render as custom sets).
+		incoming = cortexFunctions.materializeCharacter( incoming );
 	}
 	cortexFunctions.ensureTraitSetIds( incoming );
 	cortexFunctions.assignLids( incoming );
@@ -1274,7 +1293,7 @@ defineExpose( {
 					:dicePool="dicePool"
 					:viewY="viewY"
 				@update:panelTab="studioPanelTab = $event"
-				@update:isOpen="isStudioPanelOpen = $event; isRollerOpen = $event"
+				@update:isOpen="setPanelOpen($event)"
 				@togglePosition="togglePanelPosition"
 				@selectElement="selectElement"
 				@updateCharacter="updateCharacter"

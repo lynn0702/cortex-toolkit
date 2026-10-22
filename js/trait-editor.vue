@@ -4,6 +4,7 @@ import { cortexFunctions } from './functions.ts';
 import { getView, ensureView } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
+import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
 	character: any;
@@ -130,6 +131,41 @@ const sessionRecordChecked = computed( {
 const isMultiDie = computed( () => Boolean( getView( traitSet.value )?.multiDie ) || ( getView( traitSet.value )?.style?.body === 'resources' ) || ( getView( traitSet.value )?.style?.body === 'dice-count' ) || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 1 ) );
 
 const dice = computed( () => cortexFunctions.getTraitDice( trait.value ) );
+
+const isNameSet = computed( () => cortexFunctions.isNameSet( traitSet.value ) );
+
+// A trait's own label field. Rendered by name sets; stored sparsely
+// (absent unless customized).
+const traitLabel = computed( {
+	get() {
+		const v = trait.value?.label;
+		return typeof v === 'string' ? v : '';
+	},
+	set( val: any ) {
+		if ( !trait.value ) return;
+		if ( typeof val === 'string' && val.trim().length ) trait.value.label = val.trim();
+		else delete trait.value.label;
+		updateCharacter( props.character );
+	},
+} );
+
+// Trait visibility (view.hidden): true hides it everywhere, absent or
+// false shows it. Shown is absence.
+const traitHidden = computed( {
+	get() {
+		return getView( trait.value )?.hidden === true;
+	},
+	set( val: any ) {
+		if ( !trait.value ) return;
+		if ( val ) {
+			ensureView( trait.value ).hidden = true;
+		} else {
+			const v = getView( trait.value );
+			if ( v && typeof v === 'object' ) delete ( v as Record<string, unknown> ).hidden;
+		}
+		updateCharacter( props.character );
+	},
+} );
 
 const description = computed( {
 	get() {
@@ -730,7 +766,7 @@ function getDieDisplayValue( val: any ) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" @click.stop="selectElement([])"><i class="fas fa-times"></i></button>
+			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
 			<button type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait"><i class="fas fa-copy"></i></button>
 			<button
 				v-if="!confirmDelete"
@@ -760,18 +796,6 @@ function getDieDisplayValue( val: any ) {
 	
 				<div class="editor-fields">
 
-					<div class="editor-field" v-if="parentIsFullWidth">
-						<div class="editor-label">Panel Position</div>
-						<div class="editor-button-group">
-							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'left' }" @click.stop="editorDock = 'left'">
-								<i class="fas fa-arrow-left"></i> Left
-							</button>
-							<button type="button" class="editor-group-btn" :class="{ active: editorDock === 'right' }" @click.stop="editorDock = 'right'">
-								Right <i class="fas fa-arrow-right"></i>
-							</button>
-						</div>
-					</div>
-
 					<template v-if="isTalentsTable">
 						<div class="editor-field">
 							<label :for="'trait-talent-col1-' + traitID">{{ talentCol1Label }}</label>
@@ -795,6 +819,18 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
+
+					<div class="editor-field" v-if="isNameSet">
+						<label :for="'trait-label-' + traitID">Label</label>
+						<input type="text" :id="'trait-label-' + traitID" name="traitLabel" v-model="traitLabel" placeholder="Label shown on the sheet">
+					</div>
+
+					<div class="editor-field">
+						<div class="name-heading-row">
+							<label>Visibility</label>
+							<visibility-eye :visible="!traitHidden" @toggle="traitHidden = !traitHidden" />
+						</div>
+					</div>
 
 					<!-- STATEMENT FIELD -->
 					<div class="editor-field" v-if="isStatementSet || isPairedSlotsStyle">

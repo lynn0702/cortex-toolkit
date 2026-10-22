@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Inheritors",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Attributes": {
         "id": "attributes",
         "description": "Gain a PP when you include your d4 attribute in your dice pool.",
@@ -155,10 +200,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {}
-        }
+        "traits": {}
       },
       "Distinctions": {
         "id": "distinctions",
@@ -201,9 +243,6 @@
                   "Family Ties": {
                     "description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset."
                   }
-                },
-                "slots": {
-                  "2": {}
                 }
               }
             }
@@ -214,10 +253,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -228,10 +263,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -302,40 +333,19 @@
           "0": {
             "traits": {
               "Effect Tags:": {},
-              "Limit:": {},
-              "SFX": {
-                "traits": {},
-                "slots": {
-                  "0": {},
-                  "1": {}
-                }
-              }
+              "Limit:": {}
             }
           },
           "1": {
             "traits": {
               "Effect Tags:": {},
-              "Limit:": {},
-              "SFX": {
-                "traits": {},
-                "slots": {
-                  "0": {},
-                  "1": {}
-                }
-              }
+              "Limit:": {}
             }
           },
           "2": {
             "traits": {
               "Effect Tags:": {},
-              "Limit:": {},
-              "SFX": {
-                "traits": {},
-                "slots": {
-                  "0": {},
-                  "1": {}
-                }
-              }
+              "Limit:": {}
             }
           }
         }
@@ -426,13 +436,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {},
-          "3": {}
-        }
+        "traits": {}
       },
       "Personal Milestones": {
         "id": "personal-milestones",

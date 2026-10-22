@@ -11,6 +11,7 @@
 
 import { cloneDeep } from './clone-deep.ts';
 import { buildParts, formatPct } from './spotlight-grid.ts';
+import { resolveSheetStyle, defaultNameHidden } from './model.ts';
 
 export const cortexMigration = {
 
@@ -131,7 +132,18 @@ export const cortexMigration = {
 					delete node.custom;
 				}
 			}
-			if ( node.portrait && typeof node.portrait === 'object' ) {
+		// Retired view keys (2026-10-22): headerRight read nowhere.
+		if ( node.view && typeof node.view === 'object' && !Array.isArray( node.view ) ) {
+			delete node.view.headerRight;
+			// Retired (2026-10-22): visibility is a hidden boolean now.
+			// 'hidden' carries over; 'shown' was the default (absent);
+			// editor-only meant visible in Edit, which is shown.
+			if ( node.view.visibility !== undefined ) {
+				if ( node.view.visibility === 'hidden' ) node.view.hidden = true;
+				delete node.view.visibility;
+			}
+		}
+		if ( node.portrait && typeof node.portrait === 'object' ) {
 				normalizeNode( node.portrait );
 			}
 			if ( Array.isArray( node.traitSets ) ) {
@@ -186,9 +198,118 @@ export const cortexMigration = {
 			if ( set.slots ) normalizeLayeredTraits( set.slots, label );
 		};
 
+		// Character-scope sheet style lives in exactly one place:
+		// view.style.sheet. Legacy keys (top-level view.sheetStyle, the
+		// view.style.hasAttributes set-type flag) resolve once here, then go.
+		// No reader checks set types; the style is data, not deduction.
+	const collapseSheetStyle = ( holder: any ) => {
+		if ( !holder || typeof holder !== 'object' ) return;
+		const view = holder.view;
+		if ( !view || typeof view !== 'object' || Array.isArray( view ) ) return;
+		const sheet = resolveSheetStyle( holder );
+		if ( !view.style || typeof view.style !== 'object' || Array.isArray( view.style ) ) {
+			view.style = {};
+		}
+		if ( view.style.sheet !== 'classic' && view.style.sheet !== 'spotlight' ) {
+			view.style.sheet = sheet;
+		}
+		delete view.sheetStyle;
+		delete view.style.hasAttributes;
+	};
+
+	// The name block is the first trait set (view.style.body "name").
+	// Files predating it gain a synthesized one here so every later
+		// stage (merge, materialize, render, edit) sees the same shape;
+		// a legacy view.nameLabels bag folds into trait labels, then goes.
+		const isNameSetNode = ( set: any ) => {
+			if ( !set || typeof set !== 'object' ) return false;
+			const bag = set.view;
+			if ( bag && typeof bag === 'object' && !Array.isArray( bag ) &&
+				bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) &&
+				( bag.style as any ).body === 'name' ) return true;
+			// Pruned stored sets lose their view bag but keep the stable id.
+			// ('name' is reserved: ensureTraitSetIds never assigns it.)
+			return typeof set.id === 'string' && set.id === 'name';
+		};
+		const labelKeys: [string, string][] = [
+			[ 'nickname', 'nickname' ], [ 'pronouns', 'pronouns' ], [ 'description', 'description' ],
+			[ 'player', 'player' ], [ 'plotPoints', 'plotPoints' ], [ 'portraitCaption', 'caption' ],
+		];
+		const migrateNameLabels = ( list: any[], bag: any, holder: any ) => {
+			if ( !bag || typeof bag !== 'object' || Array.isArray( bag ) ) return;
+			for ( const [ bk, tk ] of labelKeys ) {
+				const v = bag[ bk ];
+				if ( typeof v !== 'string' || !v.trim().length ) continue;
+				let tr = list.find( ( t: any ) => t && typeof t === 'object' && t.name === tk );
+				if ( !tr ) {
+					tr = { name: tk, value: 0, dice: [], description: '', traits: [], sfx: [], tags: [] };
+					if ( defaultNameHidden( tk, holder ) ) tr.view = { hidden: true };
+					list.push( tr );
+				}
+				tr.label = v.trim();
+			}
+		};
+		const migrateNameLabelsMap = ( map: any, bag: any, holder: any ) => {
+			if ( !bag || typeof bag !== 'object' || Array.isArray( bag ) ) return;
+			for ( const [ bk, tk ] of labelKeys ) {
+				const v = bag[ bk ];
+				if ( typeof v !== 'string' || !v.trim().length ) continue;
+				const cur = map[ tk ];
+				if ( cur && typeof cur === 'object' && !Array.isArray( cur ) ) {
+					if ( cur.label === undefined ) cur.label = v.trim();
+				} else if ( defaultNameHidden( tk, holder ) ) {
+					map[ tk ] = { label: v.trim(), view: { hidden: true } };
+				} else {
+					map[ tk ] = { label: v.trim() };
+				}
+			}
+		};
+		const ensureNameSet = ( holder: any ) => {
+			if ( !holder || typeof holder !== 'object' ) return;
+			const bag = holder.view && typeof holder.view === 'object' ? holder.view.nameLabels : undefined;
+			if ( Array.isArray( holder.traitSets ) ) {
+				let set = holder.traitSets.find( ( s: any ) => isNameSetNode( s ) );
+				if ( !set ) {
+					set = { id: 'name', name: 'Name', traits: [], sfx: [], view: { style: { header: 'default', body: 'name' } } };
+					holder.traitSets.unshift( set );
+				}
+				// Array form only: a layered set object riding in an array
+				// wrapper (placement pass) keeps its map form untouched.
+				if ( !set.traits ) set.traits = [];
+				if ( Array.isArray( set.traits ) ) migrateNameLabels( set.traits, bag, holder );
+			} else if ( holder.sets && typeof holder.sets === 'object' && !Array.isArray( holder.sets ) ) {
+				let key = Object.keys( holder.sets ).find( ( k: string ) => isNameSetNode( holder.sets[ k ] ) );
+				if ( !key ) {
+					key = 'Name';
+					holder.sets[ key ] = { id: 'name', traits: {}, view: { style: { header: 'default', body: 'name' } } };
+				}
+				const set = holder.sets[ key ];
+				if ( !set.traits ) set.traits = {};
+				if ( set.traits && typeof set.traits === 'object' && !Array.isArray( set.traits ) ) {
+					migrateNameLabelsMap( set.traits, bag, holder );
+				}
+			} else {
+				return;
+			}
+			if ( holder.view && typeof holder.view === 'object' && !Array.isArray( holder.view ) ) {
+				delete holder.view.nameLabels;
+			}
+		};
+
 		normalizeNode( obj );
 		if ( obj.character && typeof obj.character === 'object' ) {
 			normalizeNode( obj.character );
+		}
+		collapseSheetStyle( obj );
+		if ( obj.character && typeof obj.character === 'object' ) {
+			collapseSheetStyle( obj.character );
+		}
+		ensureNameSet( obj );
+		if ( obj.character && typeof obj.character === 'object' ) {
+			ensureNameSet( obj.character );
+		}
+		if ( Array.isArray( obj.characters ) ) {
+			obj.characters.forEach( ( c: any ) => { collapseSheetStyle( c ); ensureNameSet( c ); } );
 		}
 		return obj;
 	},
@@ -587,7 +708,7 @@ export const cortexMigration = {
 	//   layers; it is future work.
 
 	// Scalar trait keys carried verbatim (presence preserved) in templates.
-	TEMPLATE_TRAIT_SCALARS: ['description', 'statement', 'questioned', 'xp', 'counter', 'ratingPosition', 'tags'] as string[],
+	TEMPLATE_TRAIT_SCALARS: ['label', 'description', 'statement', 'questioned', 'xp', 'counter', 'ratingPosition', 'tags'] as string[],
 
 	migrateTemplateTrait: function( old: any, warnings: string[], path: string, stressLabel?: string ): any {
 		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {

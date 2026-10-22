@@ -16,7 +16,7 @@ function tpl() {
     id: 'test-template', title: 'Test', version: 1,
     character: {
       id: 'tpl-char', name: '', game: 'Test Game',
-      view: { columns: 2, sheetStyle: 'spotlight' },
+      view: { columns: 2, style: { sheet: 'spotlight' } },
       traitSets: [
         {
           id: 'distinctions', name: 'Distinctions', description: '', nounSingular: 'Distinction', nounPlural: 'Distinctions',
@@ -46,11 +46,11 @@ function tpl() {
   const m = F.mergeTemplateIntoCharacter({ id: 'c1', game: 'My Game', view: { columns: 3 }, traitSets: [] }, tpl());
   ok(m.game === 'My Game', 'D3 value wins (game)');
   ok(m.view.columns === 3, 'D3 value wins (nested columns)');
-  ok(m.view.sheetStyle === 'spotlight', 'D3 absent inherits (sheetStyle)');
+  ok(m.view.style.sheet === 'spotlight', 'D3 absent inherits (style.sheet)');
   const m2 = F.mergeTemplateIntoCharacter({ id: 'c1', game: null, traitSets: [] }, tpl());
   ok(m2.game === null, 'D3 null stays cleared (no inherit)');
-  const m3 = F.mergeTemplateIntoCharacter({ id: 'c1', view: { sheetStyle: null }, traitSets: [] }, tpl());
-  ok(m3.view.sheetStyle === null, 'D3 null stays cleared (nested)');
+  const m3 = F.mergeTemplateIntoCharacter({ id: 'c1', view: { style: { sheet: null } }, traitSets: [] }, tpl());
+  ok(m3.view.style.sheet === null, 'D3 null stays cleared (nested)');
 }
 
 // ---- D3 sheet link never merges (D9).

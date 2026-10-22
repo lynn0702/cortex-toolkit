@@ -37,9 +37,8 @@
       "pageCount": 2,
       "spotlight": "Safe Zone",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Essential Stockpiles": {
         "id": "essential-stockpiles",
         "description": "Building Benefits:",
@@ -519,10 +564,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 2": {
@@ -565,10 +607,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 3": {
@@ -611,10 +650,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 4": {
@@ -657,10 +693,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 5": {
@@ -703,10 +736,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 6": {
@@ -749,10 +779,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 7": {
@@ -795,10 +822,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 8": {
@@ -841,10 +865,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Survivor 9": {
@@ -887,10 +908,7 @@
         "slots": {
           "1": {
             "value": "d6"
-          },
-          "2": {},
-          "3": {},
-          "4": {}
+          }
         }
       },
       "Notes": {

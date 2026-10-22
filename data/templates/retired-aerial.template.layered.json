@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Retired No More",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Values": {
         "id": "values",
         "description": "The aviator's code and sky ethics",
@@ -150,10 +195,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -164,10 +205,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -292,10 +329,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {}
-        }
+        "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
@@ -338,54 +372,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "1": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "2": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "3": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "4": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "5": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "6": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "7": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "8": {
-            "slots": {
-              "0": {}
-            }
-          }
-        }
+        "traits": {}
       },
       "Session Record": {
         "id": "session-record",

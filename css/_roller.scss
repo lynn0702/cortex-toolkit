@@ -239,7 +239,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	row-gap: 0.1rem;
+	row-gap: 0.45rem;
 	transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
 
 	.c {
@@ -262,6 +262,19 @@
 
 	&:active {
 		transform: translateY(0);
+	}
+}
+
+// SCALE / RESOURCE QUICK ADD (glyphs centered, never baseline-aligned)
+.roller-btn-scale-quick,
+.roller-btn-res-quick {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	.c {
+		display: inline-block;
+		vertical-align: middle;
 	}
 }
 

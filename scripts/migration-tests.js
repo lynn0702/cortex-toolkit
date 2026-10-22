@@ -164,18 +164,19 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   };
   const warnings = M.migratePlacement(char);
   const sets = char.traitSets;
+  const byName = (n) => sets.find((s) => s.name === n);
   // Row 2 (top 0): A 0/40 + B 40/60 (undeclared remainder splits two-track).
-  ok(JSON.stringify(sets[0].view.place) === JSON.stringify({ left: '0%', top: 0, width: '40%', height: 1 }), 'set A place', sets[0].view.place);
-  ok(JSON.stringify(sets[1].view.place) === JSON.stringify({ left: '40%', top: 0, width: '60%', height: 1 }), 'set B place', sets[1].view.place);
+  ok(JSON.stringify(byName('A').view.place) === JSON.stringify({ left: '0%', top: 0, width: '40%', height: 1 }), 'set A place', byName('A').view.place);
+  ok(JSON.stringify(byName('B').view.place) === JSON.stringify({ left: '40%', top: 0, width: '60%', height: 1 }), 'set B place', byName('B').view.place);
   // Full-width C omits place.
-  ok(sets[2].view.place === undefined, 'full-width set omits place');
+  ok(byName('C').view.place === undefined, 'full-width set omits place');
   // Below + inline stress become parts; flags removed.
-  ok(sets[3].view.parts && sets[3].view.parts.name.top === 0 && sets[3].view.parts.rating.top === 1, 'below becomes parts rows', sets[3].view.parts);
-  ok(sets[3].view.ratingPosition === undefined, 'ratingPosition removed');
-  ok(sets[4].view.parts && sets[4].view.parts.stress && sets[4].view.parts.stressLabel, 'stress becomes cells', sets[4].view.parts);
-  ok(sets[4].view.attachedStress === undefined, 'attachedStress removed');
+  ok(byName('D').view.parts && byName('D').view.parts.name.top === 0 && byName('D').view.parts.rating.top === 1, 'below becomes parts rows', byName('D').view.parts);
+  ok(byName('D').view.ratingPosition === undefined, 'ratingPosition removed');
+  ok(byName('E').view.parts && byName('E').view.parts.stress && byName('E').view.parts.stressLabel, 'stress becomes cells', byName('E').view.parts);
+  ok(byName('E').view.attachedStress === undefined, 'attachedStress removed');
   // Vertical ladders keep the legacy flag.
-  ok(sets[5].view.parts === undefined && sets[5].view.ratingPosition === 'vertical', 'vertical stays legacy');
+  ok(byName('F').view.parts === undefined && byName('F').view.ratingPosition === 'vertical', 'vertical stays legacy');
   // Band keys are gone everywhere.
   ok(sets.every((s) => ['track', 'span', 'widths', 'rowBreak', 'colWidth', 'rowSpan', 'colSpan', 'columnSpan', 'row'].every((k) => s.view[k] === undefined)), 'band keys deleted');
   // Sheet level
@@ -197,20 +198,23 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   };
   const warnings = M.migratePlacement(char);
   ok(warnings.some((w) => w.indexOf('collision') !== -1), 'overlap surfaces', warnings);
-  ok(char.traitSets[2].view.place.left === '0%' && char.traitSets[2].view.place.width === '100%', 'bare numbers normalize to "%" strings', char.traitSets[2].view.place);
-  ok(char.traitSets[3].view.location === 'right' && char.traitSets[3].view.place === undefined, 'classic set untouched');
+  ok(char.traitSets[3].view.place.left === '0%' && char.traitSets[3].view.place.width === '100%', 'bare numbers normalize to "%" strings', char.traitSets[3].view.place);
+  ok(char.traitSets[4].view.location === 'right' && char.traitSets[4].view.place === undefined, 'classic set untouched');
 }
 
-// ---- 11c. Idempotent: a second pass changes nothing.
+// ---- 11c. Idempotent: a second pass changes nothing (first pass may add
+// the Name set; the second must be stable).
 {
   const char = {
     traitSets: [
       { name: 'A', view: { page: 1, place: { left: '0%', top: 0, width: '40%', height: 1 }, parts: { name: { left: '0%', top: 0, width: '100%', height: 1 } } } },
     ],
   };
-  const before = JSON.stringify(char);
   M.migratePlacement(char);
-  ok(JSON.stringify(char) === before, 'second pass is a no-op');
+  const afterFirst = JSON.stringify(char);
+  ok(char.traitSets[0].id === 'name', 'first pass synthesizes the name set first');
+  M.migratePlacement(char);
+  ok(JSON.stringify(char) === afterFirst, 'second pass is a no-op');
 }
 
 // ---- 12. normalizeView migration seam.
@@ -224,12 +228,13 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
     ],
   };
   M.normalizeView(obj1);
-  ok(obj1.view && obj1.view.sheetStyle === 'spotlight' && obj1.view.columns === 2, 'char custom.cortexToolkit migrated to view');
+  ok(obj1.view && obj1.view.style && obj1.view.style.sheet === 'spotlight' && obj1.view.columns === 2, 'char custom.cortexToolkit migrated to view.style');
   ok(obj1.custom === undefined, 'empty custom cleaned up on character');
   ok(obj1.portrait.view && obj1.portrait.view.size === 'spotlight', 'portrait custom.cortexToolkit migrated to view');
   ok(obj1.portrait.custom === undefined, 'empty custom cleaned up on portrait');
-  ok(obj1.traitSets[0].view && obj1.traitSets[0].view.style.body === 'default', 'set custom.cortexToolkit migrated to view');
-  ok(obj1.traitSets[0].custom === undefined, 'empty custom cleaned up on traitSet');
+  const dset = obj1.traitSets.find((s) => s.name === 'Distinctions');
+  ok(dset.view && dset.view.style.body === 'default', 'set custom.cortexToolkit migrated to view');
+  ok(dset.custom === undefined, 'empty custom cleaned up on traitSet');
 
   // 12b. Conflict resolution: view wins, legacy dropped
   const obj2 = {
@@ -250,9 +255,110 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
     },
   };
   M.normalizeView(obj3);
-  ok(obj3.view && obj3.view.sheetStyle === 'classic', 'view migrated');
+  ok(obj3.view && obj3.view.style && obj3.view.style.sheet === 'classic', 'view migrated to style.sheet');
   ok(obj3.custom && obj3.custom.cortexToolkit === undefined, 'cortexToolkit removed from custom');
   ok(obj3.custom && obj3.custom.stress && obj3.custom.stress.physical === 6, 'custom.stress preserved');
+
+  // 12d. Name set synthesis: legacy files predate the name block.
+  const obj4 = {
+    name: 'Hero', player: 'Maya',
+    view: { nameLabels: { pronouns: 'Ruin', player: 'GM:' } },
+    traitSets: [{ id: 'd', name: 'Distinctions', traits: [], sfx: [] }],
+  };
+  M.normalizeView(obj4);
+  ok(obj4.traitSets[0].id === 'name' && obj4.traitSets[0].view.style.body === 'name', 'name set synthesized first');
+  const pronouns = obj4.traitSets[0].traits.find((t) => t.name === 'pronouns');
+  ok(pronouns && pronouns.label === 'Ruin', 'legacy pronouns label migrated', pronouns);
+  const player = obj4.traitSets[0].traits.find((t) => t.name === 'player');
+  ok(player && player.label === 'GM:', 'legacy player word migrated');
+  ok(obj4.view.nameLabels === undefined, 'legacy nameLabels bag gone');
+  ok(obj4.traitSets[1].name === 'Distinctions', 'content sets keep order');
+
+  // 12e. Existing name sets pass through untouched (no duplicates).
+  const obj5 = {
+    traitSets: [{ id: 'name', name: 'Name', traits: [{ name: 'player', label: 'Coach' }], sfx: [], view: { style: { body: 'name' } } }],
+  };
+  M.normalizeView(obj5);
+  ok(obj5.traitSets.length === 1 && obj5.traitSets[0].traits.length === 1, 'name set untouched', obj5.traitSets.length);
+
+  // 12f. Layered entities gain a Name key.
+  const obj6 = { sets: { Distinctions: { id: 'distinctions', traits: {} } } };
+  M.normalizeView(obj6);
+  ok(obj6.sets.Name && obj6.sets.Name.id === 'name', 'layered name set synthesized', Object.keys(obj6.sets));
+
+  // 12g. Pruned stored name sets (view bag dropped as inherited) are
+  // recognized by id and never overwritten with empty shells.
+  const obj7 = { sets: { Name: { id: 'name', traits: { pronouns: { label: 'Ruin' } } } } };
+  M.normalizeView(obj7);
+  ok(obj7.sets.Name.traits.pronouns && obj7.sets.Name.traits.pronouns.label === 'Ruin', 'stored name overrides survive normalize', obj7.sets.Name.traits);
+}
+
+// ---- 13. Sheet style collapses to view.style.sheet; set-type flags go.
+{
+  // 13a. Legacy top-level sheetStyle folds into style.sheet.
+  const a = { view: { sheetStyle: 'spotlight', columns: 2 }, traitSets: [] };
+  M.normalizeView(a);
+  ok(a.view.style.sheet === 'spotlight', 'sheetStyle folds to style.sheet', a.view);
+  ok(a.view.sheetStyle === undefined, 'top-level sheetStyle gone');
+
+  // 13b. The hasAttributes set-type flag resolves once, then goes.
+  const b = { view: { style: { hasAttributes: false } }, traitSets: [] };
+  M.normalizeView(b);
+  ok(b.view.style.sheet === 'spotlight', 'hasAttributes:false means spotlight', b.view.style);
+  ok(b.view.style.hasAttributes === undefined, 'hasAttributes gone');
+
+  // 13c. An explicit style.sheet is never overridden.
+  const c = { view: { style: { sheet: 'classic' }, sheetStyle: 'spotlight' }, traitSets: [] };
+  M.normalizeView(c);
+  ok(c.view.style.sheet === 'classic', 'explicit style.sheet wins', c.view.style);
+  ok(c.view.sheetStyle === undefined, 'stale sheetStyle still dropped');
+
+  // 13d. Bare legacy files default classic (the old reader default).
+  const d = { view: {}, traitSets: [] };
+  M.normalizeView(d);
+  ok(d.view.style.sheet === 'classic', 'bare view defaults classic', d.view.style);
+
+  // 13e. Sheet-template links still mean spotlight.
+  const e = { view: {}, sheet: { template: { id: 't' } }, traitSets: [] };
+  M.normalizeView(e);
+  ok(e.view.style.sheet === 'spotlight', 'template link means spotlight', e.view.style);
+
+  // 13f. Folded name traits carry style-honest hidden flags: PP hides in
+  // spotlight (no zone renders it), shows in classic (badge renders it).
+  const f = {
+    view: { style: { sheet: 'spotlight' }, nameLabels: { plotPoints: 'PP', player: 'GM:' } },
+    traitSets: [{ id: 'd', name: 'Distinctions', traits: [], sfx: [] }],
+  };
+  M.normalizeView(f);
+  const fpp = f.traitSets[0].traits.find((t) => t.name === 'plotPoints');
+  const fpl = f.traitSets[0].traits.find((t) => t.name === 'player');
+  ok(fpp && fpp.view && fpp.view.hidden === true, 'folded PP hidden in spotlight', fpp);
+  ok(fpl && (fpl.view === undefined || fpl.view.hidden !== true), 'folded player stays shown', fpl);
+  const g = {
+    view: { nameLabels: { plotPoints: 'PP' } },
+    traitSets: [{ id: 'd', name: 'Distinctions', traits: [], sfx: [] }],
+  };
+  M.normalizeView(g);
+  const gpp = g.traitSets[0].traits.find((t) => t.name === 'plotPoints');
+  ok(gpp && (gpp.view === undefined || gpp.view.hidden !== true), 'folded PP shown in classic', gpp);
+
+  // 13g. The retired visibility word converts: hidden carries, shown and
+  // editor-only dissolve into absence.
+  const h = {
+    view: {},
+    traitSets: [{
+      id: 'd', name: 'Distinctions', traits: [
+        { name: 'A', value: 8, dice: [8], traits: [], sfx: [], view: { visibility: 'hidden' } },
+        { name: 'B', value: 8, dice: [8], traits: [], sfx: [], view: { visibility: 'shown' } },
+        { name: 'C', value: 8, dice: [8], traits: [], sfx: [], view: { visibility: 'editor-only' } },
+      ], sfx: [],
+    }],
+  };
+  M.normalizeView(h);
+  const [ha, hb, hc] = h.traitSets[1].traits;
+  ok(ha.view.hidden === true && ha.view.visibility === undefined, 'hidden carries as a boolean', ha.view);
+  ok(hb.view.visibility === undefined && hb.view.hidden === undefined, 'shown dissolves', hb.view);
+  ok(hc.view.visibility === undefined && hc.view.hidden === undefined, 'editor-only dissolves', hc.view);
 }
 
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);

@@ -36,16 +36,64 @@
     },
     "view": {
       "nickname": "The Everything Sheet",
-      "sheetStyle": "spotlight",
       "pageCount": 3,
       "columnAlignment": "top-base",
       "columnOffsets": {
         "left": 0,
         "center": 0,
         "right": 0
+      },
+      "style": {
+        "sheet": "spotlight"
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Distinctions": {
         "id": "ks-distinctions",
         "nounSingular": "Distinction",
@@ -122,9 +170,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {}
                 }
               }
             }
@@ -289,7 +334,8 @@
             "top": 1,
             "width": "50%",
             "height": 1
-          }
+          },
+          "reservedSlots": 2
         },
         "traits": {
           "The Guild": {
@@ -304,9 +350,6 @@
               }
             }
           }
-        },
-        "slots": {
-          "1": {}
         }
       },
       "Badges": {
@@ -352,9 +395,6 @@
             "value": "d6",
             "xp": 1
           }
-        },
-        "slots": {
-          "2": {}
         }
       },
       "Talents": {
@@ -398,9 +438,6 @@
               }
             }
           }
-        },
-        "slots": {
-          "1": {}
         }
       },
       "Resources": {
@@ -591,16 +628,14 @@
             "top": 1,
             "width": "50%",
             "height": 1
-          }
+          },
+          "reservedSlots": 3
         },
         "traits": {
           "Session 1: The Awakening": {
             "value": "d6"
           },
           "Session 2: Crossing the Threshold": {}
-        },
-        "slots": {
-          "2": {}
         }
       },
       "Roles (Compact Two-Column)": {

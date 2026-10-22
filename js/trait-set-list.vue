@@ -5,7 +5,7 @@ import TraitSetPips from './trait-set-pips.vue';
 
 const {
 	traitSet, s, submode, printBlank, viewY, character,
-	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
+	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings,
 	isSpotlightStyle, isSpotlightPrintStyle,
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
@@ -43,9 +43,9 @@ const {
 						:style="partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet))"
 						tabindex="0"
 						role="button"
-						@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-						@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-						@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
+						@keydown.enter.prevent="openTraitAt(s, item)"
+						@keydown.space.prevent="openTraitAt(s, item)"
+						@click.stop="openTraitAt(s, item)"
 					>
 						<!-- NAME (above: the asset box; the dice live in the rating cell) -->
 						<div v-if="partsGridFor(traitSet).cells.name" class="trait-part trait-part-name" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }" :style="partCellStyle(partsGridFor(traitSet), 'name')">
@@ -236,7 +236,7 @@ const {
 								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
 								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
-								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
+								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="openTraitAt(s, item)">Click to set SFX...</span>
 								<span class="sfx-blank-line" v-else></span>
 							</div>
 						</div>
@@ -244,9 +244,9 @@ const {
 					<div v-else :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 						tabindex="0"
 						role="button"
-						@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-						@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-						@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
+						@keydown.enter.prevent="openTraitAt(s, item)"
+						@keydown.space.prevent="openTraitAt(s, item)"
+						@click.stop="openTraitAt(s, item)"
 					>
 						<!-- RATING POSITION ABOVE (e.g. Signature Assets) -->
 						<template v-if="getRatingPosition(traitSet) === 'above'">
@@ -418,7 +418,7 @@ const {
 								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
 								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
-								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="selectElement(['trait', s, item.originalIndex])">Click to set SFX...</span>
+								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="openTraitAt(s, item)">Click to set SFX...</span>
 								<span class="sfx-blank-line" v-else></span>
 							</div>
 						</div>

@@ -428,6 +428,12 @@ function sfxContainerFrom(arr: unknown[]): Record<string, unknown> {
 		if (src.tags !== undefined) o.tags = clone(src.tags);
 		if (src.view !== undefined) o.view = clone(src.view);
 		if (src.custom !== undefined) o.custom = clone(src.custom);
+		// Blank slot objects are render-time, never stored: drop nameless
+		// entries carrying nothing.
+		const hasContent = name.length > 0 ||
+			(typeof o.description === "string" && o.description.length > 0) ||
+			o.tags !== undefined || o.view !== undefined || o.custom !== undefined;
+		if (!hasContent) return;
 		if (!name.length) slots[String(i)] = o;
 		else traits[name] = o;
 	}

@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Necromancer",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Distinctions": {
         "id": "distinctions",
         "description": "Occult lineage, taboo practice, and philosophical motivation",
@@ -256,12 +301,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {}
-        }
+        "traits": {}
       },
       "Ability": {
         "id": "necromantic-arts",
@@ -311,11 +351,6 @@
                   "Limit — Dammit": {
                     "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
                   }
-                },
-                "slots": {
-                  "3": {},
-                  "4": {},
-                  "5": {}
                 }
               }
             }
@@ -403,10 +438,6 @@
           "Deathmark": {
             "description": "Deathmark"
           }
-        },
-        "slots": {
-          "1": {},
-          "2": {}
         }
       }
     }

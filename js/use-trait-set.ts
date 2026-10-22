@@ -1,6 +1,6 @@
 import { computed, provide, inject, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, resolveSheetStyle } from './model.ts';
 import { KNOWN_PARTS, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
@@ -39,18 +39,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( props.submode === 'print' && props.printStyle ) {
 			return props.printStyle;
 		}
-		const explicit = getView( props.character )?.sheetStyle;
-		if ( explicit ) return explicit;
-		if ( getView( props.character )?.style?.hasAttributes === false ) {
-			return 'spotlight';
-		}
-		if ( getView( props.character )?.spotlight ) {
-			return 'spotlight';
-		}
-		if ( ( props.character as any )?.sheet?.template ) {
-			return 'spotlight';
-		}
-		return 'classic';
+		return resolveSheetStyle( props.character );
 	} );
 
 	const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
@@ -246,18 +235,16 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function getRenderedTraits( traitSetArg: TraitSet, sArg: number ) {
 		const existing = traitSetArg?.traits || [];
-		const isPrintMode = props.submode === 'print';
-
-		if ( !isPrintMode ) {
-			return existing.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx, isPlaceholder: false }) );
-		}
 
 		if ( props.printBlank ) {
 			const targetCount = getTraitSetSlotCount( traitSetArg );
 			const list: any[] = [];
+			const visible = existing
+				.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx }) )
+				.filter( ( { trait } ) => isTraitShown( trait ) );
 			for ( let i = 0; i < targetCount; i++ ) {
-				if ( i < existing.length ) {
-					list.push({ trait: existing[i], originalIndex: i, isPlaceholder: false });
+				if ( i < visible.length ) {
+					list.push({ trait: visible[i].trait, originalIndex: visible[i].originalIndex, isPlaceholder: false });
 				} else {
 					list.push({ trait: createBlankSlotTrait( traitSetArg ), originalIndex: null, isPlaceholder: true });
 				}
@@ -265,16 +252,48 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			return list;
 		}
 
-		const reserved = Number( getView( traitSetArg )?.reservedSlots );
-		const targetCount = ( !isNaN( reserved ) && reserved > 0 ) ? Math.max( reserved, existing.length ) : existing.length;
-		const list: any[] = existing.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx, isPlaceholder: false }) );
-		for ( let i = existing.length; i < targetCount; i++ ) {
+		// Slots are not traits: every mode expands trailing blank slots to
+		// the slot count (reservedSlots floor). Placeholders are render-time
+		// objects — clicking one fills it (openTraitAt); nothing blank is stored.
+	// Visibility filters first (hidden traits leave no row), so counts
+	// stay stable. Original indices survive the filter for editor routing.
+		const mapped = existing.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx, isPlaceholder: false }) );
+		const visible = mapped.filter( ( { trait } ) => isTraitShown( trait ) );
+		const targetCount = Math.max( getTraitSetSlotCount( traitSetArg ), visible.length );
+		const list: any[] = [ ...visible ];
+		for ( let i = visible.length; i < targetCount; i++ ) {
 			list.push({ trait: createBlankSlotTrait( traitSetArg ), originalIndex: null, isPlaceholder: true });
 		}
 		return list;
 	}
 
-	function createBlankSlotTrait( traitSetArg: TraitSet ) {
+	// Trait visibility (view.hidden): true hides the trait everywhere,
+	// absent or false shows it. Editors bypass the filter; only sheet
+	// rendering applies it.
+	function isTraitShown( trait: Trait ) {
+		return getView( trait )?.hidden !== true;
+	}
+
+	// Open a trait row for editing; a blank placeholder becomes a real
+	// (still unnamed) trait first, so pencil rows fill in place.
+	function openTraitAt( sArg: any, item: any ) {
+		if ( !item ) return;
+		if ( item.isPlaceholder ) {
+			fillPlaceholder( sArg );
+			return;
+		}
+		selectElement([ 'trait', sArg, item.originalIndex ]);
+	}
+
+	function fillPlaceholder( sArg: any ) {
+		const set = props.character.traitSets[ sArg ];
+		if ( !set || !Array.isArray( set.traits ) ) return;
+		set.traits.push( createBlankSlotTrait( set ) );
+		updateCharacter( props.character );
+		selectElement([ 'trait', sArg, set.traits.length - 1 ]);
+	}
+
+	function createBlankSlotTrait( traitSetArg: TraitSet ): any {
 		const hasSubtraits = Boolean( getView( traitSetArg )?.features?.subtraits );
 		return {
 			name: '',
@@ -598,8 +617,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function visibleSubtraits( traitSetArg: TraitSet, trait: Trait ) {
 		const subs = ( trait as any )?.traits;
 		if ( !Array.isArray( subs ) ) return [];
-		if ( !hasAttachedStress( traitSetArg ) ) return subs;
-		return subs.filter( ( st: any ) => !isStressCompanion( traitSetArg, st?.name ) );
+		const list = hasAttachedStress( traitSetArg )
+			? subs.filter( ( st: any ) => !isStressCompanion( traitSetArg, st?.name ) )
+			: subs;
+		return list.filter( ( st: any ) => isTraitShown( st ) );
 	}
 
 	function shouldShowAttachedStressOut( traitSetArg: TraitSet ) {
@@ -1109,7 +1130,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
 		selectElement, updateCharacter, addTrait, removeTrait, removeTraitSet, getTraitClasses,
-		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint,
+		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint, openTraitAt, fillPlaceholder, isTraitShown,
 		getTraitSetRatings, getSubtraitRatings, getTraitDice, isMultiDieTrait, isResourceTrait,
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleStressClick,
 		handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, getSharedHinderLines, renderHinderLine,

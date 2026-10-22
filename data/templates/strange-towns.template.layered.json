@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Strange Towns",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -52,12 +51,55 @@
         "left": 0,
         "center": 0,
         "right": 0
-      },
-      "nameLabels": {
-        "pronouns": "Ruin"
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Ruin"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Attributes": {
         "id": "attributes",
         "description": "Core attributes",
@@ -140,42 +182,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {
-            "custom": {
-              "traits": {
-                "SFX": {
-                  "traits": {
-                    "Hinder": {}
-                  }
-                }
-              }
-            }
-          },
-          "1": {
-            "custom": {
-              "traits": {
-                "SFX": {
-                  "traits": {
-                    "Hinder": {}
-                  }
-                }
-              }
-            }
-          },
-          "2": {
-            "custom": {
-              "traits": {
-                "SFX": {
-                  "traits": {
-                    "Hinder": {}
-                  }
-                }
-              }
-            }
-          }
-        }
+        "traits": {}
       },
       "Roles": {
         "id": "roles",
@@ -265,15 +272,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {},
-          "3": {},
-          "4": {},
-          "5": {}
-        }
+        "traits": {}
       },
       "Signature Assets": {
         "id": "signature-assets",
@@ -381,12 +380,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {},
-          "2": {}
-        }
+        "traits": {}
       },
       "Strange Die": {
         "id": "strange-die",
@@ -418,10 +412,7 @@
             "height": 1
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {}
-        }
+        "traits": {}
       }
     }
   }

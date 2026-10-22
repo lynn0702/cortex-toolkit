@@ -24,8 +24,8 @@ const api = useTraitSetEditor( props, emit );
 
 const {
 	rootEl, inputName, cssClass, checkScrollPosition,
-	name, traitSetID, isRing, headerRight, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
-	styleLabel, setStyleLabel, description, includeOut,
+	name, traitSetID, isRing, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
+	styleLabel, setStyleLabel, hasLabelContent, description, includeOut,
 	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasAttachedStress, attachedStressLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected,
@@ -33,7 +33,7 @@ const {
 	nounSingular, nounPlural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
-	selectElement, duplicateTraitSet, copyTraitSetJson, setJsonCopied, promptDeleteTraitSet, targetValue
+	selectElement, promptDeleteTraitSet, targetValue
 } = api;
 </script>
 
@@ -43,9 +43,7 @@ const {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" @click.stop="selectElement([])"><i class="fas fa-times"></i></button>
-			<button type="button" class="editor-copy" @click.stop="duplicateTraitSet" title="Duplicate trait set"><i class="fas fa-copy"></i></button>
-			<button type="button" class="editor-copy" @click.stop="copyTraitSetJson" :title="setJsonCopied ? 'Copied!' : 'Copy set JSON'"><i class="fas fa-code"></i></button>
+			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
 			<button type="button" class="editor-delete" @click.stop="promptDeleteTraitSet" title="Delete trait set"><i class="fas fa-trash"></i></button>
 		</div>
 
@@ -63,11 +61,6 @@ const {
 						<input type="text" :id="'trait-set-name-' + traitSetID" name="traitSetName" v-model="name" ref="inputName">
 					</div>
 
-					<div class="editor-field" v-if="!isRing">
-						<label :for="'trait-set-header-right-' + traitSetID">Right header</label>
-						<input type="text" :id="'trait-set-header-right-' + traitSetID" name="headerRight" v-model="headerRight" placeholder="Character File">
-					</div>
-
 					<div class="editor-field">
 						<label :for="'trait-set-style-select-' + traitSetID">Style</label>
 						<select :id="'trait-set-style-select-' + traitSetID" name="traitSetStyle" v-model="styleBody">
@@ -79,6 +72,121 @@ const {
 						</div>
 					</div>
 
+					<!-- STYLE-CONDITIONAL SECTIONS (each exists only for the styles that summon it) -->
+					<TraitSetEditorRing />
+
+				<!-- OUT MARKER (generic stepped-track indicator, default off) -->
+				<div class="editor-field" v-if="styleBody === 'stress' || styleBody === 'default'">
+					<div class="editor-label">Out Marker</div>
+					<div class="editor-toggles">
+						<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-out'" name="stressOut" :true-value="true" :false-value="false" v-model="includeOut"></div>
+						<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Include 💥 Out Marker</label></div>
+					</div>
+					<div v-if="includeOut" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
+						<div style="flex: 1;">
+							<label :for="'trait-set-' + traitSetID + '-out-word'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Out Word</label>
+							<input type="text" :id="'trait-set-' + traitSetID + '-out-word'" name="outWord" :value="styleLabel('out')" @change="setStyleLabel('out', targetValue($event))" :placeholder="styleLabel('out')">
+						</div>
+					</div>
+				</div>
+
+					<TraitSetEditorDice />
+
+					<TraitSetEditorImage />
+
+					<!-- NOTES CONTENT -->
+					<div class="editor-field" v-if="styleBody === 'notes'">
+						<label :for="'trait-set-notes-' + traitSetID">Notes Content</label>
+						<textarea :id="'trait-set-notes-' + traitSetID" name="notesContent" v-model="notesContent" placeholder="Enter notes or text here..." rows="6"></textarea>
+					</div>
+
+					<!-- DISTINCTIONS COMPACT SFX & SHARED HINDER -->
+					<div class="editor-field" v-if="styleBody === 'distinctions'">
+						<div class="editor-label">Distinctions Layout</div>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-shared-hinder'" name="sharedHinder" v-model="sharedHinder">
+							<label :for="'trait-set-' + traitSetID + '-shared-hinder'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Shared hinder</label>
+						</div>
+					<div v-if="sharedHinder" style="margin-top: 0.35rem;">
+						<label :for="'trait-set-' + traitSetID + '-hinder-text'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Hinder text</label>
+						<textarea :id="'trait-set-' + traitSetID + '-hinder-text'" name="sharedHinderText" v-model="sharedHinderText" placeholder="Gain a PP when you trade out your distinction's [d8] rating for a [d4]." rows="2"></textarea>
+					</div>
+					</div>
+
+					<!-- ATTACHED STRESS / TRACK -->
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+						<div class="editor-label">Attached Stress / Track</div>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" name="hasAttachedStress" v-model="hasAttachedStress">
+							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Attached Stress to Traits</label>
+						</div>
+					</div>
+
+					<!-- PIPS TRACK SETTINGS -->
+					<div class="editor-field" v-if="styleBody === 'pips'">
+						<div class="editor-label">Pip Track Settings</div>
+						<div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+							<div style="flex: 1;">
+								<label :for="'trait-set-' + traitSetID + '-pip-count'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Total Pips</label>
+								<input type="number" :id="'trait-set-' + traitSetID + '-pip-count'" name="pipCount" min="1" max="100" v-model.number="pipCount" inputmode="numeric">
+							</div>
+							<div style="flex: 1;">
+								<label :for="'trait-set-' + traitSetID + '-pip-per-row'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Pips Per Row</label>
+								<div class="num-stepper">
+									<button type="button" class="btn-step" @click.stop="pipsPerRow = Math.max(1, pipsPerRow - 1)" :disabled="pipsPerRow <= 1" title="Fewer pips per row" aria-label="Fewer pips per row">-</button>
+									<input type="number" :id="'trait-set-' + traitSetID + '-pip-per-row'" name="pipsPerRow" min="1" max="20" v-model.number="pipsPerRow" inputmode="numeric" aria-label="Pips per row">
+									<button type="button" class="btn-step" @click.stop="pipsPerRow = Math.min(20, pipsPerRow + 1)" title="More pips per row" aria-label="More pips per row">+</button>
+								</div>
+							</div>
+						</div>
+						<div style="margin-bottom: 0.5rem;">
+							<label :for="'trait-set-' + traitSetID + '-pip-filled'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Filled Pips</label>
+							<div class="num-stepper">
+								<button type="button" class="btn-step" @click.stop="pipsFilled = Math.max(0, pipsFilled - 1)" :disabled="pipsFilled <= 0" title="Unfill a pip" aria-label="Unfill a pip">-</button>
+								<input type="number" :id="'trait-set-' + traitSetID + '-pip-filled'" name="pipsFilled" min="0" :max="pipCount" v-model.number="pipsFilled" inputmode="numeric" aria-label="Filled pips">
+								<button type="button" class="btn-step" @click.stop="pipsFilled = Math.min(pipCount, pipsFilled + 1)" title="Fill a pip" aria-label="Fill a pip">+</button>
+							</div>
+						</div>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pips-connected'" name="pipsConnected" v-model="pipsConnected">
+							<label :for="'trait-set-' + traitSetID + '-pips-connected'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connect Pips with Horizontal Line</label>
+						</div>
+					</div>
+
+					<!-- SESSION RECORD (ANGLED LINES / LEAF) SETTINGS -->
+					<div class="editor-field" v-if="styleBody === 'session-record' || styleBody === 'angled-lines'">
+						<div class="editor-label">Session Record Settings</div>
+						<div style="margin-bottom: 0.5rem;">
+							<label :for="'trait-set-' + traitSetID + '-session-count'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Milestones</label>
+							<input type="number" :id="'trait-set-' + traitSetID + '-session-count'" name="sessionRecordCount" min="1" max="40" v-model.number="sessionRecordCount">
+						</div>
+						<div class="rating-scale-presets" style="margin-bottom: 0.5rem;">
+							<span class="preset-label">Presets:</span>
+							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 10 }" @click.stop="sessionRecordCount = 10">10</button>
+							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 15 }" @click.stop="sessionRecordCount = 15">15</button>
+							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 20 }" @click.stop="sessionRecordCount = 20">20</button>
+						</div>
+						<div style="margin-bottom: 0.5rem;">
+							<div class="editor-label" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Orientation</div>
+							<div class="editor-button-group">
+								<button type="button" class="editor-group-btn" :class="{ active: sessionRecordOrientation !== 'horizontal' }" @click.stop="sessionRecordOrientation = 'vertical'">
+									Vertical
+								</button>
+								<button type="button" class="editor-group-btn" :class="{ active: sessionRecordOrientation === 'horizontal' }" @click.stop="sessionRecordOrientation = 'horizontal'">
+									Horizontal
+								</button>
+							</div>
+						</div>
+						<div style="display: flex; gap: 0.5rem;">
+							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="clearAllSessionBubbles">
+								<i class="fas fa-undo"></i> Clear All Bubbles
+							</button>
+							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="fillAllSessionBubbles">
+								<i class="fas fa-check"></i> Fill All
+							</button>
+						</div>
+					</div>
+
 					<div class="editor-field">
 						<label :for="'trait-set-desc-' + traitSetID">Description</label>
 						<textarea :id="'trait-set-desc-' + traitSetID" name="traitSetDescription" v-model="description"></textarea>
@@ -86,7 +194,11 @@ const {
 
 					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
 						<label :for="'trait-set-reserved-slots-' + traitSetID"><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
-						<input type="number" :id="'trait-set-reserved-slots-' + traitSetID" name="reservedSlots" min="0" max="25" v-model.number="reservedSlots" placeholder="Automatic (matches current traits)">
+						<div class="num-stepper">
+							<button type="button" class="btn-step" @click.stop="reservedSlots = Math.max(0, (reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1)" :disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0" title="Fewer reserved slots" aria-label="Fewer reserved slots">-</button>
+							<input type="number" :id="'trait-set-reserved-slots-' + traitSetID" name="reservedSlots" min="0" max="25" v-model.number="reservedSlots" placeholder="Automatic (matches current traits)" inputmode="numeric" aria-label="Reserved slots for print">
+							<button type="button" class="btn-step" @click.stop="reservedSlots = (reservedSlots === '' || reservedSlots === null ? 0 : reservedSlots) + 1" title="More reserved slots" aria-label="More reserved slots">+</button>
+						</div>
 					</div>
 
 					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
@@ -154,7 +266,7 @@ const {
 				</details>
 
 				<!-- LABELS -->
-				<details class="editor-group" open>
+				<details class="editor-group" open v-if="hasLabelContent">
 					<summary class="editor-group-title">Labels</summary>
 
 					<div class="editor-field" v-if="styleBody === 'subtrait-columns'">
@@ -239,13 +351,13 @@ const {
 					<div class="editor-field">
 						<div class="editor-label">Set Header</div>
 						<div class="editor-button-group">
-							<button type="button" class="editor-group-btn" :class="{ active: headerMode === 'sidebar' }" @click.stop="headerMode = 'sidebar'">Sidebar</button>
-							<button type="button" class="editor-group-btn" :class="{ active: headerMode === 'top' }" @click.stop="headerMode = 'top'">Top Bar</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerMode === 'sidebar' }" @click.stop="headerMode = 'sidebar'" title="Sidebar header"><i class="fas fa-grip-lines-vertical"></i> Sidebar</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerMode === 'top' }" @click.stop="headerMode = 'top'" title="Top bar header"><i class="fas fa-grip-lines"></i> Top Bar</button>
 						</div>
 						<div class="editor-button-group" style="margin-top: 0.35rem;">
-							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'left' }" @click.stop="headerAlign = 'left'">Left</button>
-							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'center' }" @click.stop="headerAlign = 'center'">Center</button>
-							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'right' }" @click.stop="headerAlign = 'right'">Right</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'left' }" @click.stop="headerAlign = 'left'" title="Align left"><i class="fas fa-align-left"></i> Left</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'center' }" @click.stop="headerAlign = 'center'" title="Align center"><i class="fas fa-align-center"></i> Center</button>
+							<button type="button" class="editor-group-btn" :class="{ active: headerAlign === 'right' }" @click.stop="headerAlign = 'right'" title="Align right"><i class="fas fa-align-right"></i> Right</button>
 						</div>
 					</div>
 
@@ -279,118 +391,6 @@ const {
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: labelPosition === 'horizontal' }" @click.stop="labelPosition = 'horizontal'">Horizontal</button>
 							<button type="button" class="editor-group-btn" :class="{ active: labelPosition === 'vertical' }" @click.stop="labelPosition = 'vertical'">Vertical</button>
-						</div>
-					</div>
-
-				</details>
-
-				<!-- SPECIALIZED (minority bodies and power tools, collapsed) -->
-				<details class="editor-group">
-					<summary class="editor-group-title">Specialized</summary>
-
-					<TraitSetEditorRing />
-
-				<!-- OUT MARKER (generic stepped-track indicator, default off) -->
-				<div class="editor-field" v-if="styleBody === 'stress' || styleBody === 'default'">
-					<div class="editor-label">Out Marker</div>
-					<div class="editor-toggles">
-						<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-out'" name="stressOut" :true-value="true" :false-value="false" v-model="includeOut"></div>
-						<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Include 💥 Out Marker</label></div>
-					</div>
-					<div v-if="includeOut" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
-						<div style="flex: 1;">
-							<label :for="'trait-set-' + traitSetID + '-out-word'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Out Word</label>
-							<input type="text" :id="'trait-set-' + traitSetID + '-out-word'" name="outWord" :value="styleLabel('out')" @change="setStyleLabel('out', targetValue($event))" :placeholder="styleLabel('out')">
-						</div>
-					</div>
-				</div>
-
-					<TraitSetEditorDice />
-
-					<TraitSetEditorImage />
-
-					<!-- NOTES CONTENT -->
-					<div class="editor-field" v-if="styleBody === 'notes'">
-						<label :for="'trait-set-notes-' + traitSetID">Notes Content</label>
-						<textarea :id="'trait-set-notes-' + traitSetID" name="notesContent" v-model="notesContent" placeholder="Enter notes or text here..." rows="6"></textarea>
-					</div>
-
-					<!-- DISTINCTIONS COMPACT SFX & SHARED HINDER -->
-					<div class="editor-field" v-if="styleBody === 'distinctions'">
-						<div class="editor-label">Distinctions Layout</div>
-						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-							<input type="checkbox" :id="'trait-set-' + traitSetID + '-shared-hinder'" name="sharedHinder" v-model="sharedHinder">
-							<label :for="'trait-set-' + traitSetID + '-shared-hinder'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Shared hinder</label>
-						</div>
-					<div v-if="sharedHinder" style="margin-top: 0.35rem;">
-						<label :for="'trait-set-' + traitSetID + '-hinder-text'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Hinder text</label>
-						<textarea :id="'trait-set-' + traitSetID + '-hinder-text'" name="sharedHinderText" v-model="sharedHinderText" placeholder="Gain a PP when you trade out your distinction's [d8] rating for a [d4]." rows="2"></textarea>
-					</div>
-					</div>
-
-					<!-- ATTACHED STRESS / TRACK -->
-					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
-						<div class="editor-label">Attached Stress / Track</div>
-						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" name="hasAttachedStress" v-model="hasAttachedStress">
-							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Attached Stress to Traits</label>
-						</div>
-					</div>
-
-					<!-- PIPS TRACK SETTINGS -->
-					<div class="editor-field" v-if="styleBody === 'pips'">
-						<div class="editor-label">Pip Track Settings</div>
-						<div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-							<div style="flex: 1;">
-								<label :for="'trait-set-' + traitSetID + '-pip-count'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Total Pips</label>
-								<input type="number" :id="'trait-set-' + traitSetID + '-pip-count'" name="pipCount" min="1" max="100" v-model.number="pipCount">
-							</div>
-							<div style="flex: 1;">
-								<label :for="'trait-set-' + traitSetID + '-pip-per-row'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Pips Per Row</label>
-								<input type="number" :id="'trait-set-' + traitSetID + '-pip-per-row'" name="pipsPerRow" min="1" max="20" v-model.number="pipsPerRow">
-							</div>
-						</div>
-						<div style="margin-bottom: 0.5rem;">
-							<label :for="'trait-set-' + traitSetID + '-pip-filled'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Filled Pips</label>
-							<input type="number" :id="'trait-set-' + traitSetID + '-pip-filled'" name="pipsFilled" min="0" :max="pipCount" v-model.number="pipsFilled">
-						</div>
-						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem;">
-							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pips-connected'" name="pipsConnected" v-model="pipsConnected">
-							<label :for="'trait-set-' + traitSetID + '-pips-connected'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connect Pips with Horizontal Line</label>
-						</div>
-					</div>
-
-					<!-- SESSION RECORD (ANGLED LINES / LEAF) SETTINGS -->
-					<div class="editor-field" v-if="styleBody === 'session-record' || styleBody === 'angled-lines'">
-						<div class="editor-label">Session Record Settings</div>
-						<div style="margin-bottom: 0.5rem;">
-							<label :for="'trait-set-' + traitSetID + '-session-count'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Milestones</label>
-							<input type="number" :id="'trait-set-' + traitSetID + '-session-count'" name="sessionRecordCount" min="1" max="40" v-model.number="sessionRecordCount">
-						</div>
-						<div class="rating-scale-presets" style="margin-bottom: 0.5rem;">
-							<span class="preset-label">Presets:</span>
-							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 10 }" @click.stop="sessionRecordCount = 10">10</button>
-							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 15 }" @click.stop="sessionRecordCount = 15">15</button>
-							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 20 }" @click.stop="sessionRecordCount = 20">20</button>
-						</div>
-						<div style="margin-bottom: 0.5rem;">
-							<div class="editor-label" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Orientation</div>
-							<div class="editor-button-group">
-								<button type="button" class="editor-group-btn" :class="{ active: sessionRecordOrientation !== 'horizontal' }" @click.stop="sessionRecordOrientation = 'vertical'">
-									Vertical
-								</button>
-								<button type="button" class="editor-group-btn" :class="{ active: sessionRecordOrientation === 'horizontal' }" @click.stop="sessionRecordOrientation = 'horizontal'">
-									Horizontal
-								</button>
-							</div>
-						</div>
-						<div style="display: flex; gap: 0.5rem;">
-							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="clearAllSessionBubbles">
-								<i class="fas fa-undo"></i> Clear All Bubbles
-							</button>
-							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="fillAllSessionBubbles">
-								<i class="fas fa-check"></i> Fill All
-							</button>
 						</div>
 					</div>
 

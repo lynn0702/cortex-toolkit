@@ -247,3 +247,66 @@ https://github.com/kaelri/cortex-toolkit.
   renderer special case. Print rules unchanged: content-sized rows,
   multi-column lists balance, traits kept whole.
 
+2026-10-22 ï¿½ Editor-layout rules and trait-visibility explicitness. The brief
+("Fix what's confusing or broken about the way we control the editor (the UI
+that is used to describe the layout of a character sheet), and make sure the
+same surface could comfortably describe 4-area Ars Magica and 8-area Exalted
+sheets... smaller"): editor chrome is not sheet property. Panel Position as a
+trait-set property is removed (placement is absolute on a shared grid in the
+visual layout; the deprecated `view.panelPos` key warns `template: view.panelPos
+ignored (removed)`, normalized out). The standalone Remove, duplicate,
+position-picker, template-insert, and custom background-image row are deleted
+(remove = empty section; duplicate = create-plus-restore; All Trait Sets insert
+= first set`s tray; background = Style Cover, which also accepts remote URLs).
+Trait-set section glyphs are removed; an empty trait-set editor renders nothing
+(headline rows of empties are a display wart, not a model state). Dependents
+live adjacent and summon-only (conditionals under Style, no existence outside
+the enabled parent; spell-out panel buried as a nested Style detail; niche
+load/delete sets trail the Sections list); every drawer control exists only
+when it can act (a greyed button is deferred deletion). Numeric readouts are
+presentation-only beside their control (a draggable surface emits no wall of
+decimals). Layout novelty is capped (two new blocks max: draggable mini, parts
+strip). Chrome sweep: Done/Cancel copy stays Done/Cancel (a close \`X\` gets an
+editor-close glyph); red text reserved for destructive actions (non-destructive
+warnings use standard emphasis); dropdowns never clip; dotted inputs read as
+editable; type never shrinks below the floor (.8125rem/13px); every touch
+target is spacious.
+2026-10-22 ï¿½ Trait-visibility explicitness is a first-class entry. Trait
+visibility is a three-state enum (\`shown\` / \`editor-only\` / \`hidden\`) on
+the trait, not a heading word ([ Hidden ]) and not a parenthetical. The
+stress-key, no-heading, and pocket render-time deductions are deleted as
+primary paths: \`custom.isStressOut\` and \`custom.stress\` normalize to a
+rated companion subtrait (the "stress ring" is display of the companion's
+value, not a third model path; templates carry stress as a real trait). A
+name-block style render\`s empty slots to give valueless fields a bordered
+landing zone (not a parenthetical invitation). 4-area Ars Magica and 8-area
+Exalted foils ship as layered fixtures; both come in through the normal
+validate/migrate path as proof the surface reaches that scale.
+2026-10-22 ï¿½ Name-block headings are data, visibility is honest, one style
+key. The name editor shows no hard-coded field words and no separate label
+boxes: each magenta heading IS the name trait's label, edited in place
+(empty heading deletes the label; the sheet falls back to its default
+word). Visibility defaults tell the truth about the current style:
+game/plotPoints/notes default to hidden in spotlight sheets (no spotlight
+zone renders them; classic still renders all three, where they default to
+shown) and stored visibility always wins. Character view carries exactly
+one style key, view.style.sheet (classic|spotlight). The retired top-level
+view.sheetStyle and the view.style.hasAttributes flag resolve once at
+import (explicit sheet wins, then legacy sheetStyle, then hasAttributes
+false, then the spotlight name string, then a sheet template link, else
+classic) and are deleted; validate errors on both. hasAttributes drove
+nothing but a legacy layout guess (sets without rated attributes render
+the spotlight sheet); no reader checks set types anymore ï¿½ the style is
+data, not deduction. Fixed alongside: applyOverrides skipped any nested
+key literally named `sheet`, so view.style.sheet could never clear to
+null through a template merge; the sheet-link guard is root-only now.
+2026-10-22 — Visibility is a hidden boolean; the eye is the only control.
+There is no editor-only state: it distinguished a viewer nobody has, so
+the enum is gone everywhere (model, renderers, editors, validate). Stored
+form is `view.hidden: true` for hidden, absent or false for shown — never
+a visibility word (normalize converts it; validate errors on it). The
+name block, portrait, and trait editors share one eye toggle docked at
+the right end of the label line (open magenta = shown, slashed dim =
+hidden). Writes stay sparse with the honest default: only a word that
+disagrees with the default survives (showing a default-hidden game
+writes hidden:false; hiding a default-shown nickname writes hidden:true).

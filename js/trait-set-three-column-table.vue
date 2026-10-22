@@ -4,7 +4,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 
 const {
 	traitSet, s, submode, printBlank, viewY, character,
-	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
+	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetLabel, renderText, getTalentEffect
 } = injectTraitSet();
 </script>
@@ -17,9 +17,9 @@ const {
 				<div :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }"
 					tabindex="0"
 					role="button"
-					@keydown.enter.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-					@keydown.space.prevent="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null"
-					@click.stop="!item.isPlaceholder ? selectElement([ 'trait', s, item.originalIndex ]) : null">
+					@keydown.enter.prevent="openTraitAt(s, item)"
+					@keydown.space.prevent="openTraitAt(s, item)"
+					@click.stop="openTraitAt(s, item)">
 					<div class="three-col-row">
 						<span class="three-col-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 						<span class="three-col-name three-col-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>

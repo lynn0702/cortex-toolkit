@@ -4,7 +4,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 
 const {
 	traitSet, s, submode, printBlank, viewY, character,
-	isSelected, selectElement, updateCharacter, removeTrait, addTrait,
+	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitSetLabel, getSetDie,
 	getBranchGroups, branchSubs, hasBranchSplit, hasBranchFlank, getFlankColumns, handleBranchFlatClick
@@ -25,9 +25,9 @@ const {
 							<div :class="{ 'trait-inner': true, 'selected': !group.skillItem.isPlaceholder && isSelected(['trait', s, group.skillItem.originalIndex]), 'trait-placeholder-slot': group.skillItem.isPlaceholder }"
 								tabindex="0"
 								role="button"
-								@keydown.enter.prevent="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null"
-								@keydown.space.prevent="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null"
-								@click.stop="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null">
+								@keydown.enter.prevent="openTraitAt(s, group.skillItem)"
+								@keydown.space.prevent="openTraitAt(s, group.skillItem)"
+								@click.stop="openTraitAt(s, group.skillItem)">
 								<div class="branch-main" @click="submode === 'play' && !printBlank && !group.skillItem.isPlaceholder && !group.skillItem.trait.value && getSetDie(traitSet) ? handleSingleDieClick(group.skillItem.trait, getSetDie(traitSet), traitSet, s, group.skillItem.originalIndex) : null">
 									<span class="trait-name" v-if="!printBlank && !group.skillItem.isPlaceholder && group.skillItem.trait.name">{{ group.skillItem.trait.name }}</span>
 									<span class="trait-name trait-name-blank" v-else-if="printBlank || group.skillItem.isPlaceholder || !group.skillItem.trait.name">
@@ -86,9 +86,9 @@ const {
 				<div :class="{ 'trait-inner': true, 'selected': !group.skillItem.isPlaceholder && isSelected(['trait', s, group.skillItem.originalIndex]), 'trait-placeholder-slot': group.skillItem.isPlaceholder }"
 					tabindex="0"
 					role="button"
-					@keydown.enter.prevent="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null"
-					@keydown.space.prevent="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null"
-					@click.stop="!group.skillItem.isPlaceholder ? selectElement([ 'trait', s, group.skillItem.originalIndex ]) : null">
+					@keydown.enter.prevent="openTraitAt(s, group.skillItem)"
+					@keydown.space.prevent="openTraitAt(s, group.skillItem)"
+					@click.stop="openTraitAt(s, group.skillItem)">
 					<div class="branch-row" :class="{ 'branch-split-row': group.split }">
 						<div class="branch-side branch-left" v-if="group.split">
 							<template v-for="(entry, ei) in branchSubs(group.subs, 'left')" :key="entry._lid || ('subl-' + ei)">

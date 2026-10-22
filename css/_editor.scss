@@ -357,6 +357,84 @@
 	}
 }
 
+// Name-block heading row: the trait label (editable) with the
+// visibility eye docked at the right end of the line.
+.name-heading-row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	margin-bottom: .25rem;
+
+	.name-heading-input {
+		flex: 1;
+		min-width: 0;
+		margin-bottom: 0;
+	}
+
+	> label {
+		flex: 1;
+		min-width: 0;
+		margin-bottom: 0;
+	}
+}
+
+// Two-state visibility eye (shared component): magenta open, dim slashed.
+.visibility-eye {
+	flex: none;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--color-primary);
+	font-size: 0.9rem;
+	line-height: 1;
+	padding: 0.15rem 0.2rem;
+
+	&.off {
+		color: #64748b;
+		opacity: 0.65;
+	}
+
+	&:hover {
+		opacity: 1;
+	}
+
+	&:focus-visible {
+		outline: 1px solid var(--color-primary);
+		border-radius: 0.25rem;
+	}
+}
+.editor-fields input.name-heading-input {
+	display: block;
+	width: 100%;
+	font-family: var(--font-secondary);
+	color: var(--color-primary);
+	background: transparent;
+	border: none;
+	border-bottom: 1px dashed transparent;
+	border-radius: 0;
+	outline: none;
+	padding: 0;
+	margin-bottom: .25rem;
+	font-size: 1em;
+
+	&::placeholder {
+		color: var(--color-primary);
+		opacity: .55;
+	}
+
+	&:hover {
+		border-bottom-color: var(--color-input);
+	}
+
+	&:focus {
+		border-bottom-color: var(--color-primary);
+		background: var(--color-input);
+		border-radius: .25rem;
+		padding: 0 .25rem;
+		color: white;
+	}
+}
+
 // Section groups (set editor Content / Labels / Layout / Specialized).
 .editor-group {
 	border: 1px solid var(--color-input);
@@ -374,18 +452,141 @@
 		&::-webkit-details-marker {
 			display: none;
 		}
-
-		&::before {
-			content: '▸ ';
-		}
-	}
-
-	&[open] > .editor-group-title::before {
-		content: '▾ ';
 	}
 
 	.editor-field:last-child {
 		margin-bottom: 0;
+	}
+}
+
+// Visual placement miniature: the page grid with the set's block in
+// position. Drag the block to move, its corner to resize; the model
+// (percent/row units) updates on release.
+.place-mini {
+	position: relative;
+	width: 100%;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 4px;
+	overflow: hidden;
+	margin-bottom: 0.4rem;
+	touch-action: none;
+	user-select: none;
+
+	.place-mini-rowline {
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: rgba(255, 255, 255, 0.08);
+		pointer-events: none;
+	}
+
+	.place-mini-ghost {
+		position: absolute;
+		background: rgba(255, 255, 255, 0.07);
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		border-radius: 2px;
+		pointer-events: none;
+	}
+
+	.place-mini-block {
+		position: absolute;
+		background: rgba(2, 132, 199, 0.3);
+		border: 1px solid #0284c7;
+		border-radius: 2px;
+		cursor: move;
+		min-width: 12px;
+		min-height: 12px;
+	}
+
+	.place-mini-name {
+		position: absolute;
+		left: 3px;
+		top: 1px;
+		right: 3px;
+		font-size: 0.62rem;
+		font-weight: 700;
+		color: #e0f2fe;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		pointer-events: none;
+	}
+
+	.place-mini-handle {
+		position: absolute;
+		right: -5px;
+		bottom: -5px;
+		width: 13px;
+		height: 13px;
+		cursor: nwse-resize;
+		background: #0284c7;
+		border: 2px solid #0f172a;
+		border-radius: 50%;
+		touch-action: none;
+	}
+}
+
+// Trait-row cell strip: each row's cells at their widths; dividers drag.
+.parts-strip {
+	margin-bottom: 0.4rem;
+
+	.parts-strip-row {
+		position: relative;
+		height: 26px;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 4px;
+		margin-bottom: 4px;
+		overflow: hidden;
+		touch-action: none;
+		user-select: none;
+	}
+
+	.parts-strip-seg {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		background: rgba(2, 132, 199, 0.22);
+		border-right: 1px solid rgba(2, 132, 199, 0.5);
+		overflow: hidden;
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+
+	.parts-strip-name {
+		display: block;
+		font-size: 0.62rem;
+		font-weight: 700;
+		color: #e0f2fe;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 5px 0 0 5px;
+		pointer-events: none;
+	}
+
+	.parts-strip-divider {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 9px;
+		cursor: col-resize;
+		touch-action: none;
+
+		&::after {
+			content: '';
+			position: absolute;
+			left: 3px;
+			top: 4px;
+			bottom: 4px;
+			width: 3px;
+			border-radius: 2px;
+			background: #38bdf8;
+		}
 	}
 }
 
@@ -416,6 +617,53 @@
 	line-height: 1.35;
 	opacity: 0.75;
 	margin-top: 0.3rem;
+}
+
+// Compact numeric stepper (Plot Points, reserved slots, pip counts):
+// narrow field with -/+ buttons; native spinners hide so the custom
+// steppers own the job.
+.num-stepper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+
+	input[type="number"] {
+		width: 3rem;
+		text-align: center;
+		-moz-appearance: textfield;
+		appearance: textfield;
+
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+
+	.btn-step {
+		background: rgba(255, 255, 255, 0.18);
+		border: none;
+		color: white;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 2px;
+		font-weight: bold;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.85rem;
+		line-height: 1;
+
+		&:hover:not(:disabled) {
+			background: var(--color-interactive);
+		}
+
+		&:disabled {
+			opacity: 0.3;
+			cursor: default;
+		}
+	}
 }
 
 .editor-values {

@@ -41,8 +41,8 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(L.id === 'spotlight-camp-bewilderwood' && L.version === 1, 'entry wrapper kept');
   ok(L.character.$schema === undefined && L.character.version === undefined, 'old-format markers dropped in layered form');
   const sets = L.character.sets;
-  ok(JSON.stringify(Object.keys(sets)) === JSON.stringify(['Distinctions', 'Values', 'Signature Assets', 'Attributes', 'Standing', 'Badges', 'Talents']),
-    'seven sets in template order', Object.keys(sets));
+  ok(JSON.stringify(Object.keys(sets)) === JSON.stringify(['Name', 'Distinctions', 'Values', 'Signature Assets', 'Attributes', 'Standing', 'Badges', 'Talents']),
+    'name set first, seven sets in template order', Object.keys(sets));
   ok(sets.Distinctions.id === 'distinctions' && sets.Talents.id === 'talents', 'set ids kept');
   ok(sets.Distinctions.traits['HERITAGE:'].value === 'd8', 'distinction die');
   ok(sets.Values.traits.Bravery.value === undefined, 'unrated stays valueless');
@@ -54,13 +54,15 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
     dctk.sharedHinderText === 'Hinder: Gain a PP when you trade out your distinction\'s d8 rating for a d4.',
     'shared hinder banner kept');
   ok(sets.Values.traits.Bravery.questioned === false && sets.Values.traits.Bravery.statement === '', 'values statement keys kept');
-  ok(Object.keys(sets['Signature Assets'].slots).join(',') === '0,1,2', 'sig-asset slot indices');
-  ok(sets['Signature Assets'].slots['0'].statement === '', 'blank sig-asset statement kept');
-  ok(sets['Signature Assets'].slots['1'].statement === undefined, 'slot without statement stays keyless (presence preserved)');
-  ok(Object.keys(sets.Standing.slots).length === 6, 'standing slots count');
-  ok(sets.Standing.slots['0'].traits.COMPLICATION !== undefined && sets.Standing.slots['0'].traits.BONUS !== undefined,
-    'complication/bonus pairs survive');
-  ok(Object.keys(sets.Talents.slots).length === 2, 'talent slots count');
+  // Slots are not traits (2026-10-22): pure-empty blanks live nowhere in
+  // files; reservedSlots counts the render-time expansion. Only
+  // data-carrying slots (branch markers, ratings, text) keep indices.
+  ok(sets['Signature Assets'].slots === undefined, 'sig-asset blanks unstored');
+  ok(sets.Standing.slots !== undefined && sets.Standing.slots['0'].traits.COMPLICATION !== undefined && sets.Standing.slots['0'].traits.BONUS !== undefined,
+    'complication/bonus pairs survive (named substructure the renderer reads positionally)');
+  ok(sets.Talents.slots === undefined, 'talent blanks unstored');
+  ok(sets['Signature Assets'].view.reservedSlots === 3 && sets.Standing.view.reservedSlots === 6, 'reservedSlots intact');
+  ok(sets.Talents.view.reservedSlots !== undefined, 'talent blanks counted', sets.Talents.view.reservedSlots);
   ok(sets['Signature Assets'].view.reservedSlots === 3 && sets.Standing.view.reservedSlots === 6, 'reservedSlots intact');
   ok(JSON.stringify(sets.Values.view.ratingScale) === '[4,6,8,10,12]', 'rating scale kept');
   ok(sets.Badges.hasCounterColumn === true && sets.Badges.counterLabel === 'XP', 'counter column kept');
@@ -97,17 +99,18 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(blob.indexOf('"_lid"') === -1 && blob.indexOf('"removedTraits"') === -1, 'no lids or tombstones');
 }
 
-// ---- 3. Leading blanks keep their positions (strange-towns distinctions ___).
-// Ruin is a name-block field, not a distinction trait: all three rows are blanks.
+// ---- 3. Blank sets store no slot objects (strange-towns distinctions ___).
+// Ruin is a name-block field, not a distinction trait: all three rows are
+// blanks, counted by reservedSlots and expanded at render time.
 {
   const L = readLayered('spotlight-strange-towns');
-  const keys = Object.keys(L.character.sets.Distinctions.slots || {});
-  ok(JSON.stringify(keys) === JSON.stringify(['0', '1', '2']), 'leading slots indexed 0,1,2', keys);
-  const back = M.unmigrateTemplateEntry(L).data;
-  const orig = T.find((t) => t.id === 'spotlight-strange-towns');
-  const pat = (ts) => ts.traits.map((t) => (t.name && t.name.length ? 'N' : '_')).join('');
-  const ds = (ch) => ch.character.traitSets.find((ts) => ts.id === 'distinctions');
-  ok(pat(ds(back)) === pat(ds(orig)), 'blank/name order restored');
+  const dset = L.character.sets.Distinctions;
+  ok(dset.slots === undefined && Object.keys(dset.traits || {}).length === 0, 'no stored blanks');
+  ok(dset.view.reservedSlots === 3, 'blank count kept', dset.view.reservedSlots);
+  const nset = L.character.sets.Name;
+  ok(nset && nset.id === 'name', 'name set first-class');
+  ok(nset.traits.pronouns && nset.traits.pronouns.label === 'Ruin', 'legacy pronouns label migrated', nset.traits.pronouns);
+  ok(!((L.character.view || {}).nameLabels), 'legacy nameLabels bag gone');
 }
 
 // ---- 4. Duplicate set names keep ids, content, and order (inheritors-family).
@@ -121,11 +124,13 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
     L.character.sets['GMC~2'].view.place.left === '50%', 'per-instance placement kept');
 }
 
-// ---- 5. Blank sfx rows survive with order (retired-crystalline Archetype [_]).
+// ---- 5. Blank sfx rows are render-time (retired-crystalline Archetype [_]).
+// Unfilled sfx slots store nothing; the sheet shows the write-in hint.
 {
   const L = readLayered('spotlight-retired-crystalline');
   const arch = L.character.sets.Distinctions.traits.Archetype;
-  ok(arch.traits.SFX && Object.keys(arch.traits.SFX.slots || {}).length === 2, 'sfx slots count', arch.traits.SFX);
+  const sfx = arch.traits && arch.traits.SFX;
+  ok(!sfx || !sfx.slots || Object.keys(sfx.slots).length === 0, 'no stored sfx blanks', sfx && sfx.slots);
 }
 
 // ---- 5b. Alien Us branch content: set die, sides, skills, statements.

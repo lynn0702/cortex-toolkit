@@ -36,12 +36,11 @@ templates = templates.map(item => {
     if (Object.keys(char.custom).length === 0) delete char.custom;
   }
 
-  char.view.sheetStyle = 'spotlight';
   delete char.view.columns;
   delete char.view.columnsPage2;
   char.view.pageCount = item.pages || 1;
   char.view.spotlight = item.spotlight || cleanTitle;
-  char.view.style = { hasAttributes: false };
+  char.view.style = { sheet: 'spotlight' };
   char.view.columnAlignment = item.id === 'spotlight-alien-us' ? 'full-width' : 'top-base';
   char.view.columnOffsets = { left: 0, center: 0, right: 0 };
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
+import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
@@ -49,27 +49,34 @@ const player = computed( () => props.character?.player ?? '' );
 const pronouns = computed( () => props.character?.pronouns ?? '' );
 const nickname = computed( () => props.character?.nickname ?? getView( props.character )?.nickname ?? '' );
 const hasNickname = computed( () => Boolean( nickname.value || ( isSpotlightStyle.value && getView( props.character )?.hasNickname ) ) );
-// Name-block field labels are editable (Name itself is fixed); games like
-// Strange Towns relabel Pronouns to Ruin. Stored in the character view.
-// Labels that render uppercase (nickname/pronouns/description) go through
-// nameLabel; words that keep their own case (Player:, PP) use nameWord.
-const nameLabels = computed( () => getView( props.character )?.nameLabels ?? {} );
-function nameLabel( key: 'nickname' | 'pronouns' | 'description', fallback: string ) {
-	const custom = ( nameLabels.value as Record<string, unknown> )[ key ];
+// The name block is the first trait set: header labels come from its
+// traits' `label` fields, visibility from trait `view`. Values stay on the
+// character fields. Absent traits fall back to the long-standing words,
+// so files predating the set render exactly as before.
+function nameTrait( key: string ) {
+	return cortexFunctions.getNameTrait( props.character, key );
+}
+function nameLabel( key: string, fallback: string ) {
+	const custom = nameTrait( key )?.label;
 	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim().toUpperCase();
 	return fallback;
 }
-function nameWord( key: 'player' | 'portraitCaption' | 'plotPoints', fallback: string ) {
-	const custom = ( nameLabels.value as Record<string, unknown> )[ key ];
+function nameWord( key: string, fallback: string ) {
+	const custom = nameTrait( key )?.label;
 	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim();
 	return fallback;
+}
+function nameShown( key: string ) {
+	const t = nameTrait( key );
+	const v = t ? getView( t )?.hidden : undefined;
+	return ( v ?? defaultNameHidden( key, props.character ) ) !== true;
 }
 const nicknameLabel = computed( () => nameLabel( 'nickname', 'NICKNAME' ) );
 const pronounsLabel = computed( () => nameLabel( 'pronouns', 'PRONOUNS' ) );
 const descriptionLabel = computed( () => nameLabel( 'description', 'DESCRIPTION' ) );
 const playerLabel = computed( () => nameWord( 'player', 'PLAYER:' ) );
 const playerLabelClassic = computed( () => nameWord( 'player', 'Player:' ) );
-const portraitCaption = computed( () => nameWord( 'portraitCaption', '' ) );
+const portraitCaption = computed( () => nameWord( 'caption', '' ) );
 const plotPointsLabel = computed( () => nameWord( 'plotPoints', 'PP' ) );
 const plotPoints = computed( () => Number( props.character?.plotPoints ) || 0 );
 const portrait = computed( () => props.character?.portrait ?? null );
@@ -175,19 +182,7 @@ const sheetStyle = computed( () => {
 	if ( props.submode === 'print' && printStyle.value ) {
 		return printStyle.value;
 	}
-	const charView = getView( props.character );
-	const explicit = charView?.sheetStyle;
-	if ( explicit ) return explicit;
-	if ( charView?.style?.hasAttributes === false ) {
-		return 'spotlight';
-	}
-	if ( charView?.spotlight ) {
-		return 'spotlight';
-	}
-	if ( ( props.character as any )?.sheet?.template ) {
-		return 'spotlight';
-	}
-	return 'classic';
+	return resolveSheetStyle( props.character );
 } );
 
 const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
@@ -621,7 +616,7 @@ watch( () => props.character, () => {
 								<div class="spotlight-meta-name-cell">
 									<div class="spotlight-cell-header">
 										<span class="spotlight-cell-label">NAME</span>
-										<span class="spotlight-cell-sublabel" v-if="player && !printBlank">{{ playerLabel }} {{ player }}</span>
+										<span class="spotlight-cell-sublabel" v-if="player && !printBlank && nameShown('player')">{{ playerLabel }} {{ player }}</span>
 									</div>
 									<div class="spotlight-cell-content name-content" v-if="!printBlank && name" v-html="renderNameHtml(name)"></div>
 									<div class="spotlight-blank-line" v-else-if="printBlank"></div>
@@ -631,7 +626,7 @@ watch( () => props.character, () => {
 
 								<div class="spotlight-meta-divider"></div>
 
-								<div class="spotlight-meta-nickname-cell" v-if="hasNickname">
+								<div class="spotlight-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
 									<span class="spotlight-cell-label">{{ nicknameLabel }}</span>
 									<span class="spotlight-nickname-val" v-if="!printBlank && nickname" v-html="renderText(nickname)"></span>
 									<span class="spotlight-blank-line" v-else-if="printBlank"></span>
@@ -639,9 +634,9 @@ watch( () => props.character, () => {
 									<span class="spotlight-blank-line" v-else></span>
 								</div>
 
-								<div class="spotlight-meta-divider" v-if="hasNickname"></div>
+								<div class="spotlight-meta-divider" v-if="hasNickname && nameShown('nickname')"></div>
 
-								<div class="spotlight-meta-pronoun-cell">
+								<div class="spotlight-meta-pronoun-cell" v-if="nameShown('pronouns')">
 									<span class="spotlight-cell-label">{{ pronounsLabel }}</span>
 									<span class="spotlight-pronoun-val" v-if="!printBlank && pronouns" v-html="renderText(pronouns)"></span>
 									<span class="spotlight-blank-line" v-else-if="printBlank"></span>
@@ -651,7 +646,7 @@ watch( () => props.character, () => {
 							</div>
 
 							<!-- CENTER BOX: DESCRIPTION (TRAIT SET STYLE) -->
-							<div class="spotlight-header-desc-box trait-set-box" @click.stop="selectElement(['name'])">
+							<div class="spotlight-header-desc-box trait-set-box" v-if="nameShown('description')" @click.stop="selectElement(['name'])">
 								<div class="spotlight-cell-header">
 									<label for="spotlight-header-desc" class="spotlight-cell-label">{{ descriptionLabel }}</label>
 									<button
@@ -682,7 +677,7 @@ watch( () => props.character, () => {
 							</div>
 
 							<!-- RIGHT BOX: PORTRAIT (25% OF HEADER WIDTH, HALF SIZE, REMOVABLE) -->
-							<div v-if="hasHeaderPortrait" class="spotlight-header-portrait-wrap">
+							<div v-if="hasHeaderPortrait && nameShown('portrait')" class="spotlight-header-portrait-wrap">
 								<div
 									class="spotlight-header-portrait-box"
 									:class="{ 'selected': isSelected(['portrait']), 'has-image': Boolean(effectivePortraitUrl) }"
@@ -711,7 +706,7 @@ watch( () => props.character, () => {
 										<i class="fas fa-trash-alt"></i>
 									</button>
 								</div>
-								<div v-if="portraitCaption" class="spotlight-portrait-caption">{{ portraitCaption }}</div>
+								<div v-if="portraitCaption && nameShown('caption')" class="spotlight-portrait-caption">{{ portraitCaption }}</div>
 							</div>
 						</div>
 
@@ -726,7 +721,7 @@ watch( () => props.character, () => {
 								<!-- CHARACTER NAME -->
 								<div class="title-container">
 
-									<div class="character-game-title" v-if="game" v-html="renderText(game)"></div>
+									<div class="character-game-title" v-if="game && nameShown('game')" v-html="renderText(game)"></div>
 
 									<div class="title">{{ name }}</div>
 
@@ -739,26 +734,26 @@ watch( () => props.character, () => {
 								<!-- CHARACTER DESCRIPTION -->
 								<div class="character-meta">
 						
-									<div class="character-player" v-if="player && player.length">
+									<div class="character-player" v-if="player && player.length && nameShown('player')">
 										<span class="meta-label">{{ playerLabelClassic }}</span> <span>{{ player }}</span>
 									</div>
 
-									<div class="character-pronouns" v-if="pronouns.length">
+									<div class="character-pronouns" v-if="pronouns.length && nameShown('pronouns')">
 										<span v-html="renderText(pronouns)"></span>
 									</div>
 
-									<div class="character-description" v-if="description.length">
+									<div class="character-description" v-if="description.length && nameShown('description')">
 										<span v-html="renderText(description)"></span>
 									</div>
 
-									<div class="character-pp-badge" v-if="submode === 'play'">
+									<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
 										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
 										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
 										<span class="pp-count">{{ plotPoints }}</span>
 										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
 									</div>
 
-									<div class="character-notes-summary" v-if="notes && notes.length">
+									<div class="character-notes-summary" v-if="notes && notes.length && nameShown('notes')">
 										<div class="character-notes-body" v-html="renderNotesText(notes)"></div>
 									</div>
 			
@@ -923,7 +918,7 @@ watch( () => props.character, () => {
 
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
-									v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
+									v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
 									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
@@ -951,7 +946,7 @@ watch( () => props.character, () => {
 					<div class="classic-full-band" v-if="!isSpotlightStyle && hasClassicFullSets(pageIndex)">
 						<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 							<TraitSetBlock
-								v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
+								v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
 								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>

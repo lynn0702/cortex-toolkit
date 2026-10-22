@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
+import TraitSetEditorPlaceMini from './trait-set-editor-place-mini.vue';
+import TraitSetEditorPartsStrip from './trait-set-editor-parts-strip.vue';
 
 const {
 	isRing, pageNumber,
 	hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
 	partCells, hasParts, hasCustomParts, setPartCell, resetParts,
 	canMoveUp, canMoveDown, moveTraitSetUp, moveTraitSetDown,
-	editorDock, isSpotlightSheet, isFullWidthSpan, targetValue
+	isSpotlightSheet, targetValue
 } = injectTraitSetEditor();
 
 const PART_TITLES: Record<string, string> = {
@@ -73,6 +75,7 @@ const PART_TITLES: Record<string, string> = {
 				Full Width
 			</button>
 		</div>
+		<TraitSetEditorPlaceMini />
 		<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
 			<div style="flex: 1;">
 				<label :for="'trait-set-place-left'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Left %</label>
@@ -139,6 +142,7 @@ const PART_TITLES: Record<string, string> = {
 				Reset
 			</button>
 		</div>
+		<TraitSetEditorPartsStrip />
 		<div v-for="cell in partCells" :key="cell.key" style="margin-bottom: 0.4rem;">
 			<div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.2rem;">{{ PART_TITLES[cell.key] || cell.key }}</div>
 			<div style="display: flex; gap: 0.5rem; margin-bottom: 0.25rem;">
@@ -164,29 +168,6 @@ const PART_TITLES: Record<string, string> = {
 		</div>
 		<div class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem;">
 			<span v-for="cell in partCells" :key="'hint-' + cell.key">{{ (PART_TITLES[cell.key] || cell.key) }} {{ cell.width }}% · </span>
-		</div>
-	</div>
-
-	<!-- PANEL POSITION (FULL-WIDTH SETS) -->
-	<div class="editor-field" v-if="isFullWidthSpan">
-		<div class="editor-label">Panel Position</div>
-		<div class="editor-button-group">
-			<button
-				type="button"
-				class="editor-group-btn"
-				:class="{ active: editorDock === 'left' }"
-				@click.stop="editorDock = 'left'"
-			>
-				Left
-			</button>
-			<button
-				type="button"
-				class="editor-group-btn"
-				:class="{ active: editorDock === 'right' }"
-				@click.stop="editorDock = 'right'"
-			>
-				Right
-			</button>
 		</div>
 	</div>
 </template>

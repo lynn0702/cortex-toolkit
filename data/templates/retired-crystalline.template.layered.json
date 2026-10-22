@@ -37,9 +37,8 @@
       "pageCount": 1,
       "spotlight": "Retired No More",
       "style": {
-        "hasAttributes": false
+        "sheet": "spotlight"
       },
-      "sheetStyle": "spotlight",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",
@@ -55,6 +54,52 @@
       }
     },
     "sets": {
+      "Name": {
+        "id": "name",
+        "view": {
+          "style": {
+            "header": "default",
+            "body": "name"
+          },
+          "page": 1
+        },
+        "traits": {
+          "name": {
+            "label": "Name"
+          },
+          "player": {
+            "label": "Player"
+          },
+          "nickname": {
+            "label": "Nickname"
+          },
+          "pronouns": {
+            "label": "Pronouns"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "game": {
+            "label": "Game",
+            "view": {
+              "hidden": true
+            }
+          },
+          "portrait": {},
+          "caption": {},
+          "plotPoints": {
+            "label": "PP",
+            "view": {
+              "hidden": true
+            }
+          },
+          "notes": {
+            "view": {
+              "hidden": true
+            }
+          }
+        }
+      },
       "Values": {
         "id": "values",
         "description": "Enduring principles of the golden era",
@@ -150,10 +195,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "0": {},
-                  "1": {}
                 }
               }
             }
@@ -164,10 +205,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -178,10 +215,6 @@
               "SFX": {
                 "traits": {
                   "Hinder": {}
-                },
-                "slots": {
-                  "1": {},
-                  "2": {}
                 }
               }
             }
@@ -314,11 +347,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {}
-        }
+        "traits": {}
       },
       "Aging Complications": {
         "id": "aging-complications",
@@ -371,11 +400,7 @@
             }
           }
         },
-        "traits": {},
-        "slots": {
-          "0": {},
-          "1": {}
-        }
+        "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
@@ -419,86 +444,22 @@
           }
         },
         "traits": {
-          "Craft": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Fight": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Fly": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Focus": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Influence": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Know": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Labor": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Move": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Notice": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Perform": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Sneak": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Survive": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Throw": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Tinker": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Treat": {
-            "slots": {
-              "0": {}
-            }
-          },
-          "Trick": {
-            "slots": {
-              "0": {}
-            }
-          }
+          "Craft": {},
+          "Fight": {},
+          "Fly": {},
+          "Focus": {},
+          "Influence": {},
+          "Know": {},
+          "Labor": {},
+          "Move": {},
+          "Notice": {},
+          "Perform": {},
+          "Sneak": {},
+          "Survive": {},
+          "Throw": {},
+          "Tinker": {},
+          "Treat": {},
+          "Trick": {}
         }
       }
     }

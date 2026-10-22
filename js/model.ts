@@ -28,11 +28,11 @@ export type { Tags, SfxHinder, Sfx } from './model.generated.ts';
 
 // ---------- custom.cortexToolkit sub-shapes (set + character scope) ----------
 
-/** `custom.cortexToolkit.style` — also carries character-level `hasAttributes`. */
+/** Character `view.style`: the single sheet-style object (`sheet`). */
 export interface SetStyle {
 	header?: string;
 	body?: string;
-	hasAttributes?: boolean;
+	sheet?: 'classic' | 'spotlight';
 }
 
 export interface SetFeatures {
@@ -199,7 +199,6 @@ export interface CortexToolkitCustom {
 	/** @deprecated superseded by place; read for legacy migration only. */
 	colWidth?: number | null;
 	editorDock?: 'left' | 'right';
-	headerRight?: string;
 	traitColumns?: number;
 	multiDie?: boolean;
 	ratingScale?: number[];
@@ -238,6 +237,8 @@ export interface CortexToolkitCustom {
 	questioned?: boolean;
 	isResource?: boolean;
 	isScale?: boolean;
+	/** Trait visibility: hidden true keeps the data off the sheet; absent or false shows it. No third state. */
+	hidden?: boolean;
 	xp?: number | string;
 	counter?: number | string;
 	branchRole?: 'skill' | 'specialty';
@@ -252,7 +253,6 @@ export interface CortexToolkitCustom {
 	pageCount?: number;
 	pageOrientation?: 'portrait' | 'landscape';
 	orientation?: 'portrait' | 'landscape';
-	sheetStyle?: 'classic' | 'spotlight';
 	diceConfig?: DiceConfig;
 	watermark?: {
 		enabled?: boolean;
@@ -281,6 +281,52 @@ export interface CortexToolkitCustom {
 
 export type ViewBag = CortexToolkitCustom;
 export type ViewConfig = CortexToolkitCustom;
+
+/**
+ * The name block is the first trait set (view.style.body "name"): its
+ * traits are the header fields, carrying labels as the trait `label`
+ * field and visibility in trait `view`. Values stay on the character
+ * fields; the traits are presentation records.
+ *
+ * Render-time check (views are always present in memory). Serialized
+ * forms may prune the view away; migration's detector also accepts the
+ * reserved id 'name' (which ensureTraitSetIds never assigns elsewhere).
+ */
+export function isNameSet( set: unknown ): boolean {
+	const v = getView( set );
+	return Boolean( set && typeof set === 'object' && v && typeof v === 'object' && v.style?.body === 'name' );
+}
+
+/**
+ * Resolve the sheet style for a character holder. `view.style.sheet` is
+ * the only stored key; the legacy fallbacks (top-level `sheetStyle`, the
+ * `hasAttributes` set-type flag, the `spotlight` name string, a sheet
+ * template link) resolve here so no reader hard-codes set-type checks.
+ */
+export function resolveSheetStyle( holder: unknown ): 'classic' | 'spotlight' {
+	const h = ( holder && typeof holder === 'object' ) ? holder as any : undefined;
+	const v = getView( h );
+	const s = v && typeof v === 'object' ? v : undefined;
+	const sheet = s?.style && typeof s.style === 'object' ? ( s.style as any ).sheet : undefined;
+	if ( sheet === 'spotlight' || sheet === 'classic' ) return sheet;
+	if ( s?.sheetStyle === 'spotlight' || s?.sheetStyle === 'classic' ) return s.sheetStyle;
+	if ( s?.style && typeof s.style === 'object' && ( s.style as any ).hasAttributes === false ) return 'spotlight';
+	if ( s?.spotlight ) return 'spotlight';
+	if ( h?.sheet && typeof h.sheet === 'object' && ( h.sheet as any ).template ) return 'spotlight';
+	return 'classic';
+}
+
+/**
+ * Name-block traits with no sheet zone in spotlight styles (game, plot
+ * points, notes) default to hidden there; everything else defaults to
+ * shown. A stored `hidden` boolean always wins — this only fills the gap
+ * so the editor never shows an open eye for something no layout renders.
+ */
+const NAME_HIDDEN_IN_SPOTLIGHT = [ 'game', 'plotPoints', 'notes' ];
+
+export function defaultNameHidden( key: string, holder: unknown ): boolean {
+	return NAME_HIDDEN_IN_SPOTLIGHT.includes( key ) && resolveSheetStyle( holder ) === 'spotlight';
+}
 
 /**
  * Accessor for the presentation view bag on any character, set, trait, or portrait.

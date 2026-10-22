@@ -879,16 +879,6 @@
 				}
 			}
 		}
-
-		// File tag (optional header note, e.g. "Character File"): small
-		// content inside the header bar, never a side strip.
-		.trait-set-header-file {
-			font-size: var(--text-meta);
-			font-weight: 700;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			opacity: 0.75;
-		}
 	}
 
 	// TRAITS LISTING

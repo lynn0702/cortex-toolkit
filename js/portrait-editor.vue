@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView } from './model.ts';
+import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
 	character: any;
@@ -56,6 +57,43 @@ const alignment = computed( {
 
 function selectElement( selector: any[] ) {
 	emit( 'selectElement', selector );
+}
+
+function targetValue( e: Event ) {
+	return ( e?.target as HTMLInputElement )?.value ?? '';
+}
+
+// Caption text lives on the caption name-trait's label (the trait has no
+// separate label word); portrait visibility gates the portrait zone.
+function captionText() {
+	const t = cortexFunctions.getNameTrait( props.character, 'caption' );
+	const v = t?.label;
+	return typeof v === 'string' ? v : '';
+}
+
+function setCaptionText( val: string ) {
+	const t = cortexFunctions.ensureNameTrait( props.character, 'caption' );
+	if ( !t ) return;
+	if ( typeof val === 'string' && val.trim().length ) t.label = val.trim();
+	else delete t.label;
+	updateCharacter( props.character );
+}
+
+function portraitHidden() {
+	const t = cortexFunctions.getNameTrait( props.character, 'portrait' );
+	return getView( t )?.hidden === true;
+}
+
+function setPortraitHidden( hidden: boolean ) {
+	const t = cortexFunctions.ensureNameTrait( props.character, 'portrait' );
+	if ( !t ) return;
+	if ( hidden ) {
+		ensureView( t ).hidden = true;
+	} else {
+		const v = getView( t );
+		if ( v && typeof v === 'object' ) delete v.hidden;
+	}
+	updateCharacter( props.character );
 }
 
 function ensurePortraitStruct() {
@@ -213,6 +251,14 @@ function updateCharacter( character: any ) {
 							<div @click.stop="setAlignment('bottom-right')"  :class="{'active': alignment === 'bottom-right' }"></div>
 						</div>
 
+					</div>
+
+					<div class="editor-field">
+						<div class="name-heading-row">
+							<label for="portrait-field-caption">Caption</label>
+							<visibility-eye :visible="!portraitHidden()" @toggle="setPortraitHidden(!portraitHidden())" title="Portrait visibility" />
+						</div>
+						<input type="text" id="portrait-field-caption" name="portraitCaption" :value="captionText()" @change="setCaptionText(targetValue($event))" placeholder="Caption under the portrait">
 					</div>
 
 				</div>

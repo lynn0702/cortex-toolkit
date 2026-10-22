@@ -173,6 +173,10 @@ export interface Trait {
    */
   name: string;
   /**
+   * Display label for the trait. Name-block traits render this instead of the name.
+   */
+  label?: string | null;
+  /**
    * The die value of the trait. For example, `2` for d2, `6` for a d6, etc. For unrated traits, use `0` or null.
    */
   value: number | null;
