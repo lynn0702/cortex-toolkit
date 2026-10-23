@@ -47,6 +47,8 @@ export interface PipsConfig {
 	perRow?: number;
 	connected?: boolean;
 	filled?: number;
+	/** Named checkable entries: rows render as bubble-plus-label. */
+	labels?: boolean;
 }
 
 export interface SessionRecordConfig {

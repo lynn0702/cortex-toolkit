@@ -1724,6 +1724,55 @@
 	.trait-pips-body {
 		padding: 0.35rem 0.25rem;
 
+		.pip-label-list {
+			display: flex;
+			flex-direction: column;
+			row-gap: 0.4rem;
+			padding: 0.25rem 0;
+
+			.pip-label-row {
+				display: flex;
+				align-items: center;
+				gap: 0.55rem;
+				min-width: 0;
+
+				.pip-bubble-wrap {
+					cursor: pointer;
+					user-select: none;
+				}
+
+				.pip-bubble {
+					width: 15px;
+					height: 15px;
+					border-radius: 50%;
+					border: 1.5px solid #000000;
+					background: #ffffff;
+					box-sizing: border-box;
+
+					&.filled {
+						background: #000000;
+					}
+				}
+
+				.pip-label-name {
+					font-size: var(--text-trait-title);
+					font-weight: 700;
+					text-transform: uppercase;
+					letter-spacing: 0.04em;
+					cursor: pointer;
+					min-width: 0;
+					overflow-wrap: break-word;
+				}
+
+				.pip-label-blank {
+					font-size: var(--text-meta);
+					font-style: italic;
+					opacity: 0.6;
+					cursor: pointer;
+				}
+			}
+		}
+
 		.pips-track-container {
 			display: flex;
 			flex-direction: column;
@@ -2282,69 +2331,7 @@
 	}
 }
 
-// SESSION RECORD PRINT COMPATIBILITY
-.trait-session-record-body {
-	.session-record-svg {
-		&.session-horizontal {
-			max-height: 6rem;
-			width: auto;
-			margin-inline: auto;
-		}
-
-		.session-spine {
-			stroke: #000000;
-			stroke-width: 1.25px;
-		}
-
-		.session-record-row {
-			.session-line {
-				stroke: #333333;
-				stroke-width: 0.85px;
-			}
-
-			.session-bubble {
-				fill: #ffffff;
-				stroke: #000000;
-				stroke-width: 1.25px;
-
-				&.filled {
-					fill: #000000;
-				}
-			}
-
-			.session-label {
-				fill: #000000;
-				/* Labels share the print floor in every mode so the
-				   tilt geometry fits long names in Edit and Print alike. */
-				font-size: 0.8125rem;
-			}
-		}
-	}
-}
-
-@media print {
-	.trait-session-record-body {
-		.session-record-svg {
-			.session-spine {
-				stroke: #000000 !important;
-			}
-			.session-record-row {
-				.session-line {
-					stroke: #000000 !important;
-				}
-				.session-bubble {
-					stroke: #000000 !important;
-					&.filled {
-						fill: #000000 !important;
-					}
-				}
-				.session-label {
-					fill: #000000 !important;
-				}
-			}
-		}
-	}
-}
+// session spine renderer retired; pip rows print through shared rules
 
 // MOBILE (â‰¤768px): the A4 sheet goes fluid and every band stacks to a
 // single column â€” no horizontal overflow or clipped content. Inline grid
@@ -2985,9 +2972,9 @@ body:has(.character-sheet.submode-print) .main {
     }
 
     // 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches):
-    // When header is set to 'top', the 3-column .branch-split-head already
-    // provides the top header bar ("SPECIALTIES | SKILLS d6 | SPECIALTIES"),
-    // so hide the redundant outer .trait-set-header.
+    // the branch bar IS the section header (single magenta header on
+    // screen; see _variants). The redundant outer header hides wherever
+    // the split bar renders, and the bar opens the set editor.
     .trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
         > .trait-set-header {
             display: none !important;
@@ -3015,11 +3002,9 @@ body:has(.character-sheet.submode-print) .main {
     }
 
     // 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT
+    // (the branch head keeps the theme magenta on screen; its black
+    // twin lives in the print-only block above)
     .trait-set-style-subtrait-columns {
-        .branch-head {
-            color: #000000;
-            border-bottom-color: #000000;
-        }
         .branch-main,
         .branch-slot {
             border: 1.5px solid #000000;

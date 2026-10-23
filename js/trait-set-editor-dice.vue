@@ -2,10 +2,14 @@
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
-	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue, setRatingPreset,
-	setDie, isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset,
+	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue,
+	setDie, isSubtraitRatingIncluded, toggleSubtraitRatingOption,
 	featureSubtraits, isRing, multiDie, isPool, isChallengePool, traitSetID
 } = injectTraitSetEditor();
+
+function toggleSetDie( size: number | null ) {
+	setDie.value = ( size !== null && setDie.value === size ) ? null : size;
+}
 </script>
 
 <template>
@@ -27,33 +31,36 @@ const {
 					<span class="chip-label">d{{ size }}</span>
 				</button>
 			</div>
-			<div class="rating-scale-presets">
-				<span class="preset-label">Presets:</span>
-				<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('all')">All</button>
-				<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('skills')">Skills</button>
-				<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('specialties')">Specialties</button>
-				<button type="button" class="btn-scale-preset" @click.stop="setRatingPreset('stress')">Stress</button>
-			</div>
 		</div>
 	</div>
 
-	<!-- SET DIE -->
+	<!-- SET DIE (ONE VALUE) -->
 	<div class="editor-field" v-if="needsDiceUI">
 		<label>Set die</label>
-		<div class="editor-button-group">
-			<button type="button" class="editor-group-btn" :class="{ active: setDie === null }" @click.stop="setDie = null">
-				None
-			</button>
-			<button
-				type="button"
-				v-for="size in [4, 6, 8, 10, 12]"
-				:key="size"
-				class="editor-group-btn"
-				:class="{ active: setDie === size }"
-				@click.stop="setDie = size"
-			>
-				<span class="c" v-html="getDieDisplayValue(size)"></span> d{{ size }}
-			</button>
+		<div class="rating-scale-container">
+			<div class="rating-scale-chips set-die-chips">
+				<button
+					type="button"
+					class="rating-scale-chip set-die-none"
+					:class="{ active: setDie === null }"
+					@click.stop="toggleSetDie(null)"
+					title="No set die"
+				>
+					<span class="chip-label">None</span>
+				</button>
+				<button
+					type="button"
+					v-for="size in [4, 6, 8, 10, 12]"
+					:key="size"
+					class="rating-scale-chip"
+					:class="{ active: setDie === size }"
+					@click.stop="toggleSetDie(size)"
+					:title="(setDie === size ? 'Clear the set die (was d' : 'Set the die to d') + size + (setDie === size ? ')' : '')"
+				>
+					<span class="c" v-html="getDieDisplayValue(size)"></span>
+					<span class="chip-label">d{{ size }}</span>
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -74,12 +81,6 @@ const {
 					<span class="c" v-html="getDieDisplayValue(size)"></span>
 					<span class="chip-label">d{{ size }}</span>
 				</button>
-			</div>
-			<div class="rating-scale-presets">
-				<span class="preset-label">Presets:</span>
-				<button type="button" class="btn-scale-preset" @click.stop="setSubtraitRatingPreset('all')">All</button>
-				<button type="button" class="btn-scale-preset" @click.stop="setSubtraitRatingPreset('specialties')">Specialties</button>
-				<button type="button" class="btn-scale-preset" @click.stop="setSubtraitRatingPreset('skills')">Skills</button>
 			</div>
 		</div>
 	</div>

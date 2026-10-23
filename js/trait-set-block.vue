@@ -5,7 +5,6 @@ import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetNotes from './trait-set-notes.vue';
 import TraitSetPips from './trait-set-pips.vue';
-import TraitSetSessionRecord from './trait-set-session-record.vue';
 import TraitSetDiceLadder from './trait-set-dice-ladder.vue';
 import TraitSetLabeledFields from './trait-set-labeled-fields.vue';
 import TraitSetSubtraitColumns from './trait-set-subtrait-columns.vue';
@@ -48,8 +47,10 @@ const BODY_COMPONENTS: Record<string, any> = {
 	'image': TraitSetImage,
 	'notes': TraitSetNotes,
 	'pips': TraitSetPips,
-	'session-record': TraitSetSessionRecord,
-	'angled-lines': TraitSetSessionRecord,
+	// Retired bodies (2026-10-22, unified into pips+labels): render as
+	// pips; migration normalizes them on load.
+	'session-record': TraitSetPips,
+	'angled-lines': TraitSetPips,
 	'dice-ladder': TraitSetDiceLadder,
 	'labeled-fields': TraitSetLabeledFields,
 	'subtrait-columns': TraitSetSubtraitColumns,

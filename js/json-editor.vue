@@ -4,6 +4,7 @@ import { toLayeredEntity } from './layered-materialize.ts';
 
 const props = defineProps<{
 	character?: any;
+	open?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -14,6 +15,7 @@ const text = ref( '' );
 const error = ref( '' );
 const copied = ref( false );
 const filledId = ref( '' );
+let filledText = '';
 
 function fill() {
 	if ( !props.character ) {
@@ -51,6 +53,7 @@ function fill() {
 	}
 	error.value = '';
 	filledId.value = props.character.id || '';
+	filledText = text.value;
 }
 
 function apply() {
@@ -81,6 +84,12 @@ function copy() {
 onMounted( fill );
 watch( () => props.character && props.character.id, ( id ) => {
 	if ( ( id || '' ) !== filledId.value ) fill();
+} );
+// Refill when the tab opens — unless the user is mid-edit (their text
+// differs from the last fill), so opening the tab never shows a stale
+// snapshot and never clobbers in-progress JSON.
+watch( () => props.open, ( isOpen ) => {
+	if ( isOpen && text.value === filledText ) fill();
 } );
 </script>
 

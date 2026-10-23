@@ -310,3 +310,143 @@ the right end of the label line (open magenta = shown, slashed dim =
 hidden). Writes stay sparse with the honest default: only a word that
 disagrees with the default survives (showing a default-hidden game
 writes hidden:false; hiding a default-shown nickname writes hidden:true).
+2026-10-22 — The layout editor is the grid itself (clarifies the §4
+editor-and-trait-model entry). Both miniatures are direct-manipulation
+controls, not pictures: page placement drags the set box (writes
+left/top) and its right/bottom edges (write width/height); the row
+miniature drags every stored part box and its edges the same way. All
+snaps are the model units (half-percent columns, integer rows); wall
+clamps refuse off-canvas writes. The page miniature mirrors the layout
+engine section walk (grid groups in document order, unplaced sets as
+full-width stacked bands, the name block excluded); the row miniature
+uses the renderer part-grid math, so its column shares and the sheet
+row agree exactly (proven 30/30/13/27 on a stress-bearing set). Numeric
+fields stay as synced readout plus fine entry: they display the live
+drag preview mid-gesture (shared preview refs, cleared on set switch)
+and the committed model on release — one gesture, one persist.
+Supersedes the miniature-plus-fields first attempt: the divider-strip
+is deleted, corner handles are right/bottom edges (a bottom handle
+must never swallow a one-row box center).
+2026-10-22 — Part Widths previews the generated row for parts-driven
+sets with no stored layout. The set editor is for set-level row work:
+a distinctions-style set with no view.parts shows the generator row
+(name/rating/description per its features) as dashed implicit boxes;
+the first drag writes the generated map plus the change, and the row
+switches from flex to the grid it previewed (said so in a hint line).
+Bodies with dedicated flex renderers and vertical ladders show no
+preview — a grid miniature of a flex row would lie about the sheet.
+Reset stays hidden until something stored disagrees with the generator.
+2026-10-22 — Set editor edits the set; page arrangement lives on the
+Sheet Page tab. The set editor Layout section holds only the row
+miniature — per-part numeric duplicates and the summary line are gone
+(the dims ride on the boxes; reserved-slots keeps its stepper, a real
+setting, not a duplicate). Page/Place left the set editor entirely:
+the Sheet Page tab hosts a page-level miniature with every set on
+every page, all boxes draggable with edge resize, click-select showing
+that set readout (page assignment, Full Width, four numbers, summary).
+The set-level place miniature is deleted (the page canvas supersedes
+the peephole); its shared preview ref goes with it. Unplaced bands
+seed coordinates where grabbed, so nothing jumps.
+2026-10-22 — The row miniature is the whole section: set header plus
+trait parts. The header renders as a box in its slot (magenta top bar
+with the text justification mirrored, vertical sidebar strip beside a
+compressed grid) because the sheet renders it as a sibling band, never
+as a grid row — part tops do not shift. Drag the header between the
+top and side slots to flip view.header; dropping in the top strip aims
+left/center/right thirds at view.headerAlign; a click with no drag
+cycles the alignment (the title says so). Sidebar drops keep the
+current align; the Sidebar/Top Bar and alignment buttons stay as fine
+entry. The section label is Section Layout now that parts are not all
+it holds.
+2026-10-22 — Sidebar Beside the grid; hinder has a band. Two section
+fixes: the sidebar strip is position:absolute spanning the section
+(the flex-intrinsic percentage chain blew it out to viewport height —
+indefinite heights plus vertical text never settle, so the strip takes
+definite inset instead) beside a margined body column carrying the
+hinder band and the row grid. The shared hinder banner renders as a
+display-only band (no stored geometry exists to drag) with the live
+sentence. Debugging note appended, not a decision: a compound selector
+that will not match alongside correct classes and correct CSS is a
+class-name mismatch until proven otherwise — dump the live token bytes
+before theorizing about the engine.
+2026-10-22 — Set Die mirrors the Rating Scale chips; presets are gone.
+The set die is one value, so it is the same chip row (None first in a
+six-across grid, then d4-d12) with single-select: a chip sets it,
+re-clicking the active chip clears back to None. The All/Skills/
+Specialties/Stress preset rows are deleted from both scales with their
+functions and styles — hand-picked dice need no taxonomy shortcuts.
+2026-10-22 — The split-branch set header is never hidden (supersedes
+the hide-redundant-header rule of the nested-grid pass). The branch bar
+carries no set name and its only click target opens traits, so hiding
+the outer header stranded split sets with no visible identity and no
+way to reach the set editor. Cost: one row in split top-bar layouts.
+2026-10-22 — Enabling Attached Stress forces the track on. The toggle
+rebuilt parts from the current spec, which still said no stress on
+sets with neither stored parts nor legacy config — so it silently did
+nothing. rebuildParts takes an explicit stress flag now; the enable
+path passes true (default five-die scale), disable keeps deleting the
+cells. The sheet, the miniature, and the checkbox all follow because
+they already key off the parts map.
+2026-10-22 — Section Layout shows in every set editor. The header box
+is universal (placement and alignment are generic), so the section is
+no longer gated on parts: flex-body sets without stored layouts get
+the header plus an honest note instead of a fake row — a grid
+miniature of a custom row would lie about the sheet, and row boxes
+only appear where the grid drives (stored anywhere, generated for
+list-driven bodies).
+2026-10-22 — Page miniatures take drops between pages; double-press
+drills into the set editor. Vertical position is document order and
+tops only group, so a cross-page drop reorders the sets (insert at the
+visual slot) and joins the landed group or opens a fresh row past its
+last top — the box renders where it lands because the numbers say
+where it renders. One gesture, one persist; ghost follows the
+pointer, insertion line marks the row, readouts track live. Drill is
+press-timing, not dblclick: selecting swaps ghost for block between
+press and release so a native double-click can never complete, and
+drilling on the second press would hijack click-then-drag — the drill
+fires on a clean release, any move cancels it.
+2026-10-22 — Styles are presets; arranging flips bespoke rows to a
+custom grid. Every trait-row body previews all of its parts and every
+drag writes through one choke point (setPartCell), which flips a
+bespoke flex preset to body "custom" — the dispatcher already falls
+through to the grid renderer, so no renderer changes. List-driven rows
+never flip (they already grid). Re-selecting a flex preset clears the
+cells (stale geometry must never hide); Reset keeps proportions inside
+the current body. Round trip is lossless: branch data survives the
+flip untouched and renders again under its preset. Non-row bodies
+(pips, portraits, notes) get the header only — there are no trait
+rows to arrange.
+2026-10-22 — Reversal: arranging never flips a preset (the custom-flip
+shipped only in the working tree, never committed). A drag that trades
+a branched layout for a generic grid reads as breakage, and rightly:
+the grid cannot express branches. So the grid never takes over a
+bespoke body — subtrait-columns arranges through branch shares
+instead (below), other bespoke rows keep header-only miniatures until
+their own controls exist, and re-selecting a preset still clears
+geometry its renderer would ignore.
+2026-10-22 — Branch shares are styled data: view.branch {left, center,
+right} fr numbers around the fixed 2rem link, defaulting to the CSS
+1.4/1/1.4 when absent. The section miniature shows Left/Skill/Right
+boxes with conserving divider drags; split head and rows take the
+shares inline (flank keeps its own), sheet and print alike. Reset
+clears them with everything else. The set die renders once, in the
+set header, on every body — it is set-level chrome, not a trait part.
+2026-10-22 — Correction: the set die belongs with the ratable content,
+never the union header. A badge on "Skills & Specialties" misattributes
+a Skill die to the whole union (and duplicates the branch-center one),
+so it is removed; the branch center keeps its badge, and unrated grid
+rows show the die in the rating cell — the one place it acts (clicking
+an unrated trait rolls it). Rated rows, placeholders, and the union
+header stay clean.
+2026-10-24 - Session record unifies into pips with a labels opt-in:
+view.pips.labels renders one bubble per row beside the trait name
+(checked mirrors custom.checked, blank rows show a Row hint, the add
+button uses the set nouns) instead of the retired session-record /
+angled-lines bodies and their spine renderer. Pure tracks (XP) keep
+count semantics and create no traits. Legacy files migrate count,
+orientation-as-perRow, checked states, and Session/Sessions nouns.
+2026-10-24 - The style gallery is the add-set flow: the Add Set /
+Trait Set buttons open it (placement carried in), and every card lands
+with that style's defaults. The gallery had shipped unreachable, which
+stranded the Sessions card; the default card preserves the old blank
+classic add.

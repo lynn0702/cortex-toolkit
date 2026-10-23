@@ -361,6 +361,61 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(hc.view.visibility === undefined && hc.view.hidden === undefined, 'editor-only dissolves', hc.view);
 }
 
+// ---- 14. Retired session bodies unify into pips+labels.
+{
+  // 14a. Array form: count, per-row, labels, nouns carry; bag goes.
+  const s = {
+    view: {},
+    traitSets: [{
+      id: 'sr', name: 'Session Record', nounSingular: 'Milestone', nounPlural: 'Milestones',
+      traits: [{ name: 'First', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} }],
+      sfx: [],
+      view: {
+        style: { header: 'default', body: 'session-record' },
+        sessionRecord: { count: 12, orientation: 'horizontal', checked: [1] },
+        reservedSlots: 12,
+      },
+    }],
+  };
+  M.normalizeView(s);
+  const set = s.traitSets.find((x) => x.id === 'sr');
+  ok(set.view.style.body === 'pips', 'session body becomes pips', set.view.style.body);
+  ok(set.view.pips && set.view.pips.labels === true && set.view.pips.count === 12 && set.view.pips.perRow === 12, 'count/orientation/labels mapped', set.view.pips);
+  ok(set.view.sessionRecord === undefined, 'session bag gone');
+  ok(set.nounSingular === 'Session' && set.nounPlural === 'Sessions', 'nouns fixed', [set.nounSingular, set.nounPlural]);
+  ok(set.traits[0] && set.traits[0].name === 'First' && set.traits[0].custom.checked === true, 'checked list materialized onto trait', set.traits[0]);
+  const s2 = {
+    view: {},
+    traitSets: [{
+      id: 'sr', name: 'Log', traits: [], sfx: [],
+      view: { style: { body: 'angled-lines' }, sessionRecord: { count: 3, checked: [2] } },
+    }],
+  };
+  M.normalizeView(s2);
+  const blank = s2.traitSets.find((x) => x.id === 'sr').traits[1];
+  ok(blank && blank.name === '' && blank.custom.checked === true, 'bare checked list makes a blank checked trait', blank);
+  ok(blank.description === undefined && blank.tags === undefined, 'materialized blanks stay canonical-sparse', blank);
+
+  // 14b. Vertical (and absent orientation) means a single column.
+  const v = {
+    view: {},
+    traitSets: [{ id: 'sr2', name: 'Log', traits: [], sfx: [], view: { style: { body: 'angled-lines' }, sessionRecord: { count: 5 } } }],
+  };
+  M.normalizeView(v);
+  const set2 = v.traitSets.find((x) => x.id === 'sr2');
+  ok(set2.view.style.body === 'pips' && set2.view.pips.perRow === 1, 'vertical maps to one column', set2.view.pips);
+
+  // 14c. Layered map form converts the same way.
+  const L = { sets: { Log: { id: 'sr3', traits: {}, view: { style: { body: 'session-record' }, sessionRecord: { count: 8 } } } } };
+  M.normalizeView(L);
+  ok(L.sets.Log.view.style.body === 'pips' && L.sets.Log.view.pips.labels === true, 'layered session converts', L.sets.Log.view);
+
+  // 14d. Second pass is a no-op (pips bodies pass through untouched).
+  const before = JSON.stringify(s);
+  M.normalizeView(s);
+  ok(JSON.stringify(s) === before, 'unification is idempotent');
+}
+
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
 

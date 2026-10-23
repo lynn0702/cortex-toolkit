@@ -617,11 +617,7 @@
           "page": 2,
           "style": {
             "header": "default",
-            "body": "session-record"
-          },
-          "sessionRecord": {
-            "orientation": "vertical",
-            "lines": 4
+            "body": "pips"
           },
           "place": {
             "left": "50%",
@@ -629,7 +625,12 @@
             "width": "50%",
             "height": 1
           },
-          "reservedSlots": 3
+          "reservedSlots": 3,
+          "pips": {
+            "labels": true,
+            "count": 3,
+            "perRow": 1
+          }
         },
         "traits": {
           "Session 1: The Awakening": {

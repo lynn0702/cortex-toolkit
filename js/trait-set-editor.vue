@@ -28,8 +28,7 @@ const {
 	styleLabel, setStyleLabel, hasLabelContent, description, includeOut,
 	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasAttachedStress, attachedStressLabel,
-	pipCount, pipsPerRow, pipsFilled, pipsConnected,
-	sessionRecordCount, sessionRecordOrientation, clearAllSessionBubbles, fillAllSessionBubbles,
+	pipCount, pipsPerRow, pipsFilled, pipsConnected, pipLabels,
 	nounSingular, nounPlural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
@@ -151,39 +150,9 @@ const {
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pips-connected'" name="pipsConnected" v-model="pipsConnected">
 							<label :for="'trait-set-' + traitSetID + '-pips-connected'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connect Pips with Horizontal Line</label>
 						</div>
-					</div>
-
-					<!-- SESSION RECORD (ANGLED LINES / LEAF) SETTINGS -->
-					<div class="editor-field" v-if="styleBody === 'session-record' || styleBody === 'angled-lines'">
-						<div class="editor-label">Session Record Settings</div>
-						<div style="margin-bottom: 0.5rem;">
-							<label :for="'trait-set-' + traitSetID + '-session-count'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Milestones</label>
-							<input type="number" :id="'trait-set-' + traitSetID + '-session-count'" name="sessionRecordCount" min="1" max="40" v-model.number="sessionRecordCount">
-						</div>
-						<div class="rating-scale-presets" style="margin-bottom: 0.5rem;">
-							<span class="preset-label">Presets:</span>
-							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 10 }" @click.stop="sessionRecordCount = 10">10</button>
-							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 15 }" @click.stop="sessionRecordCount = 15">15</button>
-							<button type="button" class="btn-scale-preset" :class="{ active: sessionRecordCount === 20 }" @click.stop="sessionRecordCount = 20">20</button>
-						</div>
-						<div style="margin-bottom: 0.5rem;">
-							<div class="editor-label" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Orientation</div>
-							<div class="editor-button-group">
-								<button type="button" class="editor-group-btn" :class="{ active: sessionRecordOrientation !== 'horizontal' }" @click.stop="sessionRecordOrientation = 'vertical'">
-									Vertical
-								</button>
-								<button type="button" class="editor-group-btn" :class="{ active: sessionRecordOrientation === 'horizontal' }" @click.stop="sessionRecordOrientation = 'horizontal'">
-									Horizontal
-								</button>
-							</div>
-						</div>
-						<div style="display: flex; gap: 0.5rem;">
-							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="clearAllSessionBubbles">
-								<i class="fas fa-undo"></i> Clear All Bubbles
-							</button>
-							<button type="button" class="btn-scale-preset" style="flex: 1; padding: 0.35rem 0.5rem;" @click.stop="fillAllSessionBubbles">
-								<i class="fas fa-check"></i> Fill All
-							</button>
+						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.35rem;">
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pip-labels'" name="pipLabels" v-model="pipLabels">
+							<label :for="'trait-set-' + traitSetID + '-pip-labels'" style="margin: 0; font-size: 0.8rem; cursor: pointer;" title="Name a pip per row: rows render as bubble-plus-label entries">Labels (one named entry per row)</label>
 						</div>
 					</div>
 

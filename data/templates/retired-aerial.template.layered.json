@@ -377,8 +377,8 @@
       "Session Record": {
         "id": "session-record",
         "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
+        "nounSingular": "Session",
+        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -390,13 +390,14 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "session-record"
+            "body": "pips"
           },
-          "sessionRecord": {
+          "reservedSlots": 20,
+          "pips": {
+            "labels": true,
             "count": 20,
-            "orientation": "horizontal"
-          },
-          "reservedSlots": 20
+            "perRow": 20
+          }
         },
         "traits": {
           "Training": {

@@ -271,6 +271,7 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 					v-if="character"
 					:key="'json-' + (character.id || 'none')"
 					:character="character"
+					:open="panelTab === 'json'"
 					@applyJson="emit('applyJson', $event)"
 				/>
 				<div v-else class="studio-empty-state">

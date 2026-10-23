@@ -159,6 +159,14 @@ templates.forEach((tpl, ti) => {
   ch.traitSets.forEach((ts, si) => {
     const bag = (ts && (ts.view || (ts.custom && ts.custom.cortexToolkit))) || {};
     if (bag.headerRight !== undefined) err(`${where}.traitSets[${si}]: retired headerRight key (2026-10-22)`);
+    const tbody = bag.style && typeof bag.style === 'object' ? bag.style.body : undefined;
+    if (tbody === 'session-record' || tbody === 'angled-lines') err(`${where}.traitSets[${si}]: retired ${tbody} body (unified into pips+labels)`);
+    const branch = bag.branch;
+    if (branch !== undefined) {
+      const ok = branch && typeof branch === 'object' && !Array.isArray(branch) &&
+        ['left', 'center', 'right'].every((k) => typeof branch[k] === 'number' && Number.isFinite(branch[k]) && branch[k] >= 0);
+      if (!ok) err(`${where}.traitSets[${si}]: view.branch must be {left,center,right} finite numbers >= 0`);
+    }
   });
 });
 
@@ -432,6 +440,16 @@ function checkTemplateFile(where, data) {
     // Retired view keys (2026-10-22): headerRight read nowhere.
     const setBag = (set.view || (set.custom && set.custom.cortexToolkit)) || {};
     if (setBag.headerRight !== undefined) err(`${where}/${name}: retired headerRight key`);
+    const setBody = setBag.style && typeof setBag.style === 'object' ? setBag.style.body : undefined;
+    if (setBody === 'session-record' || setBody === 'angled-lines') err(`${where}/${name}: retired ${setBody} body (unified into pips+labels)`);
+    // Branch column shares (subtrait-columns split rows): three finite
+    // non-negative fr numbers around the fixed link column.
+    const branch = setBag.branch;
+    if (branch !== undefined) {
+      const ok = branch && typeof branch === 'object' && !Array.isArray(branch) &&
+        ['left', 'center', 'right'].every((k) => typeof branch[k] === 'number' && Number.isFinite(branch[k]) && branch[k] >= 0);
+      if (!ok) err(`${where}/${name}: view.branch must be {left,center,right} finite numbers >= 0`);
+    }
     // Identity (2026-10-20): the map key is the address, the set id the
     // stable identity — rename the key freely, never the id. Suffixed
     // duplicate keys resolve through their label.

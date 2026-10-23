@@ -68,7 +68,7 @@ const value = computed( {
 
 const isListStyle = computed( () => {
 	const b = getView( traitSet.value )?.style?.body;
-	return b === 'list' || b === 'notes' || b === 'session-record' || b === 'angled-lines' || b === 'three-column-table' || b === 'labeled-fields';
+	return b === 'list' || b === 'notes' || b === 'three-column-table' || b === 'labeled-fields';
 } );
 
 const isStatementSet = computed( () => Boolean( getView( traitSet.value )?.statement || traitSet.value?.statement ) );
@@ -105,20 +105,17 @@ const counterValue = computed( {
 
 const isPairedSlotsStyle = computed( () => getView( traitSet.value )?.style?.body === 'paired-slots' );
 
-const isSessionRecordStyle = computed( () => {
-	const b = getView( traitSet.value )?.style?.body;
-	return b === 'session-record' || b === 'angled-lines';
+const isLabeledPipsSet = computed( () => {
+	const v = getView( traitSet.value );
+	return v?.style?.body === 'pips' && ( v as any )?.pips?.labels === true;
 } );
 
-const sessionRecordChecked = computed( {
+const pipRowChecked = computed( {
 	get() {
 		if ( trait.value?.custom?.checked !== undefined ) {
 			return Boolean( trait.value.custom.checked );
 		}
-		const srec = getView( traitSet.value )?.sessionRecord;
-		const checkedList: number[] = Array.isArray( srec?.checked ) ? srec.checked : [];
-		const fallbackChecked = checkedList.includes( props.traitID + 1 );
-		return Boolean( trait.value?.value ) || fallbackChecked;
+		return Boolean( trait.value?.value );
 	},
 	set( val: any ) {
 		if ( !trait.value.custom ) trait.value.custom = {};
@@ -253,9 +250,9 @@ const talentEffect = computed( {
 } );
 
 const canHinderTrait = computed( () => {
-	if ( isListStyle.value || isTalentsTable.value ) return false;
+	if ( isListStyle.value || isLabeledPipsSet.value || isTalentsTable.value ) return false;
 	const body = getView( traitSet.value )?.style?.body;
-	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' || body === 'session-record' ) {
+	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' ) {
 		return false;
 	}
 	return Boolean( trait.value?.value > 0 || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 0 ) );
@@ -814,8 +811,8 @@ function getDieDisplayValue( val: any ) {
 					</template>
 
 					<div class="editor-field" v-else>
-						<label :for="'trait-name-' + traitID">{{ isSessionRecordStyle ? 'Label / Milestone Text' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
-						<input type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isSessionRecordStyle ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
+						<label :for="'trait-name-' + traitID">{{ isLabeledPipsSet ? 'Label' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
+						<input type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isLabeledPipsSet ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
 					</div>
 
 					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
@@ -863,19 +860,19 @@ function getDieDisplayValue( val: any ) {
 						<input type="text" :id="'trait-counter-' + traitID" name="traitCounter" v-model="counterValue" :placeholder="counterLabel">
 					</div>
 
-					<!-- SESSION RECORD ROW CHECKBOX -->
-					<div class="editor-field" v-if="isSessionRecordStyle">
+					<!-- PIP ROW CHECKBOX -->
+					<div class="editor-field" v-if="isLabeledPipsSet">
 						<div class="editor-toggles">
 							<div>
 								<input
 									type="checkbox"
-									:id="'trait-' + traitID + '-session-checked'"
-									name="sessionRecordChecked"
-									v-model="sessionRecordChecked"
+									:id="'trait-' + traitID + '-pip-checked'"
+									name="pipRowChecked"
+									v-model="pipRowChecked"
 								>
 							</div>
 							<div>
-								<label :for="'trait-' + traitID + '-session-checked'">
+								<label :for="'trait-' + traitID + '-pip-checked'">
 									Filled / Bubbled In
 								</label>
 							</div>
@@ -934,7 +931,7 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="!isListStyle && !hideSkillDice">
+					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideSkillDice">
 
 						<div class="editor-label">{{ isMultiDie ? 'Dice Pool' : 'Value' }}</div>
 

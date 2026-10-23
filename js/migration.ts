@@ -217,6 +217,56 @@ export const cortexMigration = {
 		delete view.style.hasAttributes;
 	};
 
+	// Retired bodies (2026-10-24): session-record / angled-lines unify
+	// into pips with the labels opt-in. Count, orientation (as per-row),
+	// and checked states carry over; rows default to Session/Sessions.
+	// A bare legacy checked list materializes into blank checked traits
+	// in array form (layered maps have no stable order to map it onto).
+	const SESSION_BODIES = [ 'session-record', 'angled-lines' ];
+	const blankSessionTrait = () => ({
+		name: '', value: 0, dice: [], traits: [], sfx: [], custom: { checked: true }
+	});
+	const migrateSessionSet = ( set: any ) => {
+		if ( !set || typeof set !== 'object' ) return;
+		const view = set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ? set.view : null;
+		if ( !view ) return;
+		const body = view.style && typeof view.style === 'object' && !Array.isArray( view.style ) ? view.style.body : undefined;
+		if ( typeof body !== 'string' || SESSION_BODIES.indexOf( body ) === -1 ) return;
+		const srec = view.sessionRecord && typeof view.sessionRecord === 'object' && !Array.isArray( view.sessionRecord )
+			? view.sessionRecord : {};
+		const reserve = Number( view.reservedSlots );
+		const configured = Number( srec.count ?? srec.boxCount ) || ( Number.isFinite( reserve ) && reserve > 0 ? reserve : 0 );
+		const count = configured > 0 ? configured : 20;
+		if ( !view.pips || typeof view.pips !== 'object' || Array.isArray( view.pips ) ) view.pips = {};
+		view.pips.labels = true;
+		view.pips.count = count;
+		view.pips.perRow = srec.orientation === 'horizontal' ? count : 1;
+		if ( Array.isArray( srec.checked ) && Array.isArray( set.traits ) ) {
+			srec.checked.forEach( ( n: unknown ) => {
+				const i = Number( n ) - 1;
+				if ( !Number.isInteger( i ) || i < 0 ) return;
+				while ( set.traits.length <= i ) set.traits.push( blankSessionTrait() );
+				const t = set.traits[ i ];
+				if ( t && typeof t === 'object' ) {
+					if ( !t.custom || typeof t.custom !== 'object' ) t.custom = {};
+					if ( t.custom.checked === undefined ) t.custom.checked = true;
+				}
+			} );
+		}
+		if ( !set.nounSingular || set.nounSingular === 'Milestone' ) set.nounSingular = 'Session';
+		if ( !set.nounPlural || set.nounPlural === 'Milestones' ) set.nounPlural = 'Sessions';
+		view.style.body = 'pips';
+		delete view.sessionRecord;
+	};
+	const migrateSessionBodies = ( holder: any ) => {
+		if ( !holder || typeof holder !== 'object' ) return;
+		if ( Array.isArray( holder.traitSets ) ) {
+			holder.traitSets.forEach( migrateSessionSet );
+		}
+		if ( holder.sets && typeof holder.sets === 'object' && !Array.isArray( holder.sets ) ) {
+			Object.values( holder.sets ).forEach( migrateSessionSet );
+		}
+	};
 	// The name block is the first trait set (view.style.body "name").
 	// Files predating it gain a synthesized one here so every later
 		// stage (merge, materialize, render, edit) sees the same shape;
@@ -308,8 +358,12 @@ export const cortexMigration = {
 		if ( obj.character && typeof obj.character === 'object' ) {
 			ensureNameSet( obj.character );
 		}
+		migrateSessionBodies( obj );
+		if ( obj.character && typeof obj.character === 'object' ) {
+			migrateSessionBodies( obj.character );
+		}
 		if ( Array.isArray( obj.characters ) ) {
-			obj.characters.forEach( ( c: any ) => { collapseSheetStyle( c ); ensureNameSet( c ); } );
+			obj.characters.forEach( ( c: any ) => { collapseSheetStyle( c ); ensureNameSet( c ); migrateSessionBodies( c ); } );
 		}
 		return obj;
 	},

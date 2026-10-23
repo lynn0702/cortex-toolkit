@@ -29,6 +29,11 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const showDeleteConfirm = ref( false );
 	const uploadError = ref( '' );
 
+	// Live drag preview for the row miniature: the miniature writes the
+	// box as it moves and commits on release. Cleared on set switch so
+	// no stale box survives.
+	const partPreview = ref<{ key: string; left: number; width: number; top: number; height: number } | null>( null );
+
 	const styleOptions = [
 		{ id: 'default',              label: 'Default' },
 		{ id: 'portrait-ring',        label: 'Portrait Ring' },
@@ -49,7 +54,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		{ id: 'notes',                label: 'Notes' },
 		{ id: 'image',                label: 'Image' },
 		{ id: 'pips',                 label: 'Pips' },
-		{ id: 'session-record',       label: 'Session Record' },
 	];
 
 	const traitSet = computed( () => props.character?.traitSets?.[ props.traitSetID ] || null );
@@ -126,6 +130,22 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				if ( !view.style ) view.style = {};
 				view.style.body = value;
 				view.style.header = value;
+				// Preset flex layouts author their own rows: stale part
+				// cells would hide, so re-selecting one clears them; branch
+				// shares only survive on subtrait-columns.
+				if ( ( FLEX_BODIES as readonly string[] ).includes( value ) ) {
+					delete view.parts;
+				}
+				if ( value !== 'subtrait-columns' ) {
+					delete ( view as Record<string, unknown> ).branch;
+				}
+				// Session families name their rows Sessions unless the
+				// author already named them something else.
+				if ( ( value === 'session-record' || value === 'angled-lines' ) &&
+					!( traitSet.value as any )?.nounSingular && !( traitSet.value as any )?.nounPlural ) {
+					( traitSet.value as any ).nounSingular = 'Session';
+					( traitSet.value as any ).nounPlural = 'Sessions';
+				}
 				if ( view.location === 'attributes' ) {
 					view.location = 'right';
 				}
@@ -331,10 +351,60 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return Boolean( parts && typeof parts === 'object' && Object.keys( parts ).length );
 	} );
 
+	// Style presets fall into three kinds: dedicated flex renderers (the
+	// list below), non-row bodies with no trait rows at all, and everything
+	// else, which the list renderer draws from the parts grid. The grid
+	// never takes over a bespoke body: arranging one writes only what
+	// that body can render (branch shares for subtrait-columns).
+	// Ladders keep the legacy flag (no parts form).
+	const FLEX_BODIES = [ 'image', 'notes', 'pips', 'session-record', 'angled-lines', 'dice-ladder', 'labeled-fields', 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'portrait-ring' ];
+	const NON_ROW_BODIES = [ 'image', 'notes', 'pips', 'session-record', 'angled-lines', 'portrait-ring' ];
+	function isPartsDriven() {
+		const body = getView( traitSet.value )?.style?.body;
+		if ( typeof body === 'string' && ( FLEX_BODIES as readonly string[] ).includes( body ) ) return false;
+		return currentRatingPosition() !== 'vertical';
+	}
+	function isRowBody() {
+		const body = getView( traitSet.value )?.style?.body;
+		if ( typeof body === 'string' && ( NON_ROW_BODIES as readonly string[] ).includes( body ) ) return false;
+		return currentRatingPosition() !== 'vertical';
+	}
+
+	// Effective part cells: stored cells, or — for grid-driven sets with
+	// no stored layout — the generated preview, marked implicit. The row
+	// miniature shows both; the first drag on an implicit box writes the
+	// generated map (the seed setPartCell uses) plus the change, so the
+	// sheet switches from flex to the grid it previews.
+	const effectivePartCells = computed( (): ( PartCellEdit & { implicit: boolean } )[] => {
+		const stored = partCells.value.map( ( c ) => ( { ...c, implicit: false } ) );
+		if ( stored.length || !isPartsDriven() ) return stored;
+		const gen = buildParts( partsSpec() );
+		const out: ( PartCellEdit & { implicit: boolean } )[] = [];
+		for ( const key of KNOWN_PARTS as readonly string[] ) {
+			const cell = ( gen as Record<string, any> )[key];
+			if ( !cell || typeof cell !== 'object' ) continue;
+			const left = parsePct( cell.left );
+			const width = parsePct( cell.width );
+			out.push( {
+				key,
+				left: left === null ? 0 : Math.round( left * 1000 ) / 1000,
+				width: width === null ? 100 : Math.round( width * 1000 ) / 1000,
+				top: Number.isInteger( cell.top ) && cell.top >= 0 ? cell.top : 0,
+				height: Number.isInteger( cell.height ) && cell.height >= 1 ? cell.height : 1,
+				implicit: true,
+			} );
+		}
+		return out;
+	} );
+
+	// Generated preview on screen (no stored layout yet).
+	const isPartsPreview = computed( () => partCells.value.length === 0 && effectivePartCells.value.length > 0 );
+
 	// Non-default explicit parts: Reset restores the generated layout.
+	// (No stored parts means nothing custom, however the preview reads.)
 	const hasCustomParts = computed( () => {
 		const parts = getView( traitSet.value )?.parts;
-		if ( !parts || typeof parts !== 'object' ) return false;
+		if ( !parts || typeof parts !== 'object' || !Object.keys( parts ).length ) return false;
 		const canon = ( o: Record<string, unknown> ) => {
 			const out: Record<string, unknown> = {};
 			Object.keys( o ).sort().forEach( ( k ) => { out[k] = o[k]; } );
@@ -367,7 +437,61 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		updateCharacter( props.character );
 	}
 
+	// Branch column shares (subtrait-columns split rows): the three fr
+	// shares around the fixed 2rem link column. Absent means the CSS
+	// default (1.4 / 1 / 1.4); stored shares render wherever a split
+	// row does, sheet and print alike.
+	function branchShares() {
+		const raw = getView( traitSet.value )?.branch;
+		const num = ( v: unknown, fallback: number ) => ( typeof v === 'number' && Number.isFinite( v ) && v >= 0 ) ? v : fallback;
+		if ( !raw || typeof raw !== 'object' || Array.isArray( raw ) ) {
+			return { left: 1.4, center: 1, right: 1.4, implicit: true };
+		}
+		const r = raw as Record<string, unknown>;
+		return {
+			left: num( r.left, 1.4 ),
+			center: num( r.center, 1 ),
+			right: num( r.right, 1.4 ),
+			implicit: false,
+		};
+	}
+
+	function setBranchShare( key: 'left' | 'center' | 'right', val: number ) {
+		const view = ensureView( traitSet.value );
+	const cur = branchShares();
+		const next = {
+			left: key === 'left' ? val : cur.left,
+			center: key === 'center' ? val : cur.center,
+			right: key === 'right' ? val : cur.right,
+		};
+		( view as Record<string, unknown> ).branch = {
+			left: Math.round( Math.max( 0, Number( next.left ) || 0 ) * 100 ) / 100,
+			center: Math.round( Math.max( 0, Number( next.center ) || 0 ) * 100 ) / 100,
+			right: Math.round( Math.max( 0, Number( next.right ) || 0 ) * 100 ) / 100,
+		};
+		updateCharacter( props.character );
+	}
+
+	function hasCustomBranch() {
+		const branch = getView( traitSet.value )?.branch;
+		return Boolean( branch && typeof branch === 'object' && !Array.isArray( branch ) );
+	}
+
 	function resetParts() {
+		const view = getView( traitSet.value );
+		if ( view && typeof view === 'object' ) {
+			delete ( view as Record<string, unknown> ).branch;
+		}
+		const body = getView( traitSet.value )?.style?.body;
+		if ( typeof body === 'string' && ( FLEX_BODIES as readonly string[] ).includes( body ) ) {
+			// Flex layouts author their own rows: reset means no stored
+			// geometry at all, not a generated map they would ignore.
+			if ( view && typeof view === 'object' ) {
+				delete ( view as Record<string, unknown> ).parts;
+				updateCharacter( props.character );
+			}
+			return;
+		}
 		rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none' );
 	}
 
@@ -582,10 +706,15 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// Rebuild this set's trait-part layout, preserving its stress setup,
 	// dice counts, features, and statement mode. Vertical ladders keep
 	// the legacy flag (no parts form); bespoke bodies are left alone.
-	function rebuildParts( rating: 'inline' | 'above' | 'below' | 'none' ) {
+	// Pass stress true/false to force the track on/off (the toggle);
+	// otherwise the current setup carries over.
+	function rebuildParts( rating: 'inline' | 'above' | 'below' | 'none', stress?: boolean ) {
 		const view = ensureView( traitSet.value );
 		const legacyStress = view.attachedStress;
-		view.parts = buildParts( { ...partsSpec(), rating } );
+		const spec = partsSpec();
+		if ( stress === true && !spec.stressDice ) spec.stressDice = 5;
+		if ( stress === false ) spec.stressDice = 0;
+		view.parts = buildParts( { ...spec, rating } );
 		if ( traitSet.value && typeof traitSet.value === 'object' ) delete ( traitSet.value as any ).ratingPosition;
 		delete view.ratingPosition;
 		if ( !legacyStress ) delete view.attachedStress;
@@ -627,17 +756,17 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				updateCharacter( props.character );
 				return;
 			}
-			if ( !val ) {
-				if ( legacy && typeof legacy === 'object' ) ( legacy as any ).enabled = false;
-				const parts = getView( traitSet.value )?.parts;
-				if ( parts && typeof parts === 'object' ) {
-					delete ( parts as Record<string, unknown> ).stressLabel;
-					delete ( parts as Record<string, unknown> ).stress;
-				}
-				updateCharacter( props.character );
-				return;
+		if ( !val ) {
+			if ( legacy && typeof legacy === 'object' ) ( legacy as any ).enabled = false;
+			const parts = getView( traitSet.value )?.parts;
+			if ( parts && typeof parts === 'object' ) {
+				delete ( parts as Record<string, unknown> ).stressLabel;
+				delete ( parts as Record<string, unknown> ).stress;
 			}
-			rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none' );
+			updateCharacter( props.character );
+			return;
+		}
+		rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none', true );
 		}
 	});
 
@@ -744,40 +873,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( val: any ) => { setPipProperty( 'connected', Boolean( val ) ); }
 	});
 
+	const pipLabels = computed({
+		get: () => getView( traitSet.value )?.pips?.labels === true,
+		set: ( val: any ) => { setPipProperty( 'labels', Boolean( val ) ); }
+	});
+
 	const pipsFilled = computed({
 		get: () => getView( traitSet.value )?.pips?.filled ?? 0,
 		set: ( val: number ) => { setPipProperty( 'filled', Math.max( 0, parseInt( String( val ), 10 ) || 0 ) ); }
-	});
-
-	const sessionRecordCount = computed({
-		get: () => {
-			const v = getView( traitSet.value );
-			const configured = Number( v?.sessionRecord?.count ?? v?.sessionRecord?.boxCount ?? v?.reservedSlots ) || 0;
-			const traitsLen = traitSet.value?.traits ? traitSet.value.traits.length : 0;
-			return configured || Math.max( 20, traitsLen );
-		},
-		set: ( val: number ) => {
-			const count = Math.max( 1, parseInt( String( val ), 10 ) || 20 );
-			const view = ensureView( traitSet.value );
-			if ( !view.sessionRecord ) {
-				view.sessionRecord = {};
-			}
-			view.sessionRecord.count = count;
-			view.reservedSlots = count;
-			updateCharacter( props.character );
-		}
-	});
-
-	const sessionRecordOrientation = computed({
-		get: () => getView( traitSet.value )?.sessionRecord?.orientation === 'horizontal' ? 'horizontal' : 'vertical',
-		set: ( val: 'horizontal' | 'vertical' ) => {
-			const view = ensureView( traitSet.value );
-			if ( !view.sessionRecord ) {
-				view.sessionRecord = {};
-			}
-			view.sessionRecord.orientation = ( val === 'horizontal' ) ? 'horizontal' : 'vertical';
-			updateCharacter( props.character );
-		}
 	});
 
 	const scrollable = computed( () => true );
@@ -1039,24 +1142,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		ratingScale.value = current;
 	}
 
-	function setRatingPreset( preset: string ) {
-		switch ( preset ) {
-			case 'skills':
-				ratingScale.value = [ 4, 6 ];
-				break;
-			case 'specialties':
-				ratingScale.value = [ 8, 10, 12 ];
-				break;
-			case 'stress':
-				ratingScale.value = [ 6, 8, 10, 12 ];
-				break;
-			case 'all':
-			default:
-				ratingScale.value = [ 4, 6, 8, 10, 12 ];
-				break;
-		}
-	}
-
 	function isSubtraitRatingIncluded( size: any ) {
 		return subtraitRatingScale.value.includes( size );
 	}
@@ -1072,21 +1157,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			current.sort( ( a, b ) => a - b );
 		}
 		subtraitRatingScale.value = current;
-	}
-
-	function setSubtraitRatingPreset( preset: string ) {
-		switch ( preset ) {
-			case 'skills':
-				subtraitRatingScale.value = [ 4, 6 ];
-				break;
-			case 'specialties':
-				subtraitRatingScale.value = [ 8, 10, 12 ];
-				break;
-			case 'all':
-			default:
-				subtraitRatingScale.value = [ 4, 6, 8, 10, 12 ];
-				break;
-		}
 	}
 
 	function getDieDisplayValue( value: any ) {
@@ -1204,63 +1274,30 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		scrollPosition.value = 'middle';
 	}
 
-	function clearAllSessionBubbles() {
-		if ( !traitSet.value || !traitSet.value.traits ) return;
-		traitSet.value.traits.forEach( ( t: any ) => {
-			if ( !t.custom ) t.custom = {};
-			t.custom.checked = false;
-			t.value = 0;
-		});
-		updateCharacter( props.character );
-	}
-
-	function fillAllSessionBubbles() {
-		if ( !traitSet.value ) return;
-		const count = sessionRecordCount.value;
-		if ( !traitSet.value.traits ) traitSet.value.traits = [];
-		while ( traitSet.value.traits.length < count ) {
-			traitSet.value.traits.push({
-				name: '',
-				value: 0,
-				dice: [],
-				description: '',
-				traits: [],
-				sfx: [],
-				tags: [],
-				custom: {}
-			});
-		}
-		traitSet.value.traits.forEach( ( t: any ) => {
-			if ( !t.custom ) t.custom = {};
-			t.custom.checked = true;
-			t.value = 1;
-		});
-		updateCharacter( props.character );
-	}
-
 	const api: TraitSetEditorApi = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
 		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
 		ringTrait, pageNumber, isFullWidthSpan,
 		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
-		partCells, hasParts, hasCustomParts, setPartCell, resetParts,
+		partPreview,
+		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,
+		branchShares, setBranchShare, hasCustomBranch,
 		templateEntry, restorableTraitNames, canMoveUp, canMoveDown, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		multiDie, isPool, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
 		hasAttachedStress, attachedStressLabel, ratingPosition, labelPosition, isStatementSet,
-		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled,
-		sessionRecordCount, sessionRecordOrientation, scrollable, needsDiceUI, allowsTraitColumns,
+		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
+		scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
 		restoreTrait, moveTraitSetUp, moveTraitSetDown,
 		setRingConfig, resetRingPlacement, setFeature,
-		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart,		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption, setRatingPreset,
-		isSubtraitRatingIncluded, toggleSubtraitRatingOption, setSubtraitRatingPreset, getDieDisplayValue,
+		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart,		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption,
+		isSubtraitRatingIncluded, toggleSubtraitRatingOption, getDieDisplayValue,
 		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty,
 		checkAnchorPosition, checkScrollPosition,
-		clearAllSessionBubbles, fillAllSessionBubbles
 	};
 
 	onMounted( () => {
@@ -1278,7 +1315,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	});
 
-	watch( () => props.traitSetID, () => { showDeleteConfirm.value = false; } );
+	watch( () => props.traitSetID, () => { showDeleteConfirm.value = false; partPreview.value = null; } );
 	watch( () => props.character, () => { checkAnchorPosition(); } );
 	watch( () => props.viewY, () => { checkAnchorPosition(); } );
 	watch( () => props.open, ( isOpen: boolean | undefined, wasOpen: boolean | undefined ) => {

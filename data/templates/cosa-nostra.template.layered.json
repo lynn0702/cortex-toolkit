@@ -362,8 +362,8 @@
       "Session Record": {
         "id": "session-record",
         "description": "Session tracking and milestone progression",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
+        "nounSingular": "Session",
+        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -375,10 +375,7 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "session-record"
-          },
-          "sessionRecord": {
-            "count": 15
+            "body": "pips"
           },
           "multiDie": false,
           "notes": "",
@@ -388,6 +385,11 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
+          },
+          "pips": {
+            "labels": true,
+            "count": 15,
+            "perRow": 1
           }
         },
         "traits": {}

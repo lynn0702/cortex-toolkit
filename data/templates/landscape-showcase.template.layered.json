@@ -612,23 +612,35 @@
           "page": 2,
           "style": {
             "header": "default",
-            "body": "session-record"
-          },
-          "sessionRecord": {
-            "count": 12,
-            "boxCount": 12,
-            "orientation": "horizontal",
-            "checked": [
-              1,
-              2,
-              3
-            ]
+            "body": "pips"
           },
           "reservedSlots": 12,
           "header": "top",
-          "headerAlign": "right"
+          "headerAlign": "right",
+          "pips": {
+            "labels": true,
+            "count": 12,
+            "perRow": 12
+          }
         },
-        "traits": {}
+        "traits": {},
+        "slots": {
+          "0": {
+            "custom": {
+              "checked": true
+            }
+          },
+          "1": {
+            "custom": {
+              "checked": true
+            }
+          },
+          "2": {
+            "custom": {
+              "checked": true
+            }
+          }
+        }
       }
     }
   }

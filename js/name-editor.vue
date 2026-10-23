@@ -3,6 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, resolveSheetStyle, defaultNameHidden } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
+import PageLayoutMini from './page-layout-mini.vue';
 
 interface DicePreset {
 	name: string;
@@ -833,6 +834,11 @@ function updateCharacter( character: any ) {
 								<option :value="2">2 Pages</option>
 								<option :value="3">3 Pages</option>
 							</select>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Page Layout</div>
+							<PageLayoutMini :character="props.character" @updateCharacter="updateCharacter" @openSet="(i: number) => emit('selectElement', ['traitSet', i])" />
 						</div>
 					</template>
 

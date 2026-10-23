@@ -42,6 +42,8 @@ const printStyle = ref<string | null>( null );
 const printBlank = ref( false );
 const printBW = ref( false );
 const showStyleGallery = ref( false );
+const galleryPage = ref( 1 );
+const galleryLocation = ref( 'left' );
 
 const name = computed( () => props.character?.name ?? '' );
 const description = computed( () => props.character?.description ?? '' );
@@ -384,24 +386,9 @@ function clearSelected() {
 // lands them on their own row at the end of the target page (sparse).
 // Classic sheets keep their left/right columns via location.
 function addTraitSet( page = 1, location?: string ) {
-	const character = props.character as Character;
-
-	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
-	const tsView = ensureView( traitSet );
-	tsView.page = page ?? 1;
-	if ( !isSpotlightStyle.value && location ) {
-		tsView.location = location;
-	}
-
-	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
-	traitSet.traits.push( structuredClone( cortexFunctions.defaultTrait ) );
-
-	character.traitSets.push( traitSet );
-
-	updateCharacter( character );
-
-	const newTraitSetID = character.traitSets.length - 1;
-	selectElement( [ 'traitSet', newTraitSetID ] );
+	galleryPage.value = page ?? 1;
+	galleryLocation.value = location ?? 'left';
+	showStyleGallery.value = true;
 }
 
 function removeTraitSet( traitSetID: number ) {
@@ -415,7 +402,7 @@ function removeTraitSet( traitSetID: number ) {
 	updateCharacter( character );
 }
 
-function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string; plur?: string }, location: string, page: number ) {
+function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string; plur?: string; pipLabels?: boolean }, location: string, page: number ) {
 	const character = props.character as Character;
 	if ( !character || !styleEntry ) return;
 
@@ -438,13 +425,11 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	if ( styleId === 'pips' ) {
 		tsView.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
+		if ( styleEntry.pipLabels ) {
+			( tsView.pips as Record<string, unknown> ).labels = true;
+		}
 	}
-	if ( styleId === 'session-record' || styleId === 'angled-lines' ) {
-		tsView.sessionRecord = { count: 20 };
-		tsView.reservedSlots = 20;
-	}
-	if ( styleId !== 'pips' && styleId !== 'notes' && styleId !== 'image' &&
-	     styleId !== 'session-record' && styleId !== 'angled-lines' ) {
+	if ( styleId !== 'pips' && styleId !== 'notes' && styleId !== 'image' ) {
 		const blank: any = structuredClone( cortexFunctions.defaultTrait );
 		blank.name = '';
 		blank.value = 0;
@@ -962,6 +947,8 @@ watch( () => props.character, () => {
 			:columnCount="columnCount"
 			:pageCount="pageCount"
 			:allowCenter="isSpotlightStyle && columnCount === 3"
+			:initialPage="galleryPage"
+			:initialLocation="galleryLocation"
 			@close="showStyleGallery = false"
 			@addGallerySet="addGallerySet"
 		></StyleGallery>

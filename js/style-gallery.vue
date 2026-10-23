@@ -14,6 +14,7 @@ interface StyleCard {
 	plur: string;
 	blurb: string;
 	preview: string;
+	pipLabels?: boolean;
 }
 
 const STYLE_GALLERY_STYLES: StyleCard[] = [
@@ -108,9 +109,9 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>XP</div></div></div><div class="trait-set-body"><div class="trait-pips-body"><div class="pips-track-container connected"><div class="pip-row"><div class="pip-row-line"></div><div class="pip-bubble-wrap"><div class="pip-bubble filled"></div></div><div class="pip-bubble-wrap"><div class="pip-bubble filled"></div></div><div class="pip-bubble-wrap"><div class="pip-bubble"></div></div><div class="pip-bubble-wrap"><div class="pip-bubble"></div></div></div></div></div></div></div>'
 	},
 	{
-		id: 'session-record', name: 'Session Record', sing: 'Milestone', plur: 'Milestones',
-		blurb: 'Angled session lines with check bubbles.',
-		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SESSION RECORD</div></div></div><div class="trait-set-body"><div class="gallery-session-mock"><div class="gallery-session-line"></div><div class="gallery-session-line"></div><div class="gallery-session-line"></div></div></div></div>'
+		id: 'pips', name: 'Sessions', sing: 'Session', plur: 'Sessions', pipLabels: true,
+		blurb: 'Checkable entries with names, e.g. a session log.',
+		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SESSIONS</div></div></div><div class="trait-set-body"><div class="pip-label-list"><div class="pip-label-row"><div class="pip-bubble-wrap"><div class="pip-bubble filled"></div></div><span class="pip-label-name">Session 1</span></div><div class="pip-label-row"><div class="pip-bubble-wrap"><div class="pip-bubble"></div></div><span class="pip-label-name">Session 2</span></div></div></div></div>'
 	},
 	{
 		id: 'portrait-ring', name: 'Portrait Ring', sing: 'Attribute', plur: 'Attributes',
@@ -124,6 +125,8 @@ const props = defineProps<{
 	columnCount: number;
 	pageCount: number;
 	allowCenter: boolean;
+	initialPage: number;
+	initialLocation: string;
 }>();
 
 const emit = defineEmits<{
@@ -137,10 +140,9 @@ const page = ref( 1 );
 
 watch( () => props.open, ( isOpen ) => {
 	if ( isOpen ) {
-		page.value = 1;
-		if ( location.value === 'center' && !props.allowCenter ) {
-			location.value = 'left';
-		}
+		page.value = props.initialPage >= 1 && props.initialPage <= Math.max( 1, props.pageCount || 1 ) ? props.initialPage : 1;
+		location.value = props.initialLocation === 'center' && props.allowCenter ? 'center'
+			: props.initialLocation === 'right' ? 'right' : 'left';
 	}
 } );
 </script>
@@ -167,7 +169,7 @@ watch( () => props.open, ( isOpen ) => {
 						</div>
 					</div>
 					<div class="style-gallery-grid">
-						<div class="style-gallery-card" v-for="st in styles" :key="st.id">
+						<div class="style-gallery-card" v-for="st in styles" :key="st.name">
 							<div class="style-gallery-preview"><div class="character-sheet spotlight-style" v-html="st.preview"></div></div>
 							<div class="style-gallery-name">{{ st.name }}</div>
 							<div class="style-gallery-blurb">{{ st.blurb }}</div>

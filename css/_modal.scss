@@ -201,7 +201,7 @@
 		&:hover { background: #0369a1; }
 	}
 
-	// Gallery-only mock helpers (ring, session lines)
+	// Gallery-only mock helpers (ring)
 	.gallery-ring-mock {
 		position: relative;
 		width: 120px;
@@ -223,29 +223,5 @@
 		font-size: 1.4rem;
 	}
 
-	.gallery-session-mock {
-		padding: 0.4rem 0.2rem 0.2rem 1.2rem;
-	}
-
-	.gallery-session-line {
-		position: relative;
-		height: 1px;
-		background: #475569;
-		transform: rotate(-14deg);
-		transform-origin: left center;
-		margin: 0 0 1.1rem;
-		&::before {
-			content: '';
-			position: absolute;
-			left: -14px;
-			top: 50%;
-			width: 9px;
-			height: 9px;
-			border: 1.25px solid #000000;
-			border-radius: 50%;
-			background: #ffffff;
-			transform: translateY(-50%);
-		}
-	}
 }
 

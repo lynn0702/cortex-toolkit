@@ -682,7 +682,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			count: Math.max( 1, count ),
 			perRow: Math.max( 1, perRow ),
 			connected,
-			filled: Math.max( 0, filled )
+			filled: Math.max( 0, filled ),
+			labels: ( p as any )?.labels === true
 		};
 	}
 
@@ -725,119 +726,33 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		updateCharacter( props.character );
 	}
 
-	function getSessionRecordCount( traitSetArg: TraitSet ) {
-		return getSessionRecordConfig( traitSetArg ).count;
+	// Pip-with-label rows (the unified pips style): row i pairs the count
+	// grid with the i-th trait, if any. Named traits render beside their
+	// bubble; blank rows render bare. Filled prefers the trait's own
+	// checked flag, then its value, then the filled count.
+	function isPipLabels( traitSetArg: TraitSet ) {
+		return getPipConfig( traitSetArg ).labels === true;
 	}
 
-	function isSessionHorizontal( traitSetArg: TraitSet ) {
-		return getView( traitSetArg )?.sessionRecord?.orientation === 'horizontal';
-	}
-
-	function sessionViewBox( traitSetArg: TraitSet ) {
-		const n = getSessionRecordCount( traitSetArg );
-		if ( isSessionHorizontal( traitSetArg ) ) {
-			return '0 0 ' + ( 55 + ( n - 1 ) * 28 + 60 ) + ' 140';
-		}
-		return '0 0 272 ' + ( 55 + ( n - 1 ) * 28 + 25 );
-	}
-
-	function sessionSpine( traitSetArg: TraitSet ) {
-		const n = getSessionRecordCount( traitSetArg );
-		if ( isSessionHorizontal( traitSetArg ) ) {
-			return { x1: 55, y1: 118, x2: 55 + ( n - 1 ) * 28, y2: 118 };
-		}
-		return { x1: 24, y1: 55, x2: 24, y2: 55 + ( n - 1 ) * 28 };
-	}
-
-	function sessionBubble( traitSetArg: TraitSet, index: number ) {
-		if ( isSessionHorizontal( traitSetArg ) ) {
-			return { cx: 55 + index * 28, cy: 118 };
-		}
-		return { cx: 24, cy: 55 + index * 28 };
-	}
-
-	function sessionLine( traitSetArg: TraitSet, index: number ) {
-		if ( isSessionHorizontal( traitSetArg ) ) {
-			// The writing line starts at the pip's right edge and runs
-			// up-right, mirroring vertical mode (pip left, line right).
-			const x = 55 + index * 28;
-			return { x1: x + 7, y1: 111.5, x2: x + 44, y2: 16 };
-		}
-		const y = 55 + index * 28;
-		return { x1: 30.5, y1: y, x2: 252, y2: y - 56 };
-	}
-
-	function sessionHit( traitSetArg: TraitSet, index: number ) {
-		if ( isSessionHorizontal( traitSetArg ) ) {
-			return { x: ( 55 + index * 28 ) - 14, y: 0, width: 28, height: 140 };
-		}
-		const y = 55 + index * 28;
-		return { x: 20, y: y - 14, width: 244, height: 28 };
-	}
-
-	function sessionLabelTransform( traitSetArg: TraitSet, index: number ) {
-		if ( isSessionHorizontal( traitSetArg ) ) {
-			// Text runs parallel just left of its line, starting above the
-			// pip — the horizontal twin of vertical mode's right-of-pip anchor.
-			const x = 55 + index * 28;
-			return 'translate(' + ( x + 3 ) + ', 106) rotate(-66.5)';
-		}
-		// Vertical labels run parallel to their line (-14.2°) while they
-		// fit their 28-unit band; longer names flatten (keeping the same
-		// anchor) so the text stays legible and inside the box instead of
-		// overlapping its neighbours or escaping the viewport. Short
-		// labels render exactly as before.
-		const y = 55 + index * 28;
-		const name = ( traitSetArg?.traits || [] )[ index ]?.name || '';
-		const estLen = Math.max( 1, name.length ) * 7.2;
-		const angle = Math.min( 14.2, Math.asin( Math.min( 1, 20 / estLen ) ) * 180 / Math.PI );
-		return 'translate(36, ' + ( y - 4 ) + ') rotate(' + ( Math.round( angle * 10 ) / 10 ) + ')';
-	}
-
-	function getSessionRecordItems( traitSetArg: TraitSet ) {
-		const count = getSessionRecordCount( traitSetArg );
-		const traits = traitSetArg?.traits || [];
-		const srec = getView( traitSetArg )?.sessionRecord;
-		const checkedList: number[] = Array.isArray( srec?.checked ) ? srec.checked : [];
-		const items: any[] = [];
-		for ( let i = 0; i < count; i++ ) {
+	function pipRows( traitSetArg: TraitSet ) {
+		const cfg = getPipConfig( traitSetArg );
+		const traits = Array.isArray( traitSetArg?.traits ) ? traitSetArg.traits : [];
+		const n = Math.max( cfg.count, traits.length );
+		const rows: { index: number; trait: any; filled: boolean; name: string }[] = [];
+		for ( let i = 0; i < n; i++ ) {
 			const t = traits[ i ];
-			const fallbackChecked = checkedList.includes( i + 1 );
-			const isFilled = !props.printBlank && (
-				t?.custom?.checked !== undefined
-					? Boolean( t.custom.checked )
-					: ( Boolean( t?.value ) || fallbackChecked )
-			);
-			const name = t?.name || '';
-			items.push({ index: i, trait: t, isFilled: isFilled, name: name });
+			const named = t && typeof t === 'object' && typeof t.name === 'string' && t.name.length ? t : null;
+			const custom = t && typeof t === 'object' ? ( t as any ).custom : undefined;
+			const filled = custom && ( custom as any ).checked !== undefined
+				? Boolean( ( custom as any ).checked )
+				: ( named ? Boolean( ( named as any ).value ) : ( !props.printBlank && i < cfg.filled ) );
+			rows.push({ index: i, trait: named, filled: filled, name: named ? ( named as any ).name : '' });
 		}
-		return items;
+		return rows;
 	}
 
-	function handleSessionBubbleClick( traitSetIndex: number, itemIndex: number ) {
-		if ( props.submode === 'print' ) return;
-		const ts = props.character.traitSets?.[ traitSetIndex ];
-		const srec = getView( ts )?.sessionRecord;
-		const checkedList: number[] = Array.isArray( srec?.checked ) ? srec.checked : [];
-		const trait = ensureSessionRecordTrait( traitSetIndex, itemIndex );
-		if ( !trait ) return;
-		if ( !trait.custom ) trait.custom = {};
-		const fallbackChecked = checkedList.includes( itemIndex + 1 );
-		const currentlyChecked = trait.custom.checked !== undefined ? Boolean( trait.custom.checked ) : ( Boolean( trait.value ) || fallbackChecked );
-		trait.custom.checked = !currentlyChecked;
-		trait.value = !currentlyChecked ? 1 : 0;
-		updateCharacter( props.character );
-	}
-
-	function handleSessionLineClick( traitSetIndex: number, itemIndex: number ) {
-		if ( props.submode === 'print' ) return;
-		ensureSessionRecordTrait( traitSetIndex, itemIndex );
-		updateCharacter( props.character );
-		selectElement([ 'trait', traitSetIndex, itemIndex ]);
-	}
-
-	function ensureSessionRecordTrait( traitSetIndex: number, itemIndex: number ) {
-		const ts = props.character.traitSets?.[ traitSetIndex ];
+	function ensurePipTrait( traitSetIndex: number, itemIndex: number ) {
+		const ts = traitSets.value[ traitSetIndex ];
 		if ( !ts ) return null;
 		if ( !ts.traits ) ts.traits = [];
 		while ( ts.traits.length <= itemIndex ) {
@@ -855,8 +770,31 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return ts.traits[ itemIndex ];
 	}
 
-	function addSessionRecordRow( traitSetIndex: number ) {
-		const ts = props.character.traitSets?.[ traitSetIndex ];
+	function togglePipRow( traitSetIndex: number, itemIndex: number ) {
+		if ( props.submode === 'print' ) return;
+		const ts = traitSets.value[ traitSetIndex ];
+		if ( !ts ) return;
+		if ( !isPipLabels( ts ) ) return handlePipClick( traitSetIndex, itemIndex );
+		const trait = ensurePipTrait( traitSetIndex, itemIndex );
+		if ( !trait ) return;
+		if ( !trait.custom ) trait.custom = {};
+		const currentlyChecked = ( trait.custom as any ).checked !== undefined
+			? Boolean( ( trait.custom as any ).checked )
+			: Boolean( ( trait as any ).value );
+		( trait.custom as any ).checked = !currentlyChecked;
+		( trait as any ).value = !currentlyChecked ? 1 : 0;
+		updateCharacter( props.character );
+	}
+
+	function openPipRow( traitSetIndex: number, itemIndex: number ) {
+		if ( props.submode === 'print' ) return;
+		ensurePipTrait( traitSetIndex, itemIndex );
+		updateCharacter( props.character );
+		selectElement([ 'trait', traitSetIndex, itemIndex ]);
+	}
+
+	function addPipRow( traitSetIndex: number ) {
+		const ts = traitSets.value[ traitSetIndex ];
 		if ( !ts ) return;
 		if ( !ts.traits ) ts.traits = [];
 		ts.traits.push({
@@ -871,10 +809,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		});
 		const view = ensureView( ts );
 		const needed = ts.traits.length;
-		const effectiveCount = getSessionRecordCount( ts );
-		if ( effectiveCount < needed ) {
-			if ( !view.sessionRecord ) view.sessionRecord = {};
-			view.sessionRecord.count = needed;
+		const cfg = getPipConfig( ts );
+		if ( cfg.count < needed ) {
+			if ( !view.pips || typeof view.pips !== 'object' ) view.pips = {};
+			( view.pips as any ).count = needed;
 			view.reservedSlots = needed;
 		}
 		updateCharacter( props.character );
@@ -1091,15 +1029,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		}
 	}
 
-	function getSessionRecordConfig( traitSetArg: TraitSet ) {
-		const srec = getView( traitSetArg )?.sessionRecord;
-		const reserved = getView( traitSetArg )?.reservedSlots;
-		const traitsLen = traitSetArg?.traits ? traitSetArg.traits.length : 0;
-		const configured = Number( srec?.count ?? srec?.boxCount ?? reserved ) || 0;
-		const count = Math.max( 1, configured || 20, traitsLen );
-		return { count: count };
-	}
-
 	function getSharedHinderText( traitSetArg: TraitSet ) {
 		const hinderText = getView( traitSetArg )?.sharedHinderText?.trim();
 		if ( hinderText ) {
@@ -1139,14 +1068,12 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		getStressCompanion, isStressCompanion, visibleSubtraits,
 		shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
 		getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
-		getSessionRecordCount, isSessionHorizontal, sessionViewBox, sessionSpine, sessionBubble, sessionLine,
-		sessionHit, sessionLabelTransform, getSessionRecordItems, handleSessionBubbleClick, handleSessionLineClick,
-		ensureSessionRecordTrait, addSessionRecordRow,
+		isPipLabels, pipRows, ensurePipTrait, togglePipRow, openPipRow, addPipRow,
 		getImageSetContainerStyle, getImageSetGraphicStyle,
 		getBranchGroups, hasBranchSplit, hasBranchFlank, getFlankColumns, getBranchRole, getSetDie, getBranchSide, branchSubs, handleBranchFlatClick,
 		getStandingComplication, getStandingBonus, getStandingBonusRatings, getSubtraitNameOr,
 		getTalentEffect, getResourceDiceCount, setResourceDiceCount, getResourcePoolDice, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
-		getSessionRecordConfig, getSharedHinderText, getTraitSetSlotCount
+		getSharedHinderText, getTraitSetSlotCount
 	};
 
 	provide( TRAIT_SET_KEY, api );

@@ -150,7 +150,9 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(Object.keys(ss.traits.Bout.slots).join(',') === '0,1', 'blank specialty slots indexed');
   ok(ss.traits.Bout.slots['0'].view.branchSide === 'left', 'left slot marked');
   ok(ss.traits.Bout.slots['1'].view.branchSide === 'right', 'right slot marked');
-  ok(L.character.sets['Session Record'].view.sessionRecord.orientation === 'horizontal', 'session horizontal authored');
+  ok(L.character.sets['Session Record'].view.pips.labels === true, 'session rows labeled');
+  ok(L.character.sets['Session Record'].view.pips.count === 20, 'session count carried');
+  ok(L.character.sets['Session Record'].nounSingular === 'Session', 'session noun');
   ok(L.version === 1, 'alien-us version baseline');
   const v = L.character.sets.Values;
   ok(v.view.style.body === 'default' && v.view.traitColumns === 2, 'values two-column style');

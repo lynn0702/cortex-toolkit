@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
@@ -9,6 +10,15 @@ const {
 	renderDieValueForPrint, handleSingleDieClick, getTraitSetLabel, getSetDie,
 	getBranchGroups, branchSubs, hasBranchSplit, hasBranchFlank, getFlankColumns, handleBranchFlatClick
 } = injectTraitSet();
+
+// Stored branch column shares (view.branch), from the section miniature.
+// Absent means the CSS default (1.4 / 1 / 1.4); flank rows keep theirs.
+const branchGridStyle = computed( () => {
+	const b = getView( traitSet.value )?.branch as any;
+	if ( !b || typeof b !== 'object' || Array.isArray( b ) ) return '';
+	const num = ( v: unknown, fallback: number ) => ( typeof v === 'number' && Number.isFinite( v ) && v >= 0 ) ? v : fallback;
+	return 'grid-template-columns: ' + num( b.left, 1.4 ) + 'fr ' + num( b.center, 1 ) + 'fr 2rem ' + num( b.right, 1.4 ) + 'fr;';
+} );
 </script>
 
 <template>
@@ -77,7 +87,7 @@ const {
 			</div>
 		</template>
 		<template v-else>
-		<div class="branch-head" :class="{ 'branch-split-head': hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) }">
+		<div class="branch-head" :class="{ 'branch-split-head': hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) }" :style="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) ? branchGridStyle : ''" @click.stop="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) ? selectElement(['traitSet', s]) : null" :title="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s)) ? (traitSet.name + ' — click to edit section') : ''">
 		<template v-if="hasBranchSplit(traitSet, getRenderedTraits(traitSet, s))"><span>{{ getTraitSetLabel(traitSet, 'left') }}</span><span class="branch-head-center">{{ getTraitSetLabel(traitSet, 'center') }}<span v-if="getSetDie(traitSet)" class="c set-die" v-html="renderDieValueForPrint(getSetDie(traitSet), true)"></span></span><span></span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template>
 		<template v-else><span>{{ getTraitSetLabel(traitSet, 'left') }}</span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template>
 	</div>
@@ -89,7 +99,7 @@ const {
 					@keydown.enter.prevent="openTraitAt(s, group.skillItem)"
 					@keydown.space.prevent="openTraitAt(s, group.skillItem)"
 					@click.stop="openTraitAt(s, group.skillItem)">
-					<div class="branch-row" :class="{ 'branch-split-row': group.split }">
+					<div class="branch-row" :class="{ 'branch-split-row': group.split }" :style="group.split ? branchGridStyle : ''">
 						<div class="branch-side branch-left" v-if="group.split">
 							<template v-for="(entry, ei) in branchSubs(group.subs, 'left')" :key="entry._lid || ('subl-' + ei)">
 								<div class="branch-slot" v-if="entry.kind === 'sub'"
@@ -174,7 +184,7 @@ const {
 				</div>
 			</div>
 			<div class="branch-orphans" v-else>
-				<div class="branch-row" :class="{ 'branch-split-row': group.split }">
+				<div class="branch-row" :class="{ 'branch-split-row': group.split }" :style="group.split ? branchGridStyle : ''">
 					<div class="branch-side branch-left" v-if="group.split">
 						<template v-for="(entry, ei) in branchSubs(group.subs, 'left')" :key="entry._lid || ('orphl-' + ei)">
 							<div class="branch-slot" v-if="entry.kind === 'flat'"

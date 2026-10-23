@@ -13,6 +13,7 @@ const {
 	handleStressClick, handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, isMultiDieTrait, getTraitDice,
 	isDieSpent, toggleDieSpentInPlay, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
 	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
+	getSetDie,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
 	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
 } = injectTraitSet();
@@ -146,6 +147,7 @@ const {
 									@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
 								></span>
+								<span v-if="getSetDie(traitSet) && !item.isPlaceholder && !(item.trait.value > 0)" class="c set-die" v-html="renderDieValueForPrint(getSetDie(traitSet), true)" :title="'Set die d' + getSetDie(traitSet)"></span>
 								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>

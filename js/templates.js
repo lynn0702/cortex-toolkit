@@ -660,8 +660,8 @@ const cortexSpotlightTemplates = [
           "id": "session-record",
           "name": "Session Record",
           "description": "Session track and progression log",
-          "nounSingular": "Milestone",
-          "nounPlural": "Milestones",
+          "nounSingular": "Session",
+          "nounPlural": "Sessions",
           "traits": [],
           "sfx": [],
           "view": {
@@ -675,11 +675,7 @@ const cortexSpotlightTemplates = [
             "page": 2,
             "style": {
               "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 20,
-              "orientation": "horizontal"
+              "body": "pips"
             },
             "multiDie": false,
             "notes": "",
@@ -689,6 +685,11 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
+            },
+            "pips": {
+              "labels": true,
+              "count": 20,
+              "perRow": 20
             }
           }
         }
@@ -2517,8 +2518,8 @@ const cortexSpotlightTemplates = [
           "id": "session-record",
           "name": "Session Record",
           "description": "Session tracking and milestone progression",
-          "nounSingular": "Milestone",
-          "nounPlural": "Milestones",
+          "nounSingular": "Session",
+          "nounPlural": "Sessions",
           "traits": [],
           "sfx": [],
           "view": {
@@ -2532,10 +2533,7 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 15
+              "body": "pips"
             },
             "multiDie": false,
             "notes": "",
@@ -2545,6 +2543,11 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
+            },
+            "pips": {
+              "labels": true,
+              "count": 15,
+              "perRow": 1
             }
           }
         },
@@ -8484,8 +8487,8 @@ const cortexSpotlightTemplates = [
         {
           "id": "session-record",
           "name": "Session Record",
-          "nounSingular": "Milestone",
-          "nounPlural": "Milestones",
+          "nounSingular": "Session",
+          "nounPlural": "Sessions",
           "traits": [],
           "sfx": [],
           "view": {
@@ -8499,11 +8502,7 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 10,
-              "orientation": "horizontal"
+              "body": "pips"
             },
             "reservedSlots": 10,
             "place": {
@@ -8511,6 +8510,11 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "62%",
               "height": 1
+            },
+            "pips": {
+              "labels": true,
+              "count": 10,
+              "perRow": 10
             }
           }
         },
@@ -9802,8 +9806,8 @@ const cortexSpotlightTemplates = [
           "id": "session-record",
           "name": "Session Record",
           "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
-          "nounSingular": "Milestone",
-          "nounPlural": "Milestones",
+          "nounSingular": "Session",
+          "nounPlural": "Sessions",
           "traits": [
             {
               "name": "Training",
@@ -9842,13 +9846,14 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "session-record"
+              "body": "pips"
             },
-            "sessionRecord": {
+            "reservedSlots": 20,
+            "pips": {
+              "labels": true,
               "count": 20,
-              "orientation": "horizontal"
-            },
-            "reservedSlots": 20
+              "perRow": 20
+            }
           }
         }
       ],
@@ -18454,11 +18459,7 @@ const cortexSpotlightTemplates = [
             "page": 2,
             "style": {
               "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "orientation": "vertical",
-              "lines": 4
+              "body": "pips"
             },
             "place": {
               "left": "50%",
@@ -18466,7 +18467,12 @@ const cortexSpotlightTemplates = [
               "width": "50%",
               "height": 1
             },
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pips": {
+              "labels": true,
+              "count": 3,
+              "perRow": 1
+            }
           }
         },
         {
@@ -19614,27 +19620,53 @@ const cortexSpotlightTemplates = [
           "name": "Mission Chronicle",
           "nounSingular": "Session",
           "nounPlural": "Sessions",
-          "traits": [],
+          "traits": [
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "traits": [],
+              "sfx": [],
+              "custom": {
+                "checked": true
+              }
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "traits": [],
+              "sfx": [],
+              "custom": {
+                "checked": true
+              }
+            },
+            {
+              "name": "",
+              "value": 0,
+              "dice": [],
+              "traits": [],
+              "sfx": [],
+              "custom": {
+                "checked": true
+              }
+            }
+          ],
           "sfx": [],
           "view": {
             "page": 2,
             "style": {
               "header": "default",
-              "body": "session-record"
-            },
-            "sessionRecord": {
-              "count": 12,
-              "boxCount": 12,
-              "orientation": "horizontal",
-              "checked": [
-                1,
-                2,
-                3
-              ]
+              "body": "pips"
             },
             "reservedSlots": 12,
             "header": "top",
-            "headerAlign": "right"
+            "headerAlign": "right",
+            "pips": {
+              "labels": true,
+              "count": 12,
+              "perRow": 12
+            }
           }
         }
       ],

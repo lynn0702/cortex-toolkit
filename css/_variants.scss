@@ -1124,6 +1124,42 @@
 		}
 	}
 
+	// SPLIT HEAD AS THE SECTION HEADER: in split top-bar mode the outer
+	// header hides (see print file) and this bar is the section identity —
+	// same magenta header voice, vertically centered, clickable into the
+	// set editor. The 0,5,0 specificity beats the print file's black twin
+	// (which lives in a dual screen+print block); print keeps its black.
+	// @at-root because this sits nested inside the subtrait block.
+	@at-root .character-sheet.spotlight-style .trait-set.trait-set-style-subtrait-columns .branch-head {
+		color: var(--color-primary);
+		border-bottom-color: var(--color-primary);
+	}
+	.branch-split-head {
+		font-family: var(--font-heading);
+		font-size: var(--text-header);
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-primary);
+		align-items: center;
+		padding-top: 0.3rem;
+		cursor: pointer;
+
+		.set-die {
+			font-size: 1em;
+		}
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.06);
+		}
+	}
+
+	// Set die on unrated grid rows: the die an unrated trait rolls, shown
+	// where it acts (the branch center carries it for split rows).
+	.trait-value.single-die-value > .set-die {
+		margin-left: .35em;
+	}
+
 	.branch-split-row {
 		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
 	}
