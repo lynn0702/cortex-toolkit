@@ -15,7 +15,14 @@ const root = path.join(__dirname, '..');
 const cortex = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Sendak_Eggers.cortex.json'), 'utf8'));
 const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Sendak_Eggers.layered.json'), 'utf8'));
 
-const getDice = (t) => (Array.isArray(t.dice) && t.dice.length ? t.dice : (typeof t.value === 'number' && t.value > 0 ? [t.value] : []));
+const getDice = (t) => {
+  const r = t && typeof t === 'object' ? t.rating : undefined;
+  if (r && typeof r === 'object' && !Array.isArray(r) && Array.isArray(r.value)) {
+    const nums = r.value.filter((x) => typeof x === 'number' && x > 0);
+    if (nums.length) return nums;
+  }
+  return (Array.isArray(t.dice) && t.dice.length ? t.dice : (typeof t.value === 'number' && t.value > 0 ? [t.value] : []));
+};
 const byName = (arr, n) => (Array.isArray(arr) ? arr.find((x) => x && x.name === n) : undefined);
 const named = (arr) => (Array.isArray(arr) ? arr.filter((x) => x && typeof x.name === 'string' && x.name.length).map((x) => x.name) : []);
 
@@ -62,69 +69,85 @@ function compareRender(render, label) {
 {
   const render = materializeCharacter(M.migrateCharacter(cortex).data, cortex);
   const strength = byName(byName(render.traitSets, 'Attributes').traits, 'Strength');
-  ok(strength && strength.value === 8 && (!strength.dice || strength.dice.length === 0), 'Strength folds to value 8', strength);
+  ok(strength && strength.rating && strength.rating.type === 'Die' && JSON.stringify(strength.rating.value) === '[8]' &&
+    strength.value === undefined && strength.dice === undefined, 'Strength folds to a Die rating', strength.rating);
   const halfOrc = byName(byName(render.traitSets, 'Distinctions').traits, 'Half-Orc');
   ok(halfOrc && Array.isArray(halfOrc.sfx) && halfOrc.sfx.includes('hinder'), 'Half-Orc Hinder restored as sfx literal', halfOrc && halfOrc.sfx);
   const ath = byName(byName(render.traitSets, 'Skills').traits, 'Athletics');
-  ok(ath && ath.value === 6 && ath.traits && named(ath.traits).includes('Jump'), 'Athletics sub-trait map folds back', ath && { v: ath.value, subs: named(ath.traits) });
+  ok(ath && ath.rating && JSON.stringify(ath.rating.value) === '[6]' && ath.traits && named(ath.traits).includes('Jump'), 'Athletics sub-trait map folds back', ath && { v: ath.rating, subs: named(ath.traits) });
 }
 
-// ---- 4. render -> layered -> render is an exact, lossless codec.
+// ---- 4. render -> layered -> render is an exact, lossless codec (over
+// the normalized shape: legacy value/dice enter canonical ratings once).
 {
-  const back = materializeCharacter(toLayeredEntity(cortex), cortex);
-  const a = JSON.parse(JSON.stringify(cortex));
+  const src = JSON.parse(JSON.stringify(cortex));
+  M.normalizeView(src);
+  const back = materializeCharacter(toLayeredEntity(src), src);
+  const a = JSON.parse(JSON.stringify(src));
   const b = JSON.parse(JSON.stringify(back));
   delete a.isTemplate; delete b.isTemplate; // normalized to a boolean on the render shape
-  ok(JSON.stringify(a) === JSON.stringify(b), 'toLayeredEntity round-trips the source exactly');
+  ok(JSON.stringify(a) === JSON.stringify(b), 'toLayeredEntity round-trips the normalized source exactly');
 }
 
 // ---- 5. per-entity presentation overrides survive the codec.
 {
   const ov = JSON.parse(JSON.stringify(cortex));
-  ov.traitSets[0].custom.cortexToolkit.style.body = 'zzz-body';
-  ov.traitSets[0].nounSingular = 'ZZZ NOUN';
-  const back = materializeCharacter(toLayeredEntity(ov), cortex);
-  ok((back.traitSets[0].view?.style?.body || back.traitSets[0].custom?.cortexToolkit?.style?.body) === 'zzz-body', 'set style override survives', back.traitSets[0].custom?.cortexToolkit?.style?.body);
-  ok(back.traitSets[0].nounSingular === 'ZZZ NOUN', 'set noun override survives', back.traitSets[0].nounSingular);
+  M.normalizeView(ov);
+  const ovView = ov.traitSets[0].view || (ov.traitSets[0].custom && ov.traitSets[0].custom.cortexToolkit) || {};
+  ovView.style = ovView.style || {};
+  ovView.style.body = 'zzz-body';
+  if (!ov.traitSets[0].view) ov.traitSets[0].view = ovView;
+  ov.traitSets[0].noun = 'ZZZ NOUN';
+  const back = materializeCharacter(toLayeredEntity(ov), ov);
+  ok((back.traitSets[0].view?.style?.body || back.traitSets[0].custom?.cortexToolkit?.style?.body) === 'zzz-body', 'set style override survives', back.traitSets[0].view?.style?.body);
+  ok(back.traitSets[0].noun === 'ZZZ NOUN', 'set noun override survives', back.traitSets[0].noun);
   ok(JSON.stringify(back.traitSets[0].traits) === JSON.stringify(ov.traitSets[0].traits), 'traits unchanged alongside override');
 }
 
 // ---- 5b. per-entity view presentation overrides survive the codec.
 {
   const ov = JSON.parse(JSON.stringify(cortex));
+  M.normalizeView(ov);
   delete ov.traitSets[0].custom;
   ov.traitSets[0].view = { style: { header: 'default', body: 'view-body' } };
-  ov.traitSets[0].nounSingular = 'VIEW NOUN';
-  const back = materializeCharacter(toLayeredEntity(ov), cortex);
+  ov.traitSets[0].noun = 'VIEW NOUN';
+  const back = materializeCharacter(toLayeredEntity(ov), ov);
   ok(back.traitSets[0].view && back.traitSets[0].view.style.body === 'view-body', 'view set style override survives', back.traitSets[0].view?.style?.body);
-  ok(back.traitSets[0].nounSingular === 'VIEW NOUN', 'set noun override survives', back.traitSets[0].nounSingular);
+  ok(back.traitSets[0].noun === 'VIEW NOUN', 'set noun override survives', back.traitSets[0].noun);
 }
 
-// ---- 6. unrated (value 0) round-trips as 0, not null.
+// ---- 6. unrated (no rating) round-trips rating-free, not null.
 {
   const ch = JSON.parse(JSON.stringify(cortex));
-  const tr = ch.traitSets[0].traits[0];
-  tr.value = 0; tr.dice = [];
-  const back = materializeCharacter(toLayeredEntity(ch), cortex);
-  ok(back.traitSets[0].traits[0].value === 0 && (!back.traitSets[0].traits[0].dice || back.traitSets[0].traits[0].dice.length === 0), 'unrated round-trips to value 0', back.traitSets[0].traits[0]);
+  M.normalizeView(ch);
+  const dis = ch.traitSets.find((s) => s.name === 'Distinctions');
+  const tr = dis.traits[0];
+  delete tr.rating;
+  const back = materializeCharacter(toLayeredEntity(ch), ch);
+  const backDis = back.traitSets.find((s) => s.name === 'Distinctions');
+  ok(backDis.traits[0].rating === undefined && backDis.traits[0].value === undefined, 'unrated round-trips rating-free', backDis.traits[0]);
 }
 
 // ---- 7. place and parts round-trip untouched through the codec.
 {
   const ch = JSON.parse(JSON.stringify(cortex));
-  ch.traitSets[0].view = {
-    ...(ch.traitSets[0].view || {}),
+  M.normalizeView(ch);
+  const dis = ch.traitSets.find((s) => s.name === 'Distinctions');
+  dis.view = {
+    ...(dis.view || {}),
     place: { left: '30%', top: 2, width: '60%', height: 1 },
     parts: { name: { left: '0%', top: 0, width: '70%', height: 1 }, rating: { left: '70%', top: 0, width: '30%', height: 1 } },
   };
   const back = materializeCharacter(toLayeredEntity(ch), cortex);
-  ok(JSON.stringify(back.traitSets[0].view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }), 'place survives', back.traitSets[0].view.place);
-  ok(JSON.stringify(back.traitSets[0].view.parts) === JSON.stringify(ch.traitSets[0].view.parts), 'parts survive', back.traitSets[0].view.parts);
+  const backDis = back.traitSets.find((s) => s.name === 'Distinctions');
+  ok(JSON.stringify(backDis.view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }), 'place survives', backDis.view.place);
+  ok(JSON.stringify(backDis.view.parts) === JSON.stringify(dis.view.parts), 'parts survive', backDis.view.parts);
   // An unrelated edit (trait rename) leaves coordinates alone.
-  back.traitSets[0].traits[0].name = 'RENAMED';
+  backDis.traits[0].name = 'RENAMED';
   const back2 = materializeCharacter(toLayeredEntity(back), cortex);
-  ok(JSON.stringify(back2.traitSets[0].view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }), 'place untouched by unrelated edit');
-  ok(JSON.stringify(back2.traitSets[0].view.parts) === JSON.stringify(ch.traitSets[0].view.parts), 'parts untouched by unrelated edit');
+  const back2Dis = back2.traitSets.find((s) => s.name === 'Distinctions');
+  ok(JSON.stringify(back2Dis.view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }), 'place untouched by unrelated edit');
+  ok(JSON.stringify(back2Dis.view.parts) === JSON.stringify(dis.view.parts), 'parts untouched by unrelated edit');
 }
 
 console.log(`materialize-tests: ${pass} passed, ${fail} failed`);

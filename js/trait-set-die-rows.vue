@@ -6,7 +6,7 @@ const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, isSpotlightStyle, renderDieValueForPrint,
-	handleSingleDieClick, hasCounterColumn, getTraitCounter
+	handleSingleDieClick, hasCounterColumn, getTraitCounter, firstDie, isDieActive
 } = injectTraitSet();
 </script>
 
@@ -23,17 +23,17 @@ const {
 					<span class="die-row-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
 					<span class="die-row-name die-row-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
 						<template v-if="submode === 'edit' && !printBlank && !item.trait.name">
-							<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+							<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 						</template>
 						<template v-else>
 							<span class="trait-blank-line"></span>
 						</template>
 					</span>
 					<span class="die-row-name" v-else>{{ item.trait.name || '' }}</span>
-					<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+					<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null">
 						<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-							:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
-							v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+							:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+							v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"></span>
 					</div>
 					<span class="die-row-counter" v-if="hasCounterColumn(traitSet)">
 						{{ (!printBlank && !item.isPlaceholder) ? getTraitCounter(item.trait) : '' }}
@@ -45,7 +45,7 @@ const {
 			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
 					</div>
 				</div>
 			</div>

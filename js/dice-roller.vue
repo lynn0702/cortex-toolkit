@@ -10,6 +10,7 @@ interface RollResult {
 	isScale: boolean;
 	isResource: boolean;
 	resourceType: string;
+	hitches: number;
 	isHitch: boolean;
 	manualRole: 'total' | 'effect' | 'none';
 }
@@ -42,11 +43,11 @@ const emit = defineEmits<{
 const savedCombine = localStorage.getItem( 'cortexCombineResources' );
 
 const keep = ref( 2 );
-const hitchOn = ref( 1 );
 const combineResources = ref( savedCombine !== null ? savedCombine === 'true' : false );
 const isRolled = ref( false );
 const lastRollResults = ref<RollResult[]>( [] );
 const resourceGroupsResults = ref<ResourceGroup[]>( [] );
+const exemptGroupsResults = ref<ResourceGroup[]>( [] );
 const cortexPalOutput = ref( '' );
 const bestTotalInfo = ref<any>( null );
 const bestEffectInfo = ref<any>( null );
@@ -57,7 +58,42 @@ const diceSizes = computed( () => [ 4, 6, 8, 10, 12 ] );
 
 const stagedDice = computed<any[]>( () => ( props.pool ? props.pool.items : [] ) );
 
-const hasScaleDie = computed( () => Boolean( stagedDice.value && stagedDice.value.some( ( d: any ) => d.isScale || ( d.source && d.source.toLowerCase() === 'scale' ) ) ) );
+// Resolved hitches per staged item (sparse data, base default 1).
+function itemHitches( d: any ) {
+	const h = d && typeof d.hitches === 'number' && Number.isFinite( d.hitches ) && d.hitches >= 0 ? Math.floor( d.hitches ) : 1;
+	return h;
+}
+
+// The exemption: hitches 0 rolls in its own pool, never hitches.
+function isExempt( d: any ) {
+	return itemHitches( d ) === 0;
+}
+
+function itemKeepsExtra( d: any ) {
+	if ( d && typeof d.keepsExtra === 'number' && Number.isFinite( d.keepsExtra ) && d.keepsExtra > 0 ) return Math.floor( d.keepsExtra );
+	if ( d && ( d.isScale || ( d.source && d.source.toLowerCase() === 'scale' ) ) ) return 1;
+	return 0;
+}
+
+const keepsExtraTotal = computed( () => stagedDice.value.reduce( ( sum: number, d: any ) => sum + itemKeepsExtra( d ), 0 ) );
+
+const actionKeepsExtra = computed( () => stagedDice.value
+	.filter( ( d: any ) => !d.isResource && !isExempt( d ) )
+	.reduce( ( sum: number, d: any ) => sum + itemKeepsExtra( d ), 0 ) );
+
+// Hitches flood: a pool hitches at its highest member's hitches,
+// because pooled dice are anonymous. Exempt dice roll apart, so they
+// never raise the action threshold.
+const actionThreshold = computed( () => {
+	let top = 1;
+	for ( const d of stagedDice.value ) {
+		if ( d.isResource || isExempt( d ) ) continue;
+		top = Math.max( top, itemHitches( d ) );
+	}
+	return top;
+} );
+
+const hitchLabel = computed( () => actionThreshold.value > 1 ? ( '1–' + actionThreshold.value ) : '1' );
 
 const resourceDice = computed( () => stagedDice.value.filter( ( d: any ) => Boolean( d.isResource ) ) );
 
@@ -76,15 +112,16 @@ const resourceKeepBonus = computed( () => uniqueResourceSources.value.length );
 
 const defaultKeep = computed( () => {
 	let k = 2;
-	if ( hasScaleDie.value ) k += 1;
+	k += keepsExtraTotal.value;
 	if ( combineResources.value ) {
 		k += resourceKeepBonus.value;
 	}
 	return k;
 } );
 
-const actionRollResults = computed( () => lastRollResults.value.filter( r => !r.isResource ) );
+const actionRollResults = computed( () => lastRollResults.value.filter( r => !r.isResource && r.hitches > 0 ) );
 const resourceRollResults = computed( () => lastRollResults.value.filter( r => r.isResource ) );
+const exemptRollResults = computed( () => lastRollResults.value.filter( r => !r.isResource && r.hitches === 0 ) );
 const totalHitches = computed( () => lastRollResults.value.filter( r => r.isHitch ).length );
 const isBotch = computed( () => lastRollResults.value.length > 0 && lastRollResults.value.every( r => r.isHitch ) );
 
@@ -93,7 +130,11 @@ const manualTotal = computed( () => lastRollResults.value
 	.reduce( ( sum, r ) => sum + r.value, 0 ) );
 
 const manualActionTotal = computed( () => lastRollResults.value
-	.filter( r => !r.isResource && r.manualRole === 'total' )
+	.filter( r => !r.isResource && r.hitches > 0 && r.manualRole === 'total' )
+	.reduce( ( sum, r ) => sum + r.value, 0 ) );
+
+const manualExemptBonus = computed( () => lastRollResults.value
+	.filter( r => !r.isResource && r.hitches === 0 && r.manualRole === 'total' )
 	.reduce( ( sum, r ) => sum + r.value, 0 ) );
 
 const manualResourceBonus = computed( () => lastRollResults.value
@@ -159,7 +200,8 @@ function addResourceAdHoc( size: number ) {
 		qty: 1,
 		source: 'Resource',
 		isResource: true,
-		resourceType: 'Resource'
+		resourceType: 'Resource',
+		hitches: 0
 	} );
 	isRolled.value = false;
 }
@@ -174,6 +216,7 @@ function clearPool() {
 	isRolled.value = false;
 	lastRollResults.value = [];
 	resourceGroupsResults.value = [];
+	exemptGroupsResults.value = [];
 	cortexPalOutput.value = '';
 	bestTotalInfo.value = null;
 	bestEffectInfo.value = null;
@@ -183,12 +226,32 @@ function clearPool() {
 function roll() {
 	if ( !props.pool || props.pool.is_empty() ) return;
 
+	// Thresholds resolve per pool section before rolling: the action
+	// section floods to its highest member, resource groups to theirs,
+	// exempt dice always resolve 0 and roll apart.
+	const actionItems = props.pool.items.filter( ( item: any ) => !item.isResource && !isExempt( item ) );
+	const actionThreshold = actionItems.reduce( ( top: number, item: any ) => Math.max( top, itemHitches( item ) ), 1 );
+	const groupTop = new Map<string, number>();
+	for ( const item of props.pool.items ) {
+		if ( !item.isResource ) continue;
+		const name = ( item.resourceType || item.source || 'Resource' ).trim();
+		groupTop.set( name, Math.max( groupTop.get( name ) ?? 0, itemHitches( item ) ) );
+	}
+
 	const rollResults: RollResult[] = [];
 	// Roll each staged item
 	for ( const item of props.pool.items ) {
 		const val = Math.floor( Math.random() * item.size ) + 1;
-		// CRITICAL RULE: Resources NEVER hitch!
-		const isHitch = !item.isResource && ( val <= hitchOn.value );
+		const h = itemHitches( item );
+		let threshold: number;
+		if ( h === 0 ) {
+			threshold = 0; // the exemption: never hitches, rolls apart
+		} else if ( item.isResource ) {
+			threshold = groupTop.get( ( item.resourceType || item.source || 'Resource' ).trim() ) ?? h;
+		} else {
+			threshold = actionThreshold;
+		}
+		const isHitch = threshold > 0 && ( val <= threshold );
 		rollResults.push( {
 			id: ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ) ? crypto.randomUUID() : Math.random().toString( 36 ).substring( 2, 9 ),
 			size: item.size,
@@ -197,6 +260,7 @@ function roll() {
 			isScale: Boolean( item.isScale ),
 			isResource: Boolean( item.isResource ),
 			resourceType: item.resourceType || ( item.isResource ? ( item.source || 'Resource' ) : '' ),
+			hitches: h,
 			isHitch: isHitch,
 			manualRole: 'none'
 		} );
@@ -211,12 +275,15 @@ function evaluateRollDisplay() {
 	if ( !isRolled.value || lastRollResults.value.length === 0 ) return;
 
 	const resourceResults = lastRollResults.value.filter( r => r.isResource );
-	const actionResults = lastRollResults.value.filter( r => !r.isResource );
+	const actionResults = lastRollResults.value.filter( r => !r.isResource && r.hitches > 0 );
+	const exemptResults = lastRollResults.value.filter( r => !r.isResource && r.hitches === 0 );
 	const hasRes = resourceResults.length > 0;
+	const hasExempt = exemptResults.length > 0;
 
-	if ( !hasRes || combineResources.value ) {
+	if ( ( !hasRes && !hasExempt ) || ( combineResources.value && !hasExempt ) ) {
 		// COMBINED / NORMAL POOL MODE
 		resourceGroupsResults.value = [];
+		exemptGroupsResults.value = [];
 		const eligible = lastRollResults.value.filter( r => !r.isHitch );
 
 		if ( eligible.length === 0 ) {
@@ -274,7 +341,7 @@ function evaluateRollDisplay() {
 		cortexPalOutput.value = `Normal Pool Roll (Keep ${keep.value})${resNote}:\nDice: ${lastRollResults.value.map( r => 'd' + r.size + ( r.isResource ? '[res]' : '' ) + ': ' + r.value + ( r.isHitch ? ' (Hitch)' : '' ) ).join( ', ' )}\nBest Total: ${totalSum} (${totalFormula}) with Effect: ${effectDie}\nBest Effect: ${effectBest} with Total: ${totalSumForEffect} (${formulaForEffect})\nHitches: ${totalHitches.value}`;
 	} else {
 		// SEPARATE RESOURCES MODE (Standard Cortex Prime)
-		const actionKeep = 2 + ( hasScaleDie.value ? 1 : 0 );
+		const actionKeep = 2 + actionKeepsExtra.value;
 		const actionEligible = actionResults.filter( r => !r.isHitch );
 
 		let actionTotal = 0;
@@ -327,6 +394,37 @@ function evaluateRollDisplay() {
 
 		resourceGroupsResults.value = groups;
 
+		// Exempt dice (hitches 0, not resources) roll in their own pool:
+		// grouped by source, highest kept as a bonus, never hitches.
+		const exemptMap: Record<string, RollResult[]> = {};
+		for ( const r of exemptRollResults.value ) {
+			const name = ( r.source || 'Exempt' ).trim() || 'Exempt';
+			if ( !exemptMap[ name ] ) exemptMap[ name ] = [];
+			exemptMap[ name ].push( r );
+		}
+
+		const exemptGroups: ResourceGroup[] = [];
+		let totalExemptBonus = 0;
+
+		for ( const [ name, dice ] of Object.entries( exemptMap ) ) {
+			const sortedEx = [ ...dice ].sort( ( a, b ) => b.value - a.value );
+			const keptDie = sortedEx[ 0 ];
+			totalExemptBonus += keptDie.value;
+
+			for ( const d of dice ) {
+				d.manualRole = ( d.id === keptDie.id ) ? 'total' : 'none';
+			}
+
+			exemptGroups.push( {
+				name: name,
+				dice: dice,
+				keptDie: keptDie,
+				bonus: keptDie.value
+			} );
+		}
+
+		exemptGroupsResults.value = exemptGroups;
+
 		// Set action dice roles
 		for ( const r of actionResults ) {
 			if ( r.isHitch ) {
@@ -340,11 +438,14 @@ function evaluateRollDisplay() {
 			}
 		}
 
-		const grandTotal = actionTotal + totalResourceBonus;
+		const grandTotal = actionTotal + totalResourceBonus + totalExemptBonus;
 		const formulaParts: string[] = [];
 		if ( actionTotal > 0 ) formulaParts.push( `${actionTotal} (Action)` );
 		for ( const g of groups ) {
 			formulaParts.push( `${g.bonus} (${g.name})` );
+		}
+		for ( const g of exemptGroups ) {
+			formulaParts.push( `${g.bonus} (${g.name}, exempt)` );
 		}
 		const grandFormula = formulaParts.length > 0 ? formulaParts.join( ' + ' ) : '0';
 
@@ -362,11 +463,14 @@ function evaluateRollDisplay() {
 			actionEffectFormula = actionEffectTotalDice.map( d => d.value ).join( ' + ' );
 		}
 
-		const grandTotalForEffect = actionEffectTotal + totalResourceBonus;
+		const grandTotalForEffect = actionEffectTotal + totalResourceBonus + totalExemptBonus;
 		const formulaPartsForEffect: string[] = [];
 		if ( actionEffectTotal > 0 ) formulaPartsForEffect.push( `${actionEffectTotal} (Action)` );
 		for ( const g of groups ) {
 			formulaPartsForEffect.push( `${g.bonus} (${g.name})` );
+		}
+		for ( const g of exemptGroups ) {
+			formulaPartsForEffect.push( `${g.bonus} (${g.name}, exempt)` );
 		}
 		const grandFormulaForEffect = formulaPartsForEffect.length > 0 ? formulaPartsForEffect.join( ' + ' ) : '0';
 
@@ -401,6 +505,14 @@ function evaluateRollDisplay() {
 		}
 		log += `Total Resource Bonus: +${totalResourceBonus}\n\n`;
 
+		if ( exemptGroups.length > 0 ) {
+			log += `=== EXEMPT (hitches 0, Rolled Separately, No Hitches) ===\n`;
+			for ( const g of exemptGroups ) {
+				log += `• ${g.name} (${g.dice.map( d => 'd' + d.size ).join( ', ' )}): [${g.dice.map( d => d.value ).join( ', ' )}] -> Kept highest: ${g.bonus}\n`;
+			}
+			log += `Total Exempt Bonus: +${totalExemptBonus}\n\n`;
+		}
+
 		log += `=== FINAL COMBINED TOTAL ===\n`;
 		log += `Grand Total: ${grandTotal} (${grandFormula})\n`;
 		log += `Effect Die: ${actionEffect}\n`;
@@ -432,6 +544,20 @@ function cycleDieRole( dieResult: RollResult ) {
 		}
 	}
 
+	if ( !combineResources.value && !dieResult.isResource && ( dieResult as RollResult ).hitches === 0 ) {
+		const group = exemptGroupsResults.value.find( g => g.dice.some( d => d.id === dieResult.id ) );
+		if ( group ) {
+			if ( dieResult.manualRole === 'total' ) {
+				dieResult.manualRole = 'none';
+			} else {
+				for ( const d of group.dice ) {
+					d.manualRole = ( d.id === dieResult.id ) ? 'total' : 'none';
+				}
+			}
+			return;
+		}
+	}
+
 	if ( dieResult.manualRole === 'none' ) {
 		dieResult.manualRole = 'total';
 	} else if ( dieResult.manualRole === 'total' ) {
@@ -449,8 +575,8 @@ function applyBestTotal() {
 function applyBestEffect() {
 	if ( !bestEffectInfo.value || bestEffectInfo.value.isBotch ) return;
 
-	if ( !combineResources.value && resourceGroupsResults.value.length > 0 ) {
-		const actionKeep = 2 + ( hasScaleDie.value ? 1 : 0 );
+	if ( !combineResources.value && ( resourceGroupsResults.value.length > 0 || exemptGroupsResults.value.length > 0 ) ) {
+		const actionKeep = 2 + actionKeepsExtra.value;
 		const actionEligible = actionRollResults.value.filter( r => !r.isHitch ).sort( ( a, b ) => {
 			if ( a.size !== b.size ) return b.size - a.size;
 			return a.value - b.value;
@@ -627,11 +753,8 @@ function copyOutput() {
 					</div>
 
 					<div class="roller-option">
-						<label for="roller-hitch-on">Hitch On</label>
-						<select id="roller-hitch-on" name="hitchOn" v-model.number="hitchOn" aria-label="Hitch on">
-							<option :value="1">1</option>
-							<option :value="2">1–2</option>
-						</select>
+						<label>Hitches</label>
+						<span class="roller-hitch-readout" :title="'Faces ' + hitchLabel + ' hitch, from the staged dice (highest member wins)'">{{ hitchLabel }}</span>
 					</div>
 				</div>
 
@@ -659,8 +782,8 @@ function copyOutput() {
 				<!-- INTERACTIVE RESULTS VIEW -->
 				<div v-show="activeTab === 'roller'" class="roller-interactive-view">
 
-					<!-- SEPARATE MODE: ACTION POOL DICE & RESOURCE GROUPS -->
-					<template v-if="!combineResources && resourceGroupsResults.length > 0">
+					<!-- SEPARATE MODE: ACTION POOL DICE, RESOURCE GROUPS & EXEMPT GROUPS -->
+					<template v-if="!combineResources && (resourceGroupsResults.length > 0 || exemptGroupsResults.length > 0)">
 						<!-- Action Pool Section -->
 						<div class="roller-group-section" v-if="actionRollResults.length > 0">
 							<div class="roller-group-header">
@@ -705,7 +828,7 @@ function copyOutput() {
 						</div>
 
 						<!-- Resources Separately Section -->
-						<div class="roller-resources-section">
+						<div class="roller-resources-section" v-if="resourceGroupsResults.length > 0">
 							<div class="roller-group-header">
 								<span><i class="fas fa-cubes-stacked"></i> Resources</span>
 								<span class="group-sub">No Hitches • Keep Highest</span>
@@ -726,6 +849,48 @@ function copyOutput() {
 										}"
 										@click="cycleDieRole(die)"
 										title="Click to toggle as kept die for this resource"
+									>
+										<div class="card-top">
+											<span class="c" style="color: #0284c7;">{{ getDieDisplayValue(die.size) }}</span>
+											<span class="card-size">d{{ die.size }}</span>
+										</div>
+										<div class="card-value">
+											{{ die.value }}
+										</div>
+										<div class="card-badge badge-res-kept" v-if="die.manualRole === 'total'">
+											Kept (+{{ die.value }})
+										</div>
+										<div class="card-badge badge-unused" v-else>
+											Unused
+										</div>
+										<div class="card-source">{{ die.source }}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Exempt Separately Section (hitches 0: own pool, no hitches) -->
+						<div class="roller-resources-section" v-if="exemptGroupsResults.length > 0">
+							<div class="roller-group-header">
+								<span><i class="fas fa-shield-halved"></i> Exempt</span>
+								<span class="group-sub">No Hitches • Keep Highest</span>
+							</div>
+
+							<div v-for="group in exemptGroupsResults" :key="group.name" class="roller-resource-group-card">
+								<div class="resource-group-title">
+									<span class="res-name">{{ group.name }}</span>
+									<span class="resource-group-tag">+{{ getGroupKeptValue(group) }} to Total</span>
+								</div>
+								<div class="roller-dice-grid">
+									<div
+										v-for="die in group.dice"
+										:key="die.id"
+										class="roller-die-card die-resource-card"
+										:class="{
+											'role-total': die.manualRole === 'total'
+										}"
+										@click="cycleDieRole(die)"
+										title="Click to toggle as kept die for this group"
 									>
 										<div class="card-top">
 											<span class="c" style="color: #0284c7;">{{ getDieDisplayValue(die.size) }}</span>
@@ -797,14 +962,18 @@ function copyOutput() {
 
 					<!-- CURRENT SELECTION TOTAL / EFFECT -->
 					<div class="roller-calc-box custom-calc" v-if="!isBotch">
-						<template v-if="!combineResources && resourceGroupsResults.length > 0">
+						<template v-if="!combineResources && (resourceGroupsResults.length > 0 || exemptGroupsResults.length > 0)">
 							<div class="calc-row">
 								<span class="calc-label">Action Total</span>
 								<span class="calc-val">{{ manualActionTotal }}</span>
 							</div>
-							<div class="calc-row">
+							<div class="calc-row" v-if="resourceGroupsResults.length > 0">
 								<span class="calc-label">Resources</span>
 								<span class="calc-val" style="color: #0284c7;">+{{ manualResourceBonus }}</span>
+							</div>
+							<div class="calc-row" v-if="exemptGroupsResults.length > 0">
+								<span class="calc-label">Exempt</span>
+								<span class="calc-val" style="color: #0284c7;">+{{ manualExemptBonus }}</span>
 							</div>
 							<div class="calc-row">
 								<span class="calc-label">Grand Total</span>

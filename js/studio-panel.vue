@@ -81,7 +81,7 @@ const trait = computed( () => {
 } );
 
 const traitSetName = computed( () => traitSet.value?.name || 'Trait Set' );
-const traitName = computed( () => trait.value?.name || ( traitSet.value?.nounSingular ? `New ${traitSet.value.nounSingular}` : 'Trait' ) );
+const traitName = computed( () => trait.value?.name || ( traitSet.value?.noun ? `New ${traitSet.value.noun}` : 'Trait' ) );
 
 const nameEditorInitialTab = computed( () => {
 	const sel = props.editing;

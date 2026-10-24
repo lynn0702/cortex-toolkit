@@ -1504,7 +1504,7 @@
 		grid-template-columns: repeat(5, 1fr);
 		gap: 0.35rem;
 
-		&.set-die-chips {
+		&.set-rating-die-chips {
 			grid-template-columns: repeat(6, 1fr);
 		}
 		.rating-scale-chip {
@@ -1551,7 +1551,7 @@
 				}
 			}
 
-			&.set-die-none {
+			&.set-rating-die-none {
 				justify-content: center;
 			}
 		}

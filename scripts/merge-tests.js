@@ -19,7 +19,7 @@ function tpl() {
       view: { columns: 2, style: { sheet: 'spotlight' } },
       traitSets: [
         {
-          id: 'distinctions', name: 'Distinctions', description: '', nounSingular: 'Distinction', nounPlural: 'Distinctions',
+          id: 'distinctions', name: 'Distinctions', description: '', noun: 'Distinction', plural: 'Distinctions',
           traits: [
             { name: 'Heritage', value: 8, dice: [8], description: 'Bold lineage', traits: [], sfx: ['hinder'], tags: [], custom: {} },
             { name: '', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
@@ -29,7 +29,7 @@ function tpl() {
           view: { location: 'left', style: { header: 'distinctions', body: 'distinctions' }, reservedSlots: 3 },
         },
         {
-          id: 'attributes', name: 'Attributes', description: '', nounSingular: 'Attribute', nounPlural: 'Attributes',
+          id: 'attributes', name: 'Attributes', description: '', noun: 'Attribute', plural: 'Attributes',
           traits: [
             { name: 'Physical', value: 8, dice: [8], description: '', traits: [{ name: 'Lifting', value: 6, dice: [6], description: '', traits: [], sfx: [], tags: [], custom: {} }], sfx: [], tags: [], custom: {} },
           ],

@@ -69,20 +69,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -90,8 +101,6 @@
       "Roles": {
         "id": "roles",
         "description": "Prime vocations and endarch callings",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "features": {
             "description": false,
@@ -134,6 +143,8 @@
             }
           }
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Warrior": {},
           "Priest": {},
@@ -144,8 +155,6 @@
       "Attributes": {
         "id": "attributes",
         "description": "Elemental selfhood with highlight circles and stress",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "hasQuestionedPip": true,
         "view": {
           "features": {
@@ -205,6 +214,8 @@
             "stress": "STRESS"
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Courage": {},
           "Grace": {},
@@ -216,8 +227,6 @@
       "Endarch Distinction": {
         "id": "endarch-distinction",
         "description": "Ancestral endarch patron and its three bound powers",
-        "nounSingular": "Endarch Distinction",
-        "nounPlural": "Endarch Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -245,19 +254,69 @@
             "height": 1
           }
         },
+        "noun": "Endarch Distinction",
+        "plural": "Endarch Distinctions",
         "traits": {},
         "slots": {
           "0": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "Power 1": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Power 2": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Power 3": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "SFX": {
                 "traits": {
@@ -276,8 +335,6 @@
       "Summoned Eidolon": {
         "id": "summoned-eidolon",
         "description": "Manifested eidolon form: base trait, scale, powers, highlights",
-        "nounSingular": "Eidolon Trait",
-        "nounPlural": "Eidolon Traits",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -308,37 +365,122 @@
             "height": 1
           }
         },
+        "noun": "Eidolon Trait",
+        "plural": "Eidolon Traits",
         "traits": {
           "Base Trait": {
-            "value": "2d10",
-            "pool": true,
-            "description": "d10 d10 or d4 d4"
+            "rating": {
+              "type": "Dice",
+              "value": [
+                10,
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "description": "d10 d10 or d4 d4",
+            "spendable": true
           },
           "Scale": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Power 1": {
-            "value": "d12"
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Power 2": {
-            "value": "d12"
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Power 3": {
-            "value": "d12"
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Highlight Attribute 1": {
-            "value": "d12"
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Highlight Attribute 2": {
-            "value": "d12"
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Role & Freeform Distinctions": {
         "id": "role-freeform-distinctions",
         "description": "Chosen calling and personal definition",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -363,9 +505,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Role Distinction": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -375,7 +531,19 @@
             }
           },
           "Freeform Distinction": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -389,8 +557,6 @@
       "XP": {
         "id": "xp",
         "description": "Experience points bubble track",
-        "nounSingular": "XP",
-        "nounPlural": "XP",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -408,10 +574,8 @@
           "notes": "",
           "reservedSlots": 0,
           "pips": {
-            "count": 20,
             "perRow": 1,
-            "connected": false,
-            "filled": 0
+            "connected": false
           },
           "place": {
             "left": "90%",
@@ -420,6 +584,36 @@
             "height": 3
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            20
+          ]
+        },
+        "noun": "XP",
+        "plural": "XP",
         "traits": {}
       }
     }

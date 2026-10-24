@@ -299,7 +299,7 @@ function addDieToRoller( dieData: any ) {
 	}
 	let label;
 	if ( Array.isArray( dieData ) ) {
-		const poolName = dieData[ 0 ]?.source || 'Challenge Pool';
+		const poolName = dieData[ 0 ]?.source || 'Pool';
 		label = `${dieData.length} dice (${poolName})`;
 	} else {
 		label = dieData.source ? dieData.source : `d${dieData.size}`;

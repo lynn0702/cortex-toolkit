@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Camp background, camper reputation, and hidden destiny",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -154,9 +163,23 @@
             }
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "HERITAGE:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "statement": "",
             "traits": {
               "SFX": {
@@ -169,7 +192,19 @@
             }
           },
           "DESTINY:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "statement": "",
             "traits": {
               "SFX": {
@@ -182,7 +217,19 @@
             }
           },
           "CAMP REPUTATION:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "statement": "",
             "traits": {
               "SFX": {
@@ -199,8 +246,6 @@
       "Values": {
         "id": "values",
         "description": "Camper ideals and loyalties",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "statement": true,
         "hasQuestionedPip": true,
         "view": {
@@ -247,6 +292,8 @@
             }
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Bravery": {
             "statement": "",
@@ -273,8 +320,6 @@
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Treasured camper keepsakes and scavenged relics",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "features": {
             "description": true,
@@ -316,13 +361,13 @@
             }
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Attributes": {
         "id": "attributes",
         "description": "Core camper capability ratings",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -365,6 +410,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Mental": {},
           "Physical": {},
@@ -374,8 +421,6 @@
       "Standing": {
         "id": "paired-slots",
         "description": "Camp social standing with complication and bonus dice",
-        "nounSingular": "Standing",
-        "nounPlural": "Standings",
         "statement": true,
         "ratingPosition": "inline",
         "view": {
@@ -418,6 +463,8 @@
             "slot1": "BONUS"
           }
         },
+        "noun": "Standing",
+        "plural": "Standings",
         "traits": {},
         "slots": {
           "0": {
@@ -467,8 +514,6 @@
       "Badges": {
         "id": "badges",
         "description": "Merit badges earned at camp",
-        "nounSingular": "Badge",
-        "nounPlural": "Badges",
         "hasCounterColumn": true,
         "counterLabel": "XP",
         "view": {
@@ -501,13 +546,13 @@
             "height": 1
           }
         },
+        "noun": "Badge",
+        "plural": "Badges",
         "traits": {}
       },
       "Talents": {
         "id": "talents",
         "description": "Camper knacks and signature tricks",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "features": {
             "description": true,
@@ -528,6 +573,8 @@
             "col3": "EFFECT"
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {}
       }
     }

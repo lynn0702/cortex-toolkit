@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
+import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, resolveVisibility, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
@@ -70,8 +70,11 @@ function nameWord( key: string, fallback: string ) {
 }
 function nameShown( key: string ) {
 	const t = nameTrait( key );
-	const v = t ? getView( t )?.hidden : undefined;
-	return ( v ?? defaultNameHidden( key, props.character ) ) !== true;
+	if ( !t ) return defaultNameHidden( key, props.character ) !== true;
+	const vis = resolveVisibility( t );
+	if ( vis === 'hidden' ) return false;
+	if ( vis === 'editor-only' ) return props.submode === 'edit';
+	return defaultNameHidden( key, props.character ) !== true;
 }
 const nicknameLabel = computed( () => nameLabel( 'nickname', 'NICKNAME' ) );
 const pronounsLabel = computed( () => nameLabel( 'pronouns', 'PRONOUNS' ) );
@@ -101,7 +104,7 @@ const ringTraitSetIndex = computed( () => {
 	idx = traitSets.value.findIndex( ( ts ) => {
 		const view = getView( ts );
 		const isAttr = view?.isAttributes ||
-			ts.nounSingular?.toLowerCase() === 'attribute' ||
+			ts.noun?.toLowerCase() === 'attribute' ||
 			ts.name?.trim().toLowerCase() === 'attributes';
 		if ( !isAttr ) return false;
 		if ( cortexFunctions.getRingTrait( ts ) === false ) return false;
@@ -130,24 +133,24 @@ const hasRingTrait = computed( () => {
 
 const ringTraitID = computed( () => ( hasRingTrait.value ? ringTraitSetIndex.value : -1 ) );
 const ringTraitSet = computed( () => ( hasRingTrait.value ? traitSets.value[ ringTraitID.value ] : null ) );
-const isRingChallengePool = computed( () => {
-	const ts = ringTraitSet.value;
-	const view = getView( ts );
-	return Boolean( view?.isChallengePool || view?.challengePool );
+const isRingPool = computed( () => {
+	const ts = ringTraitSet.value as unknown as Record<string, unknown> | null;
+	if ( ts && typeof ts.pool === 'boolean' ) return ts.pool;
+	return Boolean( getView( ts )?.pool );
 } );
-const ringNounSingular = computed( () => {
+const ringNoun = computed( () => {
 	const ts = ringTraitSet.value;
-	return ( ts?.nounSingular && ts.nounSingular.length ) ? ts.nounSingular : 'Attribute';
+	return ( ts?.noun && ts.noun.length ) ? ts.noun : 'Attribute';
 } );
 const scaleTrait = computed( () => {
 	const attrSet = ringTraitSet.value;
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
-	return attrSet.traits.find( ( t ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
+	return attrSet.traits.find( ( t ) => t.name?.trim().toLowerCase() === 'scale' || ( typeof t.keepsExtra === 'number' && t.keepsExtra > 0 ) );
 } );
 const attributes = computed( () => {
 	if ( !hasRingTrait.value ) return [];
 	const all = ringTraitSet.value?.traits || [];
-	return all.filter( ( t ) => !( t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale ) );
+	return all.filter( ( t ) => !( t.name?.trim().toLowerCase() === 'scale') );
 } );
 const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
@@ -410,8 +413,8 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
 	const styleDefaults = cortexFunctions.defaultFeaturesForStyle( styleId );
 	traitSet.name = styleEntry.name || 'New trait set';
-	traitSet.nounSingular = styleEntry.sing || 'Trait';
-	traitSet.nounPlural = styleEntry.plur || 'Traits';
+	traitSet.noun = styleEntry.sing || 'Trait';
+	traitSet.plural = styleEntry.plur || 'Traits';
 	const tsView = ensureView( traitSet );
 	tsView.style = { header: styleId, body: styleId };
 	tsView.features = Object.assign( tsView.features || {}, styleDefaults.features );
@@ -424,7 +427,8 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	tsView.page = page ?? 1;
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	if ( styleId === 'pips' ) {
-		tsView.pips = { count: 25, perRow: 5, connected: true, filled: 0 };
+		( traitSet as any ).rating = { type: 'Pip', value: [], range: [ 25 ] };
+		tsView.pips = { perRow: 5, connected: true };
 		if ( styleEntry.pipLabels ) {
 			( tsView.pips as Record<string, unknown> ).labels = true;
 		}
@@ -432,8 +436,7 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	if ( styleId !== 'pips' && styleId !== 'notes' && styleId !== 'image' ) {
 		const blank: any = structuredClone( cortexFunctions.defaultTrait );
 		blank.name = '';
-		blank.value = 0;
-		blank.dice = [];
+		delete blank.rating;
 		blank.description = '';
 		traitSet.traits.push( blank );
 	}
@@ -454,13 +457,14 @@ function getTraitSetRatings( traitSet: TraitSet ) {
 function addTrait( traitSetID: number ) {
 	const character = props.character as Character;
 	const traitSet = character.traitSets[ traitSetID ];
-	const noun = ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait';
+	const noun = ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait';
 
 	const trait: any = structuredClone( cortexFunctions.defaultTrait );
 	trait.name = 'New ' + noun;
 	const allowed = cortexFunctions.getTraitSetRatings( traitSet );
-	if ( allowed.length > 0 && !allowed.includes( trait.value ) ) {
-		trait.value = allowed[ 0 ];
+	const cur = trait.rating && trait.rating.type === 'Die' && Array.isArray( trait.rating.value ) ? trait.rating.value[0] : 0;
+	if ( allowed.length > 0 && !allowed.includes( cur ) ) {
+		trait.rating = { type: 'Die', value: [ allowed[ 0 ] ], range: allowed.slice() };
 	}
 
 	character.traitSets[ traitSetID ].traits.push( trait );
@@ -865,7 +869,7 @@ watch( () => props.character, () => {
 							<!-- ATTRIBUTES -->
 							<div :class="{ 'attributes': true, 'vertical': attributes.length > 5 }" v-if="pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
 
-								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR CHALLENGE POOL (PLAY) -->
+								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR POOL (PLAY) -->
 								<transition appear>
 							<div class="preview-button-container"
 								v-if="pageLocation === 'right'"
@@ -874,7 +878,7 @@ watch( () => props.character, () => {
 										<div class="preview-button"
 											@click.stop="addTrait( ringTraitID )"
 										>
-											<span><i class="fas fa-plus"></i> {{ ringNounSingular }}</span>
+											<span><i class="fas fa-plus"></i> {{ ringNoun }}</span>
 										</div>
 										<div class="preview-button"
 											v-if="!scaleDieValue"
@@ -888,12 +892,12 @@ watch( () => props.character, () => {
 											<span><i class="fas fa-cog"></i> Settings</span>
 										</div>
 									</div>
-									<div class="preview-button-container-inner" v-if="submode === 'play' && isRingChallengePool && attributes.length > 0">
+									<div class="preview-button-container-inner" v-if="submode === 'play' && isRingPool && attributes.length > 0">
 										<div class="preview-button"
 											@click.stop="ringRef?.handleAttributeClick( ringTraitID, 0, attributes[0] )"
-											title="Add all Challenge Pool dice to roller"
+											title="Add all pool dice to roller"
 										>
-											<span><i class="fas fa-dice-d20"></i> Roll Challenge Pool ({{ attributes.length }} dice)</span>
+											<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ attributes.length }} dice)</span>
 										</div>
 									</div>
 								</div>
@@ -954,3 +958,4 @@ watch( () => props.character, () => {
 		></StyleGallery>
 	</section>
 </template>
+

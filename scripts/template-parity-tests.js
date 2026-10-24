@@ -44,7 +44,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(JSON.stringify(Object.keys(sets)) === JSON.stringify(['Name', 'Distinctions', 'Values', 'Signature Assets', 'Attributes', 'Standing', 'Badges', 'Talents']),
     'name set first, seven sets in template order', Object.keys(sets));
   ok(sets.Distinctions.id === 'distinctions' && sets.Talents.id === 'talents', 'set ids kept');
-  ok(sets.Distinctions.traits['HERITAGE:'].value === 'd8', 'distinction die');
+  ok(JSON.stringify(sets.Distinctions.traits['HERITAGE:'].rating) === JSON.stringify({ type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }), 'distinction die');
   ok(sets.Values.traits.Bravery.value === undefined, 'unrated stays valueless');
   const sfx = sets.Distinctions.traits['HERITAGE:'].traits.SFX.traits;
   ok(sfx && sfx.Heritage.description === 'Spend a PP to step up an attribute when you connect to your heritage.',
@@ -137,7 +137,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
 {
   const L = readLayered('spotlight-alien-us');
   const ss = L.character.sets['Skills & Specialties'];
-  ok(ss.view.setDie === 6, 'set die authored');
+  ok(ss.rating && ss.rating.type === 'Die' && JSON.stringify(ss.rating.value) === '[6]', 'set rating authored');
   ok(ss.view.labels &&
     ss.view.labels.left === 'Specialties' &&
     ss.view.labels.center === 'Skills' &&
@@ -151,19 +151,14 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(ss.traits.Bout.slots['0'].view.branchSide === 'left', 'left slot marked');
   ok(ss.traits.Bout.slots['1'].view.branchSide === 'right', 'right slot marked');
   ok(L.character.sets['Session Record'].view.pips.labels === true, 'session rows labeled');
-  ok(L.character.sets['Session Record'].view.pips.count === 20, 'session count carried');
-  ok(L.character.sets['Session Record'].nounSingular === 'Session', 'session noun');
+  ok(L.character.sets['Session Record'].rating && L.character.sets['Session Record'].rating.type === 'Pip' &&
+    L.character.sets['Session Record'].rating.range[0] === 20, 'session count carried on the set rating');
+  ok(L.character.sets['Session Record'].noun === 'Session', 'session noun');
   ok(L.version === 1, 'alien-us version baseline');
   const v = L.character.sets.Values;
   ok(v.view.style.body === 'default' && v.view.traitColumns === 2, 'values two-column style');
   ok((v.traits.Alien.description ?? '') === '', 'no pre-filled value statements');
   ok(JSON.stringify(Object.keys(v.traits)) === JSON.stringify(['Alien', 'Conformity', 'Materialism', 'Paranoia', 'Patriotism', 'Secrecy', 'Spirituality']), 'value names kept');
-}
-
-// ---- 6. Synthetic pool: canonical string out, expanded dice back.
-{
-  const d = M.unmigrateDieString('2d8d6', [], 'test');
-  ok(d.value === 8 && JSON.stringify(d.dice) === JSON.stringify([8, 8, 6]), 'pool expands to dice array', d);
 }
 
 // ---- 7. Materialized characters from both forms are identical (spot check).

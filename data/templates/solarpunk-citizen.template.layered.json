@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Attributes": {
         "id": "attributes",
         "description": "SolarPunk holistic community attributes",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -148,6 +157,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Mind": {},
           "Body": {},
@@ -156,8 +167,6 @@
       },
       "Session Record": {
         "id": "session-record",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "features": {
             "description": false,
@@ -170,10 +179,8 @@
             "body": "pips"
           },
           "pips": {
-            "count": 15,
             "perRow": 5,
-            "connected": true,
-            "filled": 0
+            "connected": true
           },
           "reservedSlots": 0,
           "place": {
@@ -183,13 +190,36 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            15
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {}
       },
       "Distinctions": {
         "id": "distinctions",
         "description": "Ecological calling, community role, and personal purpose",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -216,9 +246,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Identity:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -228,7 +272,19 @@
             }
           },
           "Community:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -238,7 +294,19 @@
             }
           },
           "Purpose:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -252,8 +320,6 @@
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Sustainable tech, tools, and eco-craft",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -304,13 +370,13 @@
             }
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Ecological competencies (d4-d12) and d6 craft specialties",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -343,6 +409,8 @@
             "right": "SPECIALTIES"
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Craft": {},
           "Drive": {},

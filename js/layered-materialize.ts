@@ -1,12 +1,13 @@
 // layered-materialize — the render seam for the layered model.
 //
-// The renderer (character.js / trait-set-block.js) reads the legacy array
-// shape: `character.traitSets` is an array, traits carry integer `value` +
-// `dice:int[]`, SFX is a `sfx` array, and all presentation (style, layout,
-// reserved slots, noun labels) is inline under `custom.cortexToolkit`.
+// The renderer reads the array shape: `character.traitSets` is an array,
+// traits carry `rating` objects ({ type, value: [], range: [] }), SFX is a
+// `sfx` array, and presentation (style, layout, reserved slots, nouns) is
+// inline under `view`.
 //
-// The layered model stores `sets` as a name-keyed map, dice as strings, SFX
-// folded into `traits.SFX`. This module is the two-way codec at the seam:
+// The layered model stores `sets` as a name-keyed map, ratings as objects
+// (dice strings and shorthand parse on read for import compat), SFX folded
+// into `traits.SFX`. This module is the two-way codec at the seam:
 //
 //   materializeCharacter(file, templateChar)  layered -> render (load path)
 //   toLayeredEntity(renderChar)               render  -> layered (store path)
@@ -15,7 +16,7 @@
 // per-entity override that survives the round trip. Presentation the entity
 // does not carry is inherited from the template character.
 
-import { asTrait, parseDice } from "./cortex-toolkit-trait-helpers.ts";
+import { asTrait } from "./cortex-toolkit-trait-helpers.ts";
 import type { TraitRaw, TraitObject, SetObject } from "./cortex-toolkit-trait-helpers.ts";
 import { cloneDeep } from "./clone-deep.ts";
 
@@ -57,28 +58,29 @@ export interface LegacyCharacter {
 
 const clone = cloneDeep;
 
-const dieSize = (die: string): number => parseInt(String(die).slice(1), 10);
-
-const diceFromValue = (value: unknown): number[] =>
-	typeof value === "string" ? parseDice(value).map(dieSize) : [];
-
-// render trait -> dice ints (the app's getTraitDice read rule)
-const traitDice = (t: LegacyTrait): number[] =>
-	Array.isArray(t.dice) && t.dice.length
+// render trait -> dice ints (rating-first; day-1 numeric keys read through)
+const traitDice = (t: LegacyTrait): number[] => {
+	const r = (t as Record<string, unknown>).rating;
+	if (r && typeof r === "object" && !Array.isArray(r)) {
+		const v = (r as Record<string, unknown>).value;
+		if (Array.isArray(v)) {
+			const nums = v.filter((x) => typeof x === "number" && x > 0);
+			if (nums.length) return nums;
+		}
+	}
+	return Array.isArray(t.dice) && t.dice.length
 		? t.dice.filter((x) => typeof x === "number" && x > 0)
 		: typeof t.value === "number" && t.value > 0
 			? [t.value]
 			: [];
+};
 
-// dice ints -> canonical string: descending size, count prefix, no separators.
-function canonDice(dice: number[]): string {
-	const counts = new Map<number, number>();
-	for (const d of dice) counts.set(d, (counts.get(d) ?? 0) + 1);
-	return [...counts.entries()]
-		.sort((a, b) => b[0] - a[0])
-		.map(([s, n]) => (n > 1 ? n : "") + "d" + s)
-		.join("");
-}
+// rating object for ints (canonical layered emit)
+const ratingForDice = (dice: number[]): Record<string, unknown> => ({
+	type: dice.length > 1 ? "Dice" : "Die",
+	value: dice.slice().sort((a, b) => b - a),
+	range: [4, 6, 8, 10, 12],
+});
 
 // ---------- render <- layered (materialize) ----------
 
@@ -222,7 +224,7 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 	const t: LegacyTrait = pres ? clone(pres) : { name };
 	if (!pres) t.name = name;
 	for (const [k, v] of Object.entries(et)) {
-		if (k === "traits" || k === "pool") continue;
+		if (k === "traits") continue;
 		if (k === "custom") {
 			t.custom = mergeCustom(pres?.custom, v);
 			continue;
@@ -232,24 +234,21 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 			continue;
 		}
 		if (k === "value") {
-			const hadDice = pres ? Object.prototype.hasOwnProperty.call(pres, "dice") : true;
 			if (v === null) {
-				// layered "explicitly unrated" -> legacy sentinel
-				t.value = 0;
-				if (hadDice) t.dice = [];
-			} else if (typeof v === "string") {
-				const dice = diceFromValue(v);
-				if (dice.length === 1) {
-					t.value = dice[0];
-					if (hadDice) t.dice = [];
-				} else if (dice.length > 1) {
-					t.value = dice[0];
-					t.dice = dice;
-				}
+				// layered "explicitly unrated" clears any inherited rating.
+				( t as Record<string, unknown> ).rating = null;
 			}
 			continue;
 		}
+		if (k === "dice") continue; // retired encoding; rating carries it.
 		(t as Record<string, unknown>)[k] = clone(v);
+	}
+	// Canonical wins: a rating drops any legacy value/dice the
+	// presentation base carried.
+	const tr = t as Record<string, unknown>;
+	if (tr.rating && typeof tr.rating === "object") {
+		delete tr.value;
+		delete tr.dice;
 	}
 	healSplitView(t);
 	const subs = et.traits as Record<string, TraitRaw> | undefined;
@@ -446,17 +445,18 @@ function sfxContainerFrom(arr: unknown[]): Record<string, unknown> {
 
 function layeredTraitFrom(t: LegacyTrait): TraitObject {
 	const node: TraitObject = {};
-	const dice = traitDice(t);
-	if (dice.length > 1) {
-		node.value = canonDice(dice);
-		node.pool = true;
-	} else if (dice.length === 1) {
-		node.value = "d" + dice[0];
-	} else if (t.dice !== undefined || t.value !== undefined) {
-		node.value = null; // explicitly unrated
+	const raw = (t as Record<string, unknown>).rating;
+	if (raw === null) {
+		node.rating = null; // explicitly unrated (clears inheritance)
+	} else if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+		node.rating = clone(raw);
+	} else {
+		const dice = traitDice(t);
+		if (dice.length) node.rating = ratingForDice(dice);
+		else if (t.dice !== undefined || t.value !== undefined) node.rating = null; // explicitly unrated
 	}
 	for (const [k, v] of Object.entries(t)) {
-		if (k === "name" || k === "traits" || k === "sfx" || k === "dice" || k === "value" ||
+		if (k === "name" || k === "traits" || k === "sfx" || k === "dice" || k === "value" || k === "rating" ||
 			k === "_lid" || k === "id" || k === "removedTraits") continue;
 		// Canonical emit: empty custom/tags stay out (absence carries the
 		// same meaning). description "" is KEPT: in a delta it is an

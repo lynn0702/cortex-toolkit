@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Team Base": {
         "id": "team-base",
         "description": "As a group, decide on the following information.",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -119,6 +128,8 @@
             "body": "labeled-fields"
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Location": {},
@@ -129,8 +140,6 @@
       },
       "Team Resources": {
         "id": "team-resources",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -158,6 +167,8 @@
             "dice": "/ DICE"
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {}
       }
     }

@@ -76,20 +76,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -97,8 +108,6 @@
       "Attributes": {
         "id": "attributes",
         "description": "Body, mind, and presence under pressure",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -157,6 +166,8 @@
             "stress": "STRESS"
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Physical": {},
           "Mental": {},
@@ -166,8 +177,6 @@
       "Training Packages": {
         "id": "training-packages",
         "description": "Rescue disciplines and vehicle qualifications",
-        "nounSingular": "Training Package",
-        "nounPlural": "Training Packages",
         "view": {
           "features": {
             "description": false,
@@ -210,6 +219,8 @@
             }
           }
         },
+        "noun": "Training Package",
+        "plural": "Training Packages",
         "traits": {
           "Crowd Control": {},
           "Emergency Medical": {},
@@ -230,8 +241,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Origin, true nature, and defining quirk",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -256,9 +265,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Your Life Before:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -276,7 +299,19 @@
             }
           },
           "Your Approach/Attitude:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -294,7 +329,19 @@
             }
           },
           "Your Quirk/Quality:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -316,8 +363,6 @@
       "Relationships": {
         "id": "relationships",
         "description": "Crew bonds, debts, and troublemakers",
-        "nounSingular": "Relationship",
-        "nounPlural": "Relationships",
         "statement": true,
         "view": {
           "features": {
@@ -361,6 +406,8 @@
             }
           }
         },
+        "noun": "Relationship",
+        "plural": "Relationships",
         "traits": {},
         "slots": {
           "0": {
@@ -396,8 +443,6 @@
       "XP": {
         "id": "xp",
         "description": "Experience points bubble track",
-        "nounSingular": "XP",
-        "nounPlural": "XP",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -415,10 +460,8 @@
           "notes": "",
           "reservedSlots": 0,
           "pips": {
-            "count": 20,
             "perRow": 10,
-            "connected": true,
-            "filled": 0
+            "connected": true
           },
           "place": {
             "left": "36%",
@@ -427,13 +470,41 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            20
+          ]
+        },
+        "noun": "XP",
+        "plural": "XP",
         "traits": {}
       },
       "Crisis Pools": {
         "id": "crisis-pools",
         "description": "Threat clocks and escalating disaster pools",
-        "nounSingular": "Crisis Pool",
-        "nounPlural": "Crisis Pools",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -472,6 +543,8 @@
             }
           }
         },
+        "noun": "Crisis Pool",
+        "plural": "Crisis Pools",
         "traits": {}
       }
     }

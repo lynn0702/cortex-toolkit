@@ -76,28 +76,37 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                3
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
       },
       "Distinctions": {
         "id": "ks-distinctions",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "page": 1,
           "style": {
@@ -147,9 +156,23 @@
             }
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Walking Style Guide": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Every layout edge case deserves a test.",
             "traits": {
               "SFX": {
@@ -165,7 +188,19 @@
         },
         "slots": {
           "1": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -175,7 +210,19 @@
             }
           },
           "2": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -188,8 +235,6 @@
       },
       "Values": {
         "id": "ks-values-statements",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "statement": true,
         "hasQuestionedPip": true,
         "view": {
@@ -231,25 +276,61 @@
             }
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Craft": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Form and function are inseparable."
           },
           "Speed": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Ship early, refine relentlessly.",
             "questioned": true
           },
           "Clarity": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Skills": {
         "id": "ks-subtrait-columns",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "page": 1,
           "style": {
@@ -272,35 +353,107 @@
             "height": 1
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Engineering": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "Clockwork": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Aetherics": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
           "Navigation": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "Star Charts": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
           "Diplomacy": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Standing": {
         "id": "ks-paired-slots",
-        "nounSingular": "Standing",
-        "nounPlural": "Standings",
         "statement": true,
         "view": {
           "page": 1,
@@ -337,16 +490,54 @@
           },
           "reservedSlots": 2
         },
+        "noun": "Standing",
+        "plural": "Standings",
         "traits": {
           "The Guild": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "They owe me a drydock bay.",
             "traits": {
               "Complication": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Bonus": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -354,8 +545,6 @@
       },
       "Badges": {
         "id": "ks-die-rows",
-        "nounSingular": "Badge",
-        "nounPlural": "Badges",
         "hasCounterColumn": true,
         "counterLabel": "XP",
         "view": {
@@ -386,21 +575,45 @@
             "height": 1
           }
         },
+        "noun": "Badge",
+        "plural": "Badges",
         "traits": {
           "First Responder": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "xp": 3
           },
           "Trailblazer": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "xp": 1
           }
         }
       },
       "Talents": {
         "id": "ks-three-col-table",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "page": 1,
           "style": {
@@ -425,6 +638,8 @@
             "height": 1
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {
           "Overclock": {
             "description": "Spend 1 PP when rolling Engineering.",
@@ -442,8 +657,6 @@
       },
       "Resources": {
         "id": "ks-dice-count",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "page": 1,
           "style": {
@@ -468,21 +681,50 @@
             "height": 1
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {
           "Salvage Cache": {
-            "value": "3d8",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                8,
+                8,
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "Contacts": {
-            "value": "2d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           }
         }
       },
       "Stress": {
         "id": "ks-stress",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "page": 1,
           "style": {
@@ -508,20 +750,44 @@
             "height": 1
           }
         },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {
           "Physical": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Mental": {},
           "Social": {
-            "value": "d12"
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Growth Ladder": {
         "id": "ks-dice-ladder",
-        "nounSingular": "Rung",
-        "nounPlural": "Rungs",
         "view": {
           "page": 2,
           "style": {
@@ -540,22 +806,58 @@
             "height": 1
           }
         },
+        "noun": "Rung",
+        "plural": "Rungs",
         "traits": {
           "Novice": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Adept": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Master": {
-            "value": "d10"
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Dossier": {
         "id": "ks-labeled-fields",
-        "nounSingular": "Field",
-        "nounPlural": "Fields",
         "view": {
           "page": 2,
           "style": {
@@ -574,6 +876,8 @@
             "height": 1
           }
         },
+        "noun": "Field",
+        "plural": "Fields",
         "traits": {
           "Origin": {
             "description": "Outer Rim Shipyard #4"
@@ -586,8 +890,6 @@
       },
       "Progress Track": {
         "id": "ks-pips",
-        "nounSingular": "Pip",
-        "nounPlural": "Pips",
         "view": {
           "page": 2,
           "style": {
@@ -595,10 +897,8 @@
             "body": "pips"
           },
           "pips": {
-            "count": 10,
             "perRow": 5,
-            "connected": true,
-            "filled": 4
+            "connected": true
           },
           "place": {
             "left": "0%",
@@ -607,12 +907,30 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            10
+          ]
+        },
+        "noun": "Pip",
+        "plural": "Pips",
         "traits": {}
       },
       "Session Record": {
         "id": "ks-session-record",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "page": 2,
           "style": {
@@ -628,21 +946,43 @@
           "reservedSlots": 3,
           "pips": {
             "labels": true,
-            "count": 3,
             "perRow": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false
+          ],
+          "range": [
+            3
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {
           "Session 1: The Awakening": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Session 2: Crossing the Threshold": {}
         }
       },
       "Roles (Compact Two-Column)": {
         "id": "ks-two-col-compact",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "page": 2,
           "style": {
@@ -661,25 +1001,73 @@
             "height": 1
           }
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Tactician": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Outrider": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Scholar": {
-            "value": "d10"
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Sentinel": {
-            "value": "d4"
+            "rating": {
+              "type": "Die",
+              "value": [
+                4
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Notes": {
         "id": "ks-notes",
-        "nounSingular": "Note",
-        "nounPlural": "Notes",
         "view": {
           "page": 2,
           "style": {
@@ -694,12 +1082,12 @@
             "height": 1
           }
         },
+        "noun": "Note",
+        "plural": "Notes",
         "traits": {}
       },
       "Detailed Columns": {
         "id": "ks-detailed-columns",
-        "nounSingular": "Entry",
-        "nounPlural": "Entries",
         "view": {
           "page": 3,
           "style": {
@@ -718,29 +1106,77 @@
             "height": 1
           }
         },
+        "noun": "Entry",
+        "plural": "Entries",
         "traits": {
           "Alpha": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "First detailed entry."
           },
           "Beta": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Second detailed entry."
           },
           "Gamma": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Third detailed entry."
           },
           "Delta": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Fourth detailed entry."
           }
         }
       },
       "Resource Pool": {
         "id": "ks-resource-pool",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "page": 3,
           "style": {
@@ -759,27 +1195,81 @@
             "height": 1
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {
           "Supply": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "traits": {
               "Ammo": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
           "Fuel": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "Intel": {
-            "value": "d10"
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           }
         }
       },
       "Signature Assets": {
         "id": "ks-assets",
-        "nounSingular": "Asset",
-        "nounPlural": "Assets",
         "view": {
           "page": 3,
           "style": {
@@ -798,22 +1288,58 @@
             "height": 1
           }
         },
+        "noun": "Asset",
+        "plural": "Assets",
         "traits": {
           "Custom Sidearm": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Survey Kit": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Encrypted Comms": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Simple List": {
         "id": "ks-list",
-        "nounSingular": "Item",
-        "nounPlural": "Items",
         "view": {
           "page": 3,
           "style": {
@@ -832,22 +1358,58 @@
             "height": 1
           }
         },
+        "noun": "Item",
+        "plural": "Items",
         "traits": {
           "Item One": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Item Two": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Item Three": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Image Set": {
         "id": "ks-image",
-        "nounSingular": "Image",
-        "nounPlural": "Images",
         "view": {
           "page": 3,
           "style": {
@@ -872,6 +1434,8 @@
             "height": 1
           }
         },
+        "noun": "Image",
+        "plural": "Images",
         "traits": {}
       }
     }

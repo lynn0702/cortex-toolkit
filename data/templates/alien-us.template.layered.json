@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Core alien background, job, and personality",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -125,6 +134,8 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Alien Background:": {
             "traits": {
@@ -158,8 +169,6 @@
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Core baseline d6 skills with branching d8+ specialties",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -173,7 +182,6 @@
             "header": "default",
             "body": "subtrait-columns"
           },
-          "setDie": 6,
           "subtraitRatingScale": [
             8,
             10,
@@ -188,6 +196,21 @@
           "notes": "",
           "reservedSlots": 7
         },
+        "rating": {
+          "type": "Die",
+          "value": [
+            6
+          ],
+          "range": [
+            4,
+            6,
+            8,
+            10,
+            12
+          ]
+        },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Bout": {
             "slots": {
@@ -292,8 +315,6 @@
       "Values": {
         "id": "values",
         "description": "Alien worldview versus human conditioning",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "statement": true,
         "view": {
           "header": "top",
@@ -334,6 +355,8 @@
             }
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Alien": {},
           "Conformity": {},
@@ -347,8 +370,6 @@
       "Talents": {
         "id": "talents",
         "description": "Specialized alien abilities and tech modules",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "features": {
             "description": true,
@@ -375,13 +396,13 @@
             "col3": "EFFECT"
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {}
       },
       "Signature Assets / Tech": {
         "id": "signature-assets-tech",
         "description": "Alien equipment and concealed devices",
-        "nounSingular": "Signature Asset / Tech",
-        "nounPlural": "Signature Assets / Tech",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -425,13 +446,13 @@
             }
           }
         },
+        "noun": "Signature Asset / Tech",
+        "plural": "Signature Assets / Tech",
         "traits": {}
       },
       "Relationships": {
         "id": "relationships",
         "description": "Connections to human contacts, superiors, and rivals",
-        "nounSingular": "Relationship",
-        "nounPlural": "Relationships",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -471,13 +492,13 @@
             }
           }
         },
+        "noun": "Relationship",
+        "plural": "Relationships",
         "traits": {}
       },
       "Session Record": {
         "id": "session-record",
         "description": "Session track and progression log",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -502,10 +523,39 @@
           },
           "pips": {
             "labels": true,
-            "count": 20,
             "perRow": 20
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            20
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {}
       }
     }

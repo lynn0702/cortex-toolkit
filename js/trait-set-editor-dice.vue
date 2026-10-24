@@ -3,12 +3,12 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {
 	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue,
-	setDie, isSubtraitRatingIncluded, toggleSubtraitRatingOption,
-	featureSubtraits, isRing, multiDie, isPool, isChallengePool, traitSetID
+	setRating, isSubtraitRatingIncluded, toggleSubtraitRatingOption,
+	featureSubtraits, isRing, multiDie, isPool, setSpendable, setHitches, traitSetID
 } = injectTraitSetEditor();
 
-function toggleSetDie( size: number | null ) {
-	setDie.value = ( size !== null && setDie.value === size ) ? null : size;
+function toggleSetRating( size: number | null ) {
+	setRating.value = ( size !== null && setRating.value === size ) ? null : size;
 }
 </script>
 
@@ -34,17 +34,17 @@ function toggleSetDie( size: number | null ) {
 		</div>
 	</div>
 
-	<!-- SET DIE (ONE VALUE) -->
+	<!-- RATING (THE SET NODE'S OWN; UNRATED TRAITS FALL THROUGH TO IT) -->
 	<div class="editor-field" v-if="needsDiceUI">
-		<label>Set die</label>
+		<label>Rating</label>
 		<div class="rating-scale-container">
-			<div class="rating-scale-chips set-die-chips">
+			<div class="rating-scale-chips set-rating-die-chips">
 				<button
 					type="button"
-					class="rating-scale-chip set-die-none"
-					:class="{ active: setDie === null }"
-					@click.stop="toggleSetDie(null)"
-					title="No set die"
+					class="rating-scale-chip set-rating-die-none"
+					:class="{ active: setRating === null }"
+					@click.stop="toggleSetRating(null)"
+					title="No rating"
 				>
 					<span class="chip-label">None</span>
 				</button>
@@ -53,9 +53,9 @@ function toggleSetDie( size: number | null ) {
 					v-for="size in [4, 6, 8, 10, 12]"
 					:key="size"
 					class="rating-scale-chip"
-					:class="{ active: setDie === size }"
-					@click.stop="toggleSetDie(size)"
-					:title="(setDie === size ? 'Clear the set die (was d' : 'Set the die to d') + size + (setDie === size ? ')' : '')"
+					:class="{ active: setRating === size }"
+					@click.stop="toggleSetRating(size)"
+					:title="(setRating === size ? 'Clear the rating (was d' : 'Set the rating to d') + size + (setRating === size ? ')' : '')"
 				>
 					<span class="c" v-html="getDieDisplayValue(size)"></span>
 					<span class="chip-label">d{{ size }}</span>
@@ -85,9 +85,9 @@ function toggleSetDie( size: number | null ) {
 		</div>
 	</div>
 
-	<!-- POOL & MULTI-DIE OPTIONS -->
+	<!-- OPTIONS -->
 	<div class="editor-field" v-if="needsDiceUI">
-		<label>Pool Options</label>
+		<label>Options</label>
 		<div class="editor-toggles">
 			<template v-if="!isRing">
 				<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
@@ -95,10 +95,14 @@ function toggleSetDie( size: number | null ) {
 			</template>
 
 			<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-pool'" :true-value="true" :false-value="false" v-model="isPool"></div>
-			<div><label :for="'trait-set-' + traitSetID + '-pool'" title="Clicking a trait adds its whole pool to the roller">Pool</label></div>
+			<div><label :for="'trait-set-' + traitSetID + '-pool'" title="Clicking a trait adds its whole array of available dice to the roller">Pool</label></div>
 
-			<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-challenge-pool'" :true-value="true" :false-value="false" v-model="isChallengePool"></div>
-			<div><label :for="'trait-set-' + traitSetID + '-challenge-pool'">Challenge pool</label></div>
+			<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-spendable'" :true-value="true" :false-value="false" v-model="setSpendable"></div>
+			<div><label :for="'trait-set-' + traitSetID + '-spendable'">Spendable</label></div>
+		</div>
+		<div class="editor-toggles" style="margin-top: 0.4rem;">
+			<div><label :for="'trait-set-' + traitSetID + '-hitches'">Hitches</label></div>
+			<div><input type="number" :id="'trait-set-' + traitSetID + '-hitches'" name="setHitches" min="0" max="12" :placeholder="'1'" v-model.number="setHitches" style="width: 4rem;"></div>
 		</div>
 	</div>
 </template>

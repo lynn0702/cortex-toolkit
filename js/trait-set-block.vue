@@ -47,10 +47,6 @@ const BODY_COMPONENTS: Record<string, any> = {
 	'image': TraitSetImage,
 	'notes': TraitSetNotes,
 	'pips': TraitSetPips,
-	// Retired bodies (2026-10-22, unified into pips+labels): render as
-	// pips; migration normalizes them on load.
-	'session-record': TraitSetPips,
-	'angled-lines': TraitSetPips,
 	'dice-ladder': TraitSetDiceLadder,
 	'labeled-fields': TraitSetLabeledFields,
 	'subtrait-columns': TraitSetSubtraitColumns,

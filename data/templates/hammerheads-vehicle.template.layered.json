@@ -69,20 +69,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -90,8 +101,6 @@
       "Hammerhead Attributes": {
         "id": "hammerhead-attributes",
         "description": "Rescue craft airframes, systems, and handling",
-        "nounSingular": "Hammerhead Attribute",
-        "nounPlural": "Hammerhead Attributes",
         "view": {
           "features": {
             "description": true,
@@ -121,18 +130,56 @@
             "height": 1
           }
         },
+        "noun": "Hammerhead Attribute",
+        "plural": "Hammerhead Attributes",
         "traits": {
           "Hammerhead One": {
             "description": "More agile, possesses more precise sensors and instruments.",
             "traits": {
               "Systems": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Engines": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Frame": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
@@ -140,13 +187,49 @@
             "description": "Faster, more power and range.",
             "traits": {
               "Systems": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Engines": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Frame": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
@@ -154,13 +237,49 @@
             "description": "Bigger, tougher, and more rugged.",
             "traits": {
               "Systems": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Engines": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Frame": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -169,8 +288,6 @@
       "Vehicle Distinctions": {
         "id": "vehicle-distinctions",
         "description": "Factory blessings and fleet reputation",
-        "nounSingular": "Vehicle Distinction",
-        "nounPlural": "Vehicle Distinctions",
         "view": {
           "features": {
             "description": false,
@@ -197,23 +314,59 @@
             "height": 1
           }
         },
+        "noun": "Vehicle Distinction",
+        "plural": "Vehicle Distinctions",
         "traits": {
           "Resource Support Vehicle": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Top of the Line": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Broad-Spectrum Sensors": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Resource Pools": {
         "id": "resource-pools",
         "description": "Staged supplies, support teams, and fleet backup",
-        "nounSingular": "Resource Pool",
-        "nounPlural": "Resource Pools",
         "view": {
           "traitColumns": 2,
           "features": {
@@ -243,30 +396,131 @@
             "dice": "/ DICE"
           }
         },
+        "noun": "Resource Pool",
+        "plural": "Resource Pools",
         "traits": {
           "Unassigned Resources": {
-            "value": "7d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "Tactical Support": {
-            "value": "4d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "Medical Supplies": {
-            "value": "4d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "IT/Network Support": {
-            "value": "4d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "Food/Shelter": {
-            "value": "4d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "Land/Sea/Air Support": {
-            "value": "4d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           }
         }
       }

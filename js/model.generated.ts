@@ -130,11 +130,11 @@ export interface TraitSet {
   /**
    * The singular noun used to describe a trait in this set.
    */
-  nounSingular: string;
+  noun: string;
   /**
    * The plural noun used to describe multiple traits in this set.
    */
-  nounPlural: string;
+  plural: string;
   /**
    * The traits in the trait set.
    */
@@ -164,6 +164,19 @@ export interface TraitSet {
    */
   counterLabel?: string | null;
   tags: Tags;
+  rating?: Rating;
+  /**
+   * Staging behaviour: adding a trait stages its whole array of available dice.
+   */
+  pool?: boolean | null;
+  /**
+   * Spend control for the set's traits unless a trait overrides it.
+   */
+  spendable?: boolean | null;
+  /**
+   * Top of the hitches inheritance chain. Sparse; base default 1.
+   */
+  hitches?: number | null;
   view?: View;
   custom?: Custom;
 }
@@ -177,13 +190,30 @@ export interface Trait {
    */
   label?: string | null;
   /**
-   * The die value of the trait. For example, `2` for d2, `6` for a d6, etc. For unrated traits, use `0` or null.
+   * Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating.
    */
-  value: number | null;
+  value?: number | null;
   /**
-   * Array of die values for multi-die traits (e.g. [6, 6, 6] or [8, 8, 6, 4]).
+   * Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating.
    */
   dice?: number[] | null;
+  rating?: Rating;
+  /**
+   * Staging behaviour: adding the node to the roller stages its whole array of available dice.
+   */
+  pool?: boolean | null;
+  /**
+   * Spend control: spend a single die (or unit) at a time, marking it unavailable. Spent state lives beside the rating, never in it.
+   */
+  spendable?: boolean | null;
+  /**
+   * Faces 1..hitches hitch. Sparse: absent inherits from the nearest ancestor that sets it; base default 1. Only 0 is special — the exemption, which rolls separately.
+   */
+  hitches?: number | null;
+  /**
+   * The Scale effect, named where data must name it: keep this many extra dice for the total.
+   */
+  keepsExtra?: number | null;
   /**
    * A description of the trait, or the trait statement.
    */
@@ -219,6 +249,20 @@ export interface Trait {
   tags: Tags;
   view?: View;
   custom?: Custom;
+}
+/**
+ * The node's rating: { type: Counter | Die | Dice | Pip, value: [], range: [] }. Value is always a list; range is the ladder it may take. Absent means unrated.
+ */
+export interface Rating {
+  type: "Counter" | "Die" | "Dice" | "Pip";
+  /**
+   * Always a list: die sizes for Die/Dice, a number for Counter, booleans for Pip.
+   */
+  value: (number | boolean)[];
+  /**
+   * The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip.
+   */
+  range: number[];
 }
 export interface Sfx {
   /**

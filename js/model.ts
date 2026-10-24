@@ -26,6 +26,191 @@ import type {
 // Primitives re-exported unchanged from the schema projection.
 export type { Tags, SfxHinder, Sfx } from './model.generated.ts';
 
+// ---------- ratings (2026-10-23: one shape at every level) ----------
+
+/** Rating kinds. A pip is a bubble, filled or not; a track is a list of bubbles. */
+export type RatingType = 'Counter' | 'Die' | 'Dice' | 'Pip';
+
+/**
+ * One recursive shape for every node — set, trait, subtrait. `value` is
+ * always a list; the type interprets it. `range` is the ladder the value
+ * may take: the die scale for Die/Dice, [min, max] for a Counter, the
+ * bubble count for a Pip. Rated is not a bool: a node is rated iff it
+ * carries a rating.
+ */
+export interface Rating {
+	type: RatingType;
+	value: Array<number | boolean>;
+	range: number[];
+}
+
+/** The die ladder. The word is `range`, never `scale` — Scale is a trait name. */
+export const DIE_LADDER = [ 4, 6, 8, 10, 12 ] as number[];
+
+/** Base default: faces 1..hitches hitch; absent inherits; 0 is the exemption. */
+export const DEFAULT_HITCHES = 1;
+
+/** Loose node access for rating helpers (array-model and layered nodes alike). */
+type RatedNode = { rating?: unknown; value?: unknown; dice?: unknown; hitches?: unknown; pool?: unknown; spendable?: unknown; keepsExtra?: unknown } | null | undefined;
+
+function asNumberList( v: unknown ): number[] {
+	return Array.isArray( v )
+		? v.filter( ( x ): x is number => typeof x === 'number' && Number.isFinite( x ) )
+		: [];
+}
+
+function asRatingValue( v: unknown ): Array<number | boolean> {
+	if ( !Array.isArray( v ) ) return [];
+	return v.filter( ( x ): x is number | boolean => ( typeof x === 'number' && Number.isFinite( x ) ) || typeof x === 'boolean' );
+}
+
+/** Read the rating off any node; undefined when unrated (containers of subtraits/SFX only). */
+export function getRating( node: unknown ): Rating | undefined {
+	const n = ( node && typeof node === 'object' ? node : undefined ) as RatedNode;
+	if ( !n || typeof n !== 'object' ) return undefined;
+	const r = n.rating;
+	if ( r && typeof r === 'object' && !Array.isArray( r ) ) {
+		const rec = r as Record<string, unknown>;
+		const type = rec.type;
+		if ( type === 'Counter' || type === 'Die' || type === 'Dice' || type === 'Pip' ) {
+			return { type, value: asRatingValue( rec.value ), range: asNumberList( rec.range ) };
+		}
+		return undefined;
+	}
+	// Defensive read of pre-rating encodings (migration owns the write path).
+	const dice = Array.isArray( n.dice ) ? n.dice.filter( ( d ): d is number => typeof d === 'number' && d > 0 ) : [];
+	if ( dice.length > 0 ) {
+		return { type: dice.length > 1 ? 'Dice' : 'Die', value: dice, range: [ ...DIE_LADDER ] };
+	}
+	if ( typeof n.value === 'number' && n.value > 0 ) {
+		return { type: 'Die', value: [ n.value ], range: [ ...DIE_LADDER ] };
+	}
+	return undefined;
+}
+
+/** A node is rated iff it carries a rating. */
+export function isRated( node: unknown ): boolean {
+	return getRating( node ) !== undefined;
+}
+
+/** Dice staged to the roller from a rating (Die/Dice values only; Counter/Pip stage nothing). */
+export function ratingDice( rating: Rating | undefined ): number[] {
+	if ( !rating ) return [];
+	if ( rating.type !== 'Die' && rating.type !== 'Dice' ) return [];
+	return rating.value.filter( ( v ): v is number => typeof v === 'number' && v > 0 );
+}
+
+/** Write dice onto a node as a Die/Dice rating. Empty clears to unrated. */
+export function setRatingDice( node: Record<string, any>, dice: number[], range?: number[] ): void {
+	const clean = Array.isArray( dice ) ? dice.filter( ( d ) => typeof d === 'number' && d > 0 ) : [];
+	if ( clean.length === 0 ) {
+		delete node.rating;
+		return;
+	}
+	node.rating = {
+		type: clean.length > 1 ? 'Dice' : 'Die',
+		value: clean,
+		range: Array.isArray( range ) && range.length ? [ ...range ] : [ ...DIE_LADDER ],
+	};
+}
+
+/** Step a single-die rating to a size (or clear when size is null/0). Never touches siblings. */
+export function setRatingDie( node: Record<string, any>, size: number | null, range?: number[] ): void {
+	if ( typeof size === 'number' && size > 0 ) {
+		node.rating = {
+			type: 'Die',
+			value: [ size ],
+			range: Array.isArray( range ) && range.length ? [ ...range ] : [ ...DIE_LADDER ],
+		};
+	} else {
+		delete node.rating;
+	}
+}
+
+/**
+ * Build a rating from legacy encodings (migration/import read path).
+ * pool/spendable/hitches ride alongside; range defaults to the die ladder.
+ */
+export function ratingFromLegacy( value: unknown, dice: unknown, opts?: { range?: number[]; type?: RatingType } ): Rating | undefined {
+	const list = Array.isArray( dice ) ? dice.filter( ( d ): d is number => typeof d === 'number' && d > 0 ) : [];
+	if ( list.length > 0 ) {
+		return { type: list.length > 1 ? 'Dice' : 'Die', value: list, range: opts?.range ? [ ...opts.range ] : [ ...DIE_LADDER ] };
+	}
+	if ( typeof value === 'number' && value > 0 ) {
+		return { type: opts?.type ?? 'Die', value: [ value ], range: opts?.range ? [ ...opts.range ] : [ ...DIE_LADDER ] };
+	}
+	return undefined;
+}
+
+/** Spent indices live beside the rating (view.spentDice), never in it. */
+export function getSpentIndices( node: unknown ): number[] {
+	const v = getView( node );
+	const spent = v?.spentDice;
+	return Array.isArray( spent ) ? spent.filter( ( x ): x is number => typeof x === 'number' ) : [];
+}
+
+/** Dice available for staging: rating dice minus spent. Value is never mutated. */
+export function availableDice( node: unknown ): number[] {
+	const dice = ratingDice( getRating( node ) );
+	const spent = new Set( getSpentIndices( node ) );
+	return dice.filter( ( _d, i ) => !spent.has( i ) );
+}
+
+/**
+ * Resolve hitches for a node: sparse, inherits from the nearest ancestor
+ * that sets it, base default 1. `fallbacks` runs nearest-first (parent
+ * trait … set). Only hitches 0 is special — the exemption.
+ */
+export function resolveHitches( node: unknown, fallbacks?: Array<unknown> ): number {
+	const chain: Array<unknown> = [ node, ...( Array.isArray( fallbacks ) ? fallbacks : [] ) ];
+	for ( const link of chain ) {
+		const n = ( link && typeof link === 'object' ? link : undefined ) as RatedNode;
+		if ( n && typeof n.hitches === 'number' && Number.isFinite( n.hitches ) && n.hitches >= 0 ) {
+			return Math.floor( n.hitches );
+		}
+	}
+	return DEFAULT_HITCHES;
+}
+
+/**
+ * rollSeparate is a function, not data: traits whose resolved hitches is 0
+ * roll in their own pool so the exemption holds. Computed where rolling
+ * happens, stored nowhere.
+ */
+export function rollSeparate( node: unknown, fallbacks?: Array<unknown> ): boolean {
+	return resolveHitches( node, fallbacks ) === 0;
+}
+
+/** keepsExtra: the Scale effect, named where data must name it. */
+export function keepsExtraDice( node: unknown ): number {
+	const n = ( node && typeof node === 'object' ? node : undefined ) as RatedNode;
+	const k = n && typeof n.keepsExtra === 'number' && Number.isFinite( n.keepsExtra ) ? Math.floor( n.keepsExtra ) : 0;
+	return k > 0 ? k : 0;
+}
+
+// ---------- visibility (2026-10-23: shown | editor-only | hidden) ----------
+
+/** Trait visibility: a general capability, not a name-set special case. */
+export type Visibility = 'shown' | 'editor-only' | 'hidden';
+
+/** Resolve visibility; absent is shown. */
+export function resolveVisibility( node: unknown ): Visibility {
+	const v = getView( node );
+	if ( v && typeof v === 'object' ) {
+		const named = ( v as Record<string, unknown> ).visibility;
+		if ( named === 'hidden' || named === 'editor-only' || named === 'shown' ) return named;
+	}
+	return 'shown';
+}
+
+/** Hidden in a render context: hidden everywhere, editor-only outside Edit. */
+export function isHiddenIn( node: unknown, submode: unknown ): boolean {
+	const vis = resolveVisibility( node );
+	if ( vis === 'hidden' ) return true;
+	if ( vis === 'editor-only' ) return submode !== 'edit';
+	return false;
+}
+
 // ---------- custom.cortexToolkit sub-shapes (set + character scope) ----------
 
 /** Character `view.style`: the single sheet-style object (`sheet`). */
@@ -42,20 +227,11 @@ export interface SetFeatures {
 }
 
 export interface PipsConfig {
-	count?: number;
 	rows?: number;
 	perRow?: number;
 	connected?: boolean;
-	filled?: number;
 	/** Named checkable entries: rows render as bubble-plus-label. */
 	labels?: boolean;
-}
-
-export interface SessionRecordConfig {
-	count?: number;
-	boxCount?: number;
-	orientation?: 'horizontal' | 'vertical';
-	checked?: number[];
 }
 
 export interface AttachedStressConfig {
@@ -159,8 +335,6 @@ export interface CortexToolkitCustom {
 
 	// style-specific config
 	pips?: PipsConfig;
-	pipsConfig?: PipsConfig;
-	sessionRecord?: SessionRecordConfig;
 	attachedStress?: AttachedStressConfig;
 	ringConfig?: RingConfig;
 	imageConfig?: ImageConfig;
@@ -220,9 +394,10 @@ export interface CortexToolkitCustom {
 	sharedHinder?: boolean;
 	sharedHinderText?: string;
 	branchArrows?: boolean;
-	setDie?: number | null;
-	isChallengePool?: boolean;
-	challengePool?: boolean;
+	/** Pool staging on the set node (one recursive shape): clicks stage the whole array. */
+	pool?: boolean;
+	/** Spend control on the set node; spent state lives in spentDice beside the rating. */
+	spendable?: boolean;
 
 	// ring / portrait ring
 	isAttributes?: boolean;
@@ -238,9 +413,8 @@ export interface CortexToolkitCustom {
 	rowSpan?: number;
 	questioned?: boolean;
 	isResource?: boolean;
-	isScale?: boolean;
-	/** Trait visibility: hidden true keeps the data off the sheet; absent or false shows it. No third state. */
-	hidden?: boolean;
+/** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
+	visibility?: Visibility;
 	xp?: number | string;
 	counter?: number | string;
 	branchRole?: 'skill' | 'specialty';
@@ -301,9 +475,8 @@ export function isNameSet( set: unknown ): boolean {
 
 /**
  * Resolve the sheet style for a character holder. `view.style.sheet` is
- * the only stored key; the legacy fallbacks (top-level `sheetStyle`, the
- * `hasAttributes` set-type flag, the `spotlight` name string, a sheet
- * template link) resolve here so no reader hard-codes set-type checks.
+ * the only stored key; a sheet template link resolves spotlight, and
+ * anything else defaults classic. No reader hard-codes set-type checks.
  */
 export function resolveSheetStyle( holder: unknown ): 'classic' | 'spotlight' {
 	const h = ( holder && typeof holder === 'object' ) ? holder as any : undefined;
@@ -311,9 +484,6 @@ export function resolveSheetStyle( holder: unknown ): 'classic' | 'spotlight' {
 	const s = v && typeof v === 'object' ? v : undefined;
 	const sheet = s?.style && typeof s.style === 'object' ? ( s.style as any ).sheet : undefined;
 	if ( sheet === 'spotlight' || sheet === 'classic' ) return sheet;
-	if ( s?.sheetStyle === 'spotlight' || s?.sheetStyle === 'classic' ) return s.sheetStyle;
-	if ( s?.style && typeof s.style === 'object' && ( s.style as any ).hasAttributes === false ) return 'spotlight';
-	if ( s?.spotlight ) return 'spotlight';
 	if ( h?.sheet && typeof h.sheet === 'object' && ( h.sheet as any ).template ) return 'spotlight';
 	return 'classic';
 }
@@ -366,16 +536,12 @@ export function ensureView<T = ViewBag>( obj: unknown ): T {
 /** `trait.custom` — includes legacy nested `cortexToolkit` compartment for back-compat. */
 export interface TraitCustom {
 	[ k: string ]: unknown;
-	checked?: boolean;
-	stress?: number;
-	isStressOut?: boolean;
 	spentDice?: number[];
 	linkTo?: number;
 	branchRole?: 'skill' | 'specialty';
 	branchSide?: 'left' | 'right';
 	questioned?: boolean;
 	isResource?: boolean;
-	isScale?: boolean;
 	xp?: number | string;
 	counter?: number | string;
 	cortexToolkit?: CortexToolkitCustom;

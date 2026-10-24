@@ -71,28 +71,37 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
       },
       "Roles & Masteries": {
         "id": "ls-roles",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "page": 1,
           "style": {
@@ -108,9 +117,23 @@
           "header": "top",
           "headerAlign": "center"
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Commander": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Direct allies and coordinate tactical movement.",
             "traits": {
               "SFX": {
@@ -123,7 +146,19 @@
             }
           },
           "Infiltrator": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Bypass security systems and move undetected.",
             "traits": {
               "SFX": {
@@ -136,7 +171,19 @@
             }
           },
           "Specialist": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Analyze technical anomalies and reverse-engineer artifacts.",
             "traits": {
               "SFX": {
@@ -152,8 +199,6 @@
       },
       "Skills & Specialties": {
         "id": "ls-skills",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "page": 1,
           "style": {
@@ -176,37 +221,147 @@
             "right": "SPECIALTIES"
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Engineering": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "Clockwork": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Aetherics": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
           "Navigation": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "Star Charts": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Sub-Light": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
           "Diplomacy": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "High Society": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Street Smart": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -214,8 +369,6 @@
       },
       "Standing": {
         "id": "ls-standing",
-        "nounSingular": "Standing",
-        "nounPlural": "Standings",
         "view": {
           "page": 1,
           "style": {
@@ -238,28 +391,102 @@
             "slot1": "BONUS"
           }
         },
+        "noun": "Standing",
+        "plural": "Standings",
         "traits": {
           "The Syndicate": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "statement": "Debts are never forgotten.",
             "traits": {
               "Complication": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Bonus": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           },
           "The Vanguard": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "statement": "Honor bound to protect.",
             "traits": {
               "Complication": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "Bonus": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -267,8 +494,6 @@
       },
       "Values": {
         "id": "ls-values",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "view": {
           "page": 1,
           "style": {
@@ -292,19 +517,57 @@
             "col3": "EFFECT"
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Craft": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Form and function are inseparable.",
             "statement": "Form and function are inseparable."
           },
           "Speed": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Ship early, refine relentlessly.",
             "statement": "Ship early, refine relentlessly."
           },
           "Clarity": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Truth cuts through ambiguity.",
             "statement": "Truth cuts through ambiguity."
           }
@@ -312,8 +575,6 @@
       },
       "Distinctions": {
         "id": "ls-distinctions",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "page": 1,
           "style": {
@@ -334,9 +595,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Voidborn Pioneer": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Accustomed to zero-G and cold vacuum.",
             "traits": {
               "SFX": {
@@ -349,7 +624,19 @@
             }
           },
           "Cybernetic Maverick": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "description": "Upgraded with experimental neural cyberware.",
             "traits": {
               "SFX": {
@@ -365,8 +652,6 @@
       },
       "Growth Pool": {
         "id": "ls-growth",
-        "nounSingular": "Growth Die",
-        "nounPlural": "Growth Dice",
         "view": {
           "page": 2,
           "style": {
@@ -379,7 +664,6 @@
             "subtraits": false
           },
           "multiDie": true,
-          "pool": true,
           "place": {
             "left": "0%",
             "top": 0,
@@ -391,33 +675,106 @@
             "dice": "/ DICE"
           }
         },
+        "pool": true,
+        "noun": "Growth Die",
+        "plural": "Growth Dice",
         "traits": {
           "D4": {
-            "value": "d4",
+            "rating": {
+              "type": "Die",
+              "value": [
+                4
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
-            "value": "d12",
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
@@ -426,8 +783,6 @@
       },
       "Badges & Commendations": {
         "id": "ls-badges",
-        "nounSingular": "Badge",
-        "nounPlural": "Badges",
         "view": {
           "page": 2,
           "style": {
@@ -446,22 +801,58 @@
             "height": 1
           }
         },
+        "noun": "Badge",
+        "plural": "Badges",
         "traits": {
           "Fleet Veteran": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "High Jump": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "Master Hacker": {
-            "value": "d10"
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Resources & Supplies": {
         "id": "ls-resources",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "page": 2,
           "style": {
@@ -484,21 +875,65 @@
             "dice": "/ DICE"
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {
           "Crew Complement": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 4
             }
           },
           "Emergency Fuel": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 3
             }
           },
           "Intel Network": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 2
             }
@@ -507,8 +942,6 @@
       },
       "Personnel Dossier": {
         "id": "ls-dossier",
-        "nounSingular": "Field",
-        "nounPlural": "Fields",
         "view": {
           "page": 2,
           "style": {
@@ -527,6 +960,8 @@
             "height": 1
           }
         },
+        "noun": "Field",
+        "plural": "Fields",
         "traits": {
           "Homeworld": {
             "description": "Kepler-452b Core Colony"
@@ -541,8 +976,6 @@
       },
       "Stress": {
         "id": "ls-stress",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "page": 2,
           "style": {
@@ -555,10 +988,8 @@
             "subtraits": false
           },
           "pips": {
-            "count": 10,
             "perRow": 5,
-            "connected": true,
-            "filled": 1
+            "connected": true
           },
           "place": {
             "left": "66.666%",
@@ -567,16 +998,60 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            10
+          ]
+        },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {
           "Physical": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "view": {
               "pipCount": 5,
               "pips": 1
             }
           },
           "Mental": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "view": {
               "pipCount": 5,
               "pips": 0
@@ -586,8 +1061,6 @@
       },
       "Field Notes": {
         "id": "ls-notes",
-        "nounSingular": "Note",
-        "nounPlural": "Notes",
         "view": {
           "page": 2,
           "style": {
@@ -602,12 +1075,12 @@
             "height": 1
           }
         },
+        "noun": "Note",
+        "plural": "Notes",
         "traits": {}
       },
       "Mission Chronicle": {
         "id": "ls-session-record",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "page": 2,
           "style": {
@@ -619,25 +1092,64 @@
           "headerAlign": "right",
           "pips": {
             "labels": true,
-            "count": 12,
             "perRow": 12
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            12
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {},
         "slots": {
           "0": {
-            "custom": {
-              "checked": true
+            "rating": {
+              "type": "Pip",
+              "value": [
+                true
+              ],
+              "range": [
+                1
+              ]
             }
           },
           "1": {
-            "custom": {
-              "checked": true
+            "rating": {
+              "type": "Pip",
+              "value": [
+                true
+              ],
+              "range": [
+                1
+              ]
             }
           },
           "2": {
-            "custom": {
-              "checked": true
+            "rating": {
+              "type": "Pip",
+              "value": [
+                true
+              ],
+              "range": [
+                1
+              ]
             }
           }
         }

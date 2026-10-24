@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Attributes": {
         "id": "commune-attributes",
         "description": "Collective settlement strengths",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -146,6 +155,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Resources": {},
           "Security": {},
@@ -155,8 +166,6 @@
       "Distinctions": {
         "id": "commune-distinctions",
         "description": "Settlement unity, organization, and morale",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -183,9 +192,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Unity:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -195,7 +218,19 @@
             }
           },
           "Organization:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -205,7 +240,19 @@
             }
           },
           "Morale:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -218,8 +265,6 @@
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "nounSingular": "Asset",
-        "nounPlural": "Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -259,26 +304,74 @@
             }
           }
         },
+        "noun": "Asset",
+        "plural": "Assets",
         "traits": {},
         "slots": {
           "0": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "2": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "3": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Skills": {
         "id": "skills",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -303,6 +396,8 @@
             "right": "SPECIALTIES"
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {}
       }
     }

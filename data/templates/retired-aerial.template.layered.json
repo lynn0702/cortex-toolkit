@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Values": {
         "id": "values",
         "description": "The aviator's code and sky ethics",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "view": {
           "features": {
             "description": false,
@@ -147,6 +156,8 @@
             }
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Allegiance": {},
           "Glory": {},
@@ -160,8 +171,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Aerial legend and grounded retirement",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -188,9 +197,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Archetype:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -200,7 +223,19 @@
             }
           },
           "Retirement:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -214,8 +249,6 @@
       "Resources": {
         "id": "vintage-plane-signature-assets",
         "description": "Custom aircraft and aviator resources (5d6 each)",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -262,26 +295,77 @@
             }
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {},
         "slots": {
           "0": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "1": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "2": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           }
         }
       },
       "Signature Asset": {
         "id": "signature-asset",
-        "nounSingular": "Asset",
-        "nounPlural": "Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -329,13 +413,13 @@
             }
           }
         },
+        "noun": "Asset",
+        "plural": "Assets",
         "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Flight and tactical skills (d4-d6) with veteran specialties (d8-d12)",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -372,13 +456,13 @@
             "height": 1
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {}
       },
       "Session Record": {
         "id": "session-record",
         "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -395,10 +479,39 @@
           "reservedSlots": 20,
           "pips": {
             "labels": true,
-            "count": 20,
             "perRow": 20
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            20
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {
           "Training": {
             "description": "Training"

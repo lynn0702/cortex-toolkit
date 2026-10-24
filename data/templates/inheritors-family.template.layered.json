@@ -82,28 +82,37 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
       },
       "Your Generation": {
         "id": "your-generation",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -118,6 +127,8 @@
             "body": "labeled-fields"
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -129,8 +140,6 @@
       },
       "Parents' Generation": {
         "id": "parents-generation-a",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -151,6 +160,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -162,8 +173,6 @@
       },
       "Parents' Generation~2": {
         "id": "parents-generation-b",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -184,6 +193,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -196,8 +207,6 @@
       },
       "Grandparents' Generation": {
         "id": "grandparents-generation-a",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -218,6 +227,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -229,8 +240,6 @@
       },
       "Grandparents' Generation~2": {
         "id": "grandparents-generation-b",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -251,6 +260,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -263,8 +274,6 @@
       },
       "Wild Card Branch": {
         "id": "wild-card-a",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -279,6 +288,8 @@
             "body": "labeled-fields"
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -290,8 +301,6 @@
       },
       "Wild Card Branch~2": {
         "id": "wild-card-b",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -312,6 +321,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -324,8 +335,6 @@
       },
       "Wild Card Branch~3": {
         "id": "wild-card-c",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -346,6 +355,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -358,8 +369,6 @@
       },
       "Wild Card Branch~4": {
         "id": "wild-card-d",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -380,6 +389,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -392,8 +403,6 @@
       },
       "Wild Card Branch~5": {
         "id": "wild-card-e",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -414,6 +423,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Description": {},
@@ -426,8 +437,6 @@
       },
       "GMC": {
         "id": "gmc-a",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -448,6 +457,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Relationship to PCs": {},
@@ -461,8 +472,6 @@
       },
       "GMC~2": {
         "id": "gmc-b",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -483,6 +492,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Relationship to PCs": {},
@@ -497,8 +508,6 @@
       },
       "GMC~3": {
         "id": "gmc-c",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -519,6 +528,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Relationship to PCs": {},
@@ -533,8 +544,6 @@
       },
       "GMC~4": {
         "id": "gmc-d",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -555,6 +564,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Relationship to PCs": {},
@@ -569,8 +580,6 @@
       },
       "GMC~5": {
         "id": "gmc-e",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -591,6 +600,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Relationship to PCs": {},
@@ -605,8 +616,6 @@
       },
       "GMC~6": {
         "id": "gmc-f",
-        "nounSingular": "Detail",
-        "nounPlural": "Details",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -627,6 +636,8 @@
             "height": 1
           }
         },
+        "noun": "Detail",
+        "plural": "Details",
         "traits": {
           "Name": {},
           "Relationship to PCs": {},

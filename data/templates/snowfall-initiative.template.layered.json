@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Cover identity, espionage specialization, and personal objective",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -125,9 +134,23 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Role": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -137,7 +160,19 @@
             }
           },
           "Background": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -147,7 +182,19 @@
             }
           },
           "Personality": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -161,8 +208,6 @@
       "Affiliations": {
         "id": "affiliations",
         "description": "Operational deployment modes",
-        "nounSingular": "Affiliation",
-        "nounPlural": "Affiliations",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -207,6 +252,8 @@
             }
           }
         },
+        "noun": "Affiliation",
+        "plural": "Affiliations",
         "traits": {
           "Diplomacy": {},
           "Discovery": {},
@@ -215,8 +262,6 @@
       },
       "Complications": {
         "id": "complications",
-        "nounSingular": "Complication",
-        "nounPlural": "Complications",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -259,6 +304,8 @@
             }
           }
         },
+        "noun": "Complication",
+        "plural": "Complications",
         "traits": {
           "Frostbite": {},
           "Hypothermia": {}
@@ -267,8 +314,6 @@
       "Attributes & Stress": {
         "id": "attributes-stress",
         "description": "Core operative capabilities and physical resilience",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -326,6 +371,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Brawn": {},
           "Endurance": {},
@@ -338,8 +385,6 @@
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Black-ops competencies and d6 specialties",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -368,6 +413,8 @@
           "notes": "",
           "reservedSlots": 19
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Craft": {},
           "Drive": {},
@@ -393,8 +440,6 @@
       "Signature Assets": {
         "id": "signature-assets-gifts",
         "description": "Classified spy gear and experimental equipment",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -444,12 +489,12 @@
             }
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Talents": {
         "id": "talents",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "features": {
             "description": true,
@@ -474,12 +519,12 @@
             "col3": "EFFECT"
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {}
       },
       "Gifts": {
         "id": "gifts",
-        "nounSingular": "Gift",
-        "nounPlural": "Gifts",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -528,6 +573,8 @@
             }
           }
         },
+        "noun": "Gift",
+        "plural": "Gifts",
         "traits": {
           "Gift of": {},
           "Gift of~2": {}
@@ -535,8 +582,6 @@
       },
       "Milestones": {
         "id": "milestones",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -574,6 +619,8 @@
             }
           }
         },
+        "noun": "Milestone",
+        "plural": "Milestones",
         "traits": {
           "1 XP": {
             "description": "when "
@@ -588,8 +635,6 @@
       },
       "Milestones~2": {
         "id": "milestones-b",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -627,6 +672,8 @@
             }
           }
         },
+        "noun": "Milestone",
+        "plural": "Milestones",
         "traits": {
           "1 XP": {
             "description": "when "
@@ -642,8 +689,6 @@
       },
       "XP": {
         "id": "xp",
-        "nounSingular": "Pip",
-        "nounPlural": "Pips",
         "view": {
           "features": {
             "description": false,
@@ -656,10 +701,8 @@
             "body": "pips"
           },
           "pips": {
-            "count": 20,
             "perRow": 4,
-            "connected": false,
-            "filled": 0
+            "connected": false
           },
           "place": {
             "left": "75%",
@@ -668,6 +711,36 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            20
+          ]
+        },
+        "noun": "Pip",
+        "plural": "Pips",
         "traits": {}
       }
     }

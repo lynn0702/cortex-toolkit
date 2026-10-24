@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Attributes": {
         "id": "titan-attributes-stress",
         "description": "Heavy mechanized systems with stress tracks",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "ratingPosition": "below",
         "view": {
           "features": {
@@ -152,6 +161,8 @@
             "height": 1
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Prowess": {},
           "Control": {},
@@ -161,8 +172,6 @@
       "Distinctions": {
         "id": "titan-distinctions",
         "description": "Chassis type, operational history, and battle stance",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -187,12 +196,38 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Type:": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           },
           "History:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -207,15 +242,25 @@
             }
           },
           "Battle:": {
-            "value": "d8"
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Power Set": {
         "id": "power-set",
         "description": "Colossal kaiju-annihilation weaponry",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "features": {
             "description": true,
@@ -243,13 +288,13 @@
             "height": 1
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {}
       },
       "Power Set~2": {
         "id": "power-set-2",
         "description": "Secondary titan systems and ordnance",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "features": {
             "description": true,
@@ -277,13 +322,13 @@
             "height": 1
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {},
         "label": "Power Set"
       },
       "Session Record": {
         "id": "session-record",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "right",
@@ -298,13 +343,36 @@
             "body": "pips"
           },
           "pips": {
-            "count": 15,
             "perRow": 15,
-            "connected": true,
-            "filled": 0
+            "connected": true
           },
           "reservedSlots": 0
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            15
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {}
       }
     }

@@ -58,37 +58,35 @@ function walk(node, fn) {
   // inherited description (templates, which are the base layer, never
   // carry it — migration strips it there).
   ok(e.sets.Distinctions.traits.Brawn.description === '', 'layered emit: cleared description kept');
-  ok(e.sets.Distinctions.traits.Brawn.value === 'd8', 'rated value kept', e.sets.Distinctions.traits.Brawn.value);
-  ok(e.sets.Distinctions.traits.Brawn.traits.Lift.value === 'd6', 'subtrait kept');
-  ok(e.sets.Distinctions.traits.Gone.value === null, 'explicit unrated null kept');
+  ok(JSON.stringify(e.sets.Distinctions.traits.Brawn.rating) === JSON.stringify({ type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }), 'rated rating kept', e.sets.Distinctions.traits.Brawn.rating);
+  ok(JSON.stringify(e.sets.Distinctions.traits.Brawn.traits.Lift.rating) === JSON.stringify({ type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }), 'subtrait kept');
+  ok(e.sets.Distinctions.traits.Gone.rating === null, 'explicit unrated null kept');
 }
 
-// ---- 2. Retired stress keys fold to a companion subtrait on normalize.
+// ---- 2. Companion subtraits (attached stress) pass through normalize.
 {
   const legacy = {
     traitSets: [{
       name: 'Distinctions', id: 'distinctions',
       view: { attachedStress: { enabled: true, label: 'Stress' } },
       traits: [
-        { name: 'Brawn', value: 8, dice: [8], custom: { stress: 8 }, traits: [], sfx: [] },
-        { name: 'Lean', value: 6, dice: [6], custom: { stress: 0 }, traits: [], sfx: [] },
-        { name: 'Mean', value: 10, dice: [10], custom: { isStressOut: true }, traits: [], sfx: [] },
+        { name: 'Brawn', value: 8, dice: [8], traits: [{ name: 'Stress', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }], sfx: [] },
+        { name: 'Lean', value: 6, dice: [6], traits: [], sfx: [] },
+        { name: 'Mean', value: 10, dice: [10], traits: [{ name: 'Stress', isOut: true }], sfx: [] },
       ],
     }],
   };
   M.normalizeView(legacy);
   const dset = legacy.traitSets.find((s) => s.name === 'Distinctions');
   const [brawn, lean, mean] = dset.traits;
-  ok(brawn.custom === undefined, 'stress-8: legacy custom gone');
   const bc = brawn.traits.find((t) => t.name === 'Stress');
-  ok(bc && bc.value === 8, 'stress-8: companion rated d8', bc);
-  ok(lean.custom === undefined && lean.traits.length === 0, 'stress-0: nothing emitted');
-  ok(lean.stress === undefined, 'stress-0: key deleted');
+  ok(bc && bc.rating && bc.rating.type === 'Die' && JSON.stringify(bc.rating.value) === '[8]', 'stress-8: companion rated d8', bc);
+  ok(lean.traits.length === 0, 'stress-0: nothing emitted');
   const mc = mean.traits.find((t) => t.name === 'Stress');
   ok(mc && mc.isOut === true, 'isStressOut: companion flagged', mc);
 }
 
-// ---- 3. Same fold in layered form.
+// ---- 3. Same companions in layered form.
 {
   const layered = {
     sets: {
@@ -96,20 +94,20 @@ function walk(node, fn) {
         id: 'distinctions',
         view: { attachedStress: { enabled: true } },
         traits: {
-          Brawn: { value: 'd8', custom: { stress: 8 } },
-          Lean: { value: 'd6', custom: { stress: 0 } },
+          Brawn: { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }, traits: { Stress: { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } } } },
+          Lean: { rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
         },
       },
     },
   };
   M.normalizeView(layered);
   const set = layered.sets.Distinctions;
-  ok(set.traits.Brawn.custom === undefined, 'layered: legacy custom gone');
-  ok(set.traits.Brawn.traits && set.traits.Brawn.traits.Stress === 'd8', 'layered: companion shorthand', set.traits.Brawn.traits);
+  ok(set.traits.Brawn.traits && set.traits.Brawn.traits.Stress && set.traits.Brawn.traits.Stress.rating &&
+    JSON.stringify(set.traits.Brawn.traits.Stress.rating.value) === '[8]', 'layered: companion rating', set.traits.Brawn.traits);
   ok(!set.traits.Lean.traits, 'layered: zero emits nothing');
 }
 
-// ---- 4. Template migration: stress folds, scaffolding stays out.
+// ---- 4. Template migration: companions pass through, scaffolding stays out.
 {
   const tpl = {
     id: 't', title: 'T', version: 1,
@@ -118,7 +116,7 @@ function walk(node, fn) {
         id: 'distinctions', name: 'Distinctions',
         view: { attachedStress: { enabled: true, label: 'Fallout' } },
         traits: [
-          { name: 'Brawn', value: 8, dice: [], description: '', traits: [], sfx: [], tags: [], custom: { stress: 6 } },
+          { name: 'Brawn', value: 8, dice: [], description: '', traits: [{ name: 'Fallout', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }], sfx: [], tags: [] },
           { name: 'Lean', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
         ],
         sfx: [],
@@ -127,16 +125,16 @@ function walk(node, fn) {
   };
   const r = M.migrateTemplateEntry(JSON.parse(JSON.stringify(tpl)));
   const set = r.data.character.sets.Distinctions;
-  ok(set.traits.Brawn.traits && set.traits.Brawn.traits.Fallout && set.traits.Brawn.traits.Fallout.value === 'd6',
+  ok(set.traits.Brawn.traits && set.traits.Brawn.traits.Fallout && set.traits.Brawn.traits.Fallout.rating &&
+    JSON.stringify(set.traits.Brawn.traits.Fallout.rating.value) === '[6]',
     'template: companion under set label', set.traits.Brawn.traits);
-  ok(set.traits.Brawn.custom === undefined, 'template: legacy custom gone');
   ok(set.traits.Lean.custom === undefined && set.traits.Lean.tags === undefined,
     'template: scaffolding out', set.traits.Lean);
   const back = M.unmigrateTemplateEntry(r.data);
   const backDistinctions = back.data.character.traitSets.find((s) => s.id === 'distinctions');
   const traits = (backDistinctions && backDistinctions.traits) || [];
   const bb = traits.find((t) => t.name === 'Brawn');
-  ok(bb && bb.traits && bb.traits.find((t) => t.name === 'Fallout' && t.value === 6), 'round-trip: companion survives', bb && bb.traits);
+  ok(bb && bb.traits && bb.traits.find((t) => t.name === 'Fallout' && t.rating && JSON.stringify(t.rating.value) === '[6]'), 'round-trip: companion survives', bb && bb.traits);
   ok(bb.custom === undefined && bb.tags === undefined && bb.description === undefined, 'round-trip: scaffolding stays out');
   ok(back.warnings.length === 0, 'round-trip warning-free', back.warnings);
 }

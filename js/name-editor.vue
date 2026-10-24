@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, resolveSheetStyle, defaultNameHidden } from './model.ts';
+import { getView, ensureView, resolveSheetStyle, defaultNameHidden, getRating } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 
@@ -213,28 +213,31 @@ function setNameTraitLabel( key: string, val: string ) {
 	updateCharacter( props.character );
 }
 
-function nameTraitHidden( key: string ) {
+function nameTraitVisibility( key: string ) {
 	const t = cortexFunctions.getNameTrait( props.character, key );
-	return ( getView( t )?.hidden ?? defaultNameHidden( key, props.character ) ) === true;
+	const v = getView( t ) as Record<string, unknown> | undefined;
+	const word = v?.visibility;
+	if ( word === 'hidden' || word === 'editor-only' || word === 'shown' ) return word;
+	return defaultNameHidden( key, props.character ) ? 'hidden' : 'shown';
 }
 
-function setNameTraitHidden( key: string, hidden: boolean ) {
+function setNameTraitVisibility( key: string, vis: string ) {
 	const t = cortexFunctions.ensureNameTrait( props.character, key );
 	if ( !t ) return;
+	const v = ensureView( t ) as Record<string, unknown>;
 	// Sparse with the default: only a stored word that disagrees survives.
-	if ( hidden === defaultNameHidden( key, props.character ) ) {
-		const v = getView( t );
-		if ( v && typeof v === 'object' ) delete v.hidden;
-	} else if ( hidden ) {
-		ensureView( t ).hidden = true;
-	} else {
-		ensureView( t ).hidden = false;
+	const def = defaultNameHidden( key, props.character ) ? 'hidden' : 'shown';
+	if ( vis === def ) {
+		delete v.visibility;
+	} else if ( vis === 'hidden' || vis === 'editor-only' || vis === 'shown' ) {
+		v.visibility = vis;
 	}
 	updateCharacter( props.character );
 }
 
 function toggleNameVisibility( key: string ) {
-	setNameTraitHidden( key, !nameTraitHidden( key ) );
+	const cur = nameTraitVisibility( key );
+	setNameTraitVisibility( key, cur === 'shown' ? 'editor-only' : cur === 'editor-only' ? 'hidden' : 'shown' );
 }
 
 const notes = computed( {
@@ -246,12 +249,29 @@ const notes = computed( {
 	},
 } );
 
+// Plot Points is a Counter on the name-set trait (spendable,
+// [0, 20]); the stepper is the Counter's spend control. The character
+// field stays the interchange value and mirrors the trait.
 const plotPoints = computed( {
 	get() {
+		const t = cortexFunctions.getNameTrait( props.character, 'plotPoints' );
+		const rating = getRating( t );
+		if ( rating && rating.type === 'Counter' && Array.isArray( rating.value ) && typeof rating.value[0] === 'number' ) {
+			return rating.value[0];
+		}
 		return Number( props.character?.plotPoints ) || 0;
 	},
 	set( val: any ) {
-		setCharacterProperty( 'plotPoints', Math.max( 0, parseInt( val, 10 ) || 0 ) );
+		const n = Math.max( 0, parseInt( val, 10 ) || 0 );
+		setCharacterProperty( 'plotPoints', n );
+		const t = cortexFunctions.ensureNameTrait( props.character, 'plotPoints' );
+		if ( t ) {
+			( t as unknown as Record<string, any> ).rating = { type: 'Counter', value: [ n ], range: [ 0, 20 ] };
+			if ( ( t as unknown as Record<string, unknown> ).spendable === undefined ) {
+				( t as unknown as Record<string, any> ).spendable = true;
+			}
+			updateCharacter( props.character );
+		}
 	},
 } );
 
@@ -650,7 +670,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('name')" @change="setNameTraitLabel('name', targetValue($event))" placeholder="Character Name" title="Name heading (stored on the name trait)" aria-label="Name heading">
-								<visibility-eye :visible="!nameTraitHidden('name')" @toggle="toggleNameVisibility('name')" />
+								<visibility-eye :state="nameTraitVisibility('name')" @toggle="toggleNameVisibility('name')" />
 							</div>
 							<input type="text" id="char-field-name" name="characterName" v-model="name" ref="inputName" placeholder="e.g. Maya Lin, Vance Astro" aria-label="Character name">
 						</div>
@@ -658,7 +678,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('game')" @change="setNameTraitLabel('game', targetValue($event))" placeholder="Game / Campaign Title" title="Game heading (stored on the game trait)" aria-label="Game heading">
-								<visibility-eye :visible="!nameTraitHidden('game')" @toggle="toggleNameVisibility('game')" />
+								<visibility-eye :state="nameTraitVisibility('game')" @toggle="toggleNameVisibility('game')" />
 							</div>
 							<input type="text" id="char-field-game" name="gameTitle" v-model="game" placeholder="e.g. Terraverse, Dragon Brigade..." aria-label="Game title">
 						</div>
@@ -666,7 +686,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('nickname')" @change="setNameTraitLabel('nickname', targetValue($event))" placeholder="Nickname / Call-Sign" title="Nickname heading (stored on the nickname trait)" aria-label="Nickname heading">
-								<visibility-eye :visible="!nameTraitHidden('nickname')" @toggle="toggleNameVisibility('nickname')" />
+								<visibility-eye :state="nameTraitVisibility('nickname')" @toggle="toggleNameVisibility('nickname')" />
 							</div>
 							<input type="text" id="char-field-nickname" name="nickname" v-model="nickname" placeholder="e.g. Apex, Kid" aria-label="Nickname">
 						</div>
@@ -674,7 +694,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('player')" @change="setNameTraitLabel('player', targetValue($event))" placeholder="Player Name" title="Player heading (stored on the player trait)" aria-label="Player heading">
-								<visibility-eye :visible="!nameTraitHidden('player')" @toggle="toggleNameVisibility('player')" />
+								<visibility-eye :state="nameTraitVisibility('player')" @toggle="toggleNameVisibility('player')" />
 							</div>
 							<input type="text" id="char-field-player" name="playerName" v-model="player" placeholder="Player name..." aria-label="Player name">
 						</div>
@@ -682,7 +702,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('pronouns')" @change="setNameTraitLabel('pronouns', targetValue($event))" placeholder="Pronouns" title="Pronouns heading (stored on the pronouns trait)" aria-label="Pronouns heading">
-								<visibility-eye :visible="!nameTraitHidden('pronouns')" @toggle="toggleNameVisibility('pronouns')" />
+								<visibility-eye :state="nameTraitVisibility('pronouns')" @toggle="toggleNameVisibility('pronouns')" />
 							</div>
 							<input type="text" id="char-field-pronouns" name="pronouns" v-model="pronouns" placeholder="e.g. she/her, they/them" aria-label="Pronouns">
 						</div>
@@ -690,7 +710,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('plotPoints')" @change="setNameTraitLabel('plotPoints', targetValue($event))" placeholder="Plot Points" title="Plot points heading (stored on the plotPoints trait)" aria-label="Plot points heading">
-								<visibility-eye :visible="!nameTraitHidden('plotPoints')" @toggle="toggleNameVisibility('plotPoints')" />
+								<visibility-eye :state="nameTraitVisibility('plotPoints')" @toggle="toggleNameVisibility('plotPoints')" />
 							</div>
 							<div class="num-stepper">
 								<button type="button" class="btn-step" @click.stop="plotPoints = Math.max(0, plotPoints - 1)" :disabled="plotPoints <= 0" title="Spend Plot Point" aria-label="Spend Plot Point">-</button>
@@ -702,7 +722,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('description')" @change="setNameTraitLabel('description', targetValue($event))" placeholder="Description / Bio" title="Description heading (stored on the description trait)" aria-label="Description heading">
-								<visibility-eye :visible="!nameTraitHidden('description')" @toggle="toggleNameVisibility('description')" />
+								<visibility-eye :state="nameTraitVisibility('description')" @toggle="toggleNameVisibility('description')" />
 							</div>
 							<textarea id="char-field-description" name="description" v-model="description" rows="3" placeholder="Character narrative background..." aria-label="Description"></textarea>
 						</div>
@@ -710,7 +730,7 @@ function updateCharacter( character: any ) {
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('notes')" @change="setNameTraitLabel('notes', targetValue($event))" placeholder="Notes" title="Notes heading (stored on the notes trait)" aria-label="Notes heading">
-								<visibility-eye :visible="!nameTraitHidden('notes')" @toggle="toggleNameVisibility('notes')" />
+								<visibility-eye :state="nameTraitVisibility('notes')" @toggle="toggleNameVisibility('notes')" />
 							</div>
 							<textarea id="char-field-notes" name="characterNotes" v-model="notes" rows="2" placeholder="Player notes..." aria-label="Notes"></textarea>
 						</div>

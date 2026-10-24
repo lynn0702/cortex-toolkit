@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Crew role, quality, and personal drive",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -131,9 +140,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Purpose:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -143,7 +166,19 @@
             }
           },
           "Quality:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -155,7 +190,19 @@
         },
         "slots": {
           "2": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -169,8 +216,6 @@
       "Values": {
         "id": "values",
         "description": "Guiding philosophies paired with personal statements",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "statement": true,
         "hasQuestionedPip": true,
         "view": {
@@ -201,6 +246,8 @@
             "height": 1
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Courage": {},
           "Curiosity": {},
@@ -212,8 +259,6 @@
       "Relationships": {
         "id": "relationships",
         "description": "Crew connections and ties to shipmates",
-        "nounSingular": "Relationship",
-        "nounPlural": "Relationships",
         "statement": true,
         "view": {
           "header": "top",
@@ -259,13 +304,13 @@
             }
           }
         },
+        "noun": "Relationship",
+        "plural": "Relationships",
         "traits": {}
       },
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Specialized starship equipment and personal gear",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "features": {
             "description": true,
@@ -307,12 +352,12 @@
             }
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Personal Milestones": {
         "id": "personal-milestones",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -350,6 +395,8 @@
             }
           }
         },
+        "noun": "Milestone",
+        "plural": "Milestones",
         "traits": {
           "1 XP": {},
           "3 XP": {},
@@ -358,8 +405,6 @@
       },
       "Group Milestones": {
         "id": "group-milestones",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -397,6 +442,8 @@
             }
           }
         },
+        "noun": "Milestone",
+        "plural": "Milestones",
         "traits": {
           "1 XP": {},
           "3 XP": {},
@@ -406,8 +453,6 @@
       "XP": {
         "id": "xp",
         "description": "Experience points bubble track",
-        "nounSingular": "XP",
-        "nounPlural": "XP",
         "view": {
           "features": {
             "description": false,
@@ -420,10 +465,8 @@
             "body": "pips"
           },
           "pips": {
-            "count": 25,
             "perRow": 5,
-            "connected": true,
-            "filled": 0
+            "connected": true
           },
           "reservedSlots": 0,
           "place": {
@@ -433,6 +476,41 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            25
+          ]
+        },
+        "noun": "XP",
+        "plural": "XP",
         "traits": {}
       }
     }

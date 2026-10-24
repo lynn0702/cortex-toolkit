@@ -7,7 +7,7 @@ const {
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getTraitStatement, renderText, getSubtraitNameOr,
-	getStandingComplication, getStandingBonus, getStandingBonusRatings
+	getStandingComplication, getStandingBonus, getStandingBonusRatings, firstDie, isDieActive
 } = injectTraitSet();
 </script>
 
@@ -36,19 +36,19 @@ const {
 						</span>
 					</div>
 					<div class="paired-slot-dice-row">
-						<div class="paired-slot-main-dice single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, item.trait.value, traitSet, s, item.originalIndex) : null">
+						<div class="paired-slot-main-dice single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null">
 							<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-								:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
-								v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"></span>
+								:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+								v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"></span>
 						</div>
 						<div class="paired-slot-sub-group">
 							<div class="paired-slot-sub-row">
 								<span class="paired-slot-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 0) }} •</span>
 								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingComplication(item.trait)"
-									@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), getStandingComplication(item.trait).value, traitSet, s, item.originalIndex) : null">
+									@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), firstDie(getStandingComplication(item.trait)), traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
-										:class="{ 'c': true, 'active': !printBlank && getStandingComplication(item.trait).value === size }"
-										v-html="renderDieValueForPrint(size, !printBlank && getStandingComplication(item.trait).value === size)"></span>
+										:class="{ 'c': true, 'active': !printBlank && isDieActive(getStandingComplication(item.trait), size) }"
+										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getStandingComplication(item.trait), size))"></span>
 								</div>
 								<div class="subtrait-value" v-else>
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
@@ -59,10 +59,10 @@ const {
 							<div class="paired-slot-sub-row">
 								<span class="paired-slot-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 1) }} •</span>
 								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingBonus(item.trait)"
-									@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), getStandingBonus(item.trait).value, traitSet, s, item.originalIndex) : null">
+									@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), firstDie(getStandingBonus(item.trait)), traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"
-										:class="{ 'c': true, 'active': !printBlank && getStandingBonus(item.trait).value === size }"
-										v-html="renderDieValueForPrint(size, !printBlank && getStandingBonus(item.trait).value === size)"></span>
+										:class="{ 'c': true, 'active': !printBlank && isDieActive(getStandingBonus(item.trait), size) }"
+										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getStandingBonus(item.trait), size))"></span>
 								</div>
 								<div class="subtrait-value" v-else>
 									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"
@@ -79,7 +79,7 @@ const {
 			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
 					</div>
 				</div>
 			</div>

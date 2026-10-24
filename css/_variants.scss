@@ -1118,7 +1118,7 @@
 		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
 		.branch-head-center {
 			text-align: center;
-			.set-die {
+			.set-rating-die {
 				margin-left: .4em;
 			}
 		}
@@ -1145,7 +1145,7 @@
 		padding-top: 0.3rem;
 		cursor: pointer;
 
-		.set-die {
+		.set-rating-die {
 			font-size: 1em;
 		}
 
@@ -1156,7 +1156,7 @@
 
 	// Set die on unrated grid rows: the die an unrated trait rolls, shown
 	// where it acts (the branch center carries it for split rows).
-	.trait-value.single-die-value > .set-die {
+	.trait-value.single-die-value > .set-rating-die {
 		margin-left: .35em;
 	}
 
@@ -1338,6 +1338,7 @@
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
+				flex-wrap: wrap;
 				gap: 0.35rem;
 				width: 100%;
 				min-width: 0;
@@ -1350,7 +1351,10 @@
 				letter-spacing: 0.05em;
 				color: var(--color-primary);
 				text-transform: uppercase;
-				white-space: nowrap;
+				white-space: normal;
+				flex: 1 1 8rem;
+				min-width: 0;
+				overflow-wrap: break-word;
 				text-align: left;
 			}
 

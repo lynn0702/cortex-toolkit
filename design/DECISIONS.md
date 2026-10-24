@@ -300,17 +300,17 @@ the spotlight sheet); no reader checks set types anymore ï¿½ the style is
 data, not deduction. Fixed alongside: applyOverrides skipped any nested
 key literally named `sheet`, so view.style.sheet could never clear to
 null through a template merge; the sheet-link guard is root-only now.
-2026-10-22 — Visibility is a hidden boolean; the eye is the only control.
+2026-10-22 ï¿½ Visibility is a hidden boolean; the eye is the only control.
 There is no editor-only state: it distinguished a viewer nobody has, so
 the enum is gone everywhere (model, renderers, editors, validate). Stored
-form is `view.hidden: true` for hidden, absent or false for shown — never
+form is `view.hidden: true` for hidden, absent or false for shown ï¿½ never
 a visibility word (normalize converts it; validate errors on it). The
 name block, portrait, and trait editors share one eye toggle docked at
 the right end of the label line (open magenta = shown, slashed dim =
 hidden). Writes stay sparse with the honest default: only a word that
 disagrees with the default survives (showing a default-hidden game
 writes hidden:false; hiding a default-shown nickname writes hidden:true).
-2026-10-22 — The layout editor is the grid itself (clarifies the §4
+2026-10-22 ï¿½ The layout editor is the grid itself (clarifies the ï¿½4
 editor-and-trait-model entry). Both miniatures are direct-manipulation
 controls, not pictures: page placement drags the set box (writes
 left/top) and its right/bottom edges (write width/height); the row
@@ -323,22 +323,22 @@ uses the renderer part-grid math, so its column shares and the sheet
 row agree exactly (proven 30/30/13/27 on a stress-bearing set). Numeric
 fields stay as synced readout plus fine entry: they display the live
 drag preview mid-gesture (shared preview refs, cleared on set switch)
-and the committed model on release — one gesture, one persist.
+and the committed model on release ï¿½ one gesture, one persist.
 Supersedes the miniature-plus-fields first attempt: the divider-strip
 is deleted, corner handles are right/bottom edges (a bottom handle
 must never swallow a one-row box center).
-2026-10-22 — Part Widths previews the generated row for parts-driven
+2026-10-22 ï¿½ Part Widths previews the generated row for parts-driven
 sets with no stored layout. The set editor is for set-level row work:
 a distinctions-style set with no view.parts shows the generator row
 (name/rating/description per its features) as dashed implicit boxes;
 the first drag writes the generated map plus the change, and the row
 switches from flex to the grid it previewed (said so in a hint line).
 Bodies with dedicated flex renderers and vertical ladders show no
-preview — a grid miniature of a flex row would lie about the sheet.
+preview ï¿½ a grid miniature of a flex row would lie about the sheet.
 Reset stays hidden until something stored disagrees with the generator.
-2026-10-22 — Set editor edits the set; page arrangement lives on the
+2026-10-22 ï¿½ Set editor edits the set; page arrangement lives on the
 Sheet Page tab. The set editor Layout section holds only the row
-miniature — per-part numeric duplicates and the summary line are gone
+miniature ï¿½ per-part numeric duplicates and the summary line are gone
 (the dims ride on the boxes; reserved-slots keeps its stepper, a real
 setting, not a duplicate). Page/Place left the set editor entirely:
 the Sheet Page tab hosts a page-level miniature with every set on
@@ -347,95 +347,95 @@ that set readout (page assignment, Full Width, four numbers, summary).
 The set-level place miniature is deleted (the page canvas supersedes
 the peephole); its shared preview ref goes with it. Unplaced bands
 seed coordinates where grabbed, so nothing jumps.
-2026-10-22 — The row miniature is the whole section: set header plus
+2026-10-22 ï¿½ The row miniature is the whole section: set header plus
 trait parts. The header renders as a box in its slot (magenta top bar
 with the text justification mirrored, vertical sidebar strip beside a
 compressed grid) because the sheet renders it as a sibling band, never
-as a grid row — part tops do not shift. Drag the header between the
+as a grid row ï¿½ part tops do not shift. Drag the header between the
 top and side slots to flip view.header; dropping in the top strip aims
 left/center/right thirds at view.headerAlign; a click with no drag
 cycles the alignment (the title says so). Sidebar drops keep the
 current align; the Sidebar/Top Bar and alignment buttons stay as fine
 entry. The section label is Section Layout now that parts are not all
 it holds.
-2026-10-22 — Sidebar Beside the grid; hinder has a band. Two section
+2026-10-22 ï¿½ Sidebar Beside the grid; hinder has a band. Two section
 fixes: the sidebar strip is position:absolute spanning the section
-(the flex-intrinsic percentage chain blew it out to viewport height —
+(the flex-intrinsic percentage chain blew it out to viewport height ï¿½
 indefinite heights plus vertical text never settle, so the strip takes
 definite inset instead) beside a margined body column carrying the
 hinder band and the row grid. The shared hinder banner renders as a
 display-only band (no stored geometry exists to drag) with the live
 sentence. Debugging note appended, not a decision: a compound selector
 that will not match alongside correct classes and correct CSS is a
-class-name mismatch until proven otherwise — dump the live token bytes
+class-name mismatch until proven otherwise ï¿½ dump the live token bytes
 before theorizing about the engine.
-2026-10-22 — Set Die mirrors the Rating Scale chips; presets are gone.
+2026-10-22 ï¿½ Set Die mirrors the Rating Scale chips; presets are gone.
 The set die is one value, so it is the same chip row (None first in a
 six-across grid, then d4-d12) with single-select: a chip sets it,
 re-clicking the active chip clears back to None. The All/Skills/
 Specialties/Stress preset rows are deleted from both scales with their
-functions and styles — hand-picked dice need no taxonomy shortcuts.
-2026-10-22 — The split-branch set header is never hidden (supersedes
+functions and styles ï¿½ hand-picked dice need no taxonomy shortcuts.
+2026-10-22 ï¿½ The split-branch set header is never hidden (supersedes
 the hide-redundant-header rule of the nested-grid pass). The branch bar
 carries no set name and its only click target opens traits, so hiding
 the outer header stranded split sets with no visible identity and no
 way to reach the set editor. Cost: one row in split top-bar layouts.
-2026-10-22 — Enabling Attached Stress forces the track on. The toggle
+2026-10-22 ï¿½ Enabling Attached Stress forces the track on. The toggle
 rebuilt parts from the current spec, which still said no stress on
-sets with neither stored parts nor legacy config — so it silently did
+sets with neither stored parts nor legacy config ï¿½ so it silently did
 nothing. rebuildParts takes an explicit stress flag now; the enable
 path passes true (default five-die scale), disable keeps deleting the
 cells. The sheet, the miniature, and the checkbox all follow because
 they already key off the parts map.
-2026-10-22 — Section Layout shows in every set editor. The header box
+2026-10-22 ï¿½ Section Layout shows in every set editor. The header box
 is universal (placement and alignment are generic), so the section is
 no longer gated on parts: flex-body sets without stored layouts get
-the header plus an honest note instead of a fake row — a grid
+the header plus an honest note instead of a fake row ï¿½ a grid
 miniature of a custom row would lie about the sheet, and row boxes
 only appear where the grid drives (stored anywhere, generated for
 list-driven bodies).
-2026-10-22 — Page miniatures take drops between pages; double-press
+2026-10-22 ï¿½ Page miniatures take drops between pages; double-press
 drills into the set editor. Vertical position is document order and
 tops only group, so a cross-page drop reorders the sets (insert at the
 visual slot) and joins the landed group or opens a fresh row past its
-last top — the box renders where it lands because the numbers say
+last top ï¿½ the box renders where it lands because the numbers say
 where it renders. One gesture, one persist; ghost follows the
 pointer, insertion line marks the row, readouts track live. Drill is
 press-timing, not dblclick: selecting swaps ghost for block between
 press and release so a native double-click can never complete, and
-drilling on the second press would hijack click-then-drag — the drill
+drilling on the second press would hijack click-then-drag ï¿½ the drill
 fires on a clean release, any move cancels it.
-2026-10-22 — Styles are presets; arranging flips bespoke rows to a
+2026-10-22 ï¿½ Styles are presets; arranging flips bespoke rows to a
 custom grid. Every trait-row body previews all of its parts and every
 drag writes through one choke point (setPartCell), which flips a
-bespoke flex preset to body "custom" — the dispatcher already falls
+bespoke flex preset to body "custom" ï¿½ the dispatcher already falls
 through to the grid renderer, so no renderer changes. List-driven rows
 never flip (they already grid). Re-selecting a flex preset clears the
 cells (stale geometry must never hide); Reset keeps proportions inside
 the current body. Round trip is lossless: branch data survives the
 flip untouched and renders again under its preset. Non-row bodies
-(pips, portraits, notes) get the header only — there are no trait
+(pips, portraits, notes) get the header only ï¿½ there are no trait
 rows to arrange.
-2026-10-22 — Reversal: arranging never flips a preset (the custom-flip
+2026-10-22 ï¿½ Reversal: arranging never flips a preset (the custom-flip
 shipped only in the working tree, never committed). A drag that trades
 a branched layout for a generic grid reads as breakage, and rightly:
 the grid cannot express branches. So the grid never takes over a
-bespoke body — subtrait-columns arranges through branch shares
+bespoke body ï¿½ subtrait-columns arranges through branch shares
 instead (below), other bespoke rows keep header-only miniatures until
 their own controls exist, and re-selecting a preset still clears
 geometry its renderer would ignore.
-2026-10-22 — Branch shares are styled data: view.branch {left, center,
+2026-10-22 ï¿½ Branch shares are styled data: view.branch {left, center,
 right} fr numbers around the fixed 2rem link, defaulting to the CSS
 1.4/1/1.4 when absent. The section miniature shows Left/Skill/Right
 boxes with conserving divider drags; split head and rows take the
 shares inline (flank keeps its own), sheet and print alike. Reset
 clears them with everything else. The set die renders once, in the
-set header, on every body — it is set-level chrome, not a trait part.
-2026-10-22 — Correction: the set die belongs with the ratable content,
+set header, on every body ï¿½ it is set-level chrome, not a trait part.
+2026-10-22 ï¿½ Correction: the set die belongs with the ratable content,
 never the union header. A badge on "Skills & Specialties" misattributes
 a Skill die to the whole union (and duplicates the branch-center one),
 so it is removed; the branch center keeps its badge, and unrated grid
-rows show the die in the rating cell — the one place it acts (clicking
+rows show the die in the rating cell ï¿½ the one place it acts (clicking
 an unrated trait rolls it). Rated rows, placeholders, and the union
 header stay clean.
 2026-10-24 - Session record unifies into pips with a labels opt-in:
@@ -450,3 +450,54 @@ Trait Set buttons open it (placement carried in), and every card lands
 with that style's defaults. The gallery had shipped unreachable, which
 stranded the Sessions card; the default card preserves the old blank
 classic add.
+2026-10-23 - Ratings have one shape. A trait's rating is
+{ type: Counter | Die | Dice | Pip, value: [], range: [] }:
+the value is always a list, the range is the ladder it may take, and a
+trait is rated by having one. Stepping changes the value; spending
+makes a die temporarily unavailable and never changes the value.
+"Set Die" is retired â€” there is one Rating at every level of the
+recursion, and the editor section is Options, not Pool Options.
+Challenge pools and boss pools are not flags: both are Dice ratings
+with pool and spendable true, differing only in size. Scale remains a
+trait name; its effect is keepsExtra.
+2026-10-23 - Hitches flood; exemption segregates. A
+trait's hitches (faces 1..hitches, sparse, inherited,
+default 1) sets its pool's threshold at the highest member
+value, because pooled dice are anonymous. hitches: 0 is an
+exemption and the only case that must roll apart:
+rollSeparate is a derived function of hitches == 0 and is
+stored nowhere.
+2026-10-23 - Rating emit and vocabulary follow-ups. Canonical emit
+writes rating objects only; dice strings and the "d8" shorthand parse
+on read for import compat (superseding the shorthand convention).
+Trait visibility is the word shown | editor-only | hidden (superseding
+the hidden boolean); legacy booleans map onto it. The set-rating badge
+class is set-rating-die; getSetDie is getSetRatingDie. Pip tracks live
+on the set node's Pip rating and labeled rows on row Pip ratings;
+view.pips keeps perRow/connected/labels only. Plot Points is a
+spendable Counter [0, 20] on the name-set trait, mirrored to the
+character field. Spent dice live in view.spentDice beside the rating;
+every Dice rating is spendable unless stated; resources add hitches 0.
+Long names wrap and the scale keeps right or drops a row: the
+container edge is a wall in Edit, Play, and Print.
+2026-10-23 - Sets name their nouns noun/plural. The Â§1 shape's words
+replace nounSingular/nounPlural across schema, app, and corpus;
+day-1 files map across on import. Trait-level nouns stay banned â€”
+nouns live on sets.
+2026-10-23 - Compat covers day-1 only. Migration shims and deprecated
+flags for post-day-1 keys are gone: setDie, challenge-pool flags,
+view.pool promotion, isScale, checked mirrors, hidden booleans,
+dice strings/shorthand, pips count/filled, session bodies, stress
+folds, nameLabels folding, cortexToolkit promotion, sheet-style
+collapse. What remains maps day-1 encodings (numeric value/dice,
+nouns, sfx arrays) or reads canonical data. Corpus regen after the
+cut was a verified no-op. Untouched by design: the placement/parts
+pipeline and the layered codec's split-brain heal (tested live
+machinery, not retired-key compat), and validate's retired-key
+guards (enforcement, not shims).
+2026-10-23 - Labeled pips rows are bubble plus write-in line. The row
+is a fill-in circle followed by the pip name as an underline-only
+field (inline rename in edit, underlined text in play/print); the Pip
+rating reads filled/true with no description anywhere â€” the trait
+editor hides Description for labeled-pips traits. Names no longer
+open the trait editor; the bubble still toggles in edit and play.

@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Essential Stockpiles": {
         "id": "essential-stockpiles",
         "description": "Building Benefits:",
-        "nounSingular": "Essential Stockpile",
-        "nounPlural": "Essential Stockpiles",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -126,26 +135,95 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Essential Stockpile",
+        "plural": "Essential Stockpiles",
         "traits": {
           "Food": {
-            "value": "12d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true
           },
           "Water": {
-            "value": "12d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true
           },
           "Shelter": {
-            "value": "12d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true
           }
         }
       },
       "Non-Essential Stockpiles": {
         "id": "non-essential-stockpiles",
         "description": "Building Benefits:",
-        "nounSingular": "Non-Essential Stockpile",
-        "nounPlural": "Non-Essential Stockpiles",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -167,25 +245,94 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Non-Essential Stockpile",
+        "plural": "Non-Essential Stockpiles",
         "traits": {
           "Medicine": {
-            "value": "12d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true
           },
           "Protection": {
-            "value": "12d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true
           },
           "Tools": {
-            "value": "12d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true
           }
         }
       },
       "Building 1": {
         "id": "building-1",
-        "nounSingular": "Building",
-        "nounPlural": "Buildings",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -220,20 +367,70 @@
             "height": 1
           }
         },
+        "noun": "Building",
+        "plural": "Buildings",
         "traits": {
           "Name:": {
             "traits": {
               "d6 Benefit:": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d8 Benefit:": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d10 Benefit:": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d12 Benefit:": {
-                "value": "d12"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    12
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -241,8 +438,6 @@
       },
       "Building 2": {
         "id": "building-2",
-        "nounSingular": "Building",
-        "nounPlural": "Buildings",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -277,20 +472,70 @@
             "height": 1
           }
         },
+        "noun": "Building",
+        "plural": "Buildings",
         "traits": {
           "Name:": {
             "traits": {
               "d6 Benefit:": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d8 Benefit:": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d10 Benefit:": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d12 Benefit:": {
-                "value": "d12"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    12
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -298,8 +543,6 @@
       },
       "Building 3": {
         "id": "building-3",
-        "nounSingular": "Building",
-        "nounPlural": "Buildings",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -334,20 +577,70 @@
             "height": 1
           }
         },
+        "noun": "Building",
+        "plural": "Buildings",
         "traits": {
           "Name:": {
             "traits": {
               "d6 Benefit:": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d8 Benefit:": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d10 Benefit:": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d12 Benefit:": {
-                "value": "d12"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    12
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -355,8 +648,6 @@
       },
       "Building 4": {
         "id": "building-4",
-        "nounSingular": "Building",
-        "nounPlural": "Buildings",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -391,20 +682,70 @@
             "height": 1
           }
         },
+        "noun": "Building",
+        "plural": "Buildings",
         "traits": {
           "Name:": {
             "traits": {
               "d6 Benefit:": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d8 Benefit:": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d10 Benefit:": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d12 Benefit:": {
-                "value": "d12"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    12
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -412,8 +753,6 @@
       },
       "Building 5": {
         "id": "building-5",
-        "nounSingular": "Building",
-        "nounPlural": "Buildings",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -448,20 +787,70 @@
             "height": 1
           }
         },
+        "noun": "Building",
+        "plural": "Buildings",
         "traits": {
           "Name:": {
             "traits": {
               "d6 Benefit:": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d8 Benefit:": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d10 Benefit:": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d12 Benefit:": {
-                "value": "d12"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    12
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -469,8 +858,6 @@
       },
       "Building 6": {
         "id": "building-6",
-        "nounSingular": "Building",
-        "nounPlural": "Buildings",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -505,20 +892,70 @@
             "height": 1
           }
         },
+        "noun": "Building",
+        "plural": "Buildings",
         "traits": {
           "Name:": {
             "traits": {
               "d6 Benefit:": {
-                "value": "d6"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    6
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d8 Benefit:": {
-                "value": "d8"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    8
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d10 Benefit:": {
-                "value": "d10"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    10
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               },
               "d12 Benefit:": {
-                "value": "d12"
+                "rating": {
+                  "type": "Die",
+                  "value": [
+                    12
+                  ],
+                  "range": [
+                    4,
+                    6,
+                    8,
+                    10,
+                    12
+                  ]
+                }
               }
             }
           }
@@ -526,8 +963,6 @@
       },
       "Survivor 1": {
         "id": "survivor-1",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -556,6 +991,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -563,14 +1000,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 2": {
         "id": "survivor-2",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -599,6 +1046,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -606,14 +1055,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 3": {
         "id": "survivor-3",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -642,6 +1101,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -649,14 +1110,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 4": {
         "id": "survivor-4",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -685,6 +1156,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -692,14 +1165,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 5": {
         "id": "survivor-5",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -728,6 +1211,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -735,14 +1220,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 6": {
         "id": "survivor-6",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -771,6 +1266,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -778,14 +1275,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 7": {
         "id": "survivor-7",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -814,6 +1321,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -821,14 +1330,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 8": {
         "id": "survivor-8",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -857,6 +1376,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -864,14 +1385,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Survivor 9": {
         "id": "survivor-9",
-        "nounSingular": "Survivor",
-        "nounPlural": "Survivors",
         "hasQuestionedPip": true,
         "view": {
           "header": "top",
@@ -900,6 +1431,8 @@
             "height": 1
           }
         },
+        "noun": "Survivor",
+        "plural": "Survivors",
         "traits": {
           "Morale": {
             "questioned": false
@@ -907,14 +1440,24 @@
         },
         "slots": {
           "1": {
-            "value": "d6"
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            }
           }
         }
       },
       "Notes": {
         "id": "colony-projects",
-        "nounSingular": "Note",
-        "nounPlural": "Notes",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -930,6 +1473,8 @@
           },
           "notes": ""
         },
+        "noun": "Note",
+        "plural": "Notes",
         "traits": {}
       }
     }

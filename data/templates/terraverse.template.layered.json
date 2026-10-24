@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Attributes": {
         "id": "attributes",
         "description": "Core hero ratings with Vitality and Willpower",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -148,6 +157,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Agility": {},
           "Alertness": {},
@@ -160,8 +171,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Multiversal origin, champion archetype, and personal drive",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -187,10 +196,24 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {},
         "slots": {
           "0": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -200,7 +223,19 @@
             }
           },
           "1": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -210,7 +245,19 @@
             }
           },
           "2": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -224,8 +271,6 @@
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Artifacts and multiversal gear",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "features": {
             "description": false,
@@ -252,13 +297,13 @@
             "height": 1
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -294,6 +339,8 @@
             "height": 1
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Craft": {},
           "Drive": {},
@@ -318,8 +365,6 @@
       },
       "Initiative": {
         "id": "initiative",
-        "nounSingular": "Die",
-        "nounPlural": "Dice",
         "ratingPosition": "vertical",
         "view": {
           "features": {
@@ -348,12 +393,12 @@
             "height": 1
           }
         },
+        "noun": "Die",
+        "plural": "Dice",
         "traits": {}
       },
       "Hero Dice": {
         "id": "hero-dice",
-        "nounSingular": "Die",
-        "nounPlural": "Dice",
         "ratingPosition": "vertical",
         "view": {
           "features": {
@@ -382,13 +427,13 @@
             "height": 1
           }
         },
+        "noun": "Die",
+        "plural": "Dice",
         "traits": {}
       },
       "Life Points": {
         "id": "life-points",
         "description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
-        "nounSingular": "Point",
-        "nounPlural": "Points",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -403,19 +448,49 @@
             "body": "pips"
           },
           "pips": {
-            "count": 24,
             "perRow": 12,
-            "connected": true,
-            "filled": 0
+            "connected": true
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            24
+          ]
+        },
+        "noun": "Point",
+        "plural": "Points",
         "traits": {}
       },
       "Power Set 1": {
         "id": "power-set-1",
         "description": "SFX: • SFX: • Limit:",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -445,6 +520,8 @@
             "height": 1
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {},
         "slots": {
           "0": {
@@ -463,8 +540,6 @@
       "Power Set 2": {
         "id": "power-set-2",
         "description": "SFX: • SFX: • Limit:",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -494,6 +569,8 @@
             "height": 1
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {},
         "slots": {
           "0": {
@@ -512,8 +589,6 @@
       "Power Set 3": {
         "id": "power-set-3",
         "description": "SFX: • SFX: • Limit:",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -543,6 +618,8 @@
             "height": 1
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {},
         "slots": {
           "0": {
@@ -561,8 +638,6 @@
       "Talents": {
         "id": "talents-growth-options",
         "description": "Name, Activation, and Effect",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "features": {
             "description": true,
@@ -589,12 +664,12 @@
             "col3": "EFFECT"
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {}
       },
       "Session Record": {
         "id": "session-record",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "features": {
             "description": false,
@@ -607,10 +682,8 @@
             "body": "pips"
           },
           "pips": {
-            "count": 12,
             "perRow": 6,
-            "connected": true,
-            "filled": 0
+            "connected": true
           },
           "reservedSlots": 0,
           "place": {
@@ -620,12 +693,32 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            12
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {}
       },
       "Leveling Up": {
         "id": "leveling-up",
-        "nounSingular": "Option",
-        "nounPlural": "Options",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -647,6 +740,8 @@
             "height": 1
           }
         },
+        "noun": "Option",
+        "plural": "Options",
         "traits": {}
       }
     }

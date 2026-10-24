@@ -28,7 +28,7 @@ export interface TraitObject {
 	description?: string;
   cost?: Cost;
   usableBy?: UsableBy;
-  /** Multi-die traits roll every die into the roller on add. */
+  /** Staging behaviour: adding the node stages its whole array of available dice. */
   pool?: boolean;
   traits?: Record<string, TraitRaw>;
   [key: string]: unknown;

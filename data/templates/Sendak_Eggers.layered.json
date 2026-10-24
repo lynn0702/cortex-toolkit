@@ -6,90 +6,472 @@
     "Distinctions": {
       "traits": {
         "Half-Orc": {
-          "value": "d8",
           "traits": {
             "SFX": {
               "traits": {
                 "Hinder": {}
               }
             }
+          },
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
           }
         },
         "Druid": {
-          "value": "d10",
           "traits": {
             "SFX": {
               "traits": {
                 "Hinder": {}
               }
             }
+          },
+          "rating": {
+            "type": "Die",
+            "value": [
+              10
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
           }
         },
         "Sage": {
-          "value": "d8",
           "traits": {
             "SFX": {
               "traits": {
                 "Hinder": {}
               }
             }
+          },
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
           }
         }
       }
     },
     "Attributes": {
       "traits": {
-        "Strength": "d8",
-        "Agility": "d6",
-        "Wisdom": "d10"
+        "Strength": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Agility": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Wisdom": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              10
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        }
       }
     },
     "Values": {
       "traits": {
-        "Honor": "d6",
-        "Wealth": "d4",
-        "Kindness": "d8",
-        "Justice": "d8",
-        "Truth": "d12",
-        "Power": "d6"
+        "Honor": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Wealth": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              4
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Kindness": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Justice": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Truth": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              12
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Power": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        }
       }
     },
     "Stress": {
       "traits": {
-        "Harm": "d10",
-        "Stress": "d6",
-        "Doubt": "d8"
+        "Harm": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              10
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Stress": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Doubt": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        }
       }
     },
     "Signature Assets": {
       "traits": {
-        "Shillelagh": "d8",
-        "New Asset": "d6"
+        "Shillelagh": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              8
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "New Asset": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        }
       }
     },
     "Affiliations": {
       "traits": {
-        "Circle of the Moon": "d6",
-        "King’s Guard": "d6",
-        "Biggetyburgh": "d6"
+        "Circle of the Moon": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "King’s Guard": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        },
+        "Biggetyburgh": {
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
+          }
+        }
       }
     },
     "Skills": {
       "traits": {
         "Athletics": {
-          "value": "d6",
           "traits": {
-            "Jump": "d6",
-            "Swim": "d10",
-            "Climb": "d8"
+            "Jump": {
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              }
+            },
+            "Swim": {
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              }
+            },
+            "Climb": {
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              }
+            }
+          },
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
           }
         },
         "Knowledge": {
-          "value": "d6",
           "traits": {
-            "Arcana": "d6",
-            "Nature": "d10",
-            "Society": "d8"
+            "Arcana": {
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              }
+            },
+            "Nature": {
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              }
+            },
+            "Society": {
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              }
+            }
+          },
+          "rating": {
+            "type": "Die",
+            "value": [
+              6
+            ],
+            "range": [
+              4,
+              6,
+              8,
+              10,
+              12
+            ]
           }
         }
       }

@@ -76,20 +76,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -97,8 +108,6 @@
       "Affiliations": {
         "id": "affiliations",
         "description": "Team configuration ratings",
-        "nounSingular": "Affiliation",
-        "nounPlural": "Affiliations",
         "view": {
           "features": {
             "description": false,
@@ -141,6 +150,8 @@
             }
           }
         },
+        "noun": "Affiliation",
+        "plural": "Affiliations",
         "traits": {
           "Solo": {},
           "Partner": {},
@@ -150,8 +161,6 @@
       "Roles": {
         "id": "roles",
         "description": "Civic investigation disciplines",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "features": {
             "description": false,
@@ -180,6 +189,8 @@
             "height": 1
           }
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Forensics": {},
           "Investigation": {},
@@ -193,8 +204,6 @@
       "Resources": {
         "id": "resources",
         "description": "Civic assets, contacts, and backup",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "features": {
             "description": false,
@@ -235,31 +244,87 @@
             }
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {},
         "slots": {
           "0": {
-            "value": "2d10",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                10,
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "1": {
-            "value": "2d8",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                8,
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "2": {
-            "value": "2d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "3": {
-            "value": "2d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           }
         }
       },
       "Distinctions": {
         "id": "distinctions",
         "description": "Defining history, drive, and complication",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -286,9 +351,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Distinction #1:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -298,7 +377,19 @@
             }
           },
           "Distinction #2:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -308,7 +399,19 @@
             }
           },
           "Distinction #3:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -322,8 +425,6 @@
       "Talents": {
         "id": "talents",
         "description": "Training tricks and case-cracking knacks",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "features": {
             "description": true,
@@ -346,6 +447,8 @@
             "height": 1
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {
           "Talent #1:": {},
           "Talent #2:": {},
@@ -358,8 +461,6 @@
       "Stress": {
         "id": "stress",
         "description": "Emotional and physical pressure tracks",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "features": {
             "description": false,
@@ -388,6 +489,8 @@
             "height": 1
           }
         },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {
           "Afraid": {},
           "Angry": {},
@@ -399,8 +502,6 @@
       "Growth Pool": {
         "id": "growth-pool",
         "description": "Base d6 d6",
-        "nounSingular": "Growth Die",
-        "nounPlural": "Growth Dice",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -422,7 +523,6 @@
             12
           ],
           "multiDie": true,
-          "pool": true,
           "reservedSlots": 5,
           "place": {
             "left": "80%",
@@ -435,33 +535,106 @@
             "dice": "/ DICE"
           }
         },
+        "pool": true,
+        "noun": "Growth Die",
+        "plural": "Growth Dice",
         "traits": {
           "D4": {
-            "value": "d4",
+            "rating": {
+              "type": "Die",
+              "value": [
+                4
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 0
             }
           },
           "D6": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 2
             }
           },
           "D8": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 0
             }
           },
           "D10": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 0
             }
           },
           "D12": {
-            "value": "d12",
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 0
             }

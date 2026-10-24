@@ -83,20 +83,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -104,8 +115,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -161,6 +170,8 @@
             }
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Neighborhood": {},
           "Crew": {},
@@ -170,8 +181,6 @@
       "Resources": {
         "id": "resources",
         "description": "Syndicate operational pools and assets",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "features": {
             "description": true,
@@ -203,13 +212,13 @@
             "dice": "/ DICE"
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {}
       },
       "Drives": {
         "id": "drives",
         "description": "Gain a PP when you use a drive rated at d4.",
-        "nounSingular": "Drive",
-        "nounPlural": "Drives",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -254,6 +263,8 @@
             }
           }
         },
+        "noun": "Drive",
+        "plural": "Drives",
         "traits": {
           "Corruption": {},
           "Greed": {},
@@ -265,8 +276,6 @@
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Personal weapons, vehicles, and syndicate perks",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -310,13 +319,13 @@
             }
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Roles & Specialties": {
         "id": "roles-specialties",
         "description": "Syndicate roles with specialized criminal expertise",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -351,6 +360,8 @@
             "right": "SPECIALTIES"
           }
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Big Shot": {},
           "Brains": {},
@@ -362,8 +373,6 @@
       "Session Record": {
         "id": "session-record",
         "description": "Session tracking and milestone progression",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -388,16 +397,38 @@
           },
           "pips": {
             "labels": true,
-            "count": 15,
             "perRow": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            15
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {}
       },
       "Role SFX": {
         "id": "role-sfx",
-        "nounSingular": "SFX",
-        "nounPlural": "SFX",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -419,6 +450,8 @@
             "height": 1
           }
         },
+        "noun": "SFX",
+        "plural": "SFX",
         "traits": {}
       }
     }

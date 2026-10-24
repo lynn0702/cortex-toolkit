@@ -29,7 +29,7 @@ const {
 	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasAttachedStress, attachedStressLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected, pipLabels,
-	nounSingular, nounPlural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
+	noun, plural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
 	selectElement, promptDeleteTraitSet, targetValue
@@ -113,7 +113,7 @@ const {
 					</div>
 
 					<!-- ATTACHED STRESS / TRACK -->
-					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress'">
 						<div class="editor-label">Attached Stress / Track</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" name="hasAttachedStress" v-model="hasAttachedStress">
@@ -161,7 +161,7 @@ const {
 						<textarea :id="'trait-set-desc-' + traitSetID" name="traitSetDescription" v-model="description"></textarea>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
 						<label :for="'trait-set-reserved-slots-' + traitSetID"><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
 						<div class="num-stepper">
 							<button type="button" class="btn-step" @click.stop="reservedSlots = Math.max(0, (reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1)" :disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0" title="Fewer reserved slots" aria-label="Fewer reserved slots">-</button>
@@ -170,7 +170,7 @@ const {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
 						<div class="editor-label">Trait Features</div>
 						<div class="editor-toggles">
 
@@ -187,7 +187,7 @@ const {
 					</div>
 
 					<!-- STATEMENT MODE -->
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots'">
 						<div class="editor-label">Statements</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" name="statementMode" v-model="isStatementSet">
@@ -286,16 +286,16 @@ const {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
 						<div class="editor-label">Nouns</div>
 						<div style="display: flex; gap: 0.5rem;">
 							<div style="flex: 1;">
 								<label :for="'trait-set-noun-singular-' + traitSetID" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Singular</label>
-								<input type="text" :id="'trait-set-noun-singular-' + traitSetID" name="nounSingular" v-model="nounSingular" placeholder="Trait">
+								<input type="text" :id="'trait-set-noun-singular-' + traitSetID" name="noun" v-model="noun" placeholder="Trait">
 							</div>
 							<div style="flex: 1;">
 								<label :for="'trait-set-noun-plural-' + traitSetID" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Plural</label>
-								<input type="text" :id="'trait-set-noun-plural-' + traitSetID" name="nounPlural" v-model="nounPlural" placeholder="Traits">
+								<input type="text" :id="'trait-set-noun-plural-' + traitSetID" name="plural" v-model="plural" placeholder="Traits">
 							</div>
 						</div>
 					</div>
@@ -333,7 +333,7 @@ const {
 					<TraitSetEditorLayout />
 
 					<!-- COLUMNS WITHIN SET -->
-					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
 						<label :for="'trait-set-' + traitSetID + '-columns'">Columns Within Set</label>
 						<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
 							<option :value="1">1 Column</option>
@@ -343,7 +343,7 @@ const {
 					</div>
 
 					<!-- RATING POSITION -->
-					<div class="editor-field" v-if="needsDiceUI && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'session-record' && styleBody !== 'angled-lines'">
+					<div class="editor-field" v-if="needsDiceUI && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
 						<label :for="'trait-set-' + traitSetID + '-rating-position'">Rating Position</label>
 						<select :id="'trait-set-' + traitSetID + '-rating-position'" name="ratingPosition" v-model="ratingPosition">
 							<option value="inline">Inline</option>

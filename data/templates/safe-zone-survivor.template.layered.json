@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Pre-fall life, current survival role, and future hope",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -125,9 +134,23 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Before:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -137,7 +160,19 @@
             }
           },
           "Now:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -147,7 +182,19 @@
             }
           },
           "Future:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -161,8 +208,6 @@
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Practical survival disciplines (d4-d6) with specialized traits (d8-d12)",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -199,6 +244,8 @@
             "height": 1
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Animals": {},
           "Athletics": {},
@@ -225,8 +272,6 @@
       "Attributes": {
         "id": "attributes",
         "description": "Core survival attributes",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -258,6 +303,8 @@
             "height": 1
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Analytical": {},
           "Forceful": {},
@@ -267,8 +314,6 @@
       "Relationships": {
         "id": "relationships",
         "description": "Ties to fellow survivors in the camp",
-        "nounSingular": "Relationship",
-        "nounPlural": "Relationships",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -299,13 +344,13 @@
             "height": 1
           }
         },
+        "noun": "Relationship",
+        "plural": "Relationships",
         "traits": {}
       },
       "Stress": {
         "id": "stress",
         "description": "Survivor stress and trauma",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -336,6 +381,8 @@
             "height": 1
           }
         },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {
           "Injured": {},
           "Isolated": {},
@@ -347,8 +394,6 @@
       "Talents": {
         "id": "talents",
         "description": "Survivor tricks and knacks",
-        "nounSingular": "Talent",
-        "nounPlural": "Talents",
         "view": {
           "features": {
             "description": true,
@@ -375,13 +420,13 @@
             "col3": "EFFECT"
           }
         },
+        "noun": "Talent",
+        "plural": "Talents",
         "traits": {}
       },
       "Growth Pool": {
         "id": "growth-pool",
         "description": "Survivor growth dice",
-        "nounSingular": "Growth Die",
-        "nounPlural": "Growth Dice",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -403,7 +448,6 @@
             12
           ],
           "multiDie": true,
-          "pool": true,
           "reservedSlots": 5,
           "place": {
             "left": "66.663%",
@@ -416,33 +460,106 @@
             "dice": "/ DICE"
           }
         },
+        "pool": true,
+        "noun": "Growth Die",
+        "plural": "Growth Dice",
         "traits": {
           "D4": {
-            "value": "d4",
+            "rating": {
+              "type": "Die",
+              "value": [
+                4
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
-            "value": "d12",
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }

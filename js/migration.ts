@@ -11,7 +11,6 @@
 
 import { cloneDeep } from './clone-deep.ts';
 import { buildParts, formatPct } from './spotlight-grid.ts';
-import { resolveSheetStyle, defaultNameHidden } from './model.ts';
 
 export const cortexMigration = {
 
@@ -33,7 +32,7 @@ export const cortexMigration = {
 
 	// Presentation keys resolve via the type layer (Phase-1 item 5) and never
 	// enter entity JSON. Dropped with a per-set warning.
-	PRESENTATION_KEYS: ['nounSingular', 'nounPlural', 'ratingPosition', 'statement',
+	PRESENTATION_KEYS: ['noun', 'plural', 'ratingPosition', 'statement',
 		'hasQuestionedPip', 'hasCounterColumn', 'counterLabel', 'attachedStress'] as string[],
 
 	isBlankName: function( name: unknown ) {
@@ -41,9 +40,7 @@ export const cortexMigration = {
 	},
 
 	// Attached stress lives as an ordinary companion subtrait named for the
-	// set's stress label (default "Stress"); absent means no stress. These
-	// are the retired storage keys it replaces (custom.stress / trait.stress
-	// / custom.isStressOut), converted wherever old data enters.
+	// set's stress label (default "Stress"); absent means no stress.
 	stressCompanionLabel: function( set: any ) {
 		const bag = ( set && ( set.view || ( set.custom && set.custom.cortexToolkit ) ) ) || {};
 		const labels = bag.labels;
@@ -51,59 +48,6 @@ export const cortexMigration = {
 		const legacy = bag.attachedStress;
 		if ( legacy && typeof legacy === 'object' && typeof legacy.label === 'string' && legacy.label.length ) return legacy.label;
 		return 'Stress';
-	},
-
-	// Array-form trait: fold retired stress keys into a companion subtrait.
-	migrateStressKeys: function( tr: any, label: string ) {
-		if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
-		const custom = ( tr.custom && typeof tr.custom === 'object' ) ? tr.custom : null;
-		const raw = ( custom && typeof custom.stress === 'number' ) ? custom.stress
-			: ( typeof tr.stress === 'number' ? tr.stress : 0 );
-		const outFlag = Boolean( custom && custom.isStressOut === true );
-		if ( custom ) {
-			delete custom.stress;
-			delete custom.isStressOut;
-			if ( Object.keys( custom ).length === 0 ) delete tr.custom;
-		}
-		if ( typeof tr.stress === 'number' ) delete tr.stress;
-		if ( !raw && !outFlag ) return;
-		if ( !Array.isArray( tr.traits ) ) tr.traits = [];
-		let companion = tr.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === label );
-		if ( !companion ) {
-			companion = { name: label, value: 0, dice: [] };
-			tr.traits.push( companion );
-		}
-		if ( raw > 0 && !( typeof companion.value === 'number' && companion.value > 0 ) &&
-			!( Array.isArray( companion.dice ) && companion.dice.length ) ) {
-			companion.value = raw;
-			companion.dice = [];
-		}
-		if ( outFlag ) companion.isOut = true;
-	},
-
-	// Layered-form trait: same fold into the traits map (dice shorthand).
-	migrateLayeredStressKeys: function( tr: any, label: string ) {
-		if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
-		const custom = ( tr.custom && typeof tr.custom === 'object' ) ? tr.custom : null;
-		const raw = ( custom && typeof custom.stress === 'number' ) ? custom.stress
-			: ( typeof tr.stress === 'number' ? tr.stress : 0 );
-		const outFlag = Boolean( custom && custom.isStressOut === true );
-		if ( custom ) {
-			delete custom.stress;
-			delete custom.isStressOut;
-			if ( Object.keys( custom ).length === 0 ) delete tr.custom;
-		}
-		if ( typeof tr.stress === 'number' ) delete tr.stress;
-		if ( !raw && !outFlag ) return;
-		if ( !tr.traits || typeof tr.traits !== 'object' || Array.isArray( tr.traits ) ) tr.traits = {};
-		const existing = tr.traits[label];
-		if ( existing === undefined || existing === null ) {
-			if ( raw > 0 && !outFlag ) tr.traits[label] = 'd' + raw;
-			else if ( raw > 0 ) tr.traits[label] = { value: 'd' + raw, isOut: true };
-			else tr.traits[label] = { isOut: true };
-		} else if ( outFlag && typeof existing === 'object' && !Array.isArray( existing ) ) {
-			existing.isOut = true;
-		}
 	},
 
 	isFillerDescription: function( text: unknown ) {
@@ -123,27 +67,7 @@ export const cortexMigration = {
 
 		const normalizeNode = ( node: any ) => {
 			if ( !node || typeof node !== 'object' ) return;
-			if ( node.custom && typeof node.custom === 'object' && node.custom.cortexToolkit !== undefined ) {
-				if ( node.view === undefined ) {
-					node.view = node.custom.cortexToolkit;
-				}
-				delete node.custom.cortexToolkit;
-				if ( Object.keys( node.custom ).length === 0 ) {
-					delete node.custom;
-				}
-			}
-		// Retired view keys (2026-10-22): headerRight read nowhere.
-		if ( node.view && typeof node.view === 'object' && !Array.isArray( node.view ) ) {
-			delete node.view.headerRight;
-			// Retired (2026-10-22): visibility is a hidden boolean now.
-			// 'hidden' carries over; 'shown' was the default (absent);
-			// editor-only meant visible in Edit, which is shown.
-			if ( node.view.visibility !== undefined ) {
-				if ( node.view.visibility === 'hidden' ) node.view.hidden = true;
-				delete node.view.visibility;
-			}
-		}
-		if ( node.portrait && typeof node.portrait === 'object' ) {
+			if ( node.portrait && typeof node.portrait === 'object' ) {
 				normalizeNode( node.portrait );
 			}
 			if ( Array.isArray( node.traitSets ) ) {
@@ -159,7 +83,7 @@ export const cortexMigration = {
 			traits.forEach( ( tr: any ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				normalizeNode( tr );
-				this.migrateStressKeys( tr, label );
+				this.migrateNodeRating( tr, false );
 				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits, label );
 				if ( Array.isArray( tr.sfx ) ) {
 					tr.sfx.forEach( ( s: any ) => {
@@ -172,12 +96,14 @@ export const cortexMigration = {
 		const normalizeSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
+			this.migrateNodeRating( set, true );
 			normalizeTraitsArray( set.traits, this.stressCompanionLabel( set ) );
 			if ( Array.isArray( set.sfx ) ) {
 				set.sfx.forEach( ( s: any ) => {
 					if ( s && typeof s === 'object' ) normalizeNode( s );
 				} );
 			}
+			this.migrateResourceSet( set );
 		};
 
 		const normalizeLayeredTraits = ( traits: any, label: string ) => {
@@ -185,7 +111,7 @@ export const cortexMigration = {
 			Object.values( traits ).forEach( ( tr: any ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				normalizeNode( tr );
-				this.migrateLayeredStressKeys( tr, label );
+				this.migrateNodeRating( tr, false );
 				if ( tr.traits ) normalizeLayeredTraits( tr.traits, label );
 			} );
 		};
@@ -193,84 +119,16 @@ export const cortexMigration = {
 		const normalizeLayeredSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
+			this.migrateNodeRating( set, true );
 			const label = this.stressCompanionLabel( set );
 			if ( set.traits ) normalizeLayeredTraits( set.traits, label );
 			if ( set.slots ) normalizeLayeredTraits( set.slots, label );
+			this.migrateResourceSet( set );
 		};
 
-		// Character-scope sheet style lives in exactly one place:
-		// view.style.sheet. Legacy keys (top-level view.sheetStyle, the
-		// view.style.hasAttributes set-type flag) resolve once here, then go.
-		// No reader checks set types; the style is data, not deduction.
-	const collapseSheetStyle = ( holder: any ) => {
-		if ( !holder || typeof holder !== 'object' ) return;
-		const view = holder.view;
-		if ( !view || typeof view !== 'object' || Array.isArray( view ) ) return;
-		const sheet = resolveSheetStyle( holder );
-		if ( !view.style || typeof view.style !== 'object' || Array.isArray( view.style ) ) {
-			view.style = {};
-		}
-		if ( view.style.sheet !== 'classic' && view.style.sheet !== 'spotlight' ) {
-			view.style.sheet = sheet;
-		}
-		delete view.sheetStyle;
-		delete view.style.hasAttributes;
-	};
-
-	// Retired bodies (2026-10-24): session-record / angled-lines unify
-	// into pips with the labels opt-in. Count, orientation (as per-row),
-	// and checked states carry over; rows default to Session/Sessions.
-	// A bare legacy checked list materializes into blank checked traits
-	// in array form (layered maps have no stable order to map it onto).
-	const SESSION_BODIES = [ 'session-record', 'angled-lines' ];
-	const blankSessionTrait = () => ({
-		name: '', value: 0, dice: [], traits: [], sfx: [], custom: { checked: true }
-	});
-	const migrateSessionSet = ( set: any ) => {
-		if ( !set || typeof set !== 'object' ) return;
-		const view = set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ? set.view : null;
-		if ( !view ) return;
-		const body = view.style && typeof view.style === 'object' && !Array.isArray( view.style ) ? view.style.body : undefined;
-		if ( typeof body !== 'string' || SESSION_BODIES.indexOf( body ) === -1 ) return;
-		const srec = view.sessionRecord && typeof view.sessionRecord === 'object' && !Array.isArray( view.sessionRecord )
-			? view.sessionRecord : {};
-		const reserve = Number( view.reservedSlots );
-		const configured = Number( srec.count ?? srec.boxCount ) || ( Number.isFinite( reserve ) && reserve > 0 ? reserve : 0 );
-		const count = configured > 0 ? configured : 20;
-		if ( !view.pips || typeof view.pips !== 'object' || Array.isArray( view.pips ) ) view.pips = {};
-		view.pips.labels = true;
-		view.pips.count = count;
-		view.pips.perRow = srec.orientation === 'horizontal' ? count : 1;
-		if ( Array.isArray( srec.checked ) && Array.isArray( set.traits ) ) {
-			srec.checked.forEach( ( n: unknown ) => {
-				const i = Number( n ) - 1;
-				if ( !Number.isInteger( i ) || i < 0 ) return;
-				while ( set.traits.length <= i ) set.traits.push( blankSessionTrait() );
-				const t = set.traits[ i ];
-				if ( t && typeof t === 'object' ) {
-					if ( !t.custom || typeof t.custom !== 'object' ) t.custom = {};
-					if ( t.custom.checked === undefined ) t.custom.checked = true;
-				}
-			} );
-		}
-		if ( !set.nounSingular || set.nounSingular === 'Milestone' ) set.nounSingular = 'Session';
-		if ( !set.nounPlural || set.nounPlural === 'Milestones' ) set.nounPlural = 'Sessions';
-		view.style.body = 'pips';
-		delete view.sessionRecord;
-	};
-	const migrateSessionBodies = ( holder: any ) => {
-		if ( !holder || typeof holder !== 'object' ) return;
-		if ( Array.isArray( holder.traitSets ) ) {
-			holder.traitSets.forEach( migrateSessionSet );
-		}
-		if ( holder.sets && typeof holder.sets === 'object' && !Array.isArray( holder.sets ) ) {
-			Object.values( holder.sets ).forEach( migrateSessionSet );
-		}
-	};
-	// The name block is the first trait set (view.style.body "name").
-	// Files predating it gain a synthesized one here so every later
-		// stage (merge, materialize, render, edit) sees the same shape;
-		// a legacy view.nameLabels bag folds into trait labels, then goes.
+		// The name block is the first trait set (view.style.body "name").
+		// Files predating it gain a synthesized one here so every later
+		// stage (merge, materialize, render, edit) sees the same shape.
 		const isNameSetNode = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return false;
 			const bag = set.view;
@@ -281,42 +139,8 @@ export const cortexMigration = {
 			// ('name' is reserved: ensureTraitSetIds never assigns it.)
 			return typeof set.id === 'string' && set.id === 'name';
 		};
-		const labelKeys: [string, string][] = [
-			[ 'nickname', 'nickname' ], [ 'pronouns', 'pronouns' ], [ 'description', 'description' ],
-			[ 'player', 'player' ], [ 'plotPoints', 'plotPoints' ], [ 'portraitCaption', 'caption' ],
-		];
-		const migrateNameLabels = ( list: any[], bag: any, holder: any ) => {
-			if ( !bag || typeof bag !== 'object' || Array.isArray( bag ) ) return;
-			for ( const [ bk, tk ] of labelKeys ) {
-				const v = bag[ bk ];
-				if ( typeof v !== 'string' || !v.trim().length ) continue;
-				let tr = list.find( ( t: any ) => t && typeof t === 'object' && t.name === tk );
-				if ( !tr ) {
-					tr = { name: tk, value: 0, dice: [], description: '', traits: [], sfx: [], tags: [] };
-					if ( defaultNameHidden( tk, holder ) ) tr.view = { hidden: true };
-					list.push( tr );
-				}
-				tr.label = v.trim();
-			}
-		};
-		const migrateNameLabelsMap = ( map: any, bag: any, holder: any ) => {
-			if ( !bag || typeof bag !== 'object' || Array.isArray( bag ) ) return;
-			for ( const [ bk, tk ] of labelKeys ) {
-				const v = bag[ bk ];
-				if ( typeof v !== 'string' || !v.trim().length ) continue;
-				const cur = map[ tk ];
-				if ( cur && typeof cur === 'object' && !Array.isArray( cur ) ) {
-					if ( cur.label === undefined ) cur.label = v.trim();
-				} else if ( defaultNameHidden( tk, holder ) ) {
-					map[ tk ] = { label: v.trim(), view: { hidden: true } };
-				} else {
-					map[ tk ] = { label: v.trim() };
-				}
-			}
-		};
 		const ensureNameSet = ( holder: any ) => {
 			if ( !holder || typeof holder !== 'object' ) return;
-			const bag = holder.view && typeof holder.view === 'object' ? holder.view.nameLabels : undefined;
 			if ( Array.isArray( holder.traitSets ) ) {
 				let set = holder.traitSets.find( ( s: any ) => isNameSetNode( s ) );
 				if ( !set ) {
@@ -326,7 +150,6 @@ export const cortexMigration = {
 				// Array form only: a layered set object riding in an array
 				// wrapper (placement pass) keeps its map form untouched.
 				if ( !set.traits ) set.traits = [];
-				if ( Array.isArray( set.traits ) ) migrateNameLabels( set.traits, bag, holder );
 			} else if ( holder.sets && typeof holder.sets === 'object' && !Array.isArray( holder.sets ) ) {
 				let key = Object.keys( holder.sets ).find( ( k: string ) => isNameSetNode( holder.sets[ k ] ) );
 				if ( !key ) {
@@ -335,14 +158,8 @@ export const cortexMigration = {
 				}
 				const set = holder.sets[ key ];
 				if ( !set.traits ) set.traits = {};
-				if ( set.traits && typeof set.traits === 'object' && !Array.isArray( set.traits ) ) {
-					migrateNameLabelsMap( set.traits, bag, holder );
-				}
 			} else {
 				return;
-			}
-			if ( holder.view && typeof holder.view === 'object' && !Array.isArray( holder.view ) ) {
-				delete holder.view.nameLabels;
 			}
 		};
 
@@ -350,20 +167,16 @@ export const cortexMigration = {
 		if ( obj.character && typeof obj.character === 'object' ) {
 			normalizeNode( obj.character );
 		}
-		collapseSheetStyle( obj );
-		if ( obj.character && typeof obj.character === 'object' ) {
-			collapseSheetStyle( obj.character );
-		}
 		ensureNameSet( obj );
 		if ( obj.character && typeof obj.character === 'object' ) {
 			ensureNameSet( obj.character );
 		}
-		migrateSessionBodies( obj );
+		this.migratePlotPoints( obj );
 		if ( obj.character && typeof obj.character === 'object' ) {
-			migrateSessionBodies( obj.character );
+			this.migratePlotPoints( obj.character );
 		}
 		if ( Array.isArray( obj.characters ) ) {
-			obj.characters.forEach( ( c: any ) => { collapseSheetStyle( c ); ensureNameSet( c ); migrateSessionBodies( c ); } );
+			obj.characters.forEach( ( c: any ) => { ensureNameSet( c ); this.migratePlotPoints( c ); } );
 		}
 		return obj;
 	},
@@ -383,32 +196,22 @@ export const cortexMigration = {
 		});
 	},
 
-	// Integer dice from the old model to "dX" strings. Uses the same read rule
-	// as getTraitDice: a non-empty dice array wins, otherwise the single value.
-	// Unknown sizes pass through as "d<n>" with a warning (surfaced, not invented).
-	diceStringsFor: function( trait: any, warnings: string[], path: string ): string[] {
+	// Integer dice from the old model. Uses the same read rule as
+	// getTraitDice: a non-empty dice array wins, otherwise the single value.
+	// Unknown sizes pass through with a warning (surfaced, not invented).
+	diceIntsFor: function( trait: any, warnings: string[], path: string ): number[] {
 		let nums: number[] = [];
 		if ( trait && Array.isArray( trait.dice ) && trait.dice.length ) {
 			nums = trait.dice.filter( ( d: unknown ) => typeof d === 'number' && d > 0 );
 		} else if ( trait && typeof trait.value === 'number' && trait.value > 0 ) {
 			nums = [ trait.value ];
 		}
-		return nums.map( n => {
+		nums.forEach( n => {
 			if ( this.DIE_SIZES.indexOf( n ) === -1 ) {
 				this.warn( warnings, path + ': unknown die size ' + n + ', kept as d' + n );
 			}
-			return 'd' + n;
 		} );
-	},
-
-	// Canonical dice form: descending size, count prefix, no separators.
-	canonicalDice: function( dice: string[] ): string {
-		const counts: Record<string, number> = {};
-		dice.forEach( d => { counts[d] = ( counts[d] || 0 ) + 1; } );
-		return Object.keys( counts )
-			.sort( ( a, b ) => parseInt( b.slice( 1 ), 10 ) - parseInt( a.slice( 1 ), 10 ) )
-			.map( d => ( counts[d] > 1 ? counts[d] : '' ) + d )
-			.join( '' );
+		return nums;
 	},
 
 	// Old sfx arrays (objects or the "hinder" literal) to named map + slots
@@ -477,6 +280,95 @@ export const cortexMigration = {
 
 	// Old trait object to [key, raw]. Returns null when the trait is dropped
 	// (blank print slots have no map form; reservation is presentation).
+	// Ratings have one shape (2026-10-23): { type, value: [], range: [] }.
+	// migrateNodeRating maps day-1 encodings in place (idempotent):
+	// numeric value/dice arrays become Die/Dice ratings, set nouns map
+	// onto noun/plural, Dice ratings gain spendable. Post-day-1 keys are
+	// not converted — they never shipped, so no file carries them.
+	normalizeRatingObject: function( r: any ): any | null {
+		if ( !r || typeof r !== 'object' || Array.isArray( r ) ) return null;
+		if ( r.type !== 'Counter' && r.type !== 'Die' && r.type !== 'Dice' && r.type !== 'Pip' ) return null;
+		const value = Array.isArray( r.value )
+			? r.value.filter( ( x: unknown ) => ( typeof x === 'number' && Number.isFinite( x ) ) || typeof x === 'boolean' )
+			: [];
+		const range = Array.isArray( r.range ) ? r.range.filter( ( x: unknown ) => typeof x === 'number' && Number.isFinite( x ) ) : [];
+		return { type: r.type, value: value, range: range.length ? range : [ 4, 6, 8, 10, 12 ] };
+	},
+
+	migrateNodeRating: function( node: any, isSet: boolean ) {
+		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) return node;
+		// Day-1 set nouns map onto the §1 words (noun, plural).
+		if ( isSet ) {
+			if ( typeof node.noun !== 'string' && typeof node.nounSingular === 'string' ) node.noun = node.nounSingular;
+			if ( typeof node.plural !== 'string' && typeof node.nounPlural === 'string' ) node.plural = node.nounPlural;
+			delete node.nounSingular;
+			delete node.nounPlural;
+		}
+		const LADDER = [ 4, 6, 8, 10, 12 ];
+		const legacyDiceArray = Array.isArray( node.dice ) ? node.dice.filter( ( d: unknown ) => typeof d === 'number' && ( d as number ) > 0 ) : [];
+		const legacySingle = typeof node.value === 'number' && node.value > 0 ? [ node.value ] : [];
+		// Canonical rating wins; legacy keys go once read.
+		let rating = node.rating === null ? null : this.normalizeRatingObject( node.rating );
+		if ( rating === null && node.rating !== null ) {
+			if ( legacyDiceArray.length > 1 ) {
+				const dice = legacyDiceArray.slice().sort( ( a: number, b: number ) => b - a );
+				rating = { type: 'Dice', value: dice, range: LADDER.slice() };
+			} else if ( legacyDiceArray.length === 1 || legacySingle.length === 1 ) {
+				const dice = legacyDiceArray.length ? legacyDiceArray : legacySingle;
+				rating = { type: 'Die', value: dice.slice(), range: LADDER.slice() };
+			}
+		}
+		if ( rating ) node.rating = rating;
+		else if ( node.rating !== null ) delete node.rating;
+		delete node.value;
+		delete node.dice;
+		// Dice ratings are spendable unless stated otherwise (preserves the
+		// spend control wherever multi-die dice exist).
+		if ( rating && rating.type === 'Dice' && node.spendable === undefined ) {
+			node.spendable = true;
+		}
+		return node;
+	},
+
+	// Resources stage whole and never hitch: rated traits gain spendable
+	// (unless stated) and the hitches exemption (unless stated).
+	migrateResourceSet: function( set: any ) {
+		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
+		const bag = set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ? set.view : {};
+		const body = bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) ? bag.style.body : undefined;
+		const hay = ( ( set.name || '' ) + ' ' + ( set.noun || '' ) + ' ' + ( set.plural || '' ) ).toLowerCase();
+		if ( body !== 'resources' && body !== 'dice-count' && hay.indexOf( 'resource' ) === -1 ) return;
+		const each = ( tr: any ) => {
+			if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
+			const r = this.normalizeRatingObject( tr.rating );
+			if ( !r || ( r.type !== 'Die' && r.type !== 'Dice' ) ) return;
+			if ( tr.spendable === undefined ) tr.spendable = true;
+			if ( tr.hitches === undefined ) tr.hitches = 0;
+		};
+		if ( Array.isArray( set.traits ) ) set.traits.forEach( each );
+		else if ( set.traits && typeof set.traits === 'object' ) Object.values( set.traits ).forEach( each );
+	},
+
+	// Plot Points is a Counter on a name-set trait (spendable, [0, 20]).
+	// The character field stays the interchange value; the trait is canonical.
+	migratePlotPoints: function( holder: any ) {
+		if ( !holder || typeof holder !== 'object' || Array.isArray( holder ) ) return;
+		if ( typeof holder.plotPoints !== 'number' || !Number.isFinite( holder.plotPoints ) ) return;
+		const sets = Array.isArray( holder.traitSets ) ? holder.traitSets : [];
+		const nset = sets.find( ( s: any ) => s && typeof s === 'object' &&
+			( ( s.view && typeof s.view === 'object' && s.view.style && typeof s.view.style === 'object' && s.view.style.body === 'name' ) || s.id === 'name' ) );
+		if ( !nset ) return;
+		if ( !Array.isArray( nset.traits ) ) nset.traits = [];
+		let tr = nset.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === 'plotPoints' );
+		if ( !tr ) {
+			tr = { name: 'plotPoints', description: '', traits: [], sfx: [], tags: [] };
+			nset.traits.push( tr );
+		}
+		const n = Math.max( 0, Math.floor( holder.plotPoints ) );
+		tr.rating = { type: 'Counter', value: [ n ], range: [ 0, 20 ] };
+		if ( tr.spendable === undefined ) tr.spendable = true;
+	},
+
 	migrateTrait: function( old: any, warnings: string[], path: string ): { key: string; raw: any } | null {
 		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
 			this.warn( warnings, path + ': dropped non-object trait' );
@@ -489,13 +381,13 @@ export const cortexMigration = {
 		}
 		const here = path + '/' + key;
 		const node: any = {};
-		const dice = this.diceStringsFor( old, warnings, here );
-		let single: string | null = null;
-		if ( dice.length > 1 ) {
-			node.value = this.canonicalDice( dice );
-			node.pool = true;
-		} else if ( dice.length === 1 ) {
-			single = dice[0];
+		const nums = this.diceIntsFor( old, warnings, here );
+		let single: number | null = null;
+		if ( nums.length > 1 ) {
+			node.rating = { type: 'Dice', value: nums.slice().sort( ( a: number, b: number ) => b - a ), range: [ 4, 6, 8, 10, 12 ] };
+			node.spendable = true;
+		} else if ( nums.length === 1 ) {
+			single = nums[0];
 		}
 		const desc = ( typeof old.description === 'string' && old.description.length && !this.isFillerDescription( old.description ) )
 			? old.description : null;
@@ -544,8 +436,8 @@ export const cortexMigration = {
 			} );
 		}
 		const keys = Object.keys( node );
-		if ( keys.length === 0 && single ) return { key: key, raw: single };
-		if ( single ) node.value = single;
+		if ( keys.length === 0 && single ) return { key: key, raw: { rating: { type: 'Die', value: [ single ], range: [ 4, 6, 8, 10, 12 ] } } };
+		if ( single ) node.rating = { type: 'Die', value: [ single ], range: [ 4, 6, 8, 10, 12 ] };
 		return { key: key, raw: node };
 	},
 
@@ -569,6 +461,10 @@ export const cortexMigration = {
 		}
 		const droppedPresentation: string[] = [];
 		this.PRESENTATION_KEYS.forEach( ( k: string ) => {
+			if ( old[k] !== undefined && old[k] !== null ) droppedPresentation.push( k );
+		} );
+		// Day-1 noun words report under their old names.
+		[ 'nounSingular', 'nounPlural' ].forEach( ( k: string ) => {
 			if ( old[k] !== undefined && old[k] !== null ) droppedPresentation.push( k );
 		} );
 		if ( old.custom && typeof old.custom === 'object' && Object.keys( old.custom ).length ) droppedPresentation.push( 'custom' );
@@ -762,20 +658,27 @@ export const cortexMigration = {
 	//   layers; it is future work.
 
 	// Scalar trait keys carried verbatim (presence preserved) in templates.
-	TEMPLATE_TRAIT_SCALARS: ['label', 'description', 'statement', 'questioned', 'xp', 'counter', 'ratingPosition', 'tags'] as string[],
+	TEMPLATE_TRAIT_SCALARS: ['label', 'description', 'statement', 'questioned', 'xp', 'counter', 'ratingPosition', 'tags', 'pool', 'spendable', 'hitches', 'keepsExtra'] as string[],
 
-	migrateTemplateTrait: function( old: any, warnings: string[], path: string, stressLabel?: string ): any {
+	migrateTemplateTrait: function( old: any, warnings: string[], path: string ): any {
 		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
 			this.warn( warnings, path + ': dropped non-object trait' );
 			return null;
 		}
 		const node: any = {};
-		const dice = this.diceStringsFor( old, warnings, path );
-		if ( dice.length > 1 ) {
-			node.value = this.canonicalDice( dice );
-			node.pool = true;
-		} else if ( dice.length === 1 ) {
-			node.value = dice[0];
+		// normalizeView already converted ratings; read the canonical
+		// object, falling back to day-1 numeric keys for un-normalized input.
+		const existing = this.normalizeRatingObject( old.rating );
+		if ( existing ) {
+			node.rating = existing;
+		} else {
+			const nums = this.diceIntsFor( old, warnings, path );
+			if ( nums.length > 1 ) {
+				node.rating = { type: 'Dice', value: nums.slice().sort( ( a: number, b: number ) => b - a ), range: [ 4, 6, 8, 10, 12 ] };
+				if ( old.spendable === undefined ) node.spendable = true;
+			} else if ( nums.length === 1 ) {
+				node.rating = { type: 'Die', value: nums.slice(), range: [ 4, 6, 8, 10, 12 ] };
+			}
 		}
 		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
 			if ( old[k] === undefined ) return;
@@ -786,37 +689,16 @@ export const cortexMigration = {
 			node[k] = ( Array.isArray( old[k] ) ) ? old[k].slice() : old[k];
 		} );
 		if ( old.view !== undefined ) node.view = cloneDeep( old.view );
-		if ( old.custom !== undefined ) {
-			const rest = Object.keys( old.custom ).filter( ( ck: string ) => ck !== 'stress' && ck !== 'isStressOut' );
-			if ( rest.length ) {
-				node.custom = {};
-				rest.forEach( ( ck: string ) => { node.custom[ck] = cloneDeep( old.custom[ck] ); } );
-			}
+		if ( old.custom !== undefined && !( typeof old.custom === 'object' && !Array.isArray( old.custom ) && !Object.keys( old.custom ).length ) ) {
+			node.custom = cloneDeep( old.custom );
 		}
 		if ( old.id !== undefined ) {
 			this.warn( warnings, path + ': dropped trait-level id (D1)' );
 		}
-		const subs = this.splitTemplateTraits( old.traits, warnings, path, stressLabel );
+		const subs = this.splitTemplateTraits( old.traits, warnings, path );
 		if ( subs && ( Object.keys( subs.map ).length || Object.keys( subs.slots ).length ) ) {
 			if ( Object.keys( subs.map ).length ) node.traits = subs.map;
 			if ( Object.keys( subs.slots ).length ) node.slots = subs.slots;
-		}
-		// Retired stress keys become a companion subtrait (addendum
-		// 2026-10-20); zero/absent means no stress.
-		const label = ( typeof stressLabel === 'string' && stressLabel.length ) ? stressLabel : 'Stress';
-		const customBag = ( old.custom && typeof old.custom === 'object' ) ? old.custom : {};
-		const stressRaw = ( typeof customBag.stress === 'number' ) ? customBag.stress
-			: ( typeof old.stress === 'number' ? old.stress : 0 );
-		const stressOut = customBag.isStressOut === true;
-		if ( stressRaw > 0 || stressOut ) {
-			if ( !node.traits ) node.traits = {};
-			if ( node.traits[label] === undefined || node.traits[label] === null ) {
-				if ( stressRaw > 0 && !stressOut ) node.traits[label] = 'd' + stressRaw;
-				else if ( stressRaw > 0 ) node.traits[label] = { value: 'd' + stressRaw, isOut: true };
-				else node.traits[label] = { isOut: true };
-			} else if ( stressOut && typeof node.traits[label] === 'object' && !Array.isArray( node.traits[label] ) ) {
-				node.traits[label].isOut = true;
-			}
 		}
 		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
 			if ( !node.traits ) node.traits = {};
@@ -828,15 +710,15 @@ export const cortexMigration = {
 	// Split an old traits array into named map (source order) + slots object
 	// keyed by 0-based position in the full trait order. Pure SFX containers
 	// take no position (addressed, not positional).
-	splitTemplateTraits: function( traits: any, warnings: string[], path: string, stressLabel?: string ) {
+	splitTemplateTraits: function( traits: any, warnings: string[], path: string ) {
 		const map: any = {}, slots: any = {};
 		( Array.isArray( traits ) ? traits : [] ).forEach( ( tr: any, i: number ) => {
 			if ( tr && typeof tr === 'object' && !Array.isArray( tr ) && typeof tr.name === 'string' && tr.name.length ) {
 				const key = tr.name;
 				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate trait ' + JSON.stringify( key ) + ', last wins' );
-				map[key] = this.migrateTemplateTrait( tr, warnings, path + '/' + key, stressLabel );
+				map[key] = this.migrateTemplateTrait( tr, warnings, path + '/' + key );
 			} else if ( tr && typeof tr === 'object' && !Array.isArray( tr ) ) {
-				slots[String( i )] = this.migrateTemplateTrait( tr, warnings, path + '/slot' + i, stressLabel );
+				slots[String( i )] = this.migrateTemplateTrait( tr, warnings, path + '/slot' + i );
 			} else {
 				this.warn( warnings, path + ': dropped non-object trait entry' );
 			}
@@ -881,7 +763,7 @@ export const cortexMigration = {
 			if ( k === 'custom' && old[k] && typeof old[k] === 'object' && !Object.keys( old[k] ).length ) return;
 			set[k] = cloneDeep( old[k] );
 		} );
-		const split = this.splitTemplateTraits( old.traits, warnings, here, this.stressCompanionLabel( old ) );
+		const split = this.splitTemplateTraits( old.traits, warnings, here );
 		set.traits = split.map;
 		if ( Object.keys( split.slots ).length ) set.slots = split.slots;
 		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
@@ -957,26 +839,18 @@ export const cortexMigration = {
 	// ---------- Unmigrate (layered template back to old form) ----------
 	// Mechanical inverse for parity proof. Re-adds old-format markers.
 
-	unmigrateDieString: function( value: any, warnings: string[], path: string ) {
-		if ( value === undefined ) return { value: 0, dice: [] };
-		if ( typeof value !== 'string' ) {
-			this.warn( warnings, path + ': non-string value kept as unrated' );
-			return { value: 0, dice: [] };
+	// Layered rating objects to the array-model rating. Canonical emit is
+	// always the object; anything else reads as unrated with a warning.
+	unmigrateRating: function( value: any, warnings: string[], path: string ): any | null {
+		if ( value === undefined || value === null ) return null;
+		if ( typeof value === 'object' && !Array.isArray( value ) ) {
+			const r = this.normalizeRatingObject( value );
+			if ( r ) return r;
+			this.warn( warnings, path + ': malformed rating kept as unrated' );
+			return null;
 		}
-		const re = /(\d*)d(4|6|8|10|12|20)/g;
-		let m: RegExpExecArray | null;
-		const dice: number[] = [];
-		while ( ( m = re.exec( value ) ) !== null ) {
-			const n = parseInt( m[2], 10 );
-			const count = m[1] === '' ? 1 : parseInt( m[1], 10 );
-			for ( let i = 0; i < count; i++ ) dice.push( n );
-		}
-		if ( !dice.length ) {
-			this.warn( warnings, path + ': unparseable value ' + JSON.stringify( value ) + ', kept as unrated' );
-			return { value: 0, dice: [] };
-		}
-		if ( dice.length === 1 ) return { value: dice[0], dice: [] };
-		return { value: dice[0], dice: dice };
+		this.warn( warnings, path + ': non-object rating kept as unrated' );
+		return null;
 	},
 
 	unmigrateTemplateTrait: function( name: string, node: any, warnings: string[], path: string ): any {
@@ -986,15 +860,18 @@ export const cortexMigration = {
 			return null;
 		}
 		if ( typeof node === 'string' ) {
-			const d = this.unmigrateDieString( node, warnings, here );
-			return { name: name, value: d.value, dice: d.dice, traits: [], sfx: [] };
+			const tr: any = { name: name, traits: [], sfx: [] };
+			const r = this.unmigrateRating( node, warnings, here );
+			if ( r ) tr.rating = r;
+			return tr;
 		}
 		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) {
 			this.warn( warnings, here + ': malformed trait, dropped' );
 			return null;
 		}
-		const d = this.unmigrateDieString( node.value, warnings, here );
-		const tr: any = { name: name, value: d.value, dice: d.dice };
+		const tr: any = { name: name };
+		const r = this.unmigrateRating( node.rating !== undefined ? node.rating : node.value, warnings, here );
+		if ( r ) tr.rating = r;
 		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
 			if ( node[k] !== undefined ) tr[k] = cloneDeep( node[k] );
 		} );

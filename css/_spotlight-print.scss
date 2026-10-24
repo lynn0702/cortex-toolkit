@@ -1759,16 +1759,41 @@
 					font-weight: 700;
 					text-transform: uppercase;
 					letter-spacing: 0.04em;
-					cursor: pointer;
 					min-width: 0;
 					overflow-wrap: break-word;
+					border-bottom: 1px solid #000000;
+					flex: 1 1 auto;
 				}
 
-				.pip-label-blank {
-					font-size: var(--text-meta);
-					font-style: italic;
-					opacity: 0.6;
-					cursor: pointer;
+				.pip-label-input {
+					font: inherit;
+					font-size: var(--text-trait-title);
+					font-weight: 700;
+					text-transform: uppercase;
+					letter-spacing: 0.04em;
+					color: inherit;
+					background: transparent;
+					border: none;
+					border-bottom: 1px solid #000000;
+					border-radius: 0;
+					padding: 0 0 1px 0;
+					margin: 0;
+					min-width: 0;
+					flex: 1 1 auto;
+
+					&::placeholder {
+						font-weight: 400;
+						text-transform: none;
+						letter-spacing: 0;
+						font-style: italic;
+						opacity: 0.55;
+					}
+
+					&:focus {
+						outline: none;
+						border-bottom-width: 2px;
+						padding-bottom: 0;
+					}
 				}
 			}
 		}
@@ -3492,3 +3517,39 @@ body:has(.character-sheet.submode-print) .main {
    long sfx blocks (Eidolon) without touching glyph sizes. */
 .character-sheet.spotlight-print-style .trait-set-style-distinctions .trait-sfx li,
 .character-sheet.spotlight-print-style .trait-set-style-distinctions .trait-description { line-height: 1.05; }
+
+/* Long names must not overspill (2026-10-23): on lines where a name
+   renders inline with a right-aligned rating scale, the name wraps
+   and/or the scale drops to its own row. The container edge is a wall.
+   Applies in Edit, Play, and Print (all render .character-sheet). */
+.character-sheet .paired-slot-sub-row {
+	flex-wrap: wrap;
+}
+.character-sheet .paired-slot-sub-label {
+	white-space: normal;
+	flex: 1 1 8rem;
+	min-width: 0;
+	overflow-wrap: break-word;
+}
+.character-sheet .trait-name,
+.character-sheet .die-row-name,
+.character-sheet .ladder-name,
+.character-sheet .subtrait-name,
+.character-sheet .paired-slot-name-text {
+	min-width: 0;
+	overflow-wrap: break-word;
+}
+.character-sheet .trait-value,
+.character-sheet .subtrait-value,
+.character-sheet .die-row-counter,
+.character-sheet .dice-count-track {
+	flex-shrink: 0;
+}
+.character-sheet .die-row,
+.character-sheet .branch-slot,
+.character-sheet .dice-count-row,
+.character-sheet .ladder-rung,
+.character-sheet .subtrait {
+	flex-wrap: wrap;
+	min-width: 0;
+}

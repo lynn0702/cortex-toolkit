@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Attributes": {
         "id": "handler-attributes",
         "description": "Neural synchronization and handler capabilities",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -146,6 +155,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Prowess": {},
           "Control": {},
@@ -155,8 +166,6 @@
       "Roles": {
         "id": "roles",
         "description": "Combat roles and tactical responsibilities",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "features": {
             "description": false,
@@ -199,6 +208,8 @@
             }
           }
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Backup": {},
           "Blaster": {},
@@ -210,8 +221,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Personal identity, public persona, and driving aspiration",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -236,9 +245,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Identity:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -256,7 +279,19 @@
             }
           },
           "Persona:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -274,7 +309,19 @@
             }
           },
           "Aspiration:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -296,8 +343,6 @@
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Handler cockpit gear and personal assets",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -327,12 +372,12 @@
             "height": 1
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Complications": {
         "id": "complications",
-        "nounSingular": "Complication",
-        "nounPlural": "Complications",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -355,6 +400,8 @@
           ],
           "reservedSlots": 2
         },
+        "noun": "Complication",
+        "plural": "Complications",
         "traits": {}
       }
     }

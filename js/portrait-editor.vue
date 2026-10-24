@@ -79,19 +79,24 @@ function setCaptionText( val: string ) {
 	updateCharacter( props.character );
 }
 
-function portraitHidden() {
+function portraitVisibility() {
 	const t = cortexFunctions.getNameTrait( props.character, 'portrait' );
-	return getView( t )?.hidden === true;
+	const v = getView( t ) as Record<string, unknown> | undefined;
+	const word = v?.visibility;
+	if ( word === 'hidden' || word === 'editor-only' || word === 'shown' ) return word;
+	return 'shown';
 }
 
-function setPortraitHidden( hidden: boolean ) {
+function togglePortraitVisibility() {
+	const cur = portraitVisibility();
+	const next = cur === 'shown' ? 'editor-only' : cur === 'editor-only' ? 'hidden' : 'shown';
 	const t = cortexFunctions.ensureNameTrait( props.character, 'portrait' );
 	if ( !t ) return;
-	if ( hidden ) {
-		ensureView( t ).hidden = true;
+	const v = ensureView( t ) as Record<string, unknown>;
+	if ( next === 'shown' ) {
+		delete v.visibility;
 	} else {
-		const v = getView( t );
-		if ( v && typeof v === 'object' ) delete v.hidden;
+		v.visibility = next;
 	}
 	updateCharacter( props.character );
 }
@@ -256,7 +261,7 @@ function updateCharacter( character: any ) {
 					<div class="editor-field">
 						<div class="name-heading-row">
 							<label for="portrait-field-caption">Caption</label>
-							<visibility-eye :visible="!portraitHidden()" @toggle="setPortraitHidden(!portraitHidden())" title="Portrait visibility" />
+							<visibility-eye :state="portraitVisibility()" @toggle="togglePortraitVisibility()" title="Portrait visibility" />
 						</div>
 						<input type="text" id="portrait-field-caption" name="portraitCaption" :value="captionText()" @change="setCaptionText(targetValue($event))" placeholder="Caption under the portrait">
 					</div>

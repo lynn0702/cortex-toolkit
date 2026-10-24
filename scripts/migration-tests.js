@@ -21,20 +21,24 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(warnings.length > 0, 'filler/presentation drops are reported', warnings.length);
   ok(JSON.stringify(Object.keys(data.sets).sort()) === JSON.stringify(Object.keys(layered.sets).sort()),
     'set names match reference', Object.keys(data.sets));
-  const asTrait = (raw) => (typeof raw === 'string' ? { value: raw } : raw);
+  const asRating = (raw) => (raw && typeof raw === 'object' ? raw.rating : undefined);
   for (const setName of Object.keys(layered.sets)) {
     for (const tName of Object.keys(layered.sets[setName].traits)) {
-      const want = asTrait(layered.sets[setName].traits[tName]);
-      const got = asTrait(data.sets[setName] && data.sets[setName].traits[tName]);
-      ok(got && got.value === want.value, `die kept ${setName}/${tName}`, got);
+      const want = asRating(layered.sets[setName].traits[tName]);
+      const got = asRating(data.sets[setName] && data.sets[setName].traits[tName]);
+      ok(got && want && got.type === want.type && JSON.stringify(got.value) === JSON.stringify(want.value), `die kept ${setName}/${tName}`, got);
     }
   }
-  ok(data.sets.Attributes.traits.Strength === 'd8', 'single-die shorthand');
-  ok(data.sets.Distinctions.traits.Druid.value === 'd10', 'die kept alongside SFX traits');
+  ok(data.sets.Attributes.traits.Strength.rating && data.sets.Attributes.traits.Strength.rating.type === 'Die' &&
+    JSON.stringify(data.sets.Attributes.traits.Strength.rating.value) === '[8]', 'single-die rating object');
+  ok(data.sets.Distinctions.traits.Druid.rating && data.sets.Distinctions.traits.Druid.rating.type === 'Die' &&
+    JSON.stringify(data.sets.Distinctions.traits.Druid.rating.value) === '[10]', 'die kept alongside SFX traits');
   const hinder = (((data.sets.Distinctions.traits['Half-Orc'] || {}).traits || {}).SFX || {}).traits;
   ok(hinder && hinder.Hinder !== undefined, 'hinder literal becomes Hinder trait');
   const ath = data.sets.Skills.traits.Athletics;
-  ok(ath && ath.value === 'd6' && ath.traits.Jump === 'd6' && ath.traits.Swim === 'd10' && ath.traits.Climb === 'd8',
+  const subVal = (t, n) => t && t.traits && t.traits[n] && t.traits[n].rating && t.traits[n].rating.value;
+  ok(ath && ath.rating && JSON.stringify(ath.rating.value) === '[6]' &&
+    JSON.stringify(subVal(ath, 'Jump')) === '[6]' && JSON.stringify(subVal(ath, 'Swim')) === '[10]' && JSON.stringify(subVal(ath, 'Climb')) === '[8]',
     'subtraits recurse as maps', ath);
 }
 
@@ -63,7 +67,7 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(blob.indexOf('"sfx":[') === -1, 'no array-form sfx');
 }
 
-// ---- 4. Multi-die ratings become pool traits with canonical dice strings.
+// ---- 4. Multi-die ratings become Dice ratings (spendable, no pool flag).
 {
   const old = {
     id: 'c1', name: 'P', traitSets: [
@@ -72,7 +76,8 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   };
   const { data } = M.migrateCharacter(old);
   const ammo = data.sets.Resources.traits.Ammo;
-  ok(ammo && ammo.value === '2d8d6' && ammo.pool === true, 'multi-die to pool', ammo);
+  ok(ammo && ammo.rating && ammo.rating.type === 'Dice' && JSON.stringify(ammo.rating.value) === '[8,8,6]' &&
+    ammo.spendable === true && ammo.pool === undefined, 'multi-die to Dice rating', ammo);
 }
 
 // ---- 5. removedTraits become local nulls.
@@ -143,7 +148,7 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   };
   const { data, warnings } = M.migrateCharacter(old);
   const w = data.sets.S.traits.Weird;
-  ok((w === 'd2' || (w && w.value === 'd2')) && warnings.some((x) => x.indexOf('unknown die size 2') !== -1),
+  ok((w && w.rating && w.rating.type === 'Die' && JSON.stringify(w.rating.value) === '[2]') && warnings.some((x) => x.indexOf('unknown die size 2') !== -1),
     'unknown size surfaces with warning', w);
 }
 
@@ -219,59 +224,50 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
 
 // ---- 12. normalizeView migration seam.
 {
-  // 12a. Legacy custom.cortexToolkit migrates to view and cleans up empty custom
+  // 12a. The cortexToolkit compartment passes through normalizeView
+  // untouched (access-time promotion lives in ensureView, not here).
   const obj1 = {
-    custom: { cortexToolkit: { sheetStyle: 'spotlight', columns: 2 } },
+    custom: { cortexToolkit: { columns: 2 } },
     portrait: { custom: { cortexToolkit: { size: 'spotlight' } } },
     traitSets: [
       { name: 'Distinctions', custom: { cortexToolkit: { style: { header: 'default', body: 'default' } } } },
     ],
   };
   M.normalizeView(obj1);
-  ok(obj1.view && obj1.view.style && obj1.view.style.sheet === 'spotlight' && obj1.view.columns === 2, 'char custom.cortexToolkit migrated to view.style');
-  ok(obj1.custom === undefined, 'empty custom cleaned up on character');
-  ok(obj1.portrait.view && obj1.portrait.view.size === 'spotlight', 'portrait custom.cortexToolkit migrated to view');
-  ok(obj1.portrait.custom === undefined, 'empty custom cleaned up on portrait');
+  ok(obj1.custom && obj1.custom.cortexToolkit && obj1.custom.cortexToolkit.columns === 2, 'char compartment passes through');
+  ok(obj1.portrait.custom && obj1.portrait.custom.cortexToolkit, 'portrait compartment passes through');
   const dset = obj1.traitSets.find((s) => s.name === 'Distinctions');
-  ok(dset.view && dset.view.style.body === 'default', 'set custom.cortexToolkit migrated to view');
-  ok(dset.custom === undefined, 'empty custom cleaned up on traitSet');
+  ok(dset.custom && dset.custom.cortexToolkit, 'set compartment passes through');
 
-  // 12b. Conflict resolution: view wins, legacy dropped
+  // 12b. View bags pass through untouched.
   const obj2 = {
     view: { columns: 3, pageCount: 2 },
     custom: { cortexToolkit: { columns: 2, pageCount: 1, extraKey: 'legacy' } },
   };
   M.normalizeView(obj2);
-  ok(obj2.view.columns === 3, 'view wins on conflict (columns)');
-  ok(obj2.view.pageCount === 2, 'view wins on conflict (pageCount)');
-  ok(obj2.view.extraKey === undefined, 'legacy bag dropped completely when view exists');
-  ok(obj2.custom === undefined, 'custom.cortexToolkit cleaned up');
+  ok(obj2.view.columns === 3, 'view untouched (columns)');
+  ok(obj2.view.pageCount === 2, 'view untouched (pageCount)');
+  ok(obj2.view.extraKey === undefined, 'nothing merges into view');
+  ok(obj2.custom && obj2.custom.cortexToolkit, 'compartment untouched');
 
-  // 12c. Non-cortexToolkit custom keys (e.g. custom.stress) pass through untouched
+  // 12c. Non-compartment custom keys pass through untouched.
   const obj3 = {
     custom: {
-      cortexToolkit: { sheetStyle: 'classic' },
       stress: { physical: 6, mental: 8 },
     },
   };
   M.normalizeView(obj3);
-  ok(obj3.view && obj3.view.style && obj3.view.style.sheet === 'classic', 'view migrated to style.sheet');
-  ok(obj3.custom && obj3.custom.cortexToolkit === undefined, 'cortexToolkit removed from custom');
   ok(obj3.custom && obj3.custom.stress && obj3.custom.stress.physical === 6, 'custom.stress preserved');
 
   // 12d. Name set synthesis: legacy files predate the name block.
   const obj4 = {
     name: 'Hero', player: 'Maya',
-    view: { nameLabels: { pronouns: 'Ruin', player: 'GM:' } },
+    view: {},
     traitSets: [{ id: 'd', name: 'Distinctions', traits: [], sfx: [] }],
   };
   M.normalizeView(obj4);
   ok(obj4.traitSets[0].id === 'name' && obj4.traitSets[0].view.style.body === 'name', 'name set synthesized first');
-  const pronouns = obj4.traitSets[0].traits.find((t) => t.name === 'pronouns');
-  ok(pronouns && pronouns.label === 'Ruin', 'legacy pronouns label migrated', pronouns);
-  const player = obj4.traitSets[0].traits.find((t) => t.name === 'player');
-  ok(player && player.label === 'GM:', 'legacy player word migrated');
-  ok(obj4.view.nameLabels === undefined, 'legacy nameLabels bag gone');
+  ok(obj4.traitSets[0].traits.length === 0, 'synthesis adds no traits');
   ok(obj4.traitSets[1].name === 'Distinctions', 'content sets keep order');
 
   // 12e. Existing name sets pass through untouched (no duplicates).
@@ -293,57 +289,19 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(obj7.sets.Name.traits.pronouns && obj7.sets.Name.traits.pronouns.label === 'Ruin', 'stored name overrides survive normalize', obj7.sets.Name.traits);
 }
 
-// ---- 13. Sheet style collapses to view.style.sheet; set-type flags go.
+// ---- 13. Sheet style: view.style.sheet is the only stored key.
 {
-  // 13a. Legacy top-level sheetStyle folds into style.sheet.
-  const a = { view: { sheetStyle: 'spotlight', columns: 2 }, traitSets: [] };
+  // 13a. Stored style.sheet passes through untouched.
+  const a = { view: { style: { sheet: 'spotlight' }, columns: 2 }, traitSets: [] };
   M.normalizeView(a);
-  ok(a.view.style.sheet === 'spotlight', 'sheetStyle folds to style.sheet', a.view);
-  ok(a.view.sheetStyle === undefined, 'top-level sheetStyle gone');
+  ok(a.view.style.sheet === 'spotlight', 'style.sheet passes through', a.view);
 
-  // 13b. The hasAttributes set-type flag resolves once, then goes.
-  const b = { view: { style: { hasAttributes: false } }, traitSets: [] };
-  M.normalizeView(b);
-  ok(b.view.style.sheet === 'spotlight', 'hasAttributes:false means spotlight', b.view.style);
-  ok(b.view.style.hasAttributes === undefined, 'hasAttributes gone');
-
-  // 13c. An explicit style.sheet is never overridden.
-  const c = { view: { style: { sheet: 'classic' }, sheetStyle: 'spotlight' }, traitSets: [] };
-  M.normalizeView(c);
-  ok(c.view.style.sheet === 'classic', 'explicit style.sheet wins', c.view.style);
-  ok(c.view.sheetStyle === undefined, 'stale sheetStyle still dropped');
-
-  // 13d. Bare legacy files default classic (the old reader default).
+  // 13b. Bare files carry no sheet key (reads default classic).
   const d = { view: {}, traitSets: [] };
   M.normalizeView(d);
-  ok(d.view.style.sheet === 'classic', 'bare view defaults classic', d.view.style);
+  ok(d.view.style === undefined, 'no sheet key synthesized', d.view);
 
-  // 13e. Sheet-template links still mean spotlight.
-  const e = { view: {}, sheet: { template: { id: 't' } }, traitSets: [] };
-  M.normalizeView(e);
-  ok(e.view.style.sheet === 'spotlight', 'template link means spotlight', e.view.style);
-
-  // 13f. Folded name traits carry style-honest hidden flags: PP hides in
-  // spotlight (no zone renders it), shows in classic (badge renders it).
-  const f = {
-    view: { style: { sheet: 'spotlight' }, nameLabels: { plotPoints: 'PP', player: 'GM:' } },
-    traitSets: [{ id: 'd', name: 'Distinctions', traits: [], sfx: [] }],
-  };
-  M.normalizeView(f);
-  const fpp = f.traitSets[0].traits.find((t) => t.name === 'plotPoints');
-  const fpl = f.traitSets[0].traits.find((t) => t.name === 'player');
-  ok(fpp && fpp.view && fpp.view.hidden === true, 'folded PP hidden in spotlight', fpp);
-  ok(fpl && (fpl.view === undefined || fpl.view.hidden !== true), 'folded player stays shown', fpl);
-  const g = {
-    view: { nameLabels: { plotPoints: 'PP' } },
-    traitSets: [{ id: 'd', name: 'Distinctions', traits: [], sfx: [] }],
-  };
-  M.normalizeView(g);
-  const gpp = g.traitSets[0].traits.find((t) => t.name === 'plotPoints');
-  ok(gpp && (gpp.view === undefined || gpp.view.hidden !== true), 'folded PP shown in classic', gpp);
-
-  // 13g. The retired visibility word converts: hidden carries, shown and
-  // editor-only dissolve into absence.
+  // 13c. Visibility words pass through untouched.
   const h = {
     view: {},
     traitSets: [{
@@ -356,64 +314,31 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   };
   M.normalizeView(h);
   const [ha, hb, hc] = h.traitSets[1].traits;
-  ok(ha.view.hidden === true && ha.view.visibility === undefined, 'hidden carries as a boolean', ha.view);
-  ok(hb.view.visibility === undefined && hb.view.hidden === undefined, 'shown dissolves', hb.view);
-  ok(hc.view.visibility === undefined && hc.view.hidden === undefined, 'editor-only dissolves', hc.view);
+  ok(ha.view.visibility === 'hidden', 'hidden carries', ha.view);
+  ok(hb.view.visibility === 'shown', 'shown carries', hb.view);
+  ok(hc.view.visibility === 'editor-only', 'editor-only carries', hc.view);
+  ok(ha.rating && ha.rating.type === 'Die' && JSON.stringify(ha.rating.value) === '[8]', 'ratings convert alongside', ha.rating);
 }
 
-// ---- 14. Retired session bodies unify into pips+labels.
+// ---- 14. Canonical data passes through untouched (normalize is idempotent).
 {
-  // 14a. Array form: count, per-row, labels, nouns carry; bag goes.
   const s = {
-    view: {},
+    view: { style: { sheet: 'spotlight' } },
     traitSets: [{
-      id: 'sr', name: 'Session Record', nounSingular: 'Milestone', nounPlural: 'Milestones',
-      traits: [{ name: 'First', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} }],
+      id: 'sr', name: 'Sessions', noun: 'Session', plural: 'Sessions',
+      rating: { type: 'Pip', value: [true, false], range: [12] },
+      traits: [{ name: 'First', rating: { type: 'Pip', value: [true], range: [1] }, description: '', traits: [], sfx: [], tags: [] }],
       sfx: [],
-      view: {
-        style: { header: 'default', body: 'session-record' },
-        sessionRecord: { count: 12, orientation: 'horizontal', checked: [1] },
-        reservedSlots: 12,
-      },
+      view: { style: { header: 'default', body: 'pips' }, pips: { labels: true, perRow: 12 }, reservedSlots: 12 },
     }],
   };
   M.normalizeView(s);
-  const set = s.traitSets.find((x) => x.id === 'sr');
-  ok(set.view.style.body === 'pips', 'session body becomes pips', set.view.style.body);
-  ok(set.view.pips && set.view.pips.labels === true && set.view.pips.count === 12 && set.view.pips.perRow === 12, 'count/orientation/labels mapped', set.view.pips);
-  ok(set.view.sessionRecord === undefined, 'session bag gone');
-  ok(set.nounSingular === 'Session' && set.nounPlural === 'Sessions', 'nouns fixed', [set.nounSingular, set.nounPlural]);
-  ok(set.traits[0] && set.traits[0].name === 'First' && set.traits[0].custom.checked === true, 'checked list materialized onto trait', set.traits[0]);
-  const s2 = {
-    view: {},
-    traitSets: [{
-      id: 'sr', name: 'Log', traits: [], sfx: [],
-      view: { style: { body: 'angled-lines' }, sessionRecord: { count: 3, checked: [2] } },
-    }],
-  };
-  M.normalizeView(s2);
-  const blank = s2.traitSets.find((x) => x.id === 'sr').traits[1];
-  ok(blank && blank.name === '' && blank.custom.checked === true, 'bare checked list makes a blank checked trait', blank);
-  ok(blank.description === undefined && blank.tags === undefined, 'materialized blanks stay canonical-sparse', blank);
-
-  // 14b. Vertical (and absent orientation) means a single column.
-  const v = {
-    view: {},
-    traitSets: [{ id: 'sr2', name: 'Log', traits: [], sfx: [], view: { style: { body: 'angled-lines' }, sessionRecord: { count: 5 } } }],
-  };
-  M.normalizeView(v);
-  const set2 = v.traitSets.find((x) => x.id === 'sr2');
-  ok(set2.view.style.body === 'pips' && set2.view.pips.perRow === 1, 'vertical maps to one column', set2.view.pips);
-
-  // 14c. Layered map form converts the same way.
-  const L = { sets: { Log: { id: 'sr3', traits: {}, view: { style: { body: 'session-record' }, sessionRecord: { count: 8 } } } } };
-  M.normalizeView(L);
-  ok(L.sets.Log.view.style.body === 'pips' && L.sets.Log.view.pips.labels === true, 'layered session converts', L.sets.Log.view);
-
-  // 14d. Second pass is a no-op (pips bodies pass through untouched).
   const before = JSON.stringify(s);
   M.normalizeView(s);
-  ok(JSON.stringify(s) === before, 'unification is idempotent');
+  ok(JSON.stringify(s) === before, 'second pass is a no-op');
+  const set = s.traitSets.find((x) => x.id === 'sr');
+  ok(set.rating && set.rating.type === 'Pip' && set.rating.range[0] === 12, 'set Pip rating untouched', set.rating);
+  ok(set.noun === 'Session' && set.plural === 'Sessions', 'nouns untouched');
 }
 
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);

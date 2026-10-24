@@ -82,28 +82,37 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
       },
       "Growth Pool": {
         "id": "growth-pool",
-        "nounSingular": "Growth Die",
-        "nounPlural": "Growth Dice",
         "view": {
           "features": {
             "description": false,
@@ -123,7 +132,6 @@
             12
           ],
           "multiDie": true,
-          "pool": true,
           "reservedSlots": 5,
           "place": {
             "left": "0%",
@@ -136,33 +144,106 @@
             "dice": "/ DICE"
           }
         },
+        "pool": true,
+        "noun": "Growth Die",
+        "plural": "Growth Dice",
         "traits": {
           "D4": {
-            "value": "d4",
+            "rating": {
+              "type": "Die",
+              "value": [
+                4
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
-            "value": "d12",
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
@@ -172,8 +253,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Origin of the magical calamity and personal burden",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -200,10 +279,24 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {},
         "slots": {
           "0": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -213,7 +306,19 @@
             }
           },
           "1": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -223,7 +328,19 @@
             }
           },
           "2": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -237,8 +354,6 @@
       "Values": {
         "id": "values",
         "description": "Gain a PP when you use your d4 value.",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "statement": true,
         "view": {
           "features": {
@@ -283,6 +398,8 @@
             }
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Ambition": {},
           "Responsibility": {},
@@ -294,8 +411,6 @@
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "nounSingular": "Asset",
-        "nounPlural": "Assets",
         "view": {
           "features": {
             "description": true,
@@ -335,13 +450,13 @@
             }
           }
         },
+        "noun": "Asset",
+        "plural": "Assets",
         "traits": {}
       },
       "Affiliations": {
         "id": "affiliations",
         "description": "When Worlds Collide: When two affiliations are in the same scene, add a d6 to the doom pool and a d4 to your dice pool to include both affiliations in your pool.",
-        "nounSingular": "Affiliation",
-        "nounPlural": "Affiliations",
         "statement": true,
         "view": {
           "features": {
@@ -386,6 +501,8 @@
             }
           }
         },
+        "noun": "Affiliation",
+        "plural": "Affiliations",
         "traits": {
           "Self": {},
           "Family": {},
@@ -395,8 +512,6 @@
       },
       "Stress": {
         "id": "stress",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -439,6 +554,8 @@
             }
           }
         },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {
           "Angry": {},
           "Depressed": {},
@@ -450,8 +567,6 @@
       "Crafts": {
         "id": "arcane-crafts-sfx",
         "description": "Mutated magical expressions and spellcasting disciplines",
-        "nounSingular": "Craft",
-        "nounPlural": "Crafts",
         "view": {
           "features": {
             "description": false,
@@ -480,6 +595,8 @@
             "height": 1
           }
         },
+        "noun": "Craft",
+        "plural": "Crafts",
         "traits": {
           "Azure Sympathy": {},
           "Black Wards": {},
@@ -495,8 +612,6 @@
       },
       "SFX": {
         "id": "sfx",
-        "nounSingular": "SFX",
-        "nounPlural": "SFX",
         "view": {
           "place": {
             "left": "72%",
@@ -520,6 +635,8 @@
           },
           "reservedSlots": 4
         },
+        "noun": "SFX",
+        "plural": "SFX",
         "traits": {}
       }
     }

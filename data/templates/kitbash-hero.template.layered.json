@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Origin, motivation, and crime-fighting persona",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -133,9 +142,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Personality:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -145,7 +168,19 @@
             }
           },
           "Past:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -155,7 +190,19 @@
             }
           },
           "Quirk:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -169,8 +216,6 @@
       "Affiliations": {
         "id": "affiliations",
         "description": "Operating mode ratings",
-        "nounSingular": "Affiliation",
-        "nounPlural": "Affiliations",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -213,6 +258,8 @@
             }
           }
         },
+        "noun": "Affiliation",
+        "plural": "Affiliations",
         "traits": {
           "Personal:": {},
           "Group:": {},
@@ -222,8 +269,6 @@
       "Specialties": {
         "id": "specialties",
         "description": "Master and expert professional skills",
-        "nounSingular": "Specialty",
-        "nounPlural": "Specialties",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -252,13 +297,13 @@
             "height": 1
           }
         },
+        "noun": "Specialty",
+        "plural": "Specialties",
         "traits": {}
       },
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Heroic gear and vehicles",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -288,12 +333,12 @@
             "height": 1
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Stress": {
         "id": "stress",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -336,6 +381,8 @@
             }
           }
         },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {
           "Physical": {},
           "Mental": {},
@@ -344,8 +391,6 @@
       },
       "Growth Pool": {
         "id": "growth-pool",
-        "nounSingular": "Growth Die",
-        "nounPlural": "Growth Dice",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -367,7 +412,6 @@
             12
           ],
           "multiDie": true,
-          "pool": true,
           "reservedSlots": 5,
           "place": {
             "left": "66.666%",
@@ -380,33 +424,106 @@
             "dice": "/ DICE"
           }
         },
+        "pool": true,
+        "noun": "Growth Die",
+        "plural": "Growth Dice",
         "traits": {
           "D4": {
-            "value": "d4",
+            "rating": {
+              "type": "Die",
+              "value": [
+                4
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D6": {
-            "value": "d6",
+            "rating": {
+              "type": "Die",
+              "value": [
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D8": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D10": {
-            "value": "d10",
+            "rating": {
+              "type": "Die",
+              "value": [
+                10
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
           },
           "D12": {
-            "value": "d12",
+            "rating": {
+              "type": "Die",
+              "value": [
+                12
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0,
             "view": {
               "poolCount": 1
             }
@@ -416,8 +533,6 @@
       "Power Set 1": {
         "id": "power-set",
         "description": "Modular powers, SFX triggers, and shutdown limits",
-        "nounSingular": "Power Set",
-        "nounPlural": "Power Sets",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -436,6 +551,8 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Power Set",
+        "plural": "Power Sets",
         "traits": {
           "Powers": {},
           "Limits": {}
@@ -443,8 +560,6 @@
       },
       "Power Set 2": {
         "id": "power-set-2",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -460,6 +575,8 @@
             "body": "labeled-fields"
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {
           "Powers": {},
           "Limits": {}
@@ -467,8 +584,6 @@
       },
       "Power Set 3": {
         "id": "power-set-3",
-        "nounSingular": "Power",
-        "nounPlural": "Powers",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -484,6 +599,8 @@
             "body": "labeled-fields"
           }
         },
+        "noun": "Power",
+        "plural": "Powers",
         "traits": {
           "Powers": {},
           "Limits": {}

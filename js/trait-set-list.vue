@@ -11,9 +11,9 @@ const {
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
 	handleStressClick, handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, isMultiDieTrait, getTraitDice,
-	isDieSpent, toggleDieSpentInPlay, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
+	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
 	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
-	getSetDie,
+	getSetRatingDie,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
 	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
 } = injectTraitSet();
@@ -54,7 +54,7 @@ const {
 								<span
 									class="distinction-die"
 									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
-									v-html="renderDieValueForPrint(item.trait.value || 8, !printBlank && !item.isPlaceholder && item.trait.value > 0)"
+									v-html="renderDieValueForPrint(firstDie(item.trait) || 8, !printBlank && !item.isPlaceholder && isTraitRated(item.trait))"
 								></span>
 								<template v-if="isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above'">
 									<span class="trait-name" v-if="(!printBlank || isFixedSystemTrait(traitSet, item.trait)) && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
@@ -63,7 +63,7 @@ const {
 											{{ item.trait.name }}
 										</template>
 										<template v-else-if="submode === 'edit' && !printBlank">
-											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+											<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 										</template>
 										<template v-else>
 											<span class="trait-blank-line"></span>
@@ -95,7 +95,7 @@ const {
 											{{ item.trait.name }}
 										</template>
 										<template v-else-if="submode === 'edit' && !printBlank">
-											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+											<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 										</template>
 										<template v-else>
 											<span class="trait-blank-line"></span>
@@ -111,9 +111,9 @@ const {
 								<span
 									v-for="size in getTraitSetRatings(traitSet)"
 									:key="size"
-									:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+									:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 									@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
-									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
+									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
 								<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
@@ -132,7 +132,7 @@ const {
 										:title="submode === 'play' && !printBlank && !item.isPlaceholder ? 'Click to add d' + dieSize + ' to roller pool' : ''"
 										v-html="renderDieValueForPrint(dieSize, !printBlank && !item.isPlaceholder)"
 									></span>
-									<div class="die-play-controls" v-if="submode === 'play' && !printBlank && !item.isPlaceholder">
+									<div class="die-play-controls" v-if="submode === 'play' && !printBlank && !item.isPlaceholder && isSpendable(item.trait, traitSet)">
 										<button type="button" class="btn-play-spend" @click.stop="toggleDieSpentInPlay(s, item.originalIndex, dIdx)" :title="isDieSpent(item.trait, dIdx) ? 'Restore die' : 'Spend die'">
 											<i :class="isDieSpent(item.trait, dIdx) ? 'fas fa-rotate-left' : 'fas fa-xmark'"></i>
 										</button>
@@ -143,11 +143,11 @@ const {
 								<span
 									v-for="size in getTraitSetRatings(traitSet)"
 									:key="size"
-									:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+									:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 									@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
-									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
+									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
-								<span v-if="getSetDie(traitSet) && !item.isPlaceholder && !(item.trait.value > 0)" class="c set-die" v-html="renderDieValueForPrint(getSetDie(traitSet), true)" :title="'Set die d' + getSetDie(traitSet)"></span>
+								<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)"></span>
 								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
@@ -214,7 +214,7 @@ const {
 						<!-- SUBTRAITS -->
 						<div v-if="partsGridFor(traitSet).cells.subtraits" class="trait-part trait-part-subtraits" :style="partCellStyle(partsGridFor(traitSet), 'subtraits')">
 							<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
-								<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
+								<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '' }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, firstDie(subtrait), traitSet, s, item.originalIndex) : null">
 									<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
 									<span class="subtrait-name" v-else>
 										<span class="trait-blank-line subtrait-blank-line"></span>
@@ -223,8 +223,8 @@ const {
 										<span
 											v-for="size in getSubtraitRatings(traitSet)"
 											:key="size"
-											:class="{ 'c': true, 'active': !printBlank && subtrait.value === size }"
-											v-html="renderDieValueForPrint(size, !printBlank && subtrait.value === size)"
+											:class="{ 'c': true, 'active': !printBlank && isDieActive(subtrait, size) }"
+											v-html="renderDieValueForPrint(size, !printBlank && isDieActive(subtrait, size))"
 										></span>
 									</div>
 								</li>
@@ -257,9 +257,9 @@ const {
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
-										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 										@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
-										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
+										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
 								</div>
 								<div class="trait-asset-box">
@@ -279,7 +279,7 @@ const {
 								<span
 									class="distinction-die"
 									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
-									v-html="renderDieValueForPrint(item.trait.value || 8, !printBlank && !item.isPlaceholder && item.trait.value > 0)"
+									v-html="renderDieValueForPrint(firstDie(item.trait) || 8, !printBlank && !item.isPlaceholder && isTraitRated(item.trait))"
 								></span>
 
 								<!-- STATEMENT MODE (e.g. Values) -->
@@ -290,7 +290,7 @@ const {
 											{{ item.trait.name }}
 										</template>
 										<template v-else-if="submode === 'edit' && !printBlank">
-											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+											<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 										</template>
 										<template v-else>
 											<span class="trait-blank-line"></span>
@@ -317,7 +317,7 @@ const {
 											{{ item.trait.name }}
 										</template>
 										<template v-else-if="submode === 'edit' && !printBlank">
-											<span class="trait-name-hint">{{ traitSet.nounSingular || 'Name' }}...</span>
+											<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 										</template>
 										<template v-else>
 											<span class="trait-blank-line"></span>
@@ -331,9 +331,9 @@ const {
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
-										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 										@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
-										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
+										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
 									<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
@@ -361,7 +361,7 @@ const {
 											:title="submode === 'play' && !printBlank && !item.isPlaceholder ? 'Click to add d' + dieSize + ' to roller pool' : ''"
 											v-html="renderDieValueForPrint(dieSize, !printBlank && !item.isPlaceholder)"
 										></span>
-										<div class="die-play-controls" v-if="submode === 'play' && !printBlank && !item.isPlaceholder">
+										<div class="die-play-controls" v-if="submode === 'play' && !printBlank && !item.isPlaceholder && isSpendable(item.trait, traitSet)">
 											<button type="button" class="btn-play-spend" @click.stop="toggleDieSpentInPlay(s, item.originalIndex, dIdx)" :title="isDieSpent(item.trait, dIdx) ? 'Restore die' : 'Spend die'">
 												<i :class="isDieSpent(item.trait, dIdx) ? 'fas fa-rotate-left' : 'fas fa-xmark'"></i>
 											</button>
@@ -374,9 +374,9 @@ const {
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
-										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && item.trait.value === size }"
+										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 										@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
-										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && item.trait.value === size)"
+										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
 									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
@@ -396,7 +396,7 @@ const {
 						</template>
 
 						<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
-							<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '', value: 0 }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, subtrait.value, traitSet, s, item.originalIndex) : null">
+							<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '' }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, firstDie(subtrait), traitSet, s, item.originalIndex) : null">
 								<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
 								<span class="subtrait-name" v-else>
 									<span class="trait-blank-line subtrait-blank-line"></span>
@@ -405,8 +405,8 @@ const {
 									<span
 										v-for="size in getSubtraitRatings(traitSet)"
 										:key="size"
-										:class="{ 'c': true, 'active': !printBlank && subtrait.value === size }"
-										v-html="renderDieValueForPrint(size, !printBlank && subtrait.value === size)"
+										:class="{ 'c': true, 'active': !printBlank && isDieActive(subtrait, size) }"
+										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(subtrait, size))"
 									></span>
 								</div>
 							</li>
@@ -486,7 +486,7 @@ const {
 					<div class="preview-button"
 						@click.stop="addTrait( s )"
 					>
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
 					</div>
 				</div>
 			</div>

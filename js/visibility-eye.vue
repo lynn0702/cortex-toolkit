@@ -1,28 +1,50 @@
 <script setup lang="ts">
-// Two-state visibility eye: open = shown on the sheet, slashed = hidden
-// (data retained). There is no third state.
+import { computed } from 'vue';
+// Three-state visibility eye: shown (eye) -> editor-only (pencil) ->
+// hidden (slashed eye). Clicking cycles. Data is always retained.
 const props = withDefaults( defineProps<{
-	visible: boolean;
+	state?: 'shown' | 'editor-only' | 'hidden';
+	visible?: boolean;
 	title?: string;
 }>(), {
+	state: undefined,
+	visible: true,
 	title: '',
 } );
 
 const emit = defineEmits<{
 	( e: 'toggle' ): void;
 }>();
+
+const resolved = computed( () => {
+	if ( props.state === 'hidden' || props.state === 'editor-only' || props.state === 'shown' ) return props.state;
+	return props.visible ? 'shown' : 'hidden';
+} );
+
+const icon = computed( () => {
+	if ( resolved.value === 'hidden' ) return 'fas fa-eye-slash';
+	if ( resolved.value === 'editor-only' ) return 'fas fa-pencil';
+	return 'fas fa-eye';
+} );
+
+const hint = computed( () => {
+	if ( props.title ) return props.title;
+	if ( resolved.value === 'hidden' ) return 'Hidden — click to show';
+	if ( resolved.value === 'editor-only' ) return 'Edit only — click to hide';
+	return 'Shown — click for edit only';
+} );
 </script>
 
 <template>
 	<button
 		type="button"
 		class="visibility-eye"
-		:class="{ off: !props.visible }"
+		:class="{ off: resolved === 'hidden', half: resolved === 'editor-only' }"
 		@click.stop="emit('toggle')"
-		:title="props.title || (props.visible ? 'Shown — click to hide' : 'Hidden — click to show')"
-		:aria-label="props.visible ? 'Shown — click to hide' : 'Hidden — click to show'"
-		:aria-pressed="props.visible"
+		:title="hint"
+		:aria-label="hint"
+		:aria-pressed="resolved === 'shown'"
 	>
-		<i :class="props.visible ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+		<i :class="icon"></i>
 	</button>
 </template>

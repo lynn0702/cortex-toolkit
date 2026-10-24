@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Occult lineage, taboo practice, and philosophical motivation",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -125,9 +134,23 @@
           "notes": "",
           "reservedSlots": 3
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Job:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -137,7 +160,19 @@
             }
           },
           "Necromancy:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -147,7 +182,19 @@
             }
           },
           "Desire:": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -161,8 +208,6 @@
       "Affiliations": {
         "id": "affiliations",
         "description": "Operating configuration dice and statements",
-        "nounSingular": "Affiliation",
-        "nounPlural": "Affiliations",
         "statement": true,
         "view": {
           "header": "top",
@@ -203,6 +248,8 @@
             }
           }
         },
+        "noun": "Affiliation",
+        "plural": "Affiliations",
         "traits": {
           "My Life": {},
           "The World": {},
@@ -212,8 +259,6 @@
       "Roles": {
         "id": "roles-specialties",
         "description": "Dark magical callings and practices",
-        "nounSingular": "Role",
-        "nounPlural": "Roles",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -244,6 +289,8 @@
             "height": 1
           }
         },
+        "noun": "Role",
+        "plural": "Roles",
         "traits": {
           "Diplomat": {},
           "Fighter": {},
@@ -256,8 +303,6 @@
       "Signature Assets": {
         "id": "signature-assets",
         "description": "Occult relics, grimoires, and dark instruments",
-        "nounSingular": "Signature Asset",
-        "nounPlural": "Signature Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -301,13 +346,13 @@
             }
           }
         },
+        "noun": "Signature Asset",
+        "plural": "Signature Assets",
         "traits": {}
       },
       "Ability": {
         "id": "necromantic-arts",
         "description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
-        "nounSingular": "Ability",
-        "nounPlural": "Abilities",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -336,6 +381,8 @@
             "height": 1
           }
         },
+        "noun": "Ability",
+        "plural": "Abilities",
         "traits": {
           "Necromancy": {
             "traits": {
@@ -359,8 +406,6 @@
       },
       "Session Record": {
         "id": "session-record",
-        "nounSingular": "Session",
-        "nounPlural": "Sessions",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -383,16 +428,33 @@
           },
           "pips": {
             "labels": true,
-            "count": 10,
             "perRow": 10
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            10
+          ]
+        },
+        "noun": "Session",
+        "plural": "Sessions",
         "traits": {}
       },
       "Complications": {
         "id": "complications",
-        "nounSingular": "Complication",
-        "nounPlural": "Complications",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -435,6 +497,8 @@
             }
           }
         },
+        "noun": "Complication",
+        "plural": "Complications",
         "traits": {
           "Deathmark": {
             "description": "Deathmark"

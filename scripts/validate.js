@@ -159,6 +159,8 @@ templates.forEach((tpl, ti) => {
   ch.traitSets.forEach((ts, si) => {
     const bag = (ts && (ts.view || (ts.custom && ts.custom.cortexToolkit))) || {};
     if (bag.headerRight !== undefined) err(`${where}.traitSets[${si}]: retired headerRight key (2026-10-22)`);
+    checkViewRetired(bag, `${where}.traitSets[${si}].view`);
+    checkNodeOptions(ts, `${where}.traitSets[${si}]`);
     const tbody = bag.style && typeof bag.style === 'object' ? bag.style.body : undefined;
     if (tbody === 'session-record' || tbody === 'angled-lines') err(`${where}.traitSets[${si}]: retired ${tbody} body (unified into pips+labels)`);
     const branch = bag.branch;
@@ -167,6 +169,11 @@ templates.forEach((tpl, ti) => {
         ['left', 'center', 'right'].every((k) => typeof branch[k] === 'number' && Number.isFinite(branch[k]) && branch[k] >= 0);
       if (!ok) err(`${where}.traitSets[${si}]: view.branch must be {left,center,right} finite numbers >= 0`);
     }
+    (ts.traits || []).forEach((tr, ti) => {
+      if (!tr || typeof tr !== 'object') return;
+      checkRetiredTraitKeys(tr, `${where}.traitSets[${si}].traits[${ti}]`);
+      checkNodeOptions(tr, `${where}.traitSets[${si}].traits[${ti}]`);
+    });
   });
 });
 
@@ -220,14 +227,61 @@ function isDiceString(s) {
   return tokens > 0 && covered > 0 && rest.length === 0;
 }
 
+// Ratings have one shape (2026-10-23): { type, value: [], range: [] }.
+function checkRatingObject(rating, where) {
+  if (rating === undefined || rating === null) return;
+  if (!rating || typeof rating !== 'object' || Array.isArray(rating)) {
+    err(`${where}: rating must be { type, value: [], range: [] }`);
+    return;
+  }
+  if (['Counter', 'Die', 'Dice', 'Pip'].indexOf(rating.type) === -1) {
+    err(`${where}: rating.type must be Counter|Die|Dice|Pip`);
+  }
+  if (!Array.isArray(rating.value) || rating.value.some((x) => typeof x !== 'number' && typeof x !== 'boolean')) {
+    err(`${where}: rating.value must be a list of numbers/booleans`);
+  }
+  if (!Array.isArray(rating.range) || rating.range.some((x) => typeof x !== 'number')) {
+    err(`${where}: rating.range must be a list of numbers`);
+  }
+}
+
+function checkNodeOptions(node, where) {
+  if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
+  if (node.spendable !== undefined && typeof node.spendable !== 'boolean') err(`${where}: spendable must be boolean`);
+  if (node.hitches !== undefined && !(Number.isInteger(node.hitches) && node.hitches >= 0)) err(`${where}: hitches must be an integer >= 0`);
+  if (node.keepsExtra !== undefined && !(Number.isInteger(node.keepsExtra) && node.keepsExtra >= 1)) err(`${where}: keepsExtra must be an integer >= 1`);
+  checkRatingObject(node.rating, `${where}.rating`);
+}
+
+function checkViewRetired(bag, where) {
+  if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return;
+  if (bag.setDie !== undefined) err(`${where}: retired view.setDie (the set node's own Rating supersedes it)`);
+  if (bag.isChallengePool !== undefined || bag.challengePool !== undefined) err(`${where}: retired challenge-pool flag (Dice + pool + spendable supersedes it)`);
+  if (bag.hidden !== undefined) err(`${where}: retired hidden boolean (visibility word supersedes it)`);
+  const vis = bag.visibility;
+  if (vis !== undefined && vis !== 'shown' && vis !== 'editor-only' && vis !== 'hidden') {
+    err(`${where}: view.visibility must be shown|editor-only|hidden`);
+  }
+  if (bag.pool !== undefined) err(`${where}: retired view.pool (node pool supersedes it)`);
+}
+
+function checkRetiredTraitKeys(node, where) {
+  if (!node || typeof node !== 'object' || Array.isArray(node)) return;
+  if (node.value !== undefined) err(`${where}: retired value key (rating supersedes it)`);
+  if (node.dice !== undefined) err(`${where}: retired dice key (rating supersedes it)`);
+  if (node.custom && typeof node.custom === 'object' && !Array.isArray(node.custom) && node.custom.checked !== undefined) {
+    err(`${where}: retired custom.checked (Pip rating supersedes it)`);
+  }
+}
+
 function checkLayeredTrait(node, where, depth) {
   if (node === null) return; // local clear, governed by the null-emit rule
   if (typeof node === 'string') {
-    if (!isDiceString(node)) err(`${where}: invalid dice string ${JSON.stringify(node)}`);
+    err(`${where}: dice-string shorthand retired (rating object supersedes it)`);
     return;
   }
   if (!node || typeof node !== 'object' || Array.isArray(node)) {
-    err(`${where}: trait must be a dice string, object, or null`);
+    err(`${where}: trait must be an object or null`);
     return;
   }
   for (const k of ['id', '_lid']) {
@@ -240,21 +294,22 @@ function checkLayeredTrait(node, where, depth) {
   if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
   if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
   if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
-  for (const k of ['nounSingular', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+  for (const k of ['noun', 'plural', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
     if (node[k] !== undefined) err(`${where}: presentation key ${k} lives in the type layer`);
   }
-  if (node.value !== undefined && !isDiceString(node.value)) err(`${where}: invalid value dice string ${JSON.stringify(node.value)}`);
+  checkRetiredTraitKeys(node, where);
+  checkNodeOptions(node, where);
   if (node.cost !== undefined && (typeof node.cost !== 'object' || node.cost === null || Array.isArray(node.cost))) {
     err(`${where}: cost is an object, never a bare number`);
   }
   if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
-  if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
   const visLayered = node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
-  if (visLayered !== undefined && visLayered !== 'shown' && visLayered !== 'hidden') {
-    err(`${where}: view.visibility must be shown|hidden`);
+  if (visLayered !== undefined && visLayered !== 'shown' && visLayered !== 'editor-only' && visLayered !== 'hidden') {
+    err(`${where}: view.visibility must be shown|editor-only|hidden`);
   }
+  checkViewRetired(node.view, `${where}.view`);
   if (node.select !== undefined) warn(`${where}: select lives on the set, not the trait`);
   if (node.requiresSelect !== undefined) warn(`${where}: requiresSelect lives on the set, not the trait`);
   if (node.traits !== undefined) {
@@ -303,9 +358,13 @@ function checkLayeredFile(where, data) {
       if (set[k] !== undefined) err(`${where}/${name}: set-level ${k} is old format (D1/D2)`);
     }
     if (set.custom !== undefined) err(`${where}/${name}: custom stays app-side`);
+    checkViewRetired(set.view, `${where}/${name}.view`);
+    checkNodeOptions(set, `${where}/${name}`);
+    if (set.value !== undefined) err(`${where}/${name}: retired value key (rating supersedes it)`);
+    if (set.dice !== undefined) err(`${where}/${name}: retired dice key (rating supersedes it)`);
     if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
     if (Array.isArray(set.sfx)) err(`${where}/${name}: sfx arrays become traits under an SFX node`);
-    for (const k of ['nounSingular', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+    for (const k of ['ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
       if (set[k] !== undefined) err(`${where}/${name}: presentation key ${k} lives in the type layer`);
     }
     if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {
@@ -334,11 +393,11 @@ function checkLayeredFile(where, data) {
 function checkTemplateTrait(node, where, depth, inSlot) {
   if (node === null) return; // removal record against the wrapped base
   if (typeof node === 'string') {
-    if (!isDiceString(node)) err(`${where}: invalid dice string ${JSON.stringify(node)}`);
+    err(`${where}: dice-string shorthand retired (rating object supersedes it)`);
     return;
   }
   if (!node || typeof node !== 'object' || Array.isArray(node)) {
-    err(`${where}: trait must be a dice string, object, or null`);
+    err(`${where}: trait must be an object or null`);
     return;
   }
   if (node.id !== undefined) err(`${where}: trait-level id forbidden (D1)`);
@@ -349,18 +408,19 @@ function checkTemplateTrait(node, where, depth, inSlot) {
   if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
   if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
   if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
-  if (node.value !== undefined && !isDiceString(node.value)) err(`${where}: invalid value dice string ${JSON.stringify(node.value)}`);
+  checkRetiredTraitKeys(node, where);
+  checkNodeOptions(node, where);
   if (node.cost !== undefined && (typeof node.cost !== 'object' || node.cost === null || Array.isArray(node.cost))) {
     err(`${where}: cost is an object, never a bare number`);
   }
   if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
-  if (node.pool !== undefined && typeof node.pool !== 'boolean') err(`${where}: pool must be boolean`);
   const visTemplate = node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
-  if (visTemplate !== undefined && visTemplate !== 'shown' && visTemplate !== 'hidden') {
-    err(`${where}: view.visibility must be shown|hidden`);
+  if (visTemplate !== undefined && visTemplate !== 'shown' && visTemplate !== 'editor-only' && visTemplate !== 'hidden') {
+    err(`${where}: view.visibility must be shown|editor-only|hidden`);
   }
+  checkViewRetired(node.view, `${where}.view`);
   const kids = (map, label) => {
     if (map === undefined || map === null) return;
     if (!map || typeof map !== 'object' || Array.isArray(map)) {
@@ -437,9 +497,14 @@ function checkTemplateFile(where, data) {
       continue;
     }
     if (set._lid !== undefined) err(`${where}/${name}: _lid is app-local, never in files`);
-    // Retired view keys (2026-10-22): headerRight read nowhere.
+    // Retired view keys: headerRight read nowhere; setDie, challenge-pool
+    // flags, hidden booleans, and view.pool superseded by the node shape.
     const setBag = (set.view || (set.custom && set.custom.cortexToolkit)) || {};
     if (setBag.headerRight !== undefined) err(`${where}/${name}: retired headerRight key`);
+    checkViewRetired(setBag, `${where}/${name}.view`);
+    checkNodeOptions(set, `${where}/${name}`);
+    if (set.value !== undefined) err(`${where}/${name}: retired value key (rating supersedes it)`);
+    if (set.dice !== undefined) err(`${where}/${name}: retired dice key (rating supersedes it)`);
     const setBody = setBag.style && typeof setBag.style === 'object' ? setBag.style.body : undefined;
     if (setBody === 'session-record' || setBody === 'angled-lines') err(`${where}/${name}: retired ${setBody} body (unified into pips+labels)`);
     // Branch column shares (subtrait-columns split rows): three finite

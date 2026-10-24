@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Values": {
         "id": "values",
         "description": "Enduring principles of the golden era",
-        "nounSingular": "Value",
-        "nounPlural": "Values",
         "view": {
           "features": {
             "description": false,
@@ -147,6 +156,8 @@
             }
           }
         },
+        "noun": "Value",
+        "plural": "Values",
         "traits": {
           "Allegiance": {},
           "Glory": {},
@@ -160,8 +171,6 @@
       "Distinctions": {
         "id": "distinctions",
         "description": "Past glory, modern civilian life, and the call to return",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -188,9 +197,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Archetype": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -200,7 +223,19 @@
             }
           },
           "Retirement": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -210,7 +245,19 @@
             }
           },
           "Satisfaction": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -224,8 +271,6 @@
       "Resources": {
         "id": "vintage-resources-assets",
         "description": "Stashed tech, vintage vehicles, and old connections (5d6 each)",
-        "nounSingular": "Resource",
-        "nounPlural": "Resources",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -272,34 +317,119 @@
             }
           }
         },
+        "noun": "Resource",
+        "plural": "Resources",
         "traits": {},
         "slots": {
           "0": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "1": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "2": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "3": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           },
           "4": {
-            "value": "5d6",
-            "pool": true
+            "rating": {
+              "type": "Dice",
+              "value": [
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
+            "spendable": true,
+            "hitches": 0
           }
         }
       },
       "Signature Assets": {
         "id": "signature-assets",
-        "nounSingular": "Asset",
-        "nounPlural": "Assets",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -347,12 +477,12 @@
             }
           }
         },
+        "noun": "Asset",
+        "plural": "Assets",
         "traits": {}
       },
       "Aging Complications": {
         "id": "aging-complications",
-        "nounSingular": "Complication",
-        "nounPlural": "Complications",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -400,13 +530,13 @@
             }
           }
         },
+        "noun": "Complication",
+        "plural": "Complications",
         "traits": {}
       },
       "Skills & Specialties": {
         "id": "subtrait-columns",
         "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "center",
@@ -443,6 +573,8 @@
             "height": 1
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Craft": {},
           "Fight": {},

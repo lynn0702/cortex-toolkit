@@ -11,7 +11,7 @@ const PART_TITLES: Record<string, string> = {
 	subtraits: 'Subtraits', stressLabel: 'Stress Label', stress: 'Stress'
 };
 
-const NON_ROW = [ 'image', 'notes', 'pips', 'session-record', 'angled-lines', 'portrait-ring' ];
+const NON_ROW = [ 'image', 'notes', 'pips', 'portrait-ring' ];
 
 const bodyOf = computed( () => getView( traitSet.value )?.style?.body );
 const isBranchBody = computed( () => bodyOf.value === 'subtrait-columns' );
@@ -114,7 +114,7 @@ const hinderText = computed( () => {
 	if ( getView( ts )?.style?.body !== 'distinctions' || !getView( ts )?.sharedHinder ) return '';
 	const custom = typeof getView( ts )?.sharedHinderText === 'string' ? ( getView( ts )?.sharedHinderText as string ).trim() : '';
 	if ( custom ) return custom;
-	const noun = ts?.nounSingular?.length ? String( ts.nounSingular ).toLowerCase() : 'distinction';
+	const noun = ts?.noun?.length ? String( ts.noun ).toLowerCase() : 'distinction';
 	return 'Gain a PP when you trade out your ' + noun + '\'s d8 rating for a d4.';
 } );
 

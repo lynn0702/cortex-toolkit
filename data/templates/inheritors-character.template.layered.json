@@ -82,20 +82,31 @@
           "game": {
             "label": "Game",
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "portrait": {},
           "caption": {},
           "plotPoints": {
+            "rating": {
+              "type": "Counter",
+              "value": [
+                1
+              ],
+              "range": [
+                0,
+                20
+              ]
+            },
             "label": "PP",
+            "spendable": true,
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           },
           "notes": {
             "view": {
-              "hidden": true
+              "visibility": "hidden"
             }
           }
         }
@@ -103,8 +114,6 @@
       "Attributes": {
         "id": "attributes",
         "description": "Gain a PP when you include your d4 attribute in your dice pool.",
-        "nounSingular": "Attribute",
-        "nounPlural": "Attributes",
         "view": {
           "features": {
             "description": false,
@@ -147,6 +156,8 @@
             }
           }
         },
+        "noun": "Attribute",
+        "plural": "Attributes",
         "traits": {
           "Action": {},
           "Heritage": {},
@@ -156,8 +167,6 @@
       },
       "Stress": {
         "id": "stress",
-        "nounSingular": "Stress",
-        "nounPlural": "Stress",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -200,13 +209,13 @@
             }
           }
         },
+        "noun": "Stress",
+        "plural": "Stress",
         "traits": {}
       },
       "Distinctions": {
         "id": "distinctions",
         "description": "Bloodline heritage, archetype, and personal stance",
-        "nounSingular": "Distinction",
-        "nounPlural": "Distinctions",
         "view": {
           "features": {
             "description": true,
@@ -233,9 +242,23 @@
             "height": 1
           }
         },
+        "noun": "Distinction",
+        "plural": "Distinctions",
         "traits": {
           "Family Tree": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -248,7 +271,19 @@
             }
           },
           "Approach to Conflict": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -258,7 +293,19 @@
             }
           },
           "Personality/Quirk": {
-            "value": "d8",
+            "rating": {
+              "type": "Die",
+              "value": [
+                8
+              ],
+              "range": [
+                4,
+                6,
+                8,
+                10,
+                12
+              ]
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -272,8 +319,6 @@
       "Abilities": {
         "id": "inherited-abilities",
         "description": "Powers granted by bloodline and relics",
-        "nounSingular": "Ability",
-        "nounPlural": "Abilities",
         "view": {
           "traitColumns": 3,
           "features": {
@@ -328,6 +373,8 @@
             }
           }
         },
+        "noun": "Ability",
+        "plural": "Abilities",
         "traits": {},
         "slots": {
           "0": {
@@ -353,8 +400,6 @@
       "Skills": {
         "id": "skills",
         "description": "Training and mundane competencies",
-        "nounSingular": "Skill",
-        "nounPlural": "Skills",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -385,6 +430,8 @@
             "height": 1
           }
         },
+        "noun": "Skill",
+        "plural": "Skills",
         "traits": {
           "Acquire": {},
           "Build": {},
@@ -405,8 +452,6 @@
       "Heirlooms": {
         "id": "heirlooms-milestones",
         "description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
-        "nounSingular": "Heirloom",
-        "nounPlural": "Heirlooms",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -436,12 +481,12 @@
             "height": 1
           }
         },
+        "noun": "Heirloom",
+        "plural": "Heirlooms",
         "traits": {}
       },
       "Personal Milestones": {
         "id": "personal-milestones",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -479,6 +524,8 @@
             }
           }
         },
+        "noun": "Milestone",
+        "plural": "Milestones",
         "traits": {
           "1 XP": {
             "description": "when "
@@ -493,8 +540,6 @@
       },
       "Group Milestones": {
         "id": "group-milestones",
-        "nounSingular": "Milestone",
-        "nounPlural": "Milestones",
         "view": {
           "header": "top",
           "headerAlign": "left",
@@ -532,6 +577,8 @@
             }
           }
         },
+        "noun": "Milestone",
+        "plural": "Milestones",
         "traits": {
           "1 XP": {
             "description": "when "
@@ -546,8 +593,6 @@
       },
       "XP": {
         "id": "xp",
-        "nounSingular": "Pip",
-        "nounPlural": "Pips",
         "view": {
           "features": {
             "description": false,
@@ -560,10 +605,8 @@
             "body": "pips"
           },
           "pips": {
-            "count": 25,
             "perRow": 5,
-            "connected": true,
-            "filled": 0
+            "connected": true
           },
           "place": {
             "left": "75%",
@@ -572,6 +615,41 @@
             "height": 1
           }
         },
+        "rating": {
+          "type": "Pip",
+          "value": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "range": [
+            25
+          ]
+        },
+        "noun": "Pip",
+        "plural": "Pips",
         "traits": {}
       }
     }

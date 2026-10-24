@@ -1,7 +1,8 @@
 import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
-import { VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel, resolveSheetStyle, defaultNameHidden } from './model.ts';
+import { VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel, resolveSheetStyle,
+defaultNameHidden, getRating, ratingDice, setRatingDice } from './model.ts';
 import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
@@ -253,8 +254,8 @@ export const cortexFunctions = {
 		if ( !Array.isArray( set.traits ) ) set.traits = [];
 		let trait = set.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === key );
 		if ( !trait ) {
-			trait = { name: key, value: 0, dice: [], description: '', traits: [], sfx: [], tags: [] };
-			if ( defaultNameHidden( key, character ) ) trait.view = { hidden: true };
+			trait = { name: key, description: '', traits: [], sfx: [], tags: [] };
+			if ( defaultNameHidden( key, character ) ) trait.view = { visibility: 'hidden' };
 			set.traits.push( trait );
 		}
 		return trait;
@@ -262,19 +263,14 @@ export const cortexFunctions = {
 
 	getTraitDice: function( trait: Trait ) {
 		if ( !trait ) return [];
-		if ( Array.isArray(trait.dice) && trait.dice.length > 0 ) {
-			return trait.dice.filter( ( d ) => typeof d === 'number' && d > 0 );
-		}
-		if ( typeof trait.value === 'number' && trait.value > 0 ) {
-			return [ trait.value ];
-		}
+		const rating = getRating( trait );
+		if ( rating ) return ratingDice( rating );
 		return [];
 	},
 
 	setTraitDice: function( trait: Trait, diceArray: number[] ) {
 		if ( !trait ) return;
-		trait.dice = Array.isArray(diceArray) ? diceArray.filter( d => typeof d === 'number' && d > 0 ) : [];
-		trait.value = trait.dice.length > 0 ? trait.dice[0] : null;
+		setRatingDice( trait as unknown as Record<string, any>, diceArray );
 	},
 
 	renderDate( timestamp: string | number | Date ) {
@@ -1280,13 +1276,11 @@ export const cortexFunctions = {
 			{
 				'name': 'Distinctions',
 				'description': '',
-				'nounSingular': 'Distinction',
-				'nounPlural': 'Distinctions',
+				'noun': 'Distinction',
+				'plural': 'Distinctions',
 				'traits': [
 					{
 						'name': '',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [ 'hinder' ],
@@ -1295,8 +1289,6 @@ export const cortexFunctions = {
 					},
 					{
 						'name': '',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [ 'hinder' ],
@@ -1305,8 +1297,6 @@ export const cortexFunctions = {
 					},
 					{
 						'name': '',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [ 'hinder' ],
@@ -1333,13 +1323,11 @@ export const cortexFunctions = {
 			{
 				'name': 'Attributes',
 				'description': '',
-				'nounSingular': 'Attribute',
-				'nounPlural': 'Attributes',
+				'noun': 'Attribute',
+				'plural': 'Attributes',
 				'traits': [
 					{
 						'name': 'Physical',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [],
@@ -1347,8 +1335,6 @@ export const cortexFunctions = {
 					},
 					{
 						'name': 'Mental',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [],
@@ -1356,8 +1342,6 @@ export const cortexFunctions = {
 					},
 					{
 						'name': 'Social',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [],
@@ -1383,13 +1367,11 @@ export const cortexFunctions = {
 			{
 				'name': 'Skills',
 				'description': '',
-				'nounSingular': 'Skill',
-				'nounPlural': 'Skills',
+				'noun': 'Skill',
+				'plural': 'Skills',
 				'traits': [
 					{
 						'name': '',
-						'value': 0,
-						'dice': [],
 						'description': '',
 						'traits': [],
 						'sfx': [],
@@ -1444,8 +1426,8 @@ export const cortexFunctions = {
 	defaultTraitSet: {
 		name: 'New trait set',
 		description: 'Trait set description',
-		nounSingular: '',
-		nounPlural: '',
+		noun: '',
+		plural: '',
 		traits: [],
 		sfx: [],
 		tags: [],
@@ -1470,8 +1452,7 @@ export const cortexFunctions = {
 	
 	defaultTrait: {
 		name: 'New trait',
-		value: 6,
-		dice: [6],
+		rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 		description: 'Trait description',
 		traits: [],
 		sfx: [],

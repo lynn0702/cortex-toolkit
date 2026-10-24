@@ -33,7 +33,7 @@ const {
 			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Trait' }}</span>
+						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
 					</div>
 				</div>
 			</div>

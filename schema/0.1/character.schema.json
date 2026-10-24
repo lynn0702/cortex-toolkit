@@ -23,11 +23,11 @@
 					"type": "string",
 					"description": "A description of the trait set."
 				},
-				"nounSingular": {
+				"noun": {
 					"type": "string",
 					"description": "The singular noun used to describe a trait in this set."
 				},
-				"nounPlural": {
+				"plural": {
 					"type": "string",
 					"description": "The plural noun used to describe multiple traits in this set."
 				},
@@ -90,6 +90,30 @@
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
+				"rating": {
+					"$ref": "#/$defs/rating"
+				},
+				"pool": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Staging behaviour: adding a trait stages its whole array of available dice."
+				},
+				"spendable": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Spend control for the set's traits unless a trait overrides it."
+				},
+				"hitches": {
+					"type": [
+						"integer",
+						"null"
+					],
+					"description": "Top of the hitches inheritance chain. Sparse; base default 1."
+				},
 				"view": {
 					"$ref": "#/$defs/view"
 				},
@@ -102,8 +126,8 @@
 				"id",
 				"name",
 				"description",
-				"nounSingular",
-				"nounPlural",
+				"noun",
+				"plural",
 				"traits",
 				"sfx",
 				"tags"
@@ -128,17 +152,48 @@
 						"integer",
 						"null"
 					],
-					"description": "The die value of the trait. For example, `2` for d2, `6` for a d6, etc. For unrated traits, use `0` or null."
+					"description": "Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating."
 				},
 				"dice": {
 					"type": [
 						"array",
 						"null"
 					],
-					"description": "Array of die values for multi-die traits (e.g. [6, 6, 6] or [8, 8, 6, 4]).",
+					"description": "Retired 2026-10-23: superseded by rating. Read on import only; canonical emit writes rating.",
 					"items": {
 						"type": "integer"
 					}
+				},
+				"rating": {
+					"$ref": "#/$defs/rating"
+				},
+				"pool": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Staging behaviour: adding the node to the roller stages its whole array of available dice."
+				},
+				"spendable": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Spend control: spend a single die (or unit) at a time, marking it unavailable. Spent state lives beside the rating, never in it."
+				},
+				"hitches": {
+					"type": [
+						"integer",
+						"null"
+					],
+					"description": "Faces 1..hitches hitch. Sparse: absent inherits from the nearest ancestor that sets it; base default 1. Only 0 is special — the exemption, which rolls separately."
+				},
+				"keepsExtra": {
+					"type": [
+						"integer",
+						"null"
+					],
+					"description": "The Scale effect, named where data must name it: keep this many extra dice for the total."
 				},
 				"description": {
 					"type": "string",
@@ -222,12 +277,49 @@
 			"additionalProperties": false,
 			"required": [
 				"name",
-				"value",
 				"description",
 				"traits",
 				"sfx",
 				"tags"
 			]
+		},
+		"rating": {
+			"type": "object",
+			"description": "The node's rating: { type: Counter | Die | Dice | Pip, value: [], range: [] }. Value is always a list; range is the ladder it may take. Absent means unrated.",
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum": [
+						"Counter",
+						"Die",
+						"Dice",
+						"Pip"
+					]
+				},
+				"value": {
+					"type": "array",
+					"description": "Always a list: die sizes for Die/Dice, a number for Counter, booleans for Pip.",
+					"items": {
+						"type": [
+							"integer",
+							"boolean"
+						]
+					}
+				},
+				"range": {
+					"type": "array",
+					"description": "The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip.",
+					"items": {
+						"type": "integer"
+					}
+				}
+			},
+			"required": [
+				"type",
+				"value",
+				"range"
+			],
+			"additionalProperties": false
 		},
 		"sfx": {
 			"type": "object",

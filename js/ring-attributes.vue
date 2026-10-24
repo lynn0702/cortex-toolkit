@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, resolveHitches, keepsExtraDice } from './model.ts';
 
 const props = defineProps<{
 	character: any;
@@ -28,19 +28,21 @@ const ringTraitSet = computed( () => props.character?.traitSets?.[ props.ringTra
 const scaleTrait = computed( () => {
 	const attrSet = ringTraitSet.value;
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
-	return attrSet.traits.find( ( t: any ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
+	return attrSet.traits.find( ( t: any ) => t.name?.trim().toLowerCase() === 'scale');
 } );
 const attributes = computed( () => {
 	const all = ringTraitSet.value?.traits || [];
-	return all.filter( ( t: any ) => !( t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale ) );
+	return all.filter( ( t: any ) => !( t.name?.trim().toLowerCase() === 'scale') );
 } );
-const isRingChallengePool = computed( () => {
+const isRingPool = computed( () => {
 	const ts = ringTraitSet.value;
-	return Boolean( getView( ts )?.isChallengePool || getView( ts )?.challengePool );
+	const node = ( ts && typeof ts === 'object' ? ts : undefined ) as { pool?: unknown } | undefined;
+	if ( node && typeof node.pool === 'boolean' ) return node.pool;
+	return Boolean( getView( ts )?.pool );
 } );
 const scaleDieValue = computed( () => {
 	const st = scaleTrait.value;
-	if ( st ) return Number( st.value ) || 8;
+	if ( st ) return ratingDice( getRating( st ) )[0] || 8;
 	const attrSet = ringTraitSet.value;
 	if ( getView( attrSet )?.scaleDie ) {
 		return Number( getView( attrSet )?.scaleDie );
@@ -141,20 +143,26 @@ function getAttributeNameStyle( a: number ) {
 	return `position: absolute; left: 50%; top: calc(50% + ${offY.toFixed( 2 )}mm); transform: translate(-50%, 0); text-align: center;`;
 }
 
-function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any ) {
-	if ( isRingDragging.value ) return;
+function ringDie( attribute: any ) {
+	return ratingDice( getRating( attribute ) )[0] || 0;
+}
+
+function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any ) {	if ( isRingDragging.value ) return;
 	if ( props.submode === 'play' ) {
 		const ts = props.character.traitSets[ ringTraitIDVal ];
-		const isChallenge = Boolean( getView( ts )?.isChallengePool || getView( ts )?.challengePool );
+		const isChallenge = isRingPool.value;
 		if ( isChallenge ) {
 			const diceToAdd: any[] = [];
 			const poolName = ( ts?.name && ts.name !== 'Attributes' ) ? ts.name : ( props.character.name || 'Challenge Pool' );
 			for ( const attr of attributes.value ) {
-				if ( attr.value && attr.value > 0 ) {
+				const first = ratingDice( getRating( attr ) )[0];
+				if ( first && first > 0 ) {
 					diceToAdd.push( {
-						size: attr.value,
+						size: first,
 						qty: 1,
-						source: attr.name || poolName
+						source: attr.name || poolName,
+						hitches: resolveHitches( attr, [ ts ] ),
+						keepsExtra: keepsExtraDice( attr )
 					} );
 				}
 			}
@@ -162,11 +170,14 @@ function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any
 				emit( 'addDieToRoller', diceToAdd );
 			}
 		} else {
-			if ( attribute.value ) {
+			const first = ratingDice( getRating( attribute ) )[0];
+			if ( first ) {
 				emit( 'addDieToRoller', {
-					size: attribute.value,
+					size: first,
 					qty: 1,
-					source: attribute.name
+					source: attribute.name,
+					hitches: resolveHitches( attribute, [ ts ] ),
+					keepsExtra: keepsExtraDice( attribute )
 				} );
 			}
 		}
@@ -316,13 +327,16 @@ function setScaleDieValue( val: any ) {
 	if ( attrSet ) {
 		ensureView( attrSet ).scaleDie = num;
 
-		const stIndex = attrSet.traits.findIndex( ( t: any ) => t.name?.trim().toLowerCase() === 'scale' || t.custom?.isScale );
+		const stIndex = attrSet.traits.findIndex( ( t: any ) => t.name?.trim().toLowerCase() === 'scale');
 		if ( num === 0 ) {
 			if ( stIndex !== -1 ) {
 				attrSet.traits.splice( stIndex, 1 );
 			}
 		} else if ( stIndex !== -1 ) {
-			attrSet.traits[ stIndex ].value = num;
+			const st = attrSet.traits[ stIndex ] as unknown as Record<string, any>;
+			st.rating = { type: 'Die', value: [ num ], range: [ 4, 6, 8, 10, 12 ] };
+			// Scale remains a trait name; its effect is keepsExtra.
+			st.keepsExtra = 1;
 		}
 	}
 	ensureView( props.character ).scale = num;
@@ -365,13 +379,13 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 				<div class="attribute-inner"
 					:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', ringTraitID, a]) }"
 					@click.stop="handleAttributeClick( ringTraitID, a, attribute )"
-					:title="submode === 'play' ? (isRingChallengePool ? 'Challenge Pool: Click to add all dice to roller' : 'Click to add d' + attribute.value + ' to roller') : ''"
+					:title="submode === 'play' ? (isRingPool ? 'Pool: Click to add all dice to roller' : 'Click to add d' + ringDie(attribute) + ' to roller') : ''"
 				>
 
 					<span class="c"
-						:class="['die-' + (attribute.value || 8), { 'die-empty': !attribute.value }]"
-						v-html="renderDieValue(attribute.value)"
-						:title="!attribute.value && submode === 'edit' ? 'Unrated — click to set a die rating' : ''"
+						:class="['die-' + (ringDie(attribute) || 8), { 'die-empty': !ringDie(attribute) }]"
+						v-html="renderDieValue(ringDie(attribute))"
+						:title="!ringDie(attribute) && submode === 'edit' ? 'Unrated — click to set a die rating' : ''"
 					></span>
 
 					<div class="attribute-name"
@@ -437,3 +451,4 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 		</div>
 	</div>
 </template>
+

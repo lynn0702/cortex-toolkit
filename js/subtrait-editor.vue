@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, setRatingDie } from './model.ts';
 
 const props = defineProps<{
 	character: any;
@@ -43,10 +43,16 @@ const name = computed( {
 
 const value = computed( {
 	get() {
-		return subtrait.value.value;
+		return ratingDice( getRating( subtrait.value ) )[0] || 0;
 	},
 	set( value: any ) {
-		setSubtraitProperty( 'value', value );
+		const st = subtrait.value as unknown as Record<string, any>;
+		if ( typeof value === 'number' && value > 0 ) {
+			setRatingDie( st, value );
+		} else {
+			delete st.rating;
+		}
+		updateCharacter( props.character );
 	},
 } );
 
@@ -103,11 +109,14 @@ function setSubtraitProperty( key: string, value: any ) {
 }
 
 function toggleSubtraitValue( val: any ) {
-	let v = val;
-	if ( v === subtrait.value.value ) {
-		v = null;
+	const st = subtrait.value as unknown as Record<string, any>;
+	const cur = ratingDice( getRating( st ) )[0] || 0;
+	if ( val === cur ) {
+		delete st.rating;
+	} else {
+		setRatingDie( st, val );
 	}
-	setSubtraitProperty( 'value', v );
+	updateCharacter( props.character );
 }
 
 function updateCharacter( character: any ) {
@@ -130,6 +139,10 @@ function removeFromSheet() {
 function getDieDisplayValue( value: any ) {
 	return cortexFunctions.getDieDisplayValue( value );
 }
+
+function subFirstDie() {
+	return ratingDice( getRating( subtrait.value ) )[0] || 0;
+}
 </script>
 
 <template>
@@ -144,15 +157,15 @@ function getDieDisplayValue( value: any ) {
 
 			<ul class="editor-values">
 				<li
-					v-for="value in availableValues"
-					:class="{ 'active': value === subtrait.value }"
+					v-for="size in availableValues"
+					:class="{ 'active': size === subFirstDie() }"
 					tabindex="0"
 					role="button"
-					@keydown.enter.prevent="toggleSubtraitValue( value )"
-					@keydown.space.prevent="toggleSubtraitValue( value )"
-					@click.stop="toggleSubtraitValue( value )"
+					@keydown.enter.prevent="toggleSubtraitValue( size )"
+					@keydown.space.prevent="toggleSubtraitValue( size )"
+					@click.stop="toggleSubtraitValue( size )"
 				>
-					<span class="c" v-html="getDieDisplayValue(value)"></span>
+					<span class="c" v-html="getDieDisplayValue(size)"></span>
 				</li>
 			</ul>
 

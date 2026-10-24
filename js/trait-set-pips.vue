@@ -4,8 +4,14 @@ import { injectTraitSet } from './use-trait-set.ts';
 
 const {
 	traitSet, s, submode, printBlank, isSelected, selectElement, getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
-	isPipLabels, pipRows, togglePipRow, openPipRow, addPipRow
+	isPipLabels, pipRows, togglePipRow, addPipRow, setPipRowName
 } = injectTraitSet();
+
+function commitPipRowName( traitSetIndex: number, itemIndex: number, event: Event ) {
+	const el = event && ( event.target as HTMLInputElement );
+	setPipRowName( traitSetIndex, itemIndex, el ? el.value : '' );
+	if ( el && document.activeElement === el ) el.blur();
+}
 </script>
 
 <template>
@@ -14,7 +20,8 @@ const {
 		@click.stop="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
 	>
 		<!-- LABELED ROWS (named checkable entries): one bubble plus its
-			name per row, stacked. Blank rows render bare. -->
+			name per row, stacked. The name is a write-in line on the row;
+			the Pip rating reads filled/true. Blank rows render bare. -->
 		<div class="pip-label-list" v-if="isPipLabels(traitSet)">
 			<div
 				v-for="row in pipRows(traitSet)"
@@ -36,13 +43,22 @@ const {
 						:class="{ 'filled': row.filled }"
 					></div>
 				</div>
-				<span class="pip-label-name" v-if="row.name" @click.stop="openPipRow(s, row.index)">{{ row.name }}</span>
-				<span class="pip-label-blank" v-else-if="submode === 'edit' && !printBlank" @click.stop="openPipRow(s, row.index)">Row...</span>
+				<input
+					v-if="submode === 'edit' && !printBlank"
+					class="pip-label-input"
+					type="text"
+					:value="row.name"
+					placeholder="Row..."
+					:aria-label="(traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Row') + ' name'"
+					@change="commitPipRowName(s, row.index, $event)"
+					@click.stop
+				>
+				<span class="pip-label-name" v-else-if="row.name">{{ row.name }}</span>
 			</div>
 			<div class="preview-button-container" v-show="submode === 'edit'">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addPipRow( s )">
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.nounSingular && traitSet.nounSingular.length ) ? traitSet.nounSingular : 'Row' }}</span>
+						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Row' }}</span>
 					</div>
 				</div>
 			</div>

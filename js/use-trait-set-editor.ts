@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getSpotlightSections, buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
-import { getView, ensureView, resolveSheetStyle } from './model.ts';
+import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
@@ -70,19 +70,19 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( v: string ) => setProperty( 'description', v )
 	});
 
-	const nounSingular = computed({
-		get: () => traitSet.value?.nounSingular ?? '',
-		set: ( v: string ) => setProperty( 'nounSingular', v )
+	const noun = computed({
+		get: () => traitSet.value?.noun ?? '',
+		set: ( v: string ) => setProperty( 'noun', v )
 	});
 
-	const nounPlural = computed({
+	const plural = computed({
 		get: () => {
-			const stored = traitSet.value?.nounPlural;
+			const stored = traitSet.value?.plural;
 			if ( stored !== undefined && stored !== null && stored !== '' ) return stored;
-			const singular = traitSet.value?.nounSingular;
+			const singular = traitSet.value?.noun;
 			return ( singular && singular.length ) ? singular + 's' : '';
 		},
-		set: ( v: string ) => setProperty( 'nounPlural', v )
+		set: ( v: string ) => setProperty( 'plural', v )
 	});
 
 	const styleBody = computed({
@@ -139,13 +139,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				if ( value !== 'subtrait-columns' ) {
 					delete ( view as Record<string, unknown> ).branch;
 				}
-				// Session families name their rows Sessions unless the
-				// author already named them something else.
-				if ( ( value === 'session-record' || value === 'angled-lines' ) &&
-					!( traitSet.value as any )?.nounSingular && !( traitSet.value as any )?.nounPlural ) {
-					( traitSet.value as any ).nounSingular = 'Session';
-					( traitSet.value as any ).nounPlural = 'Sessions';
-				}
 				if ( view.location === 'attributes' ) {
 					view.location = 'right';
 				}
@@ -171,7 +164,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		getView( traitSet.value )?.isAttributes ||
 		getView( traitSet.value )?.style?.body === 'attributes' ||
 		getView( traitSet.value )?.style?.body === 'portrait-ring' ||
-		traitSet.value?.nounSingular?.toLowerCase() === 'attribute' ||
+		traitSet.value?.noun?.toLowerCase() === 'attribute' ||
 		traitSet.value?.name?.trim().toLowerCase() === 'attributes'
 	) );
 
@@ -357,8 +350,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// never takes over a bespoke body: arranging one writes only what
 	// that body can render (branch shares for subtrait-columns).
 	// Ladders keep the legacy flag (no parts form).
-	const FLEX_BODIES = [ 'image', 'notes', 'pips', 'session-record', 'angled-lines', 'dice-ladder', 'labeled-fields', 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'portrait-ring' ];
-	const NON_ROW_BODIES = [ 'image', 'notes', 'pips', 'session-record', 'angled-lines', 'portrait-ring' ];
+	const FLEX_BODIES = [ 'image', 'notes', 'pips', 'dice-ladder', 'labeled-fields', 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'portrait-ring' ];
+	const NON_ROW_BODIES = [ 'image', 'notes', 'pips', 'portrait-ring' ];
 	function isPartsDriven() {
 		const body = getView( traitSet.value )?.style?.body;
 		if ( typeof body === 'string' && ( FLEX_BODIES as readonly string[] ).includes( body ) ) return false;
@@ -647,28 +640,74 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	// Pool sets add a whole trait pool to the roller on click, and their
-	// dice are never flagged as resources (e.g. Growth Pool).
+	// dice are never flagged as resources (e.g. Growth Pool). Pool lives
+	// on the set node.
 	const isPool = computed({
-		get: () => Boolean( getView( traitSet.value )?.pool ),
-		set: ( value: boolean ) => { setCustomProperty( 'pool', value ? true : null ); }
-	});
-
-	const setDie = computed({
 		get: () => {
-			const d = Number( getView( traitSet.value )?.setDie );
-			return ( d > 0 ) ? d : null;
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
+			return ts !== null && ts.pool === true;
 		},
-		set: ( value: number | null ) => { setCustomProperty( 'setDie', ( Number( value ) > 0 ) ? value : null ); }
+		set: ( value: boolean ) => {
+			const ts = traitSet.value as unknown as Record<string, any>;
+			if ( !ts ) return;
+			ts.pool = Boolean( value );
+			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+		}
 	});
 
-	const isChallengePool = computed({
-		get: () => Boolean(
-			getView( traitSet.value )?.isChallengePool ||
-			getView( traitSet.value )?.challengePool
-		),
+	// The set-level die is the set node's own Rating; unrated traits fall
+	// through to it.
+	const setRating = computed({
+		get: () => {
+			const dice = ratingDice( getRating( traitSet.value ) );
+			if ( dice.length ) return dice[0];
+			return null;
+		},
+		set: ( value: number | null ) => {
+			const ts = traitSet.value as unknown as Record<string, any>;
+			if ( !ts ) return;
+			if ( Number( value ) > 0 ) {
+				setRatingDie( ts, Number( value ) );
+			} else {
+				delete ts.rating;
+			}
+			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+		}
+	});
+
+	// Spendable on the set node drives spend controls for its traits
+	// unless a trait overrides it. Challenge/boss pools carry pool +
+	// spendable together; no flag survives them.
+	const setSpendable = computed({
+		get: () => {
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
+			if ( ts && typeof ts.spendable === 'boolean' ) return ts.spendable;
+			return false;
+		},
 		set: ( value: boolean ) => {
-			setCustomProperty( 'isChallengePool', value );
-			setCustomProperty( 'challengePool', value );
+			const ts = traitSet.value as unknown as Record<string, any>;
+			if ( !ts ) return;
+			ts.spendable = Boolean( value );
+			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+		}
+	});
+
+	// Hitches on the set node: the top of the inheritance chain.
+	const setHitches = computed({
+		get: () => {
+			const ts = traitSet.value as unknown as Record<string, unknown> | null;
+			return ts && typeof ts.hitches === 'number' ? ts.hitches : null;
+		},
+		set: ( value: number | null ) => {
+			const ts = traitSet.value as unknown as Record<string, any>;
+			if ( !ts ) return;
+			if ( value === null || value === undefined || value === '' as unknown as number ) {
+				delete ts.hitches;
+			} else {
+				const n = Math.floor( Number( value ) );
+				if ( Number.isFinite( n ) && n >= 0 ) ts.hitches = n;
+			}
+			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 		}
 	});
 
@@ -859,8 +898,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const pipCount = computed({
-		get: () => getView( traitSet.value )?.pips?.count ?? 25,
-		set: ( val: number ) => { setPipProperty( 'count', Math.max( 1, parseInt( String( val ), 10 ) || 25 ) ); }
+		get: () => {
+			const rating = getRating( traitSet.value );
+			if ( rating && rating.type === 'Pip' && Array.isArray( rating.range ) && typeof rating.range[0] === 'number' && rating.range[0] > 0 ) {
+				return Math.floor( rating.range[0] );
+			}
+			return 25;
+		},
+		set: ( val: number ) => { setPipTrack( Math.max( 1, parseInt( String( val ), 10 ) || 25 ), pipsFilled.value ); }
 	});
 
 	const pipsPerRow = computed({
@@ -879,8 +924,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	const pipsFilled = computed({
-		get: () => getView( traitSet.value )?.pips?.filled ?? 0,
-		set: ( val: number ) => { setPipProperty( 'filled', Math.max( 0, parseInt( String( val ), 10 ) || 0 ) ); }
+		get: () => {
+			const rating = getRating( traitSet.value );
+			if ( rating && rating.type === 'Pip' && Array.isArray( rating.value ) ) {
+				return rating.value.filter( ( v ) => v === true ).length;
+			}
+			return 0;
+		},
+		set: ( val: number ) => { setPipTrack( pipCount.value, Math.max( 0, parseInt( String( val ), 10 ) || 0 ) ); }
 	});
 
 	const scrollable = computed( () => true );
@@ -1083,7 +1134,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		if ( body === 'subtrait-columns' || body === 'three-column-table' || body === 'dice-count' ) return true;
 		if ( body === 'distinctions' ) return true;
 		if ( hasAttachedStress.value ) return true;
-		return body !== 'notes' && body !== 'image' && body !== 'pips' && body !== 'session-record' && body !== 'angled-lines';
+		return body !== 'notes' && body !== 'image' && body !== 'pips';
 	} );
 
 	function setImageConfig( key: keyof ImageConfig, value: any ) {
@@ -1192,12 +1243,25 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		const ctk = ctkFor( props.traitSetID );
 		if ( !ctk.pips ) {
 			ctk.pips = {
-				count: 25,
 				perRow: 5,
-				connected: true,
-				filled: 0
+				connected: true
 			};
 		}
+		const ts = traitSet.value as unknown as Record<string, any>;
+		if ( ts && ( !ts.rating || typeof ts.rating !== 'object' || ( ts.rating as any ).type !== 'Pip' ) ) {
+			ts.rating = { type: 'Pip', value: [], range: [ 25 ] };
+		}
+	}
+
+	// The track count and fill live on the set node's Pip rating;
+	// perRow/connected/labels stay presentation in view.pips.
+	function setPipTrack( count: number, filled: number ) {
+		const ts = traitSet.value as unknown as Record<string, any>;
+		if ( !ts ) return;
+		const bubbles: boolean[] = [];
+		for ( let i = 0; i < count; i++ ) bubbles.push( i < filled );
+		ts.rating = { type: 'Pip', value: bubbles, range: [ count ] };
+		updateCharacter( props.character );
 	}
 
 	function setPipProperty( key: keyof PipsConfig, value: any ) {
@@ -1276,7 +1340,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const api: TraitSetEditorApi = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
-		traitSet, character, traitSetID, name, description, nounSingular, nounPlural, styleBody, isRing, isAttributesSet,
+		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isAttributesSet,
 		ringTrait, pageNumber, isFullWidthSpan,
 		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
 		partPreview,
@@ -1286,7 +1350,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
-		multiDie, isPool, setDie, isChallengePool, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
+		multiDie, isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
 		hasAttachedStress, attachedStressLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
 		scrollable, needsDiceUI, allowsTraitColumns,

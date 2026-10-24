@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, setRatingDice, setRatingDie,
+	isRated, resolveHitches, resolveVisibility } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
@@ -57,15 +58,6 @@ const name = computed( {
 	},
 } );
 
-const value = computed( {
-	get() {
-		return trait.value?.value ?? 4;
-	},
-	set( val: any ) {
-		setProperty( 'value', val );
-	},
-} );
-
 const isListStyle = computed( () => {
 	const b = getView( traitSet.value )?.style?.body;
 	return b === 'list' || b === 'notes' || b === 'three-column-table' || b === 'labeled-fields';
@@ -112,15 +104,15 @@ const isLabeledPipsSet = computed( () => {
 
 const pipRowChecked = computed( {
 	get() {
-		if ( trait.value?.custom?.checked !== undefined ) {
-			return Boolean( trait.value.custom.checked );
+		const rating = getRating( trait.value );
+		if ( rating && rating.type === 'Pip' && Array.isArray( rating.value ) && rating.value.length ) {
+			return rating.value[0] === true;
 		}
-		return Boolean( trait.value?.value );
+		return false;
 	},
 	set( val: any ) {
-		if ( !trait.value.custom ) trait.value.custom = {};
-		trait.value.custom.checked = Boolean( val );
-		trait.value.value = val ? 1 : 0;
+		const t = trait.value as unknown as Record<string, any>;
+		t.rating = { type: 'Pip', value: [ Boolean( val ) ], range: [ 1 ] };
 		updateCharacter( props.character );
 	},
 } );
@@ -128,6 +120,97 @@ const pipRowChecked = computed( {
 const isMultiDie = computed( () => Boolean( getView( traitSet.value )?.multiDie ) || ( getView( traitSet.value )?.style?.body === 'resources' ) || ( getView( traitSet.value )?.style?.body === 'dice-count' ) || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 1 ) );
 
 const dice = computed( () => cortexFunctions.getTraitDice( trait.value ) );
+
+function firstDieOf( node: any ) {
+	return ratingDice( getRating( node ) )[0] || 0;
+}
+
+function isDieActiveOf( node: any, size: number ) {
+	return firstDieOf( node ) === size;
+}
+
+// Rated is the gate: a trait is rated iff it carries a rating. Where it
+// has none, the editor offers to add one; the Rating control and its
+// range editor render directly beneath.
+const isRatedTrait = computed( () => isRated( trait.value ) );
+
+function addRating() {
+	if ( !trait.value ) return;
+	const scale = availableValues.value;
+	const size = Array.isArray( scale ) && scale.length ? scale[0] : 8;
+	setRatingDie( trait.value as unknown as Record<string, any>, size, Array.isArray( scale ) && scale.length ? [ ...scale ] : undefined );
+	updateCharacter( props.character );
+}
+
+function setTraitRange( scale: number[] ) {
+	const t = trait.value as unknown as Record<string, any>;
+	const rating = getRating( t );
+	if ( !rating ) return;
+	t.rating = { type: rating.type, value: [ ...rating.value ], range: [ ...scale ] };
+	updateCharacter( props.character );
+}
+
+function isRangeIncluded( size: number ) {
+	const rating = getRating( trait.value );
+	if ( !rating || !Array.isArray( rating.range ) ) return availableValues.value.includes( size );
+	return rating.range.includes( size );
+}
+
+function toggleRangeOption( size: number ) {
+	const rating = getRating( trait.value );
+	const base = rating && Array.isArray( rating.range ) && rating.range.length ? [ ...rating.range ] : [ ...availableValues.value ];
+	const idx = base.indexOf( size );
+	if ( idx !== -1 ) base.splice( idx, 1 );
+	else base.push( size );
+	base.sort( ( a, b ) => a - b );
+	setTraitRange( base );
+}
+
+// Options render only what the shape makes meaningful: Pool and
+// Spendable require a rating; hitches shows against the inherited value.
+const traitPool = computed( {
+	get() {
+		const t = trait.value as unknown as Record<string, unknown> | undefined;
+		return t && typeof t.pool === 'boolean' ? t.pool : false;
+	},
+	set( val: any ) {
+		if ( !trait.value ) return;
+		( trait.value as unknown as Record<string, any> ).pool = Boolean( val );
+		updateCharacter( props.character );
+	},
+} );
+
+const traitSpendable = computed( {
+	get() {
+		const t = trait.value as unknown as Record<string, unknown> | undefined;
+		return t && typeof t.spendable === 'boolean' ? t.spendable : false;
+	},
+	set( val: any ) {
+		if ( !trait.value ) return;
+		( trait.value as unknown as Record<string, any> ).spendable = Boolean( val );
+		updateCharacter( props.character );
+	},
+} );
+
+const inheritedHitches = computed( () => resolveHitches( undefined, [ trait.value, traitSet.value ] ) );
+
+const traitHitches = computed( {
+	get() {
+		const t = trait.value as unknown as Record<string, unknown> | undefined;
+		return t && typeof t.hitches === 'number' ? t.hitches : inheritedHitches.value;
+	},
+	set( val: any ) {
+		if ( !trait.value ) return;
+		const n = Number( val );
+		( trait.value as unknown as Record<string, any> ).hitches = Number.isFinite( n ) && n >= 0 ? Math.floor( n ) : undefined;
+		updateCharacter( props.character );
+	},
+} );
+
+const hitchesDiffers = computed( () => {
+	const t = trait.value as unknown as Record<string, unknown> | undefined;
+	return t && typeof t.hitches === 'number' && t.hitches !== resolveHitches( undefined, [ traitSet.value ] );
+} );
 
 const isNameSet = computed( () => cortexFunctions.isNameSet( traitSet.value ) );
 
@@ -146,19 +229,19 @@ const traitLabel = computed( {
 	},
 } );
 
-// Trait visibility (view.hidden): true hides it everywhere, absent or
-// false shows it. Shown is absence.
-const traitHidden = computed( {
+// Trait visibility (shown | editor-only | hidden): a general trait
+// capability, not a name-set special case.
+const traitVisibility = computed( {
 	get() {
-		return getView( trait.value )?.hidden === true;
+		return resolveVisibility( trait.value );
 	},
 	set( val: any ) {
 		if ( !trait.value ) return;
-		if ( val ) {
-			ensureView( trait.value ).hidden = true;
+		const v = ensureView( trait.value ) as Record<string, unknown>;
+		if ( val === 'shown' ) {
+			delete v.visibility;
 		} else {
-			const v = getView( trait.value );
-			if ( v && typeof v === 'object' ) delete ( v as Record<string, unknown> ).hidden;
+			v.visibility = val;
 		}
 		updateCharacter( props.character );
 	},
@@ -255,7 +338,7 @@ const canHinderTrait = computed( () => {
 	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' ) {
 		return false;
 	}
-	return Boolean( trait.value?.value > 0 || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 0 ) );
+	return isRated( trait.value );
 } );
 
 const isAttributesTrait = computed( () => {
@@ -266,14 +349,20 @@ const isAttributesTrait = computed( () => {
 const isScaleDie = computed( {
 	get() {
 		return Boolean(
-			trait.value?.custom?.isScale ||
+			( trait.value && typeof ( trait.value as any ).keepsExtra === 'number' && ( trait.value as any ).keepsExtra > 0 ) ||
 			( trait.value?.name && trait.value.name.trim().toLowerCase() === 'scale' )
 		);
 	},
 	set( val: any ) {
-		if ( !trait.value.custom ) trait.value.custom = {};
-		trait.value.custom.isScale = val;
-		if ( val && ( !trait.value.name || trait.value.name === 'New trait' || trait.value.name === 'New Attribute' ) ) {
+		if ( !trait.value ) return;
+		const t = trait.value as unknown as Record<string, any>;
+		if ( val ) {
+			// Scale remains a trait name; its effect is keepsExtra.
+			t.keepsExtra = 1;
+		} else {
+			delete t.keepsExtra;
+		}
+		if ( val && ( !t.name || t.name === 'New trait' || t.name === 'New Attribute' ) ) {
 			setProperty( 'name', 'Scale' );
 		}
 		updateCharacter( props.character );
@@ -289,7 +378,7 @@ const shouldShowStressOut = computed( () => {
 	return true;
 } );
 
-const isOut = computed( () => Boolean( trait.value?.value > 12 || trait.value?.isOut === true ) );
+const isOut = computed( () => Boolean( ratingDice( getRating( trait.value ) )[0] > 12 || ( trait.value as any )?.isOut === true ) );
 
 const outLabel = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
@@ -319,7 +408,7 @@ const attachedStressValue = computed( {
 			const dice = cortexFunctions.getTraitDice( attachedStressCompanion.value );
 			return dice[0] || 0;
 		}
-		return trait.value?.custom?.stress ?? trait.value?.stress ?? 0;
+		return 0;
 	},
 	set( val: any ) {
 		const character = props.character;
@@ -328,7 +417,7 @@ const attachedStressValue = computed( {
 		let companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === attachedStressLabel.value );
 		if ( val ) {
 			if ( companion ) cortexFunctions.setTraitDice( companion, [ val ] );
-			else t.traits.push( { name: attachedStressLabel.value, value: val, dice: [] } );
+			else t.traits.push( { name: attachedStressLabel.value, rating: { type: 'Die', value: [ val ], range: [ 4, 6, 8, 10, 12 ] } } );
 		} else if ( companion ) {
 			t.traits.splice( t.traits.indexOf( companion ), 1 );
 		}
@@ -399,12 +488,14 @@ const branchSide = computed( {
 	},
 } );
 
-const setDie = computed( () => {
-	const d = Number( getView( traitSet.value )?.setDie );
-	return ( d > 0 ) ? d : null;
+// The set-level die is the set node's own Rating; unrated traits fall
+// through to it per the layer rules.
+const setRating = computed( () => {
+	const dice = ratingDice( getRating( traitSet.value ) );
+	return dice.length ? dice[0] : null;
 } );
 
-const hideSkillDice = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setDie.value && !trait.value?.value ) );
+const hideSkillDice = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setRating.value && !isRated( trait.value ) ) );
 
 const parentIsFullWidth = computed( () => {
 	const place = getView( traitSet.value )?.place;
@@ -511,7 +602,7 @@ function setAttachedStress( val: any ) {
 	} else if ( companion ) {
 		cortexFunctions.setTraitDice( companion, [ val ] );
 	} else {
-		t.traits.push( { name: label, value: val, dice: [] } );
+		t.traits.push( { name: label, rating: { type: 'Die', value: [ val ], range: [ 4, 6, 8, 10, 12 ] } } );
 	}
 	updateCharacter( character );
 }
@@ -573,27 +664,26 @@ function stepDownDieAtIndex( index: number ) {
 }
 
 function toggleTraitValue( val: any ) {
-	let v = val;
-	if ( v === trait.value.value && !isOut.value ) {
-		v = null;
-		trait.value.isOut = false;
+	const t = trait.value as unknown as Record<string, any>;
+	const cur = ratingDice( getRating( t ) )[0] || 0;
+	if ( val === cur && !isOut.value ) {
+		t.isOut = false;
 		cortexFunctions.setTraitDice( trait.value, [] );
 	} else {
-		trait.value.isOut = false;
-		cortexFunctions.setTraitDice( trait.value, [ v ] );
+		t.isOut = false;
+		cortexFunctions.setTraitDice( trait.value, [ val ] );
 	}
 	updateCharacter( props.character );
 }
 
 function toggleOutValue() {
+	const t = trait.value as unknown as Record<string, any>;
 	if ( isOut.value ) {
-		trait.value.isOut = false;
-		trait.value.value = null;
+		t.isOut = false;
 		cortexFunctions.setTraitDice( trait.value, [] );
 	} else {
-		trait.value.isOut = true;
-		trait.value.value = 14;
-		cortexFunctions.setTraitDice( trait.value, [ 14 ] );
+		t.isOut = true;
+		setRatingDie( t, 14 );
 	}
 	updateCharacter( props.character );
 }
@@ -657,11 +747,12 @@ function removeEffect( effectID: number ) {
 }
 
 function addSubtrait() {
-	const subtrait = structuredClone( cortexFunctions.defaultTrait );
+	const subtrait: any = structuredClone( cortexFunctions.defaultTrait );
 	subtrait.name = 'New subtrait';
 	const allowed = cortexFunctions.getSubtraitRatings( traitSet.value );
-	if ( allowed.length > 0 && !allowed.includes( subtrait.value ) ) {
-		subtrait.value = allowed[ 0 ];
+	const cur = subtrait.rating && subtrait.rating.type === 'Die' && Array.isArray( subtrait.rating.value ) ? subtrait.rating.value[0] : 0;
+	if ( allowed.length > 0 && !allowed.includes( cur ) ) {
+		subtrait.rating = { type: 'Die', value: [ allowed[ 0 ] ], range: allowed.slice() };
 	}
 
 	const character = props.character;
@@ -825,7 +916,7 @@ function getDieDisplayValue( val: any ) {
 					<div class="editor-field">
 						<div class="name-heading-row">
 							<label>Visibility</label>
-							<visibility-eye :visible="!traitHidden" @toggle="traitHidden = !traitHidden" />
+							<visibility-eye :state="traitVisibility" @toggle="traitVisibility = traitVisibility === 'shown' ? 'editor-only' : traitVisibility === 'editor-only' ? 'hidden' : 'shown'" />
 						</div>
 					</div>
 
@@ -933,13 +1024,19 @@ function getDieDisplayValue( val: any ) {
 
 					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideSkillDice">
 
-						<div class="editor-label">{{ isMultiDie ? 'Dice Pool' : 'Value' }}</div>
+						<div class="editor-label">Rating</div>
+
+						<!-- UNRATED: the gate offers to add one -->
+						<div class="editor-toggles" v-if="!isRatedTrait">
+							<div><span class="trait-blank-line"></span></div>
+							<div><button type="button" class="btn-step" @click.stop="addRating()">Add rating</button></div>
+						</div>
 
 						<!-- SINGLE DIE SELECTOR -->
-						<ul class="editor-values" v-if="!isMultiDie">
+						<ul class="editor-values" v-if="isRatedTrait && !isMultiDie">
 							<li
 								v-for="val in availableValues"
-								:class="{ 'active': val === trait.value && !isOut }"
+								:class="{ 'active': isDieActiveOf(trait, val) && !isOut }"
 								tabindex="0"
 								role="button"
 								@keydown.enter.prevent="toggleTraitValue( val )"
@@ -964,7 +1061,7 @@ function getDieDisplayValue( val: any ) {
 						</ul>
 
 						<!-- MULTI DIE COUNTERS AND POOL LIST -->
-						<div class="editor-multidie-container" v-else>
+						<div class="editor-multidie-container" v-else-if="isRatedTrait">
 							<div class="editor-die-steppers">
 								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
 									<span class="c">{{ getDieDisplayValue(size) }}</span>
@@ -991,6 +1088,43 @@ function getDieDisplayValue( val: any ) {
 							</div>
 						</div>
 
+					</div>
+
+					<!-- RATING RANGE (the ladder this rating may take) -->
+					<div class="editor-field" v-if="isRatedTrait && !isListStyle && !isLabeledPipsSet && !hideSkillDice">
+						<div class="editor-label">Range</div>
+						<div class="rating-scale-container">
+							<div class="rating-scale-chips">
+								<button
+									type="button"
+									v-for="size in [4, 6, 8, 10, 12]"
+									:key="'range-' + size"
+									class="rating-scale-chip"
+									:class="{ active: isRangeIncluded(size) }"
+									@click.stop="toggleRangeOption(size)"
+									:title="(isRangeIncluded(size) ? 'Exclude d' : 'Include d') + size"
+								>
+									<span class="c" v-html="getDieDisplayValue(size)"></span>
+									<span class="chip-label">d{{ size }}</span>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- OPTIONS (only what the shape makes meaningful) -->
+					<div class="editor-field" v-if="isRatedTrait && !isListStyle && !isLabeledPipsSet">
+						<div class="editor-label">Options</div>
+						<div class="editor-toggles">
+							<div><input type="checkbox" :id="'trait-' + traitID + '-pool'" :true-value="true" :false-value="false" v-model="traitPool"></div>
+							<div><label :for="'trait-' + traitID + '-pool'" title="Adding the trait stages its whole array of available dice">Pool</label></div>
+
+							<div><input type="checkbox" :id="'trait-' + traitID + '-spendable'" :true-value="true" :false-value="false" v-model="traitSpendable"></div>
+							<div><label :for="'trait-' + traitID + '-spendable'">Spendable</label></div>
+						</div>
+						<div class="editor-toggles" v-if="hitchesDiffers" style="margin-top: 0.4rem;">
+							<div><label :for="'trait-' + traitID + '-hitches'">Hitches</label></div>
+							<div><input type="number" :id="'trait-' + traitID + '-hitches'" name="traitHitches" min="0" max="12" v-model.number="traitHitches" style="width: 4rem;"></div>
+						</div>
 					</div>
 
 					<!-- ATTACHED STRESS SELECTOR -->
@@ -1022,7 +1156,7 @@ function getDieDisplayValue( val: any ) {
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="getView( traitSet )?.features?.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle">
+					<div class="editor-field" v-if="getView( traitSet )?.features?.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
 					</div>
