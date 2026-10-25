@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, getRating, ratingDice, setRatingDice, setRatingDie,
-	isRated, resolveHitches, resolveVisibility } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, setRatingDie,
+isRated, resolveHitches, resolveVisibility, DIE_LADDER, rangeTop, isOutDie } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
@@ -117,8 +117,6 @@ const pipRowChecked = computed( {
 	},
 } );
 
-const isMultiDie = computed( () => Boolean( getView( traitSet.value )?.multiDie ) || ( getView( traitSet.value )?.style?.body === 'resources' ) || ( getView( traitSet.value )?.style?.body === 'dice-count' ) || ( Array.isArray( trait.value?.dice ) && trait.value.dice.length > 1 ) );
-
 const dice = computed( () => cortexFunctions.getTraitDice( trait.value ) );
 
 function firstDieOf( node: any ) {
@@ -139,6 +137,160 @@ function addRating() {
 	const scale = availableValues.value;
 	const size = Array.isArray( scale ) && scale.length ? scale[0] : 8;
 	setRatingDie( trait.value as unknown as Record<string, any>, size, Array.isArray( scale ) && scale.length ? [ ...scale ] : undefined );
+	updateCharacter( props.character );
+}
+
+// Rating type control: Die | Dice | Counter | Pip. Die<->Dice preserves
+// the dice (one becomes a one-item list, a list's first item becomes the
+// single die); every other change starts from that type's default. The
+// switch itself is explicit, so nothing is silently discarded.
+const RATING_TYPES = [ 'Die', 'Dice', 'Counter', 'Pip' ] as const;
+
+const ratingType = computed( () => getRating( trait.value )?.type ?? null );
+
+// Out is a range option for Die/Dice ratings, defaulted off. Surgical:
+// setting true opts the range in, false drops the key.
+const ratingHasOut = computed( {
+get() {
+const r = getRating( trait.value );
+return !!r && ( r.type === 'Die' || r.type === 'Dice' ) && ( r as any ).out === true;
+},
+set( value: boolean ) {
+const t = trait.value as unknown as Record<string, any>;
+const r = t && t.rating;
+if ( !r || typeof r !== 'object' || ( r.type !== 'Die' && r.type !== 'Dice' ) ) return;
+if ( value ) r.out = true;
+else delete r.out;
+updateCharacter( props.character );
+},
+} );
+
+function setRatingType( type: 'Counter' | 'Die' | 'Dice' | 'Pip' ) {
+	const t = trait.value as unknown as Record<string, any>;
+	if ( !t ) return;
+	const cur = getRating( t );
+	if ( cur?.type === type ) return;
+	const scale = availableValues.value;
+	const range = Array.isArray( scale ) && scale.length ? [ ...scale ] : undefined;
+	const size = Array.isArray( scale ) && scale.length ? scale[0] : 8;
+	const prevRange = cur && Array.isArray( cur.range ) && cur.range.length ? [ ...cur.range ] : range;
+	if ( ( cur?.type === 'Die' || cur?.type === 'Dice' ) && ( type === 'Die' || type === 'Dice' ) ) {
+		const dice = cur ? ratingDice( cur ) : [];
+		const list = dice.length ? dice : [ size ];
+		const keepRange = prevRange && prevRange.length ? prevRange : [ ...DIE_LADDER ];
+if ( type === 'Die' ) setRatingDie( t, list[0], keepRange );
+else t.rating = { type: 'Dice', value: list, range: keepRange, ...( cur && ( cur as any ).out === true ? { out: true } : {} ) };
+	} else if ( type === 'Die' ) {
+		setRatingDie( t, size, range );
+	} else if ( type === 'Dice' ) {
+		t.rating = { type: 'Dice', value: [ size ], range: range && range.length ? range : [ ...DIE_LADDER ] };
+	} else if ( type === 'Counter' ) {
+		t.rating = { type: 'Counter', value: [ 0 ], range: [ 0, 20 ] };
+	} else {
+		t.rating = { type: 'Pip', value: [ false ], range: [ 1 ] };
+	}
+	updateCharacter( props.character );
+}
+
+// Counter inputs: a number field with its [min, max] range.
+function counterBounds(): [ number, number ] {
+	const r = getRating( trait.value );
+	if ( r && r.type === 'Counter' ) {
+		const nums = r.range.filter( ( n ): n is number => typeof n === 'number' );
+		if ( nums.length >= 2 ) {
+			const lo = nums[0], hi = nums[1];
+			return lo <= hi ? [ lo, hi ] : [ hi, lo ];
+		}
+	}
+	return [ 0, 20 ];
+}
+
+const counterNumber = computed( {
+	get() {
+		const r = getRating( trait.value );
+		if ( r && r.type === 'Counter' && typeof r.value[0] === 'number' ) return r.value[0];
+		return 0;
+	},
+	set( val: any ) {
+		const t = trait.value as unknown as Record<string, any>;
+		if ( !t ) return;
+		const [ lo, hi ] = counterBounds();
+		let n = Math.floor( Number( val ) );
+		if ( !Number.isFinite( n ) ) n = lo;
+		n = Math.max( lo, Math.min( hi, n ) );
+		t.rating = { type: 'Counter', value: [ n ], range: [ lo, hi ] };
+		updateCharacter( props.character );
+	},
+} );
+
+function setCounterBound( which: 0 | 1, val: any ) {
+	const t = trait.value as unknown as Record<string, any>;
+	if ( !t ) return;
+	let [ lo, hi ] = counterBounds();
+	const n = Math.floor( Number( val ) );
+	if ( !Number.isFinite( n ) ) return;
+	if ( which === 0 ) {
+		lo = n;
+		if ( lo > hi ) hi = lo;
+	} else {
+		hi = n;
+		if ( hi < lo ) lo = hi;
+	}
+	const cur = typeof getRating( t )?.value[0] === 'number' ? ( getRating( t ) as any ).value[0] as number : lo;
+	t.rating = { type: 'Counter', value: [ Math.max( lo, Math.min( hi, cur ) ) ], range: [ lo, hi ] };
+	updateCharacter( props.character );
+}
+
+function commitCounterBound( which: 0 | 1, event: Event ) {
+	const el = event && ( event.target as HTMLInputElement | null );
+	setCounterBound( which, el ? el.value : NaN );
+	if ( el && document.activeElement === el ) el.blur();
+}
+
+function commitPipBubbleCount( event: Event ) {
+	const el = event && ( event.target as HTMLInputElement | null );
+	setPipBubbleCount( el ? Number( el.value ) : NaN );
+	if ( el && document.activeElement === el ) el.blur();
+}
+
+// Pip inputs: a bubble row; a track is a list of bubbles. The range is
+// the bubble count.
+const pipBubbleCount = computed( () => {
+	const r = getRating( trait.value );
+	if ( !r || r.type !== 'Pip' ) return 0;
+	if ( r.range.length && typeof r.range[0] === 'number' && r.range[0] > 0 ) return Math.floor( r.range[0] );
+	return r.value.length;
+} );
+
+function pipBubbleAt( index: number ): boolean {
+	const r = getRating( trait.value );
+	return Boolean( r && r.type === 'Pip' && r.value[ index ] === true );
+}
+
+function togglePipBubble( index: number ) {
+	const t = trait.value as unknown as Record<string, any>;
+	if ( !t ) return;
+	const n = Math.max( pipBubbleCount.value, index + 1 );
+	const cur = getRating( t );
+	const list: boolean[] = [];
+	for ( let i = 0; i < n; i++ ) {
+		list.push( Boolean( cur && cur.type === 'Pip' && cur.value[ i ] === true ) );
+	}
+	list[ index ] = !list[ index ];
+	t.rating = { type: 'Pip', value: list, range: [ n ] };
+	updateCharacter( props.character );
+}
+
+function setPipBubbleCount( count: number ) {
+	const t = trait.value as unknown as Record<string, any>;
+	if ( !t ) return;
+	const n = Math.max( 1, Math.min( 100, Math.floor( Number( count ) ) || 1 ) );
+	const cur = getRating( t );
+	const list: boolean[] = [];
+	for ( let i = 0; i < n; i++ ) {
+		list.push( Boolean( cur && cur.type === 'Pip' && cur.value[ i ] === true ) );
+	}
+	t.rating = { type: 'Pip', value: list, range: [ n ] };
 	updateCharacter( props.character );
 }
 
@@ -378,7 +530,7 @@ const shouldShowStressOut = computed( () => {
 	return true;
 } );
 
-const isOut = computed( () => Boolean( ratingDice( getRating( trait.value ) )[0] > 12 || ( trait.value as any )?.isOut === true ) );
+const isOut = computed( () => isOutDie( trait.value, [ traitSet.value ] ) );
 
 const outLabel = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
@@ -677,15 +829,17 @@ function toggleTraitValue( val: any ) {
 }
 
 function toggleOutValue() {
-	const t = trait.value as unknown as Record<string, any>;
-	if ( isOut.value ) {
-		t.isOut = false;
-		cortexFunctions.setTraitDice( trait.value, [] );
-	} else {
-		t.isOut = true;
-		setRatingDie( t, 14 );
-	}
-	updateCharacter( props.character );
+const t = trait.value as unknown as Record<string, any>;
+if ( isOut.value ) {
+t.isOut = false;
+cortexFunctions.setTraitDice( trait.value, [] );
+} else {
+t.isOut = true;
+setRatingDie( t, rangeTop( t ) + 2 );
+const r = t.rating;
+if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) r.out = true;
+}
+updateCharacter( props.character );
 }
 
 function duplicateTrait() {
@@ -1032,8 +1186,39 @@ function getDieDisplayValue( val: any ) {
 							<div><button type="button" class="btn-step" @click.stop="addRating()">Add rating</button></div>
 						</div>
 
-						<!-- SINGLE DIE SELECTOR -->
-						<ul class="editor-values" v-if="isRatedTrait && !isMultiDie">
+						<!-- TYPE (Die | Dice | Counter | Pip) -->
+						<div class="editor-button-group" v-if="isRatedTrait">
+							<button
+								type="button"
+								v-for="rt in RATING_TYPES"
+								:key="'rating-type-' + rt"
+								class="editor-group-btn"
+								:class="{ active: ratingType === rt }"
+								@click.stop="setRatingType(rt)"
+							>
+{{ rt }}
+</button>
+</div>
+
+<!-- OUT (range option for Die/Dice, default off) -->
+<div class="editor-toggles" v-if="isRatedTrait && (ratingType === 'Die' || ratingType === 'Dice')">
+<div>
+<input
+type="checkbox"
+:id="'trait-' + traitID + '-out'"
+name="ratingOut"
+v-model="ratingHasOut"
+>
+</div>
+<div>
+<label :for="'trait-' + traitID + '-out'">
+Out
+</label>
+</div>
+</div>
+
+<!-- SINGLE DIE SELECTOR -->
+						<ul class="editor-values" v-if="ratingType === 'Die'">
 							<li
 								v-for="val in availableValues"
 								:class="{ 'active': isDieActiveOf(trait, val) && !isOut }"
@@ -1060,8 +1245,8 @@ function getDieDisplayValue( val: any ) {
 							</li>
 						</ul>
 
-						<!-- MULTI DIE COUNTERS AND POOL LIST -->
-						<div class="editor-multidie-container" v-else-if="isRatedTrait">
+						<!-- DICE LIST EDITOR -->
+						<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
 							<div class="editor-die-steppers">
 								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
 									<span class="c">{{ getDieDisplayValue(size) }}</span>
@@ -1088,10 +1273,53 @@ function getDieDisplayValue( val: any ) {
 							</div>
 						</div>
 
+						<!-- COUNTER NUMBER + RANGE -->
+						<div v-else-if="ratingType === 'Counter'">
+							<div style="display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap;">
+								<div style="flex: 1; min-width: 5rem;">
+									<label :for="'trait-' + traitID + '-counter-number'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Count</label>
+									<input type="number" :id="'trait-' + traitID + '-counter-number'" name="counterNumber" v-model.number="counterNumber" inputmode="numeric" style="width: 100%;">
+								</div>
+								<div style="flex: 1; min-width: 4rem;">
+									<label :for="'trait-' + traitID + '-counter-min'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Min</label>
+									<input type="number" :id="'trait-' + traitID + '-counter-min'" name="counterMin" :value="counterBounds()[0]" @change="commitCounterBound(0, $event)" inputmode="numeric" style="width: 100%;">
+								</div>
+								<div style="flex: 1; min-width: 4rem;">
+									<label :for="'trait-' + traitID + '-counter-max'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Max</label>
+									<input type="number" :id="'trait-' + traitID + '-counter-max'" name="counterMax" :value="counterBounds()[1]" @change="commitCounterBound(1, $event)" inputmode="numeric" style="width: 100%;">
+								</div>
+							</div>
+						</div>
+
+						<!-- PIP BUBBLE ROW -->
+						<div v-else-if="ratingType === 'Pip'">
+							<div class="pip-editor-row">
+								<div
+									v-for="bubbleIndex in pipBubbleCount"
+									:key="'pip-' + bubbleIndex"
+									class="pip-bubble-wrap"
+									tabindex="0"
+									role="button"
+									@keydown.enter.prevent="togglePipBubble(bubbleIndex - 1)"
+									@keydown.space.prevent="togglePipBubble(bubbleIndex - 1)"
+									@click.stop="togglePipBubble(bubbleIndex - 1)"
+									:title="pipBubbleAt(bubbleIndex - 1) ? 'Unfill bubble' : 'Fill bubble'"
+								>
+									<div class="pip-bubble" :class="{ 'filled': pipBubbleAt(bubbleIndex - 1) }"></div>
+								</div>
+								<span class="pip-editor-count" v-if="pipBubbleCount === 0">No bubbles</span>
+							</div>
+							<div class="num-stepper" style="margin-top: 0.4rem;">
+								<button type="button" class="btn-step" @click.stop="setPipBubbleCount(pipBubbleCount - 1)" :disabled="pipBubbleCount <= 1" title="Fewer bubbles" aria-label="Fewer bubbles">-</button>
+								<input type="number" :id="'trait-' + traitID + '-pip-count'" name="pipBubbleCount" min="1" max="100" :value="pipBubbleCount" @change="commitPipBubbleCount($event)" inputmode="numeric" aria-label="Bubble count" style="width: 4rem;">
+								<button type="button" class="btn-step" @click.stop="setPipBubbleCount(pipBubbleCount + 1)" title="More bubbles" aria-label="More bubbles">+</button>
+							</div>
+						</div>
+
 					</div>
 
-					<!-- RATING RANGE (the ladder this rating may take) -->
-					<div class="editor-field" v-if="isRatedTrait && !isListStyle && !isLabeledPipsSet && !hideSkillDice">
+					<!-- RATING RANGE (the die ladder Die/Dice ratings may take) -->
+					<div class="editor-field" v-if="isRatedTrait && ( ratingType === 'Die' || ratingType === 'Dice' ) && !isListStyle && !isLabeledPipsSet && !hideSkillDice">
 						<div class="editor-label">Range</div>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">

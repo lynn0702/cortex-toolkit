@@ -418,9 +418,6 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	const tsView = ensureView( traitSet );
 	tsView.style = { header: styleId, body: styleId };
 	tsView.features = Object.assign( tsView.features || {}, styleDefaults.features );
-	if ( styleDefaults.multiDie ) {
-		tsView.multiDie = true;
-	}
 	if ( !isSpotlightStyle.value ) {
 		tsView.location = location ?? 'left';
 	}

@@ -1,7 +1,8 @@
 import { computed, provide, inject, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
-	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, isHiddenIn } from './model.ts';
+	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, isHiddenIn,
+	hasOutRange, rangeTop, isOutDie } from './model.ts';
 import { KNOWN_PARTS, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
@@ -313,11 +314,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const tsBody = getView( traitSetArg )?.style?.body;
 		const tsName = ( traitSetArg?.name || '' ).toLowerCase();
 		if ( tsBody === 'attributes' || tsBody === 'stress' ||
-		     tsName.includes( 'attribute' ) || tsName.includes( 'value' ) ||
-		     tsName.includes( 'drive' ) || tsName.includes( 'role' ) ||
-		     tsName.includes( 'affiliation' ) || tsName.includes( 'branch' ) ||
-		     tsName.includes( 'eidolon' ) || tsName.includes( 'power' ) ||
-		     tsName.includes( 'system' ) || tsName.includes( 'chassis' ) ||
+		     cortexFunctions.isFixedNameSet( tsName ) ||
 		     ( getView( traitSetArg )?.traitColumns ?? 0 ) > 1 ||
 		     Boolean( getView( traitSetArg )?.attachedStress?.enabled ) ) {
 			return true;
@@ -355,34 +352,21 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return cortexFunctions.getTraitDice( trait );
 	}
 
-	function isMultiDieTrait( traitSetArg: TraitSet, trait: Trait ) {
-		const style = getView( traitSetArg )?.style?.body;
-		if ( !style || style === 'stress' || style === 'list' || style === 'notes' ) {
-			return false;
-		}
-		return Boolean( getView( traitSetArg )?.multiDie ) || ( style === 'resources' ) || ( style === 'dice-count' ) || ( getTraitDice( trait ).length > 1 );
+	// Positional subtrait access: paired slots keep complication at 0
+	// and bonus at 1. Index is the truth; names are labels.
+	function getSubtraitAt( trait: Trait, index: number ) {
+		return trait?.traits?.[ index ] || null;
 	}
 
-	// A pool set (e.g. Growth Pool) is a plain multi-die pool, not a resource:
-	// clicking a trait adds its whole pool to the roller, and its dice are
-	// never flagged as resources. Explicit per-trait isResource still wins.
+	function getSubtraitSlotRatings( traitSetArg: TraitSet, slot: number ) {
+		return cortexFunctions.getSubtraitSlotRatings( traitSetArg, slot );
+	}
+
+	// A pool set (e.g. Growth Pool) is a plain multi-die pool, not apart-rolling:
+	// clicking a trait adds its whole pool to the roller. Apart-rolling
+	// derives from hitches (0 rolls apart), never from names.
 	function isPoolSet( traitSetArg: TraitSet ) {
 		return nodePool( traitSetArg ) === true;
-	}
-
-	function isResourceTrait( traitSetArg: TraitSet, trait: Trait ) {
-		if ( getView( trait )?.isResource || trait?.isResource ) return true;
-		if ( !traitSetArg ) return false;
-		if ( isPoolSet( traitSetArg ) ) return false;
-		const body = getView( traitSetArg )?.style?.body;
-		if ( body === 'resources' || body === 'dice-count' ) return true;
-		const name = ( traitSetArg?.name || '' ).trim().toLowerCase();
-		const noun = ( traitSetArg?.noun || '' ).trim().toLowerCase();
-		const plural = ( traitSetArg?.plural || '' ).trim().toLowerCase();
-		if ( name.includes( 'resource' ) || noun === 'resource' || plural === 'resources' ) {
-			return true;
-		}
-		return false;
 	}
 
 	function isDieSpent( trait: Trait, index: number ) {
@@ -425,15 +409,12 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function stageTraitDice( trait: Trait, traitSetArg: TraitSet ) {
 		const dice = availableDice( trait );
 		if ( !dice.length ) return [];
-		const isRes = isResourceTrait( traitSetArg, trait );
 		const hitches = resolveHitches( trait, [ traitSetArg ] );
 		const keep = keepsExtraDice( trait );
 		return dice.map( ( size: number ) => ({
 			size: size,
 			qty: 1,
 			source: trait.name,
-			isResource: isRes,
-			resourceType: isRes ? ( trait.name || 'Resource' ) : undefined,
 			hitches: hitches,
 			keepsExtra: keep
 		} ) );
@@ -453,13 +434,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 				emit( 'addDieToRoller', staged );
 				return;
 			}
-			const isRes = isResourceTrait( traitSetArg, trait );
 			emit( 'addDieToRoller', {
 				size: dieSize,
 				qty: 1,
 				source: trait.name,
-				isResource: isRes,
-				resourceType: isRes ? ( trait.name || 'Resource' ) : undefined,
 				hitches: resolveHitches( trait, [ traitSetArg ] )
 			} );
 		} else {
@@ -482,13 +460,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 					emit( 'addDieToRoller', staged );
 					return;
 				}
-				const isRes = isResourceTrait( traitSetArg, trait );
 				emit( 'addDieToRoller', {
 					size: targetVal,
 					qty: 1,
 					source: trait.name,
-					isResource: isRes,
-					resourceType: isRes ? ( trait.name || 'Resource' ) : undefined,
 					hitches: resolveHitches( trait, [ traitSetArg ] )
 				} );
 			}
@@ -518,7 +493,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			const trait = props.character.traitSets[sArg].traits[t];
 			trait.isOut = !trait.isOut;
 			if ( trait.isOut ) {
-				setRatingDie( trait as unknown as Record<string, any>, 14 );
+				setRatingDie( trait as unknown as Record<string, any>, rangeTop( trait ) + 2 );
+				const r = ( trait as any ).rating;
+				if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) r.out = true;
 			} else {
 				setRatingDie( trait as unknown as Record<string, any>, null );
 			}
@@ -540,12 +517,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return false;
 	}
 
-	function shouldShowStressOut( traitSetArg: TraitSet ) {
-		return shouldShowOut( traitSetArg );
-	}
-
-	function isStressOut( trait: Trait ) {
-		return Number( ratingDice( getRating( trait ) )[0] ) > 12 || trait.isOut === true;
+	function isStressOut( trait: Trait, traitSetArg?: TraitSet ) {
+		return isOutDie( trait, traitSetArg ? [ traitSetArg ] : undefined );
 	}
 
 	function getSharedHinderLines( traitSetArg: TraitSet ) {
@@ -562,22 +535,11 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const nonHinder = trait.sfx.filter( ( sfx: any ) => sfx !== 'hinder' && ( typeof sfx !== 'object' || sfx.name?.toLowerCase() !== 'hinder' ) );
 		if ( !nonHinder.length ) return '';
 		const first = nonHinder[0];
-		if ( typeof first === 'string' ) return first;
-		if ( first.name && first.description ) {
-			return `${first.name}: ${first.description}`;
-		}
-		return first.description || first.name || '';
-	}
-
-	// Chrome words with label hooks (view.labels.*); static defaults live
-	// in the central label registry, so every on-sheet word is settable
-	// in data. Only the hinder sentence keeps a constructed default (it
-	// interpolates the live trait), overridable wholesale via
-	// labels.hinderSentence.
-	function getHinderSentence( traitSetArg: TraitSet, trait: Trait ) {
-		const labels = getView( traitSetArg )?.labels;
-		if ( labels && typeof labels.hinderSentence === 'string' && labels.hinderSentence.length ) return labels.hinderSentence;
-		return 'Gain a PP when you switch out this ' + ( traitSetArg.noun && traitSetArg.noun.length ? traitSetArg.noun.toLowerCase() : 'trait' ) + '’s d' + ( ratingDice( getRating( trait ) )[0] || 8 ) + ' for a d4.';
+		const text = typeof first === 'string' ? first
+			: ( first.name && first.description ) ? `${first.name}: ${first.description}`
+			: first.description || first.name || '';
+		const cost = typeof first === 'object' ? cortexFunctions.sfxCostText( ( first as any ).cost ) : '';
+		return cost ? text + ' (' + cost + ')' : text;
 	}
 
 	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
@@ -597,6 +559,21 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			}
 			return typeof sfx === 'object' ? sfx : { name: sfx, description: '' };
 		} );
+	}
+
+	function sfxCostText( cost: unknown ) {
+		return cortexFunctions.sfxCostText( cost );
+	}
+
+	// Chrome words with label hooks (view.labels.*); static defaults live
+	// in the central label registry, so every on-sheet word is settable
+	// in data. Only the hinder sentence keeps a constructed default (it
+	// interpolates the live trait), overridable wholesale via
+	// labels.hinderSentence.
+	function getHinderSentence( traitSetArg: TraitSet, trait: Trait ) {
+		const labels = getView( traitSetArg )?.labels;
+		if ( labels && typeof labels.hinderSentence === 'string' && labels.hinderSentence.length ) return labels.hinderSentence;
+		return 'Gain a PP when you switch out this ' + ( traitSetArg.noun && traitSetArg.noun.length ? traitSetArg.noun.toLowerCase() : 'trait' ) + '’s d' + ( ratingDice( getRating( trait ) )[0] || 8 ) + ' for a d4.';
 	}
 
 	function hasAttachedStress( traitSetArg: TraitSet ) {
@@ -655,8 +632,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 
 	function isAttachedStressOut( trait: Trait, traitSetArg?: TraitSet ) {
 		const companion = traitSetArg ? getStressCompanion( traitSetArg, trait ) : undefined;
-		if ( companion ) return Boolean( ( companion as any ).isOut ) || ( ( getTraitDice( companion as Trait )[0] || 0 ) > 12 );
-		return getAttachedStressValue( trait ) > 12;
+		if ( !companion ) return false;
+		return isOutDie( companion, traitSetArg ? [ traitSetArg ] : undefined );
 	}
 
 	function handleAttachedStressClick( sArg: any, t: any, size: number ) {
@@ -967,22 +944,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		}
 	}
 
-	function getStandingComplication( trait: Trait ) {
-		return trait?.traits?.[0] || null;
-	}
-
-	function getStandingBonus( trait: Trait ) {
-		return trait?.traits?.[1] || null;
-	}
-
-	function getStandingBonusRatings( traitSetArg: TraitSet ) {
-		const ratings = getSubtraitRatings( traitSetArg );
-		if ( Array.isArray( ratings ) && ratings.length === 5 && ratings[0] === 4 ) {
-			return ratings.filter( ( size: number ) => size >= 6 );
-		}
-		return ratings;
-	}
-
 	function getSubtraitNameOr( trait: Trait, traitSetArg: TraitSet, index: number ) {
 		const sub = trait?.traits?.[ index ];
 		if ( sub && sub.name && String( sub.name ).trim().length ) {
@@ -1129,10 +1090,11 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
 		selectElement, updateCharacter, addTrait, removeTrait, removeTraitSet, getTraitClasses,
 		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint, openTraitAt, fillPlaceholder, isTraitShown,
-		getTraitSetRatings, getSubtraitRatings, getTraitDice, isMultiDieTrait, isResourceTrait,
+		getTraitSetRatings, getSubtraitRatings, getTraitDice,
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleStressClick,
-		handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, getSharedHinderLines, renderHinderLine,
+		handleStressOutClick, shouldShowOut, isStressOut, getSharedHinderLines, renderHinderLine,
 		getDistinctionSfxText, getDisplayTraitSfx, getHinderSentence,
+		sfxCostText,
 		hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue,
 		getStressCompanion, isStressCompanion, visibleSubtraits,
 		shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
@@ -1141,7 +1103,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		isPipLabels, pipRows, ensurePipTrait, togglePipRow, openPipRow, addPipRow, setPipRowName,
 		getImageSetContainerStyle, getImageSetGraphicStyle,
 		getBranchGroups, hasBranchSplit, hasBranchFlank, getFlankColumns, getBranchRole, getSetRatingDie, getBranchSide, branchSubs, handleBranchFlatClick,
-		getStandingComplication, getStandingBonus, getStandingBonusRatings, getSubtraitNameOr,
+		getSubtraitAt, getSubtraitSlotRatings, getSubtraitNameOr,
 		getTalentEffect, getResourceDiceCount, setResourceDiceCount, getResourcePoolDice, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
 		nodePool, stagesWholePool, stageTraitDice, nodeSpendable, isSpendable,
 		firstDie, isDieActive, isTraitRated,

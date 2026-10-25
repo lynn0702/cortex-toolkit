@@ -1,0 +1,626 @@
+# DECISIONS-history.md — cortex-toolkit
+
+Full chronological log. Append-only, as before.
+`DECISIONS.md` holds the law distilled from this log; if
+the two disagree, this log is the record and the law file
+gets corrected.
+## Layer model
+
+- 2026-10-10: One layer type. `merge(...layers)`, later (more-local) wins.
+
+- 2026-10-10: Three-state per key: absent → inherit, null → explicitly clear, value → override.
+
+- 2026-10-11: Null-emit rule: a null is emitted iff a less-local layer has the trait and the local layer explicitly clears it. Every null in the data must shadow something inherited — that's how you know by looking whether a null is meaningful. Deleting a null un-clears it: the trait re-inherits.
+
+- 2026-10-10: Fields reference layers: `game` → game layer, `type` → structural layer. A field's presence can pull a mechanics layer (challenge dice are the monsters-repo instance of this pattern).
+
+- 2026-10-10: Sets and traits are name-keyed maps. Duplicate names at one level are structurally impossible.
+
+- 2026-10-10: Identity is path-scoped: `/Distinctions/SFX` ≠ `/Distinctions/Chief Engineer/SFX`.
+
+- 2026-10-10: Trait shorthand: `"Brawn": "d12"`; full objects only where needed.
+
+- 2026-10-10: No trait/subtrait ids in exported JSON. Sparse storage. Nulls allowed on optional fields.
+
+## Dice & pools
+
+- 2026-10-10: Compact dice notation: `"5d10"`, damaged `"2d10d8d6"`. Canonical: descending size, count prefix (1 omitted), no separators; spaces accepted and ignored. Tokenize on d4/d6/d8/d10/d12/d20.
+
+- 2026-10-10: "Threat Pool" rejected, never returns. No "Pool" in a trait name when the rating can be a single die.
+
+- 2026-10-11: `pool` is the core keyword for multi-die traits (e.g. Resources). Roll-all-on-add: every die in the trait's dice goes to the roller. This is what distinguishes a pool from a single-die trait. Representation: `"Resources": { "value": "2d8", "pool": true }`.
+
+- 2026-10-11: `challenge` is not a core-repo keyword. Challenge mechanics live in the monsters repo; the core repo's dice notation serves pools.
+
+- 2026-10-24: Staged-pool revision and stale readouts. Every staged-pool mutation bumps `revision`; the roller watches it and drops its last results on external change, keeping the user's keep. A roll records the revision it rolled at, so a roll in the same tick as its staging counts as fresh and survives — the naive watcher wiped those (caught by the §4 probe: stage-then-roll in one tick read back empty).
+
+## Costs & selection
+
+- 2026-10-10: Cost is an object, never a bare number.
+
+- 2026-10-11: Cost cases (decided): spend a plot point (`{plotPoints: n}`); step a trait up or down (`{stepUp: "Trait"}`, `{stepDown: "Trait"}` — key names provisional); modify the roller pool (case decided, key open — e.g. remove the highest die pre-roll, remove a die post-roll, split the largest die into two lower dice); purely narrative/descriptive (case decided — mechanically a no-op, the description carries it; representation open).
+
+- 2026-10-24: SFX cost vocabulary closed (§4): `{plotPoints:n}`, `{stepUp/stepDown:Trait}`, `{pool:drop-highest|drop-die|split-largest}`, `{narrative:true}` — one key per kind, plain words. Schema, validate, and the Cost type carry all five; codecs (migrate/unmigrate both branches, layered both directions, SFX purity check) carry `cost` instead of dropping it; bare-number costs warn and drop. Corpus carries no costs yet, so validate stays 0/0 and every round-trip suite stays green; `cost-tests.js` pins the words and the round-trips.
+
+- 2026-10-24: Pool-cost payment semantics (§4). Costs render as parenthesised words on every SFX row (full list, compact distinction slot, set-level list) and pool-cost rows are clickable in play only. Clicking pays from the staged pool via a `useSfx` emit carrying the resolved cost, candidate die sources, and SFX name: drop-highest removes the highest staged die; drop-die burns the using trait's own staged die (staged `source` is the trait name, so this is exact; at set level the earliest staged die from any member trait; sourceless falls back to earliest staged); split-largest removes the largest and stages two dice one step down (d4 cannot split). Empty pool toasts stage-first; unpayable pools toast the reason (no matching die, d4 unsplittable). Plot-point, step, and narrative costs are display-only — no PP ledger or trait-stepping exists yet to pay them with.
+
+- 2026-10-24 (SFX costs are descriptive — correction, supersedes the payment entry above): an SFX cost never executes. Costs are structured data ({plotPoints}, {stepUp}/{stepDown}, {pool}, {narrative}) that render as text telling the table what adjustments to make; the table applies them by hand with the app's own controls. Mechanical cost payment was removed wherever it had been added — pool payment operations, clickable cost rows, payment/stage-first/miss toasts, and the roller revision watcher with its same-tick guard all went; the vocabulary, editor, validation, and codecs remain. A cost that executes itself is collection, and it is out — same rule as the roller: the roller stages, the table adjudicates; costs are recorded, never collected.
+
+- 2026-10-10: Selection primitives: `usableBy` (owner|anyone|opposition), `select` (one|any), `requiresSelect` (bool). The Designer sets them on type layers; the roller enforces per pool.
+
+- 2026-10-10: Defaults: usableBy owner, select any, requiresSelect false.
+
+## SFX
+
+- 2026-10-11: SFX do not inherit. Placement is presentation, not mechanical. An SFX in one set may reference a trait in another (e.g. an SFX under Distinctions referencing Attributes or Stress). No limitations, so no inheritance needed.
+
+## Migration
+
+- 2026-10-11: The migration path is porting original toolkit files (kaelri/cortex-toolkit format). The sample/test case files live in the KaelriMonsters repo. Never break old-format import.
+
+## Stack
+
+- 2026-10-11: TypeScript migration, incremental, helpers module as pilot. Vue 3 stays.
+
+- 2026-10-11: Work order (still 0.x — the fork was schema 0.1 and this site isn't live yet): spec freeze → TS scaffold → migration shim → UI pass.
+
+## Agent working style
+
+- 2026-10-11: Terse UI: short labels, no parentheticals, no "e.g." If a label needs explaining, rename the thing.
+
+- 2026-10-11: Agents may build beyond the ask when genuinely helpful. Test: surface something real (any element that can land at rest gets UI; no hidden state) vs invent something speculative (presets for undefined taxonomies).
+
+- 2026-10-11: One migration path: users of the original fork (kaelri/cortex-toolkit) bring their files and they work; sample files live in the KaelriMonsters repo. Never break old-format import.
+
+- 2026-10-11: The model (trait-layers.md, trait-usage.md) is the spec for UI.
+
+- 2026-10-10: Keep the `$noun` / default `"pronoun"` joke. It's load-bearing morale.
+
+## Phase-1 freeze (ratified 2026-10-11 — the ten Open proposals of 2026-10-11, approved item by item)
+
+- 2026-10-11: Null-delete ratified. Merge deletes on null, per helpers.ts. Null-emit rule governs: a null is emitted iff a less-local layer carries the trait.
+
+- 2026-10-11: Removals are local nulls. `removedTraits` and `removedSets` go away; a local null is the removal record.
+
+- 2026-10-11: Envelope stays file-level. `id`, `version`, dates, `isTemplate`, `sheet`, `prefs` ride beside the entity. No-ids was always trait-level.
+
+- 2026-10-11: Entity top level carries `portrait`, `plotPoints`, `notes`, `tags` next to `name`, `game`, `type`.
+
+- 2026-10-11: Layout lives in the type layer. Set presentation fields settle there; a set object may carry a per-entity override.
+
+- 2026-10-11: SFX is a traits map. Old `sfx` arrays become `traits` under an `SFX` node; Hinder is one trait there.
+
+- 2026-10-11: `custom.*` stays app-side. App settings never enter entity JSON.
+
+- 2026-10-11: `sheet.template` is a merge layer. The template reference joins the merge stack with pinning and explicit switch.
+
+- 2026-10-11: Ratings are dice strings. A trait rating may be `"d8"` or a pool such as `"3d6"`, parsed by `parseDice`.
+
+- 2026-10-11: Real terse validation. `*.layered.json` gets actual validation; D1/D2/D8 ported to maps.
+
+- 2026-10-11 (shim): Migration output keeps file-level envelope fields beside the terse entity core. Blank-name print slots are dropped with a warning; reservation is presentation and lives in the type layer.
+
+- 2026-10-11 (shim): Old multi-die ratings (`dice` length > 1) migrate with `pool: true`. Single-die ratings omit it.
+
+- 2026-10-11 (shim): Old `custom.cortexToolkit`, `nounSingular`, `ratingPosition`, and other presentation fields are dropped from entity JSON with a warning. Type-layer extraction is future work.
+
+- 2026-10-11 (shim): `removedTraits`/`removedSets` entries become local nulls in the traits/sets maps. Template-library migration is future work; the shim covers characters.
+
+- 2026-10-11: Sparse is not data loss. An export carries its presentation layer: a ref when the layer is in memory, embedded on export for full migration to a new device. The character layer stays ultra-sparse (values plus local nulls). Placeholders, blank slots, and visual notes live in the presentation layer. This generalizes the existing export shape (sparse overlay plus embedded full template).
+
+- 2026-10-11 (template migration): Layered templates keep set `id` for join continuity until the join moves to names. Template layers are complete, not sparse — terseness is structural (maps, dice strings, SFX unification). Blanks become an ordered `slots` array on the set; unmigrate emits named traits then slots (exact for homogeneous sets; mixed interleaving is future work). Template dice convention is single dice in `value` with `dice:[]`, re-emitted on unmigrate. The entry wrapper is kept; `$schema`/`version` markers drop in layered form and return on unmigrate; `custom.cortexToolkit` stays verbatim during transition. Character-shim filler-dropping does not apply to templates.
+
+- 2026-10-11 (reference): Bewilderwood (`spotlight-camp-bewilderwood` v3) is the reference migration — round-trip deep-equal, 34 parity assertions, byte-identical sheet DOM. Nothing else migrates until its consumers (type layers, import wiring) are proven against this reference.
+
+- 2026-10-11 (slots index rule — supersedes the 2026-10-11 slots-array entry above): `slots` is an object keyed by 0-based position in the full trait order, at set, trait, and SFX levels. One corpus set leads with blanks, so arrays plus append-order could not round-trip; indices can. Pure SFX containers take no index.
+
+- 2026-10-11 (duplicate sets): repeated worksheet blocks (inheritors-family: 11 repeats) take suffixed keys (`GMC`, `GMC~2`, …) with the display name in `label`. Each keeps its id and content. Parens are avoided — the app strips them as nicknames elsewhere.
+
+- 2026-10-11 (sfx slots): nameless sfx objects are blank SFX placeholder rows and migrate to SFX slots, position-preserved like trait slots.
+
+- 2026-10-11 (corpus): all 26 spotlight templates migrated (`data/templates/*.template.layered.json`, id-derived names) and proven — 143 parity assertions, validate clean. The SFX-container warning fires only when a non-pure SFX node actually has children to dual-export; childless SFX placeholders are warning-free.
+
+- 2026-10-11 (alien-us v4): template content is hand-authored (skill/specialty names, value statements); `realign_templates.js` normalizes only and cannot author content. Every content edit ships with validate plus round-trip parity green.
+
+- 2026-10-11 (branch split): specialties take `custom.cortexToolkit.branchSide` (`left`/`right`, default `right`). The split grid applies only when a set carries left-side specialties; all other branch sets render exactly as before. Nested and flat specialties share the marker; both editors expose it.
+
+- 2026-10-11 (set die): a set may author `custom.cortexToolkit.setDie`. It renders in the branch head and is the fallback die for unrated skills — skills in such sets carry no ratings (presence is the rating; TraitEditor hides the picker). Specialties keep their own dice; the fallback never applies to them. Editor label: "Set die". Sub/side editor label: "Side".
+
+- 2026-10-11 (terse labels): branch role buttons drop their parentheticals ("Skill (Left)" → "Skill", "Specialty (Right)" → "Specialty") — the parens were layout claims the split layout falsified.
+
+- 2026-10-11 (no pre-fill): templates carry structure, never sample content. Alien-us lost its filled specialties and value statements (v5); skill names stay — the seven skills are the set's fixed structure, specialties are per-character picks. Values keep two-column layout without statements.
+
+- 2026-10-11 (terse modal): trait-set editor labels carry no parentheticals or e.g. examples — bare nouns (All, Skills, Rating scale, Subtrait scale, Multiple dice, Challenge pool, Shared hinder, Statements, Counter, Milestones, Inline/Above/Below/None). Style blurbs and halo degree readouts stay: descriptions, not labels. Style-picker renames stop at this modal; the style gallery catalog sync is follow-up.
+
+- 2026-10-11 (session orientation): session-record sets author `custom.cortexToolkit.sessionRecord.orientation` (`vertical` default, `horizontal` for Alien Us). Geometry is a pure transpose of the same SVG — vertical renders pixel-identical; editor exposes Vertical/Horizontal plus a Center Heading input for branch labels.
+
+- 2026-10-11 (shell discipline): PowerShell text replacement across the 16k-line generated file is unreliable (silent no-ops, encoding drift). Content edits there go through the edit tool with read-verified context; byte-level verification via git diff hunks.
+
+- 2026-10-11 (layer ref): the TS `TemplateRef` is `LayerRef` — a template reference is one instance of a layer reference (game/type/campaign/scene share the shape).
+
+- 2026-10-11 (module shape B): ESM plus webpack bundle. `js/app.js` is the entry; imports replace the concat order; Vue stays a CDN global; `window.app` stays the debug handle. Staged: toolchain plus `npm run check`, then wiring flag-day (still JS), then file-by-file `.ts` leaves-first. Node tests `require()` ESM sources and read the named export (Node 24) — no runner change. Unreferenced exports tree-shake by design; the TS pilot enters the graph when `functions.js` imports it, not before.
+
+- 2026-10-12 (TS wiring landed): the module-shape-B flag-day is complete and green. The build is TypeScript-capable — `webpack.mix.js` uses `mix.ts(..., { transpileOnly: true })` (ts-loader) so `.ts` joins `resolve.extensions` and compiles into the bundle; ts-loader does not type-check, `npm run check` (`tsc --noEmit`) stays the gate. The pilot `js/cortex-toolkit-trait-helpers.ts` enters the graph via `functions.js` (bridge `cortexFunctions.traitHelpers`; browser debug handle `window.cortexTraitHelpers`). Node 24 type-strips `.ts`, so the `require()`-based tests are unchanged. Verified: `npm run build`, `npm run check`, `npm test` (286), browser smoke across roster / sheet / roller / print / mobile. `migration.js` stays node-test-only until the import path (its consumer) is wired.
+
+- 2026-10-12 (migration wiring — import-only): migration targets **originals only** — files from the original project (kaelri/cortex-toolkit, tamas-rabel downstream) import and work. The fork's own data has no users yet (single dev), so there is **no stored-data upgrade path**; existing dev characters are dropped, not migrated. The spotlight library files are the internal exception (already migrated to `data/templates/*.template.layered.json`). `migration.js` now enters the graph (`js/app.js` import; debug handle `window.cortexMigration`) with no behavior change; verified `migrateCharacter` against the reference source in-browser. The behavioral half — the import path emitting a layered entity — waits on the renderer reading layered (UI pass); until then the app keeps its array model and original files already import natively.
+
+- 2026-10-12 (UI pass — render seam): reconnaissance found one seam — `mergeTemplateIntoCharacter` (`functions.js:841`), reached only by `resolveStoredCharacter` (`app.js:685`), is the single function producing the array object the renderer reads; `character.traitSets` (array) is read ~everywhere, so the renderer is kept and a **layered→render materializer** sits at the seam. Built `js/layered-materialize.ts` (`materializeCharacter(file, presentationTraitSets)`): folds a sparse content entity onto its presentation template by name — dice strings → `{value, dice:int[]}`, SFX map → `sfx` array, subtraits map → array, presentation (`custom.cortexToolkit`, nouns, layout) inherited from the template set/trait. It is the inverse of the character half of `migration.js` (which drops blanks, ids, and presentation). Unwired (tree-shaken; no behavior change). Proven by `scripts/materialize-tests.js` (225 assertions: migrate→materialize and the committed `Sendak_Eggers.layered.json` both reproduce the source render — set order, dice, subtraits, SFX, presentation). `npm test` now runs it; `tsconfig` gained `allowImportingTsExtensions`. Next slice: wire the materializer at `resolveStoredCharacter`, flip storage/import to the layered model, prove byte-identical sheet DOM.
+
+- 2026-10-12 (storage flip — templated chars): `persist` (`app.js`) serializes template-linked characters to the layered form (sparse content entity + pinned `sheet.template` ref), carrying char-level presentation overrides (`custom`, `portrait`) that the import shim drops; standalone / no-template characters stay array. `resolveStoredCharacter` detects the layered form (`c.sets`) and materializes it onto the template character; legacy array and standalone keep the existing merge path. The materializer takes the template **character** (not just its `traitSets`) so character-level presentation and envelope defaults fill from the template, and it owns `isTemplate`/`sheet` rather than leaking the template's. Proven by execution: the sheet DOM hash for both Camp Bewilderwood dev characters is byte-identical before and after a persist+reload; standalone play renders; zero console errors. Also fixed: a fully-inherited character's delta has no `traitSets`, so `persist` defaults it to `[]` before migrating. Format detection is transitional — old array storage still loads. Pre-existing limitation unchanged: `custom`/`portrait` overrides made on a legacy array character before this flip are not back-filled (dev data is template-clean).
+
+- 2026-10-12 (lossless codec + creation): replaced the storage serializer with a dedicated `toLayeredEntity` in `layered-materialize.ts` — the exact inverse of `materializeCharacter`. The import shim (`migrateCharacter`) drops presentation by design, which silently lost per-set/trait overrides (style, nouns) on save/reload; `toLayeredEntity` preserves every set/trait key (content + per-entity presentation override), and `materializeCharacter` now overlays all entity keys onto the template, emits `dice` only when the presentation trait carries it, and normalizes `isTemplate`. `createFromSpotlight` builds an empty layered entity and materializes it at the seam instead of cloning the array template (proven equivalent to the clone, 0 diffs). Import is deliberately left on the array merge (lossless) and lands in layered storage on save — the shim is not used for import because it is lossy for presentation. Verified by execution: `toLayeredEntity` round-trips the Sendak source exactly (229 assertions), a set style / noun / trait-description override survives persist→reload, the two templated dev characters' sheet DOM hashes stay byte-identical, a fresh Bewilderwood character renders (30 blocks) and stores layered, zero console errors.
+
+- 2026-10-12 (import canonicalized + unrated sentinel): `importCharacter` now folds a template-linked imported file through the same seam — `materializeCharacter(toLayeredEntity(file), templateChar)` — lossless, presentation preserved; the array merge remains only for no-template/legacy files. Creation, import, and load all build the render at the seam; in-memory edits still mutate the array and re-serialize on persist. Also fixed the unrated sentinel: a layered `value: null` materializes back to legacy `value: 0` (blank/unrated), so `0 ⇄ null` round-trips. Standalone (no-template) characters stay array-stored by design — their blank print slots are presentation with no type layer to hold them, so the content-only layered form would drop them. Verified: export→import of a templated character is 0 diffs, sheet DOM hashes unchanged, 230 codec assertions, zero console errors.
+
+- 2026-10-12 (TS leaves-first, first app module): `cortex-pal.js` → `cortex-pal.ts` — the dice model (`CortexDie`, `CortexDicePool`); no imports, fully typed, the first existing app module converted under "file-by-file `.ts` leaves-first". `app.js` imports `./cortex-pal.ts`; the `.js` is deleted. New `scripts/cortex-pal-tests.js` (20 assertions) in `npm test`. Verified: build/check/tests green (536), sheet DOM hash unchanged, pool add/roll/output works in-browser, zero console errors.
+
+- 2026-10-12 (TS leaves-first, standalone modules): `storage.js` → `storage.ts` (typed `StorageState`/`CortexStorage`) and `migration.js` → `migration.ts` (typed methods) — both dependency-free logic modules; `module.exports` shims removed since node tests `require()` the ESM. Importers updated (`app.js`; `merge/migration/materialize/template-parity` test scripts). Remaining `.js`: the Vue Options components and `functions.js`. The components need a typed-`this` strategy (Options API objects don't expose `data()` props on `this` under strict) — a decision, not a mechanical rename; `functions.js` is the hub all components import, so it converts together with them. Verified: build/check/tests green (536), sheet DOM hash unchanged, zero console errors.
+
+- 2026-10-12 (SFC spike — sfx-editor): `js/sfx-editor.js` → `js/sfx-editor.vue` (`<script setup lang="ts">`), the first real single-file component. Toolchain: `mix.vue({ version: 3 })` + `.webpackConfig({ externals: { vue: 'Vue' } })`; devDeps `vue`, `vue-loader`, `@vue/compiler-sfc`, `vue-tsc`; `npm run check` → `vue-tsc --noEmit`; `tsconfig` includes `js/**/*.vue`. **Clean transfer:** typed `defineProps`/`defineEmits`, writable `computed` for `v-model`, methods, template unchanged. Vue is NOT bundled (verified: no ESM-bundler internals in `app.min.js`; SFC render helpers resolve to the global `Vue.*`). Verified: build/check/536 tests green; app mounts; the SFC renders in a throwaway mount; sheet DOM hash unchanged; zero console errors. **Frictions/findings:** (1) hand-rolling the vue-loader rule via `.webpackConfig` fails — VueLoaderPlugin "No matching use for vue-loader" under Mix's `mergeSmart` — so `mix.vue()` is required; (2) `mix.vue()` aliases `vue$` to the ESM bundler build, so the `externals` entry is load-bearing (removing it would bundle Vue); (3) Mix declares `vue-loader@^16.2.0` but v17 is installed and working. The remaining Options-API components stay `.js`; the SFC-first pivot is pending the user's decision.
+
+- 2026-10-12 (SFC-first pivot approved): full pivot to `<script setup lang="ts">` SFCs. `vue-loader` pinned exact `17.4.2`; `allowJs` turned on so a checked `.vue`/`.ts` may import the still-JS `functions.js` without a declaration shim (until `functions` becomes `.ts`). Converted so far, each verified (vue-tsc + build + 536 tests + throwaway mount render + sheet DOM hash unchanged + zero console errors): `sfx-editor`, `subtrait-editor`, `portrait-editor`. Remaining, smallest-first: `style-gallery`, `roster`, `dice-roller`, `trait-editor`, `name-editor`, `trait-set-editor`, `trait-set-block`, `character`, then `app.js` (root). `functions.js` is not a component — it stays a plain module and can become `functions.ts` independently.
+
+- 2026-10-12 (functions.ts): `functions.js` → `functions.ts` — the logic hub (`cortexFunctions`) is now a checked TS module. Converted by copy + targeted annotation (the large data blocks stay byte-identical): ~55 outer-param annotations (`any` for opaque data) plus nested-callback annotations, `processImageFile` return type `Promise<string>`, `declare const cortexSpotlightTemplates`, `(window as any).__cortexActiveDiceConfig`, `getContext('2d')!`, `reader.result as string`, and the `module.exports` shim removed. Importers repointed (10 files + `merge/template-parity` test scripts). Verified: vue-tsc/build/536 tests green, sheet DOM hash unchanged, 63 helpers live in-browser (`renderMarkdown`, `renderDieconSVG` checked), zero console errors. `allowJs` is now only needed for the not-yet-converted Options `.js` components. Next SFC round: `style-gallery`.
+
+- 2026-10-12 (SFC round 3): `style-gallery.js` → `style-gallery.vue` (`<script setup lang="ts">`). `STYLE_GALLERY_STYLES` stays module-local (no external importers); added a typed `StyleCard`; typed `defineProps`/`defineEmits`; template `$emit(...)` → `emit(...)`. Teleport + `v-html` previews unchanged. Verified: vue-tsc/build/536 tests green; harness mount renders 20 cards + page buttons and `addGallerySet` emits `{ id, location, page }`; sheet DOM hash unchanged; zero console errors. SFCs so far: `sfx-editor`, `subtrait-editor`, `portrait-editor`, `style-gallery`. Next: `roster`.
+
+- 2026-10-12 (SFC round 4): `roster.js` → `roster.vue` (`<script setup lang="ts">`). Typed `defineProps`/`withDefaults` (`openCharacterIDs` defaults `[]`) and 15 `defineEmits`; `Vue.nextTick()` → imported `nextTick`; `this.$refs.inputFile` / `$forceUpdate` → template ref + `getCurrentInstance()?.proxy`; `declare const cortexSpotlightTemplates`; template `$emit(...)` → `emit(...)`. Verified: vue-tsc/build/536 tests green; roster view renders (7 buttons, 4 items, 3 tabs); harness mount renders items and emits `createCharacter`; zero console errors. SFCs so far: `sfx-editor`, `subtrait-editor`, `portrait-editor`, `style-gallery`, `roster`. Next: `dice-roller`.
+
+- 2026-10-12 (SFC round 5): `dice-roller.js` → `dice-roller.vue` (`<script setup lang="ts">`) — the largest logic component so far. Typed `RollResult`/`ResourceGroup` interfaces; every `this.*` → ref/computed/prop; the two `watch`es (`combineResources`; `defaultKeep` immediate) carried over; template `$emit(...)` → `emit(...)`; `crypto.randomUUID` guarded. Verified: vue-tsc/build/536 tests green; in play mode the roller quick-adds d8+d12, rolls (2 die cards), shows `Selected Total 8 / Effect d4`, and the Text Log + Copy button render; zero console errors. SFCs so far: `sfx-editor`, `subtrait-editor`, `portrait-editor`, `style-gallery`, `roster`, `dice-roller`. Next: `trait-editor`.
+
+- 2026-10-12 (SFC rounds 6 & 7): `trait-editor.js` → `trait-editor.vue` and `name-editor.js` → `name-editor.vue` (`<script setup lang="ts">`), two large files in one round. trait-editor: typed props + ~30 writable computeds, lifecycle (`onMounted`/`onUnmounted`/`onUpdated`) carrying the resize listener, `$el` → template ref, child components imported (`subtrait-editor`, `sfx-editor`). name-editor: `DICE_PRESETS` kept module-local with a typed `DicePreset`, a `targetValue($event)` helper to keep the many inline `$event.target.value` bindings type-safe, template `$emit(...)` → `emit(...)`. Verified: vue-tsc/build/536 tests green; harness mounts render (name-editor tabs + Character Name + Watermark; trait-editor Trait Name + SFX + Value); edit-view sheet DOM hash `efbda9e8` unchanged; zero console errors. SFCs so far: `sfx-editor`, `subtrait-editor`, `portrait-editor`, `style-gallery`, `roster`, `dice-roller`, `trait-editor`, `name-editor`. Remaining `.js`: `trait-set-editor` (81 KB), `trait-set-block` (91 KB), `character` (64 KB), `app.js` (56 KB).
+
+- 2026-10-12 (terse copy pass): dropped explanatory parentheticals from visible labels / buttons / options across the roller, `name-editor`, `portrait-editor`, `trait-editor`, `trait-set-editor`, and `character` — e.g. `Scale Die (Keep 3)`→`Scale Die`, `Plot Points (PP)`→`Plot Points`, `Body Font (Readability)`→`Body Font`, `Spotlight Style (Modern Grid & Print)`→`Spotlight Style`, `Top Base (Level Columns)`→`Top Base`, `Classic (Large Portrait)`→`Classic`, `Header (Top-Right Corner)`→`Header`, `Unlinked (general pool)`→`Unlinked`, `Blank Sheet (For Pencil)`→`Blank Sheet`, `Arc Position (Angle)`/`Arc Spread (Width)`/`Filled Pips (Play State)`→bare nouns, font `(Custom)` buttons→the family name, the roller hitch alert dropped its `GM may buy…` clause, and the `(Default)` options + resource toggle hint were tersified. **Kept** (data, not explanation): counts/units (`Dice Pool (0)`, `Small (120px)`, `Bottom (0°)`, `(Res)`, `({{ formula }})`), input placeholders (`e.g. …`), style-gallery blurbs (descriptions), `title=` tooltips, and the plain-text log. Verified: vue-tsc/build/536 tests green; strings absent from `app.min.js`; harness mounts render the terse labels; zero console errors.
+
+- 2026-10-12 (SFC split — root): the `app.js` inline root → `js/app.vue` (`<script setup lang="ts">`) plus a thin `js/app.js` entry (imports `App`, keeps the global `.component()` registrations and the `window.app` / `cortex*` debug handles). Extracted presentational `app-header.vue`, `app-footer.vue`, `session-nav.vue`, `add-character-modal.vue` and composables `use-toast.ts`, `use-history.ts`. **Gotchas:** (1) `<script setup>` closes its bindings, so the mounted proxy lost `app.characters`/`app.mode`/… — the documented debug/test handle was restored with `defineExpose({...})`; (2) a kebab `<character>` tag resolves to the setup binding `character` (the computed), shadowing the `Character` component — use PascalCase `<Character>` when a binding shares the kebab name. Verified: vue-tsc/build/536 tests green; app boots, header/footer/session-nav render, sheet renders (7 sets), roster 4 items, mode round-trips through the extracted header, zero console errors. The `outerHTML` hash shifts (component fragment/comment anchors), so parity is checked functionally, not by hash. Next: split `character` (grid engine + panels), `trait-set-block` (per-style components), `trait-set-editor` (control-group components).
+
+- 2026-10-12 (character split — slice 1, grid engine): the pure spotlight layout math moved from `character.js` into `js/spotlight-grid.ts` — `columnsForPage`, `getTraitSetColumn`, `isFullWidthClassic`, `hasClassicFullSets`, `getSpotlightSections`, `getSpotlightGridStyle`, `getSpotlightGridCells` (the track/span/width helpers are module-private). `character.js` now delegates to it, and `scripts/spotlight-grid-tests.js` (17 assertions) was added to `npm test`. Verified: vue-tsc/build green, 553 tests, edit-view DOM hash unchanged (`2a527c1d` — the extraction is render-identical), zero console errors. Character still to do: convert `character.js` → `character.vue` and extract the halo overlay + print toolbar.
+
+- 2026-10-12 (character split — slice 2, SFC): `character.js` → `js/character.vue` (`<script setup lang="ts">`), delegating the layout math to `spotlight-grid.ts`. data→refs, all computeds, ~40 methods, and `mounted` + the deep `character` watch → `onMounted`/`watch`; `this.$el` → a root template ref (halo drag); `$root.sheetTemplates` → `getCurrentInstance().proxy.$root`; child components imported and used PascalCase (`TraitSetBlock`, `TraitEditor`, `TraitSetEditor`, `NameEditor`, `PortraitEditor`, `StyleGallery`); template `$emit(...)` → `emit(...)`. Widened `trait-editor`'s `viewY` prop to `number | null` to match the nullable prop the app passes. Verified: vue-tsc/build/553 tests green; edit-view DOM hash **unchanged (`2a527c1d`)** — render-identical; play renders 4 sheets + roller and print renders 1 sheet + toolbar; zero console errors. Remaining character work: extract the halo overlay and print toolbar into components.
+
+- 2026-10-12 (character split — slice 3, halo + print toolbar): extracted `js/print-toolbar.vue` (the `.print-toolbar`; emits `print`/`export` + `update:printStyle`/`printBlank`/`printPageView`) and `js/halo-attributes.vue` (the attributes ring + scale die + drag — owns `haloTraitSet`/`attributes`/`scaleTrait`/`scaleDieValue`/`haloConfig` and `getAttribute*`/`startHaloDrag`/`setHaloConfigProp`/`setScaleDieValue`/`getScaleDieStyle`/`handleAttributeClick`/`handleScaleDieClick`; drag resolves the portrait via `$el.closest('.portrait')`; exposes `setScaleDieValue`/`handleAttributeClick` via `defineExpose` for the right-column add-buttons). The duplicated halo computeds/methods/data were removed from `character.vue`. Verified: vue-tsc/build/553 tests green; edit-view DOM hash unchanged (`2a527c1d`); a synthetic classic character renders the halo (3 attributes + portrait circle); the print toolbar renders; zero console errors on real data. Next: split `trait-set-block` into per-style components and `trait-set-editor` into control-group components.
+
+- 2026-10-12 (trait-set-block SFC): `trait-set-block.js` -> `js/trait-set-block.vue` (`<script setup lang="ts">`), a one-to-one whole-file conversion (the ~90 shared methods, the `v-if` style dispatch chain, and the inline styles all carried over; not yet split). Typed `defineProps`/`defineEmits`; the `s` computed is cast to `number`, the index params that receive a print-placeholder's nullable `originalIndex` are `any`, and `getBranchGroups` returns `any[]` (its `.split` usage) so vue-tsc is clean. Importers repointed to a default import (`app.js`, `character.vue`); the `.js` is deleted. Verified: vue-tsc/build/553 tests green; edit/play/print render on real data (7 sets: distinctions/default x3/standing/badges-table/talents-table) with working interactions (edit single-die click toggles `editing` `[]` <-> `['trait',0,0]`; play click adds the die to the pool) and zero console errors; a synthetic character exercising the other 12 styles (pips, session-record, growth-ladder, dossier-fields, skills-specialties, resources-count, notes, image, stress, two-columns, angled-lines, list) renders a block for every one. As with the other SFC conversions the outerHTML hash shifts, so parity is functional. Next: extract `use-trait-set.ts` + per-style components, then split `trait-set-editor`.
+
+- 2026-10-12 (trait-set-block split): extracted `js/use-trait-set.ts` (all ~90 shared methods + the `traitSet`/`s`/`sheetStyle`/`isSpotlightPrintStyle` computeds + the `selectElement`/`updateCharacter`/`addTrait`/`removeTrait`/`removeTraitSet`/`addDieToRoller` emitters) and 12 per-style body SFCs (`trait-set-image`, `trait-set-notes`, `trait-set-pips`, `trait-set-session-record`, `trait-set-growth-ladder`, `trait-set-dossier`, `trait-set-skills`, `trait-set-talents`, `trait-set-standing`, `trait-set-badges`, `trait-set-resources-count`, `trait-set-list`). `trait-set-block.vue` is now a thin dispatcher: header + `<component :is="bodyComponent">` (style-body -> component map; the default/else branch and every unmatched body render `trait-set-list`, and `angled-lines` shares `trait-set-session-record`) + the trait-set-level SFX list + right header. **Shared api via `provide`/`inject`** (`TRAIT_SET_KEY`), not prop drilling - the dispatcher calls `useTraitSet(props, emit)` once and provides the api; each body component destructures `injectTraitSet()` so its template is a verbatim copy of the old branch (only the outer `v-else-if` -> `v-if`, and the default `v-else` dropped). Verified: vue-tsc/build/553 tests green; real data (Exp2) renders 7 sets with correct dispatch (`distinctions`/`default` -> `trait-list`, `standing` -> `trait-standing`, `badges-table` -> `trait-badges-table`, `talents-table` -> `trait-talents-table`), edit single-die click toggles `editing` `null` -> `['trait',0,0]`, play click adds the D8 to the pool, print textLen identical to before (1624), zero console errors; a synthetic character exercising all 17 style bodies renders every one with zero console errors. Next: split `trait-set-editor.js` into control-group components.
+
+- 2026-10-12 (trait-set-editor split): the last Options `.js` component (`trait-set-editor.js`, 2,264 lines) -> `js/trait-set-editor.vue` (`<script setup lang="ts">`) + `js/use-trait-set-editor.ts` + six contiguous control-group SFCs. The composable owns all ~70 writable computeds, ~50 methods, the four state refs, `styleOptions`, the lifecycle (`onMounted`/`onUnmounted`/`onUpdated`), the four `watch`es, and the `nextTick`/resize anchoring (`checkAnchorPosition`/`checkScrollPosition` use a root `ref`); it is shared by `provide`/`inject` (`TRAIT_SET_EDITOR_KEY`). Groups: `trait-set-editor-halo` (halo sliders + scale die), `-layout` (column/position, span, width, row band, panel, page), `-dice` (rating scale, set die, subtrait scale, pool), `-image`, `-sfx`, `-confirm` (delete modal teleport). The root keeps controls + name/right-header/style + the inline conditional fields + the groups in the original DOM order. Added a `targetValue($event)` helper (same typed-input pattern as `name-editor`) for the `:value/@change` label inputs. Importers repointed to a default import (`app.js`, `character.vue`, `trait-set-block.vue`); the `.js` is deleted. **Gotchas (found by browser test):** the provided api must expose `character` and `traitSetID` — the templates and the SFX group use them, and omitting them made `sfx-editor` receive an undefined set id and throw. Verified: vue-tsc/build/553 tests green; Exp2 opens the set editor (fields in original order, ids like `trait-set-6-feature-sfx`), the delete-confirm modal shows/cancels, SFX add/remove renders and persists, play adds a die to the roller, print is unchanged (textLen 1624), and a synthetic character renders all 17 style bodies — zero console errors. All app components are now `.vue`/`.ts`; no `.js` components remain.
+
+- 2026-10-12 (materialize aliasing fix): `materializeCharacter` computed its `presentationSets` from `base.traitSets` *after* `const out = base` had been overwritten by the entity's own keys, so a stray `traitSets` array on an entity silently replaced the template's set order (a stored Exp2 entity that carried both `sets` and a stale `traitSets` materialized to 2 sets instead of 7 — persistence via `toLayeredEntity` strips `traitSets`, so the artifact came from an older write, but the materializer must be robust to it). Now the presentation set list is read from the `presentation` argument, falling back to the entity's own array only for an entity-only fold (no presentation). The 230 materialize assertions stay green.
+
+- 2026-10-12 (cleanup + ring/noun generalization): (1) removed the dead `includeD4` editor computed, the `stressConfig.includeD4` write, and the `getTraitSetRatings` back-compat read - the range-based `ratingScale` supersedes the single flag and it was dev-only, not part of the original-fork import contract. (2) `js/app.js` dropped the redundant global `.component()` registrations + their imports (every consumer imports its children locally under `<script setup>`); it now only mounts `App` and sets the `window.app` / `cortex*` handles (AGENTS.md updated). (3) `nounPlural` is now surfaced: a **Plural Noun** editor field was added (it was schema-required and defaulted but hidden and uneditable); when unset it defaults to singular + `s`. (4) the persisted ring flag `custom.cortexToolkit.attributesRing` renamed to **`haloTraitRing`** (write new; `cortexFunctions.getHaloTraitRing` reads new then legacy) and internal names `hasAttributesRing`/`attributesID` -> `hasHaloTraitRing`/`haloTraitID` (character.vue, the `halo-attributes` prop, the `spotlight-grid` param) - the ring is a generic portrait ring, not attributes-only. (5) exposed **Scale Die Offset X/Y** sliders in the Halo group (`haloScaleX`/`haloScaleY` -> `haloConfig.scaleDieX/scaleDieY`), which the halo drag already consumed. Verified: vue-tsc/build/553 tests green; the editor shows Plural Noun; the Halo group renders 7 sliders (2 new); the stored key is `haloTraitRing`; the ring renders on a classic sheet; the roster renders; zero console errors. Note: `templates.bundle.js` stays a separate chunk awaited by `bootFromStorage` (kept as future-proofing for a community-grown library); its loader `?v=` placeholder is rewritten to the templates content hash by `scripts/version-assets.js` at build time.
+
+- 2026-10-12 (cleanup round 2): removed the remaining dead editor computeds `styleHeader` and `styleHint`, and the now-unused `setStyle` helper (its only caller was `styleHeader`). Corrected the round-1 note: the template loader's `?v=33` is **not** a stale cache-buster - `scripts/version-assets.js` rewrites it inside `app.min.js` to the `templates.bundle.js` content hash on every `npm run build` (verified: the built bundle carries `?v=e7c286aa83`). Added a comment at both loader sites (`app.vue`, `roster.vue`) documenting the mechanism. Verified: vue-tsc/build/553 tests green; the editor opens (22 fields, incl. Plural Noun); zero console errors.
+
+- 2026-10-12 (Vue de-CDN): Vue is bundled instead of loaded from unpkg. `webpack.mix.js` drops `externals: { vue: 'Vue' }` and aliases `vue$` to `vue/dist/vue.runtime.esm-bundler.js` (templates are precompiled by vue-loader, so the runtime compiler is unused) plus `DefinePlugin` prod flags; `index.html` drops the unpkg `<script>` + its preconnect; `app.js` uses `import { createApp } from 'vue'` (the only global-`Vue` use). Removes a third-party runtime dependency (breaking-change / downtime risk) and makes the app itself offline-capable. **Caveat:** Google Fonts + Font Awesome CSS still load from remote CDNs, so offline degrades fonts/icons but the app runs. Verified: build clean (0 warnings), `npm run check` + 553 tests green, `window.Vue` is undefined, network shows only localhost requests, Exp2 renders (7 sets), only pre-existing inline-font warnings. Size 609 -> 581 KB raw, 119 -> 142 KB gzip (the Vue runtime tree-shakes in).
+
+- 2026-10-12 (model types from schema - slice 1): added `npm run types` (`scripts/gen-types.mjs`) which compiles `schema/0.1/character.schema.json` + `sheet-template.schema.json` through `json-schema-to-typescript` (new devDep) into `js/model.generated.ts` - root types `Character` / `SheetTemplate`, with `TraitSet` / `Trait` / `Sfx` / `Tags` / `Custom`; the schemas' `additionalProperties: false` gives closed shapes, while the intentionally-open `custom` stays `{ [k]: unknown }`. `js/model.ts` re-exports those and adds the app-only layer the schema omits: `CortexToolkitCustom` (+ `SetStyle` / `SetFeatures` / `PipsConfig` / `SessionRecordConfig` / `AttachedStressConfig` / `HaloConfig` / `ImageConfig` / `StressConfig`) and `TraitCustom`, refining `custom` at each carrier and re-typing the nested arrays, so `Character` / `TraitSet` / `Trait` carry real `cortexToolkit` keys (not `any`). `types` is chained into `build`. Verified: `vue-tsc` green, 553 tests green, bundle byte-identical (types erase; not imported yet). Not wired into app code yet - slice 2 annotates the data modules (`storage` / `migration` / `layered-materialize` / `spotlight-grid`), then `functions.ts`, then the composables' `props`/API and component `props`/`emits`.
+
+- 2026-10-12 (template baseline reset + spork): blanked the `(with spork attachment)` statement on the camp-bewilderwood Signature Assets blank slot (`js/templates.js` + `data/templates/camp-bewilderwood.template.layered.json`) and reset **every** spotlight template's `version` to `1` (all 26, in both the library source and the committed layered files). No public release exists, so the template versions were internal churn only - commit history is the archive. Updated `template-parity-tests.js` (Bewilderwood wrapper version 3 -> 1, alien-us 5 -> 1, spork assertion -> blank). Unrelated `version: 3` elsewhere (`mix.vue({ version: 3 })`, synthetic `tpl-x`) untouched. Verified: build, 553 tests, `validate` 0 errors / 0 warnings. **Dev caveat:** existing characters pin the old versions and resolve against a stored template snapshot in IndexedDB (`sheetTemplates`), so they keep the old content until that store is reset; newly created characters use the v1 baseline.
+
+- 2026-10-12 (model types wired - slice 2, part 1): wired the generated model into the leaves. `js/spotlight-grid.ts` now takes `TraitSet` / `Character` and returns typed `SpotlightSection` / `SpotlightCell`; `js/use-trait-set.ts` takes a typed `TraitSetProps` (`character` required) and its ~72 `traitSetArg` / `trait` params are now `TraitSet` / `Trait`. App-only fields the schema omits were added to `js/model.ts` (`Trait.isOut` / `stress` / `isResource` / `_lid` / `id`, `TraitSet._lid`, `CortexToolkitCustom.spentDice` / `rowSpan` / `questioned` / `isResource` / `isScale` / `xp` / `counter` / `branchRole` / `branchSide` / `linkTo`). Three loose comparisons were tightened behavior-preservingly (`Number(trait.value) > 12`, `(traitColumns ?? 0) > 1`, `String(configured) !== ''`). `: any` count 737 -> 642. Verified: vue-tsc, build, 553 tests, browser parity (7 sets, editor opens, zero console errors). `js/storage.ts` deliberately stays the untrusted-input boundary (its `any`s normalize arbitrary persisted/legacy data). Remaining: `use-trait-set-editor.ts` (v-model setters, 87), `functions.ts` (160), `migration.ts` (74), `app.vue` (59), then component `props`/`emits`; plus the `any`-budget guardrail.
+
+- 2026-10-12 (model types wired - slice 2, part 2): `js/use-trait-set-editor.ts` - typed `TraitSetEditorProps` (`character` + `traitSetID` required, matching how it's always called), added a `ctkFor(s)` accessor that ensures + returns the typed `custom.cortexToolkit` bag, and typed the config-setter keys (`keyof HaloConfig` / `SetFeatures` / `StressConfig` / `ImageConfig` / `PipsConfig` / `AttachedStressConfig`). `: any` 642 -> 641 - the editor's remaining ~85 are `v-model` setter value params (`set: ( v: any )`), which are low-risk value types, deliberately left. Green: vue-tsc / build / 553 tests. Remaining: `functions.ts` (160), `migration.ts` (74), `app.vue` (59), component `props`/`emits`; plus the `any`-budget guardrail.
+
+- 2026-10-12 (model types wired - slice 2, part 3): `js/functions.ts` - typed the pure + getter helpers (`arraysMatch`, `getDieDisplayValue`, `renderDieconSVG`, `getTraitSetRatings`/`getHaloTraitRing`/`getSubtraitRatings`, `defaultFeaturesForStyle`/`labelDefaultForStyle`, `getTraitDice`/`setTraitDice`, `renderDate`/`renderText`/`escapeHtml`/`isSafeUrl`/`safeImageUrl`/`processImageFile`, `deepEqual`, `slugifySetId`, `stripInternalIds`, `findSpotlightTemplate`) and added `DiceConfig` to the model. The character/draft mutators (`assignLids`/`ensureTraitSetIds`) deliberately stay `any` - they run over loose drafts (`defaultCharacter`, partials) that aren't yet `Character`. `: any` 615 -> 604 (`functions.ts` 160 -> 123). Green: vue-tsc / build / 553 tests. Remaining: the `functions.ts` template/sheet/draft helpers (need app-only `removedTraits`/`removedSets` on the model), `migration.ts` (74), `app.vue` (59), component `props`/`emits`.
+
+- 2026-10-12 (model types wired - slice 2, part 6): component `props`/`emits` are the hard wall. Typing `character.vue`'s `character?: Character` cascades badly for two reasons: (a) the generated `portrait.custom` references the generated open `Custom`, not the app `Custom`, so `portrait.custom.cortexToolkit.alignment` resolves to `unknown` and every `?? {}` fallback narrows to `{}`; (b) the many `props.character.portrait` / `props.character.plotPoints` reads assume non-null. Reverted that file to keep green - fully typing component props needs the app model to also override `portrait.custom` and export the inline portrait shape (deferred). The attempt did surface genuinely app-only fields now added to the model (`Character.player`/`nickname`, `CortexToolkitCustom.watermark`, `PortraitCustom`). Net this turn: 568 -> 459. Also typed `functions.ts` prefs helpers (`prefsForExport`/`prefsFromImport`, + `CharacterPrefs`), generic helpers (`deepEqualClean`/`unionArrays`/`findTraitByName`/`isBlankName`), all 54 `v-model` setters in `use-trait-set-editor.ts`, and `use-trait-set.ts` value/index params.
+
+- 2026-10-12 (model types wired - slice 2, part 7): `character.vue` fully typed (31 -> 4). Root fix: the generated `portrait.custom` referenced the generated open `Custom`, so I overrode `Character.portrait` with an app `Portrait` (partial fields + app `Custom`) and extended `CortexToolkitCustom` with the app-only keys the renderer reads (`theme`, `customFonts`, `watermark`, `columnOffsets`, `columnAlignment`, accent/primary/secondary colors, `location: 'header'`). Props/emits are now `Character`/`unknown`; local `const character = props.character as Character`. `trait-editor.vue` was attempted but reverted: its **templates** read deeply-optional chains (`traitSet.custom.cortexToolkit.features…`) that need either optional-chaining edits in the template or making nested `custom`/`cortexToolkit`/`features` required on the model (unsound for partial data). Total now **432** (from 737, -305). Remaining: loose boundaries (`migration.ts` 74, `storage.ts` 24, `functions.ts` merge/prune 58) and components whose templates touch optional chains (`trait-editor`/`name-editor`/`roster`/`halo-attributes`).
+
+- 2026-10-12 (model-typing paused): stopped the `: any` grind at **432** (from 737). `migration.ts` (untrusted legacy codec), `storage.ts`, and the `functions.ts` merge/prune engine are left as deliberate `any` boundaries. The remaining component anys (`trait-editor`, `name-editor`, `roster`, `halo-attributes`, `app.vue`) await a call on whether to optional-chain their templates or make nested `custom`/`cortexToolkit`/`features` required (unsound). Green: vue-tsc / build / 553 tests.
+
+- 2026-10-12 (set header option + moderate print tightening): added a generic per-set header setting `custom.cortexToolkit.header: 'sidebar' | 'top'` and `headerAlign: 'left' | 'center' | 'right'` (model + `use-trait-set-editor` computeds + a "Set Header" field: Sidebar / Top Bar and Left / Center / Right). `getTraitSetClasses` emits `trait-set-header-top` / `trait-set-header-align-*`; `trait-set-block` renders the counter label in the header when top; CSS (screen `_variants`, print `_spotlight-print`) turns `top` into a horizontal bar (writing-mode `horizontal-tb`) and maps `headerAlign` to sidebar `align-items: start/center/end` (so it is respected vertically). Removed the now-duplicate `badges-head` row from `trait-set-badges.vue` (one header). Bewilderwood's badges set now uses `header: 'top'` (source match) in `js/templates.js` + `data/templates/camp-bewilderwood.template.layered.json`. Moderate (safe) print density reductions: trait-set body padding, standing gaps/min-heights, badge row padding + counter-box height. Verified: vue-tsc/build/553 tests green (parity holds), header toggle works both orientations, page height 1773 -> 1686 px. **Still spills** for the full 16-row Bewilderwood badges (target ~1123 px) - closing the rest needs an aggressive density pass, deferred. Style id/label renames deferred pending the user's full style-name spec.
+
+- 2026-10-12 (style id rewire - 8 renames): renamed the **internal** style ids (not just labels) under the principle "name the layout, not the game concept": `skills-specialties`->`subtrait-columns`, `standing`->`paired-slots`, `badges-table`->`die-rows`, `talents-table`->`three-column-table`, `growth-ladder`->`dice-ladder`, `dossier-fields`->`labeled-fields`, `resources-count`->`dice-count`, `halo`->`portrait-ring`. Updated everywhere the id appears: `functions.ts` (style-defaults map, `styleHint`, `allowsTraitColumns`, label-default keys), `use-trait-set-editor` (`styleOptions` + `allowsTraitColumns` + the `styleBody` halo logic), `style-gallery` (ids + names), `trait-set-block` body map, each body component's `v-if`, `character.vue`/`trait-editor`/`subtrait-editor` halo/standing checks, CSS `.trait-set-style-*` selectors, and template data (`js/templates.js` + `data/templates/*.json`). Labels set to the literal names. Verified: vue-tsc / build / 553 tests / `validate` 0-0; a fresh character from the updated template renders only new ids with the badges top header and zero console errors. Component-level class names (e.g. `.trait-standing`), set names/nouns (content), and default sub-labels (e.g. COMPLICATION/BONUS) are left as-is. **No back-compat alias** - no release, and these fork-specific ids don't appear in original-fork imports; existing pinned dev characters (old snapshot ids) fall back to the default list until reset (Roster -> Delete All).
+
+- 2026-10-12 (internal vocabulary sweep): renamed the **internals** (component files, root body classes, sub-element classes, JS identifiers) to the generic stems matching the ids, using short generic stems. Files: `trait-set-{standing,badges,talents,skills,growth-ladder,dossier,resources-count}.vue` -> `trait-set-{paired-slots,die-rows,three-column-table,subtrait-columns,dice-ladder,labeled-fields,dice-count}.vue`; body roots `.trait-X` -> `.trait-<id>`; sub-elements `paired-slot-*`, `die-row*`, `three-col-*`, `branch-*`, `ladder-*`, `field-*`, `dice-count-*`. Halo family -> **ring** (classes `.ring-*`, identifiers `ringAngle`/`ringScaleX`/`isRing`/`ringRef`/`ringTraitSet`/`setRingConfig`/`resetRingPlacement`, interface `RingConfig`, components `ring-attributes.vue` + `trait-set-editor-ring.vue`). Persisted key `haloConfig` -> `ringConfig` (renamed; not present in kaelri). **Back-compat kept for `attributesRing`** (kaelri uses it): `getRingTrait` reads `cta.ringTrait ?? cta.attributesRing`. Set names/content untouched. Verified: vue-tsc / build / 553 tests / `validate` 0-0; a synthetic 20-style character renders every style with the new classes (incl. the ring overlay), zero console errors.
+
+- 2026-10-12 (aggressive print-only density): the full Bewilderwood sheet now fits **one page**. Added a print-view density mode: `app.vue` toggles `html.print-view` whenever `mode === 'character' && submode === 'print'`, and CSS scales the root font-size to **9px** under `html.print-view` and `@media print` (the rem/em base). Because nearly every sheet metric is `rem`, the whole layout shrinks together; page height went 1686 -> **1123 px (= one A4 sheet)** for the 16-row Bewilderwood sheet, and the edit/play screen is untouched (16px). Verified: computed `html` font is 16px with no `print-view` class in edit/play and 9px with the class in print; vue-tsc / build / 553 tests / `validate` 0-0. (This intentionally also densifies the print tab's own chrome, which is print-focused.)
+
+- 2026-10-12 (print density - designer preview): moved the `html.print-view` toggle from `app.vue` into `character.vue` so it fires for `submode === 'print'` **or** the designer print preview (`designerPrintPreview` - the edit-mode "Print View" button, which keeps `submode === 'edit'` and was missed by the first rule, hence still spilling). Verified: toggling "Print View" in edit goes 16px -> 9px and page 1841 -> 1123 (= one sheet); toggling back restores 16px; vue-tsc / build / 553 tests / `validate` 0-0.
+
+- 2026-10-12 (print: kill designer preview + scope density): removed the edit-mode "Print View" **designer preview** (button, banner, toggle fn, and its `html.print-view` density coupling) - redundant with the print tab. Print density is now `@media print { html { font-size: 11px } }` only: no on-screen/global shrink, so the print-tab chrome and edit/play stay at 16px and only the printed sheet shrinks. Also flushed the shared `.trait` row padding/margin/border inside the table bodies (`die-rows`/`three-column-table`/`paired-slots`) - the doubled divider was the "gutter between sections" in Badges/Talents. Verified: no "Print View" button; base font 16px / no `print-view` class; measured print sheet height vs root size (11px fits one page = 1123; 12px spills 56); vue-tsc / build / 553 tests / `validate` 0-0. **Still open (fidelity):** duplicate inner rule-lines inside bordered boxes, badge rating vertical centering, an empty dead block in Attributes, and the Description ruled-lines.
+
+- 2026-10-12 (print-tab WYSIWYG): the print tab now matches paper exactly (no disparate UX). The sheet is `rem`-based, so the tab `zoom`s only the `.pages` container by 0.6875 (= 11/16) and **inverse-scales the page box** (`--page-width`/`--page-height`/`--page-margin` ÷ zoom) - the toolbar/header are siblings of `.pages`, so the chrome stays at 16px, while the rendered page and its spill line land exactly where the paper page break will. `@media print` keeps the real 11px root with no zoom (identical rendered result). Removed the earlier `html.print-view` global scaling (it shrank the chrome). Verified: root font 16px, `.pages` zoom 0.6875, one page rendered 794x1123 (= A4), content fits (39px headroom), toolbar/header 16px; vue-tsc / build / 553 tests / `validate` 0-0. **Still open (fidelity):** duplicate inner rule-lines inside bordered boxes, badge rating vertical centering, empty dead block in Attributes, Description ruled-lines.
+
+- 2026-10-12 (print fidelity round 2): (1) badge rows are now a 3-column grid (`1fr auto 1fr`) so the rating die centres between name and counter; (2) short sets hug their content (`align-self: start !important`) - removes the empty bordered block (e.g. Attributes) left by grid stretch; (3) paired-slot name/statement boxes drop their inner rule (`border-bottom: none !important`) since the bordered box already frames the field; (4) the header Description blank lines were reduced 3 -> 2 and made solid black to match the name/pronoun ruling. The nested print rules out-specified the first attempt, so `!important` on the contested declarations. Verified via computed styles (die-row `display: grid`, die `justify-self: center`, paired-slot blank `border-bottom: none`, desc line `rgb(0,0,0)`), page still 1123 (fits one sheet), vue-tsc / build / 553 tests / `validate` 0-0.
+
+- 2026-10-12 (regular/print fidelity round 3): (1) removed the red `border-bottom: 2px solid var(--color-primary)` under trait titles (the `&.trait-set-has-feature-*  .trait-title` rule) - mis-aligned and duplicative with the thin segment divider; (2) removed the `background-color: var(--color-secondary)` highlight on `.trait-set-header-inner > div` (sidebar + top-bar label) and the `.three-col-head` crimson bar (`background: var(--color-primary)`) -> plain black text; (3) bumped the header/sidebar label font (`0.717rem` -> `0.82rem`; print `0.75` -> `0.85rem`) and `three-col-head` (`0.68` -> `0.8rem`); (4) replaced the hug (`align-self: start`, which left the empty block under Attributes) with fill: sections stretch to the band and distribute/centre their content (`.trait-set-body` flex column, `.trait-list { justify-content: space-between }`, table bodies `margin-block: auto`), so the Distinctions/Signature Assets, Values/Attributes and Badges/Standings bands fill with no gaps. Verified: Values trait-title border `none`, header-inner bg transparent + `.82rem`, three-col-head bg transparent + black; print page still 1123 (one sheet); vue-tsc / build / 553 tests / `validate` 0-0.
+
+- 2026-10-12 (print fidelity round 4 + B/W): (1) default set-header alignment is now **left** (was centre) so the top-bar label (e.g. BADGES) sits flush like the source, configurable per set as before; (2) list bodies use `space-evenly` (row-gap 0) so the Attributes MENTAL/PHYSICAL/SOCIAL rows space evenly; (3) Standing (`paired-slots`): complication + bonus dice now render on the **same row** as the main rating die (dice-row/sub-group `flex-direction: row`, print + screen) - reclaims ~a line per row; (4) added a **Black & White** print option (print-toolbar checkbox -> `printBW` ref -> `.print-bw` class on the sheet = `filter: grayscale(1)`), applies on screen and paper. Row-alignment across sets deliberately NOT attempted (user: fools errand). Verified: badge header `justify-content: flex-start`; Standing row 48px with sub-group `row`; Attributes `space-evenly`; B/W toggle applies `grayscale(1)`; print page still 1123 (one sheet); vue-tsc / build / 553 tests / `validate` 0-0.
+
+- 2026-10-12 (print-tab layout lock + readability): (1) the print tab no longer collapses to a single column at narrow viewports / browser zoom - a `@media screen` lock forces the desktop grid (`display: grid !important` on `.columns.spotlight-columns`) and pins the sheet to `var(--page-width)`, so the viewport scrolls left/right instead of reflowing to one column; (2) raised the print density to **12px-equivalent** (print root `12px`; print-tab zoom `0.75` = 12/16 with page vars ÷0.75) and enlarged the diecon icons to `1.05rem`, since the dice were unreadable; (3) flushed the set body under a top header (`.trait-set-header-top .trait-set-body { padding-top: 0 }`) to remove the dead band under the BADGES header. Standing complication/bonus dice were verified rendering (5 complications + 4 bonus dice per row - they only looked empty at the old tiny diecon size). Verified: print page 1123x794 (one sheet) at 12px; columns stay `grid` at a 420px viewport (no collapse); vue-tsc / build / 553 tests / `validate` 0-0.
+
+- 2026-10-12 (print round 6): (1) the earlier font bump had **silently failed** (whitespace-mismatched string replaces) - print was still 11px; corrected `@media print { html { font-size: 13px } }` and the print-tab zoom to `0.8125` (13/16, page vars ÷0.8125); still one page (1123x794). (2) badge trait names are centred (`.die-row .die-row-name { text-align: center }`). (3) the print-tab horizontal scroll moved onto `.main` (`body:has(.character-sheet.submode-print) .main { overflow-x: auto }`) so a narrower viewport scrolls instead of clipping the sheet. Verified: zoom 0.8125, page 1123x794, name centred, diecon ~13.6px rendered; vue-tsc/build/553 tests/validate 0-0. **Pending:** blank the Bewilderwood template's 16 badge trait names (they are fill-ins) - requires converting those named traits to blank slots in **both** `js/templates.js` and the layered fixture (keeps `template-parity` green), so it is a deliberate regeneration step (deferred / offered).
+
+- 2026-10-15 (roster UX sweep): (1) **Delete Play Session button**: removed the redundant "Play Session (n)" roster button and emit; the top nav Play tab is now the sole entry point into play mode and carries the session resume semantics (`setMode('character', 'play')` lands on open sheets in play mode). Session membership controls belong inside Play, not on the roster (removed "Open Alongside" card button). (2) **One New Sheet button + Template picker**: merged "New Character" and "New Template" into a single **New Sheet** action paired with a `Template` picker field (None default, or any sheet flagged with `isTemplate`). Choosing a template pins its snapshot as the new sheet's template layer (`sheet.template`), creating a sparse sheet with an empty local layer (`sets: {}`) rather than duplicating content. Template-ness remains toggled post-creation via the card's **Set Template** action. (3) **Roster search**: added a plain substring case-insensitive search input matching sheet `name`, `game`, and `type`, composing with the filter tabs (All / Characters / Templates) with live match counts and a terse empty state line.
+
+- 2026-10-16 (header box cross-axis centering & layout fidelity): (1) **Header cross-axis centering**: clarified that header "centering" refers to cross-axis centering within the rendering box, not forcing text justification. Top headers are vertically centered in their banner (`align-items: center; line-height: 1; transform: translateY(1px)`), while sidebar vertical headers are horizontally centered between their gutter borders (`margin-left: 1.5px; line-height: 1`). Template `headerAlign` (`left`, `center`, `right`) remains authoritative for text justification along the reading axis. (2) **Relationship 2-column side-by-side layout**: scoped `.trait-title-statement.trait-title-stacked` to screen and print modes (`.character-sheet.spotlight-style, .character-sheet.spotlight-print-style`) so Column 1 renders the Name box stacked above the rating dice scale, while Column 2 renders the full-height Statement/Description box.
+
+- 2026-10-16 (trait label reservation & gutter tightening): (1) **Trait label reservation & hint**: unnamed traits (e.g. Relationship slots) reserve identical space for entering labels, rendering an italic hint in edit mode (`{{ nounSingular }}...`, e.g. `Relationship...`) and a clean blank line in print mode, with `min-height: 1.25rem` and flex centering on stacked titles. (2) **Gutter tightening**: reduced `.trait` margins and padding (`padding: 0.25rem 0.35rem; margin-bottom: 0.25rem`) to eliminate bloated gutters and ensure slot 1 has identical spacing to slots 2..N.
+
+- 2026-10-16 (Values alignment & template-wide traited Milestones): (1) **Values inline statement row alignment**: center-aligned all elements within inline statement rows (`.trait-name`, `.statement-pip`, `.trait-statement-box`, `.trait-value`) on the row midline (`align-items: center !important`, `.trait-value { top: 0 !important; align-self: center; margin-left: auto; }`). Set a uniform `6.5rem` name column width so statement boxes and rating scales align into crisp, non-ragged columns across all rows. Added `hasQuestionedPip: true` to Brighter Stars Values. (2) **All-template traited Milestones**: converted all milestone sets across the template library from legacy `body: "notes"` to standard traited sets (`ratingPosition: "none"`, `features: { description: true }` with `1 XP`, `3 XP`, `10 XP` traits). `BrighterStars` and `Inheritors` feature two distinct milestone sets: `Personal Milestones` and `Group Milestones`; `Snowfall Initiative` features two traited milestone tracks (`Milestones` and `Milestones~2`).
+
+- 2026-10-16 (dice vector clarity & pentagon D12): (1) **Roboto & sans-serif fallback**: updated dice numeral font-family from the platform system-stack to `Roboto, sans-serif` (`font-weight="900"`, optical size 9.5–10.5) so SVG dice glyphs render with consistent weight and stroke matching the shape border across all platforms. (2) **Pentagon D12**: replaced the 12-sided dodecagon with a regular 5-sided pentagon pointing apex-up (`points="12,2.7 21.7,9.8 18,21.3 6,21.3 2.3,9.8"`), which prevents geometric blur and stroke collision at smaller screen and print resolutions. (3) **1px base border width & optical centering**: reduced base border width to `1px` (`stroke-width="1"`) for crisp, non-crowded outlines; tightened d6 square corner radius to `rx="1"` to harmonize with polygon `stroke-linejoin="round"` corners; optical baseline and centering adjusted across d4, d6, d8, d10, and d12.
+
+- 2026-10-16 (Studio Panel & popover modal elimination): (1) **Eliminated inline popover modals**: removed all inline `<TraitEditor>`, `<TraitSetEditor>`, `<PortraitEditor>`, and `<NameEditor>` modal instances floating over sheet components. Selecting any trait, set, portrait, or sheet property applies an active selection ring (`.is-selected`) on the sheet and routes inspection into a single docked Studio Panel. (2) **Unified Studio Panel architecture (`studio-panel.vue`)**: integrated docked Properties inspector and Dice Roller into a tabbed sidebar panel (`[Properties] [Roller]`). Defaults to docking on the right side and pushes the sheet viewport when screen width permits (>= 1400px), cleanly overlaying as a drawer below 1400px. Includes bidirectional dock switching (`position: left | right`) and full collapse with an edge-anchored expand handle (`.studio-panel-expand-btn`). (3) **Seamless contextual dispatching**: clicking any trait row immediately opens `Properties` showing `TraitEditor` with hierarchical breadcrumbs (`Set › Trait`) and a terse `Done` button; clicking a die rating in Play mode stages the die and opens `Roller`; clicking sheet background clears selection back to top-level `Sheet Properties`. (4) **Clean docked editor adaptation**: styled `.studio-panel .editor` with static flow, zero drop shadows, hidden popover arrows, and horizontal action toolbar (`editor-controls`), preserving full editor logic with zero code duplication or form regression.
+
+- 2026-10-16 (sheet vector dice unification & Values alignment): (1) **SVG vector dice universal on all trait rows**: `renderDieValueForPrint` in `use-trait-set.ts` now unconditionally emits `cortexFunctions.renderDieconSVG()` rather than falling back to font-based glyph characters (`'4'`, `'6'`, `'8'`, `'0'`, `'2'`). This eliminates the fallback bug where unstyled strings like `46802` and `6802` rendered when `isSpotlightPrintStyle` was false in edit mode. (2) **Spotlight style detection alignment**: `sheetStyle` across `use-trait-set.ts` and `character.vue` now recognizes `character.custom.cortexToolkit.spotlight` and `character.sheet.template` alongside `hasAttributes: false`, and `isSpotlightStyle` is exported as a computed ref so `:class="{ 'c': !isSpotlightStyle }"` evaluates properly in Vue SFC templates. (3) **Values alignment**: `.trait-title-statement .trait-name` given a rigid `flex: 0 0 5.25rem` width with vertical centering (`align-items: center`), ensuring all statement input boxes align flush in a clean column without ragged spacing.
+
+- 2026-10-17 (landscape 3-column dial-back): (1) **Landscape Showcase 3-column layout**: dialed back the landscape reference showcase template (`spotlight-landscape-showcase`) from 4 columns to 3 columns (`columns: 3, columnsPage2: 3`). Rebalanced sets across 3 tracks (Page 1: Roles full-width, Skills cols 1–2 / Standing col 3, Values col 1 / Distinctions cols 2–3; Page 2: Growth col 1 / Badges col 2 / Resources col 3, Dossier cols 1–2 / Stress & Notes col 3, Chronicle full-width). (2) **Max 3 columns system-wide**: dialed back the grid engine (`spotlight-grid.ts`), sheet settings (`name-editor.vue`), layout editor (`trait-set-editor-layout.vue`), and character add-set buttons to 2–3 columns max, eliminating cramped 4-column tracks and keeping column width readable in both portrait and landscape orientations.
+
+- 2026-10-17 (stacked traits alignment & custom materialization merge): (1) **Stacked traits center alignment**: corrected `.trait-title.trait-title-stacked:not(.trait-title-statement)` so that both `.trait-name` and `.trait-value` remain centered (`align-items: center; text-align: center; justify-content: center; width: 100%`) instead of being forced to `flex-start`. This aligns rating dice (e.g. Vigor d12) and rating scales directly beneath centered trait names and over attached stress blocks across screen and print modes. (2) **Screen/print scope parity**: expanded `.character-sheet.spotlight-print-style` selectors to `.character-sheet.spotlight-style, .character-sheet.spotlight-print-style` for attached stress blocks (stacked U-bracket and inline), empty SFX dotted slots, two-column notes, and prefilled/left-rated geometry so Edit and Play modes share identical layout geometry with Print. (3) **Lossless custom materialization merge**: in `layered-materialize.ts`, introduced `mergeCustom()` to deep merge `custom.cortexToolkit` objects during materialization. This ensures set-level presentation configuration (`attachedStress`, `ratingScale`, `features`, `style`, `reservedSlots`) inherited from the template is preserved rather than overwritten by local placement properties (`track`, `span`, `widths`).
+
+- 2026-10-18 (dual format showcases & true landscape print): (1) **Dual format showcases in library**: the Toolkit Reference collection now features two distinct showcase templates side-by-side with explicit `Portrait` and `Landscape` badges in the Spotlight library modal: *Kitchen Sink Style Showcase* (2 columns, portrait format) and *Landscape Style Showcase* (3 columns, true landscape format across Edit, Play, Print tab WYSIWYG, and physical printing). (2) **Landscape print box scaling fix**: removed conflicting `.page.orientation-landscape` un-scaled mm declaration that overrode the `.pages` `zoom: 0.8125` inverse scaling, ensuring landscape pages render at the full 297mm width (1123px) on screen instead of collapsing to portrait width. Dynamically injects `@page { size: landscape; margin: 8mm; }` during `window.print()` so the physical print dialog opens in landscape orientation. (3) **3-column span & band widths parity**: `use-trait-set.ts`, `use-trait-set-editor.ts`, and `trait-editor.vue` updated to read the canonical `span` property before legacy `colSpan`/`columnSpan`. Landscape template bands tuned to `[66.666, 0, 33.334]` and `[33.333, 66.667, 0]` with `rowBreak: true` markers and top headers on full-width banners, fitting all Page 1 and Page 2 content cleanly within 210mm paper height with zero red spill lines.
+
+- 2026-10-17 (presentation bag rename custom.cortexToolkit -> view): (1) **Descriptive over branding**: renamed the presentation/app-config bag `custom.cortexToolkit` to `view` everywhere across data, code, and schemas (`schema/0.1/character.schema.json`, `schema/0.1/sheet-template.schema.json`). The bag holds presentation only (placement, style, features, labels, stress config, typography, columns), and `view` clearly describes its role without product branding ("a good variable/property name is more important than anything else"). (2) **Rejection of `sheet`**: `sheet` was considered and rejected because `character.sheet.template` serves as the template pin, and existing engine code assigns and deletes `character.sheet` wholesale (see `js/functions.ts`); `view` is completely collision-free across code and the template corpus. (3) **Single accessor / key constant**: centralized access via `VIEW_KEY = 'view'`, `getView()`, and `ensureView()` in `js/model.ts` (re-exported on `cortexFunctions` in `js/functions.ts`), so future structural shifts route through a single seam. (4) **One migration path & conflict rule**: `cortexMigration.normalizeView` normalizes legacy objects on load/import. If an object has `custom.cortexToolkit` and no `view`, the bag maps to `view`, and empty `custom` bags are cleaned up. If both are present, `view` wins and the legacy bag is dropped on save. Non-presentation `custom.*` keys (e.g. `custom.stress`) remain untouched.
+
+- 2026-10-18 (session-record slot preservation & typographic floor enforcement): (1) **Session-record slot preservation**: fixed a slot collapse bug where adding or selecting a trait in a session-record set (e.g. Mission Chronicle) collapsed all reserved slots down to 1. In `use-trait-set.ts`, `getSessionRecordConfig` and `addSessionRecordRow` now compute effective configured slots via `Number( srec?.count ?? srec?.boxCount ?? reserved ) || 0` and `Math.max( 1, configured || 20, traitsLen )`, preventing row additions from destructively mutating `view.sessionRecord.count` or `view.reservedSlots` when below configured capacity. (2) **Template corpus parity**: updated `ls-session-record` in `js/templates.js` and `landscape-showcase.template.layered.json` with canonical `count: 12` and `reservedSlots: 12`, and added template pre-checked list fallback support to `getSessionRecordItems`, `handleSessionBubbleClick`, and `trait-editor.vue`. (3) **Typographic floor enforcement (.8125rem / 13px)**: eliminated hardcoded `8.5px` override on `.session-label` and legacy `.66rem` on `.page` in `css/_character.scss`, elevating `.page`, preview buttons, session edit hints, and SVG session labels to the design size floor of `0.8125rem` (13px), ensuring crisp readability across screen and print modes.
+
+- 2026-10-18 (growth pools are pools, not resources): (1) **Pool sets**: a set with `view.pool: true` is a plain multi-die pool — clicking a trait in play adds its WHOLE pool to the roller (downsize in the roller to split), and its dice are never flagged `isResource`. `isResourceTrait` returns false for pool sets (explicit per-trait `isResource` still wins). All six Growth Pool template sets are `dice-count` + `pool: true` with fixed D4–D12 rows (`view.poolCount` each; trace-20 starts D6×2, rest 0). (2) **Explicit zero counts**: `getResourceDiceCount`/`getResourcePoolDice` honor an explicit `poolCount: 0` (empty tally, no ghost die) and a live dice array longer than one wins over a stale `poolCount`; blank slots with no count still show the single-die ghost. (3) **Print tally past 5**: the 1–5 pip track extends to `max(5, count)` via `getPrintTallyPips`. (4) **Selection never toggles shut**: re-clicking the open trait/set keeps its editor open; deselect via Done, Escape, or empty-canvas click. (5) **Awaited saves**: `updateCharacter`/`saveLocalData` return the `persist()` promise so callers can order on it. (6) Kept out of scope: Hero Dice stays a single-die `dice-ladder` (one of each in reserve); terraverse Initiative / strange-towns Strange Die untouched.
+
+- 2026-10-18 (two pool meanings): trait-level `pool: true` and set-level `view.pool` are different claims. Trait-level `pool` is emitted by the template migration for ANY multi-die rating (`dice.length > 1` → canonical `"2d8"` + `pool: true`) — it marks "this rating holds multiple dice" and nothing more; such traits keep their existing UX (per-die badges, resource flagging where applicable). Set-level `view.pool` (edited via the Pool checkbox) marks a true pool set: clicking a trait stages its WHOLE pool at once and its dice are never flagged `isResource` (Growth Pool). New code must read the set flag for add-all behavior and must not treat auto-emitted trait `pool` as add-all (that would flip stockpiles like Food 12d6 into non-resource add-all). The 2026-10-10 "roll-all-on-add distinguishes a pool" phrasing is superseded for Resources; it now describes `view.pool` sets only.
+
+- 2026-10-18 (out indicator goes generic): stepped tracks get a generic `view.outIndicator` (default off); legacy `stressConfig.includeOut` still wins when set, but is read only on `stress` bodies. The badge renders on `stress` and `default` single-die rows; the editor toggle shows for those bodies. Rationale: stress is a kind of complication and any renamed equivalent (Fallout, Doom) must work the same — behavior keys off body + flag, never the set name. Companion cleanup: `stressConfig` was stamped on ~100 sets across the corpus where nothing reads it (plus dead `includeD4`); all instances removed except kitchen-sink Stress, converted to `outIndicator: true` to preserve its demo.
+
+- 2026-10-18 (widths are shares): the widths bar writes through the band anchor with two non-crossing dividers (keyboard nudgers included); writes normalize so the combined total can never exceed 100 (over-totals scale down proportionally).
+
+- 2026-10-18 (flank branch layout): a `subtrait-columns` set with `traitColumns: 2` renders skills in outer columns with specialties down the middle (Solarpunk); explicit left-side specialties (split) take precedence. `traitColumns` was dead data on branch sets, so nothing else shifts.
+
+- 2026-10-18 (editable name-block labels): Nickname/Pronouns/Description sheet labels are per-character `view.nameLabels` (blank = default); Strange Towns pre-labels Pronouns to Ruin. Name itself stays fixed.
+
+- 2026-10-18 (unrated tracks print): rated rows print only the circled die; rows with no rating keep the full track (sheet, print, pencil) via a `:has()` override — hiding everything had made unrated traits unrateable and blank sheets pencil-useless.
+
+- 2026-10-18 (widths belong to the band): sets carry only a singular `colWidth` share (e.g. Attributes 28, Distinctions 72); `computeBandWidths` derives band columns from members and never reads `widths` triples again. `migratePlacement` converts leftover triples once (effective triple seeds members lacking shares) instead of synthesizing anchor triples. All 51 corpus triples migrated to 188 singulars; render-equivalence holds except dead third-track voids collapsing (notably spellcaught Crafts 48→76 — eyeball it). The editor bar displays engine widths and distributes divider drags back as member shares (≤100 capped); hidden for full-width sets.
+
+- 2026-10-18 (vertical rating arrays): `dice-ladder` sets take `ratingDirection: 'vertical'` — one die per rung with its d4–d12 options stacked (Initiative two tracks, Hero Dice one). Terraverse data updated to match.
+
+- 2026-10-18 (out indicator, default off — see prior entry for the generic flag): verified live — fresh sets show no badge, toggling writes `outIndicator`, kitchen-sink legacy preserved.
+
+- 2026-10-18 (vertical is a rating position): ladder dice stack via `ratingPosition: 'vertical'` (schema + editor option, same UI hook as inline/above/below/none) — no orphan `ratingDirection` key. Rung label rotation is the separate `view.labelPosition` (`horizontal` default, `vertical` for sidebar-style rotated names) with its own Label Position control on ladder sets. Terraverse Initiative (two tracks) and Hero Dice (one) use both.
+
+- 2026-10-18 (rows replace bands): sets carry explicit `view.row` (1-based within the page); bands derive from shared rows and `rowBreak` is retired (migrated everywhere, deleted on load). The editor sets Row with a stepper and move up/down shifts rows; new sets land on their own row at the page end. Fixes the band-anchor confusion where editing one set's widths silently rewrote another set's triple.
+
+- 2026-10-18 (statement rows): the trait name never wraps (`flex: 0 0 auto`, nowrap); the statement box flexes for it.
+
+- 2026-10-18 (form-field hygiene): every input/select/textarea carries id (or name) plus a label association or aria-label — ring sliders, image/url/caption/height, roller keep/hitch/combine, print toggles, roster search/file/template picker, session modal search, field-label inputs. Trait-name emptiness was never the cause.
+
+- 2026-10-18 (rows are explicit): sets carry `view.row` (1-based within the page); bands derive from shared rows and `rowBreak` is retired (migrated corpus-wide, deleted on load). The editor shows the engine-derived band position when no row is stored, so stale and hand-authored sheets read truthfully, and moves/row edits write explicit rows. A page layout hand-authors as row/track/span triples per set — e.g. a two-row page is `{row: 1}` on Name-row sets and `{row: 2}` on the rest.
+
+- 2026-10-18 (per-set grid placement): spotlight bands render sets as grid items (`grid-column: track / span N`) instead of track stacks, so spanning sets actually span; the wired-but-unused cell engine is now the renderer. Clusters render as sub-grid bands on the first member's cell.
+
+- 2026-10-18 (rows are visual and header-inclusive): row numbers denote rendered visual rows with the page header occupying row 1, so content starts at row 2. One-time migration simulates sparse auto-flow per band (same-track adjacency stacks; overlapping spans push down) and numbers the results. The editor shows engine-derived positions for rowless data and all moves write explicit rows.
+
+- 2026-10-18 (spellcaught SFX beside Crafts): SFX is track 3 of row 5 (Stress 1, Crafts 2), per the source sheet — placement needs both row and track, which is why row-only moves could never get it there.
+
+- 2026-10-20 (audit: hand-editability, label hooks, editor UX — all three tiers): (1) **Canonical emit**: templates and template migration never emit empty scaffolding (`custom: {}`, `tags: []`, `description: ""` — ~3600 keys stripped from the corpus via `scripts/strip_scaffolding.js` + regen; presence-preserved scalars like `statement`/`questioned` untouched). Character-direction emit keeps `description: ""` deliberately: in a delta it is an explicit clear of an inherited description (the editor writes `""` on clear), while templates — being the base layer — can never carry an override, so stripping is safe there. `scripts/export-tests.js` (8th suite) asserts no `_lid`/trait-level-id/empty-custom/tags in any emit path plus the `""`-kept rule. (2) **Set identity**: the map key is the address, the set id the stable identity — rename the key freely, never the id. The materializer heals renames by id (same address + different id = stranger, stays custom; missing ids stay name-matched), `toLayeredEntity` keeps set ids and suffixes duplicate display names in document order (GMC x6 no longer collide), and a prune fix keeps rename-only deltas (`{id,name}` is never bare when the name moved — renames used to vanish on save). Validate enforces stable set ids + suffixed-key/label discipline on layered templates. Trait renames stay add+remove (name is the trait join key; no id to heal with). (3) **Attached stress is a companion subtrait** (addendum implemented): `custom.stress`/`stress`/`custom.isStressOut` migrate to an ordinary subtrait named for the set's stress label (sparse — absent means none), rendered in the existing `stressLabel`/`stress` parts cells and excluded from subtrait lists; the label editor renames companions with the label; `trait.custom.stress` reads remain as back-compat. (4) **Labels**: NAME stays fixed (2026-10-18 exception, scoped to that word); everything else on the sheet has a hook — `nameLabels` gains `player` (per-style default), `portraitCaption` (new caption under the header portrait), `plotPoints`; `view.labels.*` gains `out`, `sfxBadge`, `sfxPrefix`, `hinderSentence` (wholesale override; the interpolating default stays code) with shared defaults in the central registry, and style-header defaults seeded corpus-wide (absent-only, rendering unchanged). Deliberately hard-coded boundary (not sheet data): roller vocabulary, print toolbar, SCALE, Page-badge words, edit hints, hover tooltips. (5) **Editor**: set editor groups into Content / Labels / Layout / Specialized-collapsed; Part Widths (left/width/top/height per cell, Place-field pattern, Reset to generated) shows whenever parts exist; JSON studio tab edits the materialized sheet with apply-via-import (syntax errors change nothing) plus Copy; per-set Copy JSON beside Duplicate; click-to-open already matched DECISIONS (verified: click opens, re-click keeps).
+
+- 2026-10-20 (library card copy is human copy): Spotlight Library cards no longer carry generated summary descriptions; the `description` field is removed from template metadata. Each published setting's card pulls its quote, genre, and Setting/Prep/Complexity ratings verbatim from its DriveThruRPG listing and links to it. Eidolon Alpha, Hammerheads, and TRACE 2.0 have no individual listings (core-book settings) and link to the Game Handbook listing with no description text; the Toolkit Reference showcases carry no description either. Set-name pills unchanged.
+
+- 2026-10-21 (library cards render as mini characters): The Spotlight Library card is composed like a sheet header: the title is the DriveThruRPG link (no separate link element), the listing's cover image is the portrait, and Setting/Prep/Complexity render as a three-trait set on the portrait ring using the app's die icons. Page-count and orientation badges are removed. Cards without a listing image render minus portrait and ring.
+
+- 2026-10-21 (narrow viewports: panel closed by default on Play): below the 1400px push-aside line the panel is an overlay drawer, so entering Play lands on the sheet with the drawer closed (desktop wide keeps opening the roller). The mobile Sheet/Roller tabs drive the drawer (Roller opens it on the roller tab, Sheet closes it); staging dice on narrow viewports toasts without yanking the drawer open — explicit toggles and handles still open it everywhere. Panel header tabs and sheet-bar handles are icons-only below 1400px (titles carry the names). Also fixed the real sideways-scroll source: the floating editor's scroll region (absolute stretch +2rem with hidden scrollbars) leaked into the docked panel — in the panel it is a static block and the panel body owns scrolling; multi-column editor rows/inputs can shrink to the panel width. Entering Create (edit) follows the same closed-drawer rule on narrow viewports — tapping any trait opens it explicitly; the dock-position toggle hides on mobile where side-to-side docking is meaningless.
+
+- 2026-10-20 (nested-grid repairs: Print first-class, equal-height intentional, Milestones stack, validate pageCount): visual-QA repair pass over the nested-grid layout — every fix verified in-browser in both Edit and Print, never by shrinking type (typographic floor .8125rem/13px holds) and never by changing stored content. Print is first-class: screen/print wrap parity for trait names, dice, and parts grids (the screen `flex-shrink: 0` / `nowrap` rules that print lacked are now outranked in both modes), plus a print-density spacing-only block that brings Snowfall/Eidolon/Bewilderwood onto true paper (794px viewport + print media: ~1018–1095px vs the 1123px page box). Item 3's equal-height stretched boxes are intentional, not a defect. Snowfall's `Milestones~2` stacks under `Milestones` at left 25% / width 50% / top 5 in both `js/templates.js` and its layered counterpart. Session-record labels adapt (angle/viewBox/hit-width) to 204-unit text in 28-unit bands. `scripts/validate.js` gains a pageCount tripwire (pageCount < maxPage, `pages` vs `pageCount` consistent) over both the library source and the layered corpus. Save-failure root causes: snapshots are ~7–17KB against ~10GB quota (size falsified) — the real killers are IDB unavailability/block/transient failure plus a lossy legacy split-key fallback and a poison-forever `_dbPromise`; fixed with a full-record `cortexToolkitFallback` localStorage fallback (newest-wins by `savedAt`), poison-resetting `openDB`, and distinct blocked/quota toasts — all proven live in-app (blocked toast, quota toast, and silent fallback save + reload recovery with IDB dead).
+
+## Superseded (tried, killed — do not revive without new evidence)
+
+- 2026-10-10: `kind` field (mob/boss/challenge) — removed; not derivable from data, differences are table rulings.
+
+- 2026-10-10: `layers` array / namespaces — removed as redundant; fields reference layers directly.
+
+- 2026-10-10: `required` (selection flag) — renamed `requiresSelect`; "required" wrongly implied the trait itself is required.
+
+- 2026-10-10: Explicit `type: "set"` marker — removed; position under `sets` identifies a set.
+
+- 2026-10-11: "Build exactly what was asked, nothing more" — replaced by the genuinely-helpful rule; it would have forbidden the surfacing work she wants agents to do.
+
+- 2026-10-11: "v2" naming for the layered-model work — dropped; still 0.x (fork was schema 0.1, site not live yet).
+
+- 2026-10-19: Layout is nested grids with explicit coordinates. A set
+  carries `view.place {left, top, width, height}`: left/width are
+  percent of the parent width stored as "%" strings, top/height are
+  relative row units, height is a floor (rows stay content-sized,
+  nothing clips). Inside a set, `view.parts` places
+  trait parts (name, rating, description, sfx, subtraits, stressLabel,
+  stress) as cells in the trait's grid, percent of the set. Rating
+  inline adds a column; rating below adds a row; attached stress adds
+  two columns. Supersedes the 2026-10-17/18 band model (track / span /
+  widths / rowBreak): the band model made placement stateful — widths
+  lived on the band's first set and position derived from document
+  order — and could not express trait-row layouts such as Snowfall
+  Initiative's inline attached stress, which existed only as a
+  renderer special case. Print rules unchanged: content-sized rows,
+  multi-column lists balance, traits kept whole.
+
+2026-10-22 � Editor-layout rules and trait-visibility explicitness. The brief
+("Fix what's confusing or broken about the way we control the editor (the UI
+that is used to describe the layout of a character sheet), and make sure the
+same surface could comfortably describe 4-area Ars Magica and 8-area Exalted
+sheets... smaller"): editor chrome is not sheet property. Panel Position as a
+trait-set property is removed (placement is absolute on a shared grid in the
+visual layout; the deprecated `view.panelPos` key warns `template: view.panelPos
+ignored (removed)`, normalized out). The standalone Remove, duplicate,
+position-picker, template-insert, and custom background-image row are deleted
+(remove = empty section; duplicate = create-plus-restore; All Trait Sets insert
+= first set`s tray; background = Style Cover, which also accepts remote URLs).
+Trait-set section glyphs are removed; an empty trait-set editor renders nothing
+(headline rows of empties are a display wart, not a model state). Dependents
+live adjacent and summon-only (conditionals under Style, no existence outside
+the enabled parent; spell-out panel buried as a nested Style detail; niche
+load/delete sets trail the Sections list); every drawer control exists only
+when it can act (a greyed button is deferred deletion). Numeric readouts are
+presentation-only beside their control (a draggable surface emits no wall of
+decimals). Layout novelty is capped (two new blocks max: draggable mini, parts
+strip). Chrome sweep: Done/Cancel copy stays Done/Cancel (a close \`X\` gets an
+editor-close glyph); red text reserved for destructive actions (non-destructive
+warnings use standard emphasis); dropdowns never clip; dotted inputs read as
+editable; type never shrinks below the floor (.8125rem/13px); every touch
+target is spacious.
+
+2026-10-22 � Trait-visibility explicitness is a first-class entry. Trait
+visibility is a three-state enum (\`shown\` / \`editor-only\` / \`hidden\`) on
+the trait, not a heading word ([ Hidden ]) and not a parenthetical. The
+stress-key, no-heading, and pocket render-time deductions are deleted as
+primary paths: \`custom.isStressOut\` and \`custom.stress\` normalize to a
+rated companion subtrait (the "stress ring" is display of the companion's
+value, not a third model path; templates carry stress as a real trait). A
+name-block style render\`s empty slots to give valueless fields a bordered
+landing zone (not a parenthetical invitation). 4-area Ars Magica and 8-area
+Exalted foils ship as layered fixtures; both come in through the normal
+validate/migrate path as proof the surface reaches that scale.
+
+2026-10-22 � Name-block headings are data, visibility is honest, one style
+key. The name editor shows no hard-coded field words and no separate label
+boxes: each magenta heading IS the name trait's label, edited in place
+(empty heading deletes the label; the sheet falls back to its default
+word). Visibility defaults tell the truth about the current style:
+game/plotPoints/notes default to hidden in spotlight sheets (no spotlight
+zone renders them; classic still renders all three, where they default to
+shown) and stored visibility always wins. Character view carries exactly
+one style key, view.style.sheet (classic|spotlight). The retired top-level
+view.sheetStyle and the view.style.hasAttributes flag resolve once at
+import (explicit sheet wins, then legacy sheetStyle, then hasAttributes
+false, then the spotlight name string, then a sheet template link, else
+classic) and are deleted; validate errors on both. hasAttributes drove
+nothing but a legacy layout guess (sets without rated attributes render
+the spotlight sheet); no reader checks set types anymore � the style is
+data, not deduction. Fixed alongside: applyOverrides skipped any nested
+key literally named `sheet`, so view.style.sheet could never clear to
+null through a template merge; the sheet-link guard is root-only now.
+
+2026-10-22 � Visibility is a hidden boolean; the eye is the only control.
+There is no editor-only state: it distinguished a viewer nobody has, so
+the enum is gone everywhere (model, renderers, editors, validate). Stored
+form is `view.hidden: true` for hidden, absent or false for shown � never
+a visibility word (normalize converts it; validate errors on it). The
+name block, portrait, and trait editors share one eye toggle docked at
+the right end of the label line (open magenta = shown, slashed dim =
+hidden). Writes stay sparse with the honest default: only a word that
+disagrees with the default survives (showing a default-hidden game
+writes hidden:false; hiding a default-shown nickname writes hidden:true).
+
+2026-10-22 � The layout editor is the grid itself (clarifies the �4
+editor-and-trait-model entry). Both miniatures are direct-manipulation
+controls, not pictures: page placement drags the set box (writes
+left/top) and its right/bottom edges (write width/height); the row
+miniature drags every stored part box and its edges the same way. All
+snaps are the model units (half-percent columns, integer rows); wall
+clamps refuse off-canvas writes. The page miniature mirrors the layout
+engine section walk (grid groups in document order, unplaced sets as
+full-width stacked bands, the name block excluded); the row miniature
+uses the renderer part-grid math, so its column shares and the sheet
+row agree exactly (proven 30/30/13/27 on a stress-bearing set). Numeric
+fields stay as synced readout plus fine entry: they display the live
+drag preview mid-gesture (shared preview refs, cleared on set switch)
+and the committed model on release � one gesture, one persist.
+Supersedes the miniature-plus-fields first attempt: the divider-strip
+is deleted, corner handles are right/bottom edges (a bottom handle
+must never swallow a one-row box center).
+
+2026-10-22 � Part Widths previews the generated row for parts-driven
+sets with no stored layout. The set editor is for set-level row work:
+a distinctions-style set with no view.parts shows the generator row
+(name/rating/description per its features) as dashed implicit boxes;
+the first drag writes the generated map plus the change, and the row
+switches from flex to the grid it previewed (said so in a hint line).
+Bodies with dedicated flex renderers and vertical ladders show no
+preview � a grid miniature of a flex row would lie about the sheet.
+Reset stays hidden until something stored disagrees with the generator.
+
+2026-10-22 � Set editor edits the set; page arrangement lives on the
+Sheet Page tab. The set editor Layout section holds only the row
+miniature � per-part numeric duplicates and the summary line are gone
+(the dims ride on the boxes; reserved-slots keeps its stepper, a real
+setting, not a duplicate). Page/Place left the set editor entirely:
+the Sheet Page tab hosts a page-level miniature with every set on
+every page, all boxes draggable with edge resize, click-select showing
+that set readout (page assignment, Full Width, four numbers, summary).
+The set-level place miniature is deleted (the page canvas supersedes
+the peephole); its shared preview ref goes with it. Unplaced bands
+seed coordinates where grabbed, so nothing jumps.
+
+2026-10-22 � The row miniature is the whole section: set header plus
+trait parts. The header renders as a box in its slot (magenta top bar
+with the text justification mirrored, vertical sidebar strip beside a
+compressed grid) because the sheet renders it as a sibling band, never
+as a grid row � part tops do not shift. Drag the header between the
+top and side slots to flip view.header; dropping in the top strip aims
+left/center/right thirds at view.headerAlign; a click with no drag
+cycles the alignment (the title says so). Sidebar drops keep the
+current align; the Sidebar/Top Bar and alignment buttons stay as fine
+entry. The section label is Section Layout now that parts are not all
+it holds.
+
+2026-10-22 � Sidebar Beside the grid; hinder has a band. Two section
+fixes: the sidebar strip is position:absolute spanning the section
+(the flex-intrinsic percentage chain blew it out to viewport height �
+indefinite heights plus vertical text never settle, so the strip takes
+definite inset instead) beside a margined body column carrying the
+hinder band and the row grid. The shared hinder banner renders as a
+display-only band (no stored geometry exists to drag) with the live
+sentence. Debugging note appended, not a decision: a compound selector
+that will not match alongside correct classes and correct CSS is a
+class-name mismatch until proven otherwise � dump the live token bytes
+before theorizing about the engine.
+
+2026-10-22 � Set Die mirrors the Rating Scale chips; presets are gone.
+The set die is one value, so it is the same chip row (None first in a
+six-across grid, then d4-d12) with single-select: a chip sets it,
+re-clicking the active chip clears back to None. The All/Skills/
+Specialties/Stress preset rows are deleted from both scales with their
+functions and styles � hand-picked dice need no taxonomy shortcuts.
+
+2026-10-22 � The split-branch set header is never hidden (supersedes
+the hide-redundant-header rule of the nested-grid pass). The branch bar
+carries no set name and its only click target opens traits, so hiding
+the outer header stranded split sets with no visible identity and no
+way to reach the set editor. Cost: one row in split top-bar layouts.
+
+2026-10-22 � Enabling Attached Stress forces the track on. The toggle
+rebuilt parts from the current spec, which still said no stress on
+sets with neither stored parts nor legacy config � so it silently did
+nothing. rebuildParts takes an explicit stress flag now; the enable
+path passes true (default five-die scale), disable keeps deleting the
+cells. The sheet, the miniature, and the checkbox all follow because
+they already key off the parts map.
+
+2026-10-22 � Section Layout shows in every set editor. The header box
+is universal (placement and alignment are generic), so the section is
+no longer gated on parts: flex-body sets without stored layouts get
+the header plus an honest note instead of a fake row � a grid
+miniature of a custom row would lie about the sheet, and row boxes
+only appear where the grid drives (stored anywhere, generated for
+list-driven bodies).
+
+2026-10-22 � Page miniatures take drops between pages; double-press
+drills into the set editor. Vertical position is document order and
+tops only group, so a cross-page drop reorders the sets (insert at the
+visual slot) and joins the landed group or opens a fresh row past its
+last top � the box renders where it lands because the numbers say
+where it renders. One gesture, one persist; ghost follows the
+pointer, insertion line marks the row, readouts track live. Drill is
+press-timing, not dblclick: selecting swaps ghost for block between
+press and release so a native double-click can never complete, and
+drilling on the second press would hijack click-then-drag � the drill
+fires on a clean release, any move cancels it.
+
+2026-10-22 � Styles are presets; arranging flips bespoke rows to a
+custom grid. Every trait-row body previews all of its parts and every
+drag writes through one choke point (setPartCell), which flips a
+bespoke flex preset to body "custom" � the dispatcher already falls
+through to the grid renderer, so no renderer changes. List-driven rows
+never flip (they already grid). Re-selecting a flex preset clears the
+cells (stale geometry must never hide); Reset keeps proportions inside
+the current body. Round trip is lossless: branch data survives the
+flip untouched and renders again under its preset. Non-row bodies
+(pips, portraits, notes) get the header only � there are no trait
+rows to arrange.
+
+2026-10-22 � Reversal: arranging never flips a preset (the custom-flip
+shipped only in the working tree, never committed). A drag that trades
+a branched layout for a generic grid reads as breakage, and rightly:
+the grid cannot express branches. So the grid never takes over a
+bespoke body � subtrait-columns arranges through branch shares
+instead (below), other bespoke rows keep header-only miniatures until
+their own controls exist, and re-selecting a preset still clears
+geometry its renderer would ignore.
+
+2026-10-22 � Branch shares are styled data: view.branch {left, center,
+right} fr numbers around the fixed 2rem link, defaulting to the CSS
+1.4/1/1.4 when absent. The section miniature shows Left/Skill/Right
+boxes with conserving divider drags; split head and rows take the
+shares inline (flank keeps its own), sheet and print alike. Reset
+clears them with everything else. The set die renders once, in the
+set header, on every body � it is set-level chrome, not a trait part.
+
+2026-10-22 � Correction: the set die belongs with the ratable content,
+never the union header. A badge on "Skills & Specialties" misattributes
+a Skill die to the whole union (and duplicates the branch-center one),
+so it is removed; the branch center keeps its badge, and unrated grid
+rows show the die in the rating cell � the one place it acts (clicking
+an unrated trait rolls it). Rated rows, placeholders, and the union
+header stay clean.
+
+2026-10-24 - Session record unifies into pips with a labels opt-in:
+view.pips.labels renders one bubble per row beside the trait name
+(checked mirrors custom.checked, blank rows show a Row hint, the add
+button uses the set nouns) instead of the retired session-record /
+angled-lines bodies and their spine renderer. Pure tracks (XP) keep
+count semantics and create no traits. Legacy files migrate count,
+orientation-as-perRow, checked states, and Session/Sessions nouns.
+
+2026-10-24 - The style gallery is the add-set flow: the Add Set /
+Trait Set buttons open it (placement carried in), and every card lands
+with that style's defaults. The gallery had shipped unreachable, which
+stranded the Sessions card; the default card preserves the old blank
+classic add.
+
+2026-10-23 - Ratings have one shape. A trait's rating is
+{ type: Counter | Die | Dice | Pip, value: [], range: [] }:
+the value is always a list, the range is the ladder it may take, and a
+trait is rated by having one. Stepping changes the value; spending
+makes a die temporarily unavailable and never changes the value.
+"Set Die" is retired — there is one Rating at every level of the
+recursion, and the editor section is Options, not Pool Options.
+Challenge pools and boss pools are not flags: both are Dice ratings
+with pool and spendable true, differing only in size. Scale remains a
+trait name; its effect is keepsExtra.
+
+2026-10-23 - Hitches flood; exemption segregates. A
+trait's hitches (faces 1..hitches, sparse, inherited,
+default 1) sets its pool's threshold at the highest member
+value, because pooled dice are anonymous. hitches: 0 is an
+exemption and the only case that must roll apart:
+rollSeparate is a derived function of hitches == 0 and is
+stored nowhere.
+
+2026-10-23 - Rating emit and vocabulary follow-ups. Canonical emit
+writes rating objects only; dice strings and the "d8" shorthand parse
+on read for import compat (superseding the shorthand convention).
+Trait visibility is the word shown | editor-only | hidden (superseding
+the hidden boolean); legacy booleans map onto it. The set-rating badge
+class is set-rating-die; getSetDie is getSetRatingDie. Pip tracks live
+on the set node's Pip rating and labeled rows on row Pip ratings;
+view.pips keeps perRow/connected/labels only. Plot Points is a
+spendable Counter [0, 20] on the name-set trait, mirrored to the
+character field. Spent dice live in view.spentDice beside the rating;
+every Dice rating is spendable unless stated; resources add hitches 0.
+Long names wrap and the scale keeps right or drops a row: the
+container edge is a wall in Edit, Play, and Print.
+
+2026-10-23 - Sets name their nouns noun/plural. The §1 shape's words
+replace nounSingular/nounPlural across schema, app, and corpus;
+day-1 files map across on import. Trait-level nouns stay banned —
+nouns live on sets.
+
+2026-10-23 - Compat covers day-1 only. Migration shims and deprecated
+flags for post-day-1 keys are gone: setDie, challenge-pool flags,
+view.pool promotion, isScale, checked mirrors, hidden booleans,
+dice strings/shorthand, pips count/filled, session bodies, stress
+folds, nameLabels folding, cortexToolkit promotion, sheet-style
+collapse. What remains maps day-1 encodings (numeric value/dice,
+nouns, sfx arrays) or reads canonical data. Corpus regen after the
+cut was a verified no-op. Untouched by design: the placement/parts
+pipeline and the layered codec's split-brain heal (tested live
+machinery, not retired-key compat), and validate's retired-key
+guards (enforcement, not shims).
+
+2026-10-23 - Labeled pips rows are bubble plus write-in line. The row
+is a fill-in circle followed by the pip name as an underline-only
+field (inline rename in edit, underlined text in play/print); the Pip
+rating reads filled/true with no description anywhere — the trait
+editor hides Description for labeled-pips traits. Names no longer
+open the trait editor; the bubble still toggles in edit and play.
+
+2026-10-24 - Multi-die rendering keys off the rating type. isMultiDieTrait (Dice rating minus a stress/list/notes exclusion list) is gone; both multidie branches in trait-set-list render on getRating(trait)?.type === 'Dice'. Behavior change, as ordered: a Dice rating in a stress/list/notes body now renders multidie UI instead of single-die UI. No corpus set does this today (validate 0/0, all suites green), so nothing visible changes until data uses it.
+
+2026-10-24 - Paired slots go positional. getStandingComplication/getStandingBonus (traits[0]/traits[1] wrappers) are replaced by getSubtraitAt(trait, index); getStandingBonusRatings is replaced by getSubtraitSlotRatings(set, slot), one slot-indexed d6-floor rule on standard scales shared by sheet and subtrait editor. The editor's BONUS name-sniff is gone with it: a paired-slots subtrait at slot 1 floors at d6 whatever it is named; elsewhere behavior is identical. getSubtraitNameOr (slot labels for names) stays.
+
+2026-10-24 - Fixed system names move to a registry. isFixedSystemTrait still answers "name prints on a blank sheet", but the set-name list (attribute/value/drive/role/affiliation/branch/eidolon/power/system/chassis) lives in cortexFunctions.fixedNameSetKeys with an isFixedNameSet check instead of inline sniffing. Structural checks (traitColumns > 1, attached stress, spotlight-template membership) stay where they were. Behavior-identical move; a flaggable set option replacing the registry is open if wanted.
+
+2026-10-24 - Out is a die-range option, defaulted off. Ratings gain optional `out` (schema, types, validate); model gains hasOutRange (explicit opt-in, else set-flag inheritance from outIndicator, stressConfig.includeOut, or attachedStress.includeOut), rangeTop (ladder max, default 12), and isOutDie (in range plus past-the-top or flagged). isStressOut and isAttachedStressOut keep their names and call sites but read through the generic; the shouldShowStressOut alias folds into shouldShowOut; toggles stamp the opt-in and step to top+2 (14 on standard ladders); setRatingDie/setRatingDice spread-preserve range options so stepping never drops the opt-in (clearing still drops the rating whole); getRating carries `out` through normalization; the trait editor gains an Out checkbox for Die/Dice ratings. No migration: the only corpus set with Out gates on is kitchen-sink Stress (outIndicator), covered by inheritance, and no corpus rating carries out state. Attached companions need no builder changes for the same reason.
+
+2026-10-24 - Resources are hitches 0. isResourceTrait (name/body sniffing plus trait and view flags) is deleted; apart-rolling derives from hitches everywhere. Staging emits hitches only (DiceItem loses isResource/resourceType; ad-hoc resource dice already staged hitches 0). The roller merges the duplicated resource and exempt paths into one source-grouped display under the Exempt section with a single bonus: groups, the per-source keep bonus, and the combine toggle key off hitches-0 sources, and the always-separate carve-out is gone (combining now joins all apart dice). keepsExtra (Scale keep), pool sets, counts/tally/dice-count bodies, and the combine storage key are unchanged. Audit: all 28 sniff-matched corpus traits already carry hitches 0 with no flags, so the corpus behaves identically; direct-exemption dice now share the grouped display and bonus counting, and applyBestEffect re-keeps every apart group (it previously skipped exempt groups). Display words move to Separate/SEP with the Exempt header kept; CSS hooks, count-helper names, and the trait/view isResource declarations (deprecated, read never) stay put.
+

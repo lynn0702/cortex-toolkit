@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
+import { resolveBranchShares } from './use-trait-set-editor.ts';
 
 const {
 	traitSet, s, submode, printBlank, viewY, character,
@@ -14,10 +15,9 @@ const {
 // Stored branch column shares (view.branch), from the section miniature.
 // Absent means the CSS default (1.4 / 1 / 1.4); flank rows keep theirs.
 const branchGridStyle = computed( () => {
-	const b = getView( traitSet.value )?.branch as any;
-	if ( !b || typeof b !== 'object' || Array.isArray( b ) ) return '';
-	const num = ( v: unknown, fallback: number ) => ( typeof v === 'number' && Number.isFinite( v ) && v >= 0 ) ? v : fallback;
-	return 'grid-template-columns: ' + num( b.left, 1.4 ) + 'fr ' + num( b.center, 1 ) + 'fr 2rem ' + num( b.right, 1.4 ) + 'fr;';
+	const shares = resolveBranchShares( getView( traitSet.value )?.branch );
+	if ( !shares ) return '';
+	return 'grid-template-columns: ' + shares.left + 'fr ' + shares.center + 'fr 2rem ' + shares.right + 'fr;';
 } );
 </script>
 

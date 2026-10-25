@@ -57,14 +57,14 @@ function ok(cond, name, extra) {
   ok(elig.length === 1 && elig[0].values[0] === 4, 'eligibleDice excludes hitches', elig.map(e => e.values));
 }
 
-// ---- scale/resource staging metadata
+// ---- scale/apart staging metadata (hitches travel with the die)
 {
   const p = new CortexDicePool();
   p.add([{ size: 8, qty: 1, source: 'Scale', isScale: true }]);
   ok(p.items.length === 1 && p.items[0].isScale === true, 'isScale staged', p.items[0]);
   const p2 = new CortexDicePool();
-  p2.add([{ size: 6, qty: 2, isResource: true, resourceType: 'Gear' }]);
-  ok(p2.items.length === 2 && p2.items[0].isResource === true && p2.items[0].resourceType === 'Gear', 'isResource staged', p2.items[0]);
+  p2.add([{ size: 6, qty: 2, source: 'Gear', hitches: 0 }]);
+  ok(p2.items.length === 2 && p2.items[0].hitches === 0 && p2.items[0].source === 'Gear', 'apart metadata staged', p2.items[0]);
 }
 
 // ---- constants

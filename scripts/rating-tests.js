@@ -4,6 +4,7 @@
 const M = require('../js/migration.ts').cortexMigration;
 const { getRating, ratingDice, setRatingDice, setRatingDie, isRated,
   availableDice, getSpentIndices, resolveHitches, rollSeparate, keepsExtraDice,
+  hasOutRange, rangeTop, isOutDie,
   DIE_LADDER } = require('../js/model.ts');
 
 let pass = 0, fail = 0;
@@ -118,6 +119,38 @@ function ok(cond, name, extra) {
   const sset = sc.traitSets.find((s) => s.name === 'A');
   ok(st.keepsExtra === 1 && st.name === 'Scale', 'Scale effect is keepsExtra', { keepsExtra: st.keepsExtra, name: st.name });
   ok(sset.pool === true && sset.spendable === true, 'pool + spendable pass through');
+}
+
+// ---- Out is a range option for die ratings, defaulted off.
+{
+  const plain = { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } };
+  ok(hasOutRange(plain) === false, 'no out key means no out in range');
+  ok(hasOutRange({}) === false && hasOutRange(null) === false, 'unrated has no out in range');
+  ok(hasOutRange({ rating: { type: 'Counter', value: [2], range: [0, 20], out: true } }) === false, 'out is die-only');
+  ok(hasOutRange({ rating: { type: 'Dice', value: [8, 6], range: [4, 6, 8, 10, 12], out: true } }) === true, 'explicit out opts Dice in');
+  const str = { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } };
+  ok(hasOutRange(str, [{ view: { outIndicator: true } }]) === true, 'outIndicator puts out in range');
+  ok(hasOutRange(str, [{ view: { stressConfig: { includeOut: true } } }]) === true, 'legacy includeOut puts out in range');
+  ok(hasOutRange(str, [{ view: { attachedStress: { includeOut: true } } }]) === true, 'attached includeOut puts out in range');
+  ok(hasOutRange(str, [{ view: {} }]) === false, 'flags default off');
+  ok(rangeTop(plain) === 12, 'standard top is d12');
+  ok(rangeTop({ rating: { type: 'Die', value: [8], range: [6, 8, 10] } }) === 10, 'custom top is the max step');
+  ok(rangeTop({}) === 12, 'unrated top defaults d12');
+  ok(isOutDie(plain) === false, 'rated die is not out');
+  ok(isOutDie({ rating: { type: 'Die', value: [14], range: [4, 6, 8, 10, 12], out: true } }) === true, 'past the top is out');
+  ok(isOutDie({ rating: { type: 'Die', value: [14], range: [4, 6, 8, 10, 12] } }) === false, 'past the top without range is not out');
+  ok(isOutDie({ rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }, isOut: true }) === false, 'flag alone without range is not out');
+  const flagged = { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12], out: true }, isOut: true };
+  ok(isOutDie(flagged) === true, 'flagged out with range is out');
+  ok(isOutDie(str, [{ view: { outIndicator: true } }]) === false, 'fallback range without out state is not out');
+  // Stepping preserves the opt-in; clearing drops the rating whole.
+  const t = { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12], out: true } };
+  setRatingDie(t, 10);
+  ok(t.rating.out === true && JSON.stringify(t.rating.value) === '[10]', 'stepping keeps out', t.rating);
+  setRatingDice(t, [10, 8]);
+  ok(t.rating.type === 'Dice' && t.rating.out === true, 'Dice rewrite keeps out', t.rating);
+  setRatingDice(t, []);
+  ok(t.rating === undefined, 'clearing drops the rating whole');
 }
 
 console.log(`rating-tests: ${pass} passed, ${fail} failed`);

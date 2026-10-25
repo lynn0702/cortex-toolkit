@@ -38,7 +38,7 @@ const ts = useTraitSet( props, emit );
 const {
 	traitSet, s, submode, viewY, character,
 	getTraitSetClasses, isSelected, renderText, selectElement, updateCharacter, removeTraitSet,
-	hasCounterColumn, getCounterLabel
+	hasCounterColumn, getCounterLabel, sfxCostText
 } = ts;
 
 const headerTop = computed( () => getView(traitSet.value)?.header === 'top' );
@@ -82,6 +82,7 @@ const bodyComponent = computed( () => {
 				<li v-for="(sfx, sfId) in (traitSet.sfx || [])" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 					<span class="sfx-name">{{ sfx.name }}</span>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>
+					<span class="sfx-cost" v-if="sfxCostText(sfx.cost)"> ({{ sfxCostText(sfx.cost) }})</span>
 				</li>
 			</ul>
 		</div>

@@ -243,6 +243,9 @@ function checkRatingObject(rating, where) {
   if (!Array.isArray(rating.range) || rating.range.some((x) => typeof x !== 'number')) {
     err(`${where}: rating.range must be a list of numbers`);
   }
+  if (rating.out !== undefined && rating.out !== null && typeof rating.out !== 'boolean') {
+    err(`${where}: rating.out must be boolean (Out in range, default off)`);
+  }
 }
 
 function checkNodeOptions(node, where) {
@@ -274,6 +277,36 @@ function checkRetiredTraitKeys(node, where) {
   }
 }
 
+// Cost vocabulary (2026-10-24): costs are always objects, never bare
+// numbers. One key per kind, plain words: plotPoints, stepUp/stepDown,
+// pool (drop-highest|drop-die|split-largest), narrative.
+const COST_KEYS = ['plotPoints', 'stepUp', 'stepDown', 'pool', 'narrative'];
+const POOL_COST_OPS = ['drop-highest', 'drop-die', 'split-largest'];
+function checkCostObject(cost, where) {
+  if (typeof cost !== 'object' || cost === null || Array.isArray(cost)) {
+    err(`${where}: cost is an object, never a bare number`);
+    return;
+  }
+  for (const k of Object.keys(cost)) {
+    if (COST_KEYS.indexOf(k) === -1) err(`${where}.cost: unknown cost key ${JSON.stringify(k)}`);
+  }
+  if (cost.plotPoints !== undefined && cost.plotPoints !== null &&
+    (!Number.isInteger(cost.plotPoints) || cost.plotPoints < 0)) {
+    err(`${where}.cost: plotPoints must be an integer >= 0`);
+  }
+  for (const k of ['stepUp', 'stepDown']) {
+    if (cost[k] !== undefined && cost[k] !== null && (typeof cost[k] !== 'string' || !cost[k].length)) {
+      err(`${where}.cost: ${k} names a trait`);
+    }
+  }
+  if (cost.pool !== undefined && cost.pool !== null && POOL_COST_OPS.indexOf(cost.pool) === -1) {
+    err(`${where}.cost: pool must be drop-highest|drop-die|split-largest`);
+  }
+  if (cost.narrative !== undefined && cost.narrative !== null && typeof cost.narrative !== 'boolean') {
+    err(`${where}.cost: narrative must be boolean`);
+  }
+}
+
 function checkLayeredTrait(node, where, depth) {
   if (node === null) return; // local clear, governed by the null-emit rule
   if (typeof node === 'string') {
@@ -299,9 +332,7 @@ function checkLayeredTrait(node, where, depth) {
   }
   checkRetiredTraitKeys(node, where);
   checkNodeOptions(node, where);
-  if (node.cost !== undefined && (typeof node.cost !== 'object' || node.cost === null || Array.isArray(node.cost))) {
-    err(`${where}: cost is an object, never a bare number`);
-  }
+  if (node.cost !== undefined) checkCostObject(node.cost, where);
   if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
@@ -410,8 +441,13 @@ function checkTemplateTrait(node, where, depth, inSlot) {
   if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
   checkRetiredTraitKeys(node, where);
   checkNodeOptions(node, where);
-  if (node.cost !== undefined && (typeof node.cost !== 'object' || node.cost === null || Array.isArray(node.cost))) {
-    err(`${where}: cost is an object, never a bare number`);
+  if (node.cost !== undefined) checkCostObject(node.cost, where);
+  if (Array.isArray(node.sfx)) {
+    node.sfx.forEach((e, i) => {
+      if (e && typeof e === 'object' && !Array.isArray(e) && e.cost !== undefined) {
+        checkCostObject(e.cost, `${where}.sfx[${i}]`);
+      }
+    });
   }
   if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
     err(`${where}: usableBy must be owner|anyone|opposition`);

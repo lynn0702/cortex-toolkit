@@ -233,6 +233,10 @@ export const cortexMigration = {
 				if ( typeof sfx.description === 'string' && sfx.description.length ) node.description = sfx.description;
 				if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
 				if ( sfx.custom !== undefined && !( typeof sfx.custom === 'object' && !Array.isArray( sfx.custom ) && !Object.keys( sfx.custom ).length ) ) node.custom = cloneDeep( sfx.custom );
+				if ( sfx.cost !== undefined ) {
+					if ( sfx.cost !== null && typeof sfx.cost === 'object' && !Array.isArray( sfx.cost ) ) node.cost = cloneDeep( sfx.cost );
+					else this.warn( warnings, path + ': sfx slot ' + i + ' has a non-object cost, dropped' );
+				}
 				slots[String( i )] = node;
 				return;
 			}
@@ -242,6 +246,10 @@ export const cortexMigration = {
 			}
 			if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
 			if ( sfx.custom !== undefined && !( typeof sfx.custom === 'object' && !Array.isArray( sfx.custom ) && !Object.keys( sfx.custom ).length ) ) node.custom = cloneDeep( sfx.custom );
+			if ( sfx.cost !== undefined ) {
+				if ( sfx.cost !== null && typeof sfx.cost === 'object' && !Array.isArray( sfx.cost ) ) node.cost = cloneDeep( sfx.cost );
+				else this.warn( warnings, path + ': sfx ' + JSON.stringify( key ) + ' has a non-object cost, dropped' );
+			}
 				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate sfx ' + JSON.stringify( key ) + ', last wins' );
 				map[key] = node;
 				return;
@@ -899,7 +907,7 @@ export const cortexMigration = {
 		if ( keys.length ) return false;
 		if ( !node.traits || typeof node.traits !== 'object' || Array.isArray( node.traits ) ) return false;
 		const contentKeys = ( s: any ) => s && typeof s === 'object' && !Array.isArray( s ) &&
-			Object.keys( s ).every( ( sk: string ) => sk === 'description' || sk === 'tags' || sk === 'custom' );
+			Object.keys( s ).every( ( sk: string ) => sk === 'description' || sk === 'tags' || sk === 'custom' || sk === 'cost' );
 		if ( !Object.keys( node.traits ).every( k => contentKeys( node.traits[k] ) ) ) return false;
 		const slots = ( node.slots && typeof node.slots === 'object' && !Array.isArray( node.slots ) ) ? node.slots : {};
 		return Object.keys( slots ).every( k => contentKeys( slots[k] ) );
@@ -914,6 +922,7 @@ export const cortexMigration = {
 		if ( src.description !== undefined ) o.description = src.description;
 		if ( src.tags !== undefined ) o.tags = cloneDeep( src.tags );
 		if ( src.custom !== undefined ) o.custom = cloneDeep( src.custom );
+		if ( src.cost !== undefined ) o.cost = cloneDeep( src.cost );
 		return o;
 	},
 

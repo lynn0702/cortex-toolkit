@@ -1208,6 +1208,40 @@
 	}
 }
 
+// Pip bubble-row editor (trait Rating type Pip): one bubble per entry,
+// matching the sheet's pip bubbles.
+.pip-editor-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+	align-items: center;
+	padding: 0.35rem 0;
+
+	.pip-bubble-wrap {
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.pip-bubble {
+		width: 15px;
+		height: 15px;
+		border-radius: 50%;
+		border: 1.5px solid #ffffff;
+		background: transparent;
+		box-sizing: border-box;
+
+		&.filled {
+			background: #ffffff;
+		}
+	}
+
+	.pip-editor-count {
+		font-size: 0.68rem;
+		color: #aaa;
+		font-style: italic;
+	}
+}
+
 .editor-button-container {
 	@extend %button-container;
 	--button-font-size: .66rem;

@@ -6,7 +6,7 @@ prompt, the prompt wins for that session — then update this file.
 
 ## Working style
 
-- **Read `design/DECISIONS.md` first.** It is append-only and authoritative. Do not re-litigate ratified decisions or revive superseded ones (`removedTraits` in layered entities, `html.print-view`, `designerPrintPreview`, game-specific style IDs) without new evidence.
+- **Read `design/DECISIONS.md` first.** It is the distilled law and authoritative. `design/DECISIONS-history.md` is the full chronological record: reference, not required reading — read it only when a law entry points to it or a decision is disputed. Do not re-litigate ratified decisions or revive superseded ones (`removedTraits` in layered entities, `html.print-view`, `designerPrintPreview`, game-specific style IDs) without new evidence.
 - **Terse UI.** Short labels. No parenthetical explanations, no "e.g." examples.
   If a label needs a parenthetical to be understood, rename the thing.
 - **Name the layout, not the game concept.** Internal style IDs, component filenames, and CSS classes use geometric/structural names (`subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`).
@@ -94,7 +94,7 @@ prompt, the prompt wins for that session — then update this file.
 
 1. `npm run build` passes with no errors or warnings.
 2. `npm run check` (`vue-tsc --noEmit`) passes.
-3. `npm test` passes all 8 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`, `export`).
+3. `npm test` passes all 11 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`, `export`, `rating`, `cost`, `functions`).
 4. `npm run validate` passes with 0 errors and 0 warnings.
 5. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
 6. `grep -rn 'v-html' js/` — every site accounted for per Security rules.

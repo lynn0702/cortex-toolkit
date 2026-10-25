@@ -1,11 +1,21 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getSpotlightSections, buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
+import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
 
 export interface TraitSetEditorApi {
 	[ key: string ]: any;
+}
+
+// Pure branch-share normalization shared by the editor miniature and the
+// subtrait-columns renderer: finite numbers >= 0 win, else the CSS
+// defaults (1.4 / 1 / 1.4). Null when no branch object is stored.
+export function resolveBranchShares( branch: unknown ): { left: number; center: number; right: number } | null {
+	const num = ( v: unknown, fallback: number ) => ( typeof v === 'number' && Number.isFinite( v ) && v >= 0 ) ? v : fallback;
+	if ( !branch || typeof branch !== 'object' || Array.isArray( branch ) ) return null;
+	const r = branch as Record<string, unknown>;
+	return { left: num( r.left, 1.4 ), center: num( r.center, 1 ), right: num( r.right, 1.4 ) };
 }
 
 export interface TraitSetEditorProps {
@@ -149,9 +159,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				}
 				const styleDefaults = cortexFunctions.defaultFeaturesForStyle( value );
 				Object.assign( view.features, styleDefaults.features );
-				if ( styleDefaults.multiDie ) {
-					view.multiDie = true;
-				}
 			}
 			updateCharacter( props.character );
 		}
@@ -173,118 +180,10 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( value: boolean ) => { styleBody.value = value ? 'portrait-ring' : 'default'; }
 	});
 
-	const pageNumber = computed({
-		get: () => getView( traitSet.value )?.page ?? 1,
-		set: ( val: number ) => {
-			ensureView( traitSet.value ).page = val;
-			if ( val > 1 && ( !getView( props.character )?.pageCount || Number( getView( props.character )?.pageCount ) < val ) ) {
-				ensureView( props.character ).pageCount = val;
-			}
-			updateCharacter();
-		}
-	});
-
-	// Visual section sequence within the page (1-based) from the layout
-	// engine, so sets without stored coordinates still read true.
-	function effectiveRowOf( index: number | undefined ) {
-		if ( index === null || index === undefined || index < 0 ) return 1;
-		const sets = props.character?.traitSets || [];
-		const self = sets[ index ];
-		const p = getView( self )?.page || 1;
-		const sections = getSpotlightSections( sets, p );
-		for ( let i = 0; i < sections.length; i++ ) {
-			if ( ( sections[i].ordered || [] ).some( ( item: any ) => item.index === index ) ) return i + 1;
-		}
-		return 1;
-	}
-
-	// Visual section sequence of this set within its page (0-based): the
-	// row slot it renders in. Used to seed explicit coordinates.
-	function sectionSeqOf( index: number | undefined ) {
-		return effectiveRowOf( index ) - 1;
-	}
-
-	// Ensure an explicit place, seeding from the current visual slot so
-	// the set does not jump when it gains coordinates.
-	function ensurePlace() {
-		const view = ensureView( traitSet.value );
-		if ( !view.place || typeof view.place !== 'object' ) {
-			view.place = { left: '0%', top: sectionSeqOf( props.traitSetID ), width: '100%', height: 1 };
-		}
-		const place = view.place as { left?: unknown; top?: unknown; width?: unknown; height?: unknown };
-		if ( typeof place.left === 'number' ) place.left = formatPct( place.left );
-		if ( typeof place.width === 'number' ) place.width = formatPct( place.width );
-		if ( !Number.isInteger( place.top ) || ( place.top as number ) < 0 ) place.top = sectionSeqOf( props.traitSetID );
-		if ( !Number.isInteger( place.height ) || ( place.height as number ) < 1 ) place.height = 1;
-		return view.place as { left: string; top: number; width: string; height: number };
-	}
-
-	// Explicit coordinates (view.place). Absent = full-width stacked in
-	// document order (sparse).
-	const hasPlace = computed( () => {
-		const place = getView( traitSet.value )?.place;
-		return Boolean( place && typeof place === 'object' && !Array.isArray( place ) );
-	} );
-
-	const placeLeft = computed( {
-		get: () => {
-			const v = parsePct( getView( traitSet.value )?.place?.left );
-			return v === null ? 0 : Math.round( v * 1000 ) / 1000;
-		},
-		set: ( val: number ) => {
-			const n = Number.isFinite( Number( val ) ) ? Math.max( 0, Math.min( 100, Number( val ) ) ) : 0;
-			ensurePlace().left = formatPct( Math.round( n * 10 ) / 10 );
-			updateCharacter( props.character );
-		}
-	} );
-
-	const placeWidth = computed( {
-		get: () => {
-			const v = parsePct( getView( traitSet.value )?.place?.width );
-			return v === null ? 100 : Math.round( v * 1000 ) / 1000;
-		},
-		set: ( val: number ) => {
-			const n = Number.isFinite( Number( val ) ) ? Math.max( 1, Math.min( 100, Number( val ) ) ) : 100;
-			ensurePlace().width = formatPct( Math.round( n * 10 ) / 10 );
-			updateCharacter( props.character );
-		}
-	} );
-
-	const placeTop = computed( {
-		get: () => {
-			const raw = getView( traitSet.value )?.place?.top;
-			if ( Number.isInteger( raw ) && ( raw as number ) >= 0 ) return raw as number;
-			return sectionSeqOf( props.traitSetID );
-		},
-		set: ( val: number ) => {
-			const n = Number.isInteger( Number( val ) ) ? Math.max( 0, Number( val ) ) : 0;
-			ensurePlace().top = n;
-			updateCharacter( props.character );
-		}
-	} );
-
-	const placeHeight = computed( {
-		get: () => {
-			const raw = getView( traitSet.value )?.place?.height;
-			if ( Number.isInteger( raw ) && ( raw as number ) >= 1 ) return raw as number;
-			return 1;
-		},
-		set: ( val: number ) => {
-			const n = Number.isInteger( Number( val ) ) ? Math.max( 1, Number( val ) ) : 1;
-			ensurePlace().height = n;
-			updateCharacter( props.character );
-		}
-	} );
-
-	function clearPlace() {
-		const view = getView( traitSet.value );
-		if ( view && typeof view === 'object' ) delete ( view as Record<string, unknown> ).place;
-		updateCharacter( props.character );
-	}
-
 	const isFullWidthSpan = computed( () => {
-		if ( !hasPlace.value ) return true;
-		const w = parsePct( getView( traitSet.value )?.place?.width );
+		const place = getView( traitSet.value )?.place;
+		if ( !place || typeof place !== 'object' || Array.isArray( place ) ) return true;
+		const w = parsePct( ( place as unknown as Record<string, unknown> ).width );
 		return w === null || w >= 99.9;
 	} );
 
@@ -435,18 +334,11 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	// default (1.4 / 1 / 1.4); stored shares render wherever a split
 	// row does, sheet and print alike.
 	function branchShares() {
-		const raw = getView( traitSet.value )?.branch;
-		const num = ( v: unknown, fallback: number ) => ( typeof v === 'number' && Number.isFinite( v ) && v >= 0 ) ? v : fallback;
-		if ( !raw || typeof raw !== 'object' || Array.isArray( raw ) ) {
+		const resolved = resolveBranchShares( getView( traitSet.value )?.branch );
+		if ( !resolved ) {
 			return { left: 1.4, center: 1, right: 1.4, implicit: true };
 		}
-		const r = raw as Record<string, unknown>;
-		return {
-			left: num( r.left, 1.4 ),
-			center: num( r.center, 1 ),
-			right: num( r.right, 1.4 ),
-			implicit: false,
-		};
+		return { ...resolved, implicit: false };
 	}
 
 	function setBranchShare( key: 'left' | 'center' | 'right', val: number ) {
@@ -495,9 +387,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	// Template traits by name not currently on this sheet (D19 restore menu).
 	const restorableTraitNames = computed( () => cortexFunctions.restorableTraits( props.character, templateEntry.value, props.traitSetID ) );
-
-	const canMoveUp = computed( () => placeTop.value > 0 );
-	const canMoveDown = computed( () => true );
 
 	const isSpotlightSheet = computed( () => {
 		return resolveSheetStyle( props.character ) === 'spotlight';
@@ -632,11 +521,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			ctkFor( s ).subtraitRatingScale = scale;
 			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
 		}
-	});
-
-	const multiDie = computed({
-		get: () => Boolean( getView( traitSet.value )?.multiDie ),
-		set: ( value: boolean ) => { setCustomProperty( 'multiDie', value ); }
 	});
 
 	// Pool sets add a whole trait pool to the roller on click, and their
@@ -1039,16 +923,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	}
 
-	// Move Up / Move Down shift the set one row unit within its page.
-	function moveTraitSetUp() {
-		if ( placeTop.value <= 0 ) return;
-		placeTop.value = placeTop.value - 1;
-	}
-
-	function moveTraitSetDown() {
-		placeTop.value = placeTop.value + 1;
-	}
-
 	function setRingConfig( key: keyof RingConfig, value: any ) {
 		let s = props.traitSetID;
 		const ctk = ctkFor( s );
@@ -1341,22 +1215,21 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const api: TraitSetEditorApi = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
 		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isAttributesSet,
-		ringTrait, pageNumber, isFullWidthSpan,
-		hasPlace, placeLeft, placeWidth, placeTop, placeHeight, clearPlace,
+		ringTrait, isFullWidthSpan,
 		partPreview,
 		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,
 		branchShares, setBranchShare, hasCustomBranch,
-		templateEntry, restorableTraitNames, canMoveUp, canMoveDown, isSpotlightSheet,
+		templateEntry, restorableTraitNames, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
-		multiDie, isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
+		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
 		hasAttachedStress, attachedStressLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
 		scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
-		restoreTrait, moveTraitSetUp, moveTraitSetDown,
+		restoreTrait,
 		setRingConfig, resetRingPlacement, setFeature,
 		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart,		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, getDieDisplayValue,

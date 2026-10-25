@@ -73,7 +73,8 @@ export function getRating( node: unknown ): Rating | undefined {
 		const rec = r as Record<string, unknown>;
 		const type = rec.type;
 		if ( type === 'Counter' || type === 'Die' || type === 'Dice' || type === 'Pip' ) {
-			return { type, value: asRatingValue( rec.value ), range: asNumberList( rec.range ) };
+			return { type, value: asRatingValue( rec.value ), range: asNumberList( rec.range ),
+				...( typeof rec.out === 'boolean' ? { out: rec.out } : {} ) };
 		}
 		return undefined;
 	}
@@ -100,24 +101,28 @@ export function ratingDice( rating: Rating | undefined ): number[] {
 	return rating.value.filter( ( v ): v is number => typeof v === 'number' && v > 0 );
 }
 
-/** Write dice onto a node as a Die/Dice rating. Empty clears to unrated. */
+/** Write dice onto a node as a Die/Dice rating. Empty clears to unrated. Range options (out) survive the rewrite. */
 export function setRatingDice( node: Record<string, any>, dice: number[], range?: number[] ): void {
 	const clean = Array.isArray( dice ) ? dice.filter( ( d ) => typeof d === 'number' && d > 0 ) : [];
 	if ( clean.length === 0 ) {
 		delete node.rating;
 		return;
 	}
+	const prev = ( node.rating && typeof node.rating === 'object' && !Array.isArray( node.rating ) ) ? node.rating : {};
 	node.rating = {
+		...prev,
 		type: clean.length > 1 ? 'Dice' : 'Die',
 		value: clean,
 		range: Array.isArray( range ) && range.length ? [ ...range ] : [ ...DIE_LADDER ],
 	};
 }
 
-/** Step a single-die rating to a size (or clear when size is null/0). Never touches siblings. */
+/** Step a single-die rating to a size (or clear when size is null/0). Never touches siblings. Range options (out) survive the rewrite. */
 export function setRatingDie( node: Record<string, any>, size: number | null, range?: number[] ): void {
 	if ( typeof size === 'number' && size > 0 ) {
+		const prev = ( node.rating && typeof node.rating === 'object' && !Array.isArray( node.rating ) ) ? node.rating : {};
 		node.rating = {
+			...prev,
 			type: 'Die',
 			value: [ size ],
 			range: Array.isArray( range ) && range.length ? [ ...range ] : [ ...DIE_LADDER ],
@@ -186,6 +191,46 @@ export function keepsExtraDice( node: unknown ): number {
 	const n = ( node && typeof node === 'object' ? node : undefined ) as RatedNode;
 	const k = n && typeof n.keepsExtra === 'number' && Number.isFinite( n.keepsExtra ) ? Math.floor( n.keepsExtra ) : 0;
 	return k > 0 ? k : 0;
+}
+
+/**
+ * Out is a range option for die ratings, defaulted off: most ratings
+ * lack it. Explicit `out: true` on the rating opts in; otherwise the
+ * set flags that enable Out badges (outIndicator, stressConfig or
+ * attachedStress includeOut) put it in range for the set's dice.
+ */
+export function hasOutRange( node: unknown, fallbacks?: Array<unknown> ): boolean {
+	const r = getRating( node );
+	if ( ( r?.type === 'Die' || r?.type === 'Dice' ) && ( r as RatedNode & { out?: unknown } ).out === true ) return true;
+	for ( const fb of Array.isArray( fallbacks ) ? fallbacks : [] ) {
+		const v = getView( fb );
+		if ( !v || typeof v !== 'object' ) continue;
+		const bag = v as Record<string, unknown>;
+		if ( bag.outIndicator === true ) return true;
+		const sc = bag.stressConfig;
+		if ( sc && typeof sc === 'object' && ( sc as Record<string, unknown> ).includeOut === true ) return true;
+		const attached = bag.attachedStress;
+		if ( attached && typeof attached === 'object' && ( attached as Record<string, unknown> ).includeOut === true ) return true;
+	}
+	return false;
+}
+
+/** Top of a die ladder: max range step, default d12. Out sits one step past it. */
+export function rangeTop( node: unknown ): number {
+	const r = getRating( node );
+	const steps = r && Array.isArray( ( r as RatedNode & { range?: unknown } ).range )
+		? ( ( r as RatedNode & { range?: unknown } ).range as unknown[] ).filter( ( x ): x is number => typeof x === 'number' )
+		: [];
+	return steps.length ? Math.max( ...steps ) : 12;
+}
+
+/** Out state: out in range, and the die stepped past the top or flagged out. */
+export function isOutDie( node: unknown, fallbacks?: Array<unknown> ): boolean {
+	if ( !hasOutRange( node, fallbacks ) ) return false;
+	const first = ratingDice( getRating( node ) )[0] || 0;
+	if ( first > rangeTop( node ) ) return true;
+	const n = ( node && typeof node === 'object' ? node : undefined ) as { isOut?: unknown } | undefined;
+	return n?.isOut === true;
 }
 
 // ---------- visibility (2026-10-23: shown | editor-only | hidden) ----------
@@ -376,7 +421,6 @@ export interface CortexToolkitCustom {
 	colWidth?: number | null;
 	editorDock?: 'left' | 'right';
 	traitColumns?: number;
-	multiDie?: boolean;
 	ratingScale?: number[];
 	subtraitRatingScale?: number[];
 	reservedSlots?: number | null;
@@ -412,6 +456,7 @@ export interface CortexToolkitCustom {
 	spentDice?: number[];
 	rowSpan?: number;
 	questioned?: boolean;
+	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
 /** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
 	visibility?: Visibility;
@@ -541,6 +586,7 @@ export interface TraitCustom {
 	branchRole?: 'skill' | 'specialty';
 	branchSide?: 'left' | 'right';
 	questioned?: boolean;
+	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
 	xp?: number | string;
 	counter?: number | string;
@@ -573,7 +619,7 @@ export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits' | 'sfx'> &
 	isOut?: boolean;
 	/** App-only: attached-stress value (mirrors `custom.stress`). */
 	stress?: number;
-	/** App-only: resource-trait marker. */
+	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
 	/** App-only: template trait names removed from this trait (D19 restore). */
 	removedTraits?: string[];

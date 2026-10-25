@@ -16,10 +16,15 @@ export type SelectMode = "one" | "any";
 export type StepDir = "up" | "down";
 export type Party = "owner" | "opposition";
 
+export type PoolCostOp = "drop-highest" | "drop-die" | "split-largest";
+
 export interface Cost {
   plotPoints?: number;
   stepUp?: string;
   stepDown?: string;
+  /** Pay from the staged dice pool. Narrative costs are display-only. */
+  pool?: PoolCostOp;
+  narrative?: boolean;
   [key: string]: unknown;
 }
 

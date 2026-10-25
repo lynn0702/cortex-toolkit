@@ -10,12 +10,13 @@ const {
 	isSpotlightStyle, isSpotlightPrintStyle,
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
-	handleStressClick, handleStressOutClick, shouldShowStressOut, shouldShowOut, isStressOut, isMultiDieTrait, getTraitDice,
+	handleStressClick, handleStressOutClick, shouldShowOut, isStressOut, getTraitDice, getRating,
 	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
 	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
 	getSetRatingDie,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
-	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
+	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
+	sfxCostText
 } = injectTraitSet();
 </script>
 
@@ -115,11 +116,11 @@ const {
 									@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
-								<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
+								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 							<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
 							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1"></div>
-							<div class="trait-value multidie-value" v-else-if="isMultiDieTrait(traitSet, item.trait)">
+							<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">
 								<div
 									v-for="(dieSize, dIdx) in (printBlank || item.isPlaceholder ? getTraitSetRatings(traitSet) : getTraitDice(item.trait))"
 									:key="dIdx"
@@ -148,7 +149,7 @@ const {
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
 								<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)"></span>
-								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
+								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
 						<!-- STRESS LABEL -->
@@ -199,14 +200,12 @@ const {
 											v-html="renderText(sfx.description)"
 										></span>
 									</template>
-									<template v-else-if="typeof sfx === 'string'">
-										<span class="trait-sfx-name">{{ sfx }}</span>
-									</template>
 									<template v-else>
 										<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span><span v-if="sfx.name && sfx.description">: </span>
 										<span class="trait-sfx-description" v-if="sfx.description" v-html="renderText(sfx.description)"></span>
 										<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
 										<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">SFX...</span>
+										<span class="trait-sfx-cost" v-if="sfxCostText(sfx.cost)"> ({{ sfxCostText(sfx.cost) }})</span>
 									</template>
 								</li>
 							</ul>
@@ -335,7 +334,7 @@ const {
 										@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
-									<span v-if="shouldShowStressOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
+									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
 
 								<!-- LIST STYLE: NO VALUE -->
@@ -347,8 +346,8 @@ const {
 								<!-- NONE RATING POSITION: NO VALUE -->
 								<div class="trait-value" v-else-if="!printBlank && getRatingPosition(traitSet) === 'none'"></div>
 
-								<!-- MULTI-DIE TRAIT -->
-								<div class="trait-value multidie-value" v-else-if="isMultiDieTrait(traitSet, item.trait)">
+								<!-- DICE-RATED TRAIT -->
+								<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">
 									<div
 										v-for="(dieSize, dIdx) in (printBlank || item.isPlaceholder ? getTraitSetRatings(traitSet) : getTraitDice(item.trait))"
 										:key="dIdx"
@@ -378,7 +377,7 @@ const {
 										@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
-									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
+									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
 							</h2>
 
@@ -460,14 +459,12 @@ const {
 										v-html="renderText(sfx.description)"
 									></span>
 								</template>
-								<template v-else-if="typeof sfx === 'string'">
-									<span class="trait-sfx-name">{{ sfx }}</span>
-								</template>
 								<template v-else>
 									<span class="trait-sfx-name" v-if="sfx.name">{{ sfx.name }}</span><span v-if="sfx.name && sfx.description">: </span>
 									<span class="trait-sfx-description" v-if="sfx.description" v-html="renderText(sfx.description)"></span>
 									<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
 									<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">SFX...</span>
+									<span class="trait-sfx-cost" v-if="sfxCostText(sfx.cost)"> ({{ sfxCostText(sfx.cost) }})</span>
 								</template>
 							</li>
 						</ul>

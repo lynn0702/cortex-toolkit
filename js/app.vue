@@ -1422,8 +1422,8 @@ defineExpose( {
 							@exportCharacter="exportCharacter"
 							@saveSheetTemplate="saveSheetTemplate"
 							@exportSheetTemplate="exportSheetTemplate"
-							@addDieToRoller="addDieToRoller"
-						></Character>
+					@addDieToRoller="addDieToRoller"
+				></Character>
 					</div>
 					</div>
 

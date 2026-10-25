@@ -87,8 +87,6 @@ export interface DiceItem {
 	size: number;
 	source: string;
 	isScale: boolean;
-	isResource: boolean;
-	resourceType: string;
 	hitches: number;
 	keepsExtra: number;
 }
@@ -136,8 +134,6 @@ export class CortexDicePool {
 						size: dieObj.size,
 						source: dieObj.source || "",
 						isScale: Boolean(props.isScale || (dieObj.source && dieObj.source.toLowerCase() === "scale")),
-						isResource: Boolean(props.isResource),
-						resourceType: (props.resourceType as string) || (props.isResource ? dieObj.source || "Resource" : ""),
 						hitches: (typeof props.hitches === "number" && Number.isFinite(props.hitches) && (props.hitches as number) >= 0)
 							? Math.floor(props.hitches as number) : 1,
 						keepsExtra: (typeof props.keepsExtra === "number" && Number.isFinite(props.keepsExtra) && (props.keepsExtra as number) > 0)

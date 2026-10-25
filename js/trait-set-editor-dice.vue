@@ -4,7 +4,7 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 const {
 	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue,
 	setRating, isSubtraitRatingIncluded, toggleSubtraitRatingOption,
-	featureSubtraits, isRing, multiDie, isPool, setSpendable, setHitches, traitSetID
+	featureSubtraits, isPool, setSpendable, setHitches, traitSetID
 } = injectTraitSetEditor();
 
 function toggleSetRating( size: number | null ) {
@@ -89,11 +89,6 @@ function toggleSetRating( size: number | null ) {
 	<div class="editor-field" v-if="needsDiceUI">
 		<label>Options</label>
 		<div class="editor-toggles">
-			<template v-if="!isRing">
-				<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-multi-die'" :true-value="true" :false-value="false" v-model="multiDie"></div>
-				<div><label :for="'trait-set-' + traitSetID + '-multi-die'">Multiple dice</label></div>
-			</template>
-
 			<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-pool'" :true-value="true" :false-value="false" v-model="isPool"></div>
 			<div><label :for="'trait-set-' + traitSetID + '-pool'" title="Clicking a trait adds its whole array of available dice to the roller">Pool</label></div>
 

@@ -6,8 +6,8 @@ const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
-	renderDieValueForPrint, handleSingleDieClick, getTraitStatement, renderText, getSubtraitNameOr,
-	getStandingComplication, getStandingBonus, getStandingBonusRatings, firstDie, isDieActive
+	renderDieValueForPrint, handleSingleDieClick, getTraitStatement, renderText, getSubtraitNameOr, getSubtraitAt,
+	getSubtraitSlotRatings, firstDie, isDieActive
 } = injectTraitSet();
 </script>
 
@@ -44,11 +44,11 @@ const {
 						<div class="paired-slot-sub-group">
 							<div class="paired-slot-sub-row">
 								<span class="paired-slot-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 0) }} •</span>
-								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingComplication(item.trait)"
-									@click.stop="!printBlank ? handleSingleDieClick(getStandingComplication(item.trait), firstDie(getStandingComplication(item.trait)), traitSet, s, item.originalIndex) : null">
+								<div class="subtrait-value" v-if="!item.isPlaceholder && getSubtraitAt(item.trait, 0)"
+									@click.stop="!printBlank ? handleSingleDieClick(getSubtraitAt(item.trait, 0), firstDie(getSubtraitAt(item.trait, 0)), traitSet, s, item.originalIndex) : null">
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
-										:class="{ 'c': true, 'active': !printBlank && isDieActive(getStandingComplication(item.trait), size) }"
-										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getStandingComplication(item.trait), size))"></span>
+										:class="{ 'c': true, 'active': !printBlank && isDieActive(getSubtraitAt(item.trait, 0), size) }"
+										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getSubtraitAt(item.trait, 0), size))"></span>
 								</div>
 								<div class="subtrait-value" v-else>
 									<span v-for="size in getSubtraitRatings(traitSet)" :key="size"
@@ -58,14 +58,14 @@ const {
 							</div>
 							<div class="paired-slot-sub-row">
 								<span class="paired-slot-sub-label">{{ getSubtraitNameOr(item.trait, traitSet, 1) }} •</span>
-								<div class="subtrait-value" v-if="!item.isPlaceholder && getStandingBonus(item.trait)"
-									@click.stop="!printBlank ? handleSingleDieClick(getStandingBonus(item.trait), firstDie(getStandingBonus(item.trait)), traitSet, s, item.originalIndex) : null">
-									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"
-										:class="{ 'c': true, 'active': !printBlank && isDieActive(getStandingBonus(item.trait), size) }"
-										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getStandingBonus(item.trait), size))"></span>
+								<div class="subtrait-value" v-if="!item.isPlaceholder && getSubtraitAt(item.trait, 1)"
+									@click.stop="!printBlank ? handleSingleDieClick(getSubtraitAt(item.trait, 1), firstDie(getSubtraitAt(item.trait, 1)), traitSet, s, item.originalIndex) : null">
+									<span v-for="size in getSubtraitSlotRatings(traitSet, 1)" :key="size"
+										:class="{ 'c': true, 'active': !printBlank && isDieActive(getSubtraitAt(item.trait, 1), size) }"
+										v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getSubtraitAt(item.trait, 1), size))"></span>
 								</div>
 								<div class="subtrait-value" v-else>
-									<span v-for="size in getStandingBonusRatings(traitSet)" :key="size"
+									<span v-for="size in getSubtraitSlotRatings(traitSet, 1)" :key="size"
 										:class="{ 'c': true, 'active': false }"
 										v-html="renderDieValueForPrint(size, false)"></span>
 								</div>

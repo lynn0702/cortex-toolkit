@@ -40,7 +40,7 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 	},
 	{
 		id: 'resources', name: 'Resources', sing: 'Resource', plur: 'Resources',
-		blurb: 'Bulleted pools with multi-die support.',
+		blurb: 'Bulleted Dice pools.',
 		preview: '<div class="trait-set trait-set-style-resources"><div class="trait-set-header"><div class="trait-set-header-inner"><div>RESOURCES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Crew</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
 	},
 	{

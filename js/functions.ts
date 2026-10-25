@@ -183,20 +183,41 @@ export const cortexFunctions = {
 		return [4, 6, 8, 10, 12];
 	},
 
-	// Feature + multi-die defaults seeded when a trait-set style is chosen.
+	// Paired-slots convention: secondary slots floor at d6 on a standard
+	// scale. Slot-indexed so sheet and editor share one rule instead of
+	// the sheet keying off position and the editor name-sniffing BONUS.
+	getSubtraitSlotRatings: function( traitSet: TraitSet, slot: number ) {
+		const ratings = this.getSubtraitRatings( traitSet );
+		const body = getView( traitSet )?.style?.body;
+		if ( body === 'paired-slots' && slot >= 1 && ratings.length === 5 && ratings[0] === 4 ) {
+			return ratings.filter( ( size: number ) => size >= 6 );
+		}
+		return ratings;
+	},
+
+	// Set names whose trait names are system labels: they print on blank
+	// sheets. Central list so the check is data, not inline sniffing.
+	fixedNameSetKeys: [ 'attribute', 'value', 'drive', 'role', 'affiliation', 'branch', 'eidolon', 'power', 'system', 'chassis' ],
+	isFixedNameSet: function( setName: unknown ) {
+		const n = typeof setName === 'string' ? setName.toLowerCase() : '';
+		if ( !n.length ) return false;
+		return this.fixedNameSetKeys.some( ( k: string ) => n.includes( k ) );
+	},
+
+	// Feature defaults seeded when a trait-set style is chosen.
 	// Used by the trait set editor and the style gallery alike.
 	defaultFeaturesForStyle: function( style: string ) {
-		const map: Record<string, { features: SetFeatures; multiDie: boolean }> = {
-			'three-column-table':      { features: { description: true,  sfx: true,  subtraits: false }, multiDie: false },
-			'paired-slots':           { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
-			'subtrait-columns': { features: { description: false, sfx: false, subtraits: true  }, multiDie: false },
-			'die-rows':       { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
-			'dice-count':    { features: { description: false, sfx: false, subtraits: false }, multiDie: true  },
-			'dice-ladder':      { features: { description: false, sfx: false, subtraits: false }, multiDie: false },
-			'labeled-fields':     { features: { description: true,  sfx: false, subtraits: false }, multiDie: false },
+		const map: Record<string, { features: SetFeatures }> = {
+			'three-column-table':      { features: { description: true,  sfx: true,  subtraits: false } },
+			'paired-slots':           { features: { description: false, sfx: false, subtraits: true  } },
+			'subtrait-columns': { features: { description: false, sfx: false, subtraits: true  } },
+			'die-rows':       { features: { description: false, sfx: false, subtraits: false } },
+			'dice-count':    { features: { description: false, sfx: false, subtraits: false } },
+			'dice-ladder':      { features: { description: false, sfx: false, subtraits: false } },
+			'labeled-fields':     { features: { description: true,  sfx: false, subtraits: false } },
 		};
 		if ( map[ style ] ) return map[ style ];
-		return { features: { description: false, sfx: false, subtraits: false }, multiDie: false };
+		return { features: { description: false, sfx: false, subtraits: false } };
 	},
 
 	// Central registry of default labels for trait-set style regions.
@@ -281,6 +302,22 @@ export const cortexFunctions = {
 	renderText: function( text: unknown ) {
 		if ( !text || typeof text !== 'string' ) return '';
 		return this.renderInlineMarkdown( text ).replace( /\n/g, '<br>' );
+	},
+
+	// An SFX cost as terse display words, e.g. "2 PP, drop highest die".
+	// Costs are always objects; anything else renders as no cost.
+	sfxCostText: function( cost: unknown ) {
+		if ( !cost || typeof cost !== 'object' || Array.isArray( cost ) ) return '';
+		const c = cost as Record<string, unknown>;
+		const bits: string[] = [];
+		if ( typeof c.plotPoints === 'number' && c.plotPoints > 0 ) bits.push( c.plotPoints + ' PP' );
+		if ( typeof c.stepUp === 'string' && c.stepUp.length ) bits.push( 'step up ' + c.stepUp );
+		if ( typeof c.stepDown === 'string' && c.stepDown.length ) bits.push( 'step down ' + c.stepDown );
+		if ( c.pool === 'drop-highest' ) bits.push( 'drop highest die' );
+		else if ( c.pool === 'drop-die' ) bits.push( 'drop a die' );
+		else if ( c.pool === 'split-largest' ) bits.push( 'split largest die' );
+		if ( c.narrative === true ) bits.push( 'narrative beat' );
+		return bits.join( ', ' );
 	},
 
 	escapeHtml: function( text: unknown ) {
@@ -1442,7 +1479,6 @@ export const cortexFunctions = {
 				header: 'default',
 				body: 'default',
 			},
-			multiDie: false,
 				stressConfig: {
 					includeOut: true
 				},
