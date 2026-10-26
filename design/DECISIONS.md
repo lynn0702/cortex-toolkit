@@ -119,6 +119,10 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-11: Bewilderwood (`spotlight-camp-bewilderwood` v3) is the reference migration: round-trip deep-equal with byte-identical sheet DOM.
 - 2026-10-11: Layered templates keep set `id` for join continuity; template layers are complete, not sparse; `$schema`/`version` markers drop in layered form and return on unmigrate.
 
+### Persistence
+- 2026-10-26 (multi-tab data loss): saves are granular by character — the app upserts and deletes whole character entries by id, and the storage layer merges them into the store (read-modify-write) instead of replacing the whole record, so a stale tab can no longer clobber another tab's characters. A stale save is flagged and surfaced as a toast, never a quiet drop.
+- 2026-10-26 (multi-tab follow-up — atomicity + template merge, supersedes the two limitations above): the IDB save path is one `readwrite` transaction (get → merge → put), so simultaneous saves serialize; and the template registry merges by `id@version` with `written = (S ∪ C) − (T0 − C)`. The localStorage fallback is documented sequential-only. Per-tab UI state (open IDs, play view mode, roller position, preferences) stays last-write-wins by design.
+
 ### Stack
 - 2026-10-11: TypeScript migration, incremental. Vue 3 stays.
 - 2026-10-12: Full SFC-first pivot (`<script setup lang="ts">`); `vue-tsc --noEmit` is the type gate; Node tests `require()` ESM sources (Node 24); unreferenced exports tree-shake by design.

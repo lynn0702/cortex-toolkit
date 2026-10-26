@@ -60,6 +60,12 @@ gets corrected.
 
 - 2026-10-11: The migration path is porting original toolkit files (kaelri/cortex-toolkit format). The sample/test case files live in the KaelriMonsters repo. Never break old-format import.
 
+## Persistence
+
+- 2026-10-26: Multi-tab last-write-wins wiped characters silently: every save replaced the whole record, so whichever tab saved last clobbered the others' characters. Fixed with granular saves — the app tracks the last-saved snapshot and upserts/deletes whole character entries by id (`saveChanges({ upsert, remove, session })`); the storage layer read-modify-writes that into the store instead of replacing it, so a stale tab merges rather than clobbers. A `savedAt` staleness check flags the merge, and the app toasts "Merged changes from another tab" — never a quiet drop. No-op saves skip the write; only changed characters are rewritten (others stay byte-identical). Verified: the two-tab repro sequence re-run green; single-tab save unchanged; the `cross-tab merge` scenario in `storage-tests.js` covers the two-writer sequence.
+
+- 2026-10-26 (multi-tab follow-up — atomicity + template merge, supersedes the two limitations above): two limitations from the multi-tab fix are closed. (1) Atomicity — `saveChanges` now does get → merge → put inside ONE IndexedDB `readwrite` transaction, so overlapping saves serialize instead of racing; the merge is a pure transform applied inside the transaction, no await yields between read and write. (2) Template merge — the template registry merges by `id@version` with `written = (S ∪ C) − (T0 − C)`: keep stored and current, drop only templates this tab loaded (T0) and no longer has (not in C); a stale tab's save no longer drops a snapshot another tab pinned. The localStorage fallback is documented sequential-only (no transactions; its synchronous read-modify-write is atomic by construction but only for sequential saves). Per-tab UI state (open character IDs, play view mode, roller position, preferences) remains full-replace last-write-wins by design — merging it across tabs would be wrong. Character merge semantics unchanged (whole records by id, never field-merge). Verified: `storage-tests` grows to 30 assertions with `atomic single transaction`, `template merge keeps other tab pin`, and `template merge deletes dropped template`; the two-writer sequential test still passes; all suites + validate green.
+
 ## Stack
 
 - 2026-10-11: TypeScript migration, incremental, helpers module as pilot. Vue 3 stays.

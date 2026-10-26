@@ -105,10 +105,12 @@ const storageMod = require(storagePath);
 function freshStore() {
   const S = storageMod.cortexStorage;
   // Module-level open state must reset between scenarios (require cache
-  // keeps one module instance): drop the cached DB promise and re-read
-  // backend availability from the current globals.
+  // keeps one module instance): drop the cached DB promise, re-read backend
+  // availability, and clear the cross-tab baseline.
   S._dbPromise = null;
   S._useIDB = (typeof indexedDB !== 'undefined');
+  S._lastSavedAt = null;
+  S._lastTemplates = null;
   return S;
 }
 
@@ -244,6 +246,149 @@ async function scenario(name, fn) {
     void fb;
     const loaded = await S.load();
     ok(loaded.characters[0] && loaded.characters[0].name === 'Newer', 'newer fallback beats stale IDB');
+  });
+
+  // 7. Two writers, one store (cross-tab): a stale tab's later save merges
+  // instead of clobbering, so the other tab's character survives.
+  await scenario('cross-tab merge', async () => {
+    globalThis.indexedDB = makeIDB({ open: 'ok', put: 'ok' });
+    globalThis.localStorage = makeLS(5 * 1024 * 1024);
+    globalThis.navigator = {};
+    const S = freshStore();
+
+    // Tab A boots (empty), creates c1, saves.
+    await S.load();
+    await S.save(demoState());
+    const aBaseline = S._lastSavedAt;
+
+    // Tab B boots (loads c1), creates c2, saves.
+    await S.load();
+    await new Promise((r) => setTimeout(r, 10)); // ensure a newer timestamp
+    const stateB = demoState();
+    stateB.characters.push({ id: 'c2', name: 'Bee', traitSets: [], sheet: { template: { id: 't1', version: 1 } } });
+    await S.save(stateB);
+
+    // Tab A (stale, still sees only c1) edits c1 and saves via the granular
+    // path. Its baseline predates B's write, so the merge must keep c2.
+    S._lastSavedAt = aBaseline;
+    const result = await S.saveChanges({
+      upsert: [{ id: 'c1', name: 'Edited A', traitSets: [], sheet: { template: { id: 't1', version: 1 } } }],
+      remove: [],
+      session: { openCharacterIDs: ['c1'], playViewMode: 'split', rollerPosition: 'left', templates: demoTpls, preferences: { version: 1 } },
+    });
+    ok(result.merged === true, 'stale save is flagged merged', result);
+
+    const loaded = await S.load();
+    const ids = loaded.characters.map((c) => c.id).sort();
+    ok(ids.length === 2 && ids[0] === 'c1' && ids[1] === 'c2', 'both writers characters survive', ids);
+    const c1 = loaded.characters.find((c) => c.id === 'c1');
+    const c2 = loaded.characters.find((c) => c.id === 'c2');
+    ok(c1 && c1.name === 'Edited A', 'stale tab edit preserved', c1 && c1.name);
+    ok(c2 && c2.name === 'Bee', 'other tab character preserved', c2 && c2.name);
+  });
+
+  // 8. Single-tab granular save: upsert replaces by id, others untouched.
+  await scenario('granular upsert', async () => {
+    globalThis.indexedDB = makeIDB({ open: 'ok', put: 'ok' });
+    globalThis.localStorage = makeLS(5 * 1024 * 1024);
+    globalThis.navigator = {};
+    const S = freshStore();
+    await S.load();
+    const state = demoState();
+    state.characters.push({ id: 'c2', name: 'Two', traitSets: [], sheet: { template: { id: 't1', version: 1 } } });
+    await S.save(state);
+
+    const result = await S.saveChanges({
+      upsert: [{ id: 'c1', name: 'One edited', traitSets: [], sheet: { template: { id: 't1', version: 1 } } }],
+      remove: [],
+      session: { openCharacterIDs: ['c1'], playViewMode: 'split', rollerPosition: 'left', templates: demoTpls, preferences: { version: 1 } },
+    });
+    ok(result.merged === false, 'single-tab save is not flagged merged', result);
+    const loaded = await S.load();
+    ok(loaded.characters.length === 2, 'single-tab characters all present', loaded.characters.length);
+    ok(loaded.characters.find((c) => c.id === 'c1').name === 'One edited', 'edited character written');
+    ok(loaded.characters.find((c) => c.id === 'c2').name === 'Two', 'unchanged character preserved');
+  });
+
+  // 9. applyChanges keeps untouched entries byte-identical (same refs).
+  await scenario('applyChanges identity', async () => {
+    const S = freshStore();
+    const base = [{ id: 'c1', name: 'One', traitSets: [] }, { id: 'c2', name: 'Two', traitSets: [] }];
+    const out = S.applyChanges(base, [{ id: 'c1', name: 'One edited', traitSets: [] }], []);
+    ok(out.length === 2, 'merge keeps both entries');
+    ok(out.find((c) => c.id === 'c1').name === 'One edited', 'upsert replaced entry');
+    ok(out.find((c) => c.id === 'c2') === base[1], 'untouched entry is the same object (byte-identical)');
+  });
+
+  // 10. Atomicity: a single saveChanges does get → merge → put inside ONE
+  // readwrite transaction (no separate read transaction in between).
+  await scenario('atomic single transaction', async () => {
+    const idb = makeIDB({ open: 'ok', put: 'ok' });
+    let readonlyCount = 0;
+    let readwriteCount = 0;
+    const origTx = idb.__db.transaction;
+    idb.__db.transaction = (sname, mode) => {
+      if (mode === 'readonly') readonlyCount++;
+      else if (mode === 'readwrite') readwriteCount++;
+      return origTx.call(idb.__db, sname, mode);
+    };
+    globalThis.indexedDB = idb;
+    globalThis.localStorage = makeLS(5 * 1024 * 1024);
+    globalThis.navigator = {};
+    const S = freshStore();
+    await S.load();
+    readonlyCount = 0;
+    readwriteCount = 0;
+    await S.saveChanges({
+      upsert: [{ id: 'c1', name: 'One', traitSets: [], sheet: { template: { id: 't1', version: 1 } } }],
+      remove: [],
+      session: { openCharacterIDs: ['c1'], playViewMode: 'split', rollerPosition: 'left', templates: demoTpls, preferences: { version: 1 } },
+    });
+    ok(readwriteCount === 1, 'saveChanges uses exactly one readwrite transaction', readwriteCount);
+    ok(readonlyCount === 0, 'saveChanges uses no separate read transaction', readonlyCount);
+  });
+
+  // 11. Template merge keeps a snapshot another tab pinned.
+  await scenario('template merge keeps other tab pin', async () => {
+    globalThis.indexedDB = makeIDB({ open: 'ok', put: 'ok' });
+    globalThis.localStorage = makeLS(5 * 1024 * 1024);
+    globalThis.navigator = {};
+    const S = freshStore();
+    const tplX = { id: 'tx', version: 1, title: 'X', character: { traitSets: [] } };
+
+    // Tab A loads an empty store: its baseline saw no templates.
+    await S.load();
+    const aBaseline = S._lastTemplates;
+
+    // Tab B pins template X.
+    await S.save({ characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [tplX], preferences: {} });
+
+    // Stale tab A saves: baseline empty, current set empty.
+    S._lastTemplates = aBaseline;
+    await S.saveChanges({ upsert: [], remove: [], session: { openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: {} } });
+
+    const loaded = await S.load();
+    const keys = loaded.templates.map((t) => S.templateKey(t));
+    ok(keys.indexOf('tx@1') !== -1, 'template X survives stale tab save', keys);
+  });
+
+  // 12. Template merge still deletes a template this tab dropped.
+  await scenario('template merge deletes dropped template', async () => {
+    globalThis.indexedDB = makeIDB({ open: 'ok', put: 'ok' });
+    globalThis.localStorage = makeLS(5 * 1024 * 1024);
+    globalThis.navigator = {};
+    const S = freshStore();
+    const tplY = { id: 'ty', version: 1, title: 'Y', character: { traitSets: [] } };
+
+    // This tab's baseline includes Y (seed + load).
+    await S.save({ characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [tplY], preferences: {} });
+
+    // This tab drops Y (current set empty) and saves.
+    await S.saveChanges({ upsert: [], remove: [], session: { openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: {} } });
+
+    const loaded = await S.load();
+    const keys = loaded.templates.map((t) => S.templateKey(t));
+    ok(keys.indexOf('ty@1') === -1, 'deleted template Y is gone', keys);
   });
 
   console.log(`storage-tests: ${pass} passed, ${fail} failed`);

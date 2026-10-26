@@ -1169,8 +1169,17 @@ async function bootFromStorage() {
 	cortexStorage.requestPersistence();
 }
 
+// Last successful save: characters keyed by id (storage form as JSON) and
+// the session JSON. The next save skips no-ops and upserts only what changed.
+let lastSavedCharacters: Record<string, string> | null = null;
+let lastSavedSession: string | null = null;
+
 async function persist() {
-	let plain;
+	let upsert: any[] = [];
+	let remove: string[] = [];
+	let session: any;
+	let snapshot: Record<string, string> | null = null;
+	let sessionJson: string | null = null;
 	try {
 		await ensureSpotlightTemplates();
 		const sparse = ( characters.value || [] ).map( ( c: any ) => {
@@ -1200,20 +1209,51 @@ async function persist() {
 			} else delete out.sheet;
 			return out;
 		} );
-		plain = JSON.parse( JSON.stringify( {
-			characters: sparse,
+		session = {
 			openCharacterIDs: openCharacterIDs.value,
 			playViewMode: playViewMode.value,
 			rollerPosition: rollerPosition.value,
 			templates: cortexStorage.pruneTemplates( sheetTemplates.value, characters.value ),
 			preferences: prefs.value,
-		} ) );
+		};
+		// Dirty diff against the last save: whole entries by id, never
+		// field-merged. New ids are upserts; vanished ids are deletes.
+		const curr: Record<string, string> = {};
+		const currObj: Record<string, any> = {};
+		sparse.forEach( ( c: any ) => {
+			if ( c && c.id != null ) {
+				const id = String( c.id );
+				curr[ id ] = JSON.stringify( c );
+				currObj[ id ] = c;
+			}
+		} );
+		if ( lastSavedCharacters ) {
+			for ( const id of Object.keys( curr ) ) {
+				if ( lastSavedCharacters[ id ] !== curr[ id ] ) upsert.push( currObj[ id ] );
+			}
+			for ( const id of Object.keys( lastSavedCharacters ) ) {
+				if ( curr[ id ] === undefined ) remove.push( id );
+			}
+		} else {
+			// No baseline yet (first save since boot): upsert the roster,
+			// then the merge keeps anything this tab does not know about.
+			upsert = sparse.filter( ( c: any ) => c && c.id != null );
+		}
+		sessionJson = JSON.stringify( session );
+		// No-op gate: nothing changed since the last save, no write.
+		if ( !upsert.length && !remove.length && lastSavedSession === sessionJson ) return;
+		snapshot = curr;
 	} catch ( err ) {
 		showToast( 'Could not save changes.' );
 		return;
 	}
 
-	cortexStorage.save( plain ).catch( ( err: any ) => {
+	try {
+		const result = await cortexStorage.saveChanges( { upsert, remove, session } );
+		lastSavedCharacters = snapshot;
+		lastSavedSession = sessionJson;
+		if ( result.merged ) showToast( 'Merged changes from another tab.' );
+	} catch ( err: any ) {
 		if ( err && ( err.name === 'QuotaExceededError' || err.code === 22 ) ) {
 			showToast( 'Local storage is full — export a backup, then remove large images.' );
 		} else if ( err && /blocked|unavailable|security|denied|invalidstate/i.test( ( err.name || '' ) + ' ' + ( err.message || '' ) ) ) {
@@ -1221,7 +1261,7 @@ async function persist() {
 		} else {
 			showToast( 'Could not save changes. Export a backup to be safe.' );
 		}
-	} );
+	}
 }
 
 function saveLocalData() {

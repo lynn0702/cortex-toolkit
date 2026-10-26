@@ -21,6 +21,21 @@ export interface StorageState {
 	migrationError?: unknown;
 }
 
+// Granular save payload: whole character entries are upserted/deleted by
+// id — never field-merged — plus the session fields the app owns. This is
+// what makes a stale tab's save a merge instead of a clobber.
+export interface SaveChanges {
+	upsert: unknown[];
+	remove: string[];
+	session: {
+		openCharacterIDs: string[];
+		playViewMode: 'split' | 'tabs';
+		rollerPosition: 'left' | 'right';
+		templates: unknown[];
+		preferences: unknown;
+	};
+}
+
 export interface CortexStorage {
 	DB_NAME: string;
 	DB_VERSION: number;
@@ -30,6 +45,8 @@ export interface CortexStorage {
 	FALLBACK_KEY: string;
 	_dbPromise: Promise<IDBDatabase> | null;
 	_useIDB: boolean;
+	_lastSavedAt: string | null;
+	_lastTemplates: unknown[] | null;
 	templateKey( t: any ): string;
 	normalizeTemplates( templates: any ): any[];
 	upsertTemplate( templates: any, entry: any ): any[];
@@ -39,8 +56,15 @@ export interface CortexStorage {
 	normalizeCharacters( characters: any ): any[];
 	readLegacy(): { error: unknown; state: any };
 	clearLegacy(): void;
+	fallbackRecord(): any;
+	readRecord(): Promise<any>;
+	writeRecord( record: any ): Promise<{ backend: string }>;
+	applyChanges( base: unknown[], upsert: unknown[], remove: string[] ): unknown[];
+	mergeTemplates( stored: unknown[], current: unknown[], baseline: unknown[] ): unknown[];
+	transactReadModifyWrite( modify: ( current: any ) => { record: any; merged: boolean } ): Promise<{ record: any; merged: boolean }>;
 	load(): Promise<StorageState>;
 	save( state: any ): Promise<{ backend: string }>;
+	saveChanges( changes: SaveChanges ): Promise<{ backend: string; merged: boolean }>;
 	clear(): Promise<void>;
 	requestPersistence(): Promise<boolean>;
 }
@@ -66,6 +90,8 @@ export const cortexStorage: CortexStorage = {
 
 	_dbPromise: null as Promise<IDBDatabase> | null,
 	_useIDB: ( typeof indexedDB !== 'undefined' ),
+	_lastSavedAt: null as string | null,
+	_lastTemplates: null as unknown[] | null,
 
 	// Sheet-template registry (entry shape, same as the spotlight library:
 	// { id (static), version, title, ..., character: {...} }). Snapshots are
@@ -301,6 +327,138 @@ export const cortexStorage: CortexStorage = {
 		}
 	},
 
+	// Synchronous full-record read of the localStorage fallback. The fallback
+	// has no transactions, so its read-modify-write is atomic by construction.
+	fallbackRecord(): any {
+		try {
+			const raw = localStorage.getItem( this.FALLBACK_KEY );
+			if ( !raw ) return null;
+			return JSON.parse( raw );
+		} catch ( err ) {
+			return null;
+		}
+	},
+
+	// Newest complete record wins across the two backends: a fallback save
+	// written while IDB was down supersedes a stale IDB copy, and vice versa.
+	async readRecord(): Promise<any> {
+		let idb: any = null;
+		if ( this._useIDB ) {
+			try {
+				const db = await this.openDB();
+				idb = await new Promise( ( resolve, reject ) => {
+					const tx = db.transaction( this.STORE_NAME, 'readonly' );
+					const store = tx.objectStore( this.STORE_NAME );
+					const req = store.get( this.RECORD_KEY );
+					req.onsuccess = () => resolve( req.result || null );
+					req.onerror = () => reject( req.error || new Error( 'Could not read local database.' ) );
+				} );
+			} catch ( err ) {
+				idb = null;
+			}
+		}
+		const fallback = this.fallbackRecord();
+		if ( idb && fallback ) {
+			return String( fallback.savedAt || '' ) > String( idb.savedAt || '' ) ? fallback : idb;
+		}
+		return idb || fallback;
+	},
+
+	async writeRecord( record: any ): Promise<{ backend: string }> {
+		if ( this._useIDB ) {
+			try {
+				const db = await this.openDB();
+				await new Promise<void>( ( resolve, reject ) => {
+					const tx = db.transaction( this.STORE_NAME, 'readwrite' );
+					tx.oncomplete = () => resolve();
+					tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
+					tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
+					tx.objectStore( this.STORE_NAME ).put( record, this.RECORD_KEY );
+				} );
+				try {
+					localStorage.removeItem( this.FALLBACK_KEY );
+				} catch ( err ) {
+					// Best effort; a stale fallback is ignored while IDB reads back.
+				}
+				return { backend: 'indexeddb' };
+			} catch ( err ) {
+				// Fall through to the full-record localStorage fallback below.
+			}
+		}
+		try {
+			localStorage.setItem( this.FALLBACK_KEY, JSON.stringify( record ) );
+			return { backend: 'localstorage' };
+		} catch ( err: any ) {
+			err.isQuotaError = err && ( err.name === 'QuotaExceededError' || err.code === 22 );
+			throw err;
+		}
+	},
+
+	// Merge granular save changes into a base character list: delete by id,
+	// then upsert by id (whole entries — never field-merged). Base order is
+	// preserved; new characters append at the end.
+	applyChanges( base: unknown[], upsert: unknown[], remove: string[] ): unknown[] {
+		const removeSet = new Set( Array.isArray( remove ) ? remove : [] );
+		const map = new Map<any, unknown>();
+		const order: any[] = [];
+		( Array.isArray( base ) ? base : [] ).forEach( ( c: any ) => {
+			if ( !c || typeof c !== 'object' || c.id === undefined || c.id === null || removeSet.has( c.id ) ) return;
+			map.set( c.id, c );
+			order.push( c.id );
+		} );
+		( Array.isArray( upsert ) ? upsert : [] ).forEach( ( c: any ) => {
+			if ( !c || typeof c !== 'object' || c.id === undefined || c.id === null ) return;
+			if ( !map.has( c.id ) ) order.push( c.id );
+			map.set( c.id, c );
+		} );
+		return order.map( ( id: any ) => map.get( id ) );
+	},
+
+	// Template registry merge, keyed by template id@version: written =
+	// (S ∪ C) − (T0 − C). Keep stored and current; drop only templates this
+	// tab loaded (T0) and no longer has (not in C). A template another tab
+	// pinned is kept — a stale tab has no standing to delete what it never saw.
+	mergeTemplates( stored: unknown[], current: unknown[], baseline: unknown[] ): unknown[] {
+		const key = ( t: any ) => this.templateKey( t );
+		const currentKeys = new Set( ( Array.isArray( current ) ? current : [] ).map( key ) );
+		const baselineKeys = new Set( ( Array.isArray( baseline ) ? baseline : [] ).map( key ) );
+		const out: unknown[] = [];
+		const seen = new Set();
+		( Array.isArray( stored ) ? stored : [] ).forEach( ( t: any ) => {
+			if ( !t || typeof t !== 'object' ) return;
+			const k = key( t );
+			if ( baselineKeys.has( k ) && !currentKeys.has( k ) ) return;
+			out.push( t );
+			seen.add( k );
+		} );
+		( Array.isArray( current ) ? current : [] ).forEach( ( t: any ) => {
+			if ( !t || typeof t !== 'object' ) return;
+			const k = key( t );
+			if ( !seen.has( k ) ) { out.push( t ); seen.add( k ); }
+		} );
+		return out;
+	},
+
+	// Atomic read-modify-write on the IndexedDB path: a single readwrite
+	// transaction does get → modify → put, so overlapping saves serialize
+	// instead of racing. No await yields between the read and the write.
+	transactReadModifyWrite( modify: ( current: any ) => { record: any; merged: boolean } ): Promise<{ record: any; merged: boolean }> {
+		return this.openDB().then( ( db ) => new Promise( ( resolve, reject ) => {
+			const tx = db.transaction( this.STORE_NAME, 'readwrite' );
+			const store = tx.objectStore( this.STORE_NAME );
+			const getReq = store.get( this.RECORD_KEY );
+			getReq.onsuccess = () => {
+				const result = modify( getReq.result || null );
+				const putReq = store.put( result.record, this.RECORD_KEY );
+				putReq.onsuccess = () => resolve( result );
+				putReq.onerror = () => reject( putReq.error || new Error( 'Could not write local database.' ) );
+			};
+			getReq.onerror = () => reject( getReq.error || new Error( 'Could not read local database.' ) );
+			tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
+			tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
+		} ) );
+	},
+
 	async load(): Promise<StorageState> {
 		const empty = (): StorageState => ( { characters: [], openCharacterIDs: [], playViewMode: 'split', rollerPosition: 'left', templates: [], preferences: this.normalizePreferences( null ), migrated: false } );
 		const fromRecord = ( record: any ): StorageState | null => {
@@ -315,38 +473,9 @@ export const cortexStorage: CortexStorage = {
 				migrated: false,
 			};
 		};
-		const idbRecord = async (): Promise<any> => {
-			if ( !this._useIDB ) return null;
-			try {
-				const db = await this.openDB();
-				const record: any = await new Promise( ( resolve, reject ) => {
-					const tx = db.transaction( this.STORE_NAME, 'readonly' );
-					const store = tx.objectStore( this.STORE_NAME );
-					const req = store.get( this.RECORD_KEY );
-					req.onsuccess = () => resolve( req.result || null );
-					req.onerror = () => reject( req.error || new Error( 'Could not read local database.' ) );
-				} );
-				return record;
-			} catch ( err ) {
-				return null;
-			}
-		};
-		const fallbackRecord = (): any => {
-			try {
-				const raw = localStorage.getItem( this.FALLBACK_KEY );
-				if ( !raw ) return null;
-				return JSON.parse( raw );
-			} catch ( err ) {
-				return null;
-			}
-		};
-		// Newest complete record wins: a fallback save written while IDB
-		// was down supersedes a stale IDB copy, and vice versa.
-		const idb = await idbRecord();
-		const fallback = fallbackRecord();
-		const pick = ( idb && fallback )
-			? ( String( fallback.savedAt || '' ) > String( idb.savedAt || '' ) ? fallback : idb )
-			: ( idb || fallback );
+		const pick = await this.readRecord();
+		this._lastSavedAt = ( pick && pick.savedAt ) ? String( pick.savedAt ) : null;
+		this._lastTemplates = ( pick && Array.isArray( pick.templates ) ) ? pick.templates : null;
 		if ( pick ) {
 			const state = fromRecord( pick );
 			if ( state ) return state;
@@ -383,33 +512,75 @@ export const cortexStorage: CortexStorage = {
 			templates: this.normalizeTemplates( state.templates ),
 			preferences: this.normalizePreferences( state.preferences ),
 		};
+		const result = await this.writeRecord( record );
+		this._lastSavedAt = record.savedAt;
+		this._lastTemplates = record.templates;
+		return result;
+	},
+
+	async saveChanges( changes: SaveChanges ) {
+		const upsert = Array.isArray( changes && changes.upsert ) ? changes.upsert : [];
+		const remove = Array.isArray( changes && changes.remove ) ? changes.remove : [];
+		const session = ( changes && changes.session ) || ( {} as SaveChanges['session'] );
+		const fallbackNow = this.fallbackRecord();
+
+		// The merge is a pure transform of (current record) → (new record).
+		// It is identical for both backends; only the transaction boundary
+		// differs (atomic readwrite on IDB, synchronous on the fallback).
+		const modify = ( idbCurrent: any ): { record: any; merged: boolean } => {
+			const current = ( idbCurrent && fallbackNow )
+				? ( String( fallbackNow.savedAt || '' ) > String( idbCurrent.savedAt || '' ) ? fallbackNow : idbCurrent )
+				: ( idbCurrent || fallbackNow );
+			// Another tab wrote since we last loaded or saved: our upserts merge
+			// into the newer store instead of replacing it. Loud, never silent.
+			const merged = Boolean( current && current.savedAt && this._lastSavedAt && String( current.savedAt ) > String( this._lastSavedAt ) );
+			const base = ( current && Array.isArray( current.characters ) ) ? current.characters : [];
+			const record = {
+				v: 1,
+				savedAt: new Date().toISOString(),
+				characters: this.applyChanges( base, upsert, remove ),
+				openCharacterIDs: Array.isArray( session.openCharacterIDs ) ? session.openCharacterIDs : [],
+				playViewMode: session.playViewMode === 'tabs' ? 'tabs' : 'split',
+				rollerPosition: session.rollerPosition === 'right' ? 'right' : 'left',
+				templates: this.mergeTemplates(
+					( current && Array.isArray( current.templates ) ) ? current.templates : [],
+					this.normalizeTemplates( session.templates ),
+					this._lastTemplates || []
+				),
+				preferences: this.normalizePreferences( session.preferences ),
+			};
+			return { record, merged };
+		};
+
 		if ( this._useIDB ) {
 			try {
-				const db = await this.openDB();
-				await new Promise<void>( ( resolve, reject ) => {
-					const tx = db.transaction( this.STORE_NAME, 'readwrite' );
-					tx.oncomplete = () => resolve();
-					tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
-					tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
-					tx.objectStore( this.STORE_NAME ).put( record, this.RECORD_KEY );
-				} );
+				const result = await this.transactReadModifyWrite( modify );
+				if ( result && result.record ) {
+					this._lastSavedAt = result.record.savedAt;
+					this._lastTemplates = result.record.templates;
+				}
 				try {
 					localStorage.removeItem( this.FALLBACK_KEY );
 				} catch ( err ) {
 					// Best effort; a stale fallback is ignored while IDB reads back.
 				}
-				return { backend: 'indexeddb' };
+				return { backend: 'indexeddb', merged: result ? result.merged : false };
 			} catch ( err ) {
 				// Fall through to the full-record localStorage fallback below.
 			}
 		}
+		// Fallback path: localStorage is synchronous, so read-modify-write is
+		// atomic by construction — documented as sequential-only, not atomic.
+		const result = modify( fallbackNow );
 		try {
-			localStorage.setItem( this.FALLBACK_KEY, JSON.stringify( record ) );
-			return { backend: 'localstorage' };
+			localStorage.setItem( this.FALLBACK_KEY, JSON.stringify( result.record ) );
 		} catch ( err: any ) {
 			err.isQuotaError = err && ( err.name === 'QuotaExceededError' || err.code === 22 );
 			throw err;
 		}
+		this._lastSavedAt = result.record.savedAt;
+		this._lastTemplates = result.record.templates;
+		return { backend: 'localstorage', merged: result.merged };
 	},
 
 	async clear() {
