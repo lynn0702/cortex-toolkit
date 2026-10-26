@@ -5,7 +5,6 @@ import { getView, ensureView, getRating, ratingDice, setRatingDie } from './mode
 
 const props = defineProps<{
 	character: any;
-	selected?: any[];
 	traitSetID: number;
 	traitID: number;
 	subtraitID: number;
@@ -29,8 +28,6 @@ const subtrait = computed( () => {
 	const u = props.subtraitID;
 	return props.character.traitSets[ s ].traits[ t ].traits[ u ];
 } );
-
-const selector = computed( () => [ 'subtrait', props.traitSetID, props.traitID, props.subtraitID ] );
 
 const name = computed( {
 	get() {

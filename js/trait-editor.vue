@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, getRating, ratingDice, setRatingDie,
 isRated, resolveHitches, resolveVisibility, DIE_LADDER, rangeTop, isOutDie } from './model.ts';
@@ -151,18 +151,18 @@ const ratingType = computed( () => getRating( trait.value )?.type ?? null );
 // Out is a range option for Die/Dice ratings, defaulted off. Surgical:
 // setting true opts the range in, false drops the key.
 const ratingHasOut = computed( {
-get() {
-const r = getRating( trait.value );
-return !!r && ( r.type === 'Die' || r.type === 'Dice' ) && ( r as any ).out === true;
-},
-set( value: boolean ) {
-const t = trait.value as unknown as Record<string, any>;
-const r = t && t.rating;
-if ( !r || typeof r !== 'object' || ( r.type !== 'Die' && r.type !== 'Dice' ) ) return;
-if ( value ) r.out = true;
-else delete r.out;
-updateCharacter( props.character );
-},
+	get() {
+		const r = getRating( trait.value );
+		return !!r && ( r.type === 'Die' || r.type === 'Dice' ) && ( r as any ).out === true;
+	},
+	set( value: boolean ) {
+		const t = trait.value as unknown as Record<string, any>;
+		const r = t && t.rating;
+		if ( !r || typeof r !== 'object' || ( r.type !== 'Die' && r.type !== 'Dice' ) ) return;
+		if ( value ) r.out = true;
+		else delete r.out;
+		updateCharacter( props.character );
+	},
 } );
 
 function setRatingType( type: 'Counter' | 'Die' | 'Dice' | 'Pip' ) {
@@ -178,8 +178,8 @@ function setRatingType( type: 'Counter' | 'Die' | 'Dice' | 'Pip' ) {
 		const dice = cur ? ratingDice( cur ) : [];
 		const list = dice.length ? dice : [ size ];
 		const keepRange = prevRange && prevRange.length ? prevRange : [ ...DIE_LADDER ];
-if ( type === 'Die' ) setRatingDie( t, list[0], keepRange );
-else t.rating = { type: 'Dice', value: list, range: keepRange, ...( cur && ( cur as any ).out === true ? { out: true } : {} ) };
+		if ( type === 'Die' ) setRatingDie( t, list[0], keepRange );
+		else t.rating = { type: 'Dice', value: list, range: keepRange, ...( cur && ( cur as any ).out === true ? { out: true } : {} ) };
 	} else if ( type === 'Die' ) {
 		setRatingDie( t, size, range );
 	} else if ( type === 'Dice' ) {
@@ -433,19 +433,19 @@ const isTalentsTable = computed( () => getView( traitSet.value )?.style?.body ==
 const talentCol1Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col1 ) return labels.col1;
-	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col1' ) : 'TALENT' ) || 'TALENT';
+	return cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col1' ) || 'TALENT';
 } );
 
 const talentCol2Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col2 ) return labels.col2;
-	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col2' ) : 'ACTIVATION' ) || 'ACTIVATION';
+	return cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col2' ) || 'ACTIVATION';
 } );
 
 const talentCol3Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col3 ) return labels.col3;
-	return ( typeof cortexFunctions !== 'undefined' ? cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col3' ) : 'EFFECT' ) || 'EFFECT';
+	return cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col3' ) || 'EFFECT';
 } );
 
 const talentEffect = computed( {
@@ -829,17 +829,17 @@ function toggleTraitValue( val: any ) {
 }
 
 function toggleOutValue() {
-const t = trait.value as unknown as Record<string, any>;
-if ( isOut.value ) {
-t.isOut = false;
-cortexFunctions.setTraitDice( trait.value, [] );
-} else {
-t.isOut = true;
-setRatingDie( t, rangeTop( t ) + 2 );
-const r = t.rating;
-if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) r.out = true;
-}
-updateCharacter( props.character );
+	const t = trait.value as unknown as Record<string, any>;
+	if ( isOut.value ) {
+		t.isOut = false;
+		cortexFunctions.setTraitDice( trait.value, [] );
+	} else {
+		t.isOut = true;
+		setRatingDie( t, rangeTop( t ) + 2 );
+		const r = t.rating;
+		if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) r.out = true;
+	}
+	updateCharacter( props.character );
 }
 
 function duplicateTrait() {
@@ -847,7 +847,7 @@ function duplicateTrait() {
 	const s = props.traitSetID;
 	const t = props.traitID;
 
-	const clone = JSON.parse( JSON.stringify( character.traitSets[ s ].traits[ t ] ) );
+	const clone = structuredClone( toRaw( character.traitSets[ s ].traits[ t ] ) );
 	// A duplicate is a new instance: drop internal ids so keys and
 	// preferences never collide with the original (fresh ones are
 	// assigned on update).
@@ -1118,7 +1118,7 @@ function getDieDisplayValue( val: any ) {
 							</div>
 							<div>
 								<label :for="'trait-' + traitID + '-pip-checked'">
-									Filled / Bubbled In
+									Filled
 								</label>
 							</div>
 						</div>
@@ -1137,7 +1137,7 @@ function getDieDisplayValue( val: any ) {
 							</div>
 							<div>
 								<label :for="'trait-' + traitID + '-is-scale'">
-									Scale Die (inset on arc, triggers Keep 3 in roller)
+									Scale Die
 								</label>
 							</div>
 						</div>
@@ -1196,28 +1196,28 @@ function getDieDisplayValue( val: any ) {
 								:class="{ active: ratingType === rt }"
 								@click.stop="setRatingType(rt)"
 							>
-{{ rt }}
-</button>
-</div>
+								{{ rt }}
+							</button>
+						</div>
 
-<!-- OUT (range option for Die/Dice, default off) -->
-<div class="editor-toggles" v-if="isRatedTrait && (ratingType === 'Die' || ratingType === 'Dice')">
-<div>
-<input
-type="checkbox"
-:id="'trait-' + traitID + '-out'"
-name="ratingOut"
-v-model="ratingHasOut"
->
-</div>
-<div>
-<label :for="'trait-' + traitID + '-out'">
-Out
-</label>
-</div>
-</div>
+						<!-- OUT (range option for Die/Dice, default off) -->
+						<div class="editor-toggles" v-if="isRatedTrait && (ratingType === 'Die' || ratingType === 'Dice')">
+							<div>
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-out'"
+									name="ratingOut"
+									v-model="ratingHasOut"
+								>
+							</div>
+							<div>
+								<label :for="'trait-' + traitID + '-out'">
+									Out
+								</label>
+							</div>
+						</div>
 
-<!-- SINGLE DIE SELECTOR -->
+						<!-- SINGLE DIE SELECTOR -->
 						<ul class="editor-values" v-if="ratingType === 'Die'">
 							<li
 								v-for="val in availableValues"

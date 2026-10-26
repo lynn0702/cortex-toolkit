@@ -46,16 +46,15 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-24: Apart-rolling derives from hitches (0 rolls apart, never hitches); the resource name/body gate is gone. Staged dice carry no kind flags; groups, the per-source keep bonus, and the combine toggle key off hitches-0 sources. keepsExtra (Scale) is untouched.
 
 ### Costs & selection
-- 2026-10-10: Costs are objects, never bare numbers.
-- 2026-10-11: Cost cases: plot points (`{plotPoints: n}`); step a trait up or down (`{stepUp: "Trait"}`, `{stepDown: "Trait"}`); modify the roller pool (case decided, key open); purely narrative/descriptive (case decided, representation open).
-- 2026-10-24 (SFX costs are descriptive): an SFX cost never
-  executes. Costs are structured data ({plotPoints},
-  {stepUp}/{stepDown}, {pool}, {narrative}) that render as
-  text telling the table what adjustments to make; the
-  table applies them by hand with the app's own controls.
-  Mechanical cost payment was removed wherever it had been
-  added; the vocabulary, editor, validation, and codecs
-  remain.
+- 2026-10-26 (cost is dead): structured cost is removed from
+  the model. Cost lives in the prose of the SFX description,
+  which already carries cost and benefit in the majority of
+  SFX; one presentation preference (separating cost from
+  benefit for display) does not earn model-level treatment.
+  The cost vocabulary, editor Cost section, validation, and
+  codecs are removed, and cost payment machinery is removed
+  with them. The table reads the description and applies it
+  by hand with the app's own controls.
 - 2026-10-10: Selection primitives: `usableBy` (owner|anyone|opposition), `select` (one|any), `requiresSelect` (bool); the Designer sets them on type layers, the roller enforces per pool.
 - 2026-10-10: Selection defaults: usableBy owner, select any, requiresSelect false.
 
@@ -149,7 +148,7 @@ https://github.com/kaelri/cortex-toolkit.
 
 ## Open (decisions needed)
 
-- Cost vocabulary: pool-modification key and narrative-cost representation still open (cases decided 2026-10-11).
+- (none pending)
 
 ## Superseded (do not revive)
 
@@ -187,3 +186,5 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-18: `traitColumns` dead data — flank layout (kept where meaningful).
 - 2026-10-12: `haloConfig` persisted key and halo-attributes vocabulary — `ringConfig` / ring vocabulary.
 - 2026-10-12: `includeD4`, `styleHeader`/`styleHint`/`setStyle`, template `?v=33` confusion — removed/clarified.
+- 2026-10-10/11: Structured cost (cost as an object; `{plotPoints}`, `{stepUp}/{stepDown}`, `{pool}`, `{narrative}` cases) — cost is dead (2026-10-26); cost lives in SFX description prose.
+- 2026-10-24 (SFX costs are descriptive): kept the cost vocabulary, editor Cost section, validation, and codecs as descriptive data — superseded by 2026-10-26 (cost is dead).

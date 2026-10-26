@@ -15,8 +15,7 @@ const {
 	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
 	getSetRatingDie,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
-	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
-	sfxCostText
+	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
 } = injectTraitSet();
 </script>
 
@@ -205,7 +204,6 @@ const {
 										<span class="trait-sfx-description" v-if="sfx.description" v-html="renderText(sfx.description)"></span>
 										<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
 										<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">SFX...</span>
-										<span class="trait-sfx-cost" v-if="sfxCostText(sfx.cost)"> ({{ sfxCostText(sfx.cost) }})</span>
 									</template>
 								</li>
 							</ul>
@@ -464,7 +462,6 @@ const {
 									<span class="trait-sfx-description" v-if="sfx.description" v-html="renderText(sfx.description)"></span>
 									<span class="sfx-blank-line" v-else-if="submode === 'print'"></span>
 									<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'">SFX...</span>
-									<span class="trait-sfx-cost" v-if="sfxCostText(sfx.cost)"> ({{ sfxCostText(sfx.cost) }})</span>
 								</template>
 							</li>
 						</ul>

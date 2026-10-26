@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, type InjectionKey } from 'vue';
+import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, toRaw, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie } from './model.ts';
@@ -343,7 +343,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	function setBranchShare( key: 'left' | 'center' | 'right', val: number ) {
 		const view = ensureView( traitSet.value );
-	const cur = branchShares();
+		const cur = branchShares();
 		const next = {
 			left: key === 'left' ? val : cur.left,
 			center: key === 'center' ? val : cur.center,
@@ -510,7 +510,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
 			ctkFor( s ).ratingScale = scale;
-			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
@@ -519,7 +519,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
 			ctkFor( s ).subtraitRatingScale = scale;
-			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
@@ -535,7 +535,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			const ts = traitSet.value as unknown as Record<string, any>;
 			if ( !ts ) return;
 			ts.pool = Boolean( value );
-			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
@@ -555,7 +555,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			} else {
 				delete ts.rating;
 			}
-			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
@@ -572,7 +572,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			const ts = traitSet.value as unknown as Record<string, any>;
 			if ( !ts ) return;
 			ts.spendable = Boolean( value );
-			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
@@ -591,7 +591,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				const n = Math.floor( Number( value ) );
 				if ( Number.isFinite( n ) && n >= 0 ) ts.hitches = n;
 			}
-			updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
@@ -939,7 +939,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			};
 		}
 		ctk.ringConfig[ key ] = value;
-		updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+		updateCharacter( structuredClone( toRaw( props.character ) ) );
 	}
 
 	function resetRingPlacement() {
@@ -954,7 +954,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			scaleDieY: 0,
 			arcSlide: 0
 		};
-		updateCharacter( JSON.parse( JSON.stringify( props.character ) ) );
+		updateCharacter( structuredClone( toRaw( props.character ) ) );
 	}
 
 	function setFeature( featureID: keyof SetFeatures, value: any ) {

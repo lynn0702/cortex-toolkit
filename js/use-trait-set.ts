@@ -531,15 +531,14 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return renderText( clean );
 	}
 
-	function getDistinctionSfxText( trait: Trait ) {		if ( !trait?.sfx || !trait.sfx.length ) return '';
+	function getDistinctionSfxText( trait: Trait ) {
+		if ( !trait?.sfx || !trait.sfx.length ) return '';
 		const nonHinder = trait.sfx.filter( ( sfx: any ) => sfx !== 'hinder' && ( typeof sfx !== 'object' || sfx.name?.toLowerCase() !== 'hinder' ) );
 		if ( !nonHinder.length ) return '';
 		const first = nonHinder[0];
-		const text = typeof first === 'string' ? first
+		return typeof first === 'string' ? first
 			: ( first.name && first.description ) ? `${first.name}: ${first.description}`
 			: first.description || first.name || '';
-		const cost = typeof first === 'object' ? cortexFunctions.sfxCostText( ( first as any ).cost ) : '';
-		return cost ? text + ' (' + cost + ')' : text;
 	}
 
 	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
@@ -559,10 +558,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			}
 			return typeof sfx === 'object' ? sfx : { name: sfx, description: '' };
 		} );
-	}
-
-	function sfxCostText( cost: unknown ) {
-		return cortexFunctions.sfxCostText( cost );
 	}
 
 	// Chrome words with label hooks (view.labels.*); static defaults live
@@ -1069,7 +1064,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return false;
 	}
 
-	function getTraitSetSlotCount( traitSetArg: TraitSet ) {		const custom = getView( traitSetArg );
+	function getTraitSetSlotCount( traitSetArg: TraitSet ) {
+		const custom = getView( traitSetArg );
 		const bodyStyle = custom?.style?.body;
 		if ( bodyStyle === 'notes' || bodyStyle === 'image' ) return 0;
 
@@ -1094,7 +1090,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleStressClick,
 		handleStressOutClick, shouldShowOut, isStressOut, getSharedHinderLines, renderHinderLine,
 		getDistinctionSfxText, getDisplayTraitSfx, getHinderSentence,
-		sfxCostText,
 		hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue,
 		getStressCompanion, isStressCompanion, visibleSubtraits,
 		shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,

@@ -24,6 +24,6 @@
 		"types": "node scripts/gen-types.mjs",
 		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",
-    "test": "node scripts/cortex-pal-tests.js && node scripts/spotlight-grid-tests.js && node scripts/merge-tests.js && node scripts/migration-tests.js && node scripts/materialize-tests.js && node scripts/template-parity-tests.js && node scripts/storage-tests.js && node scripts/export-tests.js && node scripts/rating-tests.js && node scripts/cost-tests.js && node scripts/functions-tests.js"
+    "test": "node scripts/cortex-pal-tests.js && node scripts/spotlight-grid-tests.js && node scripts/merge-tests.js && node scripts/migration-tests.js && node scripts/materialize-tests.js && node scripts/template-parity-tests.js && node scripts/storage-tests.js && node scripts/export-tests.js && node scripts/rating-tests.js && node scripts/functions-tests.js"
 	}
 }

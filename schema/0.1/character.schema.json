@@ -339,53 +339,6 @@
 				"type": "string",
 				"description": "A description of the SFX."
 			},
-			"cost": {
-				"type": [
-					"object",
-					"null"
-				],
-				"description": "The SFX cost: plot points, step modifiers, a staged-pool dice payment, or a narrative beat. One key per kind; always an object, never a bare number.",
-				"properties": {
-					"plotPoints": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"minimum": 0
-					},
-					"stepUp": {
-						"type": [
-							"string",
-							"null"
-						]
-					},
-					"stepDown": {
-						"type": [
-							"string",
-							"null"
-						]
-					},
-					"pool": {
-						"type": [
-							"string",
-							"null"
-						],
-						"enum": [
-							"drop-highest",
-							"drop-die",
-							"split-largest",
-							null
-						]
-					},
-					"narrative": {
-						"type": [
-							"boolean",
-							"null"
-						]
-					}
-				},
-				"additionalProperties": false
-			},
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},

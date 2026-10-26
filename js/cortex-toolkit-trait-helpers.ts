@@ -4,7 +4,7 @@
 // Model recap:
 //   entity: { name, game, type, challenge?, sets: { [setName]: set } }
 //   set:    { description?, select?, requiresSelect?, usableBy?, traits: { [name]: trait } }
-//   trait:  "d8"  (shorthand)  or  { value?, description?, cost?, usableBy?, traits? }
+//   trait:  "d8"  (shorthand)  or  { value?, description?, usableBy?, traits? }
 // Merge: mergeLayers(...layers), later wins — absent inherits, null clears.
 
 export const DIE_SIZES = [4, 6, 8, 10, 12] as const;
@@ -16,22 +16,9 @@ export type SelectMode = "one" | "any";
 export type StepDir = "up" | "down";
 export type Party = "owner" | "opposition";
 
-export type PoolCostOp = "drop-highest" | "drop-die" | "split-largest";
-
-export interface Cost {
-  plotPoints?: number;
-  stepUp?: string;
-  stepDown?: string;
-  /** Pay from the staged dice pool. Narrative costs are display-only. */
-  pool?: PoolCostOp;
-  narrative?: boolean;
-  [key: string]: unknown;
-}
-
 export interface TraitObject {
 	value?: string | null;
 	description?: string;
-  cost?: Cost;
   usableBy?: UsableBy;
   /** Staging behaviour: adding the node stages its whole array of available dice. */
   pool?: boolean;
@@ -106,7 +93,7 @@ function deepClone<T>(v: T): T {
  * Three-state per key: absent → inherit from lower layer,
  * null → explicitly clear, concrete value → local override.
  * Only the name-keyed maps (`sets`, `traits`) merge recursively —
- * everything else (cost objects, value, description, arrays…) replaces.
+ * everything else (value, description, arrays…) replaces.
  * Trait shorthand ("d12") normalizes to { value: "d12" } in a first pass,
  * but ONLY under a `traits` map, so top-level strings like name/game/challenge
  * are untouched. That means { value: "d12" } merged with { description: "Big!" }

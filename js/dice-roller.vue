@@ -188,11 +188,11 @@ function addScaleAdHoc( size: number ) {
 	isRolled.value = false;
 }
 
-function addResourceAdHoc( size: number ) {
+function addSeparateAdHoc( size: number ) {
 	emit( 'addDie', {
 		size: size,
 		qty: 1,
-		source: 'Resource',
+		source: 'Separate',
 		hitches: 0
 	} );
 	isRolled.value = false;
@@ -595,13 +595,13 @@ function copyOutput() {
 					</div>
 				</div>
 				<div class="roller-scale-row" style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
-					<span class="roller-sublabel" style="font-weight: 700; color: #0284c7; font-style: normal; font-size: 0.65rem; text-transform: uppercase;">Resource Die</span>
+					<span class="roller-sublabel" style="font-weight: 700; color: #0284c7; font-style: normal; font-size: 0.65rem; text-transform: uppercase;">Separate Die</span>
 					<div style="display: flex; gap: 0.25rem;">
 						<button
 							v-for="size in diceSizes"
 							:key="'res-quick-d' + size"
 							class="roller-btn-res-quick"
-							@click="addResourceAdHoc(size)"
+							@click="addSeparateAdHoc(size)"
 							:title="'Add d' + size + ' Separate Die'"
 							style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 2px 5px; cursor: pointer; line-height: 1;"
 						>
@@ -737,10 +737,10 @@ function copyOutput() {
 							</div>
 						</div>
 
-						<!-- Exempt Separately Section (hitches 0: own pool, no hitches) -->
+						<!-- Separate Section (hitches 0: own pool, no hitches) -->
 						<div class="roller-resources-section" v-if="separateGroupsResults.length > 0">
 							<div class="roller-group-header">
-								<span><i class="fas fa-shield-halved"></i> Exempt</span>
+								<span><i class="fas fa-shield-halved"></i> Separate</span>
 								<span class="group-sub">No Hitches • Keep Highest</span>
 							</div>
 							<div v-for="group in separateGroupsResults" :key="group.name" class="roller-resource-group-card">

@@ -67,7 +67,7 @@ const {
 						</select>
 						<div class="editor-checkbox-row" v-if="styleBody === 'subtrait-columns'" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-branch-arrows'" name="branchArrows" v-model="branchArrows">
-							<label :for="'trait-set-' + traitSetID + '-branch-arrows'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Show connecting arrows</label>
+							<label :for="'trait-set-' + traitSetID + '-branch-arrows'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connecting arrows</label>
 						</div>
 					</div>
 
@@ -79,7 +79,7 @@ const {
 					<div class="editor-label">Out Marker</div>
 					<div class="editor-toggles">
 						<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-out'" name="stressOut" :true-value="true" :false-value="false" v-model="includeOut"></div>
-						<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Include 💥 Out Marker</label></div>
+						<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Out marker</label></div>
 					</div>
 					<div v-if="includeOut" style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
 						<div style="flex: 1;">
@@ -117,7 +117,7 @@ const {
 						<div class="editor-label">Attached Stress / Track</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" name="hasAttachedStress" v-model="hasAttachedStress">
-							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Attached Stress to Traits</label>
+							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Attached stress</label>
 						</div>
 					</div>
 
@@ -148,11 +148,11 @@ const {
 						</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pips-connected'" name="pipsConnected" v-model="pipsConnected">
-							<label :for="'trait-set-' + traitSetID + '-pips-connected'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connect Pips with Horizontal Line</label>
+							<label :for="'trait-set-' + traitSetID + '-pips-connected'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Connect pips</label>
 						</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-pip-labels'" name="pipLabels" v-model="pipLabels">
-							<label :for="'trait-set-' + traitSetID + '-pip-labels'" style="margin: 0; font-size: 0.8rem; cursor: pointer;" title="Name a pip per row: rows render as bubble-plus-label entries">Labels (one named entry per row)</label>
+							<label :for="'trait-set-' + traitSetID + '-pip-labels'" style="margin: 0; font-size: 0.8rem; cursor: pointer;" title="Name a pip per row: rows render as bubble-plus-label entries">Labels</label>
 						</div>
 					</div>
 
@@ -191,7 +191,7 @@ const {
 						<div class="editor-label">Statements</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" name="statementMode" v-model="isStatementSet">
-							<label :for="'trait-set-' + traitSetID + '-statement-mode'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Statement Field on Traits</label>
+							<label :for="'trait-set-' + traitSetID + '-statement-mode'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Statement field</label>
 						</div>
 						<div class="editor-checkbox-row" v-if="isStatementSet" style="display: flex; align-items: center; gap: 0.4rem; margin-left: 1.25rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-questioned-pip'" name="questionedPip" v-model="hasQuestionedPip">
@@ -204,7 +204,7 @@ const {
 						<div class="editor-label">Counter</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-counter-col'" name="counterCol" v-model="hasCounterColumn">
-							<label :for="'trait-set-' + traitSetID + '-counter-col'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Enable Counter / XP Column</label>
+							<label :for="'trait-set-' + traitSetID + '-counter-col'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Counter column</label>
 						</div>
 						<div v-if="hasCounterColumn" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem;">
 							<label :for="'trait-set-' + traitSetID + '-counter-label'" style="font-size: 0.75rem; color: #64748b; margin: 0;">Header Label:</label>

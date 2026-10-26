@@ -277,16 +277,6 @@ export interface Sfx {
    * A description of the SFX.
    */
   description: string;
-  /**
-   * The SFX cost: plot points, step modifiers, a staged-pool dice payment, or a narrative beat. One key per kind; always an object, never a bare number.
-   */
-  cost?: {
-    plotPoints?: number | null;
-    stepUp?: string | null;
-    stepDown?: string | null;
-    pool?: "drop-highest" | "drop-die" | "split-largest" | null;
-    narrative?: boolean | null;
-  } | null;
   tags: Tags;
   view?: View;
   custom?: Custom;

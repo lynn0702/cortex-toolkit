@@ -103,7 +103,6 @@ function sfxArrayFrom(container: unknown): unknown[] | undefined {
 		if (o.tags !== undefined) entry.tags = clone(o.tags);
 		if (o.view !== undefined) entry.view = clone(o.view);
 		if (o.custom !== undefined) entry.custom = clone(o.custom);
-		if (o.cost !== undefined) entry.cost = clone(o.cost);
 		out.push(entry);
 	}
 	const slots = node.slots && typeof node.slots === "object" && !Array.isArray(node.slots) ? node.slots : {};
@@ -114,7 +113,6 @@ function sfxArrayFrom(container: unknown): unknown[] | undefined {
 		if (o.tags !== undefined) entry.tags = clone(o.tags);
 		if (o.view !== undefined) entry.view = clone(o.view);
 		if (o.custom !== undefined) entry.custom = clone(o.custom);
-		if (o.cost !== undefined) entry.cost = clone(o.cost);
 		out.push(entry);
 	}
 	return out.length ? out : undefined;
@@ -429,12 +427,11 @@ function sfxContainerFrom(arr: unknown[]): Record<string, unknown> {
 		if (src.tags !== undefined) o.tags = clone(src.tags);
 		if (src.view !== undefined) o.view = clone(src.view);
 		if (src.custom !== undefined) o.custom = clone(src.custom);
-		if (src.cost !== undefined) o.cost = clone(src.cost);
 		// Blank slot objects are render-time, never stored: drop nameless
 		// entries carrying nothing.
 		const hasContent = name.length > 0 ||
 			(typeof o.description === "string" && o.description.length > 0) ||
-			o.tags !== undefined || o.view !== undefined || o.custom !== undefined || o.cost !== undefined;
+			o.tags !== undefined || o.view !== undefined || o.custom !== undefined;
 		if (!hasContent) return;
 		if (!name.length) slots[String(i)] = o;
 		else traits[name] = o;

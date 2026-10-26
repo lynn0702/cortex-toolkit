@@ -303,23 +303,6 @@ export const cortexFunctions = {
 		if ( !text || typeof text !== 'string' ) return '';
 		return this.renderInlineMarkdown( text ).replace( /\n/g, '<br>' );
 	},
-
-	// An SFX cost as terse display words, e.g. "2 PP, drop highest die".
-	// Costs are always objects; anything else renders as no cost.
-	sfxCostText: function( cost: unknown ) {
-		if ( !cost || typeof cost !== 'object' || Array.isArray( cost ) ) return '';
-		const c = cost as Record<string, unknown>;
-		const bits: string[] = [];
-		if ( typeof c.plotPoints === 'number' && c.plotPoints > 0 ) bits.push( c.plotPoints + ' PP' );
-		if ( typeof c.stepUp === 'string' && c.stepUp.length ) bits.push( 'step up ' + c.stepUp );
-		if ( typeof c.stepDown === 'string' && c.stepDown.length ) bits.push( 'step down ' + c.stepDown );
-		if ( c.pool === 'drop-highest' ) bits.push( 'drop highest die' );
-		else if ( c.pool === 'drop-die' ) bits.push( 'drop a die' );
-		else if ( c.pool === 'split-largest' ) bits.push( 'split largest die' );
-		if ( c.narrative === true ) bits.push( 'narrative beat' );
-		return bits.join( ', ' );
-	},
-
 	escapeHtml: function( text: unknown ) {
 		if ( text === null || text === undefined ) return '';
 		return String( text )
