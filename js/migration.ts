@@ -54,15 +54,133 @@ export const cortexMigration = {
 		return typeof text === 'string' && this.FILLER_DESCRIPTIONS.indexOf( text ) !== -1;
 	},
 
-	normalizeView: function( obj: any ) {
+	// A set is a statement context when the sheet renders a statement box
+	// for every trait. Old trait-level statement fields dissolve into a
+	// child trait; description is the alternative sentence home there.
+	statementContext: function( set: any ) {
+		if ( !set || typeof set !== 'object' ) return false;
+		const bag = ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) )
+			? set.view
+			: ( set.custom && set.custom.cortexToolkit && typeof set.custom.cortexToolkit === 'object' ? set.custom.cortexToolkit : null );
+		const flag = ( set.statement !== undefined && set.statement !== null ) ? set.statement : bag?.statement;
+		if ( flag ) return true;
+		return Boolean( bag && bag.style && typeof bag.style === 'object' && bag.style.body === 'paired-slots' );
+	},
+
+	isStatementContainerNode: function( node: any ) {
+		return Boolean( node && typeof node === 'object' && !Array.isArray( node ) && node.name === 'Statement' && node.rating === undefined );
+	},
+
+	// Create/rename the single sentence child inside the parent trait. Works
+	// in both render (array) and layered (map) trait shapes. `filled` null
+	// preserves an existing pip state; a new child starts unfilled.
+	addStatementChild: function( node: any, sentence: string, filled: boolean | null, warnings?: string[], path?: string ) {
+		if ( !node || typeof node !== 'object' || !sentence ) return;
+		if ( Array.isArray( node.traits ) ) {
+			let container = node.traits.find( ( st: any ) => this.isStatementContainerNode( st ) );
+			if ( !container ) {
+				container = { name: 'Statement', traits: [] };
+				node.traits.push( container );
+			}
+			if ( !Array.isArray( container.traits ) ) container.traits = [];
+			let child = container.traits[ 0 ];
+			const hadChild = Boolean( child && typeof child === 'object' );
+			if ( !hadChild ) {
+				child = { name: sentence };
+				container.traits.push( child );
+			} else {
+				child.name = sentence;
+			}
+			if ( filled !== null || !hadChild ) {
+				child.rating = { type: 'Pip', value: [ filled === true ] };
+			}
+			return;
+		}
+		if ( !node.traits || typeof node.traits !== 'object' ) node.traits = {};
+		let container = node.traits.Statement;
+		if ( container !== undefined && !( container && typeof container === 'object' && !Array.isArray( container ) && container.rating === undefined ) ) {
+			this.warn( warnings, ( path || 'trait' ) + ': trait "Statement" collides with the statement container, statement dropped' );
+			return;
+		}
+		if ( container === undefined ) {
+			container = { traits: {} };
+			node.traits.Statement = container;
+		}
+		if ( !container.traits || typeof container.traits !== 'object' || Array.isArray( container.traits ) ) container.traits = {};
+		const keys = Object.keys( container.traits );
+		let child: any = null;
+		if ( keys.length ) {
+			child = container.traits[ keys[ 0 ] ];
+			delete container.traits[ keys[ 0 ] ];
+		}
+		const hadChild = Boolean( child && typeof child === 'object' && !Array.isArray( child ) );
+		if ( !hadChild ) child = {};
+		container.traits[ sentence ] = child;
+		if ( filled !== null || !hadChild ) {
+			child.rating = { type: 'Pip', value: [ filled === true ] };
+		}
+	},
+
+	// Retire the old `statement`/`questioned` pair in place. The sentence
+	// becomes a child trait's name (description is the alternative home in
+	// a statement context); the questioned flag becomes that child's Pip.
+	// Idempotent: absent fields return untouched.
+	dissolveStatement: function( node: any, set: any, warnings?: string[], path?: string ) {
+		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) return node;
+		const bag = ( node.view && typeof node.view === 'object' && !Array.isArray( node.view ) )
+			? node.view
+			: ( node.custom && node.custom.cortexToolkit && typeof node.custom.cortexToolkit === 'object' ? node.custom.cortexToolkit : null );
+		const ownQuestioned = node.custom && typeof node.custom === 'object'
+			&& Object.prototype.hasOwnProperty.call( node.custom, 'questioned' );
+		const hasStatement = Object.prototype.hasOwnProperty.call( node, 'statement' );
+		const hasQuestioned = Object.prototype.hasOwnProperty.call( node, 'questioned' )
+			|| ownQuestioned
+			|| Boolean( bag && Object.prototype.hasOwnProperty.call( bag, 'questioned' ) );
+
+		const direct = typeof node.statement === 'string' ? node.statement.trim() : '';
+		const description = typeof node.description === 'string' ? node.description.trim() : '';
+		const questioned = node.questioned === true
+			|| ( ownQuestioned && node.custom.questioned === true )
+			|| ( bag && bag.questioned === true );
+		const filled = hasQuestioned ? questioned : null;
+		// The statement box already read description as its fallback in a
+		// statement context, so a description-only trait moves its sentence
+		// home too. Outside that context (and without a questioned flag)
+		// description stays a description.
+		const fallback = !direct && description && ( questioned || this.statementContext( set ) );
+		if ( !hasStatement && !hasQuestioned && !fallback ) return node;
+
+		let sentence = direct;
+		if ( !sentence && fallback ) sentence = description;
+		if ( sentence ) {
+			this.addStatementChild( node, sentence, filled, warnings, path );
+		} else if ( questioned ) {
+			this.warn( warnings, ( path || 'trait' ) + ': questioned statement had no text, cannot represent' );
+		}
+
+		delete node.statement;
+		delete node.questioned;
+		if ( node.custom && typeof node.custom === 'object' ) {
+			if ( node.custom.cortexToolkit && typeof node.custom.cortexToolkit === 'object' ) delete node.custom.cortexToolkit.questioned;
+			delete node.custom.questioned;
+			if ( !Object.keys( node.custom ).length ) delete node.custom;
+		}
+		if ( node.view && typeof node.view === 'object' ) {
+			delete node.view.questioned;
+			if ( !Object.keys( node.view ).length ) delete node.view;
+		}
+		return node;
+	},
+
+	normalizeView: function( obj: any, warnings?: string[] ) {
 		if ( !obj || typeof obj !== 'object' ) return obj;
 
 		if ( Array.isArray( obj ) ) {
-			obj.forEach( ( item: any ) => this.normalizeView( item ) );
+			obj.forEach( ( item: any ) => this.normalizeView( item, warnings ) );
 			return obj;
 		}
 		if ( Array.isArray( obj.characters ) ) {
-			obj.characters.forEach( ( c: any ) => this.normalizeView( c ) );
+			obj.characters.forEach( ( c: any ) => this.normalizeView( c, warnings ) );
 		}
 
 		const normalizeNode = ( node: any ) => {
@@ -78,13 +196,14 @@ export const cortexMigration = {
 			}
 		};
 
-		const normalizeTraitsArray = ( traits: any, label: string ) => {
+		const normalizeTraitsArray = ( traits: any, set: any ) => {
 			if ( !Array.isArray( traits ) ) return;
 			traits.forEach( ( tr: any ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				normalizeNode( tr );
+				this.dissolveStatement( tr, set, warnings, 'trait' );
 				this.migrateNodeRating( tr, false );
-				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits, label );
+				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits, set );
 			} );
 		};
 
@@ -92,17 +211,18 @@ export const cortexMigration = {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
 			this.migrateNodeRating( set, true );
-			normalizeTraitsArray( set.traits, this.stressCompanionLabel( set ) );
+			normalizeTraitsArray( set.traits, set );
 			this.migrateResourceSet( set );
 		};
 
-		const normalizeLayeredTraits = ( traits: any, label: string ) => {
+		const normalizeLayeredTraits = ( traits: any, set: any ) => {
 			if ( !traits || typeof traits !== 'object' || Array.isArray( traits ) ) return;
 			Object.values( traits ).forEach( ( tr: any ) => {
 				if ( !tr || typeof tr !== 'object' ) return;
 				normalizeNode( tr );
+				this.dissolveStatement( tr, set, warnings, 'trait' );
 				this.migrateNodeRating( tr, false );
-				if ( tr.traits ) normalizeLayeredTraits( tr.traits, label );
+				if ( tr.traits ) normalizeLayeredTraits( tr.traits, set );
 			} );
 		};
 
@@ -110,9 +230,8 @@ export const cortexMigration = {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
 			this.migrateNodeRating( set, true );
-			const label = this.stressCompanionLabel( set );
-			if ( set.traits ) normalizeLayeredTraits( set.traits, label );
-			if ( set.slots ) normalizeLayeredTraits( set.slots, label );
+			if ( set.traits ) normalizeLayeredTraits( set.traits, set );
+			if ( set.slots ) normalizeLayeredTraits( set.slots, set );
 			this.migrateResourceSet( set );
 		};
 
@@ -282,6 +401,10 @@ export const cortexMigration = {
 			? r.value.filter( ( x: unknown ) => ( typeof x === 'number' && Number.isFinite( x ) ) || typeof x === 'boolean' )
 			: [];
 		const range = Array.isArray( r.range ) ? r.range.filter( ( x: unknown ) => typeof x === 'number' && Number.isFinite( x ) ) : [];
+		// A Pip is a bubble, filled or not. Statement pips carry no ladder of
+		// their own (the [true, false] pair is derived); set-level tracks may
+		// still store a bubble count, which is kept when present.
+		if ( r.type === 'Pip' && !range.length ) return { type: r.type, value: value };
 		return { type: r.type, value: value, range: range.length ? range : [ 4, 6, 8, 10, 12 ] };
 	},
 
@@ -359,7 +482,7 @@ export const cortexMigration = {
 		if ( tr.spendable === undefined ) tr.spendable = true;
 	},
 
-	migrateTrait: function( old: any, warnings: string[], path: string ): { key: string; raw: any } | null {
+	migrateTrait: function( old: any, warnings: string[], path: string, statementSet?: boolean ): { key: string; raw: any } | null {
 		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
 			this.warn( warnings, path + ': dropped non-object trait' );
 			return null;
@@ -371,23 +494,39 @@ export const cortexMigration = {
 		}
 		const here = path + '/' + key;
 		const node: any = {};
-		const nums = this.diceIntsFor( old, warnings, here );
 		let single: number | null = null;
-		if ( nums.length > 1 ) {
-			node.rating = { type: 'Dice', value: nums.slice().sort( ( a: number, b: number ) => b - a ), range: [ 4, 6, 8, 10, 12 ] };
-			node.spendable = true;
-		} else if ( nums.length === 1 ) {
-			single = nums[0];
+		// Canonical rating wins (a render-model statement pip rides here);
+		// day-1 numeric keys read through only when no object rating exists.
+		const existingRating = old.rating === null ? null : this.normalizeRatingObject( old.rating );
+		if ( existingRating ) {
+			node.rating = existingRating;
+		} else if ( old.rating === null ) {
+			node.rating = null;
+		} else {
+			const nums = this.diceIntsFor( old, warnings, here );
+			if ( nums.length > 1 ) {
+				node.rating = { type: 'Dice', value: nums.slice().sort( ( a: number, b: number ) => b - a ), range: [ 4, 6, 8, 10, 12 ] };
+				node.spendable = true;
+			} else if ( nums.length === 1 ) {
+				single = nums[0];
+			}
 		}
 		const desc = ( typeof old.description === 'string' && old.description.length && !this.isFillerDescription( old.description ) )
 			? old.description : null;
-		const stmt = ( typeof old.statement === 'string' && old.statement.length ) ? old.statement : null;
+		const stmt = ( typeof old.statement === 'string' && old.statement.length ) ? old.statement.trim() : null;
+		const ownQuestioned = old.custom && typeof old.custom === 'object'
+			&& Object.prototype.hasOwnProperty.call( old.custom, 'questioned' );
+		const hasQuestioned = Object.prototype.hasOwnProperty.call( old, 'questioned' )
+			|| ownQuestioned
+			|| ( old.view && typeof old.view === 'object' && Object.prototype.hasOwnProperty.call( old.view, 'questioned' ) );
+		const questioned = old.questioned === true
+			|| ( ownQuestioned && old.custom.questioned === true )
+			|| ( old.view && typeof old.view === 'object' && old.view.questioned === true );
 		if ( typeof old.description === 'string' && old.description.length && !desc ) {
 			this.warn( warnings, here + ': dropped filler description' );
 		}
 		if ( desc ) node.description = desc;
 		else if ( stmt ) node.description = stmt;
-		if ( old.questioned === true ) node.questioned = true;
 		if ( ( typeof old.xp === 'number' && old.xp !== 0 ) || ( typeof old.xp === 'string' && old.xp.length ) ) node.xp = old.xp;
 		if ( ( typeof old.counter === 'number' && old.counter !== 0 ) || ( typeof old.counter === 'string' && old.counter.length ) ) node.counter = old.counter;
 		if ( old.ratingPosition !== undefined && old.ratingPosition !== null ) {
@@ -400,7 +539,7 @@ export const cortexMigration = {
 		if ( Array.isArray( old.traits ) && old.traits.length ) {
 			const subs: any = {};
 			old.traits.forEach( ( st: any ) => {
-				const m = this.migrateTrait( st, warnings, here );
+				const m = this.migrateTrait( st, warnings, here, statementSet );
 				if ( m ) {
 					if ( subs[m.key] !== undefined ) this.warn( warnings, here + ': duplicate subtrait ' + JSON.stringify( m.key ) + ', last wins' );
 					subs[m.key] = m.raw;
@@ -424,6 +563,16 @@ export const cortexMigration = {
 				}
 				node.traits[n] = null;
 			} );
+		}
+		// The sentence moves into its own child trait; the questioned flag
+		// becomes that child's Pip. Description is the fallback home in a
+		// statement context (the box already read it there).
+		let sentence = stmt;
+		if ( !sentence && desc && ( questioned || statementSet ) ) sentence = desc;
+		if ( sentence ) {
+			this.addStatementChild( node, sentence, hasQuestioned ? questioned : null, warnings, here );
+		} else if ( questioned ) {
+			this.warn( warnings, here + ': questioned statement had no text, cannot represent' );
 		}
 		const keys = Object.keys( node );
 		if ( keys.length === 0 && single ) return { key: key, raw: { rating: { type: 'Die', value: [ single ], range: [ 4, 6, 8, 10, 12 ] } } };
@@ -460,8 +609,9 @@ export const cortexMigration = {
 		if ( old.custom && typeof old.custom === 'object' && Object.keys( old.custom ).length ) droppedPresentation.push( 'custom' );
 		if ( droppedPresentation.length ) this.warn( warnings, here + ': dropped presentation keys (' + droppedPresentation.join( ', ' ) + ') to type layer' );
 		if ( Array.isArray( old.tags ) && old.tags.length ) set.tags = old.tags.slice();
+		const statementSet = this.statementContext( old );
 		( Array.isArray( old.traits ) ? old.traits : [] ).forEach( ( tr: any ) => {
-			const m = this.migrateTrait( tr, warnings, here );
+			const m = this.migrateTrait( tr, warnings, here, statementSet );
 			if ( m ) {
 				if ( set.traits[m.key] !== undefined ) this.warn( warnings, here + ': duplicate trait ' + JSON.stringify( m.key ) + ', last wins' );
 				set.traits[m.key] = m.raw;
@@ -648,7 +798,7 @@ export const cortexMigration = {
 	//   layers; it is future work.
 
 	// Scalar trait keys carried verbatim (presence preserved) in templates.
-	TEMPLATE_TRAIT_SCALARS: ['label', 'description', 'statement', 'questioned', 'xp', 'counter', 'ratingPosition', 'tags', 'pool', 'spendable', 'hitches', 'keepsExtra'] as string[],
+	TEMPLATE_TRAIT_SCALARS: ['label', 'description', 'xp', 'counter', 'ratingPosition', 'tags', 'pool', 'spendable', 'hitches', 'keepsExtra'] as string[],
 
 	migrateTemplateTrait: function( old: any, warnings: string[], path: string ): any {
 		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
@@ -774,7 +924,7 @@ export const cortexMigration = {
 		if ( !entry || typeof entry !== 'object' || Array.isArray( entry ) ) {
 			return { data: null, warnings: ['input: not a template entry'] };
 		}
-		this.normalizeView( entry );
+		this.normalizeView( entry, warnings );
 		const ch = entry.character;
 		if ( !ch || typeof ch !== 'object' || !Array.isArray( ch.traitSets ) ) {
 			return { data: null, warnings: ['input: entry has no character.traitSets'] };
@@ -1077,7 +1227,7 @@ export const cortexMigration = {
 	migratePlacement: function( charObj: any ): string[] {
 		const warnings: string[] = [];
 		if ( !charObj || typeof charObj !== 'object' ) return warnings;
-		this.normalizeView( charObj );
+		this.normalizeView( charObj, warnings );
 		const char = charObj.character || charObj;
 		const ctkChar = char?.view || char?.custom?.cortexToolkit;
 

@@ -101,11 +101,6 @@
 	flex: 1 1 auto;
 	min-width: 0;
 
-	@media screen and (max-width: 768px) {
-		&.mobile-show-roller > .character-sheet {
-			display: none;
-		}
-	}
 
 	@media print {
 		top: 0;

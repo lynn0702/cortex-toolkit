@@ -12,6 +12,7 @@ const props = defineProps<{
 	traitSetID: number;
 	traitID: number;
 	open: boolean;
+	submode?: string | null;
 	viewY?: number | null;
 }>();
 
@@ -35,6 +36,9 @@ const nameBeforeEdit = ref( '' );
 const traitSet = computed( () => props.character?.traitSets?.[ props.traitSetID ] );
 
 const trait = computed( () => props.character?.traitSets?.[ props.traitSetID ]?.traits?.[ props.traitID ] );
+
+const isPlay = computed( () => props.submode === 'play' );
+const canDeleteInPlay = computed( () => cortexFunctions.isPlayAddRemovableSet( traitSet.value ) );
 
 const templateEntry = computed( () => cortexFunctions.resolveTemplateFor( props.character, rootTemplates() ) );
 
@@ -69,12 +73,11 @@ const hasQuestionedPip = computed( () => Boolean( getView( traitSet.value )?.has
 
 const isQuestioned = computed( {
 	get() {
-		return Boolean( trait.value?.questioned ?? trait.value?.custom?.questioned );
+		return cortexFunctions.isStatementFilled( trait.value );
 	},
 	set( val: any ) {
-		setProperty( 'questioned', Boolean( val ) );
-		if ( !trait.value.custom ) trait.value.custom = {};
-		trait.value.custom.questioned = Boolean( val );
+		if ( !trait.value ) return;
+		if ( !cortexFunctions.setStatementFilled( trait.value, Boolean( val ) ) ) return;
 		updateCharacter( props.character );
 	},
 } );
@@ -197,7 +200,7 @@ function setRatingType( type: 'Counter' | 'Die' | 'Dice' | 'Pip' ) {
 function counterBounds(): [ number, number ] {
 	const r = getRating( trait.value );
 	if ( r && r.type === 'Counter' ) {
-		const nums = r.range.filter( ( n ): n is number => typeof n === 'number' );
+		const nums = ( r.range || [] ).filter( ( n ): n is number => typeof n === 'number' );
 		if ( nums.length >= 2 ) {
 			const lo = nums[0], hi = nums[1];
 			return lo <= hi ? [ lo, hi ] : [ hi, lo ];
@@ -259,7 +262,8 @@ function commitPipBubbleCount( event: Event ) {
 const pipBubbleCount = computed( () => {
 	const r = getRating( trait.value );
 	if ( !r || r.type !== 'Pip' ) return 0;
-	if ( r.range.length && typeof r.range[0] === 'number' && r.range[0] > 0 ) return Math.floor( r.range[0] );
+	const range = r.range || [];
+	if ( range.length && typeof range[0] === 'number' && range[0] > 0 ) return Math.floor( range[0] );
 	return r.value.length;
 } );
 
@@ -402,11 +406,23 @@ const traitVisibility = computed( {
 
 const description = computed( {
 	get() {
-		return trait.value?.statement ?? trait.value?.description ?? '';
+		return trait.value?.description ?? '';
 	},
 	set( val: string ) {
 		setProperty( 'description', val );
-		setProperty( 'statement', val );
+	},
+} );
+
+// The statement is a child trait: its name is the sentence and its Pip is
+// the questioned state. Editing here creates/renames/removes that child.
+const statementText = computed( {
+	get() {
+		return cortexFunctions.statementText( trait.value );
+	},
+	set( val: string ) {
+		if ( !trait.value ) return;
+		cortexFunctions.setStatementText( trait.value, val );
+		updateCharacter( props.character );
 	},
 } );
 
@@ -426,20 +442,21 @@ const editableSFX = computed( () => {
 		.filter( ( idx: number ) => idx !== -1 );
 } );
 
-// Child traits that are subtraits, not the SFX container. Index is the
-// real position in `trait.traits`, so the subtrait editor reads correctly.
+// Child traits that are subtraits, not the SFX or statement containers.
+// Index is the real position in `trait.traits`, so the subtrait editor
+// reads correctly.
 const subtraits = computed( () => {
 	const subs = trait.value?.traits;
 	if ( !Array.isArray( subs ) ) return [];
 	return subs
 		.map( ( sub: any, idx: number ) => ( { sub, idx } ) )
-		.filter( ( item: any ) => !cortexFunctions.isSfxContainer( item.sub ) );
+		.filter( ( item: any ) => !cortexFunctions.isSfxContainer( item.sub ) && !cortexFunctions.isStatementContainer( item.sub ) );
 } );
 
 const scrollable = computed( () => Boolean(
 	( getView( traitSet.value )?.features?.sfx && editableSFX.value.length > 0 && !isTalentsTable.value )
 	||
-	( getView( traitSet.value )?.features?.subtraits && trait.value?.traits?.length > 0 )
+	( getView( traitSet.value )?.features?.subtraits && subtraits.value.length > 0 )
 ) );
 
 const isTalentsTable = computed( () => getView( traitSet.value )?.style?.body === 'three-column-table' );
@@ -1006,23 +1023,25 @@ function getDieDisplayValue( val: any ) {
 
 		<div class="editor-controls">
 			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
-			<button type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait"><i class="fas fa-copy"></i></button>
+			<button v-if="!isPlay" type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait"><i class="fas fa-copy"></i></button>
+			<template v-if="!isPlay || canDeleteInPlay">
+				<button
+					v-if="!confirmDelete"
+					type="button"
+					class="editor-delete"
+					@click.stop="confirmDelete = true"
+					title="Delete trait"
+				><i class="fas fa-trash"></i></button>
+				<button
+					v-else
+					type="button"
+					class="editor-delete editor-delete-confirm"
+					@click.stop="removeTrait"
+					title="Click again to confirm deletion"
+				><span>Confirm?</span></button>
+			</template>
 			<button
-				v-if="!confirmDelete"
-				type="button"
-				class="editor-delete"
-				@click.stop="confirmDelete = true"
-				title="Delete trait"
-			><i class="fas fa-trash"></i></button>
-			<button
-				v-else
-				type="button"
-				class="editor-delete editor-delete-confirm"
-				@click.stop="removeTrait"
-				title="Click again to confirm deletion"
-			><span>Confirm?</span></button>
-			<button
-				v-if="templateTraitMatched"
+				v-if="templateTraitMatched && !isPlay"
 				type="button"
 				class="editor-delete"
 				@click.stop="removeFromSheet"
@@ -1038,33 +1057,37 @@ function getDieDisplayValue( val: any ) {
 					<template v-if="isTalentsTable">
 						<div class="editor-field">
 							<label :for="'trait-talent-col1-' + traitID">{{ talentCol1Label }}</label>
-							<input type="text" :id="'trait-talent-col1-' + traitID" name="talentName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
+							<div class="editor-readonly-title" v-if="isPlay">{{ name }}</div>
+							<input v-else type="text" :id="'trait-talent-col1-' + traitID" name="talentName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
 						</div>
 
 						<div class="editor-field">
 							<label :for="'trait-talent-col2-' + traitID">{{ talentCol2Label }}</label>
-							<textarea :id="'trait-talent-col2-' + traitID" name="talentDescription" v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
+							<div class="editor-readonly-text" v-if="isPlay">{{ description }}</div>
+							<textarea v-else :id="'trait-talent-col2-' + traitID" name="talentDescription" v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
 						</div>
 
 						<div class="editor-field">
 							<label :for="'trait-talent-col3-' + traitID">{{ talentCol3Label }}</label>
-							<textarea :id="'trait-talent-col3-' + traitID" name="talentEffect" v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
+							<div class="editor-readonly-text" v-if="isPlay">{{ talentEffect }}</div>
+							<textarea v-else :id="'trait-talent-col3-' + traitID" name="talentEffect" v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
 						</div>
 					</template>
 
 					<div class="editor-field" v-else>
 						<label :for="'trait-name-' + traitID">{{ isLabeledPipsSet ? 'Label' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
-						<input type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isLabeledPipsSet ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
+						<div class="editor-readonly-title" v-if="isPlay && !canDeleteInPlay">{{ name }}</div>
+						<input v-else type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isLabeledPipsSet ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
 					</div>
 
-					<div class="editor-hint" v-if="renameWarning">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
+					<div class="editor-hint" v-if="renameWarning && !isPlay">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
 
-					<div class="editor-field" v-if="isNameSet">
+					<div class="editor-field" v-if="isNameSet && !isPlay">
 						<label :for="'trait-label-' + traitID">Label</label>
 						<input type="text" :id="'trait-label-' + traitID" name="traitLabel" v-model="traitLabel" placeholder="Label shown on the sheet">
 					</div>
 
-					<div class="editor-field">
+					<div class="editor-field" v-if="!isPlay">
 						<div class="name-heading-row">
 							<label>Visibility</label>
 							<visibility-eye :state="traitVisibility" @toggle="traitVisibility = traitVisibility === 'shown' ? 'editor-only' : traitVisibility === 'editor-only' ? 'hidden' : 'shown'" />
@@ -1074,7 +1097,7 @@ function getDieDisplayValue( val: any ) {
 					<!-- STATEMENT FIELD -->
 					<div class="editor-field" v-if="isStatementSet || isPairedSlotsStyle">
 						<label :for="'trait-statement-' + traitID">Statement</label>
-						<textarea :id="'trait-statement-' + traitID" name="traitStatement" v-model="description" rows="2" placeholder="e.g. I'll try anything once."></textarea>
+						<textarea :id="'trait-statement-' + traitID" name="traitStatement" v-model="statementText" rows="2" placeholder="e.g. I'll try anything once."></textarea>
 					</div>
 
 					<!-- QUESTIONED PIP TOGGLE -->
@@ -1086,6 +1109,7 @@ function getDieDisplayValue( val: any ) {
 									:id="'trait-' + traitID + '-questioned'"
 									name="traitQuestioned"
 									v-model="isQuestioned"
+									:disabled="!statementText"
 								>
 							</div>
 							<div>
@@ -1122,7 +1146,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- SCALE DIE TOGGLE FOR RING ATTRIBUTES -->
-					<div class="editor-field" v-if="isAttributesTrait">
+					<div class="editor-field" v-if="isAttributesTrait && !isPlay">
 						<div class="editor-toggles">
 							<div>
 								<input
@@ -1140,7 +1164,7 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="parentIsBranch">
+					<div class="editor-field" v-if="parentIsBranch && !isPlay">
 						<div class="editor-label">Branch Role</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'skill' }" @click.stop="branchRole = 'skill'">
@@ -1152,7 +1176,7 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
+					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty' && !isPlay">
 						<label :for="'trait-branch-link-' + traitID">Connects To Skill</label>
 						<select :id="'trait-branch-link-' + traitID" name="branchLink" v-model="branchLink">
 							<option :value="null">Unlinked</option>
@@ -1161,7 +1185,7 @@ function getDieDisplayValue( val: any ) {
 						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Draws the connecting arrow from this specialty to any skill in the set.</span>
 					</div>
 
-					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty'">
+					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty' && !isPlay">
 						<div class="editor-label">Side</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
@@ -1175,16 +1199,16 @@ function getDieDisplayValue( val: any ) {
 
 					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideSkillDice">
 
-						<div class="editor-label">Rating</div>
+						<div class="editor-label" v-if="!isPlay">Rating</div>
 
 						<!-- UNRATED: the gate offers to add one -->
-						<div class="editor-toggles" v-if="!isRatedTrait">
+						<div class="editor-toggles" v-if="!isRatedTrait && !isPlay">
 							<div><span class="trait-blank-line"></span></div>
 							<div><button type="button" class="btn-step" @click.stop="addRating()">Add rating</button></div>
 						</div>
 
 						<!-- TYPE (Die | Dice | Counter | Pip) -->
-						<div class="editor-button-group" v-if="isRatedTrait">
+						<div class="editor-button-group" v-if="isRatedTrait && !isPlay">
 							<button
 								type="button"
 								v-for="rt in RATING_TYPES"
@@ -1198,7 +1222,7 @@ function getDieDisplayValue( val: any ) {
 						</div>
 
 						<!-- OUT (range option for Die/Dice, default off) -->
-						<div class="editor-toggles" v-if="isRatedTrait && (ratingType === 'Die' || ratingType === 'Dice')">
+						<div class="editor-toggles" v-if="isRatedTrait && (ratingType === 'Die' || ratingType === 'Dice') && !isPlay">
 							<div>
 								<input
 									type="checkbox"
@@ -1277,11 +1301,11 @@ function getDieDisplayValue( val: any ) {
 									<label :for="'trait-' + traitID + '-counter-number'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Count</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-number'" name="counterNumber" v-model.number="counterNumber" inputmode="numeric" style="width: 100%;">
 								</div>
-								<div style="flex: 1; min-width: 4rem;">
+								<div v-if="!isPlay" style="flex: 1; min-width: 4rem;">
 									<label :for="'trait-' + traitID + '-counter-min'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Min</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-min'" name="counterMin" :value="counterBounds()[0]" @change="commitCounterBound(0, $event)" inputmode="numeric" style="width: 100%;">
 								</div>
-								<div style="flex: 1; min-width: 4rem;">
+								<div v-if="!isPlay" style="flex: 1; min-width: 4rem;">
 									<label :for="'trait-' + traitID + '-counter-max'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Max</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-max'" name="counterMax" :value="counterBounds()[1]" @change="commitCounterBound(1, $event)" inputmode="numeric" style="width: 100%;">
 								</div>
@@ -1306,7 +1330,7 @@ function getDieDisplayValue( val: any ) {
 								</div>
 								<span class="pip-editor-count" v-if="pipBubbleCount === 0">No bubbles</span>
 							</div>
-							<div class="num-stepper" style="margin-top: 0.4rem;">
+							<div class="num-stepper" v-if="!isPlay" style="margin-top: 0.4rem;">
 								<button type="button" class="btn-step" @click.stop="setPipBubbleCount(pipBubbleCount - 1)" :disabled="pipBubbleCount <= 1" title="Fewer bubbles" aria-label="Fewer bubbles">-</button>
 								<input type="number" :id="'trait-' + traitID + '-pip-count'" name="pipBubbleCount" min="1" max="100" :value="pipBubbleCount" @change="commitPipBubbleCount($event)" inputmode="numeric" aria-label="Bubble count" style="width: 4rem;">
 								<button type="button" class="btn-step" @click.stop="setPipBubbleCount(pipBubbleCount + 1)" title="More bubbles" aria-label="More bubbles">+</button>
@@ -1316,7 +1340,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- RATING RANGE (the die ladder Die/Dice ratings may take) -->
-					<div class="editor-field" v-if="isRatedTrait && ( ratingType === 'Die' || ratingType === 'Dice' ) && !isListStyle && !isLabeledPipsSet && !hideSkillDice">
+					<div class="editor-field" v-if="!isPlay && isRatedTrait && ( ratingType === 'Die' || ratingType === 'Dice' ) && !isListStyle && !isLabeledPipsSet && !hideSkillDice">
 						<div class="editor-label">Range</div>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
@@ -1337,7 +1361,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- OPTIONS (only what the shape makes meaningful) -->
-					<div class="editor-field" v-if="isRatedTrait && !isListStyle && !isLabeledPipsSet">
+					<div class="editor-field" v-if="!isPlay && isRatedTrait && !isListStyle && !isLabeledPipsSet">
 						<div class="editor-label">Options</div>
 						<div class="editor-toggles">
 							<div><input type="checkbox" :id="'trait-' + traitID + '-pool'" :true-value="true" :false-value="false" v-model="traitPool"></div>
@@ -1381,7 +1405,7 @@ function getDieDisplayValue( val: any ) {
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="getView( traitSet )?.features?.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
+					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
 					</div>
@@ -1401,6 +1425,7 @@ function getDieDisplayValue( val: any ) {
 									:traitSetID="traitSetID"
 									:traitID="traitID"
 									:subtraitID="Number(item.idx)"
+									:submode="submode"
 									@updateCharacter="updateCharacter"
 									@removeSubtrait="removeSubtrait"
 								></subtrait-editor>
@@ -1408,7 +1433,7 @@ function getDieDisplayValue( val: any ) {
 
 						</div>
 
-						<div class="editor-button-container">
+						<div class="editor-button-container" v-if="!isPlay">
 							<div class="editor-button-container-inner">
 								<div class="editor-button" @click.stop="addSubtrait">
 									<span><i class="fas fa-plus"></i> New Subtrait</span>
@@ -1419,7 +1444,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- SFX -->
-					<div class="editor-field" v-if="getView( traitSet )?.features?.sfx && !isTalentsTable">
+					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.sfx && !isTalentsTable">
 
 						<div class="editor-label">SFX</div>
 

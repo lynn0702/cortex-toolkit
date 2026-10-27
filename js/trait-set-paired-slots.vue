@@ -29,7 +29,7 @@ const {
 							<span class="paired-slot-blank-line" v-else></span>
 						</span>
 						<span class="paired-slot-statement-box">
-							<span class="paired-slot-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
+							<span class="paired-slot-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait, true)" v-html="renderText(getTraitStatement(item.trait, true))"></span>
 							<span class="paired-slot-blank-line" v-else-if="printBlank || item.isPlaceholder"></span>
 							<span class="paired-slot-placeholder-hint" v-else-if="submode === 'edit'">Statement</span>
 							<span class="paired-slot-blank-line" v-else></span>

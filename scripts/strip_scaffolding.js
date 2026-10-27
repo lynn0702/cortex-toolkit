@@ -37,7 +37,7 @@ const stripNode = (node) => {
 // A blank slot object: blank name and nothing but default/empty state.
 // Anything meaningful (rating, text, subtraits, sfx, view, custom, id,
 // label, or any unknown key) keeps it. _lid never blocks (app-local).
-const BLANK_KEYS = new Set(['name', 'value', 'dice', 'traits', 'sfx', 'statement', 'description', 'tags', 'questioned', 'counter', 'xp', '_lid']);
+const BLANK_KEYS = new Set(['name', 'value', 'dice', 'traits', 'sfx', 'description', 'tags', 'counter', 'xp', '_lid']);
 function isBlankSlot(tr) {
   if (!tr || typeof tr !== 'object' || Array.isArray(tr)) return false;
   if (tr.name !== '') return false;
@@ -46,10 +46,8 @@ function isBlankSlot(tr) {
   if (tr.dice !== undefined && !(Array.isArray(tr.dice) && tr.dice.length === 0)) return false;
   if (tr.traits !== undefined && !(Array.isArray(tr.traits) && tr.traits.length === 0)) return false;
   if (tr.sfx !== undefined && !(Array.isArray(tr.sfx) && tr.sfx.length === 0)) return false;
-  if (tr.statement !== undefined && tr.statement !== '') return false;
   if (tr.description !== undefined && tr.description !== '') return false;
   if (tr.tags !== undefined && !(Array.isArray(tr.tags) && tr.tags.length === 0)) return false;
-  if (tr.questioned !== undefined && tr.questioned !== false) return false;
   if (tr.counter !== undefined && tr.counter !== 0 && tr.counter !== '') return false;
   if (tr.xp !== undefined && tr.xp !== 0 && tr.xp !== '') return false;
   if (tr.view !== undefined || tr.custom !== undefined) return false;

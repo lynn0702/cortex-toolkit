@@ -15,7 +15,8 @@ const {
 	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
 	getSetRatingDie,
 	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
-	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline
+	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
+	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageStressDie
 } = injectTraitSet();
 </script>
 
@@ -72,7 +73,7 @@ const {
 									<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 									<span v-if="hasQuestionedPip(traitSet)" class="statement-pip" :class="{ 'questioned': isTraitQuestioned(item.trait) }" tabindex="0" role="button" @keydown.enter.prevent="toggleTraitQuestioned(s, item.originalIndex)" @keydown.space.prevent="toggleTraitQuestioned(s, item.originalIndex)" @click.stop="toggleTraitQuestioned(s, item.originalIndex)" :title="submode === 'play' ? (isTraitQuestioned(item.trait) ? 'Questioned (click to reset)' : 'Click to question') : ''"></span>
 									<span class="trait-statement-box">
-										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
+										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait, true)" v-html="renderText(getTraitStatement(item.trait, true))"></span>
 										<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
 										<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
 										<span class="trait-statement-blank" v-else></span>
@@ -116,6 +117,13 @@ const {
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
 								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
+								<button
+									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && firstDie(item.trait) > 0"
+									type="button"
+									class="btn-stage-stress"
+									@click.stop="stageStressDie(item.trait, firstDie(item.trait), item.trait.name || 'Stress', traitSet)"
+									title="Stage stress die into pool"
+								>+<i class="fas fa-dice"></i></button>
 							</div>
 							<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
 							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1"></div>
@@ -139,7 +147,10 @@ const {
 									</div>
 								</div>
 							</div>
-							<div class="trait-value single-die-value" v-else>
+							<div class="trait-value single-die-value"
+								:class="{ 'has-hinder-pill': submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet) }"
+								@click.stop="submode === 'play' && !printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null"
+							>
 								<span
 									v-for="size in getTraitSetRatings(traitSet)"
 									:key="size"
@@ -147,6 +158,15 @@ const {
 									@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
+								<button
+									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet)"
+									type="button"
+									class="btn-hinder-pill"
+									@click.stop="handleHinderDieClick(item.trait, traitSet, s, item.originalIndex)"
+									title="Take d4 and gain 1 PP"
+								>
+									<span class="c">d4</span><span class="hinder-pp-tag">+PP</span>
+								</button>
 								<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)"></span>
 								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
@@ -176,6 +196,13 @@ const {
 									@click.stop="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
 									title="Out"
 								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
+								<button
+									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getAttachedStressValue(item.trait, traitSet) > 0"
+									type="button"
+									class="btn-stage-stress"
+									@click.stop="stageStressDie(item.trait, getAttachedStressValue(item.trait, traitSet), getAttachedStressLabel(traitSet), traitSet)"
+									title="Stage stress die into pool"
+								>+<i class="fas fa-dice"></i></button>
 							</div>
 						</div>
 						<!-- DESCRIPTION -->
@@ -296,7 +323,7 @@ const {
 									<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 									<span v-if="hasQuestionedPip(traitSet)" class="statement-pip" :class="{ 'questioned': isTraitQuestioned(item.trait) }" tabindex="0" role="button" @keydown.enter.prevent="toggleTraitQuestioned(s, item.originalIndex)" @keydown.space.prevent="toggleTraitQuestioned(s, item.originalIndex)" @click.stop="toggleTraitQuestioned(s, item.originalIndex)" :title="submode === 'play' ? (isTraitQuestioned(item.trait) ? 'Questioned (click to reset)' : 'Click to question') : ''"></span>
 									<span class="trait-statement-box">
-										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)" v-html="renderText(getTraitStatement(item.trait))"></span>
+										<span class="trait-statement-text" v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait, true)" v-html="renderText(getTraitStatement(item.trait, true))"></span>
 										<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
 										<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
 										<span class="trait-statement-blank" v-else></span>
@@ -333,6 +360,13 @@ const {
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
 									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
+									<button
+										v-if="submode === 'play' && !printBlank && !item.isPlaceholder && firstDie(item.trait) > 0"
+										type="button"
+										class="btn-stage-stress"
+										@click.stop="stageStressDie(item.trait, firstDie(item.trait), item.trait.name || 'Stress', traitSet)"
+										title="Stage stress die into pool"
+									>+<i class="fas fa-dice"></i></button>
 								</div>
 
 								<!-- LIST STYLE: NO VALUE -->
@@ -367,7 +401,10 @@ const {
 								</div>
 
 								<!-- STANDARD SINGLE-DIE TRAIT -->
-								<div class="trait-value single-die-value" v-else>
+								<div class="trait-value single-die-value"
+									:class="{ 'has-hinder-pill': submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet) }"
+									@click.stop="submode === 'play' && !printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null"
+								>
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
@@ -375,6 +412,15 @@ const {
 										@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
+									<button
+										v-if="submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet)"
+										type="button"
+										class="btn-hinder-pill"
+										@click.stop="handleHinderDieClick(item.trait, traitSet, s, item.originalIndex)"
+										title="Take d4 and gain 1 PP"
+									>
+										<span class="c">d4</span><span class="hinder-pp-tag">+PP</span>
+									</button>
 									<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
 							</h2>
@@ -446,6 +492,13 @@ const {
 									@click.stop="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
 									title="Out"
 								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
+								<button
+									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getAttachedStressValue(item.trait, traitSet) > 0"
+									type="button"
+									class="btn-stage-stress"
+									@click.stop="stageStressDie(item.trait, getAttachedStressValue(item.trait, traitSet), getAttachedStressLabel(traitSet), traitSet)"
+									title="Stage stress die into pool"
+								>+<i class="fas fa-dice"></i></button>
 							</div>
 						</div>
 
@@ -474,7 +527,7 @@ const {
 		<!-- BUTTON: ADD TRAIT -->
 		<transition appear>
 			<div class="preview-button-container"
-				v-show="submode === 'edit'"
+				v-show="submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet))"
 			>
 				<div class="preview-button-container-inner">
 					<div class="preview-button"

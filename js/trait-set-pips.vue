@@ -4,7 +4,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 
 const {
 	traitSet, s, submode, printBlank, isSelected, selectElement, getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
-	isPipLabels, pipRows, togglePipRow, addPipRow, setPipRowName
+	isPipLabels, pipRows, togglePipRow, addPipRow, setPipRowName, getPipTrack, setPipTrack
 } = injectTraitSet();
 
 function commitPipRowName( traitSetIndex: number, itemIndex: number, event: Event ) {
@@ -63,7 +63,31 @@ function commitPipRowName( traitSetIndex: number, itemIndex: number, event: Even
 				</div>
 			</div>
 		</div>
-		<div class="pips-track-container" v-else :class="{ 'connected': getPipConfig(traitSet).connected, 'pips-connected': getPipConfig(traitSet).connected, 'vertical': getPipConfig(traitSet).perRow === 1, ['pips-per-row-' + getPipConfig(traitSet).perRow]: true }">
+		<template v-else>
+			<div class="pip-play-stepper" v-if="submode === 'play' && !printBlank">
+				<button
+					type="button"
+					class="btn-pip-step"
+					:disabled="getPipTrack(traitSet).filled <= 0"
+					@click.stop="setPipTrack(s, getPipTrack(traitSet).count, Math.max(0, getPipTrack(traitSet).filled - 1))"
+					title="Decrease filled pips"
+				>
+					<i class="fas fa-minus"></i>
+				</button>
+				<span class="pip-play-stepper-count">
+					{{ getPipTrack(traitSet).filled }} / {{ getPipTrack(traitSet).count }}
+				</span>
+				<button
+					type="button"
+					class="btn-pip-step"
+					:disabled="getPipTrack(traitSet).filled >= getPipTrack(traitSet).count"
+					@click.stop="setPipTrack(s, getPipTrack(traitSet).count, Math.min(getPipTrack(traitSet).count, getPipTrack(traitSet).filled + 1))"
+					title="Increase filled pips"
+				>
+					<i class="fas fa-plus"></i>
+				</button>
+			</div>
+			<div class="pips-track-container" :class="{ 'connected': getPipConfig(traitSet).connected, 'pips-connected': getPipConfig(traitSet).connected, 'vertical': getPipConfig(traitSet).perRow === 1, ['pips-per-row-' + getPipConfig(traitSet).perRow]: true }">
 			<div class="pip-spine-line" v-if="getPipConfig(traitSet).connected && getPipConfig(traitSet).perRow === 1"></div>
 			<div
 				v-for="rowIdx in getPipRowCount(traitSet)"
@@ -89,5 +113,6 @@ function commitPipRowName( traitSetIndex: number, itemIndex: number, event: Even
 				</div>
 			</div>
 		</div>
+		</template>
 	</div>
 </template>

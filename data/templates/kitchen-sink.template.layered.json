@@ -293,7 +293,21 @@
                 12
               ]
             },
-            "description": "Form and function are inseparable."
+            "description": "Form and function are inseparable.",
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "Form and function are inseparable.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "Speed": {
             "rating": {
@@ -310,7 +324,20 @@
               ]
             },
             "description": "Ship early, refine relentlessly.",
-            "questioned": true
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "Ship early, refine relentlessly.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        true
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "Clarity": {
             "rating": {
@@ -537,6 +564,18 @@
                     10,
                     12
                   ]
+                }
+              },
+              "Statement": {
+                "traits": {
+                  "They owe me a drydock bay.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
                 }
               }
             }

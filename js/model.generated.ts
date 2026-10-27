@@ -207,17 +207,9 @@ export interface Trait {
    */
   keepsExtra?: number | null;
   /**
-   * A description of the trait, or the trait statement.
+   * A description of the trait.
    */
   description: string;
-  /**
-   * The trait statement (synonym for description).
-   */
-  statement?: string | null;
-  /**
-   * Whether this trait statement is questioned or challenged.
-   */
-  questioned?: boolean | null;
   /**
    * XP or numeral counter value for this trait.
    */
@@ -248,9 +240,9 @@ export interface Rating {
    */
   value: (number | boolean)[];
   /**
-   * The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip.
+   * The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip. Pip may omit it (a lone bubble's [true, false] pair is derived).
    */
-  range: number[];
+  range?: number[];
   /**
    * Out is part of this rating's range (one step past the top). Default off; most ratings lack it.
    */

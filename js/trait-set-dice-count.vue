@@ -8,7 +8,7 @@ const {
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getTraitSetLabel, isSpotlightStyle,
 	renderDieValueForPrint, handleSingleDieClick, getResourceDiceCount, setResourceDiceCount,
 	getResourcePoolDice, getPrintTallyPips, isDieSpent, toggleDieSpentInPlay, handleDieClick, isSpendable,
-	firstDie, isDieActive
+	firstDie, isDieActive, isPlayAddRemovableSet
 } = injectTraitSet();
 </script>
 
@@ -75,7 +75,7 @@ const {
 			</div>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-show="submode === 'edit'">
+			<div class="preview-button-container" v-show="submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet))">
 				<div class="preview-button-container-inner">
 					<div class="preview-button" @click.stop="addTrait( s )">
 						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>

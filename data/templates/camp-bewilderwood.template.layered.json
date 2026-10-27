@@ -180,7 +180,6 @@
                 12
               ]
             },
-            "statement": "",
             "traits": {
               "SFX": {
                 "traits": {
@@ -205,7 +204,6 @@
                 12
               ]
             },
-            "statement": "",
             "traits": {
               "SFX": {
                 "traits": {
@@ -230,7 +228,6 @@
                 12
               ]
             },
-            "statement": "",
             "traits": {
               "SFX": {
                 "traits": {
@@ -295,26 +292,11 @@
         "noun": "Value",
         "plural": "Values",
         "traits": {
-          "Bravery": {
-            "statement": "",
-            "questioned": false
-          },
-          "Community": {
-            "statement": "",
-            "questioned": false
-          },
-          "Curiosity": {
-            "statement": "",
-            "questioned": false
-          },
-          "Friendship": {
-            "statement": "",
-            "questioned": false
-          },
-          "Mischief": {
-            "statement": "",
-            "questioned": false
-          }
+          "Bravery": {},
+          "Community": {},
+          "Curiosity": {},
+          "Friendship": {},
+          "Mischief": {}
         }
       },
       "Signature Assets": {
@@ -468,42 +450,36 @@
         "traits": {},
         "slots": {
           "0": {
-            "statement": "",
             "traits": {
               "COMPLICATION": {},
               "BONUS": {}
             }
           },
           "1": {
-            "statement": "",
             "traits": {
               "COMPLICATION": {},
               "BONUS": {}
             }
           },
           "2": {
-            "statement": "",
             "traits": {
               "COMPLICATION": {},
               "BONUS": {}
             }
           },
           "3": {
-            "statement": "",
             "traits": {
               "COMPLICATION": {},
               "BONUS": {}
             }
           },
           "4": {
-            "statement": "",
             "traits": {
               "COMPLICATION": {},
               "BONUS": {}
             }
           },
           "5": {
-            "statement": "",
             "traits": {
               "COMPLICATION": {},
               "BONUS": {}

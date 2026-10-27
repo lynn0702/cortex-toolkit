@@ -34,13 +34,14 @@ export type RatingType = 'Counter' | 'Die' | 'Dice' | 'Pip';
  * One recursive shape for every node — set, trait, subtrait. `value` is
  * always a list; the type interprets it. `range` is the ladder the value
  * may take: the die scale for Die/Dice, [min, max] for a Counter, the
- * bubble count for a Pip. Rated is not a bool: a node is rated iff it
- * carries a rating.
+ * bubble count for a Pip. A Pip may omit it: a lone bubble's [true, false]
+ * pair is derived, so statement pips store only the value. Rated is not a
+ * bool: a node is rated iff it carries a rating.
  */
 export interface Rating {
 	type: RatingType;
 	value: Array<number | boolean>;
-	range: number[];
+	range?: number[];
 }
 
 /** The die ladder. The word is `range`, never `scale` — Scale is a trait name. */
@@ -454,7 +455,6 @@ export interface CortexToolkitCustom {
 	// app-only trait-level flags that live under `trait.view`
 	spentDice?: number[];
 	rowSpan?: number;
-	questioned?: boolean;
 	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
 /** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
@@ -584,7 +584,6 @@ export interface TraitCustom {
 	linkTo?: number;
 	branchRole?: 'skill' | 'specialty';
 	branchSide?: 'left' | 'right';
-	questioned?: boolean;
 	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
 	xp?: number | string;

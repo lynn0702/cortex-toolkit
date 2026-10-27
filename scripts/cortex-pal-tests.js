@@ -67,6 +67,13 @@ function ok(cond, name, extra) {
   ok(p2.items.length === 2 && p2.items[0].hitches === 0 && p2.items[0].source === 'Gear', 'apart metadata staged', p2.items[0]);
 }
 
+// ---- ppDelta and ppCommitted metadata
+{
+  const p = new CortexDicePool();
+  p.add([{ size: 4, qty: 1, source: 'Distinction', ppDelta: 1, ppCommitted: false }]);
+  ok(p.items.length === 1 && p.items[0].ppDelta === 1 && p.items[0].ppCommitted === false, 'ppDelta and ppCommitted staged', p.items[0]);
+}
+
 // ---- constants
 ok(DIE_SIZES.length === 5 && CORTEX_D4.size === 4, 'constants intact');
 

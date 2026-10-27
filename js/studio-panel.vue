@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import TraitEditor from './trait-editor.vue';
 import TraitSetEditor from './trait-set-editor.vue';
 import PortraitEditor from './portrait-editor.vue';
@@ -94,6 +94,13 @@ const nameEditorInitialTab = computed( () => {
 } );
 
 const diceCount = computed( () => props.dicePool?.items?.length || 0 );
+
+const diceRollerRef = ref<any>( null );
+defineExpose( {
+	diceRoller: diceRollerRef,
+	roll: () => diceRollerRef.value?.roll(),
+	clearPool: () => diceRollerRef.value?.clearPool()
+} );
 </script>
 
 <template>
@@ -128,6 +135,7 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 					<span class="studio-tab-badge" v-if="diceCount > 0">{{ diceCount }}</span>
 				</button>
 				<button
+					v-if="submode !== 'play'"
 					type="button"
 					class="studio-tab-btn"
 					:class="{ active: panelTab === 'json' }"
@@ -162,17 +170,20 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 		<div class="studio-breadcrumb-bar" v-if="panelTab === 'properties'">
 			<div class="studio-breadcrumb">
 				<template v-if="editingType === 'trait'">
-					<span class="crumb-link" @click="emit('selectElement', ['traitSet', traitSetID])">{{ traitSetName }}</span>
+					<span v-if="submode !== 'play'" class="crumb-link" @click="emit('selectElement', ['traitSet', traitSetID])">{{ traitSetName }}</span>
+					<span v-else class="crumb-current">{{ traitSetName }}</span>
 					<span class="crumb-sep">›</span>
 					<span class="crumb-current">{{ traitName }}</span>
 				</template>
 				<template v-else-if="editingType === 'traitSet'">
-					<span class="crumb-link" @click="emit('selectElement', [])">Sheet</span>
+					<span v-if="submode !== 'play'" class="crumb-link" @click="emit('selectElement', [])">Sheet</span>
+					<span v-else class="crumb-current">Sheet</span>
 					<span class="crumb-sep">›</span>
 					<span class="crumb-current">{{ traitSetName }}</span>
 				</template>
 				<template v-else-if="editingType === 'portrait'">
-					<span class="crumb-link" @click="emit('selectElement', [])">Sheet</span>
+					<span v-if="submode !== 'play'" class="crumb-link" @click="emit('selectElement', [])">Sheet</span>
+					<span v-else class="crumb-current">Sheet</span>
 					<span class="crumb-sep">›</span>
 					<span class="crumb-current">Portrait</span>
 				</template>
@@ -182,7 +193,7 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 			</div>
 
 			<button
-				v-if="editingType !== 'sheet'"
+				v-if="editingType !== 'sheet' && submode !== 'play'"
 				type="button"
 				class="studio-btn-subtle"
 				@click="emit('selectElement', [])"
@@ -204,12 +215,18 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 						:character="character"
 						:traitSetID="traitSetID"
 						:traitID="traitID"
+						:submode="submode"
 						:open="true"
 						:viewY="viewY"
 						@selectElement="emit('selectElement', $event)"
 						@updateCharacter="emit('updateCharacter', $event)"
 						@removeTrait="(s, t) => emit('removeTrait', s, t)"
 					/>
+
+					<!-- PLAY MODE LIGHTWEIGHT PLACEHOLDER WHEN NOT EDITING A TRAIT -->
+					<div v-else-if="submode === 'play'" class="studio-empty-state">
+						<p>Tap any trait on the sheet to inspect or adjust its rating.</p>
+					</div>
 
 					<!-- TRAIT SET EDITOR -->
 					<TraitSetEditor
@@ -254,6 +271,7 @@ const diceCount = computed( () => props.dicePool?.items?.length || 0 );
 			<!-- ROLLER PANE -->
 			<div v-show="panelTab === 'roller'" class="studio-tab-pane">
 				<DiceRoller
+					ref="diceRollerRef"
 					:open="true"
 					:pool="dicePool"
 					:position="position"

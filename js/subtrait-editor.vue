@@ -8,7 +8,10 @@ const props = defineProps<{
 	traitSetID: number;
 	traitID: number;
 	subtraitID: number;
+	submode?: string | null;
 }>();
+
+const isPlay = computed( () => props.submode === 'play' );
 
 const emit = defineEmits<{
 	( e: 'updateCharacter', character: any ): void;
@@ -143,7 +146,8 @@ function subFirstDie() {
 
 			<div class="editor-field">
 				<label :for="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID">Subtrait Name</label>
-				<input type="text" :id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitName" v-model="name">
+				<div class="editor-readonly-title" v-if="isPlay">{{ name }}</div>
+				<input v-else type="text" :id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitName" v-model="name">
 			</div>
 
 			<ul class="editor-values">
@@ -160,7 +164,7 @@ function subFirstDie() {
 				</li>
 			</ul>
 
-			<div class="editor-field" v-if="parentIsBranch">
+			<div class="editor-field" v-if="parentIsBranch && !isPlay">
 				<div class="editor-label">Side</div>
 				<div class="editor-button-group">
 					<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
@@ -172,7 +176,7 @@ function subFirstDie() {
 				</div>
 			</div>
 
-			<div class="editor-button-container">
+			<div class="editor-button-container" v-if="!isPlay">
 				<div class="editor-button-container-inner">
 					<div v-if="!confirmDelete" class="editor-button editor-button-remove editor-button-secondary" @click.prevent="confirmDelete = true">
 						<span><i class="fas fa-trash"></i> Remove Subtrait</span>

@@ -319,6 +319,45 @@
 		font-size: 0.7rem;
 	}
 
+	.chip-actions {
+		display: inline-flex;
+		align-items: center;
+		gap: 2px;
+		margin-left: 0.2rem;
+	}
+
+	.chip-btn {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 0.65rem;
+		line-height: 1;
+		color: #64748b;
+		padding: 2px 3px;
+		border-radius: 3px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 16px;
+		height: 18px;
+		transition: background 0.15s, color 0.15s;
+
+		&:hover:not(:disabled) {
+			background: rgba(0, 0, 0, 0.08);
+			color: #0f172a;
+		}
+
+		&:disabled {
+			opacity: 0.3;
+			cursor: not-allowed;
+		}
+
+		&.chip-dup {
+			font-weight: 700;
+			font-size: 0.6rem;
+		}
+	}
+
 	.chip-remove {
 		background: none;
 		border: none;
@@ -923,5 +962,133 @@
 	&.toast-leave-to {
 		opacity: 0;
 		transform: translate(-50%, 10px);
+	}
+}
+
+// Docked Mobile Roller Pill Bar (Play Mode <= 768px)
+.mobile-roller-pill-bar {
+	display: none;
+
+	@media screen and (max-width: 768px) {
+		display: flex;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 56px;
+		background: #0f172a;
+		color: #f8fafc;
+		border-top: 1px solid rgba(255, 255, 255, 0.15);
+		box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+		z-index: calc(var(--z-frame) + 40);
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 1rem;
+		user-select: none;
+
+		.mobile-roller-pill-left {
+			display: flex;
+			align-items: center;
+			gap: 0.4rem;
+			flex: 1 1 auto;
+			min-width: 0;
+			overflow-x: auto;
+			cursor: pointer;
+			scrollbar-width: none;
+			&::-webkit-scrollbar { display: none; }
+
+			.pill-die {
+				display: inline-flex;
+				align-items: center;
+				font-size: 1.1rem;
+				line-height: 1;
+
+				.c {
+					font-size: 1.1rem;
+				}
+
+				.pill-pp-tag {
+					font-size: 0.65rem;
+					font-weight: 700;
+					color: #38bdf8;
+					margin-left: 2px;
+				}
+			}
+
+			.pill-result-total,
+			.pill-result-effect {
+				font-size: 0.85rem;
+				white-space: nowrap;
+
+				strong {
+					color: #38bdf8;
+				}
+			}
+
+			.pill-bullet {
+				color: #64748b;
+				font-size: 0.8rem;
+			}
+
+			.pill-empty-label {
+				font-size: 0.85rem;
+				color: #94a3b8;
+				display: flex;
+				align-items: center;
+				gap: 0.4rem;
+			}
+		}
+
+		.mobile-roller-pill-right {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-left: 0.5rem;
+			flex-shrink: 0;
+
+			.btn-pill-roll {
+				background: #0284c7;
+				color: white;
+				border: none;
+				border-radius: 20px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				padding: 0.4rem 1rem;
+				cursor: pointer;
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+
+				&:active {
+					transform: scale(0.96);
+				}
+			}
+
+			.btn-pill-clear {
+				background: rgba(255, 255, 255, 0.1);
+				color: #cbd5e1;
+				border: none;
+				border-radius: 50%;
+				width: 32px;
+				height: 32px;
+				font-size: 0.9rem;
+				cursor: pointer;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+
+				&:hover {
+					color: white;
+					background: rgba(255, 255, 255, 0.2);
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.play-shell .sheet-column {
+		padding-bottom: 5rem;
 	}
 }

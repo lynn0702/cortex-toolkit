@@ -341,6 +341,104 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(set.noun === 'Session' && set.plural === 'Sessions', 'nouns untouched');
 }
 
+// ---- 14. Statement dissolve: the old trait-level pair becomes a child trait.
+{
+  const { toLayeredEntity } = require('../js/layered-materialize.ts');
+  const oldChar = (trait, setExtra) => ({
+    id: 's1', name: 'Statements',
+    traitSets: [{
+      id: 'bond', name: 'Bonds', traits: [trait],
+      view: { style: { header: 'default', body: 'default' } },
+      ...(setExtra || {}),
+    }],
+  });
+  const trait = (extra) => ({
+    name: 'Bond', description: '', traits: [], sfx: [], tags: [],
+    ...(extra || {}),
+  });
+  const migrated = (extra, setExtra) => M.migrateCharacter(oldChar(trait(extra), setExtra)).data.sets.Bonds.traits.Bond;
+
+  // 14a. statement + questioned true -> child named for the sentence, filled.
+  const q = migrated({ statement: 'saved my life', questioned: true }, { statement: true });
+  ok(q.statement === undefined && q.questioned === undefined,
+    'old statement/questioned keys gone after migration', q);
+  ok(q.traits.Statement.traits['saved my life'].rating.value[0] === true,
+    'questioned statement becomes a filled child pip', q);
+
+  // 14b. statement without questioned -> unfilled child.
+  const u = migrated({ statement: 'owes me big', questioned: false }, { statement: true });
+  ok(u.traits.Statement.traits['owes me big'].rating.value[0] === false,
+    'unquestioned statement becomes an unfilled child pip', u);
+
+  // 14c. description is the fallback sentence in a statement context.
+  const d = migrated({ description: 'They owe me a drydock bay.' }, { statement: true });
+  ok(d.traits.Statement.traits['They owe me a drydock bay.'].rating.value[0] === false,
+    'description falls back to a statement child in a statement set', d);
+  ok(d.description === 'They owe me a drydock bay.', 'description is kept alongside the child');
+
+  // 14d. outside a statement context a description stays a description.
+  const n = migrated({ description: 'Just a note' });
+  ok(n.traits === undefined && n.description === 'Just a note',
+    'non-statement description does not grow a statement child', n);
+
+  // 14e. questioned without any sentence has no home: warn, never invent.
+  const x = M.migrateCharacter(oldChar(trait({ questioned: true }), { statement: true }));
+  const xTrait = x.data.sets.Bonds.traits.Bond;
+  ok(xTrait.traits === undefined, 'questioned with no text leaves no child', xTrait);
+  ok(x.warnings.some((w) => w.indexOf('questioned statement had no text') !== -1),
+    'questioned with no text is reported', x.warnings);
+
+  // 14f. Template slots dissolve too (blank print slots keep their index).
+  const tpl = M.migrateTemplateEntry({
+    id: 'x', version: 1,
+    character: oldChar({ name: '', description: '', traits: [], sfx: [], tags: [], statement: 'saved my life', questioned: true }, { statement: true }),
+  });
+  const ts = tpl.data.character.sets.Bonds.slots['0'];
+  ok(ts && ts.statement === undefined && ts.traits.Statement.traits['saved my life'].rating.value[0] === true,
+    'template slot statement dissolves into a filled child', ts);
+
+  // 14g. Stored-character normalization dissolves the same pair in place.
+  const stored = {
+    traitSets: [{
+      name: 'Values', statement: true, traits: [
+        { name: 'Craft', description: '', statement: 'Form and function', questioned: true, traits: [], sfx: [], tags: [], custom: { questioned: true } },
+      ],
+    }],
+  };
+  M.normalizeView(stored);
+  const st = stored.traitSets.find((s) => s.name === 'Values').traits[0];
+  ok(st.statement === undefined && st.questioned === undefined && st.custom === undefined,
+    'normalizeView removes old keys', st);
+  ok(st.traits[0].name === 'Statement' && st.traits[0].traits[0].name === 'Form and function'
+    && st.traits[0].traits[0].rating.value[0] === true, 'normalizeView writes the filled child', st.traits);
+  const storedBefore = JSON.stringify(stored);
+  M.normalizeView(stored);
+  ok(JSON.stringify(stored) === storedBefore, 'normalizeView dissolve is idempotent');
+
+  // 14h. Export emits no trait-level statement/questioned, even from a render
+  // character still carrying the old keys.
+  const render = {
+    name: 'Export', traitSets: [{
+      id: 'bond', name: 'Bonds', traits: [trait({
+        statement: 'saved my life', questioned: true, custom: { questioned: true }, view: { questioned: true },
+        traits: [{ name: 'Statement', traits: [{ name: 'saved my life', rating: { type: 'Pip', value: [true] }, traits: [] }] }],
+      })],
+    }],
+  };
+  const entity = toLayeredEntity(render);
+  const raw = JSON.stringify(entity);
+  ok(raw.indexOf('"statement"') === -1 && raw.indexOf('"questioned"') === -1,
+    'export has zero trait-level statement/questioned keys', raw);
+  ok(entity.sets.Bonds.traits.Bond.traits.Statement.traits['saved my life'].rating.value[0] === true,
+    'export keeps the child pip');
+
+  // 14i. Re-normalizing migrated layered data is a no-op.
+  const again = M.migrateTemplateEntry({ id: 'x', version: 1, character: oldChar({ name: '', description: '', traits: [], sfx: [], tags: [], statement: 'saved my life', questioned: true }, { statement: true }) });
+  const before = JSON.stringify(again.data);
+  M.normalizeView(again.data);
+  ok(JSON.stringify(again.data) === before, 're-normalizing migrated layered data is a no-op');
+}
+
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
 

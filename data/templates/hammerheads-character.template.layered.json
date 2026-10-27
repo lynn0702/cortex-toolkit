@@ -412,31 +412,122 @@
         "slots": {
           "0": {
             "description": "saved my life",
-            "statement": "saved my life"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "saved my life": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "1": {
             "description": "owes me big",
-            "statement": "owes me big"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "owes me big": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "2": {
             "description": "is a troublemaker",
-            "statement": "is a troublemaker"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "is a troublemaker": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "3": {
             "description": "knows their stuff",
-            "statement": "knows their stuff"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "knows their stuff": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "4": {
             "description": "is a liability",
-            "statement": "is a liability"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "is a liability": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "5": {
             "description": "is dependable",
-            "statement": "is dependable"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "is dependable": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "6": {
             "description": "is good for a laugh",
-            "statement": "is good for a laugh"
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "is good for a laugh": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },

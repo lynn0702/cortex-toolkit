@@ -22,6 +22,10 @@ export interface TraitSetProps {
 
 export const TRAIT_SET_KEY: InjectionKey<TraitSetApi> = Symbol( 'traitSetApi' );
 
+export function isPlayAddRemovableSet( traitSetArg: TraitSet ): boolean {
+	return cortexFunctions.isPlayAddRemovableSet( traitSetArg );
+}
+
 export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	const traitSet = computed( () => props.character?.traitSets?.[ props.traitSetID as any ] );
 	const s = computed<number>( () => props.traitSetID as number );
@@ -173,17 +177,14 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function isTraitQuestioned( trait: Trait ) {
-		return Boolean( trait?.questioned ?? trait?.custom?.questioned ?? getView( trait )?.questioned );
+		return cortexFunctions.isStatementFilled( trait );
 	}
 
 	function toggleTraitQuestioned( sArg: any, t: any ) {
 		if ( props.submode === 'print' ) return;
 		const trait = props.character?.traitSets?.[ sArg ]?.traits?.[ t ];
 		if ( !trait ) return;
-		const newVal = !isTraitQuestioned( trait );
-		trait.questioned = newVal;
-		if ( !trait.custom ) trait.custom = {};
-		trait.custom.questioned = newVal;
+		if ( !cortexFunctions.setStatementFilled( trait, !cortexFunctions.isStatementFilled( trait ) ) ) return;
 		updateCharacter( props.character );
 	}
 
@@ -199,8 +200,12 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView( trait )?.xp ?? '';
 	}
 
-	function getTraitStatement( trait: Trait ) {
-		return trait?.statement ?? trait?.description ?? '';
+	// Statement boxes read the sentence child only; description is a general
+	// fallback for asset-style boxes, not a second statement home.
+	function getTraitStatement( trait: Trait, statementOnly = false ) {
+		const sentence = cortexFunctions.statementText( trait );
+		if ( sentence ) return sentence;
+		return statementOnly ? '' : ( trait?.description ?? '' );
 	}
 
 	function renderDieValue( value: number ) {
@@ -231,7 +236,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const classes: Record<string, boolean> = { 'trait': true };
 		if ( trait?.description?.length ) classes['trait-has-description'] = true;
 		if ( cortexFunctions.sfxChildren( trait ).length ) classes['trait-has-sfx'] = true;
-		if ( trait?.traits?.length ) classes['trait-has-subtraits'] = true;
+		if ( nonSfxSubtraits( trait ).length ) classes['trait-has-subtraits'] = true;
 		return classes;
 	}
 
@@ -281,6 +286,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function openTraitAt( sArg: any, item: any ) {
 		if ( !item ) return;
 		if ( item.isPlaceholder ) {
+			if ( props.submode === 'play' && !isPlayAddRemovableSet( traitSet.value ) ) {
+				return;
+			}
 			fillPlaceholder( sArg );
 			return;
 		}
@@ -357,7 +365,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	// reads past it.
 	function nonSfxSubtraits( trait: Trait ) {
 		const subs = ( trait as any )?.traits;
-		return ( Array.isArray( subs ) ? subs : [] ).filter( ( st: any ) => !cortexFunctions.isSfxContainer( st ) );
+		return ( Array.isArray( subs ) ? subs : [] )
+			.filter( ( st: any ) => !cortexFunctions.isSfxContainer( st ) && !cortexFunctions.isStatementContainer( st ) );
 	}
 
 	function getSubtraitAt( trait: Trait, index: number ) {
@@ -470,11 +479,49 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 					size: targetVal,
 					qty: 1,
 					source: trait.name,
-					hitches: resolveHitches( trait, [ traitSetArg ] )
+					hitches: resolveHitches( trait, [ traitSetArg ] ),
+					ppDelta: 0
 				} );
 			}
 		} else {
 			selectElement([ 'trait', sArg, t ]);
+		}
+	}
+
+	function traitHasHinder( trait: Trait, traitSetArg: TraitSet ): boolean {
+		if ( !trait || !isTraitRated( trait ) ) return false;
+		if ( cortexFunctions.hasHinder( trait ) ) return true;
+		if ( getView( traitSetArg )?.style?.body === 'distinctions' && getView( traitSetArg )?.sharedHinder ) return true;
+		return false;
+	}
+
+	function handleHinderDieClick( trait: Trait, traitSetArg: TraitSet, sArg: any, t: any ) {
+		if ( props.submode === 'play' ) {
+			emit( 'addDieToRoller', {
+				size: 4,
+				qty: 1,
+				source: trait.name ? `${trait.name} (Hinder)` : 'Hinder',
+				hitches: resolveHitches( trait, [ traitSetArg ] ),
+				ppDelta: 1,
+				ppCommitted: false
+			} );
+			if ( props.character ) {
+				const curPP = Number( props.character.plotPoints ) || 0;
+				cortexFunctions.setPlotPoints( props.character, curPP + 1 );
+				updateCharacter( props.character );
+			}
+		}
+	}
+
+	function stageStressDie( trait: Trait, size: number, label: string, traitSetArg: TraitSet ) {
+		if ( props.submode === 'play' && size > 0 ) {
+			emit( 'addDieToRoller', {
+				size: size,
+				qty: 1,
+				source: label || 'Stress',
+				hitches: resolveHitches( trait, [ traitSetArg ] ),
+				ppDelta: 0
+			} );
 		}
 	}
 
@@ -862,7 +909,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const skillIdx = new Set( skills.filter( ( sk: any ) => sk.originalIndex !== null && sk.originalIndex !== undefined ).map( ( sk: any ) => sk.originalIndex ) );
 		const groups: any[] = skills.map( ( skillItem: any ) => {
 			const sIdx = skillItem.originalIndex;
-			const nested = ( skillItem.trait?.traits || [] ).map( ( sub: any, u: number ) => ({ kind: 'sub', sub, u }) );
+			const nested = ( skillItem.trait?.traits || [] )
+				.filter( ( sub: any ) => !cortexFunctions.isStatementContainer( sub ) )
+				.map( ( sub: any, u: number ) => ({ kind: 'sub', sub, u }) );
 			const linked = flats
 				.filter( ( f: any ) => getView( f.trait )?.linkTo === sIdx )
 				.map( ( f: any ) => ({ kind: 'flat', item: f }) );
@@ -1111,7 +1160,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		nodePool, stagesWholePool, stageTraitDice, nodeSpendable, isSpendable,
 		firstDie, isDieActive, isTraitRated,
 		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
-		getSharedHinderText, getTraitSetSlotCount
+		getSharedHinderText, getTraitSetSlotCount,
+		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageStressDie
 	};
 
 	provide( TRAIT_SET_KEY, api );

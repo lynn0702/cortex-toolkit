@@ -239,7 +239,10 @@ function checkRatingObject(rating, where) {
   if (!Array.isArray(rating.value) || rating.value.some((x) => typeof x !== 'number' && typeof x !== 'boolean')) {
     err(`${where}: rating.value must be a list of numbers/booleans`);
   }
-  if (!Array.isArray(rating.range) || rating.range.some((x) => typeof x !== 'number')) {
+  if (rating.range === undefined) {
+    // A lone Pip bubble carries no ladder: [true, false] is derived.
+    if (rating.type !== 'Pip') err(`${where}: rating.range must be a list of numbers`);
+  } else if (!Array.isArray(rating.range) || rating.range.some((x) => typeof x !== 'number')) {
     err(`${where}: rating.range must be a list of numbers`);
   }
   if (rating.out !== undefined && rating.out !== null && typeof rating.out !== 'boolean') {
@@ -274,6 +277,14 @@ function checkRetiredTraitKeys(node, where) {
   if (node.custom && typeof node.custom === 'object' && !Array.isArray(node.custom) && node.custom.checked !== undefined) {
     err(`${where}: retired custom.checked (Pip rating supersedes it)`);
   }
+  if (node.statement !== undefined) err(`${where}: retired trait statement (a Statement child trait supersedes it)`);
+  if (node.questioned !== undefined) err(`${where}: retired trait questioned (the statement child's Pip supersedes it)`);
+  if (node.custom && typeof node.custom === 'object' && !Array.isArray(node.custom) && node.custom.questioned !== undefined) {
+    err(`${where}: retired custom.questioned (the statement child's Pip supersedes it)`);
+  }
+  if (node.view && typeof node.view === 'object' && !Array.isArray(node.view) && node.view.questioned !== undefined) {
+    err(`${where}: retired view.questioned (the statement child's Pip supersedes it)`);
+  }
 }
 
 function checkLayeredTrait(node, where, depth) {
@@ -295,7 +306,7 @@ function checkLayeredTrait(node, where, depth) {
   if (node.custom !== undefined) err(`${where}: custom stays app-side, never in entity JSON`);
   if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
   if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
-  for (const k of ['noun', 'plural', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+  for (const k of ['noun', 'plural', 'ratingPosition', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
     if (node[k] !== undefined) err(`${where}: presentation key ${k} lives in the type layer`);
   }
   checkRetiredTraitKeys(node, where);

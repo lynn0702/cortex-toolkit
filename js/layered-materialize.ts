@@ -31,8 +31,6 @@ export interface LegacyTrait {
 	traits?: LegacyTrait[];
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
-	statement?: string | null;
-	questioned?: boolean | null;
 	xp?: unknown;
 	counter?: unknown;
 	_lid?: string;
@@ -379,11 +377,32 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 	for (const [k, v] of Object.entries(t)) {
 		if (k === "name" || k === "traits" || k === "dice" || k === "value" || k === "rating" ||
 			k === "_lid" || k === "id" || k === "removedTraits") continue;
+		// Retired trait-level statement/questioned pair: the sentence lives
+		// as a child trait now. Drop the old keys plus their app-side homes.
+		if (k === "statement" || k === "questioned") continue;
 		// Canonical emit: empty custom/tags stay out (absence carries the
 		// same meaning). description "" is KEPT: in a delta it is an
 		// explicit clear of an inherited description. Explicit nulls
 		// (removals, unrated) are kept.
-		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v) && !Object.keys(v).length) continue;
+		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v)) {
+			const bag = clone(v) as Record<string, unknown>;
+			delete bag.questioned;
+			const ctk = bag.cortexToolkit;
+			if (ctk && typeof ctk === "object" && !Array.isArray(ctk)) {
+				delete (ctk as Record<string, unknown>).questioned;
+				if (!Object.keys(ctk as Record<string, unknown>).length) delete bag.cortexToolkit;
+			}
+			if (!Object.keys(bag).length) continue;
+			(node as Record<string, unknown>).custom = bag;
+			continue;
+		}
+		if (k === "view" && v && typeof v === "object" && !Array.isArray(v)) {
+			const bag = clone(v) as Record<string, unknown>;
+			delete bag.questioned;
+			if (!Object.keys(bag).length) continue;
+			(node as Record<string, unknown>).view = bag;
+			continue;
+		}
 		if (k === "tags" && Array.isArray(v) && !v.length) continue;
 		(node as Record<string, unknown>)[k] = clone(v);
 	}

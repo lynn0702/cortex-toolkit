@@ -307,12 +307,66 @@ function addDieToRoller( dieData: any ) {
 	showToast( `Added ${label} to dice pool` );
 }
 
+const studioPanelRef = ref<any>( null );
+const showPlaySaveConfirm = ref( false );
+
 function removeDieFromRoller( index: number ) {
+	const item = dicePool.value.items[ index ];
+	if ( item && !item.ppCommitted && item.ppDelta && character.value ) {
+		const currentPP = Number( character.value.plotPoints || 0 );
+		const newPP = Math.max( 0, currentPP - item.ppDelta );
+		cortexFunctions.setPlotPoints( character.value, newPP );
+		updateCharacter( character.value );
+	}
 	dicePool.value.removeAt( index );
 }
 
 function clearDicePool() {
+	if ( character.value ) {
+		let totalDelta = 0;
+		for ( const item of dicePool.value.items ) {
+			if ( !item.ppCommitted && item.ppDelta ) {
+				totalDelta += item.ppDelta;
+			}
+		}
+		if ( totalDelta > 0 ) {
+			const currentPP = Number( character.value.plotPoints || 0 );
+			const newPP = Math.max( 0, currentPP - totalDelta );
+			cortexFunctions.setPlotPoints( character.value, newPP );
+			updateCharacter( character.value );
+		}
+	}
 	dicePool.value.clear();
+}
+
+function triggerRollFromPill() {
+	if ( studioPanelRef.value && typeof studioPanelRef.value.roll === 'function' ) {
+		studioPanelRef.value.roll();
+	}
+}
+
+function triggerClearFromPill() {
+	clearDicePool();
+}
+
+function toggleMobileRollerDrawer() {
+	if ( isStudioPanelOpen.value && studioPanelTab.value === 'roller' ) {
+		isStudioPanelOpen.value = false;
+	} else {
+		isStudioPanelOpen.value = true;
+		studioPanelTab.value = 'roller';
+	}
+}
+
+function confirmPlaySave() {
+	showPlaySaveConfirm.value = false;
+	persist().then( () => {
+		showToast( 'Saved session changes to character.' );
+	} );
+}
+
+function cancelPlaySave() {
+	showPlaySaveConfirm.value = false;
 }
 
 function safeImageUrl( url: any ) {
@@ -995,6 +1049,9 @@ function updateCharacter( characterData: any ) {
 
 	recordCharOrder( characterData );
 	touchCharacter( characterData.id );
+	if ( submode.value === 'play' ) {
+		return Promise.resolve();
+	}
 	const saved = saveLocalData();
 	if ( !editing.value || !editing.value.length ) {
 		commitHistorySnapshot();
@@ -1062,7 +1119,7 @@ function selectElement( selector: any ) {
 	}
 
 	// Mobile: bring active panel into view
-	if ( selector.length && mode.value === 'character' && submode.value === 'edit' &&
+	if ( selector.length && mode.value === 'character' && submode.value !== 'print' &&
 	     window.matchMedia && window.matchMedia( '(max-width: 768px)' ).matches ) {
 		nextTick( () => {
 			const open = document.querySelector( '.studio-panel' ) || document.querySelector( '.editor.open' ) || document.querySelector( 'aside.editor' );
@@ -1265,6 +1322,10 @@ async function persist() {
 }
 
 function saveLocalData() {
+	if ( submode.value === 'play' ) {
+		showPlaySaveConfirm.value = true;
+		return Promise.resolve();
+	}
 	return persist();
 }
 
@@ -1293,6 +1354,8 @@ defineExpose( {
 	handleGlobalPointerDown, handleMainClick, clearSelected, handleEditorFocusIn,
 	bootFromStorage, persist, saveLocalData, mobileShowSheet, mobileShowRoller,
 	isNarrowViewport, handleToggleStudio,
+	studioPanelRef, showPlaySaveConfirm, confirmPlaySave, cancelPlaySave,
+	triggerRollFromPill, triggerClearFromPill, toggleMobileRollerDrawer,
 } );
 </script>
 
@@ -1322,6 +1385,7 @@ defineExpose( {
 			>
 				<!-- STUDIO PANEL: PROPERTIES INSPECTOR & DICE ROLLER -->
 				<studio-panel
+					ref="studioPanelRef"
 					v-if="mode === 'character' && submode !== 'print'"
 					:character="character"
 					:editing="editing"
@@ -1497,6 +1561,37 @@ defineExpose( {
 					</article>
 
 			</main>
+				<!-- DOCKED MOBILE ROLLER PILL BAR -->
+				<div
+					class="mobile-roller-pill-bar"
+					v-if="mode === 'character' && submode === 'play'"
+					:class="{ 'has-dice': dicePool.items.length > 0, 'is-open': isStudioPanelOpen && studioPanelTab === 'roller' }"
+				>
+					<div class="mobile-roller-pill-left" @click="toggleMobileRollerDrawer">
+						<template v-if="studioPanelRef?.diceRoller?.isRolled && studioPanelRef?.diceRoller?.bestTotalInfo">
+							<span class="pill-result-total">Total: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.total }}</strong></span>
+							<span class="pill-bullet">•</span>
+							<span class="pill-result-effect">Effect: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.effect }}</strong></span>
+						</template>
+						<template v-else-if="dicePool.items.length > 0">
+							<span v-for="(item, pIdx) in dicePool.items" :key="pIdx" class="pill-die">
+								<span class="c">{{ cortexFunctions.getDieDisplayValue(item.size) }}</span>
+								<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
+							</span>
+						</template>
+						<template v-else>
+							<span class="pill-empty-label"><i class="fas fa-dice-d20"></i> Tap to open roller</span>
+						</template>
+					</div>
+					<div class="mobile-roller-pill-right" v-if="dicePool.items.length > 0">
+						<button type="button" class="btn-pill-roll" @click.stop="triggerRollFromPill" title="Roll dice">
+							<i class="fas fa-dice"></i> Roll
+						</button>
+						<button type="button" class="btn-pill-clear" @click.stop="triggerClearFromPill" title="Clear pool">
+							<i class="fas fa-times"></i>
+						</button>
+					</div>
+				</div>
 			</div><!-- /.sheet-column -->
 			</div><!-- /.play-shell -->
 
@@ -1509,6 +1604,32 @@ defineExpose( {
 				@openAlongside="openAlongside"
 				@gotoRoster="isAddCharacterModalOpen = false; setMode('roster', null)"
 			/>
+
+			<!-- PLAY-SAVE CONFIRMATION MODAL -->
+			<teleport to="body">
+				<transition>
+					<div class="modal-veil" v-if="showPlaySaveConfirm" @click.stop="cancelPlaySave"></div>
+				</transition>
+				<transition>
+					<aside class="modal modal-confirm" v-if="showPlaySaveConfirm">
+						<div class="modal-close" @click.prevent="cancelPlaySave"><i class="fas fa-times"></i></div>
+						<div class="modal-inner">
+							<p>Save session state to character <strong>{{ character?.name || 'this character' }}</strong>?</p>
+							<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This will permanently overwrite the baseline character with current session changes (spent dice, stress, complications).</p>
+							<div class="modal-button-container">
+								<div class="modal-button-container-inner">
+									<div class="modal-button modal-button-primary" @click.stop="confirmPlaySave">
+										<span><i class="fas fa-save"></i> Save</span>
+									</div>
+									<div class="modal-button modal-button-no" @click.stop="cancelPlaySave">
+										<span><i class="fas fa-times"></i> Cancel</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</aside>
+				</transition>
+			</teleport>
 
 			<!-- TOAST NOTIFICATION -->
 			<transition name="toast">

@@ -204,6 +204,27 @@ export const cortexFunctions = {
 		return this.fixedNameSetKeys.some( ( k: string ) => n.includes( k ) );
 	},
 
+	isPlayAddRemovableSet: function( traitSetArg: any ): boolean {
+		if ( !traitSetArg ) return false;
+		const view = getView( traitSetArg );
+		if ( typeof ( view as any )?.playMutable === 'boolean' ) return ( view as any ).playMutable;
+		const body = view?.style?.body;
+		const name = ( traitSetArg.name || '' ).trim().toLowerCase();
+		if ( name.includes( 'complication' ) ) return true;
+		if ( body === 'stress' && !this.isFixedNameSet( name ) ) return true;
+		return false;
+	},
+
+	setPlotPoints: function( char: any, val: number ) {
+		if ( !char ) return;
+		const n = Math.max( 0, Math.floor( val ) );
+		char.plotPoints = n;
+		const t = this.ensureNameTrait( char, 'plotPoints' );
+		if ( t ) {
+			t.rating = { type: 'Counter', value: [ n ], range: [ 0, 20 ] };
+		}
+	},
+
 	// The SFX container is a child trait literally named "SFX" with no
 	// rating of its own; its children are the SFX entries. Shape + name,
 	// never a field — this is the dissolve of the old `sfx` array.
@@ -269,6 +290,82 @@ export const cortexFunctions = {
 		if ( !container || !Array.isArray( container.traits ) ) return;
 		const idx = container.traits.findIndex( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
 		if ( idx === -1 ) container.traits.unshift( { name: 'Hinder' } );
+	},
+
+	// The statement container is a child trait literally named "Statement"
+	// with no rating of its own; its single child is the sentence, carrying
+	// the questioned state as a Pip rating. Shape + name, never a field —
+	// this is the dissolve of the old `statement`/`questioned` pair.
+	isStatementContainer: function( t: unknown ) {
+		return Boolean( t && typeof t === 'object' && !Array.isArray( t ) && ( t as any ).name === 'Statement' && getRating( t ) === undefined );
+	},
+	statementContainer: function( node: unknown ) {
+		const subs = node && typeof node === 'object' ? ( node as any ).traits : undefined;
+		if ( !Array.isArray( subs ) ) return undefined;
+		return subs.find( ( st: any ) => this.isStatementContainer( st ) );
+	},
+	statementChild: function( node: unknown ) {
+		const container = this.statementContainer( node );
+		return ( container && Array.isArray( container.traits ) ) ? ( container.traits[ 0 ] || undefined ) : undefined;
+	},
+	statementText: function( node: unknown ) {
+		const child = this.statementChild( node );
+		return ( child && typeof child.name === 'string' ) ? child.name : '';
+	},
+	isStatementFilled: function( node: unknown ) {
+		const child = this.statementChild( node );
+		const rating = child ? getRating( child ) : undefined;
+		return Boolean( rating && rating.type === 'Pip' && rating.value[ 0 ] === true );
+	},
+	// The container child, created on demand (sparse: absent until a
+	// statement exists). The sentence is the child's name.
+	ensureStatementContainer: function( node: unknown ) {
+		if ( !node || typeof node !== 'object' ) return null;
+		const rec = node as any;
+		if ( !Array.isArray( rec.traits ) ) rec.traits = [];
+		let container = rec.traits.find( ( st: any ) => this.isStatementContainer( st ) );
+		if ( !container ) {
+			container = { name: 'Statement', traits: [] };
+			rec.traits.push( container );
+		}
+		if ( !Array.isArray( container.traits ) ) container.traits = [];
+		return container;
+	},
+	// Write the questioned state onto the existing sentence pip. Returns
+	// false when no statement exists (a state without text has no home).
+	setStatementFilled: function( node: unknown, filled: boolean ) {
+		const child = this.statementChild( node );
+		if ( !child ) return false;
+		( child as any ).rating = { type: 'Pip', value: [ Boolean( filled ) ] };
+		return true;
+	},
+	// Rename / create / remove the sentence pip. Blank text dissolves the
+	// container (questioned state cannot outlive its sentence).
+	setStatementText: function( node: unknown, text: unknown ) {
+		if ( !node || typeof node !== 'object' ) return;
+		const rec = node as any;
+		const sentence = typeof text === 'string' ? text.trim() : '';
+		if ( !sentence ) {
+			if ( !Array.isArray( rec.traits ) ) return;
+			const idx = rec.traits.findIndex( ( st: any ) => this.isStatementContainer( st ) );
+			if ( idx !== -1 ) rec.traits.splice( idx, 1 );
+			return;
+		}
+		const container = this.ensureStatementContainer( node );
+		if ( !container || !Array.isArray( container.traits ) ) return;
+		let child = container.traits[ 0 ];
+		if ( !child || typeof child !== 'object' ) {
+			child = { name: sentence };
+			container.traits.push( child );
+		} else {
+			child.name = sentence;
+		}
+		const rating = getRating( child );
+		if ( !rating || rating.type !== 'Pip' ) {
+			child.rating = { type: 'Pip', value: [ false ] };
+		} else {
+			child.rating = { type: 'Pip', value: [ rating.value[ 0 ] === true ] };
+		}
 	},
 
 	// Feature defaults seeded when a trait-set style is chosen.

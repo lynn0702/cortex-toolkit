@@ -33,6 +33,34 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   });
 }
 
+// ---- 1b. No layered template carries a trait-level statement pair.
+// Set-level `statement` is presentation and stays; the pair is trait data.
+{
+  const offenders = [];
+  const walkTrait = (node, where) => {
+    if (!node || typeof node !== 'object' || Array.isArray(node)) return;
+    if (node.statement !== undefined) offenders.push(where + '.statement');
+    if (node.questioned !== undefined) offenders.push(where + '.questioned');
+    if (node.custom && typeof node.custom === 'object' && node.custom.questioned !== undefined) offenders.push(where + '.custom.questioned');
+    if (node.view && typeof node.view === 'object' && node.view.questioned !== undefined) offenders.push(where + '.view.questioned');
+    if (node.traits && typeof node.traits === 'object') {
+      for (const [k, v] of Object.entries(node.traits)) walkTrait(v, where + '.traits.' + k);
+    }
+    if (node.slots && typeof node.slots === 'object') {
+      for (const [k, v] of Object.entries(node.slots)) walkTrait(v, where + '.slots.' + k);
+    }
+  };
+  T.forEach((orig) => {
+    const L = readLayered(orig.id);
+    for (const [sk, set] of Object.entries((L.character && L.character.sets) || {})) {
+      if (!set || typeof set !== 'object') continue;
+      for (const [k, v] of Object.entries(set.traits || {})) walkTrait(v, orig.id + '.sets.' + sk + '.traits.' + k);
+      for (const [k, v] of Object.entries(set.slots || {})) walkTrait(v, orig.id + '.sets.' + sk + '.slots.' + k);
+    }
+  });
+  ok(offenders.length === 0, 'no trait-level statement/questioned in the layered corpus', offenders);
+}
+
 // ---- 2. Bewilderwood reference assertions.
 {
   const L = readLayered('spotlight-camp-bewilderwood');
@@ -53,7 +81,14 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(dctk.sharedHinder === true &&
     dctk.sharedHinderText === 'Hinder: Gain a PP when you trade out your distinction\'s d8 rating for a d4.',
     'shared hinder banner kept');
-  ok(sets.Values.traits.Bravery.questioned === false && sets.Values.traits.Bravery.statement === '', 'values statement keys kept');
+  ok(sets.Values.traits.Bravery.questioned === undefined && sets.Values.traits.Bravery.statement === undefined, 'values statement keys dissolved');
+  ok(sets.Values.traits.Bravery.traits === undefined, 'blank sentences leave no statement child');
+  const hh = readLayered('spotlight-hammerheads-character').character.sets.Relationships.slots['0'];
+  ok(hh.statement === undefined && hh.traits.Statement.traits['saved my life'].rating.value[0] === false,
+    'statement becomes a child pip, unfilled unless questioned');
+  const ks = readLayered('spotlight-kitchen-sink').character.sets.Values.traits.Speed;
+  ok(ks.statement === undefined && ks.questioned === undefined && ks.traits.Statement.traits['Ship early, refine relentlessly.'].rating.value[0] === true,
+    'questioned migrates to a filled statement pip');
   // Slots are not traits (2026-10-22): pure-empty blanks live nowhere in
   // files; reservedSlots counts the render-time expansion. Only
   // data-carrying slots (branch markers, ratings, text) keep indices.

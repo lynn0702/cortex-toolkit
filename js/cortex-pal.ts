@@ -89,6 +89,8 @@ export interface DiceItem {
 	isScale: boolean;
 	hitches: number;
 	keepsExtra: number;
+	ppDelta?: number;
+	ppCommitted?: boolean;
 }
 
 export class CortexDicePool {
@@ -138,6 +140,8 @@ export class CortexDicePool {
 							? Math.floor(props.hitches as number) : 1,
 						keepsExtra: (typeof props.keepsExtra === "number" && Number.isFinite(props.keepsExtra) && (props.keepsExtra as number) > 0)
 							? Math.floor(props.keepsExtra as number) : 0,
+						ppDelta: (typeof props.ppDelta === "number") ? props.ppDelta : 0,
+						ppCommitted: Boolean(props.ppCommitted),
 					});
 				}
 			}

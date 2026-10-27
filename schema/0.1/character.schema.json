@@ -189,21 +189,7 @@
 				},
 				"description": {
 					"type": "string",
-					"description": "A description of the trait, or the trait statement."
-				},
-				"statement": {
-					"type": [
-						"string",
-						"null"
-					],
-					"description": "The trait statement (synonym for description)."
-				},
-				"questioned": {
-					"type": [
-						"boolean",
-						"null"
-					],
-					"description": "Whether this trait statement is questioned or challenged."
+					"description": "A description of the trait."
 				},
 				"xp": {
 					"type": [
@@ -285,7 +271,7 @@
 				},
 			"range": {
 				"type": "array",
-				"description": "The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip.",
+				"description": "The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip. Pip may omit it (a lone bubble's [true, false] pair is derived).",
 				"items": {
 					"type": "integer"
 				}
@@ -300,8 +286,7 @@
 			},
 			"required": [
 				"type",
-				"value",
-				"range"
+				"value"
 			],
 			"additionalProperties": false
 		},

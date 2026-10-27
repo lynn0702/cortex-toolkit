@@ -1473,7 +1473,6 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "statement": "",
               "traits": [
                 {
                   "name": "SFX",
@@ -1502,7 +1501,6 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "statement": "",
               "traits": [
                 {
                   "name": "SFX",
@@ -1531,7 +1529,6 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "statement": "",
               "traits": [
                 {
                   "name": "SFX",
@@ -1602,32 +1599,22 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Bravery",
-              "statement": "",
-              "questioned": false,
               "traits": []
             },
             {
               "name": "Community",
-              "statement": "",
-              "questioned": false,
               "traits": []
             },
             {
               "name": "Curiosity",
-              "statement": "",
-              "questioned": false,
               "traits": []
             },
             {
               "name": "Friendship",
-              "statement": "",
-              "questioned": false,
               "traits": []
             },
             {
               "name": "Mischief",
-              "statement": "",
-              "questioned": false,
               "traits": []
             }
           ]
@@ -1795,7 +1782,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "",
-              "statement": "",
               "traits": [
                 {
                   "name": "COMPLICATION",
@@ -1809,7 +1795,6 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
-              "statement": "",
               "traits": [
                 {
                   "name": "COMPLICATION",
@@ -1823,7 +1808,6 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
-              "statement": "",
               "traits": [
                 {
                   "name": "COMPLICATION",
@@ -1837,7 +1821,6 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
-              "statement": "",
               "traits": [
                 {
                   "name": "COMPLICATION",
@@ -1851,7 +1834,6 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
-              "statement": "",
               "traits": [
                 {
                   "name": "COMPLICATION",
@@ -1865,7 +1847,6 @@ const cortexSpotlightTemplates = [
             },
             {
               "name": "",
-              "statement": "",
               "traits": [
                 {
                   "name": "COMPLICATION",
@@ -3712,44 +3693,149 @@ const cortexSpotlightTemplates = [
             {
               "name": "",
               "description": "saved my life",
-              "statement": "saved my life",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "saved my life",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "",
               "description": "owes me big",
-              "statement": "owes me big",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "owes me big",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "",
               "description": "is a troublemaker",
-              "statement": "is a troublemaker",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "is a troublemaker",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "",
               "description": "knows their stuff",
-              "statement": "knows their stuff",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "knows their stuff",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "",
               "description": "is a liability",
-              "statement": "is a liability",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "is a liability",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "",
               "description": "is dependable",
-              "statement": "is dependable",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "is dependable",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "",
               "description": "is good for a laugh",
-              "statement": "is good for a laugh",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "is good for a laugh",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -11508,7 +11594,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11566,7 +11651,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11624,7 +11708,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11682,7 +11765,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11740,7 +11822,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11798,7 +11879,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11856,7 +11936,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11914,7 +11993,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -11972,7 +12050,6 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Morale",
-              "questioned": false,
               "traits": []
             },
             {
@@ -18164,7 +18241,23 @@ const cortexSpotlightTemplates = [
                 ]
               },
               "description": "Form and function are inseparable.",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Form and function are inseparable.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "Speed",
@@ -18182,8 +18275,23 @@ const cortexSpotlightTemplates = [
                 ]
               },
               "description": "Ship early, refine relentlessly.",
-              "questioned": true,
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Ship early, refine relentlessly.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          true
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "Clarity",
@@ -18430,6 +18538,21 @@ const cortexSpotlightTemplates = [
                     ]
                   },
                   "traits": []
+                },
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "They owe me a drydock bay.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
                 }
               ]
             }
@@ -19886,7 +20009,6 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "statement": "Debts are never forgotten.",
               "traits": [
                 {
                   "name": "Complication",
@@ -19921,6 +20043,21 @@ const cortexSpotlightTemplates = [
                     ]
                   },
                   "traits": []
+                },
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Debts are never forgotten.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
                 }
               ]
             },
@@ -19939,7 +20076,6 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "statement": "Honor bound to protect.",
               "traits": [
                 {
                   "name": "Complication",
@@ -19974,6 +20110,21 @@ const cortexSpotlightTemplates = [
                     ]
                   },
                   "traits": []
+                },
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Honor bound to protect.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
                 }
               ]
             }
@@ -20024,8 +20175,23 @@ const cortexSpotlightTemplates = [
                 ]
               },
               "description": "Form and function are inseparable.",
-              "statement": "Form and function are inseparable.",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Form and function are inseparable.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "Speed",
@@ -20043,8 +20209,23 @@ const cortexSpotlightTemplates = [
                 ]
               },
               "description": "Ship early, refine relentlessly.",
-              "statement": "Ship early, refine relentlessly.",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Ship early, refine relentlessly.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
               "name": "Clarity",
@@ -20062,8 +20243,23 @@ const cortexSpotlightTemplates = [
                 ]
               },
               "description": "Truth cuts through ambiguity.",
-              "statement": "Truth cuts through ambiguity.",
-              "traits": []
+              "traits": [
+                {
+                  "name": "Statement",
+                  "traits": [
+                    {
+                      "name": "Truth cuts through ambiguity.",
+                      "rating": {
+                        "type": "Pip",
+                        "value": [
+                          false
+                        ]
+                      },
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },

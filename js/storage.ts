@@ -112,6 +112,9 @@ export const cortexStorage: CortexStorage = {
 			const key = this.templateKey( t );
 			if ( seen.has( key ) ) continue;
 			seen.add( key );
+			// Stored snapshots predate the statement dissolve; normalize the
+			// old fields into the child-trait shape on load.
+			cortexMigration.normalizeView( t );
 			if ( t.version === undefined || t.version === null ) t.version = 1;
 			out.push( t );
 		}

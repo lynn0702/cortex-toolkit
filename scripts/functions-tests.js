@@ -32,5 +32,35 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingSca
   ok(F.isFixedNameSet('Eidolon Strain') === true, 'eidolon matches', F.fixedNameSetKeys.length);
 }
 
+// ---- isPlayAddRemovableSet (Complication carveout)
+{
+  ok(F.isPlayAddRemovableSet({ name: 'Complications' }) === true, 'complications set is play-add/removable');
+  ok(F.isPlayAddRemovableSet({ name: 'Session Complications' }) === true, 'fuzzy complications name matches');
+  ok(F.isPlayAddRemovableSet({ name: 'Eidolon Stress', view: { style: { body: 'stress' } } }) === false, 'fixed stress set is not play-add/removable');
+  ok(F.isPlayAddRemovableSet({ name: 'Custom Stress', view: { style: { body: 'stress' } } }) === true, 'generic stress set is play-add/removable');
+  ok(F.isPlayAddRemovableSet({ name: 'Skills', view: { playMutable: true } }) === true, 'explicit playMutable true wins');
+  ok(F.isPlayAddRemovableSet({ name: 'Complications', view: { playMutable: false } }) === false, 'explicit playMutable false wins');
+  ok(F.isPlayAddRemovableSet({ name: 'Distinctions' }) === false, 'distinctions are not play-add/removable');
+  ok(F.isPlayAddRemovableSet(null) === false, 'null trait set returns false');
+}
+
+// ---- setPlotPoints
+{
+  const char = {
+    plotPoints: 1,
+    traitSets: [
+      {
+        view: { style: { body: 'name' } },
+        traits: [
+          { name: 'plotPoints', rating: { type: 'Counter', value: [1], range: [0, 20] } }
+        ]
+      }
+    ]
+  };
+  F.setPlotPoints(char, 2);
+  ok(char.plotPoints === 2, 'character.plotPoints updated to 2');
+  ok(char.traitSets[0].traits[0].rating.value[0] === 2, 'Counter trait value updated to 2');
+}
+
 console.log(`functions-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

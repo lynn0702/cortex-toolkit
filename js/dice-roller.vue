@@ -214,8 +214,40 @@ function clearPool() {
 	keep.value = 2;
 }
 
+const DIE_SIZES = [ 4, 6, 8, 10, 12 ];
+
+function stepDownDie( item: any ) {
+	const currentIdx = DIE_SIZES.indexOf( item.size );
+	if ( currentIdx > 0 ) {
+		item.size = DIE_SIZES[ currentIdx - 1 ];
+		isRolled.value = false;
+	}
+}
+
+function stepUpDie( item: any ) {
+	const currentIdx = DIE_SIZES.indexOf( item.size );
+	if ( currentIdx !== -1 && currentIdx < DIE_SIZES.length - 1 ) {
+		item.size = DIE_SIZES[ currentIdx + 1 ];
+		isRolled.value = false;
+	}
+}
+
+function duplicateDie( item: any ) {
+	emit( 'addDie', {
+		...item,
+		id: undefined,
+		ppDelta: 0,
+		ppCommitted: true
+	} );
+	isRolled.value = false;
+}
+
 function roll() {
 	if ( !props.pool || props.pool.is_empty() ) return;
+
+	for ( const item of props.pool.items ) {
+		( item as any ).ppCommitted = true;
+	}
 
 	// Thresholds resolve per pool section before rolling: the action
 	// section floods to its highest member, apart-rolling dice always
@@ -541,6 +573,15 @@ function copyOutput() {
 		}, 2000 );
 	} );
 }
+
+defineExpose( {
+	roll,
+	clearPool,
+	isRolled,
+	lastRollResults,
+	bestTotalInfo,
+	bestEffectInfo
+} );
 </script>
 
 <template>
@@ -631,7 +672,12 @@ function copyOutput() {
 						<span class="c">{{ getDieDisplayValue(item.size) }}</span>
 						<span class="chip-source" v-if="cleanTraitLabel(item.source)" :title="cleanTraitLabel(item.source)">{{ cleanTraitLabel(item.source) }}</span>
 						<span class="chip-tag-res" v-if="isExempt(item)">SEP</span>
-						<button class="chip-remove" @click.stop="removeDie(Number(idx))" title="Remove die">×</button>
+						<div class="chip-actions">
+							<button type="button" class="chip-btn chip-step-down" :disabled="item.size <= 4" @click.stop="stepDownDie(item)" title="Step down">▼</button>
+							<button type="button" class="chip-btn chip-step-up" :disabled="item.size >= 12" @click.stop="stepUpDie(item)" title="Step up">▲</button>
+							<button type="button" class="chip-btn chip-dup" @click.stop="duplicateDie(item)" title="Duplicate die">×2</button>
+							<button type="button" class="chip-remove" @click.stop="removeDie(Number(idx))" title="Remove die">×</button>
+						</div>
 					</div>
 				</div>
 

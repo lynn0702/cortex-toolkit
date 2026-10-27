@@ -70,7 +70,7 @@ const bodyComponent = computed( () => {
 		<div class="trait-set-header">
 			<transition appear>
 				<div :class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
-					@click.stop="selectElement([ 'traitSet', s ])"
+					@click.stop="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>

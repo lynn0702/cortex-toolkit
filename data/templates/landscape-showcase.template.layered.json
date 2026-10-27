@@ -408,7 +408,6 @@
                 12
               ]
             },
-            "statement": "Debts are never forgotten.",
             "traits": {
               "Complication": {
                 "rating": {
@@ -438,6 +437,18 @@
                     10,
                     12
                   ]
+                }
+              },
+              "Statement": {
+                "traits": {
+                  "Debts are never forgotten.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -456,7 +467,6 @@
                 12
               ]
             },
-            "statement": "Honor bound to protect.",
             "traits": {
               "Complication": {
                 "rating": {
@@ -486,6 +496,18 @@
                     10,
                     12
                   ]
+                }
+              },
+              "Statement": {
+                "traits": {
+                  "Honor bound to protect.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -535,7 +557,20 @@
               ]
             },
             "description": "Form and function are inseparable.",
-            "statement": "Form and function are inseparable."
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "Form and function are inseparable.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "Speed": {
             "rating": {
@@ -552,7 +587,20 @@
               ]
             },
             "description": "Ship early, refine relentlessly.",
-            "statement": "Ship early, refine relentlessly."
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "Ship early, refine relentlessly.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "Clarity": {
             "rating": {
@@ -569,7 +617,20 @@
               ]
             },
             "description": "Truth cuts through ambiguity.",
-            "statement": "Truth cuts through ambiguity."
+            "traits": {
+              "Statement": {
+                "traits": {
+                  "Truth cuts through ambiguity.": {
+                    "rating": {
+                      "type": "Pip",
+                      "value": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
