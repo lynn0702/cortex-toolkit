@@ -66,7 +66,7 @@ const bodyComponent = computed( () => {
 </script>
 
 <template>
-	<div :class="getTraitSetClasses(traitSet)">
+	<div :class="getTraitSetClasses(traitSet)" :data-set-index="s">
 		<div class="trait-set-header">
 			<transition appear>
 				<div :class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"

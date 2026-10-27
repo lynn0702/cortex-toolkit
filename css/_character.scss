@@ -262,11 +262,23 @@
 }
 
 @media screen and (max-width: 768px) {
+	.character-sheet {
+		max-width: 100vw;
+		box-sizing: border-box;
+	}
+	.pages {
+		max-width: 100vw;
+		box-sizing: border-box;
+	}
 	.page:not(.submode-print &) {
 		padding-top: 1rem;
+		max-width: 100vw;
+		box-sizing: border-box;
 	}
 	.page-inner {
 		width: 100%;
+		max-width: 100vw;
+		box-sizing: border-box;
 		padding-inline: 0.25rem;
 	}
 	.title {

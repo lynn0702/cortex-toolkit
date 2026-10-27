@@ -1974,6 +1974,8 @@
 	.edit-toolbar,
 	.session-nav,
 	.session-nav *,
+	.mobile-set-jump-strip,
+	.mobile-set-jump-strip *,
 	.header,
 	.footer,
 	.footer-nav,
@@ -3329,12 +3331,19 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
+// Default guard outside mobile:
+.mobile-set-jump-strip {
+	display: none;
+}
+
 // 6. MOBILE VIEW REFLOW FOR CREATE & PLAY MODES (<= 768px)
 @media screen and (max-width: 768px) {
-	.character-sheet:not(.submode-print) {
+	// Edit Mode: vertical flex stack
+	.character-sheet:not(.submode-print):not(.submode-play) {
 		.page,
 		.spotlight-grid,
 		.sheet-columns,
+		.columns,
 		.columns-2,
 		.columns-3,
 		.columns-4 {
@@ -3347,6 +3356,116 @@ body:has(.character-sheet.submode-print) .main {
 			width: 100% !important;
 			grid-column: 1 / -1 !important;
 			overflow: visible !important;
+		}
+	}
+
+	// 1. Horizontally Scrolling Jump-Pill Strip (Play Mode Only)
+	.mobile-set-jump-strip {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: 0.4rem;
+		overflow-x: auto;
+		overflow-y: hidden;
+		-webkit-overflow-scrolling: touch;
+		scroll-behavior: smooth;
+		padding: 0.45rem 0.75rem;
+		margin: 0 -0.25rem 0.5rem -0.25rem;
+		position: sticky;
+		top: calc(var(--header-size, 48px) + 42px);
+		z-index: calc(var(--z-frame, 10) + 20);
+		background: rgba(248, 250, 252, 0.92);
+		backdrop-filter: blur(8px);
+		border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.jump-pill {
+			flex: 0 0 auto;
+			white-space: nowrap;
+			border: 1px solid #cbd5e1;
+			background: #ffffff;
+			color: #475569;
+			padding: 0.35rem 0.8rem;
+			border-radius: 999px;
+			font-family: var(--font-heading, sans-serif);
+			font-size: 0.75rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.03em;
+			cursor: pointer;
+			transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+
+			&.active {
+				background: var(--color-primary, #0f172a);
+				border-color: var(--color-primary, #0f172a);
+				color: #ffffff;
+				box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+			}
+		}
+	}
+
+	// 2. Dissolve intermediate column wrappers in Play Mode so all .trait-set cards are direct siblings
+	.character-sheet.submode-play,
+	.play-shell .character-sheet:not(.submode-print):not(.submode-edit) {
+		.columns.spotlight-columns > .spotlight-column,
+		.sheet-columns > .sheet-column-inner,
+		.columns > .column,
+		.columns > .column-left,
+		.columns > .column-right {
+			display: contents !important;
+		}
+
+		// 3. Horizontal Scroll-Snap Carousel Track
+		.columns.spotlight-columns,
+		.columns.spotlight-columns.spotlight-grid,
+		.spotlight-grid,
+		.sheet-columns,
+		.columns,
+		.columns-2,
+		.columns-3,
+		.columns-4 {
+			display: flex !important;
+			flex-direction: row !important;
+			flex-wrap: nowrap !important;
+			align-items: flex-start !important;
+			overflow-x: auto !important;
+			overflow-y: hidden !important;
+			scroll-snap-type: x mandatory;
+			scroll-behavior: smooth;
+			-webkit-overflow-scrolling: touch;
+			gap: 0.75rem !important;
+			width: 100% !important;
+			padding: 0.25rem 6vw 5.5rem 6vw !important; // 6vw side padding centers 88vw cards and lets neighbors peek in
+			box-sizing: border-box !important;
+			scrollbar-width: none;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+		}
+
+		// 4. Individual Trait Set Card Geometry
+		.trait-set {
+			flex: 0 0 88vw !important;
+			width: 88vw !important;
+			max-width: 88vw !important;
+			min-width: 88vw !important;
+			margin: 0 !important;
+			scroll-snap-align: center;
+			scroll-snap-stop: always;
+			max-height: calc(100dvh - 210px);
+			overflow-y: auto !important;
+			overscroll-behavior-y: contain;
+			background: var(--color-sheet-bg, #ffffff);
+			border-radius: 12px;
+			box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+			padding: 0.5rem;
+			box-sizing: border-box !important;
 		}
 	}
 }

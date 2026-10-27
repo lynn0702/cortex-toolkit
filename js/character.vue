@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, resolveVisibility, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
+import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, resolveVisibility, isHiddenIn, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
@@ -543,13 +543,120 @@ function print() {
 	}
 }
 
+const activeMobileSetIndex = ref<number>( 0 );
+const jumpStripRef = ref<HTMLElement | null>( null );
+let carouselObserver: IntersectionObserver | null = null;
+let mediaQuery: MediaQueryList | null = null;
+let handleMediaChange: ( () => void ) | null = null;
+
+const mobilePlayJumpSets = computed( () => {
+	if ( props.submode !== 'play' || !Array.isArray( props.character?.traitSets ) ) return [];
+	return props.character.traitSets
+		.map( ( ts: any, idx: number ) => ( { traitSet: ts, index: idx } ) )
+		.filter( ( { traitSet, index } ) => {
+			if ( isNameSet( traitSet ) ) return false;
+			if ( hasRingTrait.value && index === ringTraitID.value ) return false;
+			return !isHiddenIn( traitSet, 'play' );
+		} )
+		.map( ( { traitSet, index }, orderIdx: number ) => ( {
+			index,
+			label: getMobileJumpPillLabel( traitSet, orderIdx )
+		} ) );
+} );
+
+function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
+	if ( traitSet?.name && String( traitSet.name ).trim().length ) return String( traitSet.name ).trim();
+	if ( traitSet?.noun && String( traitSet.noun ).trim().length ) return String( traitSet.noun ).trim();
+	const body = getView( traitSet )?.style?.body;
+	if ( body === 'image' ) return 'Portrait';
+	if ( body === 'notes' ) return 'Notes';
+	return `Set ${ orderIdx + 1 }`;
+}
+
+function scrollToSetCard( setIndex: number ) {
+	activeMobileSetIndex.value = setIndex;
+	const root = rootEl.value || document;
+	const card = root.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null;
+	if ( card && typeof card.scrollIntoView === 'function' ) {
+		card.scrollIntoView( { behavior: 'smooth', inline: 'center', block: 'nearest' } );
+	}
+	centerActiveJumpPill( setIndex );
+}
+
+function centerActiveJumpPill( setIndex: number ) {
+	if ( !jumpStripRef.value ) return;
+	const pill = jumpStripRef.value.querySelector( `[data-pill-index="${ setIndex }"]` ) as HTMLElement | null;
+	if ( pill && typeof pill.scrollIntoView === 'function' ) {
+		pill.scrollIntoView( { behavior: 'smooth', inline: 'center', block: 'nearest' } );
+	}
+}
+
+function setupCarouselObserver() {
+	if ( carouselObserver ) {
+		carouselObserver.disconnect();
+		carouselObserver = null;
+	}
+	if ( props.submode !== 'play' || typeof window === 'undefined' || !window.matchMedia( '(max-width: 768px)' ).matches ) {
+		return;
+	}
+	nextTick( () => {
+		const root = rootEl.value || document;
+		const cards = root.querySelectorAll( '.trait-set[data-set-index]' );
+		if ( !cards.length ) return;
+
+		carouselObserver = new IntersectionObserver( ( entries ) => {
+			for ( const entry of entries ) {
+				if ( entry.isIntersecting ) {
+					const rawIdx = entry.target.getAttribute( 'data-set-index' );
+					if ( rawIdx !== null ) {
+						const idx = Number( rawIdx );
+						activeMobileSetIndex.value = idx;
+						centerActiveJumpPill( idx );
+					}
+				}
+			}
+		}, {
+			threshold: 0.55
+		} );
+
+		cards.forEach( ( card ) => carouselObserver!.observe( card ) );
+	} );
+}
+
 onMounted( () => {
 	applyFonts();
+	if ( typeof window !== 'undefined' && window.matchMedia ) {
+		mediaQuery = window.matchMedia( '(max-width: 768px)' );
+		handleMediaChange = () => setupCarouselObserver();
+		mediaQuery.addEventListener( 'change', handleMediaChange );
+	}
+	setupCarouselObserver();
+} );
+
+onUnmounted( () => {
+	if ( mediaQuery && handleMediaChange ) {
+		mediaQuery.removeEventListener( 'change', handleMediaChange );
+	}
+	if ( carouselObserver ) {
+		carouselObserver.disconnect();
+		carouselObserver = null;
+	}
 } );
 
 watch( () => props.character, () => {
 	applyFonts();
 }, { immediate: true, deep: true } );
+
+watch( () => mobilePlayJumpSets.value, ( sets ) => {
+	if ( sets.length > 0 && !sets.some( s => s.index === activeMobileSetIndex.value ) ) {
+		activeMobileSetIndex.value = sets[ 0 ].index;
+	}
+	setupCarouselObserver();
+}, { immediate: true } );
+
+watch( () => props.submode, () => {
+	setupCarouselObserver();
+} );
 </script>
 
 <template>
@@ -756,6 +863,27 @@ watch( () => props.character, () => {
 							<div class="page-2-badge">{{ game ? game + ' — ' : '' }}Page {{ pageIndex }} of {{ pageCount }}</div>
 						</div>
 					</header>
+
+					<!-- HORIZONTALLY SCROLLING JUMP-PILL STRIP (PLAY MODE ONLY) -->
+					<nav
+						v-if="submode === 'play' && pageIndex === 1 && mobilePlayJumpSets.length > 1"
+						ref="jumpStripRef"
+						class="mobile-set-jump-strip"
+						aria-label="Character trait sets"
+					>
+						<button
+							v-for="item in mobilePlayJumpSets"
+							:key="'jump-pill-' + item.index"
+							type="button"
+							class="jump-pill"
+							:class="{ active: activeMobileSetIndex === item.index }"
+							:data-pill-index="item.index"
+							:aria-current="activeMobileSetIndex === item.index ? 'true' : undefined"
+							@click.stop="scrollToSetCard(item.index)"
+						>
+							<span class="jump-pill-label">{{ item.label }}</span>
+						</button>
+					</nav>
 
 					<!-- SPOTLIGHT MODE LAYOUT (NESTED GRIDS, EXPLICIT COORDINATES) -->
 					<div v-if="isSpotlightStyle" class="spotlight-layout">

@@ -111,6 +111,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-18: Flank branch layout: `traitColumns: 2` spreads skills to outer columns with specialties down the middle; explicit split wins.
 - 2026-10-12: Internal style ids name the layout (`subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`); component files, classes, and identifiers follow the same stems.
 - 2026-10-24: Paired slots address subtraits by index (`getSubtraitAt`, slot labels for names); the bonus-slot d6 floor is one slot-indexed rule (`getSubtraitSlotRatings`) shared by sheet and editor — the positional wrappers and the BONUS name-sniff are gone.
+- 2026-10-27 (Mobile Play carousel & jump pills): Mobile Play (`submode === 'play'` at `<= 768px`) is a 1-set-per-card horizontal scroll-snap carousel paired with a horizontally scrolling jump-pill strip, replacing the overlong stacked scroll. Card granularity is strictly one trait set per card with nested content (attached stress, subtraits) kept whole inside it. Intermediate column wrappers dissolve (`display: contents`). Tapping a jump pill scrolls that card to center; swiping cards syncs the active pill and auto-centers it in the strip via `IntersectionObserver`. Edit, print, and desktop (> 768px) layouts remain unchanged.
 
 ### Print
 - 2026-10-12: Print density is `@media print { html { font-size: 13px } }` only; the print tab zooms `.pages` at 0.8125 with inverse-scaled page vars (WYSIWYG). No global shrink, no separate preview button.
