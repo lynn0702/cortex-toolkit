@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { getView } from './model.ts';
+import { cortexFunctions } from './functions.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 import SfxEditor from './sfx-editor.vue';
 
 const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacter, styleLabel, setStyleLabel, targetValue } = injectTraitSetEditor();
+
+const sfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value ) );
 </script>
 
 <template>
@@ -27,7 +31,7 @@ const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacte
 
 			<transition-group appear>
 				<SfxEditor
-					v-for="(effect, effectID) in traitSet.sfx"
+					v-for="(effect, effectID) in sfxEntries"
 					:key="traitSetID + '-' + effectID"
 					:character="character"
 					:traitSetID="traitSetID"

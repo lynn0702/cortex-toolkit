@@ -2,7 +2,8 @@
 //
 // The renderer reads the array shape: `character.traitSets` is an array,
 // traits carry `rating` objects ({ type, value: [], range: [] }), SFX is a
-// `sfx` array, and presentation (style, layout, reserved slots, nouns) is
+// child trait (grouped under an "SFX" child whose own children are the SFX
+// entries), and presentation (style, layout, reserved slots, nouns) is
 // inline under `view`.
 //
 // The layered model stores `sets` as a name-keyed map, ratings as objects
@@ -28,7 +29,6 @@ export interface LegacyTrait {
 	dice?: number[] | null;
 	description?: string;
 	traits?: LegacyTrait[];
-	sfx?: unknown[];
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
 	statement?: string | null;
@@ -45,7 +45,6 @@ export interface LegacySet {
 	name?: string;
 	description?: string;
 	traits?: LegacyTrait[];
-	sfx?: unknown[];
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
 	[key: string]: unknown;
@@ -84,40 +83,6 @@ const ratingForDice = (dice: number[]): Record<string, unknown> => ({
 
 // ---------- render <- layered (materialize) ----------
 
-// entity SFX container -> legacy sfx array.
-function sfxArrayFrom(container: unknown): unknown[] | undefined {
-	if (!container || typeof container !== "object" || Array.isArray(container)) return undefined;
-	const node = container as { traits?: Record<string, TraitRaw>; slots?: Record<string, unknown> };
-	const subs = node.traits && typeof node.traits === "object" && !Array.isArray(node.traits) ? node.traits : {};
-	const out: unknown[] = [];
-	for (const [key, raw] of Object.entries(subs)) {
-		if (raw === null) continue;
-		const o = asTrait(raw as TraitRaw);
-		const empty = Object.keys(o).filter((k) => k !== "traits").length === 0;
-		if (key === "Hinder" && empty) {
-			out.push("hinder");
-			continue;
-		}
-		const entry: Record<string, unknown> = { name: key };
-		entry.description = typeof o.description === "string" ? o.description : "";
-		if (o.tags !== undefined) entry.tags = clone(o.tags);
-		if (o.view !== undefined) entry.view = clone(o.view);
-		if (o.custom !== undefined) entry.custom = clone(o.custom);
-		out.push(entry);
-	}
-	const slots = node.slots && typeof node.slots === "object" && !Array.isArray(node.slots) ? node.slots : {};
-	for (const raw of Object.values(slots)) {
-		const o = raw && typeof raw === "object" ? (raw as TraitObject) : {};
-		const entry: Record<string, unknown> = { name: "" };
-		entry.description = typeof o.description === "string" ? o.description : "";
-		if (o.tags !== undefined) entry.tags = clone(o.tags);
-		if (o.view !== undefined) entry.view = clone(o.view);
-		if (o.custom !== undefined) entry.custom = clone(o.custom);
-		out.push(entry);
-	}
-	return out.length ? out : undefined;
-}
-
 // entity traits map -> legacy traits array. `pres` supplies order; entity keys win.
 function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitRaw> | undefined): LegacyTrait[] {
 	const out: LegacyTrait[] = [];
@@ -131,7 +96,6 @@ function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitR
 				out.push(clone(pt));
 				continue;
 			}
-			if (name === "SFX") continue; // container, not a positional trait
 			if (Object.prototype.hasOwnProperty.call(entityTraits, name)) {
 				used.add(name);
 				const raw = entityTraits[name];
@@ -143,7 +107,7 @@ function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitR
 		}
 	}
 	for (const [name, raw] of Object.entries(entityTraits)) {
-		if (name === "SFX" || used.has(name)) continue;
+		if (used.has(name)) continue;
 		if (raw === null) continue;
 		out.push(buildTrait(null, raw, name));
 	}
@@ -253,11 +217,7 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 	healSplitView(t);
 	const subs = et.traits as Record<string, TraitRaw> | undefined;
 	if (subs) {
-		const sfx = sfxArrayFrom(subs.SFX);
-		const rest: Record<string, TraitRaw> = { ...subs };
-		delete rest.SFX;
-		t.traits = buildTraits(pres?.traits, rest);
-		if (sfx) t.sfx = sfx;
+		t.traits = buildTraits(pres?.traits, subs);
 	}
 	return t;
 }
@@ -279,11 +239,7 @@ function buildSet(pres: LegacySet | null, eset: SetObject, name: string): Legacy
 	}
 	healSplitView(set);
 	const traitsMap = eset.traits as Record<string, TraitRaw> | undefined;
-	const sfx = sfxArrayFrom(traitsMap?.SFX);
-	const rest: Record<string, TraitRaw> = { ...(traitsMap ?? {}) };
-	delete rest.SFX;
-	set.traits = buildTraits(pres?.traits, rest);
-	if (sfx) set.sfx = sfx;
+	set.traits = buildTraits(pres?.traits, traitsMap);
 	return set;
 }
 
@@ -382,7 +338,7 @@ export function materializeCharacter(
 		let healed = "";
 		if (pid) {
 			for (const [ename, eset] of Object.entries(sets)) {
-				if (used.has(ename) || ename === "SFX" || eset === null) continue;
+				if (used.has(ename) || eset === null) continue;
 				if (idOf(eset) === pid) { healed = ename; break; }
 			}
 		}
@@ -398,7 +354,7 @@ export function materializeCharacter(
 		}
 	}
 	for (const [name, eset] of Object.entries(sets)) {
-		if (used.has(name) || name === "SFX") continue;
+		if (used.has(name)) continue;
 		if (eset === null) continue;
 		traitSets.push(buildSet(null, eset, name));
 	}
@@ -407,41 +363,6 @@ export function materializeCharacter(
 }
 
 // ---------- render -> layered (serialize) ----------
-
-// legacy sfx array -> entity SFX container (the inverse of sfxArrayFrom).
-function sfxContainerFrom(arr: unknown[]): Record<string, unknown> {
-	const traits: Record<string, unknown> = {};
-	const slots: Record<string, unknown> = {};
-	(arr || []).forEach((e, i) => {
-		if (typeof e === "string") {
-			if (!e.length) return;
-			const k = /^hinder$/i.test(e) ? "Hinder" : e;
-			if (traits[k] === undefined) traits[k] = {};
-			return;
-		}
-	if (e && typeof e === "object" && !Array.isArray(e)) {
-		const src = e as Record<string, unknown>;
-		const name = typeof src.name === "string" ? src.name : "";
-		const o: Record<string, unknown> = {};
-		o.description = src.description !== undefined ? clone(src.description) : "";
-		if (src.tags !== undefined) o.tags = clone(src.tags);
-		if (src.view !== undefined) o.view = clone(src.view);
-		if (src.custom !== undefined) o.custom = clone(src.custom);
-		// Blank slot objects are render-time, never stored: drop nameless
-		// entries carrying nothing.
-		const hasContent = name.length > 0 ||
-			(typeof o.description === "string" && o.description.length > 0) ||
-			o.tags !== undefined || o.view !== undefined || o.custom !== undefined;
-		if (!hasContent) return;
-		if (!name.length) slots[String(i)] = o;
-		else traits[name] = o;
-	}
-	});
-	const c: Record<string, unknown> = {};
-	if (Object.keys(traits).length) c.traits = traits;
-	if (Object.keys(slots).length) c.slots = slots;
-	return c;
-}
 
 function layeredTraitFrom(t: LegacyTrait): TraitObject {
 	const node: TraitObject = {};
@@ -456,7 +377,7 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 		else if (t.dice !== undefined || t.value !== undefined) node.rating = null; // explicitly unrated
 	}
 	for (const [k, v] of Object.entries(t)) {
-		if (k === "name" || k === "traits" || k === "sfx" || k === "dice" || k === "value" || k === "rating" ||
+		if (k === "name" || k === "traits" || k === "dice" || k === "value" || k === "rating" ||
 			k === "_lid" || k === "id" || k === "removedTraits") continue;
 		// Canonical emit: empty custom/tags stay out (absence carries the
 		// same meaning). description "" is KEPT: in a delta it is an
@@ -471,10 +392,6 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 		if (!st || typeof st.name !== "string" || !st.name.length) continue;
 		subs[st.name] = layeredTraitFrom(st);
 	}
-	if (Array.isArray(t.sfx) && t.sfx.length) {
-		const c = sfxContainerFrom(t.sfx);
-		if (Object.keys(c).length) subs.SFX = c as TraitObject;
-	}
 	if (Object.keys(subs).length) node.traits = subs;
 	return node;
 }
@@ -483,7 +400,7 @@ function layeredSetFrom(set: LegacySet): SetObject {
 	const s: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(set)) {
 		// Set id is the stable join key (kept); trait-level ids stay out.
-		if (k === "name" || k === "traits" || k === "sfx" ||
+		if (k === "name" || k === "traits" ||
 			k === "removedTraits" || k === "removedSets") continue;
 		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v) && !Object.keys(v as Record<string, unknown>).length) continue;
 		if (k === "tags" && Array.isArray(v) && !v.length) continue;
@@ -493,10 +410,6 @@ function layeredSetFrom(set: LegacySet): SetObject {
 	for (const tr of Array.isArray(set.traits) ? set.traits : []) {
 		if (!tr || typeof tr.name !== "string" || !tr.name.length) continue;
 		traits[tr.name] = layeredTraitFrom(tr);
-	}
-	if (Array.isArray(set.sfx) && set.sfx.length) {
-		const c = sfxContainerFrom(set.sfx);
-		if (Object.keys(c).length) traits.SFX = c as TraitObject;
 	}
 	s.traits = traits;
 	return s as SetObject;

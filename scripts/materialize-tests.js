@@ -46,9 +46,14 @@ function compareRender(render, label) {
       if (!rt) continue;
       ok(JSON.stringify(getDice(rt)) === JSON.stringify(getDice(ot)),
         label + ': dice kept ' + os.name + '/' + ot.name, { got: getDice(rt), want: getDice(ot) });
-      ok(JSON.stringify(named(rt.traits)) === JSON.stringify(named(ot.traits)),
-        label + ': subtraits kept ' + os.name + '/' + ot.name, named(rt.traits));
-      const f = (x) => (Array.isArray(x.sfx) ? x.sfx.length : 0);
+      const rtSubs = named(rt.traits).filter((n) => n !== 'SFX');
+      ok(JSON.stringify(rtSubs) === JSON.stringify(named(ot.traits)),
+        label + ': subtraits kept ' + os.name + '/' + ot.name, rtSubs);
+      const f = (x) => {
+        if (Array.isArray(x.sfx)) return x.sfx.length;
+        const c = (Array.isArray(x.traits) ? x.traits : []).find((s) => s && s.name === 'SFX');
+        return (c && Array.isArray(c.traits)) ? c.traits.length : 0;
+      };
       ok(f(rt) === f(ot), label + ': sfx count kept ' + os.name + '/' + ot.name, { got: f(rt), want: f(ot) });
     }
   }
@@ -72,7 +77,8 @@ function compareRender(render, label) {
   ok(strength && strength.rating && strength.rating.type === 'Die' && JSON.stringify(strength.rating.value) === '[8]' &&
     strength.value === undefined && strength.dice === undefined, 'Strength folds to a Die rating', strength.rating);
   const halfOrc = byName(byName(render.traitSets, 'Distinctions').traits, 'Half-Orc');
-  ok(halfOrc && Array.isArray(halfOrc.sfx) && halfOrc.sfx.includes('hinder'), 'Half-Orc Hinder restored as sfx literal', halfOrc && halfOrc.sfx);
+  const halfOrcSfx = halfOrc && Array.isArray(halfOrc.traits) ? halfOrc.traits.find((s) => s && s.name === 'SFX') : null;
+  ok(halfOrc && halfOrcSfx && Array.isArray(halfOrcSfx.traits) && halfOrcSfx.traits.some((e) => e && e.name === 'Hinder'), 'Half-Orc Hinder restored as child trait', halfOrcSfx && halfOrcSfx.traits);
   const ath = byName(byName(render.traitSets, 'Skills').traits, 'Athletics');
   ok(ath && ath.rating && JSON.stringify(ath.rating.value) === '[6]' && ath.traits && named(ath.traits).includes('Jump'), 'Athletics sub-trait map folds back', ath && { v: ath.rating, subs: named(ath.traits) });
 }

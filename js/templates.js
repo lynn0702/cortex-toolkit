@@ -11,6 +11,15 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 2,
     "genre": "Sci-Fi / Espionage",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866",
+      "quote": "You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.",
+      "genre": "Cold War Sci-Fi Drama",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -30,68 +39,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 2,
+        "spotlight": "Alien, Us",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "full-width",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -102,54 +124,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Core alien background, job, and personality",
-          "traits": [
-            {
-              "name": "Alien Background:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ]
-            },
-            {
-              "name": "Alien Role/Job:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ]
-            },
-            {
-              "name": "Personality/Quirk:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ]
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -171,169 +165,56 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Alien Background:",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Alien Role/Job:",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Personality/Quirk:",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Core baseline d6 skills with branching d8+ specialties",
-          "traits": [
-            {
-              "name": "Bout",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Chat",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Find",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Make",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Play",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Operate",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Work",
-              "traits": [
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "left"
-                  }
-                },
-                {
-                  "name": "",
-                  "traits": [],
-                  "sfx": [],
-                  "view": {
-                    "branchSide": "right"
-                  }
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -375,51 +256,148 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Bout",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Chat",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Find",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Make",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Play",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Operate",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Work",
+              "traits": [
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "left"
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "",
+                  "view": {
+                    "branchSide": "right"
+                  },
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "values",
           "name": "Values",
           "description": "Alien worldview versus human conditioning",
           "statement": true,
-          "traits": [
-            {
-              "name": "Alien",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Conformity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Materialism",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Paranoia",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Patriotism",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Secrecy",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Spirituality",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -460,14 +438,42 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Alien",
+              "traits": []
+            },
+            {
+              "name": "Conformity",
+              "traits": []
+            },
+            {
+              "name": "Materialism",
+              "traits": []
+            },
+            {
+              "name": "Paranoia",
+              "traits": []
+            },
+            {
+              "name": "Patriotism",
+              "traits": []
+            },
+            {
+              "name": "Secrecy",
+              "traits": []
+            },
+            {
+              "name": "Spirituality",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "talents",
           "name": "Talents",
           "description": "Specialized alien abilities and tech modules",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -495,14 +501,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": []
         },
         {
           "id": "signature-assets-tech",
           "name": "Signature Assets / Tech",
           "description": "Alien equipment and concealed devices",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -547,14 +552,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset / Tech",
-          "plural": "Signature Assets / Tech"
+          "plural": "Signature Assets / Tech",
+          "traits": []
         },
         {
           "id": "relationships",
           "name": "Relationships",
           "description": "Connections to human contacts, superiors, and rivals",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -595,14 +599,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Relationship",
-          "plural": "Relationships"
+          "plural": "Relationships",
+          "traits": []
         },
         {
           "id": "session-record",
           "name": "Session Record",
           "description": "Session track and progression log",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -659,38 +662,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 2,
-        "spotlight": "Alien, Us",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "full-width",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/572304/Alien-Us?manufacturers_id=31866",
-      "quote": "You crashed here forty years ago. You learned the language, the customs, the clothes, the way they smile with their teeth showing even when they don’t mean it.",
-      "genre": "Cold War Sci-Fi Drama",
-      "setting": "d6",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg"
+      ]
     }
   },
   {
@@ -702,6 +677,15 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Sci-Fi / Space Exploration",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866",
+      "quote": "The mission was supposed to last ten years. There were supposed to be answers at the end of it.",
+      "genre": "Aspirational space opera",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -721,68 +705,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "BrighterStars",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -793,93 +790,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Crew role, quality, and personal drive",
-          "traits": [
-            {
-              "name": "Purpose:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Quality:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -907,41 +837,96 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Purpose:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Quality:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "values",
           "name": "Values",
           "description": "Guiding philosophies paired with personal statements",
           "statement": true,
-          "traits": [
-            {
-              "name": "Courage",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Curiosity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Hope",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Logic",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Peace",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "hasQuestionedPip": true,
           "view": {
             "features": {
@@ -972,15 +957,35 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Courage",
+              "traits": []
+            },
+            {
+              "name": "Curiosity",
+              "traits": []
+            },
+            {
+              "name": "Hope",
+              "traits": []
+            },
+            {
+              "name": "Logic",
+              "traits": []
+            },
+            {
+              "name": "Peace",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "relationships",
           "name": "Relationships",
           "description": "Crew connections and ties to shipmates",
           "statement": true,
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -1026,14 +1031,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Relationship",
-          "plural": "Relationships"
+          "plural": "Relationships",
+          "traits": []
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Specialized starship equipment and personal gear",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -1076,29 +1080,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "personal-milestones",
           "name": "Personal Milestones",
-          "traits": [
-            {
-              "name": "1 XP",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "3 XP",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "10 XP",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -1137,29 +1124,25 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Milestone",
-          "plural": "Milestones"
+          "plural": "Milestones",
+          "traits": [
+            {
+              "name": "1 XP",
+              "traits": []
+            },
+            {
+              "name": "3 XP",
+              "traits": []
+            },
+            {
+              "name": "10 XP",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "group-milestones",
           "name": "Group Milestones",
-          "traits": [
-            {
-              "name": "1 XP",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "3 XP",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "10 XP",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -1198,14 +1181,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Milestone",
-          "plural": "Milestones"
+          "plural": "Milestones",
+          "traits": [
+            {
+              "name": "1 XP",
+              "traits": []
+            },
+            {
+              "name": "3 XP",
+              "traits": []
+            },
+            {
+              "name": "10 XP",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "xp",
           "name": "XP",
           "description": "Experience points bubble track",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -1263,38 +1258,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "XP",
-          "plural": "XP"
+          "plural": "XP",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "BrighterStars",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/568411/Brighter-Stars?manufacturers_id=31866",
-      "quote": "The mission was supposed to last ten years. There were supposed to be answers at the end of it.",
-      "genre": "Aspirational space opera",
-      "setting": "d6",
-      "prep": "d6",
-      "complexity": "d6",
-      "image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg"
+      ]
     }
   },
   {
@@ -1306,6 +1273,15 @@ const cortexSpotlightTemplates = [
     "variant": "Camper File",
     "pages": 1,
     "genre": "Supernatural / Youth Mystery",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866",
+      "quote": "Someone has decided you’re destined for great things. You’re twelve.",
+      "genre": "Supernatural summer camp / YA adventure",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -1325,68 +1301,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Camp Bewilderwood",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -1397,105 +1386,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Camp background, camper reputation, and hidden destiny",
-          "traits": [
-            {
-              "name": "HERITAGE:",
-              "statement": "",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Heritage",
-                  "description": "Spend a PP to step up an attribute when you connect to your heritage."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "DESTINY:",
-              "statement": "",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Destiny",
-                  "description": "Spend a PP to reroll your dice when you embrace your destiny."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "CAMP REPUTATION:",
-              "statement": "",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Camp Reputation",
-                  "description": "Spend a PP to create a d8 asset linked to the thing you're known for."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -1546,7 +1456,96 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "HERITAGE:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "statement": "",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Heritage",
+                      "description": "Spend a PP to step up an attribute when you connect to your heritage.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "DESTINY:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "statement": "",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Destiny",
+                      "description": "Spend a PP to reroll your dice when you embrace your destiny.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "CAMP REPUTATION:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "statement": "",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Camp Reputation",
+                      "description": "Spend a PP to create a d8 asset linked to the thing you're known for.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "values",
@@ -1554,44 +1553,6 @@ const cortexSpotlightTemplates = [
           "description": "Camper ideals and loyalties",
           "statement": true,
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Bravery",
-              "statement": "",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Community",
-              "statement": "",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Curiosity",
-              "statement": "",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Friendship",
-              "statement": "",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Mischief",
-              "statement": "",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -1637,14 +1598,44 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Bravery",
+              "statement": "",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "Community",
+              "statement": "",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "Curiosity",
+              "statement": "",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "Friendship",
+              "statement": "",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "Mischief",
+              "statement": "",
+              "questioned": false,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Treasured camper keepsakes and scavenged relics",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -1687,30 +1678,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Core camper capability ratings",
-          "traits": [
-            {
-              "name": "Mental",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Physical",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Social",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -1754,7 +1728,21 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Mental",
+              "traits": []
+            },
+            {
+              "name": "Physical",
+              "traits": []
+            },
+            {
+              "name": "Social",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "paired-slots",
@@ -1762,111 +1750,6 @@ const cortexSpotlightTemplates = [
           "description": "Camp social standing with complication and bonus dice",
           "statement": true,
           "ratingPosition": "inline",
-          "traits": [
-            {
-              "name": "",
-              "statement": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "BONUS",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "statement": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "BONUS",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "statement": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "BONUS",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "statement": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "BONUS",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "statement": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "BONUS",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "statement": "",
-              "traits": [
-                {
-                  "name": "COMPLICATION",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "BONUS",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -1908,7 +1791,93 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Standing",
-          "plural": "Standings"
+          "plural": "Standings",
+          "traits": [
+            {
+              "name": "",
+              "statement": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "traits": []
+                },
+                {
+                  "name": "BONUS",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "statement": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "traits": []
+                },
+                {
+                  "name": "BONUS",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "statement": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "traits": []
+                },
+                {
+                  "name": "BONUS",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "statement": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "traits": []
+                },
+                {
+                  "name": "BONUS",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "statement": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "traits": []
+                },
+                {
+                  "name": "BONUS",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "statement": "",
+              "traits": [
+                {
+                  "name": "COMPLICATION",
+                  "traits": []
+                },
+                {
+                  "name": "BONUS",
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "badges",
@@ -1916,8 +1885,6 @@ const cortexSpotlightTemplates = [
           "description": "Merit badges earned at camp",
           "hasCounterColumn": true,
           "counterLabel": "XP",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -1949,14 +1916,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Badge",
-          "plural": "Badges"
+          "plural": "Badges",
+          "traits": []
         },
         {
           "id": "talents",
           "name": "Talents",
           "description": "Camper knacks and signature tricks",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -1978,38 +1944,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Camp Bewilderwood",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/574554/Camp-Bewilderwood?manufacturers_id=31866",
-      "quote": "Someone has decided you’re destined for great things. You’re twelve.",
-      "genre": "Supernatural summer camp / YA adventure",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg"
+      ]
     }
   },
   {
@@ -2021,6 +1959,15 @@ const cortexSpotlightTemplates = [
     "variant": "Mobster File",
     "pages": 1,
     "genre": "Crime / Drama / Noir",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572308/Cosa-Nostra?manufacturers_id=31866",
+      "quote": "The Castellammarese War is coming. Everyone in the Five Families knows it.",
+      "genre": "Historical Crime Drama",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572308.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -2040,68 +1987,82 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Cosa Nostra",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "hasNickname": true,
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -2112,48 +2073,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Origins and syndicate reputation (Distinction Stress: Shaken, Rattled, Broken)",
-          "traits": [
-            {
-              "name": "Neighborhood",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Crew",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "The Family",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -2210,14 +2149,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Neighborhood",
+              "traits": []
+            },
+            {
+              "name": "Crew",
+              "traits": []
+            },
+            {
+              "name": "The Family",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "resources",
           "name": "Resources",
           "description": "Syndicate operational pools and assets",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -2250,40 +2201,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
+          "plural": "Resources",
+          "traits": []
         },
         {
           "id": "drives",
           "name": "Drives",
           "description": "Gain a PP when you use a drive rated at d4.",
-          "traits": [
-            {
-              "name": "Corruption",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Greed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Omerta",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Retribution",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Violence",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -2329,14 +2253,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Drive",
-          "plural": "Drives"
+          "plural": "Drives",
+          "traits": [
+            {
+              "name": "Corruption",
+              "traits": []
+            },
+            {
+              "name": "Greed",
+              "traits": []
+            },
+            {
+              "name": "Omerta",
+              "traits": []
+            },
+            {
+              "name": "Retribution",
+              "traits": []
+            },
+            {
+              "name": "Violence",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Personal weapons, vehicles, and syndicate perks",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -2381,40 +2325,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "roles-specialties",
           "name": "Roles & Specialties",
           "description": "Syndicate roles with specialized criminal expertise",
-          "traits": [
-            {
-              "name": "Big Shot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Brains",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Enforcer",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Thief",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Wheelman",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -2450,14 +2367,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Big Shot",
+              "traits": []
+            },
+            {
+              "name": "Brains",
+              "traits": []
+            },
+            {
+              "name": "Enforcer",
+              "traits": []
+            },
+            {
+              "name": "Thief",
+              "traits": []
+            },
+            {
+              "name": "Wheelman",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "session-record",
           "name": "Session Record",
           "description": "Session tracking and milestone progression",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -2509,13 +2446,12 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": []
         },
         {
           "id": "role-sfx",
           "name": "Role SFX",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -2538,39 +2474,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "SFX",
-          "plural": "SFX"
+          "plural": "SFX",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Cosa Nostra",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "hasNickname": true,
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/572308/Cosa-Nostra?manufacturers_id=31866",
-      "quote": "The Castellammarese War is coming. Everyone in the Five Families knows it.",
-      "genre": "Historical Crime Drama",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/572308.jpg"
+      ]
     }
   },
   {
@@ -2582,6 +2489,9 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Fantasy / Summoning / Mythic",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -2601,68 +2511,74 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Eidolon Alpha",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -2673,53 +2589,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "roles",
           "name": "Roles",
           "description": "Prime vocations and endarch callings",
-          "traits": [
-            {
-              "name": "Warrior",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Priest",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Scout",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Other",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -2763,41 +2652,31 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Warrior",
+              "traits": []
+            },
+            {
+              "name": "Priest",
+              "traits": []
+            },
+            {
+              "name": "Scout",
+              "traits": []
+            },
+            {
+              "name": "Other",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Elemental selfhood with highlight circles and stress",
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Courage",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Grace",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Guile",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Reason",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Vigor",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -2857,97 +2736,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Courage",
+              "traits": []
+            },
+            {
+              "name": "Grace",
+              "traits": []
+            },
+            {
+              "name": "Guile",
+              "traits": []
+            },
+            {
+              "name": "Reason",
+              "traits": []
+            },
+            {
+              "name": "Vigor",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "endarch-distinction",
           "name": "Endarch Distinction",
           "description": "Ancestral endarch patron and its three bound powers",
-          "traits": [
-            {
-              "name": "",
-              "traits": [
-                {
-                  "name": "Power 1",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Power 2",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Power 3",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "Summon",
-                  "description": "Shut down this endarch distinction to summon your Eidolon on your next turn."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -2976,38 +2792,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Endarch Distinction",
-          "plural": "Endarch Distinctions"
-        },
-        {
-          "id": "summoned-eidolon",
-          "name": "Summoned Eidolon",
-          "description": "Manifested eidolon form: base trait, scale, powers, highlights",
+          "plural": "Endarch Distinctions",
           "traits": [
             {
-              "name": "Base Trait",
-              "description": "d10 d10 or d4 d4",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  10,
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            },
-            {
-              "name": "Scale",
-              "traits": [],
-              "sfx": [],
+              "name": "",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -3020,100 +2808,82 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
-            },
-            {
-              "name": "Power 1",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Power 2",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Power 3",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Highlight Attribute 1",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Highlight Attribute 2",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
+              },
+              "traits": [
+                {
+                  "name": "Power 1",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Power 2",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Power 3",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Summon",
+                      "description": "Shut down this endarch distinction to summon your Eidolon on your next turn.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "summoned-eidolon",
+          "name": "Summoned Eidolon",
+          "description": "Manifested eidolon form: base trait, scale, powers, highlights",
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -3145,55 +2915,136 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Eidolon Trait",
-          "plural": "Eidolon Traits"
+          "plural": "Eidolon Traits",
+          "traits": [
+            {
+              "name": "Base Trait",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  10,
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "d10 d10 or d4 d4",
+              "spendable": true,
+              "traits": []
+            },
+            {
+              "name": "Scale",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Power 1",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Power 2",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Power 3",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Highlight Attribute 1",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Highlight Attribute 2",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "role-freeform-distinctions",
           "name": "Role & Freeform Distinctions",
           "description": "Chosen calling and personal definition",
-          "traits": [
-            {
-              "name": "Role Distinction",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Freeform Distinction",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -3219,14 +3070,68 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Role Distinction",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Freeform Distinction",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "xp",
           "name": "XP",
           "description": "Experience points bubble track",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -3283,25 +3188,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "XP",
-          "plural": "XP"
+          "plural": "XP",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Eidolon Alpha",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+      ]
     }
   },
   {
@@ -3313,6 +3203,9 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 2,
     "genre": "Action / Rescue / Drama",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -3332,68 +3225,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 2,
+        "spotlight": "Hammerheads",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -3404,48 +3310,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Body, mind, and presence under pressure",
-          "traits": [
-            {
-              "name": "Physical",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Mental",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Social",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -3505,85 +3389,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Physical",
+              "traits": []
+            },
+            {
+              "name": "Mental",
+              "traits": []
+            },
+            {
+              "name": "Social",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "training-packages",
           "name": "Training Packages",
           "description": "Rescue disciplines and vehicle qualifications",
-          "traits": [
-            {
-              "name": "Crowd Control",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Emergency Medical",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Firefighting",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Hammerhead Pilot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "HAZMAT",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "High-Altitude Recovery",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Legal Specialist",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Logistics",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Marine Recovery",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Network Specialist",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Mechanic",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Tactical Response",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Technical Analyst",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Urban Recovery",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -3627,108 +3452,70 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Training Package",
-          "plural": "Training Packages"
+          "plural": "Training Packages",
+          "traits": [
+            {
+              "name": "Crowd Control",
+              "traits": []
+            },
+            {
+              "name": "Emergency Medical",
+              "traits": []
+            },
+            {
+              "name": "Firefighting",
+              "traits": []
+            },
+            {
+              "name": "Hammerhead Pilot",
+              "traits": []
+            },
+            {
+              "name": "HAZMAT",
+              "traits": []
+            },
+            {
+              "name": "High-Altitude Recovery",
+              "traits": []
+            },
+            {
+              "name": "Legal Specialist",
+              "traits": []
+            },
+            {
+              "name": "Logistics",
+              "traits": []
+            },
+            {
+              "name": "Marine Recovery",
+              "traits": []
+            },
+            {
+              "name": "Network Specialist",
+              "traits": []
+            },
+            {
+              "name": "Mechanic",
+              "traits": []
+            },
+            {
+              "name": "Tactical Response",
+              "traits": []
+            },
+            {
+              "name": "Technical Analyst",
+              "traits": []
+            },
+            {
+              "name": "Urban Recovery",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Origin, true nature, and defining quirk",
-          "traits": [
-            {
-              "name": "Your Life Before:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "Connect",
-                  "description": "Spend a PP to step up an attribute when you connect to your old life."
-                },
-                {
-                  "name": "Overdrive",
-                  "description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Your Approach/Attitude:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "True Nature",
-                  "description": "Spend a PP to reroll your dice when you align with your true nature."
-                },
-                {
-                  "name": "Push Limits",
-                  "description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Your Quirk/Quality:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "Embrace",
-                  "description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality."
-                },
-                {
-                  "name": "Escalate",
-                  "description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -3754,65 +3541,129 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Your Life Before:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Connect",
+                      "description": "Spend a PP to step up an attribute when you connect to your old life.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Overdrive",
+                      "description": "Add d6 to the crisis pool to double your attribute die when you connect to your old life.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Your Approach/Attitude:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "True Nature",
+                      "description": "Spend a PP to reroll your dice when you align with your true nature.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Push Limits",
+                      "description": "Add d6 to the crisis pool to step up your training package die when you align with your true nature.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Your Quirk/Quality:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Embrace",
+                      "description": "Spend a PP to double your relationship die when your assistance embraces your quirk or quality.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Escalate",
+                      "description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "relationships",
           "name": "Relationships",
           "description": "Crew bonds, debts, and troublemakers",
           "statement": true,
-          "traits": [
-            {
-              "name": "",
-              "description": "saved my life",
-              "statement": "saved my life",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "description": "owes me big",
-              "statement": "owes me big",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "description": "is a troublemaker",
-              "statement": "is a troublemaker",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "description": "knows their stuff",
-              "statement": "knows their stuff",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "description": "is a liability",
-              "statement": "is a liability",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "description": "is dependable",
-              "statement": "is dependable",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "description": "is good for a laugh",
-              "statement": "is good for a laugh",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -3856,14 +3707,56 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Relationship",
-          "plural": "Relationships"
+          "plural": "Relationships",
+          "traits": [
+            {
+              "name": "",
+              "description": "saved my life",
+              "statement": "saved my life",
+              "traits": []
+            },
+            {
+              "name": "",
+              "description": "owes me big",
+              "statement": "owes me big",
+              "traits": []
+            },
+            {
+              "name": "",
+              "description": "is a troublemaker",
+              "statement": "is a troublemaker",
+              "traits": []
+            },
+            {
+              "name": "",
+              "description": "knows their stuff",
+              "statement": "knows their stuff",
+              "traits": []
+            },
+            {
+              "name": "",
+              "description": "is a liability",
+              "statement": "is a liability",
+              "traits": []
+            },
+            {
+              "name": "",
+              "description": "is dependable",
+              "statement": "is dependable",
+              "traits": []
+            },
+            {
+              "name": "",
+              "description": "is good for a laugh",
+              "statement": "is good for a laugh",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "xp",
           "name": "XP",
           "description": "Experience points bubble track",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -3920,14 +3813,13 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "XP",
-          "plural": "XP"
+          "plural": "XP",
+          "traits": []
         },
         {
           "id": "crisis-pools",
           "name": "Crisis Pools",
           "description": "Threat clocks and escalating disaster pools",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -3967,32 +3859,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Crisis Pool",
-          "plural": "Crisis Pools"
+          "plural": "Crisis Pools",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 2,
-        "spotlight": "Hammerheads",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+      ]
     }
   },
   {
@@ -4004,6 +3874,9 @@ const cortexSpotlightTemplates = [
     "variant": "Vehicle File",
     "pages": 1,
     "genre": "Action / Rescue / Vehicles",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -4023,68 +3896,74 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Hammerheads",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -4095,216 +3974,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "hammerhead-attributes",
           "name": "Hammerhead Attributes",
           "description": "Rescue craft airframes, systems, and handling",
-          "traits": [
-            {
-              "name": "Hammerhead One",
-              "description": "More agile, possesses more precise sensors and instruments.",
-              "traits": [
-                {
-                  "name": "Systems",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Engines",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Frame",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Hammerhead Two",
-              "description": "Faster, more power and range.",
-              "traits": [
-                {
-                  "name": "Systems",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Engines",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Frame",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "Hammerhead Three",
-              "description": "Bigger, tougher, and more rugged.",
-              "traits": [
-                {
-                  "name": "Systems",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Engines",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Frame",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -4335,69 +4024,185 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Hammerhead Attribute",
-          "plural": "Hammerhead Attributes"
+          "plural": "Hammerhead Attributes",
+          "traits": [
+            {
+              "name": "Hammerhead One",
+              "description": "More agile, possesses more precise sensors and instruments.",
+              "traits": [
+                {
+                  "name": "Systems",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Engines",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Frame",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Hammerhead Two",
+              "description": "Faster, more power and range.",
+              "traits": [
+                {
+                  "name": "Systems",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Engines",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Frame",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Hammerhead Three",
+              "description": "Bigger, tougher, and more rugged.",
+              "traits": [
+                {
+                  "name": "Systems",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Engines",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Frame",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "vehicle-distinctions",
           "name": "Vehicle Distinctions",
           "description": "Factory blessings and fleet reputation",
-          "traits": [
-            {
-              "name": "Resource Support Vehicle",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Top of the Line",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Broad-Spectrum Sensors",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -4425,156 +4230,65 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Vehicle Distinction",
-          "plural": "Vehicle Distinctions"
+          "plural": "Vehicle Distinctions",
+          "traits": [
+            {
+              "name": "Resource Support Vehicle",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Top of the Line",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Broad-Spectrum Sensors",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "resource-pools",
           "name": "Resource Pools",
           "description": "Staged supplies, support teams, and fleet backup",
-          "traits": [
-            {
-              "name": "Unassigned Resources",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "Tactical Support",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "Medical Supplies",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "IT/Network Support",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "Food/Shelter",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "Land/Sea/Air Support",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "traitColumns": 2,
             "features": {
@@ -4605,25 +4319,146 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource Pool",
-          "plural": "Resource Pools"
+          "plural": "Resource Pools",
+          "traits": [
+            {
+              "name": "Unassigned Resources",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "Tactical Support",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "Medical Supplies",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "IT/Network Support",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "Food/Shelter",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "Land/Sea/Air Support",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Hammerheads",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+      ]
     }
   },
   {
@@ -4635,6 +4470,15 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Superhero / Dynastic Drama",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+      "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+      "genre": "Modern Pulp Action-Adventure",
+      "setting": "d6",
+      "prep": "d10",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -4654,68 +4498,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Inheritors",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -4726,53 +4583,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Gain a PP when you include your d4 attribute in your dice pool.",
-          "traits": [
-            {
-              "name": "Action",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Heritage",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Science",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Weird",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -4816,13 +4646,29 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Action",
+              "traits": []
+            },
+            {
+              "name": "Heritage",
+              "traits": []
+            },
+            {
+              "name": "Science",
+              "traits": []
+            },
+            {
+              "name": "Weird",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "stress",
           "name": "Stress",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -4866,79 +4712,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Stress",
-          "plural": "Stress"
+          "plural": "Stress",
+          "traits": []
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Bloodline heritage, archetype, and personal stance",
-          "traits": [
-            {
-              "name": "Family Tree",
-              "traits": [],
-              "sfx": [
-                "hinder",
-                {
-                  "name": "Family Ties",
-                  "description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Approach to Conflict",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Personality/Quirk",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -4966,63 +4746,100 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Family Tree",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    },
+                    {
+                      "name": "Family Ties",
+                      "description": "Spend a PP to get aid or advice from a member of your family tree in the form of a d8 asset.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Approach to Conflict",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Personality/Quirk",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "inherited-abilities",
           "name": "Abilities",
           "description": "Powers granted by bloodline and relics",
-          "traits": [
-            {
-              "name": "",
-              "traits": [
-                {
-                  "name": "Effect Tags:",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "Limit:",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [
-                {
-                  "name": "Effect Tags:",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "Limit:",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [
-                {
-                  "name": "Effect Tags:",
-                  "traits": [],
-                  "sfx": []
-                },
-                {
-                  "name": "Limit:",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "traitColumns": 3,
             "features": {
@@ -5078,85 +4895,53 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Ability",
-          "plural": "Abilities"
+          "plural": "Abilities",
+          "traits": [
+            {
+              "name": "",
+              "traits": [
+                {
+                  "name": "Effect Tags:",
+                  "traits": []
+                },
+                {
+                  "name": "Limit:",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "traits": [
+                {
+                  "name": "Effect Tags:",
+                  "traits": []
+                },
+                {
+                  "name": "Limit:",
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "",
+              "traits": [
+                {
+                  "name": "Effect Tags:",
+                  "traits": []
+                },
+                {
+                  "name": "Limit:",
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "skills",
           "name": "Skills",
           "description": "Training and mundane competencies",
-          "traits": [
-            {
-              "name": "Acquire",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Build",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Charm",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fight",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Investigate",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Move",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Perform",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Pilot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Shoot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sneak",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Study",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Survive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Treat",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Trick",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -5188,14 +4973,70 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Acquire",
+              "traits": []
+            },
+            {
+              "name": "Build",
+              "traits": []
+            },
+            {
+              "name": "Charm",
+              "traits": []
+            },
+            {
+              "name": "Fight",
+              "traits": []
+            },
+            {
+              "name": "Investigate",
+              "traits": []
+            },
+            {
+              "name": "Move",
+              "traits": []
+            },
+            {
+              "name": "Perform",
+              "traits": []
+            },
+            {
+              "name": "Pilot",
+              "traits": []
+            },
+            {
+              "name": "Shoot",
+              "traits": []
+            },
+            {
+              "name": "Sneak",
+              "traits": []
+            },
+            {
+              "name": "Study",
+              "traits": []
+            },
+            {
+              "name": "Survive",
+              "traits": []
+            },
+            {
+              "name": "Treat",
+              "traits": []
+            },
+            {
+              "name": "Trick",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "heirlooms-milestones",
           "name": "Heirlooms",
           "description": "Item: Oh, There It Is. Spend a PP to declare that the item, if you didn't have it at the beginning of the scene, is now in your possession despite it being narratively improbable.\nVehicle: I'm Here! Spend a PP to use a vehicle to enter any scene that the vehicle can get you to.\nBase: Resourceful. Spend a PP to reveal that you have brought something useful from your base, thus allowing you to roll the heirloom in subsequent related actions.\nPet: Proxy. Spend a PP to affect a scene where you aren't physically present but your pet is. While you build your dice pool as normal, you're limited to actions your pet can perform.",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -5226,32 +5067,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Heirloom",
-          "plural": "Heirlooms"
+          "plural": "Heirlooms",
+          "traits": []
         },
         {
           "id": "personal-milestones",
           "name": "Personal Milestones",
-          "traits": [
-            {
-              "name": "1 XP",
-              "description": "when ",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "3 XP",
-              "description": "when ",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "10 XP",
-              "description": "when ",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -5290,32 +5111,28 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Milestone",
-          "plural": "Milestones"
-        },
-        {
-          "id": "group-milestones",
-          "name": "Group Milestones",
+          "plural": "Milestones",
           "traits": [
             {
               "name": "1 XP",
               "description": "when ",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "3 XP",
               "description": "when ",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "10 XP",
               "description": "when ",
-              "traits": [],
-              "sfx": []
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "group-milestones",
+          "name": "Group Milestones",
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -5354,13 +5171,28 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Milestone",
-          "plural": "Milestones"
+          "plural": "Milestones",
+          "traits": [
+            {
+              "name": "1 XP",
+              "description": "when ",
+              "traits": []
+            },
+            {
+              "name": "3 XP",
+              "description": "when ",
+              "traits": []
+            },
+            {
+              "name": "10 XP",
+              "description": "when ",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "xp",
           "name": "XP",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -5417,38 +5249,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Pip",
-          "plural": "Pips"
+          "plural": "Pips",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Inheritors",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
-      "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
-      "genre": "Modern Pulp Action-Adventure",
-      "setting": "d6",
-      "prep": "d10",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
+      ]
     }
   },
   {
@@ -5460,6 +5264,15 @@ const cortexSpotlightTemplates = [
     "variant": "Family Tree File",
     "pages": 2,
     "genre": "Superhero / Dynastic Drama",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
+      "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
+      "genre": "Modern Pulp Action-Adventure",
+      "setting": "d6",
+      "prep": "d10",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -5479,1091 +5292,6 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
-      "traitSets": [
-        {
-          "id": "name",
-          "name": "Name",
-          "traits": [
-            {
-              "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
-            },
-            {
-              "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
-            },
-            {
-              "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
-            },
-            {
-              "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
-            },
-            {
-              "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
-            },
-            {
-              "name": "game",
-              "traits": [],
-              "sfx": [],
-              "label": "Game",
-              "view": {
-                "visibility": "hidden"
-              }
-            },
-            {
-              "name": "portrait",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "caption",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
-              "rating": {
-                "type": "Counter",
-                "value": [
-                  1
-                ],
-                "range": [
-                  0,
-                  20
-                ]
-              },
-              "spendable": true
-            },
-            {
-              "name": "notes",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "visibility": "hidden"
-              }
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
-        },
-        {
-          "id": "your-generation",
-          "name": "Your Generation",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "parents-generation-a",
-          "name": "Parents' Generation",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 1,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "parents-generation-b",
-          "name": "Parents' Generation",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 1,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "grandparents-generation-a",
-          "name": "Grandparents' Generation",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 2,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "grandparents-generation-b",
-          "name": "Grandparents' Generation",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 2,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "wild-card-a",
-          "name": "Wild Card Branch",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "wild-card-b",
-          "name": "Wild Card Branch",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 4,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "wild-card-c",
-          "name": "Wild Card Branch",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 4,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "wild-card-d",
-          "name": "Wild Card Branch",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 5,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "wild-card-e",
-          "name": "Wild Card Branch",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 5,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "gmc-a",
-          "name": "GMC",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to PCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to GMCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 0,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "gmc-b",
-          "name": "GMC",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to PCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to GMCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 0,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "gmc-c",
-          "name": "GMC",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to PCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to GMCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 1,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "gmc-d",
-          "name": "GMC",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to PCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to GMCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 1,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "gmc-e",
-          "name": "GMC",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to PCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to GMCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "0%",
-              "top": 2,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        },
-        {
-          "id": "gmc-f",
-          "name": "GMC",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to PCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Relationship to GMCs",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fame",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Features",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Deed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Current Fate",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
-          "view": {
-            "header": "top",
-            "headerAlign": "left",
-            "features": {
-              "description": true,
-              "sfx": false,
-              "subtraits": false
-            },
-            "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "place": {
-              "left": "50%",
-              "top": 2,
-              "width": "50%",
-              "height": 1
-            }
-          },
-          "noun": "Detail",
-          "plural": "Details"
-        }
-      ],
       "view": {
         "pageCount": 2,
         "spotlight": "Inheritors",
@@ -6583,16 +5311,957 @@ const cortexSpotlightTemplates = [
           "center": 0,
           "right": 0
         }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/572309/Inheritors?manufacturers_id=31866",
-      "quote": "Your grandfather stopped an immortal warlord using nothing but a biplane and a stolen amulet. Your great-aunt discovered a lost civilization and barely made it out with her notes.",
-      "genre": "Modern Pulp Action-Adventure",
-      "setting": "d6",
-      "prep": "d10",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
+      },
+      "traitSets": [
+        {
+          "id": "name",
+          "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
+          "traits": [
+            {
+              "name": "name",
+              "label": "Name",
+              "traits": []
+            },
+            {
+              "name": "player",
+              "label": "Player",
+              "traits": []
+            },
+            {
+              "name": "nickname",
+              "label": "Nickname",
+              "traits": []
+            },
+            {
+              "name": "pronouns",
+              "label": "Pronouns",
+              "traits": []
+            },
+            {
+              "name": "description",
+              "label": "Description",
+              "traits": []
+            },
+            {
+              "name": "game",
+              "label": "Game",
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
+            },
+            {
+              "name": "portrait",
+              "traits": []
+            },
+            {
+              "name": "caption",
+              "traits": []
+            },
+            {
+              "name": "plotPoints",
+              "rating": {
+                "type": "Counter",
+                "value": [
+                  1
+                ],
+                "range": [
+                  0,
+                  20
+                ]
+              },
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
+            },
+            {
+              "name": "notes",
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "your-generation",
+          "name": "Your Generation",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "parents-generation-a",
+          "name": "Parents' Generation",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "parents-generation-b",
+          "name": "Parents' Generation",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "grandparents-generation-a",
+          "name": "Grandparents' Generation",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "grandparents-generation-b",
+          "name": "Grandparents' Generation",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "wild-card-a",
+          "name": "Wild Card Branch",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "wild-card-b",
+          "name": "Wild Card Branch",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "wild-card-c",
+          "name": "Wild Card Branch",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 4,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "wild-card-d",
+          "name": "Wild Card Branch",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 5,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "wild-card-e",
+          "name": "Wild Card Branch",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 1,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 5,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "gmc-a",
+          "name": "GMC",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 2,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Relationship to PCs",
+              "traits": []
+            },
+            {
+              "name": "Relationship to GMCs",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "gmc-b",
+          "name": "GMC",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 2,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Relationship to PCs",
+              "traits": []
+            },
+            {
+              "name": "Relationship to GMCs",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "gmc-c",
+          "name": "GMC",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 2,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Relationship to PCs",
+              "traits": []
+            },
+            {
+              "name": "Relationship to GMCs",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "gmc-d",
+          "name": "GMC",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 2,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 1,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Relationship to PCs",
+              "traits": []
+            },
+            {
+              "name": "Relationship to GMCs",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "gmc-e",
+          "name": "GMC",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 2,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "0%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Relationship to PCs",
+              "traits": []
+            },
+            {
+              "name": "Relationship to GMCs",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        },
+        {
+          "id": "gmc-f",
+          "name": "GMC",
+          "view": {
+            "header": "top",
+            "headerAlign": "left",
+            "features": {
+              "description": true,
+              "sfx": false,
+              "subtraits": false
+            },
+            "page": 2,
+            "style": {
+              "header": "labeled-fields",
+              "body": "labeled-fields"
+            },
+            "place": {
+              "left": "50%",
+              "top": 2,
+              "width": "50%",
+              "height": 1
+            }
+          },
+          "noun": "Detail",
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Relationship to PCs",
+              "traits": []
+            },
+            {
+              "name": "Relationship to GMCs",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Fame",
+              "traits": []
+            },
+            {
+              "name": "Features",
+              "traits": []
+            },
+            {
+              "name": "Deed",
+              "traits": []
+            },
+            {
+              "name": "Current Fate",
+              "traits": []
+            }
+          ]
+        }
+      ]
     }
   },
   {
@@ -6604,6 +6273,15 @@ const cortexSpotlightTemplates = [
     "variant": "Hero File",
     "pages": 1,
     "genre": "Comic Book / Superhero",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+      "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+      "genre": "Superhero",
+      "setting": "d6",
+      "prep": "d12",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -6623,68 +6301,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "KitBash",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -6695,93 +6386,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Origin, motivation, and crime-fighting persona",
-          "traits": [
-            {
-              "name": "Personality:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Past:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Quirk:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -6811,30 +6435,95 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Personality:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Past:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Quirk:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "affiliations",
           "name": "Affiliations",
           "description": "Operating mode ratings",
-          "traits": [
-            {
-              "name": "Personal:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Group:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "World:",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -6878,14 +6567,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Affiliation",
-          "plural": "Affiliations"
+          "plural": "Affiliations",
+          "traits": [
+            {
+              "name": "Personal:",
+              "traits": []
+            },
+            {
+              "name": "Group:",
+              "traits": []
+            },
+            {
+              "name": "World:",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "specialties",
           "name": "Specialties",
           "description": "Master and expert professional skills",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -6915,14 +6616,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Specialty",
-          "plural": "Specialties"
+          "plural": "Specialties",
+          "traits": []
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Heroic gear and vehicles",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -6953,29 +6653,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "stress",
           "name": "Stress",
-          "traits": [
-            {
-              "name": "Physical",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Mental",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Social",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7019,129 +6702,25 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Stress",
-          "plural": "Stress"
+          "plural": "Stress",
+          "traits": [
+            {
+              "name": "Physical",
+              "traits": []
+            },
+            {
+              "name": "Mental",
+              "traits": []
+            },
+            {
+              "name": "Social",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "growth-pool",
           "name": "Growth Pool",
-          "traits": [
-            {
-              "name": "D4",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D6",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D8",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D10",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D12",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7177,25 +6756,124 @@ const cortexSpotlightTemplates = [
           },
           "pool": true,
           "noun": "Growth Die",
-          "plural": "Growth Dice"
+          "plural": "Growth Dice",
+          "traits": [
+            {
+              "name": "D4",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  4
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D6",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D8",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D10",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D12",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "power-set",
           "name": "Power Set 1",
           "description": "Modular powers, SFX triggers, and shutdown limits",
-          "traits": [
-            {
-              "name": "Powers",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Limits",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7215,24 +6893,21 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Power Set",
-          "plural": "Power Sets"
+          "plural": "Power Sets",
+          "traits": [
+            {
+              "name": "Powers",
+              "traits": []
+            },
+            {
+              "name": "Limits",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "power-set-2",
           "name": "Power Set 2",
-          "traits": [
-            {
-              "name": "Powers",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Limits",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7249,24 +6924,21 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": [
+            {
+              "name": "Powers",
+              "traits": []
+            },
+            {
+              "name": "Limits",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "power-set-3",
           "name": "Power Set 3",
-          "traits": [
-            {
-              "name": "Powers",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Limits",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7283,38 +6955,19 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": [
+            {
+              "name": "Powers",
+              "traits": []
+            },
+            {
+              "name": "Limits",
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "KitBash",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
-      "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
-      "genre": "Superhero",
-      "setting": "d6",
-      "prep": "d12",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
+      ]
     }
   },
   {
@@ -7326,6 +6979,15 @@ const cortexSpotlightTemplates = [
     "variant": "Team Roster File",
     "pages": 1,
     "genre": "Comic Book / Superhero",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
+      "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
+      "genre": "Superhero",
+      "setting": "d6",
+      "prep": "d12",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -7345,68 +7007,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "KitBash",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -7417,58 +7092,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "team-base",
           "name": "Team Base",
           "description": "As a group, decide on the following information.",
-          "traits": [
-            {
-              "name": "Name",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Location",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Description",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Benefits",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Drawbacks",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7484,13 +7127,33 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Detail",
-          "plural": "Details"
+          "plural": "Details",
+          "traits": [
+            {
+              "name": "Name",
+              "traits": []
+            },
+            {
+              "name": "Location",
+              "traits": []
+            },
+            {
+              "name": "Description",
+              "traits": []
+            },
+            {
+              "name": "Benefits",
+              "traits": []
+            },
+            {
+              "name": "Drawbacks",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "team-resources",
           "name": "Team Resources",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7519,38 +7182,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
+          "plural": "Resources",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "KitBash",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/568416/Kit-Bash?manufacturers_id=31866",
-      "quote": "You want to run a superhero campaign, but you’re sick of starting with someone else’s universe. What if the table built the world together, from scratch, before the first punch is thrown?",
-      "genre": "Superhero",
-      "setting": "d6",
-      "prep": "d12",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
+      ]
     }
   },
   {
@@ -7562,6 +7197,15 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Mystery / Drama / Supernatural",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866",
+      "quote": "The town knows you’re different. They always have.",
+      "genre": "Small-town supernatural drama",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -7581,68 +7225,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Misty Cove",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -7653,50 +7310,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Coastal heritage, town role, and personal quirk",
-          "traits": [
-            {
-              "name": "Extraordinary:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ]
-            },
-            {
-              "name": "Backstory:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Role:",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -7726,14 +7359,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Extraordinary:",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Backstory:",
+              "traits": []
+            },
+            {
+              "name": "Role:",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets-curios",
           "name": "Signature Assets",
           "description": "Heirlooms and keepsakes from the misty coast",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -7776,41 +7431,14 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "emotional-attributes-stress",
           "name": "Attributes",
           "description": "Core emotional drives with corresponding statements and stress",
           "statement": true,
-          "traits": [
-            {
-              "name": "Anger",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Desire",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fear",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Joy",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sorrow",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -7865,14 +7493,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Anger",
+              "traits": []
+            },
+            {
+              "name": "Desire",
+              "traits": []
+            },
+            {
+              "name": "Fear",
+              "traits": []
+            },
+            {
+              "name": "Joy",
+              "traits": []
+            },
+            {
+              "name": "Sorrow",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "town-relationships",
           "name": "Relationships",
           "description": "Bonds and rivalries with local residents",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -7924,129 +7572,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Relationship",
-          "plural": "Relationships"
+          "plural": "Relationships",
+          "traits": []
         },
         {
           "id": "growth-pool",
           "name": "Growth Pool",
-          "traits": [
-            {
-              "name": "D4",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D6",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D8",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D10",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D12",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -8082,13 +7613,123 @@ const cortexSpotlightTemplates = [
           },
           "pool": true,
           "noun": "Growth Die",
-          "plural": "Growth Dice"
+          "plural": "Growth Dice",
+          "traits": [
+            {
+              "name": "D4",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  4
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D6",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D8",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D10",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D12",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "complications",
           "name": "Complications",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -8129,38 +7770,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Complication",
-          "plural": "Complications"
+          "plural": "Complications",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Misty Cove",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/568414/Misty-Cove?manufacturers_id=31866",
-      "quote": "The town knows you’re different. They always have.",
-      "genre": "Small-town supernatural drama",
-      "setting": "d6",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg"
+      ]
     }
   },
   {
@@ -8172,6 +7785,15 @@ const cortexSpotlightTemplates = [
     "variant": "Caster File",
     "pages": 1,
     "genre": "Dark Fantasy / Occult",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866",
+      "quote": "You didn’t ask for this. You were just trying to live your life.",
+      "genre": "Urban fantasy",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -8191,68 +7813,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Necromancer",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -8263,93 +7898,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Occult lineage, taboo practice, and philosophical motivation",
-          "traits": [
-            {
-              "name": "Job:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Necromancy:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Desire:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -8371,31 +7939,96 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Job:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Necromancy:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Desire:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "affiliations",
           "name": "Affiliations",
           "description": "Operating configuration dice and statements",
           "statement": true,
-          "traits": [
-            {
-              "name": "My Life",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "The World",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "The Demi-Monde",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -8436,45 +8069,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Affiliation",
-          "plural": "Affiliations"
+          "plural": "Affiliations",
+          "traits": [
+            {
+              "name": "My Life",
+              "traits": []
+            },
+            {
+              "name": "The World",
+              "traits": []
+            },
+            {
+              "name": "The Demi-Monde",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "roles-specialties",
           "name": "Roles",
           "description": "Dark magical callings and practices",
-          "traits": [
-            {
-              "name": "Diplomat",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fighter",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Guardian",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Healer",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sneak",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Transporter",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -8506,14 +8120,38 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Diplomat",
+              "traits": []
+            },
+            {
+              "name": "Fighter",
+              "traits": []
+            },
+            {
+              "name": "Guardian",
+              "traits": []
+            },
+            {
+              "name": "Healer",
+              "traits": []
+            },
+            {
+              "name": "Sneak",
+              "traits": []
+            },
+            {
+              "name": "Transporter",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Occult relics, grimoires, and dark instruments",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -8558,39 +8196,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "necromantic-arts",
           "name": "Ability",
           "description": "EFFECT TAGS: ATTACK • SENSORY • MOVEMENT • CONTROL • DEFENSE • ENHANCEMENT",
-          "traits": [
-            {
-              "name": "Necromancy",
-              "traits": [
-                {
-                  "name": "Descriptor Tags:",
-                  "traits": [],
-                  "sfx": []
-                }
-              ],
-              "sfx": [
-                {
-                  "name": "Been There",
-                  "description": "When you are resurrecting a ______________, double your Necromancy."
-                },
-                {
-                  "name": "Done That",
-                  "description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP."
-                },
-                {
-                  "name": "Limit — Dammit",
-                  "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
-                }
-              ]
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -8620,13 +8232,42 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Ability",
-          "plural": "Abilities"
+          "plural": "Abilities",
+          "traits": [
+            {
+              "name": "Necromancy",
+              "traits": [
+                {
+                  "name": "Descriptor Tags:",
+                  "traits": []
+                },
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Been There",
+                      "description": "When you are resurrecting a ______________, double your Necromancy.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Done That",
+                      "description": "When a ______________ you resurrected creates or exacerbates a problem, earn a PP.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Limit — Dammit",
+                      "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "session-record",
           "name": "Session Record",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -8671,20 +8312,12 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": []
         },
         {
           "id": "complications",
           "name": "Complications",
-          "traits": [
-            {
-              "name": "Deathmark",
-              "description": "Deathmark",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -8728,38 +8361,16 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Complication",
-          "plural": "Complications"
+          "plural": "Complications",
+          "traits": [
+            {
+              "name": "Deathmark",
+              "description": "Deathmark",
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Necromancer",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/574557/Necromancer?manufacturers_id=31866",
-      "quote": "You didn’t ask for this. You were just trying to live your life.",
-      "genre": "Urban fantasy",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg"
+      ]
     }
   },
   {
@@ -8771,6 +8382,15 @@ const cortexSpotlightTemplates = [
     "variant": "Crystalline Age",
     "pages": 1,
     "genre": "Superhero / Silver Age Nostalgia",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+      "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+      "genre": "Pulp adventure",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -8790,68 +8410,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Retired No More",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -8862,68 +8495,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "values",
           "name": "Values",
           "description": "Enduring principles of the golden era",
-          "traits": [
-            {
-              "name": "Allegiance",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Glory",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Integrity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Knowledge",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Novelty",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Power",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Riches",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -8967,75 +8558,42 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Allegiance",
+              "traits": []
+            },
+            {
+              "name": "Glory",
+              "traits": []
+            },
+            {
+              "name": "Integrity",
+              "traits": []
+            },
+            {
+              "name": "Knowledge",
+              "traits": []
+            },
+            {
+              "name": "Novelty",
+              "traits": []
+            },
+            {
+              "name": "Power",
+              "traits": []
+            },
+            {
+              "name": "Riches",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Past glory, modern civilian life, and the call to return",
-          "traits": [
-            {
-              "name": "Archetype",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Retirement",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Satisfaction",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -9063,135 +8621,95 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Archetype",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Retirement",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Satisfaction",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "vintage-resources-assets",
           "name": "Resources",
           "description": "Stashed tech, vintage vehicles, and old connections (5d6 each)",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -9239,13 +8757,128 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
+          "plural": "Resources",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -9294,13 +8927,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Asset",
-          "plural": "Assets"
+          "plural": "Assets",
+          "traits": []
         },
         {
           "id": "aging-complications",
           "name": "Aging Complications",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -9349,95 +8981,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Complication",
-          "plural": "Complications"
+          "plural": "Complications",
+          "traits": []
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Mundane d4-d6 skills stepped up by d8-d12 veteran specialties",
-          "traits": [
-            {
-              "name": "Craft",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fight",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fly",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Focus",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Influence",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Know",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Labor",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Move",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Notice",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Perform",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sneak",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Survive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Throw",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Tinker",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Treat",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Trick",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -9475,38 +9025,75 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Craft",
+              "traits": []
+            },
+            {
+              "name": "Fight",
+              "traits": []
+            },
+            {
+              "name": "Fly",
+              "traits": []
+            },
+            {
+              "name": "Focus",
+              "traits": []
+            },
+            {
+              "name": "Influence",
+              "traits": []
+            },
+            {
+              "name": "Know",
+              "traits": []
+            },
+            {
+              "name": "Labor",
+              "traits": []
+            },
+            {
+              "name": "Move",
+              "traits": []
+            },
+            {
+              "name": "Notice",
+              "traits": []
+            },
+            {
+              "name": "Perform",
+              "traits": []
+            },
+            {
+              "name": "Sneak",
+              "traits": []
+            },
+            {
+              "name": "Survive",
+              "traits": []
+            },
+            {
+              "name": "Throw",
+              "traits": []
+            },
+            {
+              "name": "Tinker",
+              "traits": []
+            },
+            {
+              "name": "Treat",
+              "traits": []
+            },
+            {
+              "name": "Trick",
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Retired No More",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
-      "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
-      "genre": "Pulp adventure",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
+      ]
     }
   },
   {
@@ -9518,6 +9105,15 @@ const cortexSpotlightTemplates = [
     "variant": "Aerial Age",
     "pages": 1,
     "genre": "Dieselpunk / Aviation Adventure",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
+      "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
+      "genre": "Pulp adventure",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -9537,68 +9133,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Retired No More",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -9609,68 +9218,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "values",
           "name": "Values",
           "description": "The aviator's code and sky ethics",
-          "traits": [
-            {
-              "name": "Allegiance",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Glory",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Integrity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Knowledge",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Novelty",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Power",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Riches",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -9714,55 +9281,42 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Allegiance",
+              "traits": []
+            },
+            {
+              "name": "Glory",
+              "traits": []
+            },
+            {
+              "name": "Integrity",
+              "traits": []
+            },
+            {
+              "name": "Knowledge",
+              "traits": []
+            },
+            {
+              "name": "Novelty",
+              "traits": []
+            },
+            {
+              "name": "Power",
+              "traits": []
+            },
+            {
+              "name": "Riches",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Aerial legend and grounded retirement",
-          "traits": [
-            {
-              "name": "Archetype:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Retirement:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -9790,87 +9344,68 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Archetype:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Retirement:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "vintage-plane-signature-assets",
           "name": "Resources",
           "description": "Custom aircraft and aviator resources (5d6 each)",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -9918,13 +9453,82 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
+          "plural": "Resources",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-asset",
           "name": "Signature Asset",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -9973,14 +9577,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Asset",
-          "plural": "Assets"
+          "plural": "Assets",
+          "traits": []
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Flight and tactical skills (d4-d6) with veteran specialties (d8-d12)",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -10018,33 +9621,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": []
         },
         {
           "id": "session-record",
           "name": "Session Record",
           "description": "1: Training • 2: Adventuring Triumph • 3: Retirement",
-          "traits": [
-            {
-              "name": "Training",
-              "description": "Training",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Adventuring Triumph",
-              "description": "Adventuring Triumph",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Retirement",
-              "description": "Retirement",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -10093,38 +9676,26 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": [
+            {
+              "name": "Training",
+              "description": "Training",
+              "traits": []
+            },
+            {
+              "name": "Adventuring Triumph",
+              "description": "Adventuring Triumph",
+              "traits": []
+            },
+            {
+              "name": "Retirement",
+              "description": "Retirement",
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Retired No More",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567044/Retired-No-More?manufacturers_id=31866",
-      "quote": "You had a good run. Crystal artifacts recovered, sky pirates outwitted, ancient ruins plundered.",
-      "genre": "Pulp adventure",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
+      ]
     }
   },
   {
@@ -10136,6 +9707,15 @@ const cortexSpotlightTemplates = [
     "variant": "Survivor File",
     "pages": 1,
     "genre": "Post-Apocalyptic / Survival",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+      "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+      "genre": "Post-apocalyptic zombie survival | Base-building",
+      "setting": "d8",
+      "prep": "d8",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -10155,68 +9735,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Safe Zone",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -10227,93 +9820,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Pre-fall life, current survival role, and future hope",
-          "traits": [
-            {
-              "name": "Before:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Now:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Future:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -10335,115 +9861,95 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Before:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Now:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Future:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Practical survival disciplines (d4-d6) with specialized traits (d8-d12)",
-          "traits": [
-            {
-              "name": "Animals",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Athletics",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Big Guns",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Covert",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Craft",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Creativity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Drive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Focus",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Guns",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Influence",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Knowledge",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Mechanic",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Melee",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Notice",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Operate",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Pilot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Survival",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Thrown",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Treatment",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Unarmed",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -10481,30 +9987,94 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Animals",
+              "traits": []
+            },
+            {
+              "name": "Athletics",
+              "traits": []
+            },
+            {
+              "name": "Big Guns",
+              "traits": []
+            },
+            {
+              "name": "Covert",
+              "traits": []
+            },
+            {
+              "name": "Craft",
+              "traits": []
+            },
+            {
+              "name": "Creativity",
+              "traits": []
+            },
+            {
+              "name": "Drive",
+              "traits": []
+            },
+            {
+              "name": "Focus",
+              "traits": []
+            },
+            {
+              "name": "Guns",
+              "traits": []
+            },
+            {
+              "name": "Influence",
+              "traits": []
+            },
+            {
+              "name": "Knowledge",
+              "traits": []
+            },
+            {
+              "name": "Mechanic",
+              "traits": []
+            },
+            {
+              "name": "Melee",
+              "traits": []
+            },
+            {
+              "name": "Notice",
+              "traits": []
+            },
+            {
+              "name": "Operate",
+              "traits": []
+            },
+            {
+              "name": "Pilot",
+              "traits": []
+            },
+            {
+              "name": "Survival",
+              "traits": []
+            },
+            {
+              "name": "Thrown",
+              "traits": []
+            },
+            {
+              "name": "Treatment",
+              "traits": []
+            },
+            {
+              "name": "Unarmed",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Core survival attributes",
-          "traits": [
-            {
-              "name": "Analytical",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Forceful",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Quiet",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -10537,14 +10107,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Analytical",
+              "traits": []
+            },
+            {
+              "name": "Forceful",
+              "traits": []
+            },
+            {
+              "name": "Quiet",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "relationships",
           "name": "Relationships",
           "description": "Ties to fellow survivors in the camp",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -10576,40 +10158,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Relationship",
-          "plural": "Relationships"
+          "plural": "Relationships",
+          "traits": []
         },
         {
           "id": "stress",
           "name": "Stress",
           "description": "Survivor stress and trauma",
-          "traits": [
-            {
-              "name": "Injured",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Isolated",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sick",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Tired",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Upset",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -10641,14 +10196,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Stress",
-          "plural": "Stress"
+          "plural": "Stress",
+          "traits": [
+            {
+              "name": "Injured",
+              "traits": []
+            },
+            {
+              "name": "Isolated",
+              "traits": []
+            },
+            {
+              "name": "Sick",
+              "traits": []
+            },
+            {
+              "name": "Tired",
+              "traits": []
+            },
+            {
+              "name": "Upset",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "talents",
           "name": "Talents",
           "description": "Survivor tricks and knacks",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -10676,130 +10251,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": []
         },
         {
           "id": "growth-pool",
           "name": "Growth Pool",
           "description": "Survivor growth dice",
-          "traits": [
-            {
-              "name": "D4",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D6",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D8",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D10",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D12",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -10835,38 +10293,121 @@ const cortexSpotlightTemplates = [
           },
           "pool": true,
           "noun": "Growth Die",
-          "plural": "Growth Dice"
+          "plural": "Growth Dice",
+          "traits": [
+            {
+              "name": "D4",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  4
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D6",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D8",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D10",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D12",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Safe Zone",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
-      "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
-      "genre": "Post-apocalyptic zombie survival | Base-building",
-      "setting": "d8",
-      "prep": "d8",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
+      ]
     }
   },
   {
@@ -10878,6 +10419,15 @@ const cortexSpotlightTemplates = [
     "variant": "Colony File",
     "pages": 2,
     "genre": "Post-Apocalyptic / Base Building",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
+      "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
+      "genre": "Post-apocalyptic zombie survival | Base-building",
+      "setting": "d8",
+      "prep": "d8",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -10897,68 +10447,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 2,
+        "spotlight": "Safe Zone",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -10969,123 +10532,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "essential-stockpiles",
           "name": "Essential Stockpiles",
           "description": "Building Benefits:",
-          "traits": [
-            {
-              "name": "Food",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            },
-            {
-              "name": "Water",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            },
-            {
-              "name": "Shelter",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11108,105 +10574,101 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Essential Stockpile",
-          "plural": "Essential Stockpiles"
+          "plural": "Essential Stockpiles",
+          "traits": [
+            {
+              "name": "Food",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "traits": []
+            },
+            {
+              "name": "Water",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "traits": []
+            },
+            {
+              "name": "Shelter",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "non-essential-stockpiles",
           "name": "Non-Essential Stockpiles",
           "description": "Building Benefits:",
-          "traits": [
-            {
-              "name": "Medicine",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            },
-            {
-              "name": "Protection",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            },
-            {
-              "name": "Tools",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11229,92 +10691,100 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Non-Essential Stockpile",
-          "plural": "Non-Essential Stockpiles"
+          "plural": "Non-Essential Stockpiles",
+          "traits": [
+            {
+              "name": "Medicine",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "traits": []
+            },
+            {
+              "name": "Protection",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "traits": []
+            },
+            {
+              "name": "Tools",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "building-1",
           "name": "Building 1",
-          "traits": [
-            {
-              "name": "Name:",
-              "traits": [
-                {
-                  "name": "d6 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d8 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d10 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d12 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      12
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11350,92 +10820,86 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Building",
-          "plural": "Buildings"
+          "plural": "Buildings",
+          "traits": [
+            {
+              "name": "Name:",
+              "traits": [
+                {
+                  "name": "d6 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d8 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d10 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d12 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      12
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "building-2",
           "name": "Building 2",
-          "traits": [
-            {
-              "name": "Name:",
-              "traits": [
-                {
-                  "name": "d6 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d8 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d10 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d12 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      12
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11471,92 +10935,86 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Building",
-          "plural": "Buildings"
+          "plural": "Buildings",
+          "traits": [
+            {
+              "name": "Name:",
+              "traits": [
+                {
+                  "name": "d6 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d8 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d10 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d12 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      12
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "building-3",
           "name": "Building 3",
-          "traits": [
-            {
-              "name": "Name:",
-              "traits": [
-                {
-                  "name": "d6 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d8 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d10 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d12 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      12
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11592,92 +11050,86 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Building",
-          "plural": "Buildings"
+          "plural": "Buildings",
+          "traits": [
+            {
+              "name": "Name:",
+              "traits": [
+                {
+                  "name": "d6 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d8 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d10 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d12 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      12
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "building-4",
           "name": "Building 4",
-          "traits": [
-            {
-              "name": "Name:",
-              "traits": [
-                {
-                  "name": "d6 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d8 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d10 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "d12 Benefit:",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      12
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11713,19 +11165,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Building",
-          "plural": "Buildings"
-        },
-        {
-          "id": "building-5",
-          "name": "Building 5",
+          "plural": "Buildings",
           "traits": [
             {
               "name": "Name:",
               "traits": [
                 {
                   "name": "d6 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11738,12 +11184,11 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 },
                 {
                   "name": "d8 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11756,12 +11201,11 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 },
                 {
                   "name": "d10 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11774,12 +11218,11 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 },
                 {
                   "name": "d12 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11792,13 +11235,16 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 }
-              ],
-              "sfx": []
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "building-5",
+          "name": "Building 5",
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11834,19 +11280,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Building",
-          "plural": "Buildings"
-        },
-        {
-          "id": "building-6",
-          "name": "Building 6",
+          "plural": "Buildings",
           "traits": [
             {
               "name": "Name:",
               "traits": [
                 {
                   "name": "d6 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11859,12 +11299,11 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 },
                 {
                   "name": "d8 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11877,12 +11316,11 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 },
                 {
                   "name": "d10 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11895,12 +11333,11 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 },
                 {
                   "name": "d12 Benefit:",
-                  "traits": [],
-                  "sfx": [],
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -11913,13 +11350,16 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
                 }
-              ],
-              "sfx": []
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "building-6",
+          "name": "Building 6",
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -11955,39 +11395,87 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Building",
-          "plural": "Buildings"
+          "plural": "Buildings",
+          "traits": [
+            {
+              "name": "Name:",
+              "traits": [
+                {
+                  "name": "d6 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d8 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d10 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "d12 Benefit:",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      12
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "survivor-1",
           "name": "Survivor 1",
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Morale",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12016,39 +11504,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
+          "plural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "survivor-2",
           "name": "Survivor 2",
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Morale",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12077,39 +11562,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
+          "plural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "survivor-3",
           "name": "Survivor 3",
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Morale",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12138,39 +11620,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
+          "plural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "survivor-4",
           "name": "Survivor 4",
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Morale",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12199,39 +11678,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
+          "plural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "survivor-5",
           "name": "Survivor 5",
           "hasQuestionedPip": true,
-          "traits": [
-            {
-              "name": "Morale",
-              "questioned": false,
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12260,23 +11736,15 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
-        },
-        {
-          "id": "survivor-6",
-          "name": "Survivor 6",
-          "hasQuestionedPip": true,
+          "plural": "Survivors",
           "traits": [
             {
               "name": "Morale",
               "questioned": false,
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "",
-              "traits": [],
-              "sfx": [],
               "rating": {
                 "type": "Die",
                 "value": [
@@ -12289,10 +11757,15 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "survivor-6",
+          "name": "Survivor 6",
+          "hasQuestionedPip": true,
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12321,23 +11794,15 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
-        },
-        {
-          "id": "survivor-7",
-          "name": "Survivor 7",
-          "hasQuestionedPip": true,
+          "plural": "Survivors",
           "traits": [
             {
               "name": "Morale",
               "questioned": false,
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "",
-              "traits": [],
-              "sfx": [],
               "rating": {
                 "type": "Die",
                 "value": [
@@ -12350,10 +11815,15 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "survivor-7",
+          "name": "Survivor 7",
+          "hasQuestionedPip": true,
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12382,23 +11852,15 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
-        },
-        {
-          "id": "survivor-8",
-          "name": "Survivor 8",
-          "hasQuestionedPip": true,
+          "plural": "Survivors",
           "traits": [
             {
               "name": "Morale",
               "questioned": false,
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "",
-              "traits": [],
-              "sfx": [],
               "rating": {
                 "type": "Die",
                 "value": [
@@ -12411,10 +11873,15 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "survivor-8",
+          "name": "Survivor 8",
+          "hasQuestionedPip": true,
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12443,23 +11910,15 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
-        },
-        {
-          "id": "survivor-9",
-          "name": "Survivor 9",
-          "hasQuestionedPip": true,
+          "plural": "Survivors",
           "traits": [
             {
               "name": "Morale",
               "questioned": false,
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "",
-              "traits": [],
-              "sfx": [],
               "rating": {
                 "type": "Die",
                 "value": [
@@ -12472,10 +11931,15 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "survivor-9",
+          "name": "Survivor 9",
+          "hasQuestionedPip": true,
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12504,13 +11968,35 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Survivor",
-          "plural": "Survivors"
+          "plural": "Survivors",
+          "traits": [
+            {
+              "name": "Morale",
+              "questioned": false,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "colony-projects",
           "name": "Notes",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -12527,38 +12013,10 @@ const cortexSpotlightTemplates = [
             "notes": ""
           },
           "noun": "Note",
-          "plural": "Notes"
+          "plural": "Notes",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 2,
-        "spotlight": "Safe Zone",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/574559/Safe-Zone?manufacturers_id=31866",
-      "quote": "The Rot took the world. The Rotters are still out there, but they’re not the problem anymore.",
-      "genre": "Post-apocalyptic zombie survival | Base-building",
-      "setting": "d8",
-      "prep": "d8",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
+      ]
     }
   },
   {
@@ -12570,6 +12028,15 @@ const cortexSpotlightTemplates = [
     "variant": "Agent File",
     "pages": 1,
     "genre": "Spy / Cold War / High-Tech",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/574560/Snowfall-Initiative?manufacturers_id=31866",
+      "quote": "Earth is freezing. Not metaphorically—glaciers are advancing on major cities, temperatures are dropping, and a new ice age has begun.",
+      "genre": "Military sci-fi / Norse portal fantasy",
+      "setting": "d10",
+      "prep": "d8",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/574560.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -12589,68 +12056,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Snowfall Initiative",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -12661,93 +12141,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Cover identity, espionage specialization, and personal objective",
-          "traits": [
-            {
-              "name": "Role",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Background",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Personality",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -12769,30 +12182,95 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 3
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Role",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Background",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Personality",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "affiliations",
           "name": "Affiliations",
           "description": "Operational deployment modes",
-          "traits": [
-            {
-              "name": "Diplomacy",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Discovery",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Defense",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -12838,24 +12316,25 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Affiliation",
-          "plural": "Affiliations"
+          "plural": "Affiliations",
+          "traits": [
+            {
+              "name": "Diplomacy",
+              "traits": []
+            },
+            {
+              "name": "Discovery",
+              "traits": []
+            },
+            {
+              "name": "Defense",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "complications",
           "name": "Complications",
-          "traits": [
-            {
-              "name": "Frostbite",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Hypothermia",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -12899,45 +12378,22 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Complication",
-          "plural": "Complications"
+          "plural": "Complications",
+          "traits": [
+            {
+              "name": "Frostbite",
+              "traits": []
+            },
+            {
+              "name": "Hypothermia",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "attributes-stress",
           "name": "Attributes & Stress",
           "description": "Core operative capabilities and physical resilience",
-          "traits": [
-            {
-              "name": "Brawn",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Endurance",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Grace",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Grit",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Mettle",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Smarts",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -12996,110 +12452,38 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Brawn",
+              "traits": []
+            },
+            {
+              "name": "Endurance",
+              "traits": []
+            },
+            {
+              "name": "Grace",
+              "traits": []
+            },
+            {
+              "name": "Grit",
+              "traits": []
+            },
+            {
+              "name": "Mettle",
+              "traits": []
+            },
+            {
+              "name": "Smarts",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Black-ops competencies and d6 specialties",
-          "traits": [
-            {
-              "name": "Craft",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Drive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fight",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fix",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fly",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Focus",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Influence",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Know",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Labor",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Move",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Notice",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Operate",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Perform",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Shoot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sneak",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Survive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Throw",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Treat",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Trick",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -13129,14 +12513,90 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 19
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Craft",
+              "traits": []
+            },
+            {
+              "name": "Drive",
+              "traits": []
+            },
+            {
+              "name": "Fight",
+              "traits": []
+            },
+            {
+              "name": "Fix",
+              "traits": []
+            },
+            {
+              "name": "Fly",
+              "traits": []
+            },
+            {
+              "name": "Focus",
+              "traits": []
+            },
+            {
+              "name": "Influence",
+              "traits": []
+            },
+            {
+              "name": "Know",
+              "traits": []
+            },
+            {
+              "name": "Labor",
+              "traits": []
+            },
+            {
+              "name": "Move",
+              "traits": []
+            },
+            {
+              "name": "Notice",
+              "traits": []
+            },
+            {
+              "name": "Operate",
+              "traits": []
+            },
+            {
+              "name": "Perform",
+              "traits": []
+            },
+            {
+              "name": "Shoot",
+              "traits": []
+            },
+            {
+              "name": "Sneak",
+              "traits": []
+            },
+            {
+              "name": "Survive",
+              "traits": []
+            },
+            {
+              "name": "Throw",
+              "traits": []
+            },
+            {
+              "name": "Treat",
+              "traits": []
+            },
+            {
+              "name": "Trick",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets-gifts",
           "name": "Signature Assets",
           "description": "Classified spy gear and experimental equipment",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -13187,13 +12647,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "talents",
           "name": "Talents",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -13219,24 +12678,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": []
         },
         {
           "id": "gifts",
           "name": "Gifts",
-          "traits": [
-            {
-              "name": "Gift of",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Gift of~2",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -13286,32 +12733,21 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Gift",
-          "plural": "Gifts"
+          "plural": "Gifts",
+          "traits": [
+            {
+              "name": "Gift of",
+              "traits": []
+            },
+            {
+              "name": "Gift of~2",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "milestones",
           "name": "Milestones",
-          "traits": [
-            {
-              "name": "1 XP",
-              "description": "when ",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "3 XP",
-              "description": "when ",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "10 XP",
-              "description": "when ",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -13350,32 +12786,28 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Milestone",
-          "plural": "Milestones"
-        },
-        {
-          "id": "milestones-b",
-          "name": "Milestones",
+          "plural": "Milestones",
           "traits": [
             {
               "name": "1 XP",
               "description": "when ",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "3 XP",
               "description": "when ",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "10 XP",
               "description": "when ",
-              "traits": [],
-              "sfx": []
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "milestones-b",
+          "name": "Milestones",
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -13414,13 +12846,28 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Milestone",
-          "plural": "Milestones"
+          "plural": "Milestones",
+          "traits": [
+            {
+              "name": "1 XP",
+              "description": "when ",
+              "traits": []
+            },
+            {
+              "name": "3 XP",
+              "description": "when ",
+              "traits": []
+            },
+            {
+              "name": "10 XP",
+              "description": "when ",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "xp",
           "name": "XP",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -13472,38 +12919,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Pip",
-          "plural": "Pips"
+          "plural": "Pips",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Snowfall Initiative",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/574560/Snowfall-Initiative?manufacturers_id=31866",
-      "quote": "Earth is freezing. Not metaphorically—glaciers are advancing on major cities, temperatures are dropping, and a new ice age has begun.",
-      "genre": "Military sci-fi / Norse portal fantasy",
-      "setting": "d10",
-      "prep": "d8",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/574560.jpg"
+      ]
     }
   },
   {
@@ -13515,6 +12934,15 @@ const cortexSpotlightTemplates = [
     "variant": "Citizen File",
     "pages": 1,
     "genre": "SolarPunk / Sci-Fi / Community",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+      "quote": "The corporations took everything. The land, the water, the air.",
+      "genre": "Near-future eco-punk / hopepunk",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -13534,68 +12962,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "SolarPunk",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -13606,48 +13047,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "SolarPunk holistic community attributes",
-          "traits": [
-            {
-              "name": "Mind",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Body",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Connection",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -13692,13 +13111,25 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Mind",
+              "traits": []
+            },
+            {
+              "name": "Body",
+              "traits": []
+            },
+            {
+              "name": "Connection",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "session-record",
           "name": "Session Record",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -13746,75 +13177,13 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": []
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Ecological calling, community role, and personal purpose",
-          "traits": [
-            {
-              "name": "Identity:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Community:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Purpose:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -13842,14 +13211,95 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Identity:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Community:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Purpose:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Sustainable tech, tools, and eco-craft",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -13901,110 +13351,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Ecological competencies (d4-d12) and d6 craft specialties",
-          "traits": [
-            {
-              "name": "Craft",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Drive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fight",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fix",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fly",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Focus",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Influence",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Know",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Labor",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Move",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Notice",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Operate",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Perform",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Shoot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sneak",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Survive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Throw",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Treat",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Trick",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -14038,38 +13391,87 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Craft",
+              "traits": []
+            },
+            {
+              "name": "Drive",
+              "traits": []
+            },
+            {
+              "name": "Fight",
+              "traits": []
+            },
+            {
+              "name": "Fix",
+              "traits": []
+            },
+            {
+              "name": "Fly",
+              "traits": []
+            },
+            {
+              "name": "Focus",
+              "traits": []
+            },
+            {
+              "name": "Influence",
+              "traits": []
+            },
+            {
+              "name": "Know",
+              "traits": []
+            },
+            {
+              "name": "Labor",
+              "traits": []
+            },
+            {
+              "name": "Move",
+              "traits": []
+            },
+            {
+              "name": "Notice",
+              "traits": []
+            },
+            {
+              "name": "Operate",
+              "traits": []
+            },
+            {
+              "name": "Perform",
+              "traits": []
+            },
+            {
+              "name": "Shoot",
+              "traits": []
+            },
+            {
+              "name": "Sneak",
+              "traits": []
+            },
+            {
+              "name": "Survive",
+              "traits": []
+            },
+            {
+              "name": "Throw",
+              "traits": []
+            },
+            {
+              "name": "Treat",
+              "traits": []
+            },
+            {
+              "name": "Trick",
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "SolarPunk",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
-      "quote": "The corporations took everything. The land, the water, the air.",
-      "genre": "Near-future eco-punk / hopepunk",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
+      ]
     }
   },
   {
@@ -14081,6 +13483,15 @@ const cortexSpotlightTemplates = [
     "variant": "Commune File",
     "pages": 1,
     "genre": "SolarPunk / Settlement",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
+      "quote": "The corporations took everything. The land, the water, the air.",
+      "genre": "Near-future eco-punk / hopepunk",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -14100,68 +13511,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "SolarPunk",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -14172,48 +13596,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "commune-attributes",
           "name": "Attributes",
           "description": "Collective settlement strengths",
-          "traits": [
-            {
-              "name": "Resources",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Security",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Connections",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -14256,75 +13658,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Resources",
+              "traits": []
+            },
+            {
+              "name": "Security",
+              "traits": []
+            },
+            {
+              "name": "Connections",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "commune-distinctions",
           "name": "Distinctions",
           "description": "Settlement unity, organization, and morale",
-          "traits": [
-            {
-              "name": "Unity:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Organization:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Morale:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -14352,86 +13705,94 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Unity:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Organization:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Morale:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -14472,13 +13833,81 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Asset",
-          "plural": "Assets"
+          "plural": "Assets",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "skills",
           "name": "Skills",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -14504,38 +13933,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "SolarPunk",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/568415/Solarpunk?manufacturers_id=31866",
-      "quote": "The corporations took everything. The land, the water, the air.",
-      "genre": "Near-future eco-punk / hopepunk",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
+      ]
     }
   },
   {
@@ -14547,6 +13948,15 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Fantasy / Eldritch / Arcane",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/572310/Spellcaught?manufacturers_id=31866",
+      "quote": "High school is already a crucible. Add magic, and someone’s going to get burned.",
+      "genre": "Teenage witches / high school drama",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d8",
+      "image": "https://legacy.drivethrurpg.com/images/31866/572310.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -14566,68 +13976,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Spellcaught",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -14638,147 +14061,25 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "growth-pool",
           "name": "Growth Pool",
-          "traits": [
-            {
-              "name": "D4",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D6",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D8",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D10",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D12",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -14812,75 +14113,124 @@ const cortexSpotlightTemplates = [
           },
           "pool": true,
           "noun": "Growth Die",
-          "plural": "Growth Dice"
+          "plural": "Growth Dice",
+          "traits": [
+            {
+              "name": "D4",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  4
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D6",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D8",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D10",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D12",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Origin of the magical calamity and personal burden",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -14908,46 +14258,96 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "values",
           "name": "Values",
           "description": "Gain a PP when you use your d4 value.",
           "statement": true,
-          "traits": [
-            {
-              "name": "Ambition",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Responsibility",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Belonging",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Popularity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Empathy",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Secrecy",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -14992,13 +14392,37 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Ambition",
+              "traits": []
+            },
+            {
+              "name": "Responsibility",
+              "traits": []
+            },
+            {
+              "name": "Belonging",
+              "traits": []
+            },
+            {
+              "name": "Popularity",
+              "traits": []
+            },
+            {
+              "name": "Empathy",
+              "traits": []
+            },
+            {
+              "name": "Secrecy",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -15039,36 +14463,14 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Asset",
-          "plural": "Assets"
+          "plural": "Assets",
+          "traits": []
         },
         {
           "id": "affiliations",
           "name": "Affiliations",
           "description": "When Worlds Collide: When two affiliations are in the same scene, add a d6 to the doom pool and a d4 to your dice pool to include both affiliations in your pool.",
           "statement": true,
-          "traits": [
-            {
-              "name": "Self",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Family",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "School",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Coven",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -15113,39 +14515,29 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Affiliation",
-          "plural": "Affiliations"
+          "plural": "Affiliations",
+          "traits": [
+            {
+              "name": "Self",
+              "traits": []
+            },
+            {
+              "name": "Family",
+              "traits": []
+            },
+            {
+              "name": "School",
+              "traits": []
+            },
+            {
+              "name": "Coven",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "stress",
           "name": "Stress",
-          "traits": [
-            {
-              "name": "Angry",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Depressed",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Exhausted",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Insecure",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Injured",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -15189,65 +14581,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Stress",
-          "plural": "Stress"
+          "plural": "Stress",
+          "traits": [
+            {
+              "name": "Angry",
+              "traits": []
+            },
+            {
+              "name": "Depressed",
+              "traits": []
+            },
+            {
+              "name": "Exhausted",
+              "traits": []
+            },
+            {
+              "name": "Insecure",
+              "traits": []
+            },
+            {
+              "name": "Injured",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "arcane-crafts-sfx",
           "name": "Crafts",
           "description": "Mutated magical expressions and spellcasting disciplines",
-          "traits": [
-            {
-              "name": "Azure Sympathy",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Black Wards",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Bronze Mending",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Crimson Passion",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Golden Inspiration",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Orange Flare",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Pink Fidelity",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Purple Veils",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Verdant Conjuration",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "White Purification",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -15277,13 +14638,53 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Craft",
-          "plural": "Crafts"
+          "plural": "Crafts",
+          "traits": [
+            {
+              "name": "Azure Sympathy",
+              "traits": []
+            },
+            {
+              "name": "Black Wards",
+              "traits": []
+            },
+            {
+              "name": "Bronze Mending",
+              "traits": []
+            },
+            {
+              "name": "Crimson Passion",
+              "traits": []
+            },
+            {
+              "name": "Golden Inspiration",
+              "traits": []
+            },
+            {
+              "name": "Orange Flare",
+              "traits": []
+            },
+            {
+              "name": "Pink Fidelity",
+              "traits": []
+            },
+            {
+              "name": "Purple Veils",
+              "traits": []
+            },
+            {
+              "name": "Verdant Conjuration",
+              "traits": []
+            },
+            {
+              "name": "White Purification",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "sfx",
           "name": "SFX",
-          "traits": [],
-          "sfx": [],
           "view": {
             "place": {
               "left": "72%",
@@ -15308,38 +14709,10 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 4
           },
           "noun": "SFX",
-          "plural": "SFX"
+          "plural": "SFX",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Spellcaught",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/572310/Spellcaught?manufacturers_id=31866",
-      "quote": "High school is already a crucible. Add magic, and someone’s going to get burned.",
-      "genre": "Teenage witches / high school drama",
-      "setting": "d6",
-      "prep": "d6",
-      "complexity": "d8",
-      "image": "https://legacy.drivethrurpg.com/images/31866/572310.jpg"
+      ]
     }
   },
   {
@@ -15351,6 +14724,15 @@ const cortexSpotlightTemplates = [
     "variant": "Townsperson File",
     "pages": 1,
     "genre": "Horror / Small Town / Weird Fiction",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866",
+      "quote": "There’s something wrong with this town. Maybe it’s the sheriff who never blinks.",
+      "genre": "Weird horror / small-town mystery",
+      "setting": "d6",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -15370,68 +14752,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Strange Towns",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Ruin"
+              "label": "Ruin",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -15442,48 +14837,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Core attributes",
-          "traits": [
-            {
-              "name": "Mental",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Physical",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Social",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -15526,14 +14899,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Mental",
+              "traits": []
+            },
+            {
+              "name": "Physical",
+              "traits": []
+            },
+            {
+              "name": "Social",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Mundane, Offbeat, and Strange facets of town life",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -15560,45 +14945,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": []
         },
         {
           "id": "roles",
           "name": "Roles",
           "description": "Town archetypes and societal roles",
-          "traits": [
-            {
-              "name": "Enforcer",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Entrepreneur",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Rebel",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sage",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Shepherd",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Townie",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -15642,14 +14995,38 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Enforcer",
+              "traits": []
+            },
+            {
+              "name": "Entrepreneur",
+              "traits": []
+            },
+            {
+              "name": "Rebel",
+              "traits": []
+            },
+            {
+              "name": "Sage",
+              "traits": []
+            },
+            {
+              "name": "Shepherd",
+              "traits": []
+            },
+            {
+              "name": "Townie",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "relationships-strange-die",
           "name": "Relationships",
           "description": "Bonds and ties within the town",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -15678,50 +15055,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Relationship",
-          "plural": "Relationships"
+          "plural": "Relationships",
+          "traits": []
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -15765,13 +15104,47 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Asset",
-          "plural": "Assets"
+          "plural": "Assets",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "complications",
           "name": "Complications",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -15819,13 +15192,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Complication",
-          "plural": "Complications"
+          "plural": "Complications",
+          "traits": []
         },
         {
           "id": "strange-die",
           "name": "Strange Die",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -15853,38 +15225,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Die",
-          "plural": "Dice"
+          "plural": "Dice",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Strange Towns",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567043/Strange-Towns?manufacturers_id=31866",
-      "quote": "There’s something wrong with this town. Maybe it’s the sheriff who never blinks.",
-      "genre": "Weird horror / small-town mystery",
-      "setting": "d6",
-      "prep": "d6",
-      "complexity": "d6",
-      "image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg"
+      ]
     }
   },
   {
@@ -15896,6 +15240,15 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 2,
     "genre": "Sci-Fi / Superhero / Multiverse",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866",
+      "quote": "Every world is a version of this one. Some are close — a step to the left, a slightly different history.",
+      "genre": "Science fantasy / multiverse adventure",
+      "setting": "d10",
+      "prep": "d10",
+      "complexity": "d10",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -15915,68 +15268,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 2,
+        "spotlight": "Terraverse",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -15987,63 +15353,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "attributes",
           "name": "Attributes",
           "description": "Core hero ratings with Vitality and Willpower",
-          "traits": [
-            {
-              "name": "Agility",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Alertness",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Intelligence",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Strength",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Vitality",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Willpower",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -16088,75 +15417,38 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Agility",
+              "traits": []
+            },
+            {
+              "name": "Alertness",
+              "traits": []
+            },
+            {
+              "name": "Intelligence",
+              "traits": []
+            },
+            {
+              "name": "Strength",
+              "traits": []
+            },
+            {
+              "name": "Vitality",
+              "traits": []
+            },
+            {
+              "name": "Willpower",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Multiversal origin, champion archetype, and personal drive",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -16183,14 +15475,95 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Artifacts and multiversal gear",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -16218,110 +15591,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "subtrait-columns",
           "name": "Skills & Specialties",
           "description": "Multiverse capabilities (d4-d6) and specialized proficiencies (d8-d12)",
-          "traits": [
-            {
-              "name": "Craft",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Drive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fight",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fix",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Fly",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Focus",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Influence",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Know",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Labor",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Move",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Notice",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Operate",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Perform",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Shoot",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Sneak",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Survive",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Throw",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Treat",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Trick",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -16358,14 +15634,90 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
+          "plural": "Skills",
+          "traits": [
+            {
+              "name": "Craft",
+              "traits": []
+            },
+            {
+              "name": "Drive",
+              "traits": []
+            },
+            {
+              "name": "Fight",
+              "traits": []
+            },
+            {
+              "name": "Fix",
+              "traits": []
+            },
+            {
+              "name": "Fly",
+              "traits": []
+            },
+            {
+              "name": "Focus",
+              "traits": []
+            },
+            {
+              "name": "Influence",
+              "traits": []
+            },
+            {
+              "name": "Know",
+              "traits": []
+            },
+            {
+              "name": "Labor",
+              "traits": []
+            },
+            {
+              "name": "Move",
+              "traits": []
+            },
+            {
+              "name": "Notice",
+              "traits": []
+            },
+            {
+              "name": "Operate",
+              "traits": []
+            },
+            {
+              "name": "Perform",
+              "traits": []
+            },
+            {
+              "name": "Shoot",
+              "traits": []
+            },
+            {
+              "name": "Sneak",
+              "traits": []
+            },
+            {
+              "name": "Survive",
+              "traits": []
+            },
+            {
+              "name": "Throw",
+              "traits": []
+            },
+            {
+              "name": "Treat",
+              "traits": []
+            },
+            {
+              "name": "Trick",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "initiative",
           "name": "Initiative",
           "ratingPosition": "vertical",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -16394,14 +15746,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Die",
-          "plural": "Dice"
+          "plural": "Dice",
+          "traits": []
         },
         {
           "id": "hero-dice",
           "name": "Hero Dice",
           "ratingPosition": "vertical",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -16430,14 +15781,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Die",
-          "plural": "Dice"
+          "plural": "Dice",
+          "traits": []
         },
         {
           "id": "life-points",
           "name": "Life Points",
           "description": "Vitality (12 → 1, Injured!) • Ø • Willpower (1 → 12, Dazed!)",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -16489,30 +15839,13 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Point",
-          "plural": "Points"
+          "plural": "Points",
+          "traits": []
         },
         {
           "id": "power-set-1",
           "name": "Power Set 1",
           "description": "SFX: • SFX: • Limit:",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "SFX 1"
-                },
-                {
-                  "name": "SFX 2"
-                },
-                {
-                  "name": "Limit"
-                }
-              ]
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -16543,30 +15876,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": [
+            {
+              "name": "",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "SFX 1",
+                      "traits": []
+                    },
+                    {
+                      "name": "SFX 2",
+                      "traits": []
+                    },
+                    {
+                      "name": "Limit",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "power-set-2",
           "name": "Power Set 2",
           "description": "SFX: • SFX: • Limit:",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "SFX 1"
-                },
-                {
-                  "name": "SFX 2"
-                },
-                {
-                  "name": "Limit"
-                }
-              ]
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -16597,30 +15936,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": [
+            {
+              "name": "",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "SFX 1",
+                      "traits": []
+                    },
+                    {
+                      "name": "SFX 2",
+                      "traits": []
+                    },
+                    {
+                      "name": "Limit",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "power-set-3",
           "name": "Power Set 3",
           "description": "SFX: • SFX: • Limit:",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "SFX 1"
-                },
-                {
-                  "name": "SFX 2"
-                },
-                {
-                  "name": "Limit"
-                }
-              ]
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -16651,14 +15996,36 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": [
+            {
+              "name": "",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "SFX 1",
+                      "traits": []
+                    },
+                    {
+                      "name": "SFX 2",
+                      "traits": []
+                    },
+                    {
+                      "name": "Limit",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "talents-growth-options",
           "name": "Talents",
           "description": "Name, Activation, and Effect",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -16686,13 +16053,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": []
         },
         {
           "id": "session-record",
           "name": "Session Record",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -16737,13 +16103,12 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": []
         },
         {
           "id": "leveling-up",
           "name": "Leveling Up",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -16766,38 +16131,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Option",
-          "plural": "Options"
+          "plural": "Options",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 2,
-        "spotlight": "Terraverse",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567047/Terraverse?manufacturers_id=31866",
-      "quote": "Every world is a version of this one. Some are close — a step to the left, a slightly different history.",
-      "genre": "Science fantasy / multiverse adventure",
-      "setting": "d10",
-      "prep": "d10",
-      "complexity": "d10",
-      "image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg"
+      ]
     }
   },
   {
@@ -16809,6 +16146,15 @@ const cortexSpotlightTemplates = [
     "variant": "Handler File",
     "pages": 1,
     "genre": "Mecha / Kaiju / Military",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+      "quote": "The city shakes. The bay churns.",
+      "genre": "Kaiju / mech action",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -16828,68 +16174,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Titans vs Leviathans",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -16900,48 +16259,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "handler-attributes",
           "name": "Attributes",
           "description": "Neural synchronization and handler capabilities",
-          "traits": [
-            {
-              "name": "Prowess",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Control",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Renown",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -16984,40 +16321,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Prowess",
+              "traits": []
+            },
+            {
+              "name": "Control",
+              "traits": []
+            },
+            {
+              "name": "Renown",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "roles",
           "name": "Roles",
           "description": "Combat roles and tactical responsibilities",
-          "traits": [
-            {
-              "name": "Backup",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Blaster",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Boss",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Brain",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Brawler",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -17061,108 +16384,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Backup",
+              "traits": []
+            },
+            {
+              "name": "Blaster",
+              "traits": []
+            },
+            {
+              "name": "Boss",
+              "traits": []
+            },
+            {
+              "name": "Brain",
+              "traits": []
+            },
+            {
+              "name": "Brawler",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Personal identity, public persona, and driving aspiration",
-          "traits": [
-            {
-              "name": "Identity:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "Affirmation",
-                  "description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity."
-                },
-                {
-                  "name": "Authenticity",
-                  "description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Persona:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "Shake it Off",
-                  "description": "Spend a PP to recover a complication when acting in line with your public persona."
-                },
-                {
-                  "name": "Double Down",
-                  "description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Aspiration:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Hinder",
-                  "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
-                },
-                {
-                  "name": "Cards on the Table",
-                  "description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration."
-                },
-                {
-                  "name": "Hurts for a Minute",
-                  "description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -17188,14 +16437,128 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Identity:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Affirmation",
+                      "description": "Spend a PP to step up an attribute for an action or reaction when acting in line with your personal identity.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Authenticity",
+                      "description": "Step up a complication to reroll one or all of your dice, even hitches, when acting in line with your personal identity.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Persona:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Shake it Off",
+                      "description": "Spend a PP to recover a complication when acting in line with your public persona.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Double Down",
+                      "description": "Step up a complication to double an attribute for an action or reaction when acting in line with your public persona.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Aspiration:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Cards on the Table",
+                      "description": "Spend a PP to double an attribute for an action or reaction when you're pursuing your aspiration.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Hurts for a Minute",
+                      "description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "signature-assets",
           "name": "Signature Assets",
           "description": "Handler cockpit gear and personal assets",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -17226,13 +16589,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Signature Asset",
-          "plural": "Signature Assets"
+          "plural": "Signature Assets",
+          "traits": []
         },
         {
           "id": "complications",
           "name": "Complications",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "left",
@@ -17256,38 +16618,10 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 2
           },
           "noun": "Complication",
-          "plural": "Complications"
+          "plural": "Complications",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Titans vs Leviathans",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
-      "quote": "The city shakes. The bay churns.",
-      "genre": "Kaiju / mech action",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d6",
-      "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
+      ]
     }
   },
   {
@@ -17299,6 +16633,15 @@ const cortexSpotlightTemplates = [
     "variant": "Titan Mech File",
     "pages": 1,
     "genre": "Mecha / Kaiju / Military",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
+      "quote": "The city shakes. The bay churns.",
+      "genre": "Kaiju / mech action",
+      "setting": "d8",
+      "prep": "d6",
+      "complexity": "d6",
+      "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -17318,68 +16661,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "Titans vs Leviathans",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -17390,49 +16746,27 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "titan-attributes-stress",
           "name": "Attributes",
           "description": "Heavy mechanized systems with stress tracks",
           "ratingPosition": "below",
-          "traits": [
-            {
-              "name": "Prowess",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Control",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Renown",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -17480,78 +16814,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Attribute",
-          "plural": "Attributes"
+          "plural": "Attributes",
+          "traits": [
+            {
+              "name": "Prowess",
+              "traits": []
+            },
+            {
+              "name": "Control",
+              "traits": []
+            },
+            {
+              "name": "Renown",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "titan-distinctions",
           "name": "Distinctions",
           "description": "Chassis type, operational history, and battle stance",
-          "traits": [
-            {
-              "name": "Type:",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "History:",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Underscore",
-                  "description": "Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history."
-                },
-                {
-                  "name": "Overcompensate",
-                  "description": "Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Battle:",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -17577,14 +16859,81 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Type:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "History:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Underscore",
+                      "description": "Spend a PP to double a titan attribute for your next action or reaction when drawing on your titan's history.",
+                      "traits": []
+                    },
+                    {
+                      "name": "Overcompensate",
+                      "description": "Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Battle:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "power-set",
           "name": "Power Set",
           "description": "Colossal kaiju-annihilation weaponry",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -17613,14 +16962,13 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": []
         },
         {
           "id": "power-set-2",
           "name": "Power Set",
           "description": "Secondary titan systems and ordnance",
-          "traits": [],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -17649,13 +16997,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Power",
-          "plural": "Powers"
+          "plural": "Powers",
+          "traits": []
         },
         {
           "id": "session-record",
           "name": "Session Record",
-          "traits": [],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "right",
@@ -17699,38 +17046,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": []
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "Titans vs Leviathans",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567042/Titans-vs-Leviathans?manufacturers_id=31866",
-      "quote": "The city shakes. The bay churns.",
-      "genre": "Kaiju / mech action",
-      "setting": "d8",
-      "prep": "d6",
-      "complexity": "d6",
-      "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
+      ]
     }
   },
   {
@@ -17742,6 +17061,9 @@ const cortexSpotlightTemplates = [
     "variant": "Character File",
     "pages": 1,
     "genre": "Mystery / Procedural / Urban Fantasy",
+    "listing": {
+      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+    },
     "character": {
       "$schema": "https://cortex.engard.me/schema/0.1/character.schema.json",
       "version": "0.1",
@@ -17761,68 +17083,81 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "pageCount": 1,
+        "spotlight": "TRACE 2.0",
+        "style": {
+          "sheet": "spotlight"
+        },
+        "watermark": {
+          "enabled": true,
+          "url": "images/cortex_prime_logo_light_transparent.png",
+          "opacity": 0.08,
+          "scale": 70,
+          "page": "all"
+        },
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -17833,48 +17168,26 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "affiliations",
           "name": "Affiliations",
           "description": "Team configuration ratings",
-          "traits": [
-            {
-              "name": "Solo",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Partner",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Squad",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -17918,50 +17231,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Affiliation",
-          "plural": "Affiliations"
+          "plural": "Affiliations",
+          "traits": [
+            {
+              "name": "Solo",
+              "traits": []
+            },
+            {
+              "name": "Partner",
+              "traits": []
+            },
+            {
+              "name": "Squad",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "roles",
           "name": "Roles",
           "description": "Civic investigation disciplines",
-          "traits": [
-            {
-              "name": "Forensics",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Investigation",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Legal",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Medicine",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Psychology",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Tactics",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Technology",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -17991,99 +17280,42 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Forensics",
+              "traits": []
+            },
+            {
+              "name": "Investigation",
+              "traits": []
+            },
+            {
+              "name": "Legal",
+              "traits": []
+            },
+            {
+              "name": "Medicine",
+              "traits": []
+            },
+            {
+              "name": "Psychology",
+              "traits": []
+            },
+            {
+              "name": "Tactics",
+              "traits": []
+            },
+            {
+              "name": "Technology",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "resources",
           "name": "Resources",
           "description": "Civic assets, contacts, and backup",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  10,
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  8,
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -18125,75 +17357,94 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
+          "plural": "Resources",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  10,
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  8,
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Dice",
+                "value": [
+                  6,
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "distinctions",
           "name": "Distinctions",
           "description": "Defining history, drive, and complication",
-          "traits": [
-            {
-              "name": "Distinction #1:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Distinction #2:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Distinction #3:",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -18221,45 +17472,95 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
+          "plural": "Distinctions",
+          "traits": [
+            {
+              "name": "Distinction #1:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Distinction #2:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Distinction #3:",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "talents",
           "name": "Talents",
           "description": "Training tricks and case-cracking knacks",
-          "traits": [
-            {
-              "name": "Talent #1:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Talent #2:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Talent #3:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Talent #4:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Talent #5:",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Talent #6:",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": true,
@@ -18283,40 +17584,38 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": [
+            {
+              "name": "Talent #1:",
+              "traits": []
+            },
+            {
+              "name": "Talent #2:",
+              "traits": []
+            },
+            {
+              "name": "Talent #3:",
+              "traits": []
+            },
+            {
+              "name": "Talent #4:",
+              "traits": []
+            },
+            {
+              "name": "Talent #5:",
+              "traits": []
+            },
+            {
+              "name": "Talent #6:",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "stress",
           "name": "Stress",
           "description": "Emotional and physical pressure tracks",
-          "traits": [
-            {
-              "name": "Afraid",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Angry",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Anxious",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Exhausted",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Injured",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "features": {
               "description": false,
@@ -18346,130 +17645,34 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Stress",
-          "plural": "Stress"
+          "plural": "Stress",
+          "traits": [
+            {
+              "name": "Afraid",
+              "traits": []
+            },
+            {
+              "name": "Angry",
+              "traits": []
+            },
+            {
+              "name": "Anxious",
+              "traits": []
+            },
+            {
+              "name": "Exhausted",
+              "traits": []
+            },
+            {
+              "name": "Injured",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "growth-pool",
           "name": "Growth Pool",
           "description": "Base d6 d6",
-          "traits": [
-            {
-              "name": "D4",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 0
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D6",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 2
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D8",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 0
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D10",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 0
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D12",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 0
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "header": "top",
             "headerAlign": "center",
@@ -18505,32 +17708,121 @@ const cortexSpotlightTemplates = [
           },
           "pool": true,
           "noun": "Growth Die",
-          "plural": "Growth Dice"
+          "plural": "Growth Dice",
+          "traits": [
+            {
+              "name": "D4",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  4
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 0
+              },
+              "traits": []
+            },
+            {
+              "name": "D6",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 2
+              },
+              "traits": []
+            },
+            {
+              "name": "D8",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 0
+              },
+              "traits": []
+            },
+            {
+              "name": "D10",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 0
+              },
+              "traits": []
+            },
+            {
+              "name": "D12",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 0
+              },
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "pageCount": 1,
-        "spotlight": "TRACE 2.0",
-        "style": {
-          "sheet": "spotlight"
-        },
-        "watermark": {
-          "enabled": true,
-          "url": "images/cortex_prime_logo_light_transparent.png",
-          "opacity": 0.08,
-          "scale": 70,
-          "page": "all"
-        },
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        }
-      }
-    },
-    "listing": {
-      "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
+      ]
     }
   },
   {
@@ -18571,68 +17863,74 @@ const cortexSpotlightTemplates = [
           "location": "header"
         }
       },
+      "view": {
+        "nickname": "The Everything Sheet",
+        "pageCount": 3,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        },
+        "style": {
+          "sheet": "spotlight"
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -18643,97 +17941,25 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "ks-distinctions",
           "name": "Distinctions",
-          "traits": [
-            {
-              "name": "Walking Style Guide",
-              "description": "Every layout edge case deserves a test.",
-              "traits": [],
-              "sfx": [
-                "hinder",
-                {
-                  "name": "Pixel Parity",
-                  "description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [
-                "hinder"
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 1,
             "style": {
@@ -18784,39 +18010,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
-        },
-        {
-          "id": "ks-values-statements",
-          "name": "Values",
-          "statement": true,
-          "hasQuestionedPip": true,
+          "plural": "Distinctions",
           "traits": [
             {
-              "name": "Craft",
-              "description": "Form and function are inseparable.",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Speed",
-              "description": "Ship early, refine relentlessly.",
-              "questioned": true,
-              "traits": [],
-              "sfx": [],
+              "name": "Walking Style Guide",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -18829,16 +18026,31 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "description": "Every layout edge case deserves a test.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    },
+                    {
+                      "name": "Pixel Parity",
+                      "description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "name": "Clarity",
-              "traits": [],
-              "sfx": [],
+              "name": "",
               "rating": {
                 "type": "Die",
                 "value": [
-                  6
+                  8
                 ],
                 "range": [
                   4,
@@ -18847,10 +18059,53 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Hinder",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-values-statements",
+          "name": "Values",
+          "statement": true,
+          "hasQuestionedPip": true,
           "view": {
             "page": 1,
             "style": {
@@ -18891,53 +18146,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
-        },
-        {
-          "id": "ks-subtrait-columns",
-          "name": "Skills",
+          "plural": "Values",
           "traits": [
             {
-              "name": "Engineering",
-              "traits": [
-                {
-                  "name": "Clockwork",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Aetherics",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
+              "name": "Craft",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -18950,31 +18162,12 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "description": "Form and function are inseparable.",
+              "traits": []
             },
             {
-              "name": "Navigation",
-              "traits": [
-                {
-                  "name": "Star Charts",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
+              "name": "Speed",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -18987,12 +18180,13 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "description": "Ship early, refine relentlessly.",
+              "questioned": true,
+              "traits": []
             },
             {
-              "name": "Diplomacy",
-              "traits": [],
-              "sfx": [],
+              "name": "Clarity",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19005,10 +18199,14 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-subtrait-columns",
+          "name": "Skills",
           "view": {
             "page": 1,
             "style": {
@@ -19032,39 +18230,26 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
-        },
-        {
-          "id": "ks-paired-slots",
-          "name": "Standing",
-          "statement": true,
+          "plural": "Skills",
           "traits": [
             {
-              "name": "The Guild",
-              "description": "They owe me a drydock bay.",
+              "name": "Engineering",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
               "traits": [
                 {
-                  "name": "Complication",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Bonus",
-                  "traits": [],
-                  "sfx": [],
+                  "name": "Clockwork",
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -19077,10 +18262,30 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Aetherics",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
                 }
-              ],
-              "sfx": [],
+              ]
+            },
+            {
+              "name": "Navigation",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19093,10 +18298,50 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": [
+                {
+                  "name": "Star Charts",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Diplomacy",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-paired-slots",
+          "name": "Standing",
+          "statement": true,
           "view": {
             "page": 1,
             "style": {
@@ -19133,19 +18378,10 @@ const cortexSpotlightTemplates = [
             "reservedSlots": 2
           },
           "noun": "Standing",
-          "plural": "Standings"
-        },
-        {
-          "id": "ks-die-rows",
-          "name": "Badges",
-          "hasCounterColumn": true,
-          "counterLabel": "XP",
+          "plural": "Standings",
           "traits": [
             {
-              "name": "First Responder",
-              "xp": 3,
-              "traits": [],
-              "sfx": [],
+              "name": "The Guild",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19158,29 +18394,52 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
-            },
-            {
-              "name": "Trailblazer",
-              "xp": 1,
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
+              },
+              "description": "They owe me a drydock bay.",
+              "traits": [
+                {
+                  "name": "Complication",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Bonus",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-die-rows",
+          "name": "Badges",
+          "hasCounterColumn": true,
+          "counterLabel": "XP",
           "view": {
             "page": 1,
             "header": "top",
@@ -19210,25 +18469,49 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Badge",
-          "plural": "Badges"
+          "plural": "Badges",
+          "traits": [
+            {
+              "name": "First Responder",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "xp": 3,
+              "traits": []
+            },
+            {
+              "name": "Trailblazer",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "xp": 1,
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ks-three-col-table",
           "name": "Talents",
-          "traits": [
-            {
-              "name": "Overclock",
-              "description": "Spend 1 PP when rolling Engineering.",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Effect",
-                  "description": "Step up your Effect die by one step for the scene."
-                }
-              ]
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 1,
             "style": {
@@ -19254,57 +18537,29 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Talent",
-          "plural": "Talents"
+          "plural": "Talents",
+          "traits": [
+            {
+              "name": "Overclock",
+              "description": "Spend 1 PP when rolling Engineering.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Effect",
+                      "description": "Step up your Effect die by one step for the scene.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "ks-dice-count",
           "name": "Resources",
-          "traits": [
-            {
-              "name": "Salvage Cache",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  8,
-                  8,
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "Contacts",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Dice",
-                "value": [
-                  6,
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 1,
             "style": {
@@ -19330,19 +18585,15 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
-        },
-        {
-          "id": "ks-stress",
-          "name": "Stress",
+          "plural": "Resources",
           "traits": [
             {
-              "name": "Physical",
-              "traits": [],
-              "sfx": [],
+              "name": "Salvage Cache",
               "rating": {
-                "type": "Die",
+                "type": "Dice",
                 "value": [
+                  8,
+                  8,
                   8
                 ],
                 "range": [
@@ -19352,21 +18603,18 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
             },
             {
-              "name": "Mental",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Social",
-              "traits": [],
-              "sfx": [],
+              "name": "Contacts",
               "rating": {
-                "type": "Die",
+                "type": "Dice",
                 "value": [
-                  12
+                  6,
+                  6
                 ],
                 "range": [
                   4,
@@ -19375,10 +18623,16 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-stress",
+          "name": "Stress",
           "view": {
             "page": 1,
             "style": {
@@ -19405,34 +18659,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Stress",
-          "plural": "Stress"
-        },
-        {
-          "id": "ks-dice-ladder",
-          "name": "Growth Ladder",
+          "plural": "Stress",
           "traits": [
             {
-              "name": "Novice",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Adept",
-              "traits": [],
-              "sfx": [],
+              "name": "Physical",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19445,16 +18675,19 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             },
             {
-              "name": "Master",
-              "traits": [],
-              "sfx": [],
+              "name": "Mental",
+              "traits": []
+            },
+            {
+              "name": "Social",
               "rating": {
                 "type": "Die",
                 "value": [
-                  10
+                  12
                 ],
                 "range": [
                   4,
@@ -19463,10 +18696,14 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-dice-ladder",
+          "name": "Growth Ladder",
           "view": {
             "page": 2,
             "style": {
@@ -19486,31 +18723,64 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Rung",
-          "plural": "Rungs"
+          "plural": "Rungs",
+          "traits": [
+            {
+              "name": "Novice",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Adept",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Master",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ks-labeled-fields",
           "name": "Dossier",
-          "traits": [
-            {
-              "name": "Origin",
-              "description": "Outer Rim Shipyard #4",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Drive",
-              "description": "Restore the lost fleet",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Quirk",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -19530,13 +18800,27 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Field",
-          "plural": "Fields"
+          "plural": "Fields",
+          "traits": [
+            {
+              "name": "Origin",
+              "description": "Outer Rim Shipyard #4",
+              "traits": []
+            },
+            {
+              "name": "Drive",
+              "description": "Restore the lost fleet",
+              "traits": []
+            },
+            {
+              "name": "Quirk",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ks-pips",
           "name": "Progress Track",
-          "traits": [],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -19573,37 +18857,12 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Pip",
-          "plural": "Pips"
+          "plural": "Pips",
+          "traits": []
         },
         {
           "id": "ks-session-record",
           "name": "Session Record",
-          "traits": [
-            {
-              "name": "Session 1: The Awakening",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Session 2: Crossing the Threshold",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -19634,34 +18893,10 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
-        },
-        {
-          "id": "ks-two-col-compact",
-          "name": "Roles (Compact Two-Column)",
+          "plural": "Sessions",
           "traits": [
             {
-              "name": "Tactician",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Outrider",
-              "traits": [],
-              "sfx": [],
+              "name": "Session 1: The Awakening",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19674,46 +18909,18 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             },
             {
-              "name": "Scholar",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Sentinel",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
+              "name": "Session 2: Crossing the Threshold",
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-two-col-compact",
+          "name": "Roles (Compact Two-Column)",
           "view": {
             "page": 2,
             "style": {
@@ -19733,13 +18940,81 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Tactician",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Outrider",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Scholar",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  10
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Sentinel",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  4
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ks-notes",
           "name": "Notes",
-          "traits": [],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -19755,90 +19030,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Note",
-          "plural": "Notes"
+          "plural": "Notes",
+          "traits": []
         },
         {
           "id": "ks-detailed-columns",
           "name": "Detailed Columns",
-          "traits": [
-            {
-              "name": "Alpha",
-              "description": "First detailed entry.",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Beta",
-              "description": "Second detailed entry.",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Gamma",
-              "description": "Third detailed entry.",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  10
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Delta",
-              "description": "Fourth detailed entry.",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 3,
             "style": {
@@ -19858,35 +19055,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Entry",
-          "plural": "Entries"
-        },
-        {
-          "id": "ks-resource-pool",
-          "name": "Resource Pool",
+          "plural": "Entries",
           "traits": [
             {
-              "name": "Supply",
-              "traits": [
-                {
-                  "name": "Ammo",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
+              "name": "Alpha",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19900,13 +19072,11 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "description": "First detailed entry.",
+              "traits": []
             },
             {
-              "name": "Fuel",
-              "traits": [],
-              "sfx": [],
+              "name": "Beta",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19920,13 +19090,11 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "description": "Second detailed entry.",
+              "traits": []
             },
             {
-              "name": "Intel",
-              "traits": [],
-              "sfx": [],
+              "name": "Gamma",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19940,11 +19108,32 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "description": "Third detailed entry.",
+              "traits": []
+            },
+            {
+              "name": "Delta",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Fourth detailed entry.",
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-resource-pool",
+          "name": "Resource Pool",
           "view": {
             "page": 3,
             "style": {
@@ -19964,16 +19153,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
-        },
-        {
-          "id": "ks-assets",
-          "name": "Signature Assets",
+          "plural": "Resources",
           "traits": [
             {
-              "name": "Custom Sidearm",
-              "traits": [],
-              "sfx": [],
+              "name": "Supply",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -19986,12 +19169,31 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": [
+                {
+                  "name": "Ammo",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             },
             {
-              "name": "Survey Kit",
-              "traits": [],
-              "sfx": [],
+              "name": "Fuel",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20004,16 +19206,17 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
             },
             {
-              "name": "Encrypted Comms",
-              "traits": [],
-              "sfx": [],
+              "name": "Intel",
               "rating": {
                 "type": "Die",
                 "value": [
-                  8
+                  10
                 ],
                 "range": [
                   4,
@@ -20022,10 +19225,16 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-assets",
+          "name": "Signature Assets",
           "view": {
             "page": 3,
             "style": {
@@ -20045,16 +19254,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Asset",
-          "plural": "Assets"
-        },
-        {
-          "id": "ks-list",
-          "name": "Simple List",
+          "plural": "Assets",
           "traits": [
             {
-              "name": "Item One",
-              "traits": [],
-              "sfx": [],
+              "name": "Custom Sidearm",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20067,12 +19270,11 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             },
             {
-              "name": "Item Two",
-              "traits": [],
-              "sfx": [],
+              "name": "Survey Kit",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20085,12 +19287,11 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             },
             {
-              "name": "Item Three",
-              "traits": [],
-              "sfx": [],
+              "name": "Encrypted Comms",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20103,10 +19304,14 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ks-list",
+          "name": "Simple List",
           "view": {
             "page": 3,
             "style": {
@@ -20126,13 +19331,64 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Item",
-          "plural": "Items"
+          "plural": "Items",
+          "traits": [
+            {
+              "name": "Item One",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Item Two",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "Item Three",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ks-image",
           "name": "Image Set",
-          "traits": [],
-          "sfx": [],
           "view": {
             "page": 3,
             "style": {
@@ -20158,22 +19414,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Image",
-          "plural": "Images"
+          "plural": "Images",
+          "traits": []
         }
-      ],
-      "view": {
-        "nickname": "The Everything Sheet",
-        "pageCount": 3,
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        },
-        "style": {
-          "sheet": "spotlight"
-        }
-      }
+      ]
     }
   },
   {
@@ -20208,68 +19452,75 @@ const cortexSpotlightTemplates = [
         "showcase",
         "landscape"
       ],
+      "view": {
+        "nickname": "The Panorama Sheet",
+        "pageOrientation": "landscape",
+        "pageCount": 2,
+        "columnAlignment": "top-base",
+        "columnOffsets": {
+          "left": 0,
+          "center": 0,
+          "right": 0
+        },
+        "style": {
+          "sheet": "spotlight"
+        }
+      },
       "traitSets": [
         {
           "id": "name",
           "name": "Name",
+          "view": {
+            "style": {
+              "header": "default",
+              "body": "name"
+            },
+            "page": 1
+          },
           "traits": [
             {
               "name": "name",
-              "traits": [],
-              "sfx": [],
-              "label": "Name"
+              "label": "Name",
+              "traits": []
             },
             {
               "name": "player",
-              "traits": [],
-              "sfx": [],
-              "label": "Player"
+              "label": "Player",
+              "traits": []
             },
             {
               "name": "nickname",
-              "traits": [],
-              "sfx": [],
-              "label": "Nickname"
+              "label": "Nickname",
+              "traits": []
             },
             {
               "name": "pronouns",
-              "traits": [],
-              "sfx": [],
-              "label": "Pronouns"
+              "label": "Pronouns",
+              "traits": []
             },
             {
               "name": "description",
-              "traits": [],
-              "sfx": [],
-              "label": "Description"
+              "label": "Description",
+              "traits": []
             },
             {
               "name": "game",
-              "traits": [],
-              "sfx": [],
               "label": "Game",
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             },
             {
               "name": "portrait",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "caption",
-              "traits": [],
-              "sfx": []
+              "traits": []
             },
             {
               "name": "plotPoints",
-              "traits": [],
-              "sfx": [],
-              "label": "PP",
-              "view": {
-                "visibility": "hidden"
-              },
               "rating": {
                 "type": "Counter",
                 "value": [
@@ -20280,104 +19531,25 @@ const cortexSpotlightTemplates = [
                   20
                 ]
               },
-              "spendable": true
+              "label": "PP",
+              "spendable": true,
+              "view": {
+                "visibility": "hidden"
+              },
+              "traits": []
             },
             {
               "name": "notes",
-              "traits": [],
-              "sfx": [],
               "view": {
                 "visibility": "hidden"
-              }
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
-          "view": {
-            "style": {
-              "header": "default",
-              "body": "name"
-            },
-            "page": 1
-          }
+          ]
         },
         {
           "id": "ls-roles",
           "name": "Roles & Masteries",
-          "traits": [
-            {
-              "name": "Commander",
-              "description": "Direct allies and coordinate tactical movement.",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Lead from the Front",
-                  "description": "Spend 1 PP to step up an ally's die when acting on your order."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Infiltrator",
-              "description": "Bypass security systems and move undetected.",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Ghost Protocol",
-                  "description": "Spend 1 PP to borrow a die from the challenge pool for stealth."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Specialist",
-              "description": "Analyze technical anomalies and reverse-engineer artifacts.",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Tactical Insight",
-                  "description": "Spend 1 PP to reroll a die when analyzing enemy technology."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 1,
             "style": {
@@ -20394,179 +19566,100 @@ const cortexSpotlightTemplates = [
             "headerAlign": "center"
           },
           "noun": "Role",
-          "plural": "Roles"
+          "plural": "Roles",
+          "traits": [
+            {
+              "name": "Commander",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Direct allies and coordinate tactical movement.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Lead from the Front",
+                      "description": "Spend 1 PP to step up an ally's die when acting on your order.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Infiltrator",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Bypass security systems and move undetected.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Ghost Protocol",
+                      "description": "Spend 1 PP to borrow a die from the challenge pool for stealth.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Specialist",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Analyze technical anomalies and reverse-engineer artifacts.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Tactical Insight",
+                      "description": "Spend 1 PP to reroll a die when analyzing enemy technology.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "ls-skills",
           "name": "Skills & Specialties",
-          "traits": [
-            {
-              "name": "Engineering",
-              "traits": [
-                {
-                  "name": "Clockwork",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Aetherics",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Navigation",
-              "traits": [
-                {
-                  "name": "Star Charts",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Sub-Light",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      10
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Diplomacy",
-              "traits": [
-                {
-                  "name": "High Society",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Street Smart",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 1,
             "style": {
@@ -20590,54 +19683,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Skill",
-          "plural": "Skills"
-        },
-        {
-          "id": "ls-standing",
-          "name": "Standing",
+          "plural": "Skills",
           "traits": [
             {
-              "name": "The Syndicate",
-              "statement": "Debts are never forgotten.",
-              "traits": [
-                {
-                  "name": "Complication",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      8
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Bonus",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                }
-              ],
-              "sfx": [],
+              "name": "Engineering",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20650,34 +19699,10 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
-            },
-            {
-              "name": "The Vanguard",
-              "statement": "Honor bound to protect.",
+              },
               "traits": [
                 {
-                  "name": "Complication",
-                  "traits": [],
-                  "sfx": [],
-                  "rating": {
-                    "type": "Die",
-                    "value": [
-                      6
-                    ],
-                    "range": [
-                      4,
-                      6,
-                      8,
-                      10,
-                      12
-                    ]
-                  }
-                },
-                {
-                  "name": "Bonus",
-                  "traits": [],
-                  "sfx": [],
+                  "name": "Clockwork",
                   "rating": {
                     "type": "Die",
                     "value": [
@@ -20690,14 +19715,34 @@ const cortexSpotlightTemplates = [
                       10,
                       12
                     ]
-                  }
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Aetherics",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
                 }
-              ],
-              "sfx": [],
+              ]
+            },
+            {
+              "name": "Navigation",
               "rating": {
                 "type": "Die",
                 "value": [
-                  6
+                  8
                 ],
                 "range": [
                   4,
@@ -20706,10 +19751,101 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "traits": [
+                {
+                  "name": "Star Charts",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Sub-Light",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      10
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
+            },
+            {
+              "name": "Diplomacy",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "traits": [
+                {
+                  "name": "High Society",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Street Smart",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ls-standing",
+          "name": "Standing",
           "view": {
             "page": 1,
             "style": {
@@ -20733,18 +19869,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Standing",
-          "plural": "Standings"
-        },
-        {
-          "id": "ls-values",
-          "name": "Values",
+          "plural": "Standings",
           "traits": [
             {
-              "name": "Craft",
-              "description": "Form and function are inseparable.",
-              "statement": "Form and function are inseparable.",
-              "traits": [],
-              "sfx": [],
+              "name": "The Syndicate",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20757,34 +19885,47 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "statement": "Debts are never forgotten.",
+              "traits": [
+                {
+                  "name": "Complication",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Bonus",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             },
             {
-              "name": "Speed",
-              "description": "Ship early, refine relentlessly.",
-              "statement": "Ship early, refine relentlessly.",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Clarity",
-              "description": "Truth cuts through ambiguity.",
-              "statement": "Truth cuts through ambiguity.",
-              "traits": [],
-              "sfx": [],
+              "name": "The Vanguard",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20797,10 +19938,50 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "statement": "Honor bound to protect.",
+              "traits": [
+                {
+                  "name": "Complication",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      6
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                },
+                {
+                  "name": "Bonus",
+                  "rating": {
+                    "type": "Die",
+                    "value": [
+                      8
+                    ],
+                    "range": [
+                      4,
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ls-values",
+          "name": "Values",
           "view": {
             "page": 1,
             "style": {
@@ -20825,62 +20006,70 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Value",
-          "plural": "Values"
+          "plural": "Values",
+          "traits": [
+            {
+              "name": "Craft",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Form and function are inseparable.",
+              "statement": "Form and function are inseparable.",
+              "traits": []
+            },
+            {
+              "name": "Speed",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Ship early, refine relentlessly.",
+              "statement": "Ship early, refine relentlessly.",
+              "traits": []
+            },
+            {
+              "name": "Clarity",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "description": "Truth cuts through ambiguity.",
+              "statement": "Truth cuts through ambiguity.",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ls-distinctions",
           "name": "Distinctions",
-          "traits": [
-            {
-              "name": "Voidborn Pioneer",
-              "description": "Accustomed to zero-G and cold vacuum.",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Zero-G Maneuver",
-                  "description": "Spend 1 PP to ignore difficult terrain in micro-gravity environments."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Cybernetic Maverick",
-              "description": "Upgraded with experimental neural cyberware.",
-              "traits": [],
-              "sfx": [
-                {
-                  "name": "Overclock",
-                  "description": "Spend 1 PP to double an Engineering die when hotwiring security."
-                }
-              ],
-              "rating": {
-                "type": "Die",
-                "value": [
-                  8
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 1,
             "style": {
@@ -20902,65 +20091,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Distinction",
-          "plural": "Distinctions"
-        },
-        {
-          "id": "ls-growth",
-          "name": "Growth Pool",
+          "plural": "Distinctions",
           "traits": [
             {
-              "name": "D4",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  4
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D6",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D8",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
+              "name": "Voidborn Pioneer",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -20974,20 +20108,26 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "description": "Accustomed to zero-G and cold vacuum.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Zero-G Maneuver",
+                      "description": "Spend 1 PP to ignore difficult terrain in micro-gravity environments.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "name": "D10",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
+              "name": "Cybernetic Maverick",
               "rating": {
                 "type": "Die",
                 "value": [
-                  10
+                  8
                 ],
                 "range": [
                   4,
@@ -20997,34 +20137,25 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
-            },
-            {
-              "name": "D12",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  12
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              },
-              "spendable": true,
-              "hitches": 0
+              "description": "Upgraded with experimental neural cyberware.",
+              "traits": [
+                {
+                  "name": "SFX",
+                  "traits": [
+                    {
+                      "name": "Overclock",
+                      "description": "Spend 1 PP to double an Engineering die when hotwiring security.",
+                      "traits": []
+                    }
+                  ]
+                }
+              ]
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ls-growth",
+          "name": "Growth Pool",
           "view": {
             "page": 2,
             "style": {
@@ -21050,20 +20181,14 @@ const cortexSpotlightTemplates = [
           },
           "pool": true,
           "noun": "Growth Die",
-          "plural": "Growth Dice"
-        },
-        {
-          "id": "ls-badges",
-          "name": "Badges & Commendations",
+          "plural": "Growth Dice",
           "traits": [
             {
-              "name": "Fleet Veteran",
-              "traits": [],
-              "sfx": [],
+              "name": "D4",
               "rating": {
                 "type": "Die",
                 "value": [
-                  8
+                  4
                 ],
                 "range": [
                   4,
@@ -21072,12 +20197,16 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
             },
             {
-              "name": "High Jump",
-              "traits": [],
-              "sfx": [],
+              "name": "D6",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -21090,12 +20219,38 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
             },
             {
-              "name": "Master Hacker",
-              "traits": [],
-              "sfx": [],
+              "name": "D8",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D10",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -21108,10 +20263,41 @@ const cortexSpotlightTemplates = [
                   10,
                   12
                 ]
-              }
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "D12",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  12
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 1
+              },
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ls-badges",
+          "name": "Badges & Commendations",
           "view": {
             "page": 2,
             "style": {
@@ -21131,19 +20317,10 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Badge",
-          "plural": "Badges"
-        },
-        {
-          "id": "ls-resources",
-          "name": "Resources & Supplies",
+          "plural": "Badges",
           "traits": [
             {
-              "name": "Crew Complement",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 4
-              },
+              "name": "Fleet Veteran",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -21157,16 +20334,10 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "traits": []
             },
             {
-              "name": "Emergency Fuel",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 3
-              },
+              "name": "High Jump",
               "rating": {
                 "type": "Die",
                 "value": [
@@ -21180,20 +20351,14 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "traits": []
             },
             {
-              "name": "Intel Network",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "poolCount": 2
-              },
+              "name": "Master Hacker",
               "rating": {
                 "type": "Die",
                 "value": [
-                  8
+                  10
                 ],
                 "range": [
                   4,
@@ -21203,11 +20368,13 @@ const cortexSpotlightTemplates = [
                   12
                 ]
               },
-              "spendable": true,
-              "hitches": 0
+              "traits": []
             }
-          ],
-          "sfx": [],
+          ]
+        },
+        {
+          "id": "ls-resources",
+          "name": "Resources & Supplies",
           "view": {
             "page": 2,
             "style": {
@@ -21231,32 +20398,79 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Resource",
-          "plural": "Resources"
+          "plural": "Resources",
+          "traits": [
+            {
+              "name": "Crew Complement",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 4
+              },
+              "traits": []
+            },
+            {
+              "name": "Emergency Fuel",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 3
+              },
+              "traits": []
+            },
+            {
+              "name": "Intel Network",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  8
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "spendable": true,
+              "hitches": 0,
+              "view": {
+                "poolCount": 2
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ls-dossier",
           "name": "Personnel Dossier",
-          "traits": [
-            {
-              "name": "Homeworld",
-              "description": "Kepler-452b Core Colony",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Security Clearance",
-              "description": "Level 5 Special Access",
-              "traits": [],
-              "sfx": []
-            },
-            {
-              "name": "Affiliation",
-              "description": "Independent Free-Trader Collective",
-              "traits": [],
-              "sfx": []
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -21276,58 +20490,28 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Field",
-          "plural": "Fields"
+          "plural": "Fields",
+          "traits": [
+            {
+              "name": "Homeworld",
+              "description": "Kepler-452b Core Colony",
+              "traits": []
+            },
+            {
+              "name": "Security Clearance",
+              "description": "Level 5 Special Access",
+              "traits": []
+            },
+            {
+              "name": "Affiliation",
+              "description": "Independent Free-Trader Collective",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ls-stress",
           "name": "Stress",
-          "traits": [
-            {
-              "name": "Physical",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "pipCount": 5,
-                "pips": 1
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            },
-            {
-              "name": "Mental",
-              "traits": [],
-              "sfx": [],
-              "view": {
-                "pipCount": 5,
-                "pips": 0
-              },
-              "rating": {
-                "type": "Die",
-                "value": [
-                  6
-                ],
-                "range": [
-                  4,
-                  6,
-                  8,
-                  10,
-                  12
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -21369,13 +20553,55 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Stress",
-          "plural": "Stress"
+          "plural": "Stress",
+          "traits": [
+            {
+              "name": "Physical",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "view": {
+                "pipCount": 5,
+                "pips": 1
+              },
+              "traits": []
+            },
+            {
+              "name": "Mental",
+              "rating": {
+                "type": "Die",
+                "value": [
+                  6
+                ],
+                "range": [
+                  4,
+                  6,
+                  8,
+                  10,
+                  12
+                ]
+              },
+              "view": {
+                "pipCount": 5,
+                "pips": 0
+              },
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ls-notes",
           "name": "Field Notes",
-          "traits": [],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -21391,56 +20617,12 @@ const cortexSpotlightTemplates = [
             }
           },
           "noun": "Note",
-          "plural": "Notes"
+          "plural": "Notes",
+          "traits": []
         },
         {
           "id": "ls-session-record",
           "name": "Mission Chronicle",
-          "traits": [
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Pip",
-                "value": [
-                  true
-                ],
-                "range": [
-                  1
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Pip",
-                "value": [
-                  true
-                ],
-                "range": [
-                  1
-                ]
-              }
-            },
-            {
-              "name": "",
-              "traits": [],
-              "sfx": [],
-              "rating": {
-                "type": "Pip",
-                "value": [
-                  true
-                ],
-                "range": [
-                  1
-                ]
-              }
-            }
-          ],
-          "sfx": [],
           "view": {
             "page": 2,
             "style": {
@@ -21476,23 +20658,50 @@ const cortexSpotlightTemplates = [
             ]
           },
           "noun": "Session",
-          "plural": "Sessions"
+          "plural": "Sessions",
+          "traits": [
+            {
+              "name": "",
+              "rating": {
+                "type": "Pip",
+                "value": [
+                  true
+                ],
+                "range": [
+                  1
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Pip",
+                "value": [
+                  true
+                ],
+                "range": [
+                  1
+                ]
+              },
+              "traits": []
+            },
+            {
+              "name": "",
+              "rating": {
+                "type": "Pip",
+                "value": [
+                  true
+                ],
+                "range": [
+                  1
+                ]
+              },
+              "traits": []
+            }
+          ]
         }
-      ],
-      "view": {
-        "nickname": "The Panorama Sheet",
-        "pageOrientation": "landscape",
-        "pageCount": 2,
-        "columnAlignment": "top-base",
-        "columnOffsets": {
-          "left": 0,
-          "center": 0,
-          "right": 0
-        },
-        "style": {
-          "sheet": "spotlight"
-        }
-      }
+      ]
     }
   }
 ];

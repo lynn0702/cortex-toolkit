@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getView } from './model.ts';
+import { cortexFunctions } from './functions.ts';
 import { computed } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
@@ -43,6 +44,8 @@ const {
 
 const headerTop = computed( () => getView(traitSet.value)?.header === 'top' );
 
+const setSfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value ) );
+
 const BODY_COMPONENTS: Record<string, any> = {
 	'image': TraitSetImage,
 	'notes': TraitSetNotes,
@@ -78,8 +81,8 @@ const bodyComponent = computed( () => {
 		<div class="trait-set-body">
 			<component :is="bodyComponent" />
 
-			<ul class="sfx" v-if="getView(traitSet)?.features?.sfx && traitSet?.sfx?.length">
-				<li v-for="(sfx, sfId) in (traitSet.sfx || [])" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
+			<ul class="sfx" v-if="getView(traitSet)?.features?.sfx && setSfxEntries.length">
+				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 					<span class="sfx-name">{{ sfx.name }}</span>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>
 				</li>

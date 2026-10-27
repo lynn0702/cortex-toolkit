@@ -1092,9 +1092,10 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		let character = props.character;
 		let s = props.traitSetID;
 
-		character.traitSets[s].sfx!.push(
-			structuredClone( cortexFunctions.defaultSFX )
-		);
+		const container = cortexFunctions.ensureSfxContainer( character.traitSets[s] );
+		if ( container && Array.isArray( container.traits ) ) {
+			container.traits.push( structuredClone( cortexFunctions.defaultSFX ) );
+		}
 
 		updateCharacter( character );
 	}
@@ -1102,9 +1103,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	function removeEffect( effectID: any ) {
 		let character = props.character;
 		let s = props.traitSetID;
-		let f = effectID;
 
-		character.traitSets[s].sfx!.splice( f, 1 );
+		cortexFunctions.removeSfxAt( character.traitSets[s], effectID );
 
 		updateCharacter( character );
 	}

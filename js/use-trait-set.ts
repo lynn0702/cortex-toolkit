@@ -230,7 +230,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function getTraitClasses( trait: Trait ) {
 		const classes: Record<string, boolean> = { 'trait': true };
 		if ( trait?.description?.length ) classes['trait-has-description'] = true;
-		if ( trait?.sfx?.length ) classes['trait-has-sfx'] = true;
+		if ( cortexFunctions.sfxChildren( trait ).length ) classes['trait-has-sfx'] = true;
 		if ( trait?.traits?.length ) classes['trait-has-subtraits'] = true;
 		return classes;
 	}
@@ -301,7 +301,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 			name: '',
 			description: '',
 			traits: hasSubtraits ? [{ name: '' }] : [],
-			sfx: [],
 			tags: [],
 			custom: {}
 		};
@@ -353,9 +352,16 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	// Positional subtrait access: paired slots keep complication at 0
-	// and bonus at 1. Index is the truth; names are labels.
+	// and bonus at 1. Index is the truth; names are labels. The SFX
+	// container is a child trait, not a subtrait, so positional access
+	// reads past it.
+	function nonSfxSubtraits( trait: Trait ) {
+		const subs = ( trait as any )?.traits;
+		return ( Array.isArray( subs ) ? subs : [] ).filter( ( st: any ) => !cortexFunctions.isSfxContainer( st ) );
+	}
+
 	function getSubtraitAt( trait: Trait, index: number ) {
-		return trait?.traits?.[ index ] || null;
+		return nonSfxSubtraits( trait )[ index ] || null;
 	}
 
 	function getSubtraitSlotRatings( traitSetArg: TraitSet, slot: number ) {
@@ -532,31 +538,33 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getDistinctionSfxText( trait: Trait ) {
-		if ( !trait?.sfx || !trait.sfx.length ) return '';
-		const nonHinder = trait.sfx.filter( ( sfx: any ) => sfx !== 'hinder' && ( typeof sfx !== 'object' || sfx.name?.toLowerCase() !== 'hinder' ) );
+		const entries = cortexFunctions.sfxChildren( trait );
+		if ( !entries.length ) return '';
+		const nonHinder = entries.filter( ( sfx: any ) => String( sfx.name || '' ).toLowerCase() !== 'hinder' );
 		if ( !nonHinder.length ) return '';
 		const first = nonHinder[0];
-		return typeof first === 'string' ? first
-			: ( first.name && first.description ) ? `${first.name}: ${first.description}`
+		return ( first.name && first.description ) ? `${first.name}: ${first.description}`
 			: first.description || first.name || '';
 	}
 
 	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
-		if ( !trait?.sfx || !Array.isArray( trait.sfx ) || !trait.sfx.length ) return [];
+		const entries = cortexFunctions.sfxChildren( trait );
+		if ( !entries.length ) return [];
 		const isSharedHinder = Boolean( getView( traitSetArg )?.sharedHinder );
-		let list = trait.sfx;
+		let list = entries;
 		if ( isSharedHinder ) {
-			list = list.filter( ( sfx: any ) => sfx !== 'hinder' && ( typeof sfx !== 'object' || sfx.name?.toLowerCase() !== 'hinder' ) );
+			list = list.filter( ( sfx: any ) => String( sfx.name || '' ).toLowerCase() !== 'hinder' );
 		}
 		return list.map( ( sfx: any ) => {
-			if ( sfx === 'hinder' || ( typeof sfx === 'object' && sfx.name?.toLowerCase() === 'hinder' ) ) {
+			if ( String( sfx.name || '' ).toLowerCase() === 'hinder' ) {
+				const hasOwn = typeof sfx.description === 'string' && sfx.description.length > 0;
 				return {
 					name: 'Hinder',
 					isHinder: true,
-					description: getHinderSentence( traitSetArg, trait )
+					description: hasOwn ? sfx.description : getHinderSentence( traitSetArg, trait )
 				};
 			}
-			return typeof sfx === 'object' ? sfx : { name: sfx, description: '' };
+			return sfx;
 		} );
 	}
 
@@ -613,8 +621,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function visibleSubtraits( traitSetArg: TraitSet, trait: Trait ) {
-		const subs = ( trait as any )?.traits;
-		if ( !Array.isArray( subs ) ) return [];
+		const subs = nonSfxSubtraits( trait );
+		if ( !subs.length ) return [];
 		const list = hasAttachedStress( traitSetArg )
 			? subs.filter( ( st: any ) => !isStressCompanion( traitSetArg, st?.name ) )
 			: subs;
@@ -645,7 +653,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		} else if ( idx !== -1 ) {
 			cortexFunctions.setTraitDice( trait.traits[idx], [ size ] );
 		} else {
-			trait.traits.push( { name, rating: { type: 'Die', value: [ size ], range: [ 4, 6, 8, 10, 12 ] }, description: '', traits: [], sfx: [], tags: [], custom: {} } );
+			trait.traits.push( { name, rating: { type: 'Die', value: [ size ], range: [ 4, 6, 8, 10, 12 ] }, description: '', traits: [], tags: [], custom: {} } );
 		}
 		updateCharacter( props.character );
 	}
@@ -659,7 +667,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
 		let companion: any = trait.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === name );
 		if ( !companion ) {
-			companion = { name, description: '', traits: [], sfx: [], tags: [], custom: {} };
+			companion = { name, description: '', traits: [], tags: [], custom: {} };
 			trait.traits.push( companion );
 		}
 		companion.isOut = !companion.isOut;
@@ -771,7 +779,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function blankPipTrait(): any {
-		return { name: '', description: '', traits: [], sfx: [], tags: [], custom: {} };
+		return { name: '', description: '', traits: [], tags: [], custom: {} };
 	}
 
 	function ensurePipTrait( traitSetIndex: number, itemIndex: number ) {
@@ -940,7 +948,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getSubtraitNameOr( trait: Trait, traitSetArg: TraitSet, index: number ) {
-		const sub = trait?.traits?.[ index ];
+		const sub = nonSfxSubtraits( trait )[ index ];
 		if ( sub && sub.name && String( sub.name ).trim().length ) {
 			return sub.name;
 		}
@@ -948,9 +956,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function getTalentEffect( trait: Trait ) {
-		const sfx = ( trait?.sfx || [] ).find( ( e: any ) => e !== 'hinder' );
+		const entries = cortexFunctions.sfxChildren( trait );
+		const sfx = entries.find( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
 		if ( !sfx ) return '';
-		if ( typeof sfx === 'string' ) return sfx;
 		return sfx.description || sfx.name || '';
 	}
 

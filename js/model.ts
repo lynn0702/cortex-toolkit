@@ -19,12 +19,11 @@ import type {
 	TraitSet as GeneratedTraitSet,
 	Trait as GeneratedTrait,
 	SheetTemplate as GeneratedSheetTemplate,
-	Sfx,
 	Tags,
 } from './model.generated.ts';
 
 // Primitives re-exported unchanged from the schema projection.
-export type { Tags, SfxHinder, Sfx } from './model.generated.ts';
+export type { Tags } from './model.generated.ts';
 
 // ---------- ratings (2026-10-23: one shape at every level) ----------
 
@@ -610,11 +609,10 @@ export interface CharacterPrefs {
 
 // ---------- app document types (schema shape + typed view & custom) ----------
 
-export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits' | 'sfx'> & {
+export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits'> & {
 	view?: ViewBag;
 	custom?: TraitCustom;
 	traits?: Trait[];
-	sfx?: (Sfx | 'hinder')[];
 	/** App-only: stress "out" marker (rendered as the 💥 OUT badge). */
 	isOut?: boolean;
 	/** App-only: attached-stress value (mirrors `custom.stress`). */
@@ -628,11 +626,10 @@ export type Trait = Omit<GeneratedTrait, 'custom' | 'view' | 'traits' | 'sfx'> &
 	id?: string;
 };
 
-export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'view' | 'traits' | 'sfx'> & {
+export type TraitSet = Omit<GeneratedTraitSet, 'custom' | 'view' | 'traits'> & {
 	view?: ViewBag;
 	custom?: Custom;
 	traits: Trait[];
-	sfx?: Sfx[];
 	/** App-only: stable internal key. */
 	_lid?: string;
 	/** App-only: template trait names removed from this set (D19 restore). */

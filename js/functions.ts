@@ -204,6 +204,73 @@ export const cortexFunctions = {
 		return this.fixedNameSetKeys.some( ( k: string ) => n.includes( k ) );
 	},
 
+	// The SFX container is a child trait literally named "SFX" with no
+	// rating of its own; its children are the SFX entries. Shape + name,
+	// never a field — this is the dissolve of the old `sfx` array.
+	isSfxContainer: function( t: unknown ) {
+		return Boolean( t && typeof t === 'object' && !Array.isArray( t ) && ( t as any ).name === 'SFX' && getRating( t ) === undefined );
+	},
+	sfxChildren: function( node: unknown ) {
+		const subs = node && typeof node === 'object' ? ( node as any ).traits : undefined;
+		if ( !Array.isArray( subs ) ) return [];
+		const container = subs.find( ( st: any ) => this.isSfxContainer( st ) );
+		return ( container && Array.isArray( container.traits ) ) ? container.traits : [];
+	},
+
+	// The SFX container child, created on demand (sparse: absent until an
+	// SFX exists).
+	ensureSfxContainer: function( node: unknown ) {
+		if ( !node || typeof node !== 'object' ) return null;
+		const rec = node as any;
+		if ( !Array.isArray( rec.traits ) ) rec.traits = [];
+		let container = rec.traits.find( ( st: any ) => this.isSfxContainer( st ) );
+		if ( !container ) {
+			container = { name: 'SFX', traits: [] };
+			rec.traits.push( container );
+		}
+		return container;
+	},
+
+	// Drop an SFX entry by index, removing the container when it empties.
+	removeSfxAt: function( node: unknown, index: number ) {
+		if ( !node || typeof node !== 'object' ) return;
+		const rec = node as any;
+		if ( !Array.isArray( rec.traits ) ) return;
+		const container = rec.traits.find( ( st: any ) => this.isSfxContainer( st ) );
+		if ( !container || !Array.isArray( container.traits ) ) return;
+		container.traits.splice( index, 1 );
+		if ( !container.traits.length ) {
+			const ci = rec.traits.indexOf( container );
+			if ( ci !== -1 ) rec.traits.splice( ci, 1 );
+		}
+	},
+
+	// Hinder is a child trait named "Hinder" in the SFX container.
+	hasHinder: function( node: unknown ) {
+		return this.sfxChildren( node ).some( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+	},
+	setHinder: function( node: unknown, present: boolean ) {
+		if ( !node || typeof node !== 'object' ) return;
+		const rec = node as any;
+		if ( !present ) {
+			if ( !Array.isArray( rec.traits ) ) return;
+			const container = rec.traits.find( ( st: any ) => this.isSfxContainer( st ) );
+			if ( !container || !Array.isArray( container.traits ) ) return;
+			const idx = container.traits.findIndex( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+			if ( idx === -1 ) return;
+			container.traits.splice( idx, 1 );
+			if ( !container.traits.length ) {
+				const ci = rec.traits.indexOf( container );
+				if ( ci !== -1 ) rec.traits.splice( ci, 1 );
+			}
+			return;
+		}
+		const container = this.ensureSfxContainer( node );
+		if ( !container || !Array.isArray( container.traits ) ) return;
+		const idx = container.traits.findIndex( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+		if ( idx === -1 ) container.traits.unshift( { name: 'Hinder' } );
+	},
+
 	// Feature defaults seeded when a trait-set style is chosen.
 	// Used by the trait set editor and the style gallery alike.
 	defaultFeaturesForStyle: function( style: string ) {
@@ -269,13 +336,13 @@ export const cortexFunctions = {
 		if ( !character || !Array.isArray( character.traitSets ) ) return null;
 		let set = character.traitSets.find( ( s: any ) => isNameSetModel( s ) );
 		if ( !set ) {
-			set = { id: 'name', name: 'Name', traits: [], sfx: [], view: { style: { header: 'default', body: 'name' } } };
+			set = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
 			character.traitSets.unshift( set );
 		}
 		if ( !Array.isArray( set.traits ) ) set.traits = [];
 		let trait = set.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === key );
 		if ( !trait ) {
-			trait = { name: key, description: '', traits: [], sfx: [], tags: [] };
+			trait = { name: key, description: '', traits: [], tags: [] };
 			if ( defaultNameHidden( key, character ) ) trait.view = { visibility: 'hidden' };
 			set.traits.push( trait );
 		}
@@ -1449,7 +1516,6 @@ export const cortexFunctions = {
 		noun: '',
 		plural: '',
 		traits: [],
-		sfx: [],
 		tags: [],
 		view: {
 			features: {
@@ -1474,7 +1540,6 @@ export const cortexFunctions = {
 		rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 		description: 'Trait description',
 		traits: [],
-		sfx: [],
 		tags: [],
 		custom: {}
 	},

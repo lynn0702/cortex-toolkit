@@ -61,6 +61,7 @@ https://github.com/kaelri/cortex-toolkit.
 ### SFX
 - 2026-10-11: SFX do not inherit. Placement is presentation, not mechanical. An SFX in one set may reference a trait in another.
 - 2026-10-11: SFX is a traits map: old `sfx` arrays fold into `traits` under an `SFX` node, Hinder among them.
+- 2026-10-26 (SFX dissolve): `trait.sfx` / `set.sfx` die as named model fields. SFX are ordinary child traits grouped under an "SFX" child trait, distinguished by shape and view — no named field, no kind flag, no SFX boolean. Export stops emitting sfx arrays; old-format import still converts them into traits. Hinder shared-text behavior preserved.
 
 ### Stress & complications
 - 2026-10-22: Stress lives as an ordinary rated companion subtrait (the "stress ring" is display of the companion's value); `custom.stress` / `custom.isStressOut` normalize to it, templates carry stress as real traits.

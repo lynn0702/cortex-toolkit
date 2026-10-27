@@ -49,8 +49,9 @@ const name = computed( {
 	},
 	set( val: string ) {
 		setProperty( 'name', val );
-		if ( isTalentsTable.value && Array.isArray( trait.value?.sfx ) ) {
-			const sfx = trait.value.sfx.find( ( e: any ) => e !== 'hinder' );
+		if ( isTalentsTable.value ) {
+			const entries = cortexFunctions.sfxChildren( trait.value );
+			const sfx = entries.find( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
 			if ( sfx && typeof sfx === 'object' ) {
 				sfx.name = val;
 			}
@@ -411,16 +412,29 @@ const description = computed( {
 
 const hinder = computed( {
 	get() {
-		return trait.value.sfx.includes( 'hinder' );
+		return cortexFunctions.hasHinder( trait.value );
 	},
 	set( val: any ) {
 		setHinder( val );
 	},
 } );
 
-const editableSFX = computed( () => trait.value.sfx
-	.filter( ( effect: any ) => effect !== 'hinder' )
-	.map( ( effect: any ) => trait.value.sfx.indexOf( effect ) ) );
+const editableSFX = computed( () => {
+	const entries = cortexFunctions.sfxChildren( trait.value );
+	return entries
+		.map( ( effect: any, idx: number ) => ( String( effect.name || '' ).toLowerCase() === 'hinder' ? -1 : idx ) )
+		.filter( ( idx: number ) => idx !== -1 );
+} );
+
+// Child traits that are subtraits, not the SFX container. Index is the
+// real position in `trait.traits`, so the subtrait editor reads correctly.
+const subtraits = computed( () => {
+	const subs = trait.value?.traits;
+	if ( !Array.isArray( subs ) ) return [];
+	return subs
+		.map( ( sub: any, idx: number ) => ( { sub, idx } ) )
+		.filter( ( item: any ) => !cortexFunctions.isSfxContainer( item.sub ) );
+} );
 
 const scrollable = computed( () => Boolean(
 	( getView( traitSet.value )?.features?.sfx && editableSFX.value.length > 0 && !isTalentsTable.value )
@@ -450,35 +464,25 @@ const talentCol3Label = computed( () => {
 
 const talentEffect = computed( {
 	get() {
-		const sfx = ( trait.value?.sfx || [] ).find( ( e: any ) => e !== 'hinder' );
+		const entries = cortexFunctions.sfxChildren( trait.value );
+		const sfx = entries.find( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
 		if ( !sfx ) return '';
-		if ( typeof sfx === 'string' ) return sfx;
 		return sfx.description || sfx.name || '';
 	},
 	set( val: string ) {
-		if ( !Array.isArray( trait.value.sfx ) ) {
-			trait.value.sfx = [];
-		}
-		const sfxIndex = trait.value.sfx.findIndex( ( e: any ) => e !== 'hinder' );
-		if ( sfxIndex === -1 ) {
-			trait.value.sfx.push( {
+		const container = cortexFunctions.ensureSfxContainer( trait.value );
+		if ( !container || !Array.isArray( container.traits ) ) return;
+		const idx = container.traits.findIndex( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
+		if ( idx === -1 ) {
+			container.traits.push( {
 				name: trait.value.name || '',
 				description: val,
 				tags: [],
 				custom: {}
 			} );
 		} else {
-			if ( typeof trait.value.sfx[ sfxIndex ] === 'string' ) {
-				trait.value.sfx[ sfxIndex ] = {
-					name: trait.value.name || '',
-					description: val,
-					tags: [],
-					custom: {}
-				};
-			} else {
-				trait.value.sfx[ sfxIndex ].description = val;
-				trait.value.sfx[ sfxIndex ].name = trait.value.name || '';
-			}
+			container.traits[ idx ].description = val;
+			container.traits[ idx ].name = trait.value.name || '';
 		}
 		updateCharacter( props.character );
 	},
@@ -731,14 +735,7 @@ function setHinder( val: any ) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
-	const sfx = character.traitSets[ s ].traits[ t ].sfx;
-
-	if ( val === false && sfx.includes( 'hinder' ) ) {
-		sfx.splice( sfx.indexOf( 'hinder' ), 1 );
-	} else if ( val === true && !sfx.includes( 'hinder' ) ) {
-		sfx.unshift( 'hinder' );
-	}
-
+	cortexFunctions.setHinder( character.traitSets[ s ].traits[ t ], Boolean( val ) );
 	updateCharacter( character );
 }
 
@@ -885,9 +882,10 @@ function addEffect() {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
-	character.traitSets[ s ].traits[ t ].sfx.push(
-		structuredClone( cortexFunctions.defaultSFX )
-	);
+	const container = cortexFunctions.ensureSfxContainer( character.traitSets[ s ].traits[ t ] );
+	if ( container && Array.isArray( container.traits ) ) {
+		container.traits.push( structuredClone( cortexFunctions.defaultSFX ) );
+	}
 	updateCharacter( character );
 }
 
@@ -895,8 +893,7 @@ function removeEffect( effectID: number ) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
-	const f = effectID;
-	character.traitSets[ s ].traits[ t ].sfx.splice( f, 1 );
+	cortexFunctions.removeSfxAt( character.traitSets[ s ].traits[ t ], effectID );
 	updateCharacter( character );
 }
 
@@ -1398,12 +1395,12 @@ function getDieDisplayValue( val: any ) {
 
 							<transition-group appear>
 								<subtrait-editor
-									v-for="(subtrait, subtraitID) in trait.traits"
-									:key="traitSetID + '-' + traitID + '-' + subtraitID"
+									v-for="item in subtraits"
+									:key="traitSetID + '-' + traitID + '-' + item.idx"
 									:character="character"
 									:traitSetID="traitSetID"
 									:traitID="traitID"
-									:subtraitID="Number(subtraitID)"
+									:subtraitID="Number(item.idx)"
 									@updateCharacter="updateCharacter"
 									@removeSubtrait="removeSubtrait"
 								></subtrait-editor>

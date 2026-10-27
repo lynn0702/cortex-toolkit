@@ -85,11 +85,6 @@ export const cortexMigration = {
 				normalizeNode( tr );
 				this.migrateNodeRating( tr, false );
 				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits, label );
-				if ( Array.isArray( tr.sfx ) ) {
-					tr.sfx.forEach( ( s: any ) => {
-						if ( s && typeof s === 'object' ) normalizeNode( s );
-					} );
-				}
 			} );
 		};
 
@@ -98,11 +93,6 @@ export const cortexMigration = {
 			normalizeNode( set );
 			this.migrateNodeRating( set, true );
 			normalizeTraitsArray( set.traits, this.stressCompanionLabel( set ) );
-			if ( Array.isArray( set.sfx ) ) {
-				set.sfx.forEach( ( s: any ) => {
-					if ( s && typeof s === 'object' ) normalizeNode( s );
-				} );
-			}
 			this.migrateResourceSet( set );
 		};
 
@@ -144,7 +134,7 @@ export const cortexMigration = {
 			if ( Array.isArray( holder.traitSets ) ) {
 				let set = holder.traitSets.find( ( s: any ) => isNameSetNode( s ) );
 				if ( !set ) {
-					set = { id: 'name', name: 'Name', traits: [], sfx: [], view: { style: { header: 'default', body: 'name' } } };
+					set = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
 					holder.traitSets.unshift( set );
 				}
 				// Array form only: a layered set object riding in an array
@@ -361,7 +351,7 @@ export const cortexMigration = {
 		if ( !Array.isArray( nset.traits ) ) nset.traits = [];
 		let tr = nset.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === 'plotPoints' );
 		if ( !tr ) {
-			tr = { name: 'plotPoints', description: '', traits: [], sfx: [], tags: [] };
+			tr = { name: 'plotPoints', description: '', traits: [], tags: [] };
 			nset.traits.push( tr );
 		}
 		const n = Math.max( 0, Math.floor( holder.plotPoints ) );
@@ -726,10 +716,11 @@ export const cortexMigration = {
 		return { map: map, slots: slots };
 	},
 
-	// Positional keys of a traits map: everything except a pure SFX container.
+	// Positional keys of a traits map: every child, including the "SFX"
+	// container (SFX is a child trait now, not a separate field).
 	positionalKeys: function( traits: any ): string[] {
 		if ( !traits || typeof traits !== 'object' || Array.isArray( traits ) ) return [];
-		return Object.keys( traits ).filter( k => !( k === 'SFX' && this.isPureSfxContainer( traits.SFX ) ) );
+		return Object.keys( traits );
 	},
 
 	// Rebuild the source trait order: slots at their indices, named traits
@@ -860,7 +851,7 @@ export const cortexMigration = {
 			return null;
 		}
 		if ( typeof node === 'string' ) {
-			const tr: any = { name: name, traits: [], sfx: [] };
+			const tr: any = { name: name, traits: [] };
 			const r = this.unmigrateRating( node, warnings, here );
 			if ( r ) tr.rating = r;
 			return tr;
@@ -888,53 +879,7 @@ export const cortexMigration = {
 			}
 			return self.unmigrateTemplateTrait( e.key, subs[e.key], warnings, here );
 		} );
-		tr.sfx = this.unmigrateSfxArray( node, warnings, here );
 		return tr;
-	},
-
-	isPureSfxContainer: function( node: any ): boolean {
-		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) return false;
-		if ( typeof node === 'string' ) return false;
-		const keys = Object.keys( node ).filter( k => k !== 'traits' && k !== 'slots' );
-		if ( keys.length ) return false;
-		if ( !node.traits || typeof node.traits !== 'object' || Array.isArray( node.traits ) ) return false;
-		const contentKeys = ( s: any ) => s && typeof s === 'object' && !Array.isArray( s ) &&
-			Object.keys( s ).every( ( sk: string ) => sk === 'description' || sk === 'tags' || sk === 'custom' );
-		if ( !Object.keys( node.traits ).every( k => contentKeys( node.traits[k] ) ) ) return false;
-		const slots = ( node.slots && typeof node.slots === 'object' && !Array.isArray( node.slots ) ) ? node.slots : {};
-		return Object.keys( slots ).every( k => contentKeys( slots[k] ) );
-	},
-
-	// Presence-preserved sfx rebuild. Entries carry only authored keys;
-	// empty scaffolding stays out (renderers treat absence as empty).
-	unmigrateSfxEntry: function( k: string, s: any, isSlot: boolean ): any {
-		if ( !isSlot && s && typeof s === 'object' && !Array.isArray( s ) && Object.keys( s ).length === 0 && k === 'Hinder' ) return 'hinder';
-		const o: any = { name: isSlot ? '' : k };
-		const src = ( s && typeof s === 'object' && !Array.isArray( s ) ) ? s : {};
-		if ( src.description !== undefined ) o.description = src.description;
-		if ( src.tags !== undefined ) o.tags = cloneDeep( src.tags );
-		if ( src.custom !== undefined ) o.custom = cloneDeep( src.custom );
-		return o;
-	},
-
-	unmigrateSfxArray: function( node: any, warnings: string[], path: string ): any[] {
-		if ( !node.traits || typeof node.traits !== 'object' || Array.isArray( node.traits ) || !node.traits.SFX ) return [];
-		const sfx = node.traits.SFX;
-		if ( !this.isPureSfxContainer( sfx ) &&
-			( ( sfx.traits && Object.keys( sfx.traits ).length ) || ( sfx.slots && Object.keys( sfx.slots ).length ) ) ) {
-			this.warn( warnings, path + ': non-container SFX trait kept as trait, sub-traits also exported as sfx' );
-		}
-		const subs = ( sfx.traits && typeof sfx.traits === 'object' && !Array.isArray( sfx.traits ) ) ? sfx.traits : {};
-		const subSlots = ( sfx.slots && typeof sfx.slots === 'object' && !Array.isArray( sfx.slots ) ) ? sfx.slots : {};
-		const self = this;
-		return this.orderedTraits( subs, subSlots, ( e: any ) => {
-			if ( e.slot ) return self.unmigrateSfxEntry( e.key, subSlots[e.key], true );
-			if ( subs[e.key] === null ) {
-				self.warn( warnings, path + ': null sfx ' + JSON.stringify( e.key ) + ' has no old-form equivalent, dropped' );
-				return null;
-			}
-			return self.unmigrateSfxEntry( e.key, subs[e.key], false );
-		} );
 	},
 
 	unmigrateTemplateSet: function( name: string, set: any, warnings: string[] ): any {
@@ -945,7 +890,7 @@ export const cortexMigration = {
 		}
 		const ts: any = { id: set.id, name: name };
 		Object.keys( set ).forEach( ( k: string ) => {
-			if ( k === 'id' || k === 'name' || k === 'label' || k === 'traits' || k === 'slots' || k === 'sfx' ) return;
+			if ( k === 'id' || k === 'name' || k === 'label' || k === 'traits' || k === 'slots' ) return;
 			ts[k] = cloneDeep( set[k] );
 		} );
 		const subs = ( set.traits && typeof set.traits === 'object' && !Array.isArray( set.traits ) ) ? set.traits : {};
@@ -959,7 +904,6 @@ export const cortexMigration = {
 			}
 			return self.unmigrateTemplateTrait( e.key, subs[e.key], warnings, here );
 		} );
-		ts.sfx = this.unmigrateSfxArray( set, warnings, here );
 		return ts;
 	},
 

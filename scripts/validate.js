@@ -35,7 +35,6 @@ function checkDef(name, def) {
 }
 checkDef('traitSet', schema.$defs.traitSet);
 checkDef('trait', schema.$defs.trait);
-checkDef('sfx', schema.$defs.sfx);
 
 for (const need of ['id', 'name']) {
   if (!schema.required.includes(need)) err(`schema character: required missing "${need}"`);
@@ -296,7 +295,6 @@ function checkLayeredTrait(node, where, depth) {
   if (node.custom !== undefined) err(`${where}: custom stays app-side, never in entity JSON`);
   if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
   if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
-  if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
   for (const k of ['noun', 'plural', 'ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
     if (node[k] !== undefined) err(`${where}: presentation key ${k} lives in the type layer`);
   }
@@ -363,7 +361,6 @@ function checkLayeredFile(where, data) {
     if (set.value !== undefined) err(`${where}/${name}: retired value key (rating supersedes it)`);
     if (set.dice !== undefined) err(`${where}/${name}: retired dice key (rating supersedes it)`);
     if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
-    if (Array.isArray(set.sfx)) err(`${where}/${name}: sfx arrays become traits under an SFX node`);
     for (const k of ['ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
       if (set[k] !== undefined) err(`${where}/${name}: presentation key ${k} lives in the type layer`);
     }
@@ -407,7 +404,6 @@ function checkTemplateTrait(node, where, depth, inSlot) {
   }
   if (node.traitSets !== undefined) err(`${where}: array-form traitSets has no map form here`);
   if (Array.isArray(node.traits)) err(`${where}: traits must be a name-keyed map, not an array`);
-  if (Array.isArray(node.sfx)) err(`${where}: sfx arrays become traits under an SFX node`);
   checkRetiredTraitKeys(node, where);
   checkNodeOptions(node, where);
   if (node.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(node.usableBy) === -1) {
@@ -526,7 +522,6 @@ function checkTemplateFile(where, data) {
       err(`${where}/${name}: tombstones are gone, use local nulls`);
     }
     if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
-    if (Array.isArray(set.sfx)) err(`${where}/${name}: sfx arrays become traits under an SFX node`);
     if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {
       err(`${where}/${name}: usableBy must be owner|anyone|opposition`);
     }

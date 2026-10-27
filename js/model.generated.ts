@@ -11,10 +11,6 @@ export type Tags = string[];
 export type View = {
   [k: string]: unknown;
 } | null;
-/**
- * Represents the “Hinder” core SFX.
- */
-export type SfxHinder = "hinder";
 
 /**
  * A JSON schema for a Cortex Prime player character sheet.
@@ -140,10 +136,6 @@ export interface TraitSet {
    */
   traits: Trait[];
   /**
-   * Any SFX attached directly to this trait set.
-   */
-  sfx: Sfx[];
-  /**
    * Placement of trait rating dice relative to trait labels.
    */
   ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
@@ -242,10 +234,6 @@ export interface Trait {
    * Any child traits attached this parent trait.
    */
   traits: Trait[];
-  /**
-   * Any SFX attached to this trait.
-   */
-  sfx: (Sfx | SfxHinder)[];
   tags: Tags;
   view?: View;
   custom?: Custom;
@@ -267,19 +255,6 @@ export interface Rating {
    * Out is part of this rating's range (one step past the top). Default off; most ratings lack it.
    */
   out?: boolean | null;
-}
-export interface Sfx {
-  /**
-   * The name of the SFX.
-   */
-  name: string;
-  /**
-   * A description of the SFX.
-   */
-  description: string;
-  tags: Tags;
-  view?: View;
-  custom?: Custom;
 }
 /**
  * An open-ended object where apps and services can add custom data to this entity. It is strongly recommended that developers compartmentalize their app’s custom data under a unique key to avoid conflicts and generally be good neighbors.

@@ -38,13 +38,6 @@
 						"$ref": "#/$defs/trait"
 					}
 				},
-				"sfx": {
-					"type": "array",
-					"description": "Any SFX attached directly to this trait set.",
-					"items": {
-						"$ref": "#/$defs/sfx"
-					}
-				},
 				"ratingPosition": {
 					"type": [
 						"string",
@@ -129,7 +122,6 @@
 				"noun",
 				"plural",
 				"traits",
-				"sfx",
 				"tags"
 			]
 		},
@@ -250,20 +242,6 @@
 						"$ref": "#/$defs/trait"
 					}
 				},
-				"sfx": {
-					"type": "array",
-					"description": "Any SFX attached to this trait.",
-					"items": {
-						"oneOf": [
-							{
-								"$ref": "#/$defs/sfx"
-							},
-							{
-								"$ref": "#/$defs/sfxHinder"
-							}
-						]
-					}
-				},
 				"tags": {
 					"$ref": "#/$defs/tags"
 				},
@@ -279,7 +257,6 @@
 				"name",
 				"description",
 				"traits",
-				"sfx",
 				"tags"
 			]
 		},
@@ -327,41 +304,6 @@
 				"range"
 			],
 			"additionalProperties": false
-		},
-		"sfx": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string",
-					"description": "The name of the SFX."
-				},
-			"description": {
-				"type": "string",
-				"description": "A description of the SFX."
-			},
-				"tags": {
-					"$ref": "#/$defs/tags"
-				},
-				"view": {
-					"$ref": "#/$defs/view"
-				},
-				"custom": {
-					"$ref": "#/$defs/custom"
-				}
-			},
-			"additionalProperties": false,
-			"required": [
-				"name",
-				"description",
-				"tags"
-			]
-		},
-		"sfxHinder": {
-			"type": "string",
-			"description": "Represents the “Hinder” core SFX.",
-			"enum": [
-				"hinder"
-			]
 		},
 		"tags": {
 			"type": "array",

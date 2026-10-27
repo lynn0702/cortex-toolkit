@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { cortexFunctions } from './functions.ts';
 
 const props = defineProps<{
 	character: any;
@@ -13,14 +14,14 @@ const emit = defineEmits<{
 	( e: 'removeEffect', effectID: number ): void;
 }>();
 
-const effect = computed( () => {
+const node = computed( () => {
 	const s = props.traitSetID;
 	const t = props.traitID;
-	const f = props.effectID;
-	if ( t === null ) {
-		return props.character.traitSets[ s ].sfx[ f ];
-	}
-	return props.character.traitSets[ s ].traits[ t ].sfx[ f ];
+	return ( t === null ) ? props.character.traitSets[ s ] : props.character.traitSets[ s ].traits[ t ];
+} );
+
+const effect = computed( () => {
+	return cortexFunctions.sfxChildren( node.value )[ props.effectID ];
 } );
 
 const name = computed( {
@@ -43,16 +44,8 @@ const description = computed( {
 
 function setEffectProperty( key: string, value: any ) {
 	const character = props.character;
-	const s = props.traitSetID;
-	const t = props.traitID;
-	const f = props.effectID;
-
-	if ( t === null ) {
-		character.traitSets[ s ].sfx[ f ][ key ] = value;
-	} else {
-		character.traitSets[ s ].traits[ t ].sfx[ f ][ key ] = value;
-	}
-
+	const entry = cortexFunctions.sfxChildren( node.value )[ props.effectID ];
+	if ( entry ) entry[ key ] = value;
 	emit( 'updateCharacter', character );
 }
 
