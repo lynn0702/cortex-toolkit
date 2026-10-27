@@ -94,7 +94,7 @@ function commitPipRowName( traitSetIndex: number, itemIndex: number, event: Even
 				:key="'prow-' + rowIdx"
 				class="pip-row"
 			>
-				<div class="pip-row-line" v-if="getPipConfig(traitSet).connected && getPipConfig(traitSet).perRow > 1"></div>
+				<div class="pip-row-line" v-if="getPipConfig(traitSet).connected && getPipRowCols(traitSet, rowIdx) > 1"></div>
 				<div
 					v-for="colIdx in getPipRowCols(traitSet, rowIdx)"
 					:key="'pcol-' + colIdx"

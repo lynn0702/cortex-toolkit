@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, getRating, ratingDice, setRatingDie,
+import { getView, ensureView, getRating, ratingDice, setRatingDie, setRatingDice,
 isRated, resolveHitches, resolveVisibility, DIE_LADDER, rangeTop, isOutDie } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
@@ -856,6 +856,95 @@ function toggleOutValue() {
 	updateCharacter( props.character );
 }
 
+const dieRange = computed( () => {
+	const r = getRating( trait.value );
+	if ( r && Array.isArray( r.range ) && r.range.length ) {
+		return [ ...r.range ].sort( ( a, b ) => a - b );
+	}
+	const av = availableValues.value;
+	if ( Array.isArray( av ) && av.length ) {
+		return [ ...av ].sort( ( a, b ) => a - b );
+	}
+	return [ ...DIE_LADDER ];
+} );
+
+function getDieStepPrev( currentSize: number, range: number[] = dieRange.value ): number | null {
+	if ( !range.length ) return null;
+	const idx = range.indexOf( currentSize );
+	if ( idx !== -1 ) return idx > 0 ? range[ idx - 1 ] : null;
+	const smaller = range.filter( s => s < currentSize );
+	return smaller.length ? smaller[ smaller.length - 1 ] : null;
+}
+
+function getDieStepNext( currentSize: number, range: number[] = dieRange.value ): number | null {
+	if ( !range.length ) return null;
+	const idx = range.indexOf( currentSize );
+	if ( idx !== -1 ) return idx < range.length - 1 ? range[ idx + 1 ] : null;
+	const larger = range.filter( s => s > currentSize );
+	return larger.length ? larger[ 0 ] : null;
+}
+
+const singleDieStepPrev = computed( () => getDieStepPrev( firstDieOf( trait.value ) ) );
+const singleDieStepNext = computed( () => getDieStepNext( firstDieOf( trait.value ) ) );
+
+function stepSingleDieDown() {
+	const prev = singleDieStepPrev.value;
+	if ( prev !== null && trait.value ) {
+		setRatingDie( trait.value as unknown as Record<string, any>, prev, dieRange.value );
+		updateCharacter( props.character );
+	}
+}
+
+function stepSingleDieUp() {
+	const next = singleDieStepNext.value;
+	if ( next !== null && trait.value ) {
+		setRatingDie( trait.value as unknown as Record<string, any>, next, dieRange.value );
+		updateCharacter( props.character );
+	}
+}
+
+function stepDownDieAtIndexAlongRange( index: number ) {
+	const current = [ ...dice.value ];
+	if ( index >= 0 && index < current.length && trait.value ) {
+		const curSize = current[ index ];
+		const prev = getDieStepPrev( curSize );
+		if ( prev !== null ) {
+			current[ index ] = prev;
+			setRatingDice( trait.value as unknown as Record<string, any>, current, dieRange.value );
+			syncPoolCount( current.length );
+			updateCharacter( props.character );
+		}
+	}
+}
+
+function stepUpDieAtIndexAlongRange( index: number ) {
+	const current = [ ...dice.value ];
+	if ( index >= 0 && index < current.length && trait.value ) {
+		const curSize = current[ index ];
+		const next = getDieStepNext( curSize );
+		if ( next !== null ) {
+			current[ index ] = next;
+			setRatingDice( trait.value as unknown as Record<string, any>, current, dieRange.value );
+			syncPoolCount( current.length );
+			updateCharacter( props.character );
+		}
+	}
+}
+
+function stepCounterDown() {
+	const [ lo ] = counterBounds();
+	if ( counterNumber.value > lo ) {
+		counterNumber.value = counterNumber.value - 1;
+	}
+}
+
+function stepCounterUp() {
+	const [ , hi ] = counterBounds();
+	if ( counterNumber.value < hi ) {
+		counterNumber.value = counterNumber.value + 1;
+	}
+}
+
 function duplicateTrait() {
 	const character = props.character;
 	const s = props.traitSetID;
@@ -1199,7 +1288,7 @@ function getDieDisplayValue( val: any ) {
 
 					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideSkillDice">
 
-						<div class="editor-label" v-if="!isPlay">Rating</div>
+						<div class="editor-label" v-if="!isPlay || isRatedTrait">Rating</div>
 
 						<!-- UNRATED: the gate offers to add one -->
 						<div class="editor-button-container my-2" v-if="!isRatedTrait && !isPlay">
@@ -1241,8 +1330,8 @@ function getDieDisplayValue( val: any ) {
 							</div>
 						</div>
 
-						<!-- SINGLE DIE SELECTOR -->
-						<ul class="editor-values" v-if="ratingType === 'Die'">
+						<!-- SINGLE DIE SELECTOR (EDIT MODE) -->
+						<ul class="editor-values" v-if="ratingType === 'Die' && !isPlay">
 							<li
 								v-for="val in availableValues"
 								:class="{ 'active': isDieActiveOf(trait, val) && !isOut }"
@@ -1269,11 +1358,35 @@ function getDieDisplayValue( val: any ) {
 							</li>
 						</ul>
 
+						<!-- SINGLE DIE STEPPER (PLAY MODE) -->
+						<div class="die-rating-stepper" v-else-if="ratingType === 'Die' && isPlay">
+							<button
+								type="button"
+								class="btn-step"
+								:disabled="singleDieStepPrev === null"
+								@click.stop="stepSingleDieDown()"
+								title="Step down"
+								aria-label="Step down"
+							>-</button>
+							<div class="die-rating-current">
+								<span class="c" v-html="getDieDisplayValue(firstDieOf(trait))"></span>
+								<span class="die-rating-text">d{{ firstDieOf(trait) }}</span>
+							</div>
+							<button
+								type="button"
+								class="btn-step"
+								:disabled="singleDieStepNext === null"
+								@click.stop="stepSingleDieUp()"
+								title="Step up"
+								aria-label="Step up"
+							>+</button>
+						</div>
+
 						<!-- DICE LIST EDITOR -->
 						<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
-							<div class="editor-die-steppers">
+							<div class="editor-die-steppers" v-if="!isPlay">
 								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
-									<span class="c">{{ getDieDisplayValue(size) }}</span>
+									<span class="c" v-html="getDieDisplayValue(size)"></span>
 									<span class="stepper-label">d{{ size }}</span>
 									<div class="stepper-controls">
 										<button type="button" class="btn-step" @click.stop="removeDieFromTrait(size)" :disabled="getDieCount(size) === 0">-</button>
@@ -1288,10 +1401,30 @@ function getDieDisplayValue( val: any ) {
 								<span class="sub-label">Current Dice ({{ dice.length }}):</span>
 								<div class="multidie-chips">
 									<div v-for="(dieSize, dIdx) in dice" :key="dIdx" class="multidie-chip">
-										<span class="c">{{ getDieDisplayValue(dieSize) }}</span>
+										<span class="c" v-html="getDieDisplayValue(dieSize)"></span>
 										<span class="chip-text">d{{ dieSize }}</span>
-										<button type="button" class="btn-step-down" @click.stop="stepDownDieAtIndex(dIdx)" title="Step down die size">-2</button>
-										<button type="button" class="btn-remove-die" @click.stop="removeDieAtIndex(dIdx)" title="Remove die">×</button>
+										<template v-if="isPlay">
+											<button
+												type="button"
+												class="btn-step-play"
+												:disabled="getDieStepPrev(dieSize) === null"
+												@click.stop="stepDownDieAtIndexAlongRange(dIdx)"
+												title="Step down"
+												aria-label="Step down"
+											>-</button>
+											<button
+												type="button"
+												class="btn-step-play"
+												:disabled="getDieStepNext(dieSize) === null"
+												@click.stop="stepUpDieAtIndexAlongRange(dIdx)"
+												title="Step up"
+												aria-label="Step up"
+											>+</button>
+										</template>
+										<template v-else>
+											<button type="button" class="btn-step-down" @click.stop="stepDownDieAtIndex(dIdx)" title="Step down die size">-2</button>
+											<button type="button" class="btn-remove-die" @click.stop="removeDieAtIndex(dIdx)" title="Remove die">×</button>
+										</template>
 									</div>
 								</div>
 							</div>
@@ -1299,19 +1432,38 @@ function getDieDisplayValue( val: any ) {
 
 						<!-- COUNTER NUMBER + RANGE -->
 						<div v-else-if="ratingType === 'Counter'">
-							<div style="display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap;">
+							<div v-if="!isPlay" style="display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap;">
 								<div style="flex: 1; min-width: 5rem;">
 									<label :for="'trait-' + traitID + '-counter-number'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Count</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-number'" name="counterNumber" v-model.number="counterNumber" inputmode="numeric" style="width: 100%;">
 								</div>
-								<div v-if="!isPlay" style="flex: 1; min-width: 4rem;">
+								<div style="flex: 1; min-width: 4rem;">
 									<label :for="'trait-' + traitID + '-counter-min'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Min</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-min'" name="counterMin" :value="counterBounds()[0]" @change="commitCounterBound(0, $event)" inputmode="numeric" style="width: 100%;">
 								</div>
-								<div v-if="!isPlay" style="flex: 1; min-width: 4rem;">
+								<div style="flex: 1; min-width: 4rem;">
 									<label :for="'trait-' + traitID + '-counter-max'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Max</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-max'" name="counterMax" :value="counterBounds()[1]" @change="commitCounterBound(1, $event)" inputmode="numeric" style="width: 100%;">
 								</div>
+							</div>
+							<div v-else class="num-stepper">
+								<button
+									type="button"
+									class="btn-step"
+									:disabled="counterNumber <= counterBounds()[0]"
+									@click.stop="stepCounterDown()"
+									title="Decrease count"
+									aria-label="Decrease count"
+								>-</button>
+								<span class="stepper-count" style="font-size: 1rem; font-weight: bold; min-width: 2.2rem; text-align: center; color: white;">{{ counterNumber }}</span>
+								<button
+									type="button"
+									class="btn-step"
+									:disabled="counterNumber >= counterBounds()[1]"
+									@click.stop="stepCounterUp()"
+									title="Increase count"
+									aria-label="Increase count"
+								>+</button>
 							</div>
 						</div>
 

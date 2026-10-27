@@ -36,6 +36,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-24: A trait is multi-die by having a Dice rating; the old multi-die flag and checkbox are gone.
 - 2026-10-24: Multi-die rendering keys off the rating type (`Dice`) alone; the style exclusion list (stress/list/notes) is gone, so a Dice rating renders multidie UI in every body.
 - 2026-10-24: Out is a range option for die ratings, defaulted off: `rating.out` opts a Die/Dice ladder in, and set flags that enable Out badges (outIndicator, stressConfig or attachedStress includeOut) put it in range. Out state is a die past the ladder top or the out flag; toggles stamp the opt-in, stepping preserves it, clearing drops the rating whole.
+- 2026-10-27: Die rating stepping in Play lives in the Play panel (Properties tab) as value-stepping controls only: Die steps size along range; Dice steps each die independently along range; Counter steps +/- within [min, max]; Pip inline tracks and questioned toggling unchanged. Stepping disables at range bounds and never wraps. Inline row steppers rejected to protect row hitboxes and staging targets. Rating type, range editing, add/remove die in a pool, and adding ratings to unrated traits stay Edit-only.
 
 ### Dice & pools
 - 2026-10-10: Compact dice notation (`"5d10"`, damaged `"2d10d8d6"`): descending size, count prefix with 1 omitted, no separators; spaces ignored. Tokenize on d4/d6/d8/d10/d12/d20.

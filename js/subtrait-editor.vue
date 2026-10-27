@@ -137,6 +137,41 @@ function getDieDisplayValue( value: any ) {
 function subFirstDie() {
 	return ratingDice( getRating( subtrait.value ) )[0] || 0;
 }
+
+function getSubtraitStepPrev( currentSize: number, range: number[] = availableValues.value ): number | null {
+	if ( !range.length ) return null;
+	const idx = range.indexOf( currentSize );
+	if ( idx !== -1 ) return idx > 0 ? range[ idx - 1 ] : null;
+	const smaller = range.filter( s => s < currentSize );
+	return smaller.length ? smaller[ smaller.length - 1 ] : null;
+}
+
+function getSubtraitStepNext( currentSize: number, range: number[] = availableValues.value ): number | null {
+	if ( !range.length ) return null;
+	const idx = range.indexOf( currentSize );
+	if ( idx !== -1 ) return idx < range.length - 1 ? range[ idx + 1 ] : null;
+	const larger = range.filter( s => s > currentSize );
+	return larger.length ? larger[ 0 ] : null;
+}
+
+const subtraitStepPrev = computed( () => getSubtraitStepPrev( subFirstDie() ) );
+const subtraitStepNext = computed( () => getSubtraitStepNext( subFirstDie() ) );
+
+function stepSubtraitDown() {
+	const prev = subtraitStepPrev.value;
+	if ( prev !== null && subtrait.value ) {
+		setRatingDie( subtrait.value as unknown as Record<string, any>, prev, availableValues.value );
+		updateCharacter( props.character );
+	}
+}
+
+function stepSubtraitUp() {
+	const next = subtraitStepNext.value;
+	if ( next !== null && subtrait.value ) {
+		setRatingDie( subtrait.value as unknown as Record<string, any>, next, availableValues.value );
+		updateCharacter( props.character );
+	}
+}
 </script>
 
 <template>
@@ -150,7 +185,7 @@ function subFirstDie() {
 				<input v-else type="text" :id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitName" v-model="name">
 			</div>
 
-			<ul class="editor-values">
+			<ul class="editor-values" v-if="!isPlay">
 				<li
 					v-for="size in availableValues"
 					:class="{ 'active': size === subFirstDie() }"
@@ -163,6 +198,29 @@ function subFirstDie() {
 					<span class="c" v-html="getDieDisplayValue(size)"></span>
 				</li>
 			</ul>
+
+			<div class="die-rating-stepper" v-else-if="subFirstDie() > 0">
+				<button
+					type="button"
+					class="btn-step"
+					:disabled="subtraitStepPrev === null"
+					@click.stop="stepSubtraitDown()"
+					title="Step down"
+					aria-label="Step down"
+				>-</button>
+				<div class="die-rating-current">
+					<span class="c" v-html="getDieDisplayValue(subFirstDie())"></span>
+					<span class="die-rating-text">d{{ subFirstDie() }}</span>
+				</div>
+				<button
+					type="button"
+					class="btn-step"
+					:disabled="subtraitStepNext === null"
+					@click.stop="stepSubtraitUp()"
+					title="Step up"
+					aria-label="Step up"
+				>+</button>
+			</div>
 
 			<div class="editor-field" v-if="parentIsBranch && !isPlay">
 				<div class="editor-label">Side</div>
