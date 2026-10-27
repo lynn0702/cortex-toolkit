@@ -442,6 +442,8 @@ export interface CortexToolkitCustom {
 	pool?: boolean;
 	/** Spend control on the set node; spent state lives in spentDice beside the rating. */
 	spendable?: boolean;
+	/** Whether this set permits adding and removing traits during Play mode. */
+	playMutable?: boolean;
 
 	// ring / portrait ring
 	isAttributes?: boolean;

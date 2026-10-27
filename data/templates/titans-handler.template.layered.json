@@ -398,7 +398,8 @@
             10,
             12
           ],
-          "reservedSlots": 2
+          "reservedSlots": 2,
+          "playMutable": true
         },
         "noun": "Complication",
         "plural": "Complications",

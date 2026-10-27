@@ -68,6 +68,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-22: Stress lives as an ordinary rated companion subtrait (the "stress ring" is display of the companion's value); `custom.stress` / `custom.isStressOut` normalize to it, templates carry stress as real traits.
 - 2026-10-18: Attached stress is set-level config (`enabled`, `label`, scale) with an ordinary companion per trait; enabling forces the track on (default five-die scale), disabling deletes the cells.
 - 2026-10-18: Stepped tracks get a generic `view.outIndicator` (default off); legacy `stressConfig.includeOut` still wins when set on `stress` bodies.
+- 2026-10-27 (playMutable carve-out): Play add/remove is decided strictly by `view.playMutable === true`. Name-sniffing ('complication' substring) and the unflagged stress fallback are removed. Stress sets never add or remove traits in Play (stress only steps ratings). Complications sets keep full add and remove capability in Play. The 6 complication sets in the spotlight corpus are flagged by meaning: Misty Cove Complications, Necromancer Complications, Retired No More Aging Complications, Snowfall Initiative Complications, Strange Towns Complications, Titans vs Leviathans Handler Complications. Assets and stress sets remain unflagged.
 
 ### Visibility & name block
 - 2026-10-23: Trait visibility is the word `shown` | `editor-only` | `hidden` on the trait (shown is absence); one shared eye toggle; writes stay sparse against honest defaults.

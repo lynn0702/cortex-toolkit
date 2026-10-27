@@ -7853,7 +7853,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "playMutable": true
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -8444,7 +8445,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "playMutable": true
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -9064,7 +9066,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "playMutable": true
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -12452,7 +12455,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "playMutable": true
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -15266,7 +15270,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "playMutable": true
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -16692,7 +16697,8 @@ const cortexSpotlightTemplates = [
               10,
               12
             ],
-            "reservedSlots": 2
+            "reservedSlots": 2,
+            "playMutable": true
           },
           "noun": "Complication",
           "plural": "Complications",

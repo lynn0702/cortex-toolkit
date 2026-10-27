@@ -207,12 +207,7 @@ export const cortexFunctions = {
 	isPlayAddRemovableSet: function( traitSetArg: any ): boolean {
 		if ( !traitSetArg ) return false;
 		const view = getView( traitSetArg );
-		if ( typeof ( view as any )?.playMutable === 'boolean' ) return ( view as any ).playMutable;
-		const body = view?.style?.body;
-		const name = ( traitSetArg.name || '' ).trim().toLowerCase();
-		if ( name.includes( 'complication' ) ) return true;
-		if ( body === 'stress' && !this.isFixedNameSet( name ) ) return true;
-		return false;
+		return view?.playMutable === true;
 	},
 
 	setPlotPoints: function( char: any, val: number ) {
