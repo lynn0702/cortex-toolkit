@@ -1209,13 +1209,13 @@ async function persist() {
 			} else delete out.sheet;
 			return out;
 		} );
-		session = {
+		session = JSON.parse( JSON.stringify( {
 			openCharacterIDs: openCharacterIDs.value,
 			playViewMode: playViewMode.value,
 			rollerPosition: rollerPosition.value,
 			templates: cortexStorage.pruneTemplates( sheetTemplates.value, characters.value ),
 			preferences: prefs.value,
-		};
+		} ) );
 		// Dirty diff against the last save: whole entries by id, never
 		// field-merged. New ids are upserts; vanished ids are deletes.
 		const curr: Record<string, string> = {};
