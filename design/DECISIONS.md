@@ -80,6 +80,9 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-23: Pip tracks live on the set node's Pip rating; labeled rows on row Pip ratings; `view.pips` keeps perRow/connected/labels only.
 - 2026-10-16: Milestone sets are standard traited sets (`ratingPosition: "none"`, `features: { description: true }`).
 
+### Statements
+- 2026-10-27 (Statements dissolve): `trait.statement` and `trait.questioned` die as named model data fields. A statement is an ordinary child pip trait grouped under a "Statement" child trait (no named field, no kind flag, no statement boolean), with the sentence as the trait's name (and description as alternative). Its Pip rating value represents questioned state: filled (`value: [true]`) = questioned, unfilled (`value: [false]`) = not questioned. Pip range is degenerate (`[true, false]`) and is not stored. Marking questioned is a Play value edit by construction (no special carve-out needed). Set-level `statement` / `hasQuestionedPip` view flags remain presentation-only. Export stops emitting trait-level statement and questioned fields; old-format import converts them into statement child pip traits.
+
 ### Portrait ring
 - 2026-10-12: The ring is generic, not attributes-only (`ringTrait` flag, `ring-*` vocabulary); `getRingTrait` still reads legacy `attributesRing`.
 - 2026-10-12: Scale die offsets X/Y are sliders; the halo drag already consumed them.

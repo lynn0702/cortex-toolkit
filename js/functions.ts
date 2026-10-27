@@ -225,6 +225,35 @@ export const cortexFunctions = {
 		}
 	},
 
+	hasAttachedStress: function( traitSetArg: any ): boolean {
+		if ( !traitSetArg ) return false;
+		const view = getView( traitSetArg );
+		const parts = view?.parts;
+		if ( parts && typeof parts === 'object' && !Array.isArray( parts ) ) {
+			if ( ( parts as any ).stress ) return true;
+		}
+		return Boolean( view?.attachedStress?.enabled );
+	},
+
+	getAttachedStressLabel: function( traitSetArg: any ): string {
+		if ( !traitSetArg ) return 'Stress';
+		const view = getView( traitSetArg );
+		const labels = view?.labels;
+		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+		return view?.attachedStress?.label || 'Stress';
+	},
+
+	getAttachedStressScale: function( traitSetArg: any ): number[] {
+		if ( !traitSetArg ) return [ 4, 6, 8, 10, 12 ];
+		const view = getView( traitSetArg );
+		const legacy = view?.attachedStress;
+		if ( legacy && typeof legacy === 'object' ) {
+			if ( Array.isArray( legacy.scale ) && legacy.scale.length ) return legacy.scale;
+			if ( Array.isArray( legacy.ratingScale ) && legacy.ratingScale.length ) return legacy.ratingScale;
+		}
+		return [ 4, 6, 8, 10, 12 ];
+	},
+
 	// The SFX container is a child trait literally named "SFX" with no
 	// rating of its own; its children are the SFX entries. Shape + name,
 	// never a field — this is the dissolve of the old `sfx` array.

@@ -561,18 +561,15 @@ const outLabel = computed( () => {
 
 const availableValues = computed( () => cortexFunctions.getTraitSetRatings( traitSet.value ) );
 
-const hasAttachedStress = computed( () => Boolean( getView( traitSet.value )?.attachedStress?.enabled ) );
-const attachedStressLabel = computed( () => {
-	const labels = getView( traitSet.value )?.labels;
-	if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
-	return getView( traitSet.value )?.attachedStress?.label || 'Stress';
-} );
-const attachedStressScale = computed( () => getView( traitSet.value )?.attachedStress?.scale || [ 4, 6, 8, 10, 12 ] );
+const hasAttachedStress = computed( () => cortexFunctions.hasAttachedStress( traitSet.value ) );
+const attachedStressLabel = computed( () => cortexFunctions.getAttachedStressLabel( traitSet.value ) );
+const attachedStressScale = computed( () => cortexFunctions.getAttachedStressScale( traitSet.value ) );
 
 const attachedStressCompanion = computed( () => {
 	const subs = trait.value?.traits;
 	if ( !Array.isArray( subs ) ) return undefined;
-	return subs.find( ( st: any ) => st && typeof st === 'object' && st.name === attachedStressLabel.value );
+	const target = attachedStressLabel.value.toLowerCase();
+	return subs.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 } );
 
 const attachedStressValue = computed( {
@@ -587,10 +584,12 @@ const attachedStressValue = computed( {
 		const character = props.character;
 		const t = character.traitSets[ props.traitSetID ].traits[ props.traitID ];
 		if ( !Array.isArray( t.traits ) ) t.traits = [];
-		let companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === attachedStressLabel.value );
+		const label = attachedStressLabel.value;
+		const target = label.toLowerCase();
+		let companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 		if ( val ) {
 			if ( companion ) cortexFunctions.setTraitDice( companion, [ val ] );
-			else t.traits.push( { name: attachedStressLabel.value, rating: { type: 'Die', value: [ val ], range: [ 4, 6, 8, 10, 12 ] } } );
+			else t.traits.push( { name: label, rating: { type: 'Die', value: [ val ], range: attachedStressScale.value.slice() } } );
 		} else if ( companion ) {
 			t.traits.splice( t.traits.indexOf( companion ), 1 );
 		}
@@ -761,14 +760,15 @@ function setAttachedStress( val: any ) {
 	const t = character.traitSets[ props.traitSetID ].traits[ props.traitID ];
 	if ( !Array.isArray( t.traits ) ) t.traits = [];
 	const label = attachedStressLabel.value;
-	const companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === label );
+	const target = label.toLowerCase();
+	const companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 	const current = companion ? ( cortexFunctions.getTraitDice( companion )[0] || 0 ) : 0;
 	if ( current === val ) {
 		if ( companion ) t.traits.splice( t.traits.indexOf( companion ), 1 );
 	} else if ( companion ) {
 		cortexFunctions.setTraitDice( companion, [ val ] );
 	} else {
-		t.traits.push( { name: label, rating: { type: 'Die', value: [ val ], range: [ 4, 6, 8, 10, 12 ] } } );
+		t.traits.push( { name: label, rating: { type: 'Die', value: [ val ], range: attachedStressScale.value.slice() } } );
 	}
 	updateCharacter( character );
 }
@@ -1202,9 +1202,12 @@ function getDieDisplayValue( val: any ) {
 						<div class="editor-label" v-if="!isPlay">Rating</div>
 
 						<!-- UNRATED: the gate offers to add one -->
-						<div class="editor-toggles" v-if="!isRatedTrait && !isPlay">
-							<div><span class="trait-blank-line"></span></div>
-							<div><button type="button" class="btn-step" @click.stop="addRating()">Add rating</button></div>
+						<div class="editor-button-container my-2" v-if="!isRatedTrait && !isPlay">
+							<div class="editor-button-container-inner">
+								<button type="button" class="editor-button" @click.stop="addRating()">
+									<span><i class="fas fa-plus me-1"></i> Add Rating</span>
+								</button>
+							</div>
 						</div>
 
 						<!-- TYPE (Die | Dice | Counter | Pip) -->

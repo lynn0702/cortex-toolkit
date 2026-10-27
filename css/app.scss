@@ -270,9 +270,17 @@ $die-backings:
 	text-transform: uppercase;
 	white-space: nowrap;
 	padding-inline: 2em;
+	padding-block: 0;
 	cursor: pointer;
 	opacity: .85;
 	transition: opacity .2s;
+
+	> span {
+		display: inline-block;
+		line-height: inherit;
+		transform: translateY(-1.5px);
+	}
+
 	&:hover {
 		opacity: 1;
 	}

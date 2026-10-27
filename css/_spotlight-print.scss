@@ -3411,6 +3411,27 @@ body:has(.character-sheet.submode-print) .main {
 .trait-part-stress-label {
 	text-align: center;
 	align-self: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+
+	.attached-stress-divider {
+		border-top: 1px solid #000000;
+		margin: 0.25rem 0 0.2rem 0;
+		width: 100%;
+	}
+
+	.attached-stress-label {
+		font-family: var(--font-primary);
+		font-size: var(--text-meta);
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #000000;
+		line-height: 1.1;
+	}
 }
 .trait-parts .trait-part-description .trait-description {
 	margin-top: 0 !important;
@@ -3446,11 +3467,40 @@ body:has(.character-sheet.submode-print) .main {
 	row-gap: 0.3rem;
 	align-items: center;
 }
+.character-sheet .trait-parts .trait-part-stress {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
 .character-sheet .trait-parts .attached-stress-track {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.15rem;
+	column-gap: 0.1rem;
+	row-gap: 0.3rem;
 	align-items: center;
+	justify-content: center;
+	width: 100%;
+
+	.attached-stress-die {
+		font-size: 0.95rem;
+		cursor: pointer;
+		line-height: 1;
+		user-select: none;
+		transition: transform 0.1s ease;
+
+		&:hover {
+			transform: scale(1.15);
+		}
+	}
+}
+.character-sheet .trait-parts-inline > .trait-part-stress {
+	justify-content: flex-start;
+	width: auto;
+}
+.character-sheet .trait-parts-inline .attached-stress-track {
+	justify-content: flex-start;
+	width: auto;
 }
 /* Rating dice hug the name side: any residual spill goes right, away
    from the trait name, matching legacy row order. */

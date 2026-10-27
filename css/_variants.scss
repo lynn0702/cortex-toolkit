@@ -72,6 +72,7 @@
 			}
 
 			.statement-pip {
+				position: relative;
 				display: inline-block;
 				width: 10px;
 				height: 10px;
@@ -88,6 +89,21 @@
 				transition: background-color 0.12s ease, transform 0.1s ease;
 				print-color-adjust: exact;
 				-webkit-print-color-adjust: exact;
+
+				&::before {
+					content: '';
+					position: absolute;
+					top: -12px;
+					bottom: -12px;
+					left: -12px;
+					right: -12px;
+				}
+
+				@media print {
+					&::before {
+						display: none;
+					}
+				}
 
 				&:hover {
 					transform: scale(1.2);

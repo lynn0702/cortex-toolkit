@@ -180,9 +180,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		return cortexFunctions.isStatementFilled( trait );
 	}
 
-	function toggleTraitQuestioned( sArg: any, t: any ) {
+	function toggleTraitQuestioned( sArg: any, t: any, traitArg?: Trait ) {
 		if ( props.submode === 'print' ) return;
-		const trait = props.character?.traitSets?.[ sArg ]?.traits?.[ t ];
+		const trait = traitArg ?? props.character?.traitSets?.[ sArg ]?.traits?.[ t ];
 		if ( !trait ) return;
 		if ( !cortexFunctions.setStatementFilled( trait, !cortexFunctions.isStatementFilled( trait ) ) ) return;
 		updateCharacter( props.character );
@@ -627,24 +627,15 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function hasAttachedStress( traitSetArg: TraitSet ) {
-		const parts = getParts( traitSetArg );
-		if ( parts ) return Boolean( parts.stress );
-		return Boolean( getView( traitSetArg )?.attachedStress?.enabled );
+		return cortexFunctions.hasAttachedStress( traitSetArg );
 	}
 
 	function getAttachedStressLabel( traitSetArg: TraitSet ) {
-		const labels = getView( traitSetArg )?.labels;
-		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
-		return getView( traitSetArg )?.attachedStress?.label || 'Stress';
+		return cortexFunctions.getAttachedStressLabel( traitSetArg );
 	}
 
 	function getAttachedStressScale( traitSetArg: TraitSet ) {
-		const legacy = getView( traitSetArg )?.attachedStress;
-		if ( legacy && typeof legacy === 'object' ) {
-			if ( Array.isArray( legacy.scale ) && legacy.scale.length ) return legacy.scale;
-			if ( Array.isArray( legacy.ratingScale ) && legacy.ratingScale.length ) return legacy.ratingScale;
-		}
-		return [ 4, 6, 8, 10, 12 ];
+		return cortexFunctions.getAttachedStressScale( traitSetArg );
 	}
 
 	function getAttachedStressValue( trait: Trait, traitSetArg?: TraitSet ) {
@@ -659,12 +650,12 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	function getStressCompanion( traitSetArg: TraitSet, trait: Trait ) {
 		const subs = ( trait as any )?.traits;
 		if ( !Array.isArray( subs ) ) return undefined;
-		const name = getAttachedStressLabel( traitSetArg );
-		return subs.find( ( st: any ) => st && typeof st === 'object' && st.name === name );
+		const name = getAttachedStressLabel( traitSetArg ).toLowerCase();
+		return subs.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === name );
 	}
 
 	function isStressCompanion( traitSetArg: TraitSet, subName: unknown ) {
-		return hasAttachedStress( traitSetArg ) && subName === getAttachedStressLabel( traitSetArg );
+		return hasAttachedStress( traitSetArg ) && typeof subName === 'string' && subName.toLowerCase() === getAttachedStressLabel( traitSetArg ).toLowerCase();
 	}
 
 	function visibleSubtraits( traitSetArg: TraitSet, trait: Trait ) {
@@ -692,15 +683,16 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const trait = set?.traits?.[t];
 		if ( !trait ) return;
 		const name = getAttachedStressLabel( set );
+		const target = name.toLowerCase();
 		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
-		const idx = trait.traits.findIndex( ( st: any ) => st && typeof st === 'object' && st.name === name );
+		const idx = trait.traits.findIndex( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 		const cur = idx !== -1 ? ( getTraitDice( trait.traits[idx] )[0] || 0 ) : 0;
 		if ( cur === size ) {
 			if ( idx !== -1 ) trait.traits.splice( idx, 1 );
 		} else if ( idx !== -1 ) {
 			cortexFunctions.setTraitDice( trait.traits[idx], [ size ] );
 		} else {
-			trait.traits.push( { name, rating: { type: 'Die', value: [ size ], range: [ 4, 6, 8, 10, 12 ] }, description: '', traits: [], tags: [], custom: {} } );
+			( trait.traits as any[] ).push( { name, rating: { type: 'Die', value: [ size ], range: getAttachedStressScale( set ).slice() } } );
 		}
 		updateCharacter( props.character );
 	}
@@ -711,15 +703,22 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		const trait = set?.traits?.[t];
 		if ( !trait ) return;
 		const name = getAttachedStressLabel( set );
+		const target = name.toLowerCase();
 		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
-		let companion: any = trait.traits.find( ( st: any ) => st && typeof st === 'object' && st.name === name );
+		let companion: any = trait.traits.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 		if ( !companion ) {
-			companion = { name, description: '', traits: [], tags: [], custom: {} };
-			trait.traits.push( companion );
-		}
-		companion.isOut = !companion.isOut;
-		if ( !companion.isOut && !( ( getTraitDice( companion )[0] || 0 ) > 0 ) ) {
-			trait.traits.splice( trait.traits.indexOf( companion ), 1 );
+			const scale = getAttachedStressScale( set );
+			companion = { name, rating: { type: 'Die', value: [ scale[0] || 4 ], range: scale.slice(), out: true } };
+			( trait.traits as any[] ).push( companion );
+		} else {
+			companion.isOut = !companion.isOut;
+			const r = companion.rating;
+			if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) {
+				r.out = Boolean( companion.isOut );
+			}
+			if ( !companion.isOut && !( ( getTraitDice( companion )[0] || 0 ) > 0 ) ) {
+				trait.traits.splice( trait.traits.indexOf( companion ), 1 );
+			}
 		}
 		updateCharacter( props.character );
 	}
