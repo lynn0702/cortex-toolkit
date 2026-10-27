@@ -17,6 +17,7 @@ const emit = defineEmits<{
 	( e: 'add' ): void;
 	( e: 'setPlayView', mode: string ): void;
 	( e: 'toggleStudio', tab: 'properties' | 'roller' | 'json' ): void;
+	( e: 'saveSession' ): void;
 }>();
 
 function safeImageUrl( url: any ) {
@@ -104,6 +105,17 @@ function safeImageUrl( url: any ) {
 					<i class="fas fa-dice-d20"></i>
 					<span class="sheet-bar-btn-label">Roller</span>
 					<span class="sheet-bar-dice-count" v-if="rollerCount && rollerCount > 0">{{ rollerCount }}</span>
+				</button>
+
+				<button
+					type="button"
+					class="sheet-bar-btn sheet-bar-save"
+					@click.stop="emit('saveSession')"
+					title="Save session"
+					v-if="submode === 'play'"
+				>
+					<i class="fas fa-save"></i>
+					<span class="sheet-bar-btn-label">Save</span>
 				</button>
 			</div>
 		</div>

@@ -505,11 +505,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 				ppDelta: 1,
 				ppCommitted: false
 			} );
-			if ( props.character ) {
-				const curPP = Number( props.character.plotPoints ) || 0;
-				cortexFunctions.setPlotPoints( props.character, curPP + 1 );
-				updateCharacter( props.character );
-			}
 		}
 	}
 

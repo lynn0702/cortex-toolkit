@@ -40,6 +40,7 @@ const emit = defineEmits<{
 	( e: 'addDie', die: any ): void;
 	( e: 'removeDie', index: number ): void;
 	( e: 'clearPool' ): void;
+	( e: 'settlePP', delta: number ): void;
 }>();
 
 const editingType = computed( () => {
@@ -280,6 +281,7 @@ defineExpose( {
 					@addDie="emit('addDie', $event)"
 					@removeDie="emit('removeDie', $event)"
 					@clearPool="emit('clearPool')"
+					@settlePP="emit('settlePP', $event)"
 				/>
 			</div>
 

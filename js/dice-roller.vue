@@ -36,6 +36,7 @@ const emit = defineEmits<{
 	( e: 'removeDie', index: number ): void;
 	( e: 'clearPool' ): void;
 	( e: 'togglePosition' ): void;
+	( e: 'settlePP', delta: number ): void;
 }>();
 
 const savedCombine = localStorage.getItem( 'cortexCombineResources' );
@@ -245,8 +246,15 @@ function duplicateDie( item: any ) {
 function roll() {
 	if ( !props.pool || props.pool.is_empty() ) return;
 
+	let ppToSettle = 0;
 	for ( const item of props.pool.items ) {
+		if ( !item.ppCommitted && item.ppDelta ) {
+			ppToSettle += Number( item.ppDelta ) || 0;
+		}
 		( item as any ).ppCommitted = true;
+	}
+	if ( ppToSettle > 0 ) {
+		emit( 'settlePP', ppToSettle );
 	}
 
 	// Thresholds resolve per pool section before rolling: the action

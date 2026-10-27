@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { cortexMigration } from './migration.ts';
 import { cortexStorage } from './storage.ts';
@@ -130,6 +130,15 @@ onMounted( async () => {
 
 // ---- methods: view ----
 function setMode( m: string, sub: string | null, updateHash = true ) {
+	if ( mode.value === 'character' && submode.value === 'play' && ( m !== 'character' || sub !== 'play' ) ) {
+		if ( hasUncommittedSessionChanges() ) {
+			pendingNavigation = () => {
+				setMode( m, sub, updateHash );
+			};
+			showPlaySaveConfirm.value = true;
+			return;
+		}
+	}
 	if ( m === 'character' && sub === 'play' ) {
 		if ( !openCharacterIDs.value.length && characters.value.length ) {
 			if ( characterID.value ) {
@@ -309,34 +318,46 @@ function addDieToRoller( dieData: any ) {
 
 const studioPanelRef = ref<any>( null );
 const showPlaySaveConfirm = ref( false );
+let pendingNavigation: ( () => void ) | null = null;
+const baselineCharacters = new Map<string, string>();
+
+function initBaseline( chars: any[] ) {
+	baselineCharacters.clear();
+	( chars || [] ).forEach( ( c: any ) => {
+		if ( c && c.id != null ) {
+			baselineCharacters.set( String( c.id ), JSON.stringify( toRaw( c ) ) );
+		}
+	} );
+}
+
+function hasUncommittedSessionChanges(): boolean {
+	for ( const c of characters.value ) {
+		if ( !c || c.id == null ) continue;
+		const id = String( c.id );
+		const base = baselineCharacters.get( id );
+		if ( base !== undefined ) {
+			if ( base !== JSON.stringify( toRaw( c ) ) ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 function removeDieFromRoller( index: number ) {
-	const item = dicePool.value.items[ index ];
-	if ( item && !item.ppCommitted && item.ppDelta && character.value ) {
-		const currentPP = Number( character.value.plotPoints || 0 );
-		const newPP = Math.max( 0, currentPP - item.ppDelta );
-		cortexFunctions.setPlotPoints( character.value, newPP );
-		updateCharacter( character.value );
-	}
 	dicePool.value.removeAt( index );
 }
 
 function clearDicePool() {
-	if ( character.value ) {
-		let totalDelta = 0;
-		for ( const item of dicePool.value.items ) {
-			if ( !item.ppCommitted && item.ppDelta ) {
-				totalDelta += item.ppDelta;
-			}
-		}
-		if ( totalDelta > 0 ) {
-			const currentPP = Number( character.value.plotPoints || 0 );
-			const newPP = Math.max( 0, currentPP - totalDelta );
-			cortexFunctions.setPlotPoints( character.value, newPP );
-			updateCharacter( character.value );
-		}
-	}
 	dicePool.value.clear();
+}
+
+function handleSettlePP( delta: number ) {
+	if ( character.value && delta > 0 ) {
+		const currentPP = Number( character.value.plotPoints || 0 );
+		cortexFunctions.setPlotPoints( character.value, currentPP + delta );
+		updateCharacter( character.value );
+	}
 }
 
 function triggerRollFromPill() {
@@ -358,15 +379,46 @@ function toggleMobileRollerDrawer() {
 	}
 }
 
-function confirmPlaySave() {
+async function confirmPlaySave() {
 	showPlaySaveConfirm.value = false;
-	persist().then( () => {
-		showToast( 'Saved session changes to character.' );
-	} );
+	await persist( { allowSessionCharacterSave: true } );
+	for ( const c of characters.value ) {
+		if ( c && c.id != null ) {
+			baselineCharacters.set( String( c.id ), JSON.stringify( toRaw( c ) ) );
+		}
+	}
+	showToast( 'Saved session changes to character.' );
+	if ( pendingNavigation ) {
+		const nav = pendingNavigation;
+		pendingNavigation = null;
+		nav();
+	}
+}
+
+function discardPlaySession() {
+	showPlaySaveConfirm.value = false;
+	for ( let i = 0; i < characters.value.length; i++ ) {
+		const c = characters.value[ i ];
+		if ( c && c.id != null ) {
+			const baseJson = baselineCharacters.get( String( c.id ) );
+			if ( baseJson ) {
+				characters.value[ i ] = structuredClone( JSON.parse( baseJson ) );
+			}
+		}
+	}
+	dicePool.value.clear();
+	showToast( 'Discarded session changes.' );
+	if ( pendingNavigation ) {
+		const nav = pendingNavigation;
+		pendingNavigation = null;
+		nav();
+	}
 }
 
 function cancelPlaySave() {
 	showPlaySaveConfirm.value = false;
+	pendingNavigation = null;
+	updateRouteHash();
 }
 
 function safeImageUrl( url: any ) {
@@ -1200,6 +1252,13 @@ async function bootFromStorage() {
 		prefs.value = cortexStorage.normalizePreferences( stored.preferences );
 		await ensureSpotlightTemplates();
 		characters.value = ( stored.characters || [] ).map( ( c: any ) => resolveStoredCharacter( c ) );
+		initBaseline( characters.value );
+		lastSavedCharacters = {};
+		( stored.characters || [] ).forEach( ( c: any ) => {
+			if ( c && c.id != null ) {
+				lastSavedCharacters![ String( c.id ) ] = JSON.stringify( c );
+			}
+		} );
 		playViewMode.value = stored.playViewMode || 'split';
 		panelPosition.value = ( stored.rollerPosition === 'left' || stored.rollerPosition === 'right' ) ? stored.rollerPosition : 'right';
 		rollerPosition.value = panelPosition.value;
@@ -1209,6 +1268,13 @@ async function bootFromStorage() {
 		if ( characterID.value && !openCharacterIDs.value.includes( characterID.value ) ) {
 			openCharacterIDs.value.push( characterID.value );
 		}
+		lastSavedSession = JSON.stringify( {
+			openCharacterIDs: openCharacterIDs.value,
+			playViewMode: playViewMode.value,
+			rollerPosition: rollerPosition.value,
+			templates: cortexStorage.pruneTemplates( sheetTemplates.value, characters.value ),
+			preferences: prefs.value,
+		} );
 		if ( stored.loadError ) {
 			storeError.value = stored.loadError;
 			showToast( 'Saved data was damaged — starting fresh. Export backups regularly.' );
@@ -1231,7 +1297,7 @@ async function bootFromStorage() {
 let lastSavedCharacters: Record<string, string> | null = null;
 let lastSavedSession: string | null = null;
 
-async function persist() {
+async function persist( options?: { allowSessionCharacterSave?: boolean } ) {
 	let upsert: any[] = [];
 	let remove: string[] = [];
 	let session: any;
@@ -1296,10 +1362,18 @@ async function persist() {
 			// then the merge keeps anything this tab does not know about.
 			upsert = sparse.filter( ( c: any ) => c && c.id != null );
 		}
+
+		// Persist gating in Play:
+		const isGatedPlay = submode.value === 'play' && !options?.allowSessionCharacterSave;
+		if ( isGatedPlay ) {
+			upsert = [];
+			remove = [];
+		}
+
 		sessionJson = JSON.stringify( session );
 		// No-op gate: nothing changed since the last save, no write.
 		if ( !upsert.length && !remove.length && lastSavedSession === sessionJson ) return;
-		snapshot = curr;
+		snapshot = isGatedPlay ? ( lastSavedCharacters || {} ) : curr;
 	} catch ( err ) {
 		showToast( 'Could not save changes.' );
 		return;
@@ -1309,6 +1383,13 @@ async function persist() {
 		const result = await cortexStorage.saveChanges( { upsert, remove, session } );
 		lastSavedCharacters = snapshot;
 		lastSavedSession = sessionJson;
+		if ( submode.value !== 'play' || options?.allowSessionCharacterSave ) {
+			for ( const c of characters.value ) {
+				if ( c && c.id != null ) {
+					baselineCharacters.set( String( c.id ), JSON.stringify( toRaw( c ) ) );
+				}
+			}
+		}
 		if ( result.merged ) showToast( 'Merged changes from another tab.' );
 	} catch ( err: any ) {
 		if ( err && ( err.name === 'QuotaExceededError' || err.code === 22 ) ) {
@@ -1354,7 +1435,8 @@ defineExpose( {
 	handleGlobalPointerDown, handleMainClick, clearSelected, handleEditorFocusIn,
 	bootFromStorage, persist, saveLocalData, mobileShowSheet, mobileShowRoller,
 	isNarrowViewport, handleToggleStudio,
-	studioPanelRef, showPlaySaveConfirm, confirmPlaySave, cancelPlaySave,
+	studioPanelRef, showPlaySaveConfirm, confirmPlaySave, discardPlaySession, cancelPlaySave,
+	hasUncommittedSessionChanges, baselineCharacters,
 	triggerRollFromPill, triggerClearFromPill, toggleMobileRollerDrawer,
 } );
 </script>
@@ -1409,6 +1491,7 @@ defineExpose( {
 					@addDie="addDieToRoller"
 					@removeDie="removeDieFromRoller"
 					@clearPool="clearDicePool"
+					@settlePP="handleSettlePP"
 				/>
 
 				<div class="sheet-column">
@@ -1426,6 +1509,7 @@ defineExpose( {
 				@add="isAddCharacterModalOpen = true"
 				@setPlayView="setPlayViewMode"
 				@toggleStudio="handleToggleStudio"
+				@saveSession="saveLocalData"
 			/>
 
 			<main class="main" ref="main" @scroll="setViewY"
@@ -1615,11 +1699,14 @@ defineExpose( {
 						<div class="modal-close" @click.prevent="cancelPlaySave"><i class="fas fa-times"></i></div>
 						<div class="modal-inner">
 							<p>Save session state to character <strong>{{ character?.name || 'this character' }}</strong>?</p>
-							<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This will permanently overwrite the baseline character with current session changes (spent dice, stress, complications).</p>
+							<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This will overwrite the baseline character with current session changes.</p>
 							<div class="modal-button-container">
 								<div class="modal-button-container-inner">
 									<div class="modal-button modal-button-primary" @click.stop="confirmPlaySave">
-										<span><i class="fas fa-save"></i> Save</span>
+										<span><i class="fas fa-save"></i> Save session into character</span>
+									</div>
+									<div class="modal-button modal-button-danger" @click.stop="discardPlaySession">
+										<span><i class="fas fa-undo"></i> Discard session changes</span>
 									</div>
 									<div class="modal-button modal-button-no" @click.stop="cancelPlaySave">
 										<span><i class="fas fa-times"></i> Cancel</span>
