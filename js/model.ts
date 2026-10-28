@@ -314,6 +314,20 @@ export function getPillarLabel( character: unknown, pillarKey: string ): string 
 		const flat = labels[ 'pillar_' + key ];
 		if ( typeof flat === 'string' && flat.trim().length > 0 ) return flat.trim();
 	}
+	const sets = ( character && typeof character === 'object' && Array.isArray( ( character as any ).traitSets ) )
+		? ( character as any ).traitSets : [];
+	for ( const ts of sets ) {
+		const tsLabels = getView( ts )?.labels as Record<string, any> | undefined;
+		if ( tsLabels && typeof tsLabels === 'object' ) {
+			const tsMap = tsLabels.pillars;
+			if ( tsMap && typeof tsMap === 'object' && !Array.isArray( tsMap ) ) {
+				const tsCustom = tsMap[ key ];
+				if ( typeof tsCustom === 'string' && tsCustom.trim().length > 0 ) return tsCustom.trim();
+			}
+			const tsFlat = tsLabels[ 'pillar_' + key ];
+			if ( typeof tsFlat === 'string' && tsFlat.trim().length > 0 ) return tsFlat.trim();
+		}
+	}
 	return key.charAt( 0 ).toUpperCase() + key.slice( 1 );
 }
 

@@ -76,6 +76,17 @@ function toggleDarkMode() {
 	} catch ( _e ) {}
 }
 
+const isDesktopPillars = ref<boolean>(
+	typeof localStorage !== 'undefined' ? localStorage.getItem( 'cortexPlayPillars' ) === 'true' : false
+);
+
+function toggleDesktopPillars() {
+	isDesktopPillars.value = !isDesktopPillars.value;
+	try {
+		localStorage.setItem( 'cortexPlayPillars', String( isDesktopPillars.value ) );
+	} catch ( _e ) {}
+}
+
 watch( isDarkMode, ( dark ) => {
 	if ( typeof document !== 'undefined' ) {
 		document.documentElement.setAttribute( 'data-theme', dark ? 'dark' : 'light' );
@@ -1518,12 +1529,14 @@ defineExpose( {
 				:isStudioPanelOpen="isStudioPanelOpen"
 				:studioPanelTab="studioPanelTab"
 				:rollerCount="dicePool.items.length"
+				:isDesktopPillars="isDesktopPillars"
 				@focus="focusCharacter"
 				@close="closeOpenCharacter"
 				@add="isAddCharacterModalOpen = true"
 				@setPlayView="setPlayViewMode"
 				@toggleStudio="handleToggleStudio"
 				@saveSession="saveLocalData"
+				@togglePillars="toggleDesktopPillars"
 			/>
 
 			<main class="main" ref="main" @scroll="setViewY"
@@ -1609,6 +1622,7 @@ defineExpose( {
 								:editing="editing"
 								:viewY="viewY"
 								:dicePool="dicePool"
+								:isDesktopPillars="isDesktopPillars"
 							@selectElement="selectElement"
 							@updateCharacter="updateCharacter"
 							@exportCharacter="exportCharacter"
@@ -1627,6 +1641,7 @@ defineExpose( {
 						:editing="editing"
 						:viewY="viewY"
 						:dicePool="dicePool"
+						:isDesktopPillars="isDesktopPillars"
 						@selectElement="selectElement"
 						@updateCharacter="updateCharacter"
 						@exportCharacter="exportCharacter"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
+import TraitSetMini from './trait-set-mini.vue';
 
 /**
  * Style Gallery — visual side panel for adding trait sets.
@@ -139,11 +140,16 @@ const emit = defineEmits<{
 const styles = STYLE_GALLERY_STYLES;
 const builtInPresets = Object.values( cortexSetPresets );
 const customPresets = ref<SetPresetEntry[]>( [] );
+const showTraitSetMini = ref( false );
 const location = ref( 'left' );
 const page = ref( 1 );
 
 function refreshCustomPresets() {
 	customPresets.value = cortexFunctions.getCustomSetPresets();
+}
+
+function onPresetSavedInMini() {
+	refreshCustomPresets();
 }
 
 function removeCustomPreset( id: string ) {
@@ -182,11 +188,16 @@ watch( () => props.open, ( isOpen ) => {
 						</div>
 					</div>
 					<div class="gallery-presets-section">
-						<div class="editor-label" style="margin-bottom: 0.4rem;">Set Presets</div>
+						<div class="gallery-presets-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+							<div class="editor-label">Set Presets</div>
+							<button type="button" class="btn-gallery-add btn-open-mini" style="width: auto; padding: 0.25rem 0.65rem;" @click.stop="showTraitSetMini = true">
+								<i class="fas fa-th-large"></i> New Card in Mini
+							</button>
+						</div>
 						<div class="style-gallery-grid" style="margin-bottom: 1.25rem;">
 							<div class="style-gallery-card" v-for="preset in builtInPresets" :key="'builtin-' + preset.id">
 								<div class="style-gallery-name">{{ preset.label }}</div>
-								<div class="style-gallery-blurb">{{ preset.blurb }}</div>
+								<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 								<button type="button" class="btn-gallery-add" @click.stop="emit('addPresetSet', preset, location, page)">
 									<i class="fas fa-plus"></i> Add Preset
 								</button>
@@ -198,7 +209,7 @@ watch( () => props.open, ( isOpen ) => {
 										<i class="fas fa-trash-alt"></i>
 									</button>
 								</div>
-								<div class="style-gallery-blurb">{{ preset.blurb || 'Saved custom set preset' }}</div>
+								<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 								<button type="button" class="btn-gallery-add" @click.stop="emit('addPresetSet', preset, location, page)">
 									<i class="fas fa-plus"></i> Add Preset
 								</button>
@@ -219,5 +230,10 @@ watch( () => props.open, ( isOpen ) => {
 				</div>
 			</aside>
 		</transition>
+		<TraitSetMini
+			v-if="showTraitSetMini"
+			@close="showTraitSetMini = false"
+			@saved="onPresetSavedInMini"
+		/>
 	</teleport>
 </template>

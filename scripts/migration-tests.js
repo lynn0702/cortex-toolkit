@@ -464,7 +464,7 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   const resCustom = M.migrateSetParts(customScaleSet, customScaleSet.view);
   ok(resCustom === 'parts', 'custom scale migrates to parts instead of bailing to legacy');
   ok(customScaleSet.view.attachedStress === undefined, 'declaration removed');
-  ok(customScaleSet.view.labels && customScaleSet.view.labels.stress === 'STRESS', 'label migrated to labels.stress');
+  ok(customScaleSet.view.labels && customScaleSet.view.labels.track === 'STRESS', 'label migrated to labels.track');
   ok(customScaleSet.view.parts && customScaleSet.view.parts.track && customScaleSet.view.parts.trackLabel, 'track parts created');
   ok(customScaleSet.traits[0].traits.length === 1, 'Prowess has 1 companion seeded');
   const seeded = customScaleSet.traits[0].traits[0];
@@ -492,7 +492,7 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   const resDefault = M.migrateSetParts(defaultScaleSet, defaultScaleSet.view);
   ok(resDefault === 'parts', 'default scale migrates to parts');
   ok(defaultScaleSet.view.attachedStress === undefined, 'default declaration removed');
-  ok(defaultScaleSet.view.labels?.stress === undefined, 'default label stays implicit');
+  ok(defaultScaleSet.view.labels?.track === undefined, 'default label stays implicit');
   ok(defaultScaleSet.traits[0].traits.length === 0 && defaultScaleSet.traits[1].traits.length === 0, 'default scale seeds nothing');
 
   // 15c. includeOut: true migrates to outIndicator: true

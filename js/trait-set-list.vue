@@ -12,10 +12,11 @@ const {
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
 	handleSteppedDieClick, handleOutClick, shouldShowOut, isTraitOut, getTraitDice, getRating,
 	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, getSharedHinderLines, renderHinderLine, getCompactSfxText,
-	hasTrackPart, getTrackLabel, getTrackScale, getTrackValue, visibleSubtraits,
+	hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue, visibleSubtraits,
 	getSetRatingDie,
 	shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
 	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
+	getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
 	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie
 } = injectTraitSet();
 </script>
@@ -180,6 +181,21 @@ const {
 							</div>
 							<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
 							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1"></div>
+							<div class="trait-value pip-value" v-else-if="getRating(item.trait)?.type === 'Pip'">
+								<span
+									v-for="(filled, pIdx) in getTraitPipBubbles(item.trait)"
+									:key="pIdx"
+									class="pip-bubble"
+									:class="{ filled: !printBlank && filled }"
+									role="checkbox"
+									:aria-checked="filled ? 'true' : 'false'"
+									:aria-label="`Pip ${pIdx + 1} of ${item.trait.name || 'trait'}`"
+									@click.stop="toggleTraitPipBubble(item.trait, pIdx)"
+								></span>
+							</div>
+							<div class="trait-value counter-value" v-else-if="getRating(item.trait)?.type === 'Counter'">
+								<span class="counter-display">{{ getRating(item.trait)?.value?.[0] ?? 0 }}</span>
+							</div>
 							<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">
 								<div
 									v-for="(dieSize, dIdx) in (printBlank || item.isPlaceholder ? getTraitSetRatings(traitSet) : getTraitDice(item.trait))"
@@ -256,7 +272,7 @@ const {
 						<!-- TRACK LABEL -->
 						<div v-if="partsGridFor(traitSet)?.cells.trackLabel" class="trait-part trait-part-track-label" :style="partCellStyle(partsGridFor(traitSet), 'trackLabel')">
 							<div class="attached-stress-divider" v-if="!isPartsInline(traitSet)"></div>
-							<span class="attached-stress-label">{{ getTrackLabel(traitSet) }}</span>
+							<span class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
 						</div>
 						<!-- TRACK CELLS -->
 						<div v-if="partsGridFor(traitSet)?.cells.track" class="trait-part trait-part-track" :style="partCellStyle(partsGridFor(traitSet), 'track') + '; --track-faces: ' + getTrackScale(traitSet).length">
@@ -271,7 +287,7 @@ const {
 									}"
 									role="button"
 									tabindex="0"
-									:aria-label="`Stage d${size} ${getTrackLabel(traitSet)} from ${item.trait.name || 'trait'}`"
+									:aria-label="`Stage d${size} ${getTraitTrackLabel(traitSet, item.trait)} from ${item.trait.name || 'trait'}`"
 									:aria-pressed="getTrackValue(item.trait, traitSet) === size ? 'true' : 'false'"
 									@click.stop="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
 									@keydown.enter.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
@@ -294,7 +310,7 @@ const {
 									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getTrackValue(item.trait, traitSet) > 0"
 									type="button"
 									class="btn-stage-stress"
-									@click.stop="stageTrackDie(item.trait, getTrackValue(item.trait, traitSet), getTrackLabel(traitSet), traitSet)"
+									@click.stop="stageTrackDie(item.trait, getTrackValue(item.trait, traitSet), getTraitTrackLabel(traitSet, item.trait), traitSet)"
 									title="Stage track die into pool"
 									aria-label="Stage track die into pool"
 								>+<i class="fas fa-dice" aria-hidden="true"></i></button>
@@ -355,6 +371,59 @@ const {
 								</li>
 							</ul>
 						</div>
+						<!-- DYNAMIC CHILD TRAIT PARTS -->
+						<template v-for="partKey in getDynamicChildParts(traitSet)" :key="partKey">
+							<div
+								v-if="partsGridFor(traitSet)?.cells[partKey]"
+								:class="'trait-part trait-part-' + partKey.replace(/[^a-zA-Z0-9_-]/g, '-' )"
+								:style="partCellStyle(partsGridFor(traitSet), partKey)"
+							>
+								<template v-if="parseChildPartKey(partKey).kind === 'label'">
+									<span class="child-part-label" v-if="(getView(traitSet)?.parts?.[partKey] as any)?.marker === 'L'">
+										{{ getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.name || parseChildPartKey(partKey).noun }}
+									</span>
+									<span class="child-part-text" v-else>
+										{{ getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.description || getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.name || '' }}
+									</span>
+								</template>
+								<template v-else-if="parseChildPartKey(partKey).kind === 'rating'">
+									<div class="trait-value child-part-value">
+										<template v-if="getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Pip'">
+											<span
+												v-for="(filled, pIdx) in getTraitPipBubbles(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))"
+												:key="pIdx"
+												class="pip-bubble"
+												:class="{ filled: !printBlank && filled }"
+												role="checkbox"
+												:aria-checked="filled ? 'true' : 'false'"
+												@click.stop="toggleTraitPipBubble(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun), pIdx)"
+											></span>
+										</template>
+										<template v-else-if="getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Die'">
+											<span
+												v-for="size in (getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.range || [4,6,8,10,12])"
+												:key="size"
+												class="c"
+												:class="{ active: !printBlank && isDieActive(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)!, size) }"
+												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)!, size))"
+											></span>
+										</template>
+										<template v-else-if="getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Dice'">
+											<div
+												v-for="(dieSize, dIdx) in (getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.value || [])"
+												:key="dIdx"
+												class="multidie-badge-wrap"
+											>
+												<span class="c active" v-html="renderDieValueForPrint(Number(dieSize) || 6, !printBlank)"></span>
+											</div>
+										</template>
+										<template v-else-if="getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Counter'">
+											<span class="counter-display">{{ getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.value?.[0] ?? 0 }}</span>
+										</template>
+									</div>
+								</template>
+							</div>
+						</template>
 						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
 						<div class="distinction-sfx-slot" style="grid-column: 1 / -1;" v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
 							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
@@ -659,7 +728,7 @@ const {
 						<div class="attached-stress-block" v-if="hasTrackPart(traitSet)">
 							<div class="attached-stress-divider"></div>
 							<div class="attached-stress-header">
-								<span class="attached-stress-label">{{ getTrackLabel(traitSet) }}</span>
+								<span class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
 							</div>
 							<div class="attached-stress-track">
 								<span
@@ -672,7 +741,7 @@ const {
 									}"
 									role="button"
 									tabindex="0"
-									:aria-label="`Stage d${size} from ${getTrackLabel(traitSet) || 'track'}`"
+									:aria-label="`Stage d${size} from ${getTraitTrackLabel(traitSet, item.trait) || 'track'}`"
 									:aria-pressed="getTrackValue(item.trait, traitSet) === size ? 'true' : 'false'"
 									@click.stop="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
 									@keydown.enter.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
@@ -684,7 +753,7 @@ const {
 									:class="{ 'stress-out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
-									:aria-label="`Out for ${getTrackLabel(traitSet) || 'track'}`"
+									:aria-label="`Out for ${getTraitTrackLabel(traitSet, item.trait) || 'track'}`"
 									:aria-pressed="isTrackOut(item.trait, traitSet) ? 'true' : 'false'"
 									@click.stop="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
 									@keydown.enter.prevent="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
@@ -695,7 +764,7 @@ const {
 									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getTrackValue(item.trait, traitSet) > 0"
 									type="button"
 									class="btn-stage-stress"
-									@click.stop="stageTrackDie(item.trait, getTrackValue(item.trait, traitSet), getTrackLabel(traitSet), traitSet)"
+									@click.stop="stageTrackDie(item.trait, getTrackValue(item.trait, traitSet), getTraitTrackLabel(traitSet, item.trait), traitSet)"
 									title="Stage track die into pool"
 									aria-label="Stage track die into pool"
 								>+<i class="fas fa-dice" aria-hidden="true"></i></button>

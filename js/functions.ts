@@ -168,6 +168,17 @@ export const cortexFunctions = {
 		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1.45rem" height="1.45rem" style="display:inline-block; vertical-align:middle; overflow:visible; width:var(--diecon-size, 1.45rem); height:var(--diecon-size, 1.45rem);">${defs}${shape}${text}</svg>`;
 	},
 
+	// Geometry-only die SVG for miniature icons: reuses the exact diecon polygon
+	// shapes with aria-hidden="true" and no inner text node so screen readers
+	// read only the surrounding HTML labels.
+	renderDieGeometrySVG: function( dieValue: number, isFilled = false, extraClass = '' ) {
+		const raw = this.renderDieconSVG( dieValue, isFilled, extraClass );
+		return raw
+			.replace( /<text[^>]*>[\s\S]*?<\/text>/g, '' )
+			.replace( 'role="img"', 'aria-hidden="true"' )
+			.replace( /aria-label="[^"]*"\s*/g, '' );
+	},
+
 	getTraitSetRatings: function( traitSet: TraitSet ) {
 		const custom = getView( traitSet );
 		if ( Array.isArray(custom?.ratingScale) && custom.ratingScale.length > 0 ) {
@@ -241,7 +252,7 @@ export const cortexFunctions = {
 		if ( !traitSetArg ) return 'Stress';
 		const view = getView( traitSetArg );
 		const labels = view?.labels;
-		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+		if ( labels && typeof labels.track === 'string' && labels.track.length ) return labels.track;
 		return 'Stress';
 	},
 
@@ -252,15 +263,18 @@ export const cortexFunctions = {
 		const traits = Array.isArray( rawTraits )
 			? rawTraits
 			: ( rawTraits && typeof rawTraits === 'object' ? Object.values( rawTraits ) : [] );
+		let firstAnyRange: number[] | null = null;
 		for ( const tr of traits ) {
 			if ( !tr || typeof tr !== 'object' ) continue;
 			const rawSubs = ( tr as any ).traits;
 			if ( Array.isArray( rawSubs ) ) {
 				for ( const st of rawSubs ) {
 					if ( !st || typeof st !== 'object' ) continue;
-					if ( typeof st.name === 'string' && st.name.toLowerCase() === label ) {
-						const r = st.rating;
-						if ( r && typeof r === 'object' && Array.isArray( r.range ) && r.range.length ) {
+					if ( this.isSfxContainer( st ) || this.isStatementContainer( st ) ) continue;
+					const r = st.rating;
+					if ( r && typeof r === 'object' && Array.isArray( r.range ) && r.range.length ) {
+						if ( !firstAnyRange ) firstAnyRange = r.range.slice();
+						if ( typeof st.name === 'string' && st.name.toLowerCase() === label ) {
 							return r.range.slice();
 						}
 					}
@@ -269,16 +283,18 @@ export const cortexFunctions = {
 				for ( const [ key, st ] of Object.entries( rawSubs ) ) {
 					if ( !st || typeof st !== 'object' ) continue;
 					const name = ( ( st as any ).name || key );
-					if ( typeof name === 'string' && name.toLowerCase() === label ) {
-						const r = ( st as any ).rating;
-						if ( r && typeof r === 'object' && Array.isArray( r.range ) && r.range.length ) {
+					if ( name === 'SFX' || name === 'Statement' ) continue;
+					const r = ( st as any ).rating;
+					if ( r && typeof r === 'object' && Array.isArray( r.range ) && r.range.length ) {
+						if ( !firstAnyRange ) firstAnyRange = r.range.slice();
+						if ( typeof name === 'string' && name.toLowerCase() === label ) {
 							return r.range.slice();
 						}
 					}
 				}
 			}
 		}
-		return [ 4, 6, 8, 10, 12 ];
+		return firstAnyRange || [ 4, 6, 8, 10, 12 ];
 	},
 
 	// The SFX container is a child trait literally named "SFX" with no
@@ -1795,6 +1811,27 @@ export const cortexFunctions = {
 		}
 	} as Record<string, { id: string; label: string; blurb?: string; preset: any }>,
 
+	derivePresetId: function( label: string ): string {
+		return String( label || '' )
+			.trim()
+			.toLowerCase()
+			.replace( /[^a-z0-9]+/g, '-' )
+			.replace( /^-+|-+$/g, '' );
+	},
+
+	hasPresetCollision: function( labelOrId: string ): boolean {
+		const id = this.derivePresetId( labelOrId );
+		if ( !id ) return false;
+		if ( this.cortexSetPresets && Object.prototype.hasOwnProperty.call( this.cortexSetPresets, id ) ) {
+			return true;
+		}
+		for ( const b of Object.values( this.cortexSetPresets || {} ) ) {
+			if ( b.id === id || this.derivePresetId( b.label ) === id ) return true;
+		}
+		const customs = this.getCustomSetPresets();
+		return customs.some( ( p ) => p.id === id || this.derivePresetId( p.label ) === id );
+	},
+
 	getCustomSetPresets: function(): { id: string; label: string; blurb?: string; preset: any }[] {
 		if ( typeof localStorage === 'undefined' ) return [];
 		try {
@@ -1807,21 +1844,27 @@ export const cortexFunctions = {
 		}
 	},
 
-	saveCustomSetPreset: function( traitSet: any ): { id: string; label: string; blurb?: string; preset: any } | null {
+	saveCustomSetPreset: function( traitSet: any, options?: { label?: string; blurb?: string } ): { id: string; label: string; blurb?: string; preset: any } | null {
 		if ( !traitSet || typeof traitSet !== 'object' ) return null;
 		const cloned = cloneDeep( traitSet );
 		this.stripInternalIds( cloned );
 		delete cloned.id;
-		if ( cloned.view && typeof cloned.view === 'object' ) {
-			delete cloned.view.place;
+		const v = ensureView( cloned );
+		delete v.place;
+		if ( !v.pillar || typeof v.pillar !== 'string' || !v.pillar.trim().length ) {
+			v.pillar = 'play';
 		}
-		const label = ( typeof cloned.name === 'string' && cloned.name.trim().length )
-			? cloned.name.trim()
-			: 'Custom Set';
-		const entry = {
-			id: 'custom-' + this.generateUUID(),
-			label,
-			blurb: 'Saved custom set preset',
+		const rawLabel = options?.label !== undefined
+			? String( options.label ).trim()
+			: ( typeof cloned.name === 'string' ? cloned.name.trim() : '' );
+		if ( !rawLabel.length ) return null;
+		const id = this.derivePresetId( rawLabel );
+		if ( !id || this.hasPresetCollision( id ) ) return null;
+		const rawBlurb = options?.blurb !== undefined ? String( options.blurb ).trim() : '';
+		const entry: { id: string; label: string; blurb?: string; preset: any } = {
+			id,
+			label: rawLabel,
+			...( rawBlurb.length ? { blurb: rawBlurb } : {} ),
 			preset: cloned
 		};
 		const list = this.getCustomSetPresets();
@@ -1853,6 +1896,17 @@ export const cortexFunctions = {
 		delete traitSet.id;
 		const v = ensureView( traitSet );
 		delete v.place;
+		// Propagate custom pillar labels onto character view if not already set on character
+		if ( character && typeof character === 'object' && v.labels?.pillars && typeof v.labels.pillars === 'object' ) {
+			const charView = ensureView( character );
+			if ( !charView.labels || typeof charView.labels !== 'object' ) charView.labels = {};
+			if ( !charView.labels.pillars || typeof charView.labels.pillars !== 'object' ) charView.labels.pillars = {};
+			for ( const [ pKey, pVal ] of Object.entries( v.labels.pillars ) ) {
+				if ( typeof pVal === 'string' && pVal.trim().length && !charView.labels.pillars[ pKey ] ) {
+					charView.labels.pillars[ pKey ] = pVal.trim();
+				}
+			}
+		}
 		// Normalize legacy attachedStress if present in a user-supplied preset
 		const legacyStress = ( v as any ).attachedStress;
 		if ( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled && !v.parts ) {

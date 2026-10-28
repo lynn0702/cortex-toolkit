@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue';
 import { useTraitSetEditor } from './use-trait-set-editor.ts';
 import TraitSetEditorRing from './trait-set-editor-ring.vue';
 import TraitSetEditorLayout from './trait-set-editor-layout.vue';
@@ -7,6 +8,7 @@ import TraitSetEditorImage from './trait-set-editor-image.vue';
 import TraitSetEditorSfx from './trait-set-editor-sfx.vue';
 import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 import VisibilityEye from './visibility-eye.vue';
+import TraitSetMini from './trait-set-mini.vue';
 
 const props = defineProps<{
 	character: any;
@@ -27,15 +29,49 @@ const {
 	rootEl, inputName, cssClass, checkScrollPosition,
 	name, traitSetID, isRing, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
 	styleLabel, setStyleLabel, hasLabelContent, description, includeOut,
-	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
+	notesContent, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasTrackPart, trackLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected, pipLabels,
 	noun, plural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
-	setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
+	setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved,
+	showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
 	selectElement, promptDeleteTraitSet, targetValue
 } = api;
+
+const STANDARD_PILLARS = [ 'prime', 'plus', 'play', 'identity' ];
+const isCustomPillar = ref( false );
+
+const selectedPillar = computed<string>( {
+	get: () => {
+		if ( isCustomPillar.value ) return '__custom__';
+		const cur = ( setPillar.value || resolvedPillar.value || 'prime' ).toLowerCase().trim();
+		if ( STANDARD_PILLARS.includes( cur ) || characterCustomPillars.value.includes( cur ) ) {
+			return cur;
+		}
+		return '__custom__';
+	},
+	set: ( val: string ) => {
+		if ( val === '__custom__' ) {
+			isCustomPillar.value = true;
+			if ( STANDARD_PILLARS.includes( setPillar.value.toLowerCase().trim() ) ) {
+				setPillar.value = '';
+			}
+		} else {
+			isCustomPillar.value = false;
+			setPillar.value = val;
+		}
+	}
+} );
+
+function applyFromMini( updatedSet: any ) {
+	if ( props.character && props.character.traitSets && props.character.traitSets[ props.traitSetID ] ) {
+		props.character.traitSets[ props.traitSetID ] = updatedSet;
+		emit( 'updateCharacter', props.character );
+	}
+	closeBlockMini();
+}
 </script>
 
 <template>
@@ -44,7 +80,7 @@ const {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" @click.stop="saveSetAsPreset" :title="presetSaved ? 'Saved Set as Preset!' : 'Save Set as Preset'"><i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'"></i></button>
+			<button type="button" @click.stop="openBlockMini" title="Open in Trait Block Mini / Save as Preset"><i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'"></i></button>
 			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
 			<button type="button" class="editor-delete" @click.stop="promptDeleteTraitSet" title="Delete trait set"><i class="fas fa-trash"></i></button>
 		</div>
@@ -103,28 +139,6 @@ const {
 					<div class="editor-field" v-if="styleBody === 'notes'">
 						<label :for="'trait-set-notes-' + traitSetID">Notes Content</label>
 						<textarea :id="'trait-set-notes-' + traitSetID" name="notesContent" v-model="notesContent" placeholder="Enter notes or text here..." rows="6"></textarea>
-					</div>
-
-					<!-- DISTINCTIONS COMPACT SFX & SHARED HINDER -->
-					<div class="editor-field" v-if="styleBody === 'sfx-rows'">
-						<div class="editor-label">Distinctions Layout</div>
-						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-							<input type="checkbox" :id="'trait-set-' + traitSetID + '-shared-hinder'" name="sharedHinder" v-model="sharedHinder">
-							<label :for="'trait-set-' + traitSetID + '-shared-hinder'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Shared hinder</label>
-						</div>
-					<div v-if="sharedHinder" style="margin-top: 0.35rem;">
-						<label :for="'trait-set-' + traitSetID + '-hinder-text'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Hinder text</label>
-						<textarea :id="'trait-set-' + traitSetID + '-hinder-text'" name="sharedHinderText" v-model="sharedHinderText" placeholder="Gain a PP when you trade out your distinction's [d8] rating for a [d4]." rows="2"></textarea>
-					</div>
-					</div>
-
-					<!-- ATTACHED STRESS / TRACK -->
-					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'">
-						<div class="editor-label">Attached Stress / Track</div>
-						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-track'" name="hasTrackPart" v-model="hasTrackPart">
-							<label :for="'trait-set-' + traitSetID + '-attached-track'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Attached track</label>
-						</div>
 					</div>
 
 					<!-- PIPS TRACK SETTINGS -->
@@ -338,33 +352,35 @@ const {
 
 					<TraitSetEditorLayout />
 
-					<!-- MOBILE PILLAR -->
+					<!-- PILLAR (DROPDOWN + EXPLICIT CUSTOM TEXT ENTRY) -->
 					<div class="editor-field">
-						<label :for="'trait-set-' + traitSetID + '-pillar'">Mobile Pillar</label>
-						<div class="editor-button-group" style="margin-bottom: 0.35rem; flex-wrap: wrap;">
-							<button
-								v-for="pOpt in ['prime', 'plus', 'play', 'identity']"
-								:key="'pillar-chip-' + pOpt"
-								type="button"
-								class="editor-group-btn"
-								:class="{ active: resolvedPillar === pOpt }"
-								@click.stop="setPillar = pOpt"
-							>{{ pOpt.charAt(0).toUpperCase() + pOpt.slice(1) }}</button>
+						<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
+						<div style="display: flex; gap: 0.4rem; align-items: center;">
+							<select
+								:id="'trait-set-' + traitSetID + '-pillar-select'"
+								v-model="selectedPillar"
+								class="editor-select"
+								style="flex: 1;"
+								aria-label="Pillar"
+							>
+								<option value="prime">Prime</option>
+								<option value="plus">Plus</option>
+								<option value="play">Play</option>
+								<option value="identity">Identity</option>
+								<option v-for="cp in characterCustomPillars" :key="cp" :value="cp">{{ cp.charAt(0).toUpperCase() + cp.slice(1) }}</option>
+								<option value="__custom__">Custom...</option>
+							</select>
+							<input
+								v-if="selectedPillar === '__custom__' || isCustomPillar"
+								type="text"
+								:id="'trait-set-' + traitSetID + '-pillar-custom'"
+								name="setPillarCustom"
+								v-model="setPillar"
+								placeholder="Custom pillar name..."
+								style="flex: 1;"
+								aria-label="Custom pillar name"
+							>
 						</div>
-						<input
-							type="text"
-							:id="'trait-set-' + traitSetID + '-pillar'"
-							name="setPillar"
-							list="pillar-suggestions"
-							v-model="setPillar"
-							:placeholder="resolvedPillar + ' (default)'"
-						>
-						<datalist id="pillar-suggestions">
-							<option value="prime"></option>
-							<option value="plus"></option>
-							<option value="play"></option>
-							<option value="identity"></option>
-						</datalist>
 					</div>
 
 					<!-- COLUMNS WITHIN SET -->
@@ -406,6 +422,16 @@ const {
 		</div>
 
 		<TraitSetEditorConfirm />
+
+		<teleport to="body">
+			<TraitSetMini
+				v-if="showBlockMini"
+				:initialSet="props.character?.traitSets?.[traitSetID]"
+				@close="closeBlockMini"
+				@applyToSet="applyFromMini"
+				@saved="presetSaved = true"
+			/>
+		</teleport>
 
 	</aside>
 </template>

@@ -560,6 +560,10 @@ function checkTemplateFile(where, data) {
 // ---- 6. Nested-grid placement (2026-10-19): view.place + view.parts.
 const KNOWN_PARTS = ['name', 'rating', 'description', 'block', 'subtraits', 'trackLabel', 'track'];
 
+function isKnownPartName(part) {
+  return KNOWN_PARTS.indexOf(part) !== -1 || part.startsWith('child:') || part.startsWith('child_');
+}
+
 function parseStoredPct(v) {
   if (typeof v !== 'string') return null;
   const m = v.trim().match(/^(-?\d+(?:\.\d+)?)\s*%$/);
@@ -609,7 +613,7 @@ function checkSetPlacement(where, setName, set, pageOf) {
   }
   if (hasParts) {
     for (const part of Object.keys(view.parts)) {
-      if (KNOWN_PARTS.indexOf(part) === -1) {
+      if (!isKnownPartName(part)) {
         err(`${where}/${setName}: unknown part ${JSON.stringify(part)}`);
         continue;
       }

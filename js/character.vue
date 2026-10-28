@@ -14,6 +14,7 @@ import TraitSetBlock from './trait-set-block.vue';
 import StyleGallery from './style-gallery.vue';
 import PrintToolbar from './print-toolbar.vue';
 import PortraitRing from './portrait-ring.vue';
+import TraitSetMini from './trait-set-mini.vue';
 
 const props = defineProps<{
 	submode?: string | null;
@@ -21,6 +22,7 @@ const props = defineProps<{
 	editing?: unknown[] | null;
 	viewY?: number | null;
 	dicePool?: any;
+	isDesktopPillars?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -46,10 +48,27 @@ const showStyleGallery = ref( false );
 const galleryPage = ref( 1 );
 const galleryLocation = ref( 'left' );
 const showPlayPresetPicker = ref( false );
+const showPlayMini = ref( false );
 const playBuiltInPresets = Object.values( cortexSetPresets );
 const playCustomPresets = ref<SetPresetEntry[]>( [] );
 const isMobileViewport = ref( typeof window !== 'undefined' && Boolean( window.matchMedia && window.matchMedia( '(max-width: 768px)' ).matches ) );
-const isMobilePlay = computed( () => props.submode === 'play' && isMobileViewport.value );
+const internalDesktopPillars = ref<boolean>(
+	typeof localStorage !== 'undefined' ? localStorage.getItem( 'cortexPlayPillars' ) === 'true' : false
+);
+const effectiveDesktopPillars = computed( () => {
+	if ( props.isDesktopPillars !== undefined ) return props.isDesktopPillars;
+	return internalDesktopPillars.value;
+} );
+const isPillarPlay = computed( () => props.submode === 'play' && ( isMobileViewport.value || effectiveDesktopPillars.value ) );
+
+function toggleDesktopPillars() {
+	const next = !effectiveDesktopPillars.value;
+	internalDesktopPillars.value = next;
+	if ( typeof localStorage !== 'undefined' ) {
+		localStorage.setItem( 'cortexPlayPillars', String( next ) );
+	}
+	setupCarouselObserver();
+}
 
 const name = computed( () => props.character?.name ?? '' );
 const description = computed( () => props.character?.description ?? '' );
@@ -245,7 +264,7 @@ const descriptionText = computed( {
 } );
 
 const printPages = computed( () => {
-	if ( isMobilePlay.value ) return [ 1 ];
+	if ( isPillarPlay.value ) return [ 1 ];
 	if ( props.submode === 'print' && printPageView.value !== 'all' ) {
 		return [ Number( printPageView.value ) ];
 	}
@@ -687,22 +706,24 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>( () => {
 		if ( byPillar.has( customKey ) ) orderedKeys.push( customKey );
 	}
 
-	return orderedKeys.map( ( key ) => {
-		const sets = byPillar.get( key ) || [];
-		const hasClassicRing = ringPillarKey === key;
-		const setsForCount = sets.map( ( s ) => s.traitSet );
-		if ( hasClassicRing && hasRingTrait.value && ringTraitSet.value ) {
-			setsForCount.unshift( ringTraitSet.value );
-		}
-		return {
-			key,
-			label: getPillarLabel( props.character, key ),
-			hasHeader: key === 'identity',
-			hasClassicRing,
-			sets,
-			stagedCount: countStagedDiceForSets( setsForCount ),
-		};
-	} );
+	return orderedKeys
+		.map( ( key ) => {
+			const sets = byPillar.get( key ) || [];
+			const hasClassicRing = ringPillarKey === key;
+			const setsForCount = sets.map( ( s ) => s.traitSet );
+			if ( hasClassicRing && hasRingTrait.value && ringTraitSet.value ) {
+				setsForCount.unshift( ringTraitSet.value );
+			}
+			return {
+				key,
+				label: getPillarLabel( props.character, key ),
+				hasHeader: key === 'identity',
+				hasClassicRing,
+				sets,
+				stagedCount: countStagedDiceForSets( setsForCount ),
+			};
+		} )
+		.filter( ( col ) => col.sets.length > 0 || col.hasClassicRing || col.hasHeader );
 } );
 
 function columnStackItems( col: MobilePillarColumn ): { index: number; label: string }[] {
@@ -767,7 +788,7 @@ function setupCarouselObserver() {
 		carouselObserver.disconnect();
 		carouselObserver = null;
 	}
-	if ( !isMobilePlay.value ) {
+	if ( !isPillarPlay.value ) {
 		return;
 	}
 	nextTick( () => {
@@ -834,7 +855,7 @@ watch( () => props.submode, () => {
 </script>
 
 <template>
-	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark }]" :style="characterSheetStyle">
+	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'pillar-deck-view': isPillarPlay }]" :style="characterSheetStyle">
 	
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
@@ -872,7 +893,7 @@ watch( () => props.submode, () => {
 
 					<!-- 2D MOBILE PILLAR JUMP STRIP (PLAY MODE) -->
 					<nav
-						v-if="submode === 'play' && pageIndex === 1 && mobilePillarColumns.length > 0"
+						v-if="isPillarPlay && pageIndex === 1 && mobilePillarColumns.length > 0"
 						ref="jumpStripRef"
 						class="mobile-set-jump-strip"
 						aria-label="Character pillars"
@@ -898,10 +919,20 @@ watch( () => props.submode, () => {
 						>
 							<i class="fas fa-plus"></i> <span class="jump-pill-label">Card</span>
 						</button>
+						<button
+							v-if="!isMobileViewport && submode === 'play'"
+							type="button"
+							class="jump-pill jump-pill-view-toggle"
+							@click.stop="toggleDesktopPillars"
+							:title="effectiveDesktopPillars ? 'Switch to Sheet View' : 'Switch to Pillars Deck'"
+						>
+							<i :class="effectiveDesktopPillars ? 'fas fa-file-alt' : 'fas fa-building-columns'"></i>
+							<span class="jump-pill-label">{{ effectiveDesktopPillars ? 'Sheet' : 'Pillars' }}</span>
+						</button>
 					</nav>
 
-					<!-- 2D MOBILE PILLAR & STACK DECK (MOBILE PLAY MODE) -->
-					<div v-if="isMobilePlay && pageIndex === 1" class="mobile-pillar-track">
+					<!-- 2D MOBILE PILLAR & STACK DECK (PLAY MODE) -->
+					<div v-if="isPillarPlay && pageIndex === 1" class="mobile-pillar-track">
 						<div
 							v-for="col in mobilePillarColumns"
 							:key="'pillar-col-' + col.key"
@@ -1439,12 +1470,17 @@ watch( () => props.submode, () => {
 				<aside class="modal modal-style-gallery" v-if="showPlayPresetPicker">
 					<div class="modal-close" @click.prevent="showPlayPresetPicker = false"><i class="fas fa-times"></i></div>
 					<div class="modal-inner">
-						<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
+						<div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
+							<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
+							<button type="button" class="btn-gallery-add btn-open-mini" style="width: auto; padding: 0.35rem 0.75rem;" @click.stop="showPlayMini = true">
+								<i class="fas fa-th-large"></i> New Card in Mini
+							</button>
+						</div>
 						<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
 						<div class="style-gallery-grid">
 							<div class="style-gallery-card" v-for="preset in playBuiltInPresets" :key="'play-builtin-' + preset.id">
 								<div class="style-gallery-name">{{ preset.label }}</div>
-								<div class="style-gallery-blurb">{{ preset.blurb }}</div>
+								<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 								<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
 									<i class="fas fa-plus"></i> Add to Session
 								</button>
@@ -1456,7 +1492,7 @@ watch( () => props.submode, () => {
 										<i class="fas fa-trash-alt"></i>
 									</button>
 								</div>
-								<div class="style-gallery-blurb">{{ preset.blurb || 'Saved custom set preset' }}</div>
+								<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 								<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
 									<i class="fas fa-plus"></i> Add to Session
 								</button>
@@ -1465,6 +1501,11 @@ watch( () => props.submode, () => {
 					</div>
 				</aside>
 			</transition>
+			<TraitSetMini
+				v-if="showPlayMini"
+				@close="showPlayMini = false"
+				@saved="playCustomPresets = cortexFunctions.getCustomSetPresets()"
+			/>
 		</teleport>
 	</section>
 </template>

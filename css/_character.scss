@@ -1508,6 +1508,15 @@ button.trait-title-btn {
 				background-color: transparent !important;
 			}
 
+			.portrait-circle {
+				background-color: var(--bg-surface-elevated) !important;
+				border-color: var(--border-strong) !important;
+			}
+
+			.portrait-placeholder {
+				filter: invert(0.85);
+			}
+
 			.character-pp-badge {
 				background: var(--bg-surface-elevated);
 				border-color: var(--color-primary);

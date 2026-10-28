@@ -6,6 +6,8 @@ import DiceRoller from '../js/dice-roller.vue';
 import TraitEditor from '../js/trait-editor.vue';
 import AppHeader from '../js/app-header.vue';
 import SessionNav from '../js/session-nav.vue';
+import TraitSetMini from '../js/trait-set-mini.vue';
+import { cortexFunctions } from '../js/functions.ts';
 import { cortexPal } from '../js/cortex-pal.ts';
 
 // 1. Axe-core runner configured for JSDOM / Component testing
@@ -350,5 +352,154 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		expect( getContrastRatio( lightTextMain, lightElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
 		expect( getContrastRatio( lightTextSecondary, lightCardBg ) ).toBeGreaterThanOrEqual( 4.5 );
 		expect( getContrastRatio( lightTextSecondary, lightElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
+	} );
+
+	it( 'TraitSetMini (Phase 3a): standalone authoring, noun inventory consistency, companion stress track, keyboard nudge, and preset round-trip', async () => {
+		window.localStorage.removeItem( 'cortexCustomSetPresets' );
+
+		const wrapper = mount( TraitSetMini );
+		await runAxeAudit( wrapper.element as HTMLElement );
+
+		// 1. Standalone inventory & keyboard nudge/resize on grid part boxes
+		const nameBox = wrapper.find( '[data-grid-part="name"]' );
+		expect( nameBox.exists() ).toBe( true );
+		await nameBox.trigger( 'click' );
+		await nameBox.trigger( 'keydown', { key: 'ArrowRight' } );
+		const leftInput = wrapper.find( 'input[aria-label="Part Left Percent"]' );
+		expect( ( leftInput.element as HTMLInputElement ).value ).toBe( '5' );
+
+		await nameBox.trigger( 'keydown', { key: 'ArrowLeft', shiftKey: true } );
+		const widthInput = wrapper.find( 'input[aria-label="Part Width Percent"]' );
+		expect( ( widthInput.element as HTMLInputElement ).value ).toBe( '60' );
+
+		// 2. Noun consistency check: misspelled trait noun ("Roel") and companion noun ("Stres") surface as extra noun groups in inventory
+		const traitNounInput = wrapper.find( 'input[aria-label="Trait 1 Noun"]' );
+		await traitNounInput.setValue( 'Roel' );
+		expect( wrapper.find( '[data-noun-group="Roel"]' ).exists() ).toBe( true );
+
+		const addTrackBtn = wrapper.find( 'button[title="Add Companion / Stress Track"]' );
+		await addTrackBtn.trigger( 'click' );
+		const companionNounInput = wrapper.find( 'input[aria-label="Companion Track Noun 1"]' );
+		await companionNounInput.setValue( 'Stres' );
+		expect( wrapper.find( '[data-noun-group="Stres"]' ).exists() ).toBe( true );
+
+		// 3. Acceptance case (Section 5.3): stress-bearing set with companion range [6, 8, 10] + block entry
+		// Toggle d4 and d12 off in companion track range so range becomes [6, 8, 10]
+		const toggleD4 = wrapper.find( 'button[aria-label="Toggle d4 in track range"]' );
+		const toggleD12 = wrapper.find( 'button[aria-label="Toggle d12 in track range"]' );
+		await toggleD4.trigger( 'click' );
+		await toggleD12.trigger( 'click' );
+
+		const addBlockBtn = wrapper.find( 'button[title="Add Block / SFX Entry"]' );
+		await addBlockBtn.trigger( 'click' );
+
+		// Verify live preview renders track, trackLabel, and block with [6, 8, 10] scale
+		expect( wrapper.find( '[data-grid-part="trackLabel"]' ).exists() ).toBe( true );
+		expect( wrapper.find( '[data-grid-part="track"]' ).exists() ).toBe( true );
+		expect( wrapper.find( '[data-grid-part="block"]' ).exists() ).toBe( true );
+
+		// 4. Save as Preset: creator-typed label, derived ID, collision check, and round-trip across Play, Edit, and Print
+		const labelInput = wrapper.find( 'input[aria-label="Preset Label"]' );
+		await labelInput.setValue( 'Scene Traits' ); // Collides with built-in preset
+		expect( wrapper.find( '.mini-collision-alert' ).exists() ).toBe( true );
+		const saveBtn = wrapper.find( '.mini-save-preset-btn' );
+		expect( ( saveBtn.element as HTMLButtonElement ).disabled ).toBe( true );
+
+		await labelInput.setValue( 'Overload Tracker' );
+		expect( wrapper.find( '.mini-collision-alert' ).exists() ).toBe( false );
+		expect( ( saveBtn.element as HTMLButtonElement ).disabled ).toBe( false );
+
+		await saveBtn.trigger( 'click' );
+		const savedEvents = wrapper.emitted( 'saved' );
+		expect( savedEvents && savedEvents.length ).toBe( 1 );
+		const savedPreset = ( savedEvents![ 0 ] as any )[ 0 ];
+		expect( savedPreset.id ).toBe( 'overload-tracker' );
+		expect( savedPreset.label ).toBe( 'Overload Tracker' );
+		expect( savedPreset.preset.view.pillar ).toBe( 'play' );
+
+		// Verify collision blocks saving duplicate custom preset
+		expect( wrapper.find( '.mini-collision-alert' ).exists() ).toBe( true );
+
+		// Instantiate saved preset onto a character and verify Play, Edit, and Print rendering
+		const char: any = { name: 'Tester', traitSets: [] };
+		const addedSet = cortexFunctions.instantiateSetPreset( savedPreset, char, 1 );
+		char.traitSets.push( addedSet );
+		expect( cortexFunctions.getTrackScale( addedSet ) ).toEqual( [ 6, 8, 10 ] );
+
+		for ( const mode of [ 'play', 'edit', 'print' ] ) {
+			const block = mount( TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: mode }
+			} );
+			expect( block.find( '.trait-set' ).exists() ).toBe( true );
+			expect( block.find( '.attached-stress-track' ).exists() ).toBe( true );
+			await runAxeAudit( block.element as HTMLElement );
+			block.unmount();
+		}
+
+		wrapper.unmount();
+		window.localStorage.removeItem( 'cortexCustomSetPresets' );
+	} );
+
+	it( 'supports trait-specific custom companion track names (Injured, Worried) with track fallback and T/L marker toggles', async () => {
+		const customSet: any = {
+			name: 'Attributes',
+			view: {
+				labels: { track: 'Stress' },
+				parts: {
+					name: { left: '0%', top: 0, width: '40%', height: 1 },
+					trackLabel: { left: '40%', top: 0, width: '25%', height: 1 },
+					track: { left: '65%', top: 0, width: '35%', height: 1 }
+				}
+			},
+			traits: [
+				{
+					name: 'Physical',
+					rating: { type: 'Die', value: 8 },
+					traits: [
+						{ name: 'Injured', rating: { type: 'Die', value: 6, range: [ 4, 6, 8, 10, 12 ] } }
+					]
+				},
+				{
+					name: 'Mental',
+					rating: { type: 'Die', value: 10 },
+					traits: [
+						{ name: 'Worried', rating: { type: 'Die', value: 8, range: [ 4, 6, 8, 10, 12 ] } }
+					]
+				},
+				{
+					name: 'Social',
+					rating: { type: 'Die', value: 6 },
+					traits: [
+						// Fallback to set track label
+						{ name: 'Stress', rating: { type: 'Die', value: 4, range: [ 4, 6, 8, 10, 12 ] } }
+					]
+				}
+			]
+		};
+
+		const char: any = { name: 'Custom Track Tester', traitSets: [ customSet ] };
+		const block = mount( TraitSetBlock, {
+			props: { character: char, traitSetID: 0, submode: 'play' }
+		} );
+
+		const labels = block.findAll( '.attached-stress-label' ).map( el => el.text() );
+		expect( labels ).toEqual( [ 'Injured', 'Worried', 'Stress' ] );
+		expect( customSet.view.labels.stress ).toBeUndefined();
+		expect( customSet.view.labels.track ).toBe( 'Stress' );
+
+		// Test TraitSetMini child marker toggle
+		const mini = mount( TraitSetMini, {
+			props: { initialSet: customSet }
+		} );
+
+		const markerToggles = mini.findAll( '.mini-marker-toggle' );
+		expect( markerToggles.length ).toBeGreaterThanOrEqual( 3 );
+		const firstMarker = markerToggles[ 0 ];
+		const initialText = firstMarker.text();
+		await firstMarker.trigger( 'click' );
+		expect( firstMarker.text() ).toBe( initialText === 'L' ? 'T' : 'L' );
+
+		mini.unmount();
+		block.unmount();
 	} );
 } );

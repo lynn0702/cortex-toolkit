@@ -3,6 +3,7 @@ import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
+import TraitSetMini from './trait-set-mini.vue';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -44,6 +45,7 @@ const showDeleteConfirm = ref( false );
 const characterToDelete = ref<any>( null );
 const showDeleteAllConfirm = ref( false );
 const showSpotlightLibrary = ref( false );
+const showTraitSetMini = ref( false );
 const spotlightSearch = ref( '' );
 
 const inputFile = ref<HTMLInputElement | null>( null );
@@ -399,6 +401,16 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 						<span><i class="fas fa-layer-group"></i> Spotlight Library</span>
 					</div>
 
+					<div class="roster-button roster-button-card-builder"
+						role="button"
+						tabindex="0"
+						@click.stop="showTraitSetMini = true"
+						@keydown.enter.prevent="showTraitSetMini = true"
+						@keydown.space.prevent="showTraitSetMini = true"
+					>
+						<span><i class="fas fa-th-large"></i> Card Builder</span>
+					</div>
+
 					<div class="roster-button roster-button-import"
 						@click.stop="importStart"
 					>
@@ -711,6 +723,11 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 			</div>
 		</aside>
 		</transition>
+
+		<TraitSetMini
+			v-if="showTraitSetMini"
+			@close="showTraitSetMini = false"
+		/>
 		
 	</section>
 </template>

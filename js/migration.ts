@@ -53,7 +53,13 @@ export const cortexMigration = {
 	stressCompanionLabel: function( set: any ) {
 		const bag = ( set && ( set.view || ( set.custom && set.custom.cortexToolkit ) ) ) || {};
 		const labels = bag.labels;
-		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+		if ( labels && typeof labels.track === 'string' && labels.track.length ) return labels.track;
+		if ( labels && typeof ( labels as any ).stress === 'string' ) {
+			const s = ( labels as any ).stress;
+			delete ( labels as any ).stress;
+			labels.track = s;
+			return s;
+		}
 		const legacy = bag.attachedStress;
 		if ( legacy && typeof legacy === 'object' && typeof legacy.label === 'string' && legacy.label.length ) return legacy.label;
 		return 'Stress';
@@ -1236,7 +1242,7 @@ export const cortexMigration = {
 		const stressLabel = ( stressOn && typeof stress.label === 'string' && stress.label.length ) ? stress.label : 'Stress';
 		if ( stressOn && stressLabel !== 'Stress' ) {
 			if ( !bag.labels || typeof bag.labels !== 'object' ) bag.labels = {};
-			bag.labels.stress = stressLabel;
+			bag.labels.track = stressLabel;
 		}
 		// includeOut: true migrates to outIndicator: true (leaving existing outIndicator untouched unless not already true)
 		if ( stressOn && stress.includeOut === true && bag.outIndicator !== true ) {

@@ -662,6 +662,25 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		setTimeout( () => { presetSaved.value = false; }, 1600 );
 	}
 
+	const showBlockMini = ref( false );
+	function openBlockMini() { showBlockMini.value = true; }
+	function closeBlockMini() { showBlockMini.value = false; }
+
+	const characterCustomPillars = computed<string[]>( () => {
+		const list: string[] = [];
+		const std = [ 'prime', 'plus', 'play', 'identity' ];
+		for ( const ts of ( props.character?.traitSets || [] ) ) {
+			const p = getView( ts )?.pillar;
+			if ( typeof p === 'string' && p.trim() ) {
+				const low = p.trim().toLowerCase();
+				if ( !std.includes( low ) && !list.includes( low ) ) {
+					list.push( low );
+				}
+			}
+		}
+		return list;
+	} );
+
 	// Rebuild this set's trait-part layout, preserving its track setup,
 	// dice counts, features, and statement mode. Vertical ladders keep
 	// the legacy flag (no parts form); bespoke bodies are left alone.
@@ -718,15 +737,16 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 	const trackLabel = computed({
 		get: () => {
 			const labels = getView( traitSet.value )?.labels;
-			if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
+			if ( labels && typeof labels.track === 'string' && labels.track.length ) return labels.track;
 			return 'Stress';
 		},
 		set: ( val: string ) => {
 			const view = ensureView( traitSet.value );
-			const prev = getView( traitSet.value )?.labels?.stress ?? 'Stress';
+			const prev = getView( traitSet.value )?.labels?.track ?? 'Stress';
 			if ( !view.labels || typeof view.labels !== 'object' ) view.labels = {};
-			if ( typeof val === 'string' && val.length ) view.labels.stress = val;
-			else delete view.labels.stress;
+			if ( typeof val === 'string' && val.length ) view.labels.track = val;
+			else delete view.labels.track;
+			delete ( view.labels as any ).stress;
 			// Keep track companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
 			const next = ( typeof val === 'string' && val.length ) ? val : 'Stress';
@@ -1241,6 +1261,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
 		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
+		showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
 		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
 		scrollable, needsDiceUI, allowsTraitColumns,

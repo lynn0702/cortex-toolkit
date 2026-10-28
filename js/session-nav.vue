@@ -9,6 +9,7 @@ defineProps<{
 	isStudioPanelOpen?: boolean;
 	studioPanelTab?: string;
 	rollerCount?: number;
+	isDesktopPillars?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -18,6 +19,7 @@ const emit = defineEmits<{
 	( e: 'setPlayView', mode: string ): void;
 	( e: 'toggleStudio', tab: 'properties' | 'roller' | 'json' ): void;
 	( e: 'saveSession' ): void;
+	( e: 'togglePillars' ): void;
 }>();
 
 function safeImageUrl( url: any ) {
@@ -105,6 +107,18 @@ function safeImageUrl( url: any ) {
 					<i class="fas fa-dice-d20"></i>
 					<span class="sheet-bar-btn-label">Roller</span>
 					<span class="sheet-bar-dice-count" v-if="rollerCount && rollerCount > 0">{{ rollerCount }}</span>
+				</button>
+
+				<button
+					type="button"
+					class="sheet-bar-btn sheet-bar-pillars"
+					:class="{ active: isDesktopPillars }"
+					@click.stop="emit('togglePillars')"
+					title="Toggle Pillars deck view"
+					v-if="submode === 'play'"
+				>
+					<i class="fas fa-building-columns"></i>
+					<span class="sheet-bar-btn-label">Pillars</span>
 				</button>
 
 				<button

@@ -91,6 +91,60 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingSca
   ok(presets && presets['scene-traits'] && presets['session-notes'] && presets['crisis-pool'] && presets['micro-gmc'], '4 built-in set presets exist');
   const inst = F.instantiateSetPreset(presets['scene-traits'], { traitSets: [] }, 1);
   ok(inst && inst.name === 'Scene Traits' && inst.view.pillar === 'play' && inst.view.visibility === 'play-only' && inst.view.playMutable === true, 'instantiateSetPreset clones and assigns id');
+
+  // ---- Phase 3a: derivePresetId, collision check, saveCustomSetPreset, getTrackScale, renderDieGeometrySVG
+  const mockStore = {};
+  global.localStorage = {
+    getItem: (k) => (k in mockStore ? mockStore[k] : null),
+    setItem: (k, v) => { mockStore[k] = String(v); },
+    removeItem: (k) => { delete mockStore[k]; }
+  };
+
+  ok(F.derivePresetId('  Doom Pool & Stress! ') === 'doom-pool-stress', 'derivePresetId lowercases and hyphenates label');
+  ok(F.hasPresetCollision('Scene Traits') === true, 'hasPresetCollision detects built-in preset collision');
+  ok(F.hasPresetCollision('Brand New Card') === false, 'hasPresetCollision passes unused label');
+
+  const customCard = {
+    name: 'Ship Damage',
+    noun: 'System',
+    traits: [
+      {
+        name: 'Engines',
+        rating: { type: 'Die', values: [8] },
+        traits: [
+          { name: 'Wear', rating: { type: 'Die', value: 6, range: [6, 8, 10] } }
+        ]
+      }
+    ],
+    view: {
+      pillar: 'ship',
+      labels: { pillars: { ship: 'Starship' }, stress: 'Wear' },
+      parts: {
+        name: { left: '0%', top: 0, width: '50%', height: 1 },
+        rating: { left: '50%', top: 0, width: '50%', height: 1 },
+        trackLabel: { left: '0%', top: 1, width: '30%', height: 1 },
+        track: { left: '30%', top: 1, width: '70%', height: 1 }
+      }
+    }
+  };
+
+  ok(JSON.stringify(F.getTrackScale(customCard)) === '[6,8,10]', 'getTrackScale resolves first companion range [6,8,10]');
+  ok(JSON.stringify(F.getTrackScale({ name: 'Bare', traits: [{ name: 'A', traits: [{ name: 'AnyTrack', rating: { type: 'Die', range: [4, 6, 8] } }] }] })) === '[4,6,8]', 'getTrackScale falls back to first rated companion range even without matching trackLabel');
+  ok(JSON.stringify(F.getTrackScale({ name: 'NoTrack', traits: [] })) === '[4,6,8,10,12]', 'getTrackScale falls back to default [4,6,8,10,12]');
+
+  const savedEntry = F.saveCustomSetPreset(customCard, { label: 'Starship Systems' });
+  ok(savedEntry && savedEntry.id === 'starship-systems' && savedEntry.label === 'Starship Systems', 'saveCustomSetPreset derives id from creator label');
+  ok(savedEntry && !('blurb' in savedEntry), 'saveCustomSetPreset keeps blurb sparse when omitted');
+  ok(F.hasPresetCollision('Starship Systems') === true, 'saved custom preset triggers collision on duplicate label');
+  ok(F.saveCustomSetPreset(customCard, { label: 'Starship Systems' }) === null, 'saveCustomSetPreset rejects collision without overwriting');
+
+  const targetChar = { name: 'Capt. Kirk', traitSets: [] };
+  const addedSet = F.instantiateSetPreset(savedEntry, targetChar, 1);
+  targetChar.traitSets.push(addedSet);
+  ok(F.getPillarLabel(targetChar, 'ship') === 'Starship', 'instantiateSetPreset propagates custom pillar display label onto character');
+
+  const geomSvg = F.renderDieGeometrySVG(8, true);
+  ok(geomSvg.includes('<svg') && geomSvg.includes('aria-hidden="true"') && !geomSvg.includes('<text'), 'renderDieGeometrySVG outputs pure geometry SVG without inner text');
 }
 
 console.log(`functions-tests: ${pass} passed, ${fail} failed`);

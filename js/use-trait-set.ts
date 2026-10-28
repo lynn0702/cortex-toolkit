@@ -3,7 +3,7 @@ import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
 	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,
 	hasOutRange, rangeTop, isOutDie } from './model.ts';
-import { KNOWN_PARTS, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
+import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
 export type TraitSetApi = ReturnType<typeof useTraitSet>;
@@ -151,7 +151,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 	function getParts( traitSetArg: TraitSet ) {
 		const parts = getView( traitSetArg )?.parts;
 		if ( !parts || typeof parts !== 'object' || Array.isArray( parts ) ) return null;
-		const known = Object.keys( parts ).filter( ( k ) => ( KNOWN_PARTS as readonly string[] ).includes( k ) );
+		const known = Object.keys( parts ).filter( ( k ) => isKnownPart( k ) );
 		if ( !known.length ) return null;
 		return parts as Record<string, { left: string; top: number; width: string; height: number }>;
 	}
@@ -636,6 +636,14 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		return cortexFunctions.getTrackLabel( traitSetArg );
 	}
 
+	function getTraitTrackLabel( traitSetArg: TraitSet, trait: Trait ): string {
+		const companion = getTrackCompanion( traitSetArg, trait );
+		if ( companion && typeof companion.name === 'string' && companion.name.trim().length > 0 ) {
+			return companion.name.trim();
+		}
+		return getTrackLabel( traitSetArg );
+	}
+
 	function getTrackScale( traitSetArg: TraitSet ) {
 		return cortexFunctions.getTrackScale( traitSetArg );
 	}
@@ -646,25 +654,46 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		return 0;
 	}
 
-	// The track companion is an ordinary subtrait named for the set's
-	// track label (default "Stress"). It renders in the track cells, not
-	// in the subtrait list; absent means no track value (sparse).
+	// The track companion is an ordinary subtrait on the trait. Its name
+	// defaults to the set's track label (fallback "Stress"), but can be
+	// customized individually (e.g. Physical's companion is "Injured", Mental is "Worried").
 	function getTrackCompanion( traitSetArg: TraitSet, trait: Trait ) {
 		const subs = ( trait as any )?.traits;
 		if ( !Array.isArray( subs ) ) return undefined;
-		const name = getTrackLabel( traitSetArg ).toLowerCase();
-		return subs.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === name );
+		const fallbackName = getTrackLabel( traitSetArg ).toLowerCase();
+		// 1. Direct match by set's track label
+		const direct = subs.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === fallbackName );
+		if ( direct ) return direct;
+		// 2. Trait-specific companion track (e.g. Physical's companion is named "Injured", Mental is "Worried")
+		if ( hasTrackPart( traitSetArg ) ) {
+			return subs.find( ( st: any ) =>
+				st && typeof st === 'object' && st.rating &&
+				st.rating.type !== 'SFX' && st.rating.type !== 'Statement' &&
+				Array.isArray( st.rating.range )
+			);
+		}
+		return undefined;
 	}
 
-	function isTrackCompanion( traitSetArg: TraitSet, subName: unknown ) {
-		return hasTrackPart( traitSetArg ) && typeof subName === 'string' && subName.toLowerCase() === getTrackLabel( traitSetArg ).toLowerCase();
+	function isTrackCompanion( traitSetArg: TraitSet, sub: unknown, trait?: Trait ) {
+		if ( !hasTrackPart( traitSetArg ) || !sub || typeof sub !== 'object' ) return false;
+		if ( trait ) {
+			return getTrackCompanion( traitSetArg, trait ) === sub;
+		}
+		const subName = ( sub as any )?.name;
+		if ( typeof subName === 'string' && subName.toLowerCase() === getTrackLabel( traitSetArg ).toLowerCase() ) {
+			return true;
+		}
+		const r = ( sub as any )?.rating;
+		return Boolean( r && r.type !== 'SFX' && r.type !== 'Statement' && Array.isArray( r.range ) );
 	}
 
 	function visibleSubtraits( traitSetArg: TraitSet, trait: Trait ) {
 		const subs = nonSfxSubtraits( trait );
 		if ( !subs.length ) return [];
-		const list = hasTrackPart( traitSetArg )
-			? subs.filter( ( st: any ) => !isTrackCompanion( traitSetArg, st?.name ) )
+		const comp = hasTrackPart( traitSetArg ) ? getTrackCompanion( traitSetArg, trait ) : null;
+		const list = comp
+			? subs.filter( ( st: any ) => st !== comp )
 			: subs;
 		return list.filter( ( st: any ) => isTraitShown( st ) );
 	}
@@ -684,16 +713,18 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		const set = props.character.traitSets[sArg];
 		const trait = set?.traits?.[t];
 		if ( !trait ) return;
-		const name = getTrackLabel( set );
-		const target = name.toLowerCase();
 		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
-		const idx = trait.traits.findIndex( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
-		const cur = idx !== -1 ? ( getTraitDice( trait.traits[idx] )[0] || 0 ) : 0;
-		if ( cur === size ) {
-			if ( idx !== -1 ) trait.traits.splice( idx, 1 );
-		} else if ( idx !== -1 ) {
-			cortexFunctions.setTraitDice( trait.traits[idx], [ size ] );
+		const companion: any = getTrackCompanion( set, trait );
+		if ( companion ) {
+			const cur = getTraitDice( companion )[0] || 0;
+			if ( cur === size ) {
+				const idx = trait.traits.indexOf( companion );
+				if ( idx !== -1 ) trait.traits.splice( idx, 1 );
+			} else {
+				cortexFunctions.setTraitDice( companion, [ size ] );
+			}
 		} else {
+			const name = getTrackLabel( set );
 			( trait.traits as any[] ).push( { name, rating: { type: 'Die', value: [ size ], range: getTrackScale( set ).slice() } } );
 		}
 		updateCharacter( props.character );
@@ -704,11 +735,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		const set = props.character.traitSets[sArg];
 		const trait = set?.traits?.[t];
 		if ( !trait ) return;
-		const name = getTrackLabel( set );
-		const target = name.toLowerCase();
 		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
-		let companion: any = trait.traits.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
+		let companion: any = getTrackCompanion( set, trait );
 		if ( !companion ) {
+			const name = getTrackLabel( set );
 			const scale = getTrackScale( set );
 			companion = { name, rating: { type: 'Die', value: [ scale[0] || 4 ], range: scale.slice(), out: true } };
 			( trait.traits as any[] ).push( companion );
@@ -824,6 +854,57 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 			rows.push({ index: i, trait: named, filled: pipRowFilled( t, i, track.filled ), name: named ? ( named as any ).name : '' });
 		}
 		return rows;
+	}
+
+	function getTraitPipBubbles( trait: Trait | undefined ): boolean[] {
+		const r = getRating( trait );
+		if ( r && r.type === 'Pip' && Array.isArray( r.value ) ) {
+			const count = Array.isArray( r.range ) && r.range[ 0 ] ? r.range[ 0 ] : ( r.value.length || 5 );
+			const bubbles: boolean[] = [];
+			for ( let i = 0; i < count; i++ ) bubbles.push( Boolean( r.value[ i ] === true ) );
+			return bubbles;
+		}
+		return [];
+	}
+
+	function toggleTraitPipBubble( trait: Trait | undefined, pipIndex: number ) {
+		if ( props.submode === 'print' || !trait ) return;
+		const r = getRating( trait );
+		if ( !r || r.type !== 'Pip' ) return;
+		const count = Array.isArray( r.range ) && r.range[ 0 ] ? r.range[ 0 ] : ( r.value.length || 5 );
+		const bubbles: boolean[] = [];
+		for ( let i = 0; i < count; i++ ) bubbles.push( Boolean( r.value[ i ] === true ) );
+		bubbles[ pipIndex ] = !bubbles[ pipIndex ];
+		( trait as any ).rating = { type: 'Pip', value: bubbles, range: [ count ] };
+		updateCharacter( props.character );
+	}
+
+	function getDynamicChildParts( traitSetArg: TraitSet ): string[] {
+		const parts = getParts( traitSetArg ) || {};
+		return Object.keys( parts ).filter( ( k ) => k.startsWith( 'child:' ) || k.startsWith( 'child_' ) );
+	}
+
+	function parseChildPartKey( partKey: string ): { noun: string; kind: 'label' | 'rating' } {
+		if ( partKey.startsWith( 'child:' ) ) {
+			const segs = partKey.slice( 6 ).split( ':' );
+			return { noun: segs[ 0 ] || 'Child', kind: ( segs[ 1 ] === 'rating' ? 'rating' : 'label' ) };
+		}
+		if ( partKey.startsWith( 'child_' ) ) {
+			const rest = partKey.slice( 6 );
+			if ( rest.endsWith( '_rating' ) ) {
+				return { noun: rest.slice( 0, -7 ), kind: 'rating' };
+			}
+			if ( rest.endsWith( '_text' ) || rest.endsWith( '_label' ) ) {
+				return { noun: rest.slice( 0, -5 ), kind: 'label' };
+			}
+			return { noun: rest, kind: 'label' };
+		}
+		return { noun: partKey, kind: 'label' };
+	}
+
+	function getChildTraitByNoun( trait: Trait | undefined, noun: string ): Trait | undefined {
+		if ( !trait || !Array.isArray( trait.traits ) ) return undefined;
+		return trait.traits.find( ( t ) => ( t?.name || '' ).trim().toLowerCase() === noun.trim().toLowerCase() );
 	}
 
 	function blankPipTrait(): any {
@@ -1148,7 +1229,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleSteppedDieClick,
 		handleOutClick, shouldShowOut, isTraitOut, getSharedHinderLines, renderHinderLine,
 		getCompactSfxText, getDisplayTraitSfx, getHinderSentence,
-		hasTrackPart, getTrackLabel, getTrackScale, getTrackValue,
+		hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue,
 		getTrackCompanion, isTrackCompanion, visibleSubtraits,
 		shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
 		getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
@@ -1162,7 +1243,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		firstDie, isDieActive, isTraitRated,
 		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
 		getSharedHinderText, getTraitSetSlotCount,
-		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie
+		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
+		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun
 	};
 
 	provide( TRAIT_SET_KEY, api );

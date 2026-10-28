@@ -40,7 +40,11 @@ export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, 
 
 // Known trait-part names. Anything else in view.parts is an error.
 export const KNOWN_PARTS = [ 'name', 'rating', 'description', 'block', 'subtraits', 'trackLabel', 'track' ] as const;
-export type PartName = ( typeof KNOWN_PARTS )[ number ];
+export type PartName = ( typeof KNOWN_PARTS )[ number ] | string;
+
+export function isKnownPart( part: string ): boolean {
+	return ( KNOWN_PARTS as readonly string[] ).includes( part ) || part.startsWith( 'child:' ) || part.startsWith( 'child_' );
+}
 
 // Parse a percent-of-parent value: "%" strings ("25%", decimals allowed)
 // or a bare number (import-time form, normalized to "%" on the way in).
