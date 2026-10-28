@@ -220,6 +220,14 @@ function stepSubtraitUp() {
 					title="Step up"
 					aria-label="Step up"
 				>+</button>
+				<button
+					type="button"
+					class="btn-unset-rating"
+					v-if="subFirstDie() > 0"
+					@click.stop="setRatingDie(subtrait as unknown as Record<string, any>, null); updateCharacter(props.character)"
+					title="Clear rating"
+					aria-label="Clear rating"
+				><i class="fas fa-xmark" aria-hidden="true"></i></button>
 			</div>
 
 			<div class="editor-field" v-if="parentIsBranch && !isPlay">

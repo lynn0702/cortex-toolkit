@@ -1081,6 +1081,26 @@
 			cursor: default;
 		}
 	}
+
+	.btn-unset-rating {
+		background: rgba(255, 255, 255, 0.12);
+		border: none;
+		color: rgba(255, 255, 255, 0.7);
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 2px;
+		font-size: 0.75rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-left: 0.25rem;
+
+		&:hover {
+			background: var(--color-danger, #d9534f);
+			color: white;
+		}
+	}
 }
 
 .editor-values {

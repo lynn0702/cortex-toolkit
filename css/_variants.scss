@@ -182,7 +182,7 @@
 		top: -.5em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { display: none; }
+			&:not(.active) { color: var(--color-separator); }
 		}
 	}	
 	.trait-description {
@@ -264,7 +264,7 @@
 		top: -.25em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { display: none; }
+			&:not(.active) { color: var(--color-separator); }
 		}
 	}
 
@@ -291,7 +291,7 @@
 	.trait-value {
 		top: -.1em;
 		> span:not(.active),
-		.c:not(.active) { display: none; }
+		.c:not(.active) { color: var(--color-separator); }
 	}
 
 }
@@ -329,7 +329,7 @@
 
 	.trait-value {
 		> span:not(.active),
-		.c:not(.active) { display: none; }
+		.c:not(.active) { color: var(--color-separator); }
 	}
 
 }
@@ -459,7 +459,7 @@
 		top: -.1em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { display: none; }
+			&:not(.active) { color: var(--color-separator); }
 		}
 	}
 
@@ -669,7 +669,7 @@
 		top: -.1em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { display: none; }
+			&:not(.active) { color: var(--color-separator); }
 		}
 	}
 
@@ -1729,13 +1729,20 @@
 .submode-play {
 	.trait-set-style-stress .c,
 	.trait-set-style-stress .stress-out-badge,
-	.single-die-value .c.active,
+	.single-die-value .c,
 	.attribute-inner .c,
-	.subtrait-value .c.active {
+	.subtrait-value .c {
 		cursor: pointer;
 		transition: transform 0.12s, color 0.15s;
 		&:hover {
 			transform: scale(1.15);
+		}
+	}
+
+	.single-die-value .c:not(.active),
+	.subtrait-value .c:not(.active) {
+		&:hover {
+			color: var(--color-interactive, #1976d2);
 		}
 	}
 }

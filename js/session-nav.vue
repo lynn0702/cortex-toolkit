@@ -114,7 +114,7 @@ function safeImageUrl( url: any ) {
 					title="Save session"
 					v-if="submode === 'play'"
 				>
-					<i class="fas fa-save"></i>
+					<i class="fas fa-floppy-disk"></i>
 					<span class="sheet-bar-btn-label">Save</span>
 				</button>
 			</div>

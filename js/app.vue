@@ -35,9 +35,8 @@ const dicePool = ref( new cortexPal.DicePool() );
 const isRollerOpen = ref( false );
 const rollerPosition = ref( 'right' );
 const isStudioPanelOpen = ref( true );
-	const studioPanelTab = ref<'properties' | 'roller' | 'json'>( 'properties' );
+const studioPanelTab = ref<'properties' | 'roller' | 'json'>( 'properties' );
 const panelPosition = ref<'left' | 'right'>( 'right' );
-const mobileActiveView = ref( 'sheet' );
 const storeReady = ref( false );
 const storeError = ref<any>( null );
 const mouseDownInsideEditor = ref( false );
@@ -162,12 +161,11 @@ function setMode( m: string, sub: string | null, updateHash = true ) {
 	if ( m === 'character' && sub === 'play' ) {
 		// Narrow viewports (overlay drawer): land on the sheet, panel
 		// closed — it would otherwise cover the sheet on arrival. The
-		// Roller handle / mobile Roller tab open it explicitly.
+		// Roller handle opens it explicitly.
 		const narrow = isNarrowViewport();
 		isStudioPanelOpen.value = !narrow;
 		studioPanelTab.value = 'roller';
 		isRollerOpen.value = !narrow;
-		mobileActiveView.value = 'sheet';
 	} else if ( m === 'character' && sub === 'edit' ) {
 		// Same overlay rule as Play: land on the sheet with the drawer
 		// closed. Tapping any trait opens it explicitly.
@@ -175,10 +173,8 @@ function setMode( m: string, sub: string | null, updateHash = true ) {
 		isStudioPanelOpen.value = !narrowEdit;
 		studioPanelTab.value = 'properties';
 		isRollerOpen.value = !narrowEdit;
-		mobileActiveView.value = 'sheet';
 	} else {
 		isRollerOpen.value = false;
-		mobileActiveView.value = 'sheet';
 	}
 	if ( updateHash ) {
 		updateRouteHash();
@@ -232,56 +228,24 @@ function toggleRoller() {
 	isStudioPanelOpen.value = !isStudioPanelOpen.value;
 	isRollerOpen.value = isStudioPanelOpen.value;
 	if ( isStudioPanelOpen.value ) {
-		if ( submode.value === 'play' ) {
-			studioPanelTab.value = 'roller';
-			mobileActiveView.value = 'roller';
-		} else {
-			studioPanelTab.value = 'properties';
-			mobileActiveView.value = 'sheet';
-		}
-	} else {
-		mobileActiveView.value = 'sheet';
+		studioPanelTab.value = submode.value === 'play' ? 'roller' : 'properties';
 	}
 }
-// Single seam for drawer open/close: closing always lands the mobile
-// view back on the sheet, or the sheet stays display:none behind a shut
-// drawer (blank screen until something forces a rerender).
+
 function setPanelOpen( open: boolean ) {
 	isStudioPanelOpen.value = open;
 	isRollerOpen.value = open;
-	if ( !open ) mobileActiveView.value = 'sheet';
 }
 
 function handleToggleStudio( tab: 'properties' | 'roller' | 'json' ) {
 	if ( isStudioPanelOpen.value && studioPanelTab.value === tab ) {
 		isStudioPanelOpen.value = false;
 		isRollerOpen.value = false;
-		mobileActiveView.value = 'sheet';
 	} else {
 		isStudioPanelOpen.value = true;
 		isRollerOpen.value = true;
 		studioPanelTab.value = tab;
-		if ( tab === 'roller' ) {
-			mobileActiveView.value = 'roller';
-		} else {
-			mobileActiveView.value = 'sheet';
-		}
 	}
-}
-
-// Mobile play tabs drive the overlay drawer: Sheet closes it, Roller opens
-// it on the roller tab (the drawer no longer opens by default on Play).
-function mobileShowSheet() {
-	mobileActiveView.value = 'sheet';
-	isStudioPanelOpen.value = false;
-	isRollerOpen.value = false;
-}
-
-function mobileShowRoller() {
-	mobileActiveView.value = 'roller';
-	isStudioPanelOpen.value = true;
-	isRollerOpen.value = true;
-	studioPanelTab.value = 'roller';
 }
 
 function togglePanelPosition() {
@@ -1415,7 +1379,7 @@ function saveLocalData() {
 defineExpose( {
 	localData, characters, characterID, openCharacterIDs, sheetTemplates, prefs,
 	playViewMode, isAddCharacterModalOpen, sessionCharacterSearch, mode, submode,
-	editing, viewY, dicePool, isRollerOpen, rollerPosition, mobileActiveView,
+	editing, viewY, dicePool, isRollerOpen, rollerPosition,
 	isStudioPanelOpen, studioPanelTab, panelPosition,
 	toastMessage, history, historyIndex, storeReady, storeError,
 	character, openCharacters, availableToOpen, pendingTemplateUpdate,
@@ -1433,7 +1397,7 @@ defineExpose( {
 	exportAllCharacters, updateCharacter, initHistory, commitHistorySnapshot,
 	validateEditing, undo, redo, handleGlobalKeydown, touchCharacter, selectElement,
 	handleGlobalPointerDown, handleMainClick, clearSelected, handleEditorFocusIn,
-	bootFromStorage, persist, saveLocalData, mobileShowSheet, mobileShowRoller,
+	bootFromStorage, persist, saveLocalData,
 	isNarrowViewport, handleToggleStudio,
 	studioPanelRef, showPlaySaveConfirm, confirmPlaySave, discardPlaySession, cancelPlaySave,
 	hasUncommittedSessionChanges, baselineCharacters,
@@ -1514,18 +1478,7 @@ defineExpose( {
 
 			<main class="main" ref="main" @scroll="setViewY"
 				@click.stop="handleMainClick"
-				:class="{ 'mobile-show-roller': mobileActiveView === 'roller' }"
 			>
-
-				<!-- MOBILE PLAY TABS -->
-				<div class="mobile-play-tabs" v-if="mode === 'character' && submode === 'play'">
-					<button :class="{ active: mobileActiveView === 'sheet' }" @click.stop="mobileShowSheet">
-						<i class="fas fa-id-card"></i> Sheet
-					</button>
-					<button :class="{ active: mobileActiveView === 'roller' }" @click.stop="mobileShowRoller">
-						<i class="fas fa-dice-d20"></i> Roller <span class="tab-badge" v-if="dicePool.items.length > 0">{{ dicePool.items.length }}</span>
-					</button>
-				</div>
 			
 				<!-- TEMPLATE VERSION SWITCH PROMPT -->
 				<div class="template-update-banner" v-if="pendingTemplateUpdate && submode === 'edit'"
@@ -1664,16 +1617,23 @@ defineExpose( {
 							</span>
 						</template>
 						<template v-else>
-							<span class="pill-empty-label"><i class="fas fa-dice-d20"></i> Tap to open roller</span>
+							<span class="pill-empty-label"><i class="fas fa-dice-d20"></i> 0 Dice Staged — Tap traits to build pool</span>
 						</template>
 					</div>
-					<div class="mobile-roller-pill-right" v-if="dicePool.items.length > 0">
-						<button type="button" class="btn-pill-roll" @click.stop="triggerRollFromPill" title="Roll dice">
-							<i class="fas fa-dice"></i> Roll
-						</button>
-						<button type="button" class="btn-pill-clear" @click.stop="triggerClearFromPill" title="Clear pool">
-							<i class="fas fa-times"></i>
-						</button>
+					<div class="mobile-roller-pill-right">
+						<template v-if="dicePool.items.length > 0">
+							<button type="button" class="btn-pill-roll" @click.stop="triggerRollFromPill" title="Roll dice">
+								<i class="fas fa-dice"></i> Roll
+							</button>
+							<button type="button" class="btn-pill-clear" @click.stop="triggerClearFromPill" title="Clear pool">
+								<i class="fas fa-times"></i>
+							</button>
+						</template>
+						<template v-else>
+							<button type="button" class="btn-pill-expand" @click.stop="toggleMobileRollerDrawer" title="Open dice roller">
+								<i class="fas fa-dice-d20"></i> Roller
+							</button>
+						</template>
 					</div>
 				</div>
 			</div><!-- /.sheet-column -->

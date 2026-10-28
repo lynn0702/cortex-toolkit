@@ -543,7 +543,7 @@ function print() {
 	}
 }
 
-const activeMobileSetIndex = ref<number>( 0 );
+const activeMobileSetIndex = ref<number>( -1 );
 const jumpStripRef = ref<HTMLElement | null>( null );
 let carouselObserver: IntersectionObserver | null = null;
 let mediaQuery: MediaQueryList | null = null;
@@ -551,7 +551,13 @@ let handleMediaChange: ( () => void ) | null = null;
 
 const mobilePlayJumpSets = computed( () => {
 	if ( props.submode !== 'play' || !Array.isArray( props.character?.traitSets ) ) return [];
-	return props.character.traitSets
+	const headerPill = {
+		index: -1,
+		label: ( props.character?.name && String( props.character.name ).trim().length )
+			? String( props.character.name ).trim()
+			: 'Identity'
+	};
+	const sets = props.character.traitSets
 		.map( ( ts: any, idx: number ) => ( { traitSet: ts, index: idx } ) )
 		.filter( ( { traitSet, index } ) => {
 			if ( isNameSet( traitSet ) ) return false;
@@ -562,6 +568,7 @@ const mobilePlayJumpSets = computed( () => {
 			index,
 			label: getMobileJumpPillLabel( traitSet, orderIdx )
 		} ) );
+	return [ headerPill, ...sets ];
 } );
 
 function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
@@ -576,7 +583,9 @@ function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
 function scrollToSetCard( setIndex: number ) {
 	activeMobileSetIndex.value = setIndex;
 	const root = rootEl.value || document;
-	const card = root.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null;
+	const card = setIndex === -1
+		? ( root.querySelector( '.page-header[data-set-index="-1"]' ) as HTMLElement | null )
+		: ( root.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null );
 	if ( card && typeof card.scrollIntoView === 'function' ) {
 		card.scrollIntoView( { behavior: 'smooth', inline: 'center', block: 'nearest' } );
 	}
@@ -601,7 +610,7 @@ function setupCarouselObserver() {
 	}
 	nextTick( () => {
 		const root = rootEl.value || document;
-		const cards = root.querySelectorAll( '.trait-set[data-set-index]' );
+		const cards = root.querySelectorAll( '[data-set-index]' );
 		if ( !cards.length ) return;
 
 		carouselObserver = new IntersectionObserver( ( entries ) => {
@@ -696,7 +705,30 @@ watch( () => props.submode, () => {
 
 				<div class="page-inner">
 
-					<header class="page-header" v-if="pageIndex === 1">
+					<!-- HORIZONTALLY SCROLLING JUMP-PILL STRIP (PLAY MODE ONLY) -->
+					<nav
+						v-if="submode === 'play' && pageIndex === 1 && mobilePlayJumpSets.length > 1"
+						ref="jumpStripRef"
+						class="mobile-set-jump-strip"
+						aria-label="Character trait sets"
+					>
+						<button
+							v-for="item in mobilePlayJumpSets"
+							:key="'jump-pill-' + item.index"
+							type="button"
+							class="jump-pill"
+							:class="{ active: activeMobileSetIndex === item.index }"
+							:data-pill-index="item.index"
+							:aria-current="activeMobileSetIndex === item.index ? 'true' : undefined"
+							@click.stop="scrollToSetCard(item.index)"
+						>
+							<span class="jump-pill-label">{{ item.label }}</span>
+						</button>
+					</nav>
+
+					<div class="mobile-carousel-track">
+
+					<header class="page-header" v-if="pageIndex === 1" :data-set-index="-1">
 
 						<!-- SPOTLIGHT HEADER (EDIT, PLAY, PRINT) -->
 						<div
@@ -863,27 +895,6 @@ watch( () => props.submode, () => {
 							<div class="page-2-badge">{{ game ? game + ' — ' : '' }}Page {{ pageIndex }} of {{ pageCount }}</div>
 						</div>
 					</header>
-
-					<!-- HORIZONTALLY SCROLLING JUMP-PILL STRIP (PLAY MODE ONLY) -->
-					<nav
-						v-if="submode === 'play' && pageIndex === 1 && mobilePlayJumpSets.length > 1"
-						ref="jumpStripRef"
-						class="mobile-set-jump-strip"
-						aria-label="Character trait sets"
-					>
-						<button
-							v-for="item in mobilePlayJumpSets"
-							:key="'jump-pill-' + item.index"
-							type="button"
-							class="jump-pill"
-							:class="{ active: activeMobileSetIndex === item.index }"
-							:data-pill-index="item.index"
-							:aria-current="activeMobileSetIndex === item.index ? 'true' : undefined"
-							@click.stop="scrollToSetCard(item.index)"
-						>
-							<span class="jump-pill-label">{{ item.label }}</span>
-						</button>
-					</nav>
 
 					<!-- SPOTLIGHT MODE LAYOUT (NESTED GRIDS, EXPLICIT COORDINATES) -->
 					<div v-if="isSpotlightStyle" class="spotlight-layout">
@@ -1064,7 +1075,9 @@ watch( () => props.submode, () => {
 								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>
-					</div>
+					</div> <!-- .classic-full-band -->
+
+					</div> <!-- .mobile-carousel-track -->
 
 				</div> <!-- .page-inner -->
 			</div> <!-- .page -->

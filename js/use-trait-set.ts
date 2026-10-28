@@ -464,9 +464,11 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( props.submode === 'play' ) {
 			const first = ratingDice( getRating( trait ) )[0];
 			const targetVal = value || first;
-			if ( !first && value ) {
-				setRatingDie( trait as unknown as Record<string, any>, value );
-				updateCharacter( props.character );
+			if ( value !== undefined && value !== null ) {
+				if ( !first || first !== value ) {
+					setRatingDie( trait as unknown as Record<string, any>, value );
+					updateCharacter( props.character );
+				}
 			}
 			if ( targetVal ) {
 				if ( stagesWholePool( trait, traitSetArg ) ) {

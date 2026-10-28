@@ -1383,6 +1383,14 @@ function getDieDisplayValue( val: any ) {
 								title="Step up"
 								aria-label="Step up"
 							>+</button>
+							<button
+								type="button"
+								class="btn-unset-rating"
+								v-if="firstDieOf(trait) > 0"
+								@click.stop="setRatingDie(trait as unknown as Record<string, any>, null); updateCharacter(props.character)"
+								title="Clear rating"
+								aria-label="Clear rating"
+							><i class="fas fa-xmark" aria-hidden="true"></i></button>
 						</div>
 
 						<!-- DICE LIST EDITOR -->

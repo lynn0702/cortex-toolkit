@@ -3343,6 +3343,9 @@ body:has(.character-sheet.submode-print) .main {
 .mobile-set-jump-strip {
 	display: none;
 }
+.mobile-carousel-track {
+	display: contents;
+}
 
 // 6. MOBILE VIEW REFLOW FOR CREATE & PLAY MODES (<= 768px)
 @media screen and (max-width: 768px) {
@@ -3417,26 +3420,29 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 2. Dissolve intermediate column wrappers in Play Mode so all .trait-set cards are direct siblings
+	// 2. Dissolve intermediate wrappers in Play Mode so .page-header and all .trait-set cards are direct siblings
 	.character-sheet.submode-play,
 	.play-shell .character-sheet:not(.submode-print):not(.submode-edit) {
+		.spotlight-layout,
+		.columns.spotlight-columns,
+		.columns.spotlight-columns.spotlight-grid,
+		.spotlight-grid,
 		.columns.spotlight-columns > .spotlight-column,
 		.sheet-columns > .sheet-column-inner,
+		.sheet-columns,
 		.columns > .column,
 		.columns > .column-left,
-		.columns > .column-right {
+		.columns > .column-right,
+		.columns,
+		.columns-2,
+		.columns-3,
+		.columns-4,
+		.classic-full-band {
 			display: contents !important;
 		}
 
 		// 3. Horizontal Scroll-Snap Carousel Track
-		.columns.spotlight-columns,
-		.columns.spotlight-columns.spotlight-grid,
-		.spotlight-grid,
-		.sheet-columns,
-		.columns,
-		.columns-2,
-		.columns-3,
-		.columns-4 {
+		.mobile-carousel-track {
 			display: flex !important;
 			flex-direction: row !important;
 			flex-wrap: nowrap !important;
@@ -3457,7 +3463,8 @@ body:has(.character-sheet.submode-print) .main {
 			}
 		}
 
-		// 4. Individual Trait Set Card Geometry
+		// 4. Individual Card Geometry (Name Header Card + Trait Set Cards)
+		.page-header,
 		.trait-set {
 			flex: 0 0 88vw !important;
 			width: 88vw !important;
