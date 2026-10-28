@@ -155,7 +155,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -194,7 +195,8 @@
             "top": 0,
             "width": "72%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -295,7 +297,8 @@
             "top": 1,
             "width": "28%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Signature Asset",
         "plural": "Signature Assets",
@@ -337,7 +340,8 @@
             "top": 1,
             "width": "72%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Skill",
         "plural": "Skills",
@@ -391,7 +395,8 @@
             "top": 2,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Die",
         "plural": "Dice",
@@ -425,7 +430,8 @@
             "top": 3,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Die",
         "plural": "Dice",
@@ -450,7 +456,8 @@
           "pips": {
             "perRow": 12,
             "connected": true
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",
@@ -518,7 +525,8 @@
             "top": 0,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Power",
         "plural": "Powers",
@@ -567,7 +575,8 @@
             "top": 0,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Power",
         "plural": "Powers",
@@ -616,7 +625,8 @@
             "top": 0,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Power",
         "plural": "Powers",
@@ -662,7 +672,8 @@
             "col1": "TALENT",
             "col2": "ACTIVATION",
             "col3": "EFFECT"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Talent",
         "plural": "Talents",
@@ -691,7 +702,8 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",
@@ -738,7 +750,8 @@
             "top": 2,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "noun": "Option",
         "plural": "Options",

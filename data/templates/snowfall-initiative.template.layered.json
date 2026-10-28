@@ -132,7 +132,8 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 3
+          "reservedSlots": 3,
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -250,7 +251,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Affiliation",
         "plural": "Affiliations",
@@ -303,7 +305,8 @@
               "height": 1
             }
           },
-          "playMutable": true
+          "playMutable": true,
+          "pillar": "play"
         },
         "noun": "Complication",
         "plural": "Complications",
@@ -370,7 +373,8 @@
               "width": "27%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -412,7 +416,8 @@
           ],
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 19
+          "reservedSlots": 19,
+          "pillar": "prime"
         },
         "noun": "Skill",
         "plural": "Skills",
@@ -488,7 +493,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Signature Asset",
         "plural": "Signature Assets",
@@ -518,7 +524,8 @@
             "col1": "TALENT",
             "col2": "ACTIVATION",
             "col3": "EFFECT"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Talent",
         "plural": "Talents",
@@ -572,7 +579,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Gift",
         "plural": "Gifts",
@@ -618,7 +626,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Milestone",
         "plural": "Milestones",
@@ -671,7 +680,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Milestone",
         "plural": "Milestones",
@@ -710,7 +720,8 @@
             "top": 4,
             "width": "25%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

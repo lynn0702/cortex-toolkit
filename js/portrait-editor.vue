@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, type Character } from './model.ts';
+import { getView, ensureView, nextVisibility, type Character, type Visibility } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
@@ -83,13 +83,13 @@ function portraitVisibility() {
 	const t = cortexFunctions.getNameTrait( props.character, 'portrait' );
 	const v = getView( t ) as Record<string, unknown> | undefined;
 	const word = v?.visibility;
-	if ( word === 'hidden' || word === 'editor-only' || word === 'shown' ) return word;
+	if ( word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown' ) return word;
 	return 'shown';
 }
 
 function togglePortraitVisibility() {
 	const cur = portraitVisibility();
-	const next = cur === 'shown' ? 'editor-only' : cur === 'editor-only' ? 'hidden' : 'shown';
+	const next = nextVisibility( cur as Visibility );
 	const t = cortexFunctions.ensureNameTrait( props.character, 'portrait' );
 	if ( !t ) return;
 	const v = ensureView( t ) as Record<string, unknown>;

@@ -115,7 +115,8 @@
             "subtraits": false
           },
           "header": "top",
-          "headerAlign": "center"
+          "headerAlign": "center",
+          "pillar": "prime"
         },
         "noun": "Role",
         "plural": "Roles",
@@ -219,7 +220,8 @@
           "labels": {
             "left": "SKILL",
             "right": "SPECIALTIES"
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Skill",
         "plural": "Skills",
@@ -389,7 +391,8 @@
           "labels": {
             "slot0": "COMPLICATION",
             "slot1": "BONUS"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Standing",
         "plural": "Standings",
@@ -537,7 +540,8 @@
             "col1": "TALENT",
             "col2": "ACTIVATION",
             "col3": "EFFECT"
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Value",
         "plural": "Values",
@@ -654,7 +658,8 @@
             "top": 2,
             "width": "66.667%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -734,7 +739,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "play"
         },
         "pool": true,
         "noun": "Growth Die",
@@ -860,7 +866,8 @@
             "top": 0,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Badge",
         "plural": "Badges",
@@ -934,7 +941,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Resource",
         "plural": "Resources",
@@ -1019,7 +1027,8 @@
             "top": 1,
             "width": "66.666%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Field",
         "plural": "Fields",
@@ -1057,7 +1066,8 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",
@@ -1134,7 +1144,8 @@
             "top": 2,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "noun": "Note",
         "plural": "Notes",
@@ -1154,7 +1165,8 @@
           "pips": {
             "labels": true,
             "perRow": 12
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

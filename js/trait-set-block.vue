@@ -39,8 +39,13 @@ const ts = useTraitSet( props, emit );
 const {
 	traitSet, s, submode, viewY, character,
 	getTraitSetClasses, isSelected, renderText, selectElement, updateCharacter, removeTraitSet,
-	hasCounterColumn, getCounterLabel
+	hasCounterColumn, getCounterLabel, isHiddenIn
 } = ts;
+
+const canRemoveSetInPlay = computed( () => {
+	const v = getView( traitSet.value );
+	return Boolean( v?.playMutable || v?.visibility === 'play-only' );
+} );
 
 const headerTop = computed( () => getView(traitSet.value)?.header === 'top' );
 
@@ -67,6 +72,7 @@ const bodyComponent = computed( () => {
 
 <template>
 	<section
+		v-if="traitSet && !isHiddenIn(traitSet, submode)"
 		:class="getTraitSetClasses(traitSet)"
 		:data-set-index="s"
 		:data-set-name="traitSet.name || undefined"
@@ -85,6 +91,16 @@ const bodyComponent = computed( () => {
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
 					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>
+					<button
+						v-if="submode === 'play' && canRemoveSetInPlay"
+						type="button"
+						class="trait-set-play-remove-btn"
+						title="Remove card from session"
+						aria-label="Remove card from session"
+						@click.stop="removeTraitSet(s)"
+					>
+						<i class="fas fa-times"></i>
+					</button>
 				</div>
 			</transition>
 		</div>

@@ -62,5 +62,36 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingSca
   ok(char.traitSets[0].traits[0].rating.value[0] === 2, 'Counter trait value updated to 2');
 }
 
+// ---- play-only visibility, resolveSetPillar, getPillarLabel, cortexSetPresets
+{
+  const Model = require('../js/model.ts');
+  const playOnlyNode = { view: { visibility: 'play-only' } };
+  ok(Model.resolveVisibility(playOnlyNode) === 'play-only', 'resolveVisibility recognizes play-only');
+  ok(Model.isHiddenIn(playOnlyNode, 'edit') === false, 'play-only is visible in edit');
+  ok(Model.isHiddenIn(playOnlyNode, 'play') === false, 'play-only is visible in play');
+  ok(Model.isHiddenIn(playOnlyNode, 'print') === true, 'play-only is hidden in print');
+  ok(Model.nextVisibility('shown') === 'play-only', 'shown cycles to play-only');
+  ok(Model.nextVisibility('play-only') === 'editor-only', 'play-only cycles to editor-only');
+
+  ok(F.resolveSetPillar({ view: { pillar: 'cyberware' } }) === 'cyberware', 'explicit custom pillar wins');
+  ok(F.resolveSetPillar({ view: { visibility: 'play-only' } }) === 'play', 'play-only defaults to play pillar');
+  ok(F.resolveSetPillar({ view: { playMutable: true } }) === 'play', 'playMutable defaults to play pillar');
+  ok(F.resolveSetPillar({ view: { style: { body: 'notes' } } }) === 'play', 'notes style defaults to play pillar');
+  ok(F.resolveSetPillar({ view: { style: { body: 'sfx-rows' } } }) === 'prime', 'sfx-rows defaults to prime pillar');
+  ok(F.resolveSetPillar({ view: { style: { body: 'portrait-ring' } } }) === 'prime', 'portrait-ring defaults to prime pillar');
+  ok(F.resolveSetPillar({ view: { style: { body: 'default' } } }) === 'plus', 'default style defaults to plus pillar');
+
+  const charWithLabels = { view: { labels: { pillars: { prime: 'Core', cyberware: 'Augments' }, pillar_play: 'Session' } } };
+  ok(F.getPillarLabel(charWithLabels, 'prime') === 'Core', 'getPillarLabel reads view.labels.pillars');
+  ok(F.getPillarLabel(charWithLabels, 'cyberware') === 'Augments', 'getPillarLabel reads custom pillar label');
+  ok(F.getPillarLabel(charWithLabels, 'play') === 'Session', 'getPillarLabel reads flat pillar_ fallback');
+  ok(F.getPillarLabel(charWithLabels, 'plus') === 'Plus', 'getPillarLabel capitalizes uncustomized key');
+
+  const presets = F.cortexSetPresets;
+  ok(presets && presets['scene-traits'] && presets['session-notes'] && presets['crisis-pool'] && presets['micro-gmc'], '4 built-in set presets exist');
+  const inst = F.instantiateSetPreset(presets['scene-traits'], { traitSets: [] }, 1);
+  ok(inst && inst.name === 'Scene Traits' && inst.view.pillar === 'play' && inst.view.visibility === 'play-only' && inst.view.playMutable === true, 'instantiateSetPreset clones and assigns id');
+}
+
 console.log(`functions-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

@@ -154,7 +154,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Value",
         "plural": "Values",
@@ -195,7 +196,8 @@
             "top": 0,
             "width": "72%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -293,7 +295,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Resource",
         "plural": "Resources",
@@ -411,7 +414,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Asset",
         "plural": "Assets",
@@ -454,7 +458,8 @@
             "top": 1,
             "width": "72%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Skill",
         "plural": "Skills",
@@ -480,7 +485,8 @@
           "pips": {
             "labels": true,
             "perRow": 20
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

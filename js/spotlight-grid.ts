@@ -9,7 +9,7 @@
 // trait parts (name, rating, description, block, subtraits, trackLabel,
 // track) as cells in the trait's grid, percent of the set.
 import type { Character, TraitSet } from './model.ts';
-import { getView, isNameSet } from './model.ts';
+import { getView, isNameSet, isHiddenIn, resolveVisibility } from './model.ts';
 
 // Classic flow has left/right tracks only; 'center' (and anything
 // unexpected) folds left so no set ever vanishes.
@@ -171,11 +171,12 @@ export interface SpotlightSection {
 // Columns come from the page-union edges, so every cell renders its exact
 // rectangle and vertical edges align across rows. Height is a floor via
 // grid-row span plus min-height; rows stay content-sized.
-export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number ): SpotlightSection[] {
+export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number, submode?: string | null ): SpotlightSection[] {
 	const pageSets: SpotlightSectionItem[] = [];
 	( traitSets || [] ).forEach( ( traitSet, s ) => {
 		// The name block renders as the page header, never as a grid cell.
 		if ( isNameSet( traitSet ) ) return;
+		if ( submode ? isHiddenIn( traitSet, submode ) : resolveVisibility( traitSet ) === 'hidden' ) return;
 		const page = getView( traitSet )?.page || 1;
 		if ( page === pageIndex ) {
 			pageSets.push( { traitSet, index: s } );

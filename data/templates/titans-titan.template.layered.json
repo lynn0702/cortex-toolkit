@@ -169,7 +169,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -249,7 +250,8 @@
             "top": 0,
             "width": "72%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -341,7 +343,8 @@
             "top": 1,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Power",
         "plural": "Powers",
@@ -375,7 +378,8 @@
             "top": 1,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Power",
         "plural": "Powers",
@@ -401,7 +405,8 @@
             "perRow": 15,
             "connected": true
           },
-          "reservedSlots": 0
+          "reservedSlots": 0,
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

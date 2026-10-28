@@ -6,6 +6,7 @@ import TraitSetEditorDice from './trait-set-editor-dice.vue';
 import TraitSetEditorImage from './trait-set-editor-image.vue';
 import TraitSetEditorSfx from './trait-set-editor-sfx.vue';
 import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
+import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
 	character: any;
@@ -32,6 +33,7 @@ const {
 	noun, plural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
+	setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
 	selectElement, promptDeleteTraitSet, targetValue
 } = api;
 </script>
@@ -42,6 +44,7 @@ const {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
+			<button type="button" @click.stop="saveSetAsPreset" :title="presetSaved ? 'Saved Set as Preset!' : 'Save Set as Preset'"><i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'"></i></button>
 			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
 			<button type="button" class="editor-delete" @click.stop="promptDeleteTraitSet" title="Delete trait set"><i class="fas fa-trash"></i></button>
 		</div>
@@ -56,7 +59,10 @@ const {
 					<summary class="editor-group-title">Content</summary>
 
 					<div class="editor-field">
-						<label :for="'trait-set-name-' + traitSetID">Trait Set Name</label>
+						<div class="name-heading-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem;">
+							<label :for="'trait-set-name-' + traitSetID" style="margin: 0;">Trait Set Name</label>
+							<VisibilityEye :state="setVisibility" @toggle="cycleSetVisibility" />
+						</div>
 						<input type="text" :id="'trait-set-name-' + traitSetID" name="traitSetName" v-model="name" ref="inputName">
 					</div>
 
@@ -331,6 +337,35 @@ const {
 					</div>
 
 					<TraitSetEditorLayout />
+
+					<!-- MOBILE PILLAR -->
+					<div class="editor-field">
+						<label :for="'trait-set-' + traitSetID + '-pillar'">Mobile Pillar</label>
+						<div class="editor-button-group" style="margin-bottom: 0.35rem; flex-wrap: wrap;">
+							<button
+								v-for="pOpt in ['prime', 'plus', 'play', 'identity']"
+								:key="'pillar-chip-' + pOpt"
+								type="button"
+								class="editor-group-btn"
+								:class="{ active: resolvedPillar === pOpt }"
+								@click.stop="setPillar = pOpt"
+							>{{ pOpt.charAt(0).toUpperCase() + pOpt.slice(1) }}</button>
+						</div>
+						<input
+							type="text"
+							:id="'trait-set-' + traitSetID + '-pillar'"
+							name="setPillar"
+							list="pillar-suggestions"
+							v-model="setPillar"
+							:placeholder="resolvedPillar + ' (default)'"
+						>
+						<datalist id="pillar-suggestions">
+							<option value="prime"></option>
+							<option value="plus"></option>
+							<option value="play"></option>
+							<option value="identity"></option>
+						</datalist>
+					</div>
 
 					<!-- COLUMNS WITHIN SET -->
 					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">

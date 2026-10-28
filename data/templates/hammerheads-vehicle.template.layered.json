@@ -128,7 +128,8 @@
             "top": 0,
             "width": "25%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Hammerhead Attribute",
         "plural": "Hammerhead Attributes",
@@ -312,7 +313,8 @@
             "top": 0,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Vehicle Distinction",
         "plural": "Vehicle Distinctions",
@@ -394,7 +396,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Resource Pool",
         "plural": "Resource Pools",

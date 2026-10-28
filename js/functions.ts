@@ -2,7 +2,9 @@ import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
 import { VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel, resolveSheetStyle,
-defaultNameHidden, getRating, ratingDice, setRatingDice } from './model.ts';
+defaultNameHidden, getRating, ratingDice, setRatingDice, resolveSetPillar, getPillarLabel,
+resolveVisibility, nextVisibility, isHiddenIn } from './model.ts';
+import { buildParts } from './spotlight-grid.ts';
 import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
@@ -13,6 +15,11 @@ export const cortexFunctions = {
 	VIEW_KEY: VIEW_KEY,
 	getView: getView,
 	ensureView: ensureView,
+	resolveSetPillar: resolveSetPillar,
+	getPillarLabel: getPillarLabel,
+	resolveVisibility: resolveVisibility,
+	nextVisibility: nextVisibility,
+	isHiddenIn: isHiddenIn,
 
 	// Layered-model helpers (TS pilot). Imported here so the TypeScript
 	// toolchain compiles it into the bundle; consumers land during the UI pass.
@@ -1696,5 +1703,195 @@ export const cortexFunctions = {
 		tags: [],
 		custom: {}
 	},
-	
+
+	// Built-in Set Presets (dogfooded TraitSet templates for Play & Edit)
+	cortexSetPresets: {
+		'scene-traits': {
+			id: 'scene-traits',
+			label: 'Scene Traits — Assets & Complications',
+			blurb: 'Temporary Play-only set with 3 slots and Out indicator.',
+			preset: {
+				name: 'Scene Traits',
+				noun: 'Scene Trait',
+				plural: 'Scene Traits',
+				description: '',
+				traits: [],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					outIndicator: true,
+					reservedSlots: 3,
+					style: { header: 'default', body: 'default' }
+				}
+			}
+		},
+		'session-notes': {
+			id: 'session-notes',
+			label: 'Session Notes',
+			blurb: 'Play-only markdown scratchpad for session notes.',
+			preset: {
+				name: 'Session Notes',
+				noun: 'Note',
+				plural: 'Notes',
+				description: '',
+				traits: [],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					style: { header: 'notes', body: 'notes' }
+				}
+			}
+		},
+		'crisis-pool': {
+			id: 'crisis-pool',
+			label: 'Crisis / Trouble Pool',
+			blurb: 'Spendable dice pool for scene trouble or crisis dice.',
+			preset: {
+				name: 'Crisis Pool',
+				noun: 'Die',
+				plural: 'Dice',
+				description: '',
+				pool: true,
+				spendable: true,
+				traits: [
+					{ name: 'Trouble', description: '', traits: [], tags: [], rating: { type: 'Dice', value: [ 6, 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+				],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					style: { header: 'default', body: 'default' }
+				}
+			}
+		},
+		'micro-gmc': {
+			id: 'micro-gmc',
+			label: 'Micro-Character / GMC',
+			blurb: 'Compact GMC card with role/specialty dice and stress track.',
+			preset: {
+				name: 'Scene GMC',
+				noun: 'Trait',
+				plural: 'Traits',
+				description: '',
+				traits: [
+					{ name: 'Primary Role', description: '', traits: [], tags: [], rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] } },
+					{ name: 'Specialty / Gear', description: '', traits: [], tags: [], rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+				],
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					outIndicator: true,
+					parts: buildParts( { rating: 'inline', ratingDice: 5, trackDice: 5, description: false, block: false, subtraits: false } ),
+					style: { header: 'default', body: 'default' }
+				}
+			}
+		}
+	} as Record<string, { id: string; label: string; blurb?: string; preset: any }>,
+
+	getCustomSetPresets: function(): { id: string; label: string; blurb?: string; preset: any }[] {
+		if ( typeof localStorage === 'undefined' ) return [];
+		try {
+			const raw = localStorage.getItem( 'cortexCustomSetPresets' );
+			if ( !raw ) return [];
+			const parsed = JSON.parse( raw );
+			return Array.isArray( parsed ) ? parsed.filter( ( p: any ) => p && typeof p === 'object' && p.preset ) : [];
+		} catch ( _e ) {
+			return [];
+		}
+	},
+
+	saveCustomSetPreset: function( traitSet: any ): { id: string; label: string; blurb?: string; preset: any } | null {
+		if ( !traitSet || typeof traitSet !== 'object' ) return null;
+		const cloned = cloneDeep( traitSet );
+		this.stripInternalIds( cloned );
+		delete cloned.id;
+		if ( cloned.view && typeof cloned.view === 'object' ) {
+			delete cloned.view.place;
+		}
+		const label = ( typeof cloned.name === 'string' && cloned.name.trim().length )
+			? cloned.name.trim()
+			: 'Custom Set';
+		const entry = {
+			id: 'custom-' + this.generateUUID(),
+			label,
+			blurb: 'Saved custom set preset',
+			preset: cloned
+		};
+		const list = this.getCustomSetPresets();
+		list.push( entry );
+		if ( typeof localStorage !== 'undefined' ) {
+			try {
+				localStorage.setItem( 'cortexCustomSetPresets', JSON.stringify( list ) );
+			} catch ( _e ) { /* ignore storage quota in headless environments */ }
+		}
+		return entry;
+	},
+
+	deleteCustomSetPreset: function( presetId: string ): { id: string; label: string; blurb?: string; preset: any }[] {
+		const list = this.getCustomSetPresets().filter( ( p ) => p.id !== presetId );
+		if ( typeof localStorage !== 'undefined' ) {
+			try {
+				localStorage.setItem( 'cortexCustomSetPresets', JSON.stringify( list ) );
+			} catch ( _e ) { /* ignore */ }
+		}
+		return list;
+	},
+
+	instantiateSetPreset: function( presetOrEntry: any, character: any, page = 1, location?: string ): any {
+		const rawSet = ( presetOrEntry && typeof presetOrEntry === 'object' && presetOrEntry.preset )
+			? presetOrEntry.preset
+			: presetOrEntry;
+		const traitSet = cloneDeep( rawSet );
+		this.stripInternalIds( traitSet );
+		delete traitSet.id;
+		const v = ensureView( traitSet );
+		delete v.place;
+		// Normalize legacy attachedStress if present in a user-supplied preset
+		const legacyStress = ( v as any ).attachedStress;
+		if ( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled && !v.parts ) {
+			const scale = Array.isArray( v.ratingScale ) && v.ratingScale.length ? v.ratingScale : [ 4, 6, 8, 10, 12 ];
+			const sScale = Array.isArray( legacyStress.scale ) && legacyStress.scale.length ? legacyStress.scale : [ 4, 6, 8, 10, 12 ];
+			v.parts = buildParts( {
+				rating: 'inline',
+				ratingDice: scale.length,
+				trackDice: sScale.length,
+				description: Boolean( v.features?.description ),
+				block: Boolean( v.features?.sfx ),
+				subtraits: Boolean( v.features?.subtraits )
+			} );
+			if ( legacyStress.includeOut === true && v.outIndicator !== true ) {
+				v.outIndicator = true;
+			}
+			delete ( v as any ).attachedStress;
+		}
+		if ( !v.style || typeof v.style !== 'object' ) {
+			v.style = { header: 'default', body: 'default' };
+		} else if ( !v.style.header ) {
+			v.style.header = v.style.body || 'default';
+		}
+		v.page = page || 1;
+		if ( resolveSheetStyle( character ) !== 'spotlight' ) {
+			v.location = location || 'left';
+		}
+		this.ensureTraitSetIds( { traitSets: [ ...( character?.traitSets || [] ), traitSet ] } );
+		this.assignLids( { traitSets: [ traitSet ] } );
+		return traitSet;
+	},
+
+};
+
+export interface SetPresetEntry {
+	id: string;
+	label: string;
+	blurb?: string;
+	preset: any;
 }
+
+export const cortexSetPresets = cortexFunctions.cortexSetPresets;

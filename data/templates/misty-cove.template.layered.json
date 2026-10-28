@@ -140,7 +140,8 @@
             "top": 0,
             "width": "64%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -200,7 +201,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Signature Asset",
         "plural": "Signature Assets",
@@ -261,7 +263,8 @@
           },
           "labels": {
             "stress": "STRESS"
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -324,7 +327,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Relationship",
         "plural": "Relationships",
@@ -363,7 +367,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "play"
         },
         "pool": true,
         "noun": "Growth Die",
@@ -511,7 +516,8 @@
               "height": 1
             }
           },
-          "playMutable": true
+          "playMutable": true,
+          "pillar": "play"
         },
         "noun": "Complication",
         "plural": "Complications",

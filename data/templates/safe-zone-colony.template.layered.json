@@ -133,7 +133,8 @@
           ],
           "multiDie": true,
           "notes": "",
-          "reservedSlots": 3
+          "reservedSlots": 3,
+          "pillar": "plus"
         },
         "noun": "Essential Stockpile",
         "plural": "Essential Stockpiles",
@@ -243,7 +244,8 @@
           ],
           "multiDie": true,
           "notes": "",
-          "reservedSlots": 3
+          "reservedSlots": 3,
+          "pillar": "plus"
         },
         "noun": "Non-Essential Stockpile",
         "plural": "Non-Essential Stockpiles",
@@ -365,7 +367,8 @@
             "top": 2,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Building",
         "plural": "Buildings",
@@ -470,7 +473,8 @@
             "top": 2,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Building",
         "plural": "Buildings",
@@ -575,7 +579,8 @@
             "top": 3,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Building",
         "plural": "Buildings",
@@ -680,7 +685,8 @@
             "top": 3,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Building",
         "plural": "Buildings",
@@ -785,7 +791,8 @@
             "top": 4,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Building",
         "plural": "Buildings",
@@ -890,7 +897,8 @@
             "top": 4,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Building",
         "plural": "Buildings",
@@ -989,7 +997,8 @@
             "top": 0,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1042,7 +1051,8 @@
             "top": 0,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1095,7 +1105,8 @@
             "top": 0,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1148,7 +1159,8 @@
             "top": 1,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1201,7 +1213,8 @@
             "top": 1,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1254,7 +1267,8 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1307,7 +1321,8 @@
             "top": 2,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1360,7 +1375,8 @@
             "top": 2,
             "width": "33.333%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1413,7 +1429,8 @@
             "top": 2,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Survivor",
         "plural": "Survivors",
@@ -1453,7 +1470,8 @@
             "header": "default",
             "body": "notes"
           },
-          "notes": ""
+          "notes": "",
+          "pillar": "play"
         },
         "noun": "Note",
         "plural": "Notes",

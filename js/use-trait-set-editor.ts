@@ -1,8 +1,8 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, toRaw, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
-import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie } from './model.ts';
-import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
+import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
+import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig, Visibility } from './model.ts';
 
 export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
 
@@ -619,6 +619,49 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		set: ( val: number ) => { setCustomProperty( 'traitColumns', parseInt( String( val ), 10 ) || 1 ); }
 	});
 
+	const setVisibility = computed<Visibility>({
+		get: () => resolveVisibility( traitSet.value ),
+		set: ( val: Visibility ) => {
+			if ( !traitSet.value ) return;
+			const v = ensureView( traitSet.value );
+			if ( val === 'shown' ) {
+				delete v.visibility;
+			} else {
+				v.visibility = val;
+			}
+			updateCharacter( props.character );
+		}
+	});
+
+	function cycleSetVisibility() {
+		setVisibility.value = nextVisibility( setVisibility.value );
+	}
+
+	const setPillar = computed<string>({
+		get: () => getView( traitSet.value )?.pillar ?? '',
+		set: ( val: string ) => {
+			if ( !traitSet.value ) return;
+			const v = ensureView( traitSet.value );
+			const trimmed = String( val || '' ).trim();
+			if ( trimmed ) {
+				v.pillar = trimmed;
+			} else {
+				delete v.pillar;
+			}
+			updateCharacter( props.character );
+		}
+	});
+
+	const resolvedPillar = computed<string>( () => resolveSetPillar( traitSet.value ) );
+
+	const presetSaved = ref( false );
+	function saveSetAsPreset() {
+		if ( !traitSet.value ) return;
+		cortexFunctions.saveCustomSetPreset( toRaw( traitSet.value ) );
+		presetSaved.value = true;
+		setTimeout( () => { presetSaved.value = false; }, 1600 );
+	}
+
 	// Rebuild this set's trait-part layout, preserving its track setup,
 	// dice counts, features, and statement mode. Vertical ladders keep
 	// the legacy flag (no parts form); bespoke bodies are left alone.
@@ -1197,6 +1240,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
+		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
 		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
 		scrollable, needsDiceUI, allowsTraitColumns,

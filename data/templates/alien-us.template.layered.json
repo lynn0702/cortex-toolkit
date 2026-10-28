@@ -132,7 +132,8 @@
             8
           ],
           "notes": "",
-          "reservedSlots": 3
+          "reservedSlots": 3,
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -194,7 +195,8 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 7
+          "reservedSlots": 7,
+          "pillar": "prime"
         },
         "rating": {
           "type": "Die",
@@ -353,7 +355,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Value",
         "plural": "Values",
@@ -394,7 +397,8 @@
             "col1": "TALENT",
             "col2": "ACTIVATION",
             "col3": "EFFECT"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Talent",
         "plural": "Talents",
@@ -444,7 +448,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Signature Asset / Tech",
         "plural": "Signature Assets / Tech",
@@ -490,7 +495,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Relationship",
         "plural": "Relationships",
@@ -524,7 +530,8 @@
           "pips": {
             "labels": true,
             "perRow": 20
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

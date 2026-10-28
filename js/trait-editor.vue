@@ -2,7 +2,7 @@
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, getRating, ratingDice, setRatingDie, setRatingDice,
-isRated, resolveHitches, resolveVisibility, DIE_LADDER, rangeTop, isOutDie, type Character } from './model.ts';
+isRated, resolveHitches, resolveVisibility, nextVisibility, DIE_LADDER, rangeTop, isOutDie, type Character } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
@@ -1187,7 +1187,7 @@ function getDieDisplayValue( val: any ) {
 					<div class="editor-field" v-if="!isPlay">
 						<div class="name-heading-row">
 							<label>Visibility</label>
-							<visibility-eye :state="traitVisibility" @toggle="traitVisibility = traitVisibility === 'shown' ? 'editor-only' : traitVisibility === 'editor-only' ? 'hidden' : 'shown'" />
+							<visibility-eye :state="traitVisibility" @toggle="traitVisibility = nextVisibility(traitVisibility)" />
 						</div>
 					</div>
 

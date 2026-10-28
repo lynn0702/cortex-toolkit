@@ -126,7 +126,8 @@
           "style": {
             "header": "labeled-fields",
             "body": "labeled-fields"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Detail",
         "plural": "Details",
@@ -165,7 +166,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Resource",
         "plural": "Resources",

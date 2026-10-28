@@ -3340,7 +3340,8 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 // Default guard outside mobile:
-.mobile-set-jump-strip {
+.mobile-set-jump-strip,
+.mobile-pillar-track {
 	display: none;
 }
 .mobile-carousel-track {
@@ -3396,6 +3397,9 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		.jump-pill {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.35rem;
 			flex: 0 0 auto;
 			white-space: nowrap;
 			border: 1px solid #cbd5e1;
@@ -3417,32 +3421,35 @@ body:has(.character-sheet.submode-print) .main {
 				color: #ffffff;
 				box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
 			}
+
+			&.jump-pill-add-card {
+				border-style: dashed;
+				border-color: var(--color-interactive, #2563eb);
+				color: var(--color-interactive, #2563eb);
+				background: rgba(37, 99, 235, 0.06);
+			}
+		}
+
+		.jump-pill-badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 1.15rem;
+			height: 1.15rem;
+			padding: 0 0.3rem;
+			border-radius: 999px;
+			background: var(--color-interactive, #2563eb);
+			color: #ffffff;
+			font-size: 0.65rem;
+			font-weight: 800;
+			line-height: 1;
 		}
 	}
 
-	// 2. Dissolve intermediate wrappers in Play Mode so .page-header and all .trait-set cards are direct siblings
+	// 2. 2D Horizontal Pillar Track + Vertical Stack Columns (Play Mode Only)
 	.character-sheet.submode-play,
 	.play-shell .character-sheet:not(.submode-print):not(.submode-edit) {
-		.spotlight-layout,
-		.columns.spotlight-columns,
-		.columns.spotlight-columns.spotlight-grid,
-		.spotlight-grid,
-		.columns.spotlight-columns > .spotlight-column,
-		.sheet-columns > .sheet-column-inner,
-		.sheet-columns,
-		.columns > .column,
-		.columns > .column-left,
-		.columns > .column-right,
-		.columns,
-		.columns-2,
-		.columns-3,
-		.columns-4,
-		.classic-full-band {
-			display: contents !important;
-		}
-
-		// 3. Horizontal Scroll-Snap Carousel Track
-		.mobile-carousel-track {
+		.mobile-pillar-track {
 			display: flex !important;
 			flex-direction: row !important;
 			flex-wrap: nowrap !important;
@@ -3454,7 +3461,7 @@ body:has(.character-sheet.submode-print) .main {
 			-webkit-overflow-scrolling: touch;
 			gap: 0.75rem !important;
 			width: 100% !important;
-			padding: 0.25rem 6vw 5.5rem 6vw !important; // 6vw side padding centers 88vw cards and lets neighbors peek in
+			padding: 0.25rem 6vw 5.5rem 6vw !important;
 			box-sizing: border-box !important;
 			scrollbar-width: none;
 
@@ -3463,24 +3470,94 @@ body:has(.character-sheet.submode-print) .main {
 			}
 		}
 
-		// 4. Individual Card Geometry (Name Header Card + Trait Set Cards)
-		.page-header,
-		.trait-set {
+		.mobile-pillar-column {
 			flex: 0 0 88vw !important;
 			width: 88vw !important;
 			max-width: 88vw !important;
 			min-width: 88vw !important;
-			margin: 0 !important;
 			scroll-snap-align: center;
 			scroll-snap-stop: always;
-			max-height: calc(100dvh - 210px);
-			overflow-y: auto !important;
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+			max-height: calc(100dvh - 190px);
+			overflow-y: auto;
+			scroll-snap-type: y proximity;
 			overscroll-behavior-y: contain;
-			background: var(--color-sheet-bg, #ffffff);
-			border-radius: 12px;
-			box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
-			padding: 0.5rem;
-			box-sizing: border-box !important;
+			padding-bottom: 4rem;
+			box-sizing: border-box;
+
+			.page-header,
+			.portrait,
+			.trait-set {
+				width: 100% !important;
+				max-width: 100% !important;
+				min-width: 0 !important;
+				margin: 0 !important;
+				scroll-snap-align: start;
+				background: var(--color-sheet-bg, #ffffff);
+				border-radius: 12px;
+				box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+				padding: 0.5rem;
+				box-sizing: border-box !important;
+				overflow: visible !important;
+			}
+		}
+
+		.mobile-substack-bar {
+			position: sticky;
+			top: 0;
+			z-index: 12;
+			display: flex;
+			flex-wrap: nowrap;
+			align-items: center;
+			gap: 0.3rem;
+			overflow-x: auto;
+			padding: 0.35rem 0.5rem;
+			background: rgba(255, 255, 255, 0.94);
+			backdrop-filter: blur(6px);
+			border-radius: 10px;
+			box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+			scrollbar-width: none;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			.substack-pill {
+				flex: 0 0 auto;
+				white-space: nowrap;
+				border: 1px solid #e2e8f0;
+				background: #f8fafc;
+				color: #334155;
+				padding: 0.22rem 0.6rem;
+				border-radius: 999px;
+				font-size: 0.68rem;
+				font-weight: 700;
+				cursor: pointer;
+
+				&:hover,
+				&:active {
+					background: #e2e8f0;
+					color: #0f172a;
+				}
+			}
+		}
+
+		.btn-mobile-add-play-card {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.4rem;
+			width: 100%;
+			padding: 0.65rem 1rem;
+			border: 1.5px dashed var(--color-interactive, #2563eb);
+			border-radius: 10px;
+			background: rgba(37, 99, 235, 0.05);
+			color: var(--color-interactive, #2563eb);
+			font-weight: 700;
+			font-size: 0.8rem;
+			cursor: pointer;
 		}
 	}
 }

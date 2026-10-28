@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.cortexMaterialize = cortexFunctions.materializeCharacter;
 	window.cortexToLayered = cortexFunctions.toLayeredEntity;
 	window.cortexFunctions = cortexFunctions;
+	window.cortexSetPresets = cortexFunctions.cortexSetPresets;
 	window.cortexCloneDeep = cloneDeep;
 
 });

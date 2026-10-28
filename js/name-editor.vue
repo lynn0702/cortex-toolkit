@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, resolveSheetStyle, defaultNameHidden, getRating, type Character } from './model.ts';
+import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, getRating, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 
@@ -217,7 +217,7 @@ function nameTraitVisibility( key: string ) {
 	const t = cortexFunctions.getNameTrait( props.character, key );
 	const v = getView( t ) as Record<string, unknown> | undefined;
 	const word = v?.visibility;
-	if ( word === 'hidden' || word === 'editor-only' || word === 'shown' ) return word;
+	if ( word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown' ) return word;
 	return defaultNameHidden( key, props.character ) ? 'hidden' : 'shown';
 }
 
@@ -229,7 +229,7 @@ function setNameTraitVisibility( key: string, vis: string ) {
 	const def = defaultNameHidden( key, props.character ) ? 'hidden' : 'shown';
 	if ( vis === def ) {
 		delete v.visibility;
-	} else if ( vis === 'hidden' || vis === 'editor-only' || vis === 'shown' ) {
+	} else if ( vis === 'hidden' || vis === 'editor-only' || vis === 'play-only' || vis === 'shown' ) {
 		v.visibility = vis;
 	}
 	updateCharacter( props.character );
@@ -237,7 +237,53 @@ function setNameTraitVisibility( key: string, vis: string ) {
 
 function toggleNameVisibility( key: string ) {
 	const cur = nameTraitVisibility( key );
-	setNameTraitVisibility( key, cur === 'shown' ? 'editor-only' : cur === 'editor-only' ? 'hidden' : 'shown' );
+	setNameTraitVisibility( key, nextVisibility( cur as Visibility ) );
+}
+
+const activePillarKeys = computed<string[]>( () => {
+	const seen: string[] = [ 'identity' ];
+	const defaults = [ 'prime', 'plus', 'play' ];
+	const sets = props.character?.traitSets || [];
+	const used = new Set<string>( [ 'identity' ] );
+	for ( const ts of sets ) {
+		if ( !ts || isNameSet( ts ) ) continue;
+		used.add( resolveSetPillar( ts ) );
+	}
+	for ( const d of defaults ) {
+		if ( used.has( d ) && !seen.includes( d ) ) seen.push( d );
+	}
+	for ( const ts of sets ) {
+		if ( !ts || isNameSet( ts ) ) continue;
+		const p = resolveSetPillar( ts );
+		if ( !seen.includes( p ) ) seen.push( p );
+	}
+	return seen;
+} );
+
+function pillarLabelValue( key: string ): string {
+	const labels = getView( props.character )?.labels as Record<string, any> | undefined;
+	return labels?.pillars?.[ key ] ?? labels?.[ 'pillar_' + key ] ?? '';
+}
+
+function pillarLabelPlaceholder( key: string ): string {
+	return key ? key.charAt( 0 ).toUpperCase() + key.slice( 1 ) : '';
+}
+
+function setPillarLabel( key: string, val: string ) {
+	if ( !props.character ) return;
+	const v = ensureView( props.character );
+	if ( !v.labels || typeof v.labels !== 'object' ) v.labels = {};
+	if ( !v.labels.pillars || typeof v.labels.pillars !== 'object' || Array.isArray( v.labels.pillars ) ) {
+		v.labels.pillars = {};
+	}
+	const trimmed = String( val || '' ).trim();
+	if ( trimmed ) {
+		v.labels.pillars[ key ] = trimmed;
+	} else {
+		delete v.labels.pillars[ key ];
+		delete v.labels[ 'pillar_' + key ];
+	}
+	updateCharacter( props.character );
 }
 
 const notes = computed( {
@@ -741,6 +787,23 @@ function updateCharacter( character: any ) {
 								<option value="spotlight">Spotlight Style</option>
 								<option value="classic">Classic Style</option>
 							</select>
+						</div>
+
+						<div class="editor-field">
+							<div class="editor-label">Pillar Labels</div>
+							<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.45rem; margin-top: 0.35rem;">
+								<div v-for="pKey in activePillarKeys" :key="'pillar-lbl-' + pKey">
+									<label :for="'char-pillar-label-' + pKey" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.15rem;">{{ pKey }}</label>
+									<input
+										type="text"
+										:id="'char-pillar-label-' + pKey"
+										:name="'pillarLabel_' + pKey"
+										:value="pillarLabelValue(pKey)"
+										:placeholder="pillarLabelPlaceholder(pKey)"
+										@change="setPillarLabel(pKey, targetValue($event))"
+									>
+								</div>
+							</div>
 						</div>
 
 						<div class="editor-field">

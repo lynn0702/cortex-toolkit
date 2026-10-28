@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
 
 /**
  * Style Gallery — visual side panel for adding trait sets.
@@ -132,14 +133,26 @@ const props = defineProps<{
 const emit = defineEmits<{
 	( e: 'close' ): void;
 	( e: 'addGallerySet', st: StyleCard, location: string, page: number ): void;
+	( e: 'addPresetSet', preset: SetPresetEntry, location: string, page: number ): void;
 }>();
 
 const styles = STYLE_GALLERY_STYLES;
+const builtInPresets = Object.values( cortexSetPresets );
+const customPresets = ref<SetPresetEntry[]>( [] );
 const location = ref( 'left' );
 const page = ref( 1 );
 
+function refreshCustomPresets() {
+	customPresets.value = cortexFunctions.getCustomSetPresets();
+}
+
+function removeCustomPreset( id: string ) {
+	customPresets.value = cortexFunctions.deleteCustomSetPreset( id );
+}
+
 watch( () => props.open, ( isOpen ) => {
 	if ( isOpen ) {
+		refreshCustomPresets();
 		page.value = props.initialPage >= 1 && props.initialPage <= Math.max( 1, props.pageCount || 1 ) ? props.initialPage : 1;
 		location.value = props.initialLocation === 'center' && props.allowCenter ? 'center'
 			: props.initialLocation === 'right' ? 'right' : 'left';
@@ -168,6 +181,31 @@ watch( () => props.open, ( isOpen ) => {
 							<button type="button" class="editor-group-btn" v-for="n in Math.max(1, pageCount || 1)" :key="n" :class="{ active: page === n }" @click.stop="page = n">Page {{ n }}</button>
 						</div>
 					</div>
+					<div class="gallery-presets-section">
+						<div class="editor-label" style="margin-bottom: 0.4rem;">Set Presets</div>
+						<div class="style-gallery-grid" style="margin-bottom: 1.25rem;">
+							<div class="style-gallery-card" v-for="preset in builtInPresets" :key="'builtin-' + preset.id">
+								<div class="style-gallery-name">{{ preset.label }}</div>
+								<div class="style-gallery-blurb">{{ preset.blurb }}</div>
+								<button type="button" class="btn-gallery-add" @click.stop="emit('addPresetSet', preset, location, page)">
+									<i class="fas fa-plus"></i> Add Preset
+								</button>
+							</div>
+							<div class="style-gallery-card" v-for="preset in customPresets" :key="'custom-' + preset.id">
+								<div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;">
+									<div class="style-gallery-name">{{ preset.label }}</div>
+									<button type="button" class="editor-header-btn" title="Delete saved preset" @click.stop="removeCustomPreset(preset.id)">
+										<i class="fas fa-trash-alt"></i>
+									</button>
+								</div>
+								<div class="style-gallery-blurb">{{ preset.blurb || 'Saved custom set preset' }}</div>
+								<button type="button" class="btn-gallery-add" @click.stop="emit('addPresetSet', preset, location, page)">
+									<i class="fas fa-plus"></i> Add Preset
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="editor-label" style="margin-bottom: 0.4rem;">Blank Styles</div>
 					<div class="style-gallery-grid">
 						<div class="style-gallery-card" v-for="st in styles" :key="st.name">
 							<div class="style-gallery-preview"><div class="character-sheet spotlight-style" v-html="st.preview"></div></div>

@@ -265,8 +265,8 @@ function checkViewRetired(bag, where) {
   if (bag.isChallengePool !== undefined || bag.challengePool !== undefined) err(`${where}: retired challenge-pool flag (Dice + pool + spendable supersedes it)`);
   if (bag.hidden !== undefined) err(`${where}: retired hidden boolean (visibility word supersedes it)`);
   const vis = bag.visibility;
-  if (vis !== undefined && vis !== 'shown' && vis !== 'editor-only' && vis !== 'hidden') {
-    err(`${where}: view.visibility must be shown|editor-only|hidden`);
+  if (vis !== undefined && vis !== 'shown' && vis !== 'play-only' && vis !== 'editor-only' && vis !== 'hidden') {
+    err(`${where}: view.visibility must be shown|play-only|editor-only|hidden`);
   }
   if (bag.pool !== undefined) err(`${where}: retired view.pool (node pool supersedes it)`);
 }
@@ -316,8 +316,8 @@ function checkLayeredTrait(node, where, depth) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
   const visLayered = node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
-  if (visLayered !== undefined && visLayered !== 'shown' && visLayered !== 'editor-only' && visLayered !== 'hidden') {
-    err(`${where}: view.visibility must be shown|editor-only|hidden`);
+  if (visLayered !== undefined && visLayered !== 'shown' && visLayered !== 'play-only' && visLayered !== 'editor-only' && visLayered !== 'hidden') {
+    err(`${where}: view.visibility must be shown|play-only|editor-only|hidden`);
   }
   checkViewRetired(node.view, `${where}.view`);
   if (node.select !== undefined) warn(`${where}: select lives on the set, not the trait`);
@@ -422,8 +422,8 @@ function checkTemplateTrait(node, where, depth, inSlot) {
     err(`${where}: usableBy must be owner|anyone|opposition`);
   }
   const visTemplate = node.view && typeof node.view === 'object' && !Array.isArray(node.view) ? node.view.visibility : undefined;
-  if (visTemplate !== undefined && visTemplate !== 'shown' && visTemplate !== 'editor-only' && visTemplate !== 'hidden') {
-    err(`${where}: view.visibility must be shown|editor-only|hidden`);
+  if (visTemplate !== undefined && visTemplate !== 'shown' && visTemplate !== 'play-only' && visTemplate !== 'editor-only' && visTemplate !== 'hidden') {
+    err(`${where}: view.visibility must be shown|play-only|editor-only|hidden`);
   }
   checkViewRetired(node.view, `${where}.view`);
   const kids = (map, label) => {

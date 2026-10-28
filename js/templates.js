@@ -162,7 +162,8 @@ const cortexSpotlightTemplates = [
               8
             ],
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -240,7 +241,8 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 7
+            "reservedSlots": 7,
+            "pillar": "prime"
           },
           "rating": {
             "type": "Die",
@@ -435,7 +437,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -498,7 +501,8 @@ const cortexSpotlightTemplates = [
               "col1": "TALENT",
               "col2": "ACTIVATION",
               "col3": "EFFECT"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -549,7 +553,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset / Tech",
           "plural": "Signature Assets / Tech",
@@ -596,7 +601,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Relationship",
           "plural": "Relationships",
@@ -631,7 +637,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "labels": true,
               "perRow": 20
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -834,7 +841,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "64%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -954,7 +962,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "64%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -1028,7 +1037,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Relationship",
           "plural": "Relationships",
@@ -1077,7 +1087,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -1121,7 +1132,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Milestone",
           "plural": "Milestones",
@@ -1178,7 +1190,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Milestone",
           "plural": "Milestones",
@@ -1222,7 +1235,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "36%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -1453,7 +1467,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -1592,7 +1607,8 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -1662,7 +1678,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -1712,7 +1729,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -1775,7 +1793,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "slot0": "COMPLICATION",
               "slot1": "BONUS"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Standing",
           "plural": "Standings",
@@ -1894,7 +1913,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "60%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Badge",
           "plural": "Badges",
@@ -1922,7 +1942,8 @@ const cortexSpotlightTemplates = [
               "col1": "TALENT",
               "col2": "ACTIVATION",
               "col3": "EFFECT"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -2127,7 +2148,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -2179,7 +2201,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -2231,7 +2254,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Drive",
           "plural": "Drives",
@@ -2303,7 +2327,8 @@ const cortexSpotlightTemplates = [
                 "width": "24%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -2345,7 +2370,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "left": "SKILL",
               "right": "SPECIALTIES"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -2401,7 +2427,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "labels": true,
               "perRow": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -2452,7 +2479,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "66.667%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "SFX",
           "plural": "SFX",
@@ -2630,7 +2658,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -2714,7 +2743,8 @@ const cortexSpotlightTemplates = [
             },
             "labels": {
               "stress": "STRESS"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -2770,7 +2800,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "60%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Endarch Distinction",
           "plural": "Endarch Distinctions",
@@ -2893,7 +2924,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "60%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Eidolon Trait",
           "plural": "Eidolon Traits",
@@ -3048,7 +3080,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "60%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -3138,7 +3171,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "10%",
               "height": 3
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -3367,7 +3401,8 @@ const cortexSpotlightTemplates = [
             },
             "labels": {
               "stress": "STRESS"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -3430,7 +3465,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Training Package",
           "plural": "Training Packages",
@@ -3519,7 +3555,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "64%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -3685,7 +3722,8 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Relationship",
           "plural": "Relationships",
@@ -3868,7 +3906,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "64%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -3942,7 +3981,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Crisis Pool",
           "plural": "Crisis Pools",
@@ -4107,7 +4147,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "25%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Hammerhead Attribute",
           "plural": "Hammerhead Attributes",
@@ -4313,7 +4354,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Vehicle Distinction",
           "plural": "Vehicle Distinctions",
@@ -4402,7 +4444,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource Pool",
           "plural": "Resource Pools",
@@ -4729,7 +4772,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -4795,7 +4839,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Stress",
           "plural": "Stress",
@@ -4829,7 +4874,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -4978,7 +5024,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Ability",
           "plural": "Abilities",
@@ -5056,7 +5103,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "25%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -5150,7 +5198,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Heirloom",
           "plural": "Heirlooms",
@@ -5194,7 +5243,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Milestone",
           "plural": "Milestones",
@@ -5254,7 +5304,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Milestone",
           "plural": "Milestones",
@@ -5299,7 +5350,8 @@ const cortexSpotlightTemplates = [
               "top": 5,
               "width": "25%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -5494,7 +5546,8 @@ const cortexSpotlightTemplates = [
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5546,7 +5599,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5598,7 +5652,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5650,7 +5705,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5702,7 +5758,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5748,7 +5805,8 @@ const cortexSpotlightTemplates = [
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5800,7 +5858,8 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5852,7 +5911,8 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5904,7 +5964,8 @@ const cortexSpotlightTemplates = [
               "top": 5,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5956,7 +6017,8 @@ const cortexSpotlightTemplates = [
               "top": 5,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6008,7 +6070,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6068,7 +6131,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6128,7 +6192,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6188,7 +6253,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6248,7 +6314,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6308,7 +6375,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6518,7 +6586,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -6650,7 +6719,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Affiliation",
           "plural": "Affiliations",
@@ -6699,7 +6769,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Specialty",
           "plural": "Specialties",
@@ -6736,7 +6807,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -6785,7 +6857,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Stress",
           "plural": "Stress",
@@ -6838,7 +6911,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "play"
           },
           "pool": true,
           "noun": "Growth Die",
@@ -6976,7 +7050,8 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "plus"
           },
           "noun": "Power Set",
           "plural": "Power Sets",
@@ -7007,7 +7082,8 @@ const cortexSpotlightTemplates = [
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -7038,7 +7114,8 @@ const cortexSpotlightTemplates = [
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -7210,7 +7287,8 @@ const cortexSpotlightTemplates = [
             "style": {
               "header": "labeled-fields",
               "body": "labeled-fields"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Detail",
           "plural": "Details",
@@ -7265,7 +7343,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -7442,7 +7521,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "64%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -7514,7 +7594,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -7576,7 +7657,8 @@ const cortexSpotlightTemplates = [
             },
             "labels": {
               "stress": "STRESS"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -7655,7 +7737,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Relationship",
           "plural": "Relationships",
@@ -7695,7 +7778,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "play"
           },
           "pool": true,
           "noun": "Growth Die",
@@ -7854,7 +7938,8 @@ const cortexSpotlightTemplates = [
                 "height": 1
               }
             },
-            "playMutable": true
+            "playMutable": true,
+            "pillar": "play"
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -8023,7 +8108,8 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -8153,7 +8239,8 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Affiliation",
           "plural": "Affiliations",
@@ -8204,7 +8291,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "38%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -8280,7 +8368,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -8316,7 +8405,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "62%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Ability",
           "plural": "Abilities",
@@ -8378,7 +8468,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "labels": true,
               "perRow": 10
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -8446,7 +8537,8 @@ const cortexSpotlightTemplates = [
                 "height": 1
               }
             },
-            "playMutable": true
+            "playMutable": true,
+            "pillar": "play"
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -8643,7 +8735,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -8706,7 +8799,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -8842,7 +8936,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -9012,7 +9107,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -9067,7 +9163,8 @@ const cortexSpotlightTemplates = [
                 "height": 1
               }
             },
-            "playMutable": true
+            "playMutable": true,
+            "pillar": "play"
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -9111,7 +9208,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -9367,7 +9465,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -9430,7 +9529,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -9539,7 +9639,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -9663,7 +9764,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -9707,7 +9809,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -9734,7 +9837,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "labels": true,
               "perRow": 20
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -9947,7 +10051,8 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -10073,7 +10178,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "66.663%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -10193,7 +10299,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -10244,7 +10351,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Relationship",
           "plural": "Relationships",
@@ -10282,7 +10390,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Stress",
           "plural": "Stress",
@@ -10337,7 +10446,8 @@ const cortexSpotlightTemplates = [
               "col1": "TALENT",
               "col2": "ACTIVATION",
               "col3": "EFFECT"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -10378,7 +10488,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "play"
           },
           "pool": true,
           "noun": "Growth Die",
@@ -10660,7 +10771,8 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": true,
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "plus"
           },
           "noun": "Essential Stockpile",
           "plural": "Essential Stockpiles",
@@ -10777,7 +10889,8 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": true,
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "plus"
           },
           "noun": "Non-Essential Stockpile",
           "plural": "Non-Essential Stockpiles",
@@ -10906,7 +11019,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Building",
           "plural": "Buildings",
@@ -11021,7 +11135,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Building",
           "plural": "Buildings",
@@ -11136,7 +11251,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Building",
           "plural": "Buildings",
@@ -11251,7 +11367,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Building",
           "plural": "Buildings",
@@ -11366,7 +11483,8 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Building",
           "plural": "Buildings",
@@ -11481,7 +11599,8 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Building",
           "plural": "Buildings",
@@ -11590,7 +11709,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11647,7 +11767,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11704,7 +11825,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11761,7 +11883,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11818,7 +11941,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11875,7 +11999,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11932,7 +12057,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -11989,7 +12115,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -12046,7 +12173,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Survivor",
           "plural": "Survivors",
@@ -12090,7 +12218,8 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "notes"
             },
-            "notes": ""
+            "notes": "",
+            "pillar": "play"
           },
           "noun": "Note",
           "plural": "Notes",
@@ -12259,7 +12388,8 @@ const cortexSpotlightTemplates = [
             },
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 3
+            "reservedSlots": 3,
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -12393,7 +12523,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Affiliation",
           "plural": "Affiliations",
@@ -12456,7 +12587,8 @@ const cortexSpotlightTemplates = [
                 "height": 1
               }
             },
-            "playMutable": true
+            "playMutable": true,
+            "pillar": "play"
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -12530,7 +12662,8 @@ const cortexSpotlightTemplates = [
                 "width": "27%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -12591,7 +12724,8 @@ const cortexSpotlightTemplates = [
             ],
             "multiDie": false,
             "notes": "",
-            "reservedSlots": 19
+            "reservedSlots": 19,
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -12725,7 +12859,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -12756,7 +12891,8 @@ const cortexSpotlightTemplates = [
               "col1": "TALENT",
               "col2": "ACTIVATION",
               "col3": "EFFECT"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -12811,7 +12947,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Gift",
           "plural": "Gifts",
@@ -12864,7 +13001,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Milestone",
           "plural": "Milestones",
@@ -12924,7 +13062,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Milestone",
           "plural": "Milestones",
@@ -12969,7 +13108,8 @@ const cortexSpotlightTemplates = [
               "top": 4,
               "width": "25%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -13189,7 +13329,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -13232,7 +13373,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "28%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -13289,7 +13431,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -13429,7 +13572,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -13469,7 +13613,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "left": "SKILL",
               "right": "SPECIALTIES"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -13736,7 +13881,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -13783,7 +13929,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -13911,7 +14058,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -14011,7 +14159,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "left": "SKILL",
               "right": "SPECIALTIES"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -14190,7 +14339,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "play"
           },
           "pool": true,
           "noun": "Growth Die",
@@ -14336,7 +14486,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "78%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -14470,7 +14621,8 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -14541,7 +14693,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -14593,7 +14746,8 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Affiliation",
           "plural": "Affiliations",
@@ -14659,7 +14813,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Stress",
           "plural": "Stress",
@@ -14716,7 +14871,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "48%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Craft",
           "plural": "Crafts",
@@ -14787,7 +14943,8 @@ const cortexSpotlightTemplates = [
                 "height": 1
               }
             },
-            "reservedSlots": 4
+            "reservedSlots": 4,
+            "pillar": "plus"
           },
           "noun": "SFX",
           "plural": "SFX",
@@ -14977,7 +15134,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -15023,7 +15181,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -15073,7 +15232,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -15133,7 +15293,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Relationship",
           "plural": "Relationships",
@@ -15182,7 +15343,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -15271,7 +15433,8 @@ const cortexSpotlightTemplates = [
                 "height": 1
               }
             },
-            "playMutable": true
+            "playMutable": true,
+            "pillar": "play"
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -15304,7 +15467,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "25%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Die",
           "plural": "Dice",
@@ -15496,7 +15660,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -15554,7 +15719,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -15670,7 +15836,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "28%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -15713,7 +15880,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -15825,7 +15993,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Die",
           "plural": "Dice",
@@ -15860,7 +16029,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Die",
           "plural": "Dice",
@@ -15886,7 +16056,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "perRow": 12,
               "connected": true
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -15955,7 +16126,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -16015,7 +16187,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -16075,7 +16248,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -16132,7 +16306,8 @@ const cortexSpotlightTemplates = [
               "col1": "TALENT",
               "col2": "ACTIVATION",
               "col3": "EFFECT"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -16162,7 +16337,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -16210,7 +16386,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Option",
           "plural": "Options",
@@ -16400,7 +16577,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -16463,7 +16641,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -16516,7 +16695,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -16668,7 +16848,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Signature Asset",
           "plural": "Signature Assets",
@@ -16698,7 +16879,8 @@ const cortexSpotlightTemplates = [
               12
             ],
             "reservedSlots": 2,
-            "playMutable": true
+            "playMutable": true,
+            "pillar": "play"
           },
           "noun": "Complication",
           "plural": "Complications",
@@ -16904,7 +17086,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Attribute",
           "plural": "Attributes",
@@ -16994,7 +17177,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "72%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -17097,7 +17281,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -17132,7 +17317,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Power",
           "plural": "Powers",
@@ -17158,7 +17344,8 @@ const cortexSpotlightTemplates = [
               "perRow": 15,
               "connected": true
             },
-            "reservedSlots": 0
+            "reservedSlots": 0,
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -17366,7 +17553,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Affiliation",
           "plural": "Affiliations",
@@ -17415,7 +17603,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "30%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -17492,7 +17681,8 @@ const cortexSpotlightTemplates = [
                 "width": "18%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -17607,7 +17797,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "70%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -17719,7 +17910,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "70%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -17780,7 +17972,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Stress",
           "plural": "Stress",
@@ -17842,7 +18035,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "play"
           },
           "pool": true,
           "noun": "Growth Die",
@@ -18145,7 +18339,8 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -18281,7 +18476,8 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               }
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -18396,7 +18592,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -18544,7 +18741,8 @@ const cortexSpotlightTemplates = [
               "width": "50%",
               "height": 1
             },
-            "reservedSlots": 2
+            "reservedSlots": 2,
+            "pillar": "plus"
           },
           "noun": "Standing",
           "plural": "Standings",
@@ -18650,7 +18848,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Badge",
           "plural": "Badges",
@@ -18718,7 +18917,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -18766,7 +18966,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -18840,7 +19041,8 @@ const cortexSpotlightTemplates = [
               "top": 3,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Stress",
           "plural": "Stress",
@@ -18904,7 +19106,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Rung",
           "plural": "Rungs",
@@ -18981,7 +19184,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Field",
           "plural": "Fields",
@@ -19020,7 +19224,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -19063,7 +19268,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "labels": true,
               "perRow": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -19121,7 +19327,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -19211,7 +19418,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Note",
           "plural": "Notes",
@@ -19236,7 +19444,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Entry",
           "plural": "Entries",
@@ -19334,7 +19543,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -19435,7 +19645,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -19512,7 +19723,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "50%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Item",
           "plural": "Items",
@@ -19595,7 +19807,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "100%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Image",
           "plural": "Images",
@@ -19747,7 +19960,8 @@ const cortexSpotlightTemplates = [
               "subtraits": false
             },
             "header": "top",
-            "headerAlign": "center"
+            "headerAlign": "center",
+            "pillar": "prime"
           },
           "noun": "Role",
           "plural": "Roles",
@@ -19864,7 +20078,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "left": "SKILL",
               "right": "SPECIALTIES"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Skill",
           "plural": "Skills",
@@ -20050,7 +20265,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "slot0": "COMPLICATION",
               "slot1": "BONUS"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Standing",
           "plural": "Standings",
@@ -20215,7 +20431,8 @@ const cortexSpotlightTemplates = [
               "col1": "TALENT",
               "col2": "ACTIVATION",
               "col3": "EFFECT"
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Value",
           "plural": "Values",
@@ -20345,7 +20562,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "66.667%",
               "height": 1
-            }
+            },
+            "pillar": "prime"
           },
           "noun": "Distinction",
           "plural": "Distinctions",
@@ -20434,7 +20652,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "play"
           },
           "pool": true,
           "noun": "Growth Die",
@@ -20571,7 +20790,8 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "33.333%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Badge",
           "plural": "Badges",
@@ -20652,7 +20872,8 @@ const cortexSpotlightTemplates = [
             "labels": {
               "rating": "RATING",
               "dice": "/ DICE"
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Resource",
           "plural": "Resources",
@@ -20744,7 +20965,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "66.666%",
               "height": 1
-            }
+            },
+            "pillar": "plus"
           },
           "noun": "Field",
           "plural": "Fields",
@@ -20789,7 +21011,8 @@ const cortexSpotlightTemplates = [
               "top": 1,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",
@@ -20871,7 +21094,8 @@ const cortexSpotlightTemplates = [
               "top": 2,
               "width": "33.334%",
               "height": 1
-            }
+            },
+            "pillar": "play"
           },
           "noun": "Note",
           "plural": "Notes",
@@ -20892,7 +21116,8 @@ const cortexSpotlightTemplates = [
             "pips": {
               "labels": true,
               "perRow": 12
-            }
+            },
+            "pillar": "play"
           },
           "rating": {
             "type": "Pip",

@@ -168,7 +168,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -210,7 +211,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Resource",
         "plural": "Resources",
@@ -261,7 +263,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Drive",
         "plural": "Drives",
@@ -317,7 +320,8 @@
               "width": "24%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Signature Asset",
         "plural": "Signature Assets",
@@ -358,7 +362,8 @@
           "labels": {
             "left": "SKILL",
             "right": "SPECIALTIES"
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Role",
         "plural": "Roles",
@@ -398,7 +403,8 @@
           "pips": {
             "labels": true,
             "perRow": 1
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",
@@ -448,7 +454,8 @@
             "top": 3,
             "width": "66.667%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "SFX",
         "plural": "SFX",

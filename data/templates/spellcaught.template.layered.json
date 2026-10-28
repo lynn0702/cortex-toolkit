@@ -142,7 +142,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "play"
         },
         "pool": true,
         "noun": "Growth Die",
@@ -277,7 +278,8 @@
             "top": 0,
             "width": "78%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -396,7 +398,8 @@
               "width": "30%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Value",
         "plural": "Values",
@@ -448,7 +451,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Asset",
         "plural": "Assets",
@@ -499,7 +503,8 @@
               "width": "30%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Affiliation",
         "plural": "Affiliations",
@@ -552,7 +557,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "play"
         },
         "noun": "Stress",
         "plural": "Stress",
@@ -593,7 +599,8 @@
             "top": 3,
             "width": "48%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Craft",
         "plural": "Crafts",
@@ -633,7 +640,8 @@
               "height": 1
             }
           },
-          "reservedSlots": 4
+          "reservedSlots": 4,
+          "pillar": "plus"
         },
         "noun": "SFX",
         "plural": "SFX",

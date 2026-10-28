@@ -132,7 +132,8 @@
           },
           "multiDie": false,
           "notes": "",
-          "reservedSlots": 3
+          "reservedSlots": 3,
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -242,7 +243,8 @@
             "top": 1,
             "width": "66.663%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Skill",
         "plural": "Skills",
@@ -301,7 +303,8 @@
             "top": 1,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -342,7 +345,8 @@
             "top": 2,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Relationship",
         "plural": "Relationships",
@@ -379,7 +383,8 @@
             "top": 3,
             "width": "33.334%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "noun": "Stress",
         "plural": "Stress",
@@ -418,7 +423,8 @@
             "col1": "TALENT",
             "col2": "ACTIVATION",
             "col3": "EFFECT"
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Talent",
         "plural": "Talents",
@@ -458,7 +464,8 @@
           "labels": {
             "rating": "RATING",
             "dice": "/ DICE"
-          }
+          },
+          "pillar": "play"
         },
         "pool": true,
         "noun": "Growth Die",

@@ -154,7 +154,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -207,7 +208,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "play"
         },
         "noun": "Stress",
         "plural": "Stress",
@@ -240,7 +242,8 @@
             "top": 0,
             "width": "72%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -371,7 +374,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Ability",
         "plural": "Abilities",
@@ -428,7 +432,8 @@
             "top": 3,
             "width": "25%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Skill",
         "plural": "Skills",
@@ -479,7 +484,8 @@
             "top": 3,
             "width": "50%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Heirloom",
         "plural": "Heirlooms",
@@ -522,7 +528,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Milestone",
         "plural": "Milestones",
@@ -575,7 +582,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Milestone",
         "plural": "Milestones",
@@ -613,7 +621,8 @@
             "top": 5,
             "width": "25%",
             "height": 1
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

@@ -141,7 +141,8 @@
               "width": "100%",
               "height": 1
             }
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Role",
         "plural": "Roles",
@@ -212,7 +213,8 @@
           },
           "labels": {
             "stress": "STRESS"
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Attribute",
         "plural": "Attributes",
@@ -252,7 +254,8 @@
             "top": 0,
             "width": "60%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Endarch Distinction",
         "plural": "Endarch Distinctions",
@@ -363,7 +366,8 @@
             "top": 1,
             "width": "60%",
             "height": 1
-          }
+          },
+          "pillar": "plus"
         },
         "noun": "Eidolon Trait",
         "plural": "Eidolon Traits",
@@ -503,7 +507,8 @@
             "top": 2,
             "width": "60%",
             "height": 1
-          }
+          },
+          "pillar": "prime"
         },
         "noun": "Distinction",
         "plural": "Distinctions",
@@ -582,7 +587,8 @@
             "top": 0,
             "width": "10%",
             "height": 3
-          }
+          },
+          "pillar": "play"
         },
         "rating": {
           "type": "Pip",

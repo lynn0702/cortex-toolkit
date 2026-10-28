@@ -1,7 +1,7 @@
 import { computed, provide, inject, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
-	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, isHiddenIn,
+	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,
 	hasOutRange, rangeTop, isOutDie } from './model.ts';
 import { KNOWN_PARTS, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
@@ -126,6 +126,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		const align = ctk?.headerAlign;
 		classes[ 'trait-set-header-align-' + ( align === 'center' || align === 'right' ? align : 'left' ) ] = true;
 
+		const vis = resolveVisibility( traitSetArg );
+		if ( vis === 'play-only' ) classes[ 'trait-set-play-only' ] = true;
+		if ( vis === 'editor-only' ) classes[ 'trait-set-editor-only' ] = true;
+
 		return classes;
 	}
 
@@ -235,6 +239,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		if ( trait?.description?.length ) classes['trait-has-description'] = true;
 		if ( cortexFunctions.sfxChildren( trait ).length ) classes['trait-has-sfx'] = true;
 		if ( nonSfxSubtraits( trait ).length ) classes['trait-has-subtraits'] = true;
+		const vis = resolveVisibility( trait );
+		if ( vis === 'play-only' ) classes['trait-play-only'] = true;
+		if ( vis === 'editor-only' ) classes['trait-editor-only'] = true;
 		return classes;
 	}
 

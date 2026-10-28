@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, resolveVisibility, isHiddenIn, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
+import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
+import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, resolveVisibility, isHiddenIn, resolveSetPillar, getPillarLabel, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
@@ -20,6 +20,7 @@ const props = defineProps<{
 	character?: Character;
 	editing?: unknown[] | null;
 	viewY?: number | null;
+	dicePool?: any;
 }>();
 
 const emit = defineEmits<{
@@ -44,6 +45,11 @@ const printBW = ref( false );
 const showStyleGallery = ref( false );
 const galleryPage = ref( 1 );
 const galleryLocation = ref( 'left' );
+const showPlayPresetPicker = ref( false );
+const playBuiltInPresets = Object.values( cortexSetPresets );
+const playCustomPresets = ref<SetPresetEntry[]>( [] );
+const isMobileViewport = ref( typeof window !== 'undefined' && Boolean( window.matchMedia && window.matchMedia( '(max-width: 768px)' ).matches ) );
+const isMobilePlay = computed( () => props.submode === 'play' && isMobileViewport.value );
 
 const name = computed( () => props.character?.name ?? '' );
 const description = computed( () => props.character?.description ?? '' );
@@ -73,6 +79,7 @@ function nameShown( key: string ) {
 	if ( !t ) return defaultNameHidden( key, props.character ) !== true;
 	const vis = resolveVisibility( t );
 	if ( vis === 'hidden' ) return false;
+	if ( vis === 'play-only' ) return props.submode !== 'print';
 	if ( vis === 'editor-only' ) return props.submode === 'edit';
 	return defaultNameHidden( key, props.character ) !== true;
 }
@@ -238,6 +245,7 @@ const descriptionText = computed( {
 } );
 
 const printPages = computed( () => {
+	if ( isMobilePlay.value ) return [ 1 ];
 	if ( props.submode === 'print' && printPageView.value !== 'all' ) {
 		return [ Number( printPageView.value ) ];
 	}
@@ -344,7 +352,7 @@ function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number 
 	return false;
 }
 
-function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex ); }
+function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex, props.submode ); }
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
 
 function renderNameHtml( value: unknown ) {
@@ -447,6 +455,34 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	selectElement( [ 'traitSet', newTraitSetID ] );
 }
 
+function addPresetSet( preset: SetPresetEntry, location?: string, page?: number ) {
+	const character = props.character as Character;
+	if ( !character || !preset ) return;
+	const loc = !isSpotlightStyle.value ? ( location ?? 'left' ) : undefined;
+	const traitSet = cortexFunctions.instantiateSetPreset( preset, character, page ?? 1, loc );
+	character.traitSets.push( traitSet );
+	updateCharacter( character );
+	showStyleGallery.value = false;
+	showPlayPresetPicker.value = false;
+	const newTraitSetID = character.traitSets.length - 1;
+	if ( props.submode === 'edit' ) {
+		selectElement( [ 'traitSet', newTraitSetID ] );
+	} else if ( props.submode === 'play' ) {
+		const pKey = resolveSetPillar( traitSet );
+		nextTick( () => scrollToPillar( pKey, newTraitSetID ) );
+	}
+}
+
+function openPlayPresetPicker() {
+	playCustomPresets.value = cortexFunctions.getCustomSetPresets();
+	showPlayPresetPicker.value = true;
+}
+
+function removePlayCustomPreset( id: string ) {
+	playCustomPresets.value = cortexFunctions.deleteCustomSetPreset( id );
+}
+
+
 function getTraitSetRatings( traitSet: TraitSet ) {
 	return cortexFunctions.getTraitSetRatings( traitSet );
 }
@@ -543,33 +579,26 @@ function print() {
 	}
 }
 
-const activeMobileSetIndex = ref<number>( -1 );
+interface MobilePillarSetItem {
+	traitSet: TraitSet;
+	index: number;
+	label: string;
+}
+
+interface MobilePillarColumn {
+	key: string;
+	label: string;
+	hasHeader: boolean;
+	hasClassicRing: boolean;
+	sets: MobilePillarSetItem[];
+	stagedCount: number;
+}
+
+const activeMobilePillarKey = ref<string>( 'identity' );
 const jumpStripRef = ref<HTMLElement | null>( null );
 let carouselObserver: IntersectionObserver | null = null;
 let mediaQuery: MediaQueryList | null = null;
 let handleMediaChange: ( () => void ) | null = null;
-
-const mobilePlayJumpSets = computed( () => {
-	if ( props.submode !== 'play' || !Array.isArray( props.character?.traitSets ) ) return [];
-	const headerPill = {
-		index: -1,
-		label: ( props.character?.name && String( props.character.name ).trim().length )
-			? String( props.character.name ).trim()
-			: 'Identity'
-	};
-	const sets = props.character.traitSets
-		.map( ( ts: any, idx: number ) => ( { traitSet: ts, index: idx } ) )
-		.filter( ( { traitSet, index } ) => {
-			if ( isNameSet( traitSet ) ) return false;
-			if ( hasRingTrait.value && index === ringTraitID.value ) return false;
-			return !isHiddenIn( traitSet, 'play' );
-		} )
-		.map( ( { traitSet, index }, orderIdx: number ) => ( {
-			index,
-			label: getMobileJumpPillLabel( traitSet, orderIdx )
-		} ) );
-	return [ headerPill, ...sets ];
-} );
 
 function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
 	if ( traitSet?.name && String( traitSet.name ).trim().length ) return String( traitSet.name ).trim();
@@ -580,23 +609,156 @@ function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
 	return `Set ${ orderIdx + 1 }`;
 }
 
-function scrollToSetCard( setIndex: number ) {
-	activeMobileSetIndex.value = setIndex;
-	const root = rootEl.value || document;
-	const card = setIndex === -1
-		? ( root.querySelector( '.page-header[data-set-index="-1"]' ) as HTMLElement | null )
-		: ( root.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null );
-	if ( card && typeof card.scrollIntoView === 'function' ) {
-		card.scrollIntoView( { behavior: 'smooth', inline: 'center', block: 'nearest' } );
+function countStagedDiceForSets( sets: TraitSet[] ): number {
+	const items = props.dicePool?.items;
+	if ( !Array.isArray( items ) || !items.length || !sets.length ) return 0;
+	const names = new Set<string>();
+	for ( const ts of sets ) {
+		if ( !ts ) continue;
+		if ( ts.name?.trim() ) names.add( ts.name.trim().toLowerCase() );
+		if ( ts.noun?.trim() ) names.add( ts.noun.trim().toLowerCase() );
+		for ( const tr of ( ts.traits || [] ) ) {
+			if ( tr?.name?.trim() ) {
+				const n = tr.name.trim().toLowerCase();
+				names.add( n );
+				names.add( `${n} (hinder)` );
+			}
+			for ( const sub of ( tr?.traits || [] ) ) {
+				if ( sub?.name?.trim() ) names.add( sub.name.trim().toLowerCase() );
+			}
+		}
 	}
-	centerActiveJumpPill( setIndex );
+	if ( !names.size ) return 0;
+	let count = 0;
+	for ( const item of items ) {
+		const src = String( item?.source || '' ).trim().toLowerCase();
+		if ( src && names.has( src ) ) count++;
+	}
+	return count;
 }
 
-function centerActiveJumpPill( setIndex: number ) {
+const mobilePillarColumns = computed<MobilePillarColumn[]>( () => {
+	if ( props.submode !== 'play' || !props.character ) return [];
+	const allSets = Array.isArray( props.character.traitSets ) ? props.character.traitSets : [];
+	const byPillar = new Map<string, MobilePillarSetItem[]>();
+	const seenCustomKeys: string[] = [];
+	const standardOrder = [ 'prime', 'plus', 'play' ];
+
+	const ensureBucket = ( key: string ) => {
+		if ( !byPillar.has( key ) ) {
+			byPillar.set( key, [] );
+			if ( key !== 'identity' && !standardOrder.includes( key ) ) {
+				seenCustomKeys.push( key );
+			}
+		}
+		return byPillar.get( key )!;
+	};
+
+	ensureBucket( 'identity' );
+
+	let ringPillarKey: string | null = null;
+	if ( !isSpotlightStyle.value && shouldShowClassicPortrait() ) {
+		if ( hasRingTrait.value && ringTraitSet.value && !isHiddenIn( ringTraitSet.value, 'play' ) ) {
+			ringPillarKey = resolveSetPillar( ringTraitSet.value );
+			ensureBucket( ringPillarKey );
+		} else if ( !hasRingTrait.value ) {
+			ringPillarKey = 'identity';
+		}
+	}
+
+	allSets.forEach( ( ts, idx ) => {
+		if ( isNameSet( ts ) ) return;
+		if ( hasRingTrait.value && idx === ringTraitID.value ) return;
+		if ( isHiddenIn( ts, 'play' ) ) return;
+		const pKey = resolveSetPillar( ts );
+		const bucket = ensureBucket( pKey );
+		bucket.push( {
+			traitSet: ts,
+			index: idx,
+			label: getMobileJumpPillLabel( ts, bucket.length ),
+		} );
+	} );
+
+	const orderedKeys: string[] = [ 'identity' ];
+	for ( const stdKey of standardOrder ) {
+		if ( byPillar.has( stdKey ) ) orderedKeys.push( stdKey );
+	}
+	for ( const customKey of seenCustomKeys ) {
+		if ( byPillar.has( customKey ) ) orderedKeys.push( customKey );
+	}
+
+	return orderedKeys.map( ( key ) => {
+		const sets = byPillar.get( key ) || [];
+		const hasClassicRing = ringPillarKey === key;
+		const setsForCount = sets.map( ( s ) => s.traitSet );
+		if ( hasClassicRing && hasRingTrait.value && ringTraitSet.value ) {
+			setsForCount.unshift( ringTraitSet.value );
+		}
+		return {
+			key,
+			label: getPillarLabel( props.character, key ),
+			hasHeader: key === 'identity',
+			hasClassicRing,
+			sets,
+			stagedCount: countStagedDiceForSets( setsForCount ),
+		};
+	} );
+} );
+
+function columnStackItems( col: MobilePillarColumn ): { index: number; label: string }[] {
+	const items: { index: number; label: string }[] = [];
+	if ( col.hasHeader ) {
+		items.push( {
+			index: -1,
+			label: ( props.character?.name && String( props.character.name ).trim().length )
+				? String( props.character.name ).trim()
+				: 'Bio',
+		} );
+	}
+	if ( col.hasClassicRing && hasRingTrait.value && ringTraitSet.value ) {
+		items.push( {
+			index: -2,
+			label: getMobileJumpPillLabel( ringTraitSet.value, 0 ),
+		} );
+	}
+	for ( const s of col.sets ) {
+		items.push( { index: s.index, label: s.label } );
+	}
+	return items;
+}
+
+function centerActiveJumpPill( pillarKey: string ) {
 	if ( !jumpStripRef.value ) return;
-	const pill = jumpStripRef.value.querySelector( `[data-pill-index="${ setIndex }"]` ) as HTMLElement | null;
+	const pill = jumpStripRef.value.querySelector( `[data-pillar-pill="${ pillarKey }"]` ) as HTMLElement | null;
 	if ( pill && typeof pill.scrollIntoView === 'function' ) {
 		pill.scrollIntoView( { behavior: 'smooth', inline: 'center', block: 'nearest' } );
+	}
+}
+
+function scrollToPillar( pillarKey: string, targetSetIndex?: number ) {
+	activeMobilePillarKey.value = pillarKey;
+	const root = rootEl.value || document;
+	const colEl = root.querySelector( `.mobile-pillar-column[data-pillar-key="${ pillarKey }"]` ) as HTMLElement | null;
+	if ( colEl && typeof colEl.scrollIntoView === 'function' ) {
+		colEl.scrollIntoView( { behavior: 'smooth', inline: 'center', block: 'nearest' } );
+	}
+	if ( targetSetIndex !== undefined ) {
+		setTimeout( () => scrollToSetInColumn( pillarKey, targetSetIndex ), 180 );
+	}
+	centerActiveJumpPill( pillarKey );
+}
+
+function scrollToSetInColumn( pillarKey: string, setIndex: number ) {
+	const root = rootEl.value || document;
+	const colEl = root.querySelector( `.mobile-pillar-column[data-pillar-key="${ pillarKey }"]` ) as HTMLElement | null;
+	const scope = colEl || root;
+	const card = setIndex === -1
+		? ( scope.querySelector( '.page-header[data-set-index="-1"]' ) as HTMLElement | null )
+		: setIndex === -2
+			? ( scope.querySelector( '.portrait[data-set-index="-2"]' ) as HTMLElement | null )
+			: ( scope.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null );
+	if ( card && typeof card.scrollIntoView === 'function' ) {
+		card.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
 	}
 }
 
@@ -605,22 +767,21 @@ function setupCarouselObserver() {
 		carouselObserver.disconnect();
 		carouselObserver = null;
 	}
-	if ( props.submode !== 'play' || typeof window === 'undefined' || !window.matchMedia( '(max-width: 768px)' ).matches ) {
+	if ( !isMobilePlay.value ) {
 		return;
 	}
 	nextTick( () => {
 		const root = rootEl.value || document;
-		const cards = root.querySelectorAll( '[data-set-index]' );
-		if ( !cards.length ) return;
+		const cols = root.querySelectorAll( '.mobile-pillar-column[data-pillar-key]' );
+		if ( !cols.length ) return;
 
 		carouselObserver = new IntersectionObserver( ( entries ) => {
 			for ( const entry of entries ) {
 				if ( entry.isIntersecting ) {
-					const rawIdx = entry.target.getAttribute( 'data-set-index' );
-					if ( rawIdx !== null ) {
-						const idx = Number( rawIdx );
-						activeMobileSetIndex.value = idx;
-						centerActiveJumpPill( idx );
+					const rawKey = entry.target.getAttribute( 'data-pillar-key' );
+					if ( rawKey ) {
+						activeMobilePillarKey.value = rawKey;
+						centerActiveJumpPill( rawKey );
 					}
 				}
 			}
@@ -628,7 +789,7 @@ function setupCarouselObserver() {
 			threshold: 0.55
 		} );
 
-		cards.forEach( ( card ) => carouselObserver!.observe( card ) );
+		cols.forEach( ( col ) => carouselObserver!.observe( col ) );
 	} );
 }
 
@@ -636,7 +797,11 @@ onMounted( () => {
 	applyFonts();
 	if ( typeof window !== 'undefined' && window.matchMedia ) {
 		mediaQuery = window.matchMedia( '(max-width: 768px)' );
-		handleMediaChange = () => setupCarouselObserver();
+		isMobileViewport.value = mediaQuery.matches;
+		handleMediaChange = () => {
+			isMobileViewport.value = Boolean( mediaQuery && mediaQuery.matches );
+			setupCarouselObserver();
+		};
 		mediaQuery.addEventListener( 'change', handleMediaChange );
 	}
 	setupCarouselObserver();
@@ -656,9 +821,9 @@ watch( () => props.character, () => {
 	applyFonts();
 }, { immediate: true, deep: true } );
 
-watch( () => mobilePlayJumpSets.value, ( sets ) => {
-	if ( sets.length > 0 && !sets.some( s => s.index === activeMobileSetIndex.value ) ) {
-		activeMobileSetIndex.value = sets[ 0 ].index;
+watch( () => mobilePillarColumns.value, ( cols ) => {
+	if ( cols.length > 0 && !cols.some( ( c ) => c.key === activeMobilePillarKey.value ) ) {
+		activeMobilePillarKey.value = cols[ 0 ].key;
 	}
 	setupCarouselObserver();
 }, { immediate: true } );
@@ -705,28 +870,198 @@ watch( () => props.submode, () => {
 
 				<div class="page-inner">
 
-					<!-- HORIZONTALLY SCROLLING JUMP-PILL STRIP (PLAY MODE ONLY) -->
+					<!-- 2D MOBILE PILLAR JUMP STRIP (PLAY MODE) -->
 					<nav
-						v-if="submode === 'play' && pageIndex === 1 && mobilePlayJumpSets.length > 1"
+						v-if="submode === 'play' && pageIndex === 1 && mobilePillarColumns.length > 0"
 						ref="jumpStripRef"
 						class="mobile-set-jump-strip"
-						aria-label="Character trait sets"
+						aria-label="Character pillars"
 					>
 						<button
-							v-for="item in mobilePlayJumpSets"
-							:key="'jump-pill-' + item.index"
+							v-for="col in mobilePillarColumns"
+							:key="'jump-pillar-' + col.key"
 							type="button"
 							class="jump-pill"
-							:class="{ active: activeMobileSetIndex === item.index }"
-							:data-pill-index="item.index"
-							:aria-current="activeMobileSetIndex === item.index ? 'true' : undefined"
-							@click.stop="scrollToSetCard(item.index)"
+							:class="{ active: activeMobilePillarKey === col.key }"
+							:data-pillar-pill="col.key"
+							:aria-current="activeMobilePillarKey === col.key ? 'true' : undefined"
+							@click.stop="scrollToPillar(col.key)"
 						>
-							<span class="jump-pill-label">{{ item.label }}</span>
+							<span class="jump-pill-label">{{ col.label }}</span>
+							<span v-if="col.stagedCount > 0" class="jump-pill-badge">{{ col.stagedCount }}</span>
+						</button>
+						<button
+							type="button"
+							class="jump-pill jump-pill-add-card"
+							title="Add Play Card / Set Preset"
+							@click.stop="openPlayPresetPicker"
+						>
+							<i class="fas fa-plus"></i> <span class="jump-pill-label">Card</span>
 						</button>
 					</nav>
 
-					<div class="mobile-carousel-track">
+					<!-- 2D MOBILE PILLAR & STACK DECK (MOBILE PLAY MODE) -->
+					<div v-if="isMobilePlay && pageIndex === 1" class="mobile-pillar-track">
+						<div
+							v-for="col in mobilePillarColumns"
+							:key="'pillar-col-' + col.key"
+							class="mobile-pillar-column"
+							:data-pillar-key="col.key"
+						>
+							<div class="mobile-substack-bar" v-if="columnStackItems(col).length > 1">
+								<button
+									v-for="sub in columnStackItems(col)"
+									:key="'substack-' + col.key + '-' + sub.index"
+									type="button"
+									class="substack-pill"
+									@click.stop="scrollToSetInColumn(col.key, sub.index)"
+								>
+									{{ sub.label }}
+								</button>
+							</div>
+
+							<header class="page-header" v-if="col.hasHeader" :data-set-index="-1">
+								<div
+									v-if="isSpotlightStyle"
+									class="page-header-inner spotlight-header-card"
+									:class="{ 'has-portrait': hasHeaderPortrait }"
+								>
+									<div class="spotlight-header-meta-box trait-set-box">
+										<div class="spotlight-meta-name-cell">
+											<div class="spotlight-cell-header">
+												<span class="spotlight-cell-label">NAME</span>
+												<span class="spotlight-cell-sublabel" v-if="player && nameShown('player')">{{ playerLabel }} {{ player }}</span>
+											</div>
+											<div class="spotlight-cell-content name-content" v-if="name" v-html="renderNameHtml(name)"></div>
+											<div class="spotlight-blank-line" v-else></div>
+										</div>
+										<div class="spotlight-meta-divider"></div>
+										<div class="spotlight-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
+											<span class="spotlight-cell-label">{{ nicknameLabel }}</span>
+											<span class="spotlight-nickname-val" v-if="nickname" v-html="renderText(nickname)"></span>
+											<span class="spotlight-blank-line" v-else></span>
+										</div>
+										<div class="spotlight-meta-divider" v-if="hasNickname && nameShown('nickname')"></div>
+										<div class="spotlight-meta-pronoun-cell" v-if="nameShown('pronouns')">
+											<span class="spotlight-cell-label">{{ pronounsLabel }}</span>
+											<span class="spotlight-pronoun-val" v-if="pronouns" v-html="renderText(pronouns)"></span>
+											<span class="spotlight-blank-line" v-else></span>
+										</div>
+									</div>
+
+									<div class="spotlight-header-desc-box trait-set-box" v-if="nameShown('description')">
+										<div class="spotlight-cell-header">
+											<span class="spotlight-cell-label">{{ descriptionLabel }}</span>
+										</div>
+										<div class="desc-content" v-if="description" v-html="renderText(description)"></div>
+										<div class="desc-blank-area" v-else>
+											<div class="desc-blank-line"></div>
+											<div class="desc-blank-line"></div>
+										</div>
+									</div>
+
+									<div v-if="hasHeaderPortrait && nameShown('portrait')" class="spotlight-header-portrait-wrap">
+										<div class="spotlight-header-portrait-box" :class="{ 'has-image': Boolean(effectivePortraitUrl) }">
+											<img
+												v-if="effectivePortraitUrl"
+												class="portrait-small-image"
+												:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'center')"
+												:src="safeImageUrl(effectivePortraitUrl)"
+												alt="Portrait / Logo"
+											/>
+											<div v-else class="portrait-small-placeholder">
+												<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
+											</div>
+										</div>
+										<div v-if="portraitCaption && nameShown('caption')" class="spotlight-portrait-caption">{{ portraitCaption }}</div>
+									</div>
+								</div>
+
+								<div v-else class="page-header-inner">
+									<div>
+										<div class="title-container">
+											<div class="character-game-title" v-if="game && nameShown('game')" v-html="renderText(game)"></div>
+											<div class="title">{{ name }}</div>
+											<div class="title-decoration">
+												<svg height="4" width="100%"><line x1="0" y1="0" x2="10000" y2="0" style="stroke:#C50852;stroke-width:4pt"/></svg>
+											</div>
+										</div>
+										<div class="character-meta">
+											<div class="character-player" v-if="player && player.length && nameShown('player')">
+												<span class="meta-label">{{ playerLabelClassic }}</span> <span>{{ player }}</span>
+											</div>
+											<div class="character-pronouns" v-if="pronouns.length && nameShown('pronouns')">
+												<span v-html="renderText(pronouns)"></span>
+											</div>
+											<div class="character-description" v-if="description.length && nameShown('description')">
+												<span v-html="renderText(description)"></span>
+											</div>
+											<div class="character-pp-badge" v-if="nameShown('plotPoints')">
+												<span class="pp-badge-label">{{ plotPointsLabel }}</span>
+												<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
+												<span class="pp-count">{{ plotPoints }}</span>
+												<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
+											</div>
+											<div class="character-notes-summary" v-if="notes && notes.length && nameShown('notes')">
+												<div class="character-notes-body" v-html="renderNotesText(notes)"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</header>
+
+							<!-- CLASSIC PORTRAIT & RING IN PILLAR COLUMN -->
+							<div v-if="col.hasClassicRing" :class="{ 'portrait': true, 'portrait-standalone': !hasRingTrait }" :data-set-index="-2">
+								<div class="portrait-inner">
+									<div :class="'portrait-circle portrait-alignment-' + (getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
+										<img class="portrait-placeholder" v-if="!effectivePortraitUrl" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
+									</div>
+								</div>
+								<PortraitRing
+									v-if="hasRingTrait && ringTraitID > -1"
+									ref="ringRef"
+									:character="character"
+									:editing="editing"
+									:submode="submode"
+									:viewY="viewY"
+									:ringTraitID="ringTraitID"
+									@selectElement="selectElement"
+									@updateCharacter="updateCharacter"
+									@addDieToRoller="emit('addDieToRoller', $event)"
+									@removeTrait="removeTrait"
+								/>
+							</div>
+
+							<TraitSetBlock
+								v-for="item in col.sets"
+								:key="'mobile-set-' + item.index"
+								:character="character"
+								:traitSetID="item.index"
+								:submode="submode"
+								:editing="editing"
+								:viewY="viewY"
+								:printBlank="effectivePrintBlank"
+								:printStyle="printStyle"
+								@selectElement="selectElement"
+								@updateCharacter="updateCharacter"
+								@removeTrait="removeTrait"
+								@removeTraitSet="removeTraitSet"
+								@addTrait="addTrait"
+								@addDieToRoller="emit('addDieToRoller', $event)"
+							></TraitSetBlock>
+
+							<button
+								v-if="col.key === 'play'"
+								type="button"
+								class="btn-mobile-add-play-card"
+								@click.stop="openPlayPresetPicker"
+							>
+								<i class="fas fa-plus"></i> Add Play Card
+							</button>
+						</div>
+					</div>
+
+					<div v-else class="mobile-carousel-track">
 
 					<header class="page-header" v-if="pageIndex === 1" :data-set-index="-1">
 
@@ -1093,7 +1428,44 @@ watch( () => props.submode, () => {
 			:initialLocation="galleryLocation"
 			@close="showStyleGallery = false"
 			@addGallerySet="addGallerySet"
+			@addPresetSet="addPresetSet"
 		></StyleGallery>
+
+		<teleport to="body">
+			<transition>
+				<div class="modal-veil" v-if="showPlayPresetPicker" @click.stop="showPlayPresetPicker = false"></div>
+			</transition>
+			<transition>
+				<aside class="modal modal-style-gallery" v-if="showPlayPresetPicker">
+					<div class="modal-close" @click.prevent="showPlayPresetPicker = false"><i class="fas fa-times"></i></div>
+					<div class="modal-inner">
+						<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
+						<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
+						<div class="style-gallery-grid">
+							<div class="style-gallery-card" v-for="preset in playBuiltInPresets" :key="'play-builtin-' + preset.id">
+								<div class="style-gallery-name">{{ preset.label }}</div>
+								<div class="style-gallery-blurb">{{ preset.blurb }}</div>
+								<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
+									<i class="fas fa-plus"></i> Add to Session
+								</button>
+							</div>
+							<div class="style-gallery-card" v-for="preset in playCustomPresets" :key="'play-custom-' + preset.id">
+								<div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;">
+									<div class="style-gallery-name">{{ preset.label }}</div>
+									<button type="button" class="editor-header-btn" title="Delete saved preset" @click.stop="removePlayCustomPreset(preset.id)">
+										<i class="fas fa-trash-alt"></i>
+									</button>
+								</div>
+								<div class="style-gallery-blurb">{{ preset.blurb || 'Saved custom set preset' }}</div>
+								<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
+									<i class="fas fa-plus"></i> Add to Session
+								</button>
+							</div>
+						</div>
+					</div>
+				</aside>
+			</transition>
+		</teleport>
 	</section>
 </template>
 

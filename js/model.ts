@@ -234,14 +234,15 @@ export function isOutDie( node: unknown, fallbacks?: Array<unknown> ): boolean {
 // ---------- visibility (2026-10-23: shown | editor-only | hidden) ----------
 
 /** Trait visibility: a general capability, not a name-set special case. */
-export type Visibility = 'shown' | 'editor-only' | 'hidden';
+export type Visibility = 'shown' | 'play-only' | 'editor-only' | 'hidden';
+export type VisibilityState = Visibility;
 
 /** Resolve visibility; absent is shown. */
 export function resolveVisibility( node: unknown ): Visibility {
 	const v = getView( node );
 	if ( v && typeof v === 'object' ) {
 		const named = ( v as Record<string, unknown> ).visibility;
-		if ( named === 'hidden' || named === 'editor-only' || named === 'shown' ) return named;
+		if ( named === 'hidden' || named === 'editor-only' || named === 'play-only' || named === 'shown' ) return named;
 	}
 	return 'shown';
 }
@@ -250,8 +251,70 @@ export function resolveVisibility( node: unknown ): Visibility {
 export function isHiddenIn( node: unknown, submode: unknown ): boolean {
 	const vis = resolveVisibility( node );
 	if ( vis === 'hidden' ) return true;
+	if ( vis === 'play-only' ) return submode === 'print';
 	if ( vis === 'editor-only' ) return submode !== 'edit';
 	return false;
+}
+
+/** Cycle visibility state: shown -> play-only -> editor-only -> hidden -> shown. */
+export function nextVisibility( cur: Visibility ): Visibility {
+	if ( cur === 'shown' ) return 'play-only';
+	if ( cur === 'play-only' ) return 'editor-only';
+	if ( cur === 'editor-only' ) return 'hidden';
+	return 'shown';
+}
+
+/**
+ * Resolve a trait set's pillar key for the 2D mobile Play deck.
+ * Explicit `view.pillar` in JSON always wins; otherwise falls back to
+ * structural/behavioral conventions without mutating stored data.
+ */
+export function resolveSetPillar( traitSet: unknown ): string {
+	const v = getView( traitSet );
+	if ( v && typeof v.pillar === 'string' && v.pillar.trim().length > 0 ) {
+		return v.pillar.trim();
+	}
+	if (
+		v?.visibility === 'play-only' ||
+		v?.playMutable === true ||
+		v?.style?.body === 'notes'
+	) {
+		return 'play';
+	}
+	const body = v?.style?.body;
+	if (
+		body === 'portrait-ring' ||
+		body === 'attributes' ||
+		v?.location === 'attributes' ||
+		v?.ringTrait === true ||
+		v?.attributesRing === true ||
+		body === 'sfx-rows' ||
+		body === 'distinctions'
+	) {
+		return 'prime';
+	}
+	return 'plus';
+}
+
+/**
+ * Resolve the display label for a pillar key on a character sheet.
+ * Reads `view.labels.pillars[pillarKey]` or `view.labels['pillar_' + pillarKey]`,
+ * falling back to capitalizing the pillar key.
+ */
+export function getPillarLabel( character: unknown, pillarKey: string ): string {
+	const key = String( pillarKey || '' ).trim();
+	if ( !key ) return '';
+	const labels = getView( character )?.labels as Record<string, any> | undefined;
+	if ( labels && typeof labels === 'object' ) {
+		const map = labels.pillars;
+		if ( map && typeof map === 'object' && !Array.isArray( map ) ) {
+			const custom = map[ key ];
+			if ( typeof custom === 'string' && custom.trim().length > 0 ) return custom.trim();
+		}
+		const flat = labels[ 'pillar_' + key ];
+		if ( typeof flat === 'string' && flat.trim().length > 0 ) return flat.trim();
+	}
+	return key.charAt( 0 ).toUpperCase() + key.slice( 1 );
 }
 
 // ---------- custom.cortexToolkit sub-shapes (set + character scope) ----------
@@ -375,7 +438,9 @@ export interface CortexToolkitCustom {
 	stressConfig?: StressConfig;
 	/** Generic Out indicator for any stepped track; default off. Supersedes stressConfig.includeOut when set. */
 	outIndicator?: boolean;
-	labels?: Record<string, string>;
+	labels?: { [ k: string ]: any; pillars?: Record<string, string>; };
+	/** Open permissive pillar key for the 2D mobile Play carousel. */
+	pillar?: string;
 	notes?: string;
 
 	// layout: nested grids with explicit coordinates (2026-10-19).

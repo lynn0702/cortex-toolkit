@@ -1415,5 +1415,35 @@ button.trait-title-btn {
 	}
 }
 
+.submode-print .trait-set-play-only,
+.submode-print .trait-play-only {
+	display: none !important;
+}
+
+@media print {
+	.trait-set-play-only,
+	.trait-play-only {
+		display: none !important;
+	}
+}
+
+.trait-set-play-remove-btn {
+	background: transparent;
+	border: none;
+	color: inherit;
+	opacity: 0.7;
+	cursor: pointer;
+	padding: 0 0.3rem;
+	margin-left: auto;
+	font-size: 0.85rem;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	&:hover {
+		opacity: 1;
+	}
+}
+
 
 
