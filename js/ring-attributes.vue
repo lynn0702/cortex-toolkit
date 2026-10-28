@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, getRating, ratingDice, resolveHitches, keepsExtraDice } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, resolveHitches, keepsExtraDice, type Trait } from './model.ts';
 
 const props = defineProps<{
 	character: any;
@@ -30,8 +30,8 @@ const scaleTrait = computed( () => {
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
 	return attrSet.traits.find( ( t: any ) => t.name?.trim().toLowerCase() === 'scale');
 } );
-const attributes = computed( () => {
-	const all = ringTraitSet.value?.traits || [];
+const attributes = computed<Trait[]>( () => {
+	const all = ( ringTraitSet.value?.traits || [] ) as Trait[];
 	return all.filter( ( t: any ) => !( t.name?.trim().toLowerCase() === 'scale') );
 } );
 const isRingPool = computed( () => {
@@ -87,7 +87,8 @@ function renderDieValue( value: any ) {
 	return cortexFunctions.getDieDisplayValue( value );
 }
 
-function getAttributeAngle( a: number ) {
+function getAttributeAngle( a: number | string ) {
+	const idx = Number( a );
 	const cfg = ringConfig.value;
 	const centerAngle = 90 + ( cfg.arcAngle ?? -90 );
 	const spreadFactor = ( cfg.arcSpread ?? 100 ) / 100;
@@ -97,13 +98,13 @@ function getAttributeAngle( a: number ) {
 	if ( attributes.value.length === 1 ) {
 		alpha = 0.5;
 	} else {
-		alpha = a / ( attributes.value.length - 1 );
+		alpha = idx / ( attributes.value.length - 1 );
 	}
 
 	return centerAngle + ( alpha - 0.5 ) * totalSpan;
 }
 
-function getAttributeStyle( a: number ) {
+function getAttributeStyle( a: number | string ) {
 	const cfg = ringConfig.value;
 	const angleDeg = getAttributeAngle( a );
 	const rad = angleDeg * Math.PI / 180;
@@ -123,7 +124,7 @@ function getAttributeStyle( a: number ) {
 	return `left: calc(50% + ${percentX}%); top: calc(50% + ${percentY}%);`;
 }
 
-function getAttributeNameStyle( a: number ) {
+function getAttributeNameStyle( a: number | string ) {
 	const angleDeg = getAttributeAngle( a );
 	const rad = angleDeg * Math.PI / 180;
 
@@ -147,9 +148,12 @@ function ringDie( attribute: any ) {
 	return ratingDice( getRating( attribute ) )[0] || 0;
 }
 
-function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any ) {	if ( isRingDragging.value ) return;
+function handleAttributeClick( ringTraitIDVal: number | string, a: number | string, attribute: any ) {
+	if ( isRingDragging.value ) return;
+	const traitIdx = Number( a );
+	const setIdx = Number( ringTraitIDVal );
 	if ( props.submode === 'play' ) {
-		const ts = props.character.traitSets[ ringTraitIDVal ];
+		const ts = props.character.traitSets[ setIdx ];
 		const isChallenge = isRingPool.value;
 		if ( isChallenge ) {
 			const diceToAdd: any[] = [];
@@ -182,7 +186,7 @@ function handleAttributeClick( ringTraitIDVal: number, a: number, attribute: any
 			}
 		}
 	} else {
-		selectElement( [ 'trait', ringTraitIDVal, a ] );
+		selectElement( [ 'trait', setIdx, traitIdx ] );
 	}
 }
 
@@ -370,20 +374,20 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 		>
 			<div v-for="( attribute, a ) in attributes"
 				class="attribute"
-				:class="{ 'has-open-editor': isSelected(['trait', ringTraitID, a]), 'is-draggable': submode === 'edit' }"
-				:style="getAttributeStyle( a )"
+				:class="{ 'has-open-editor': isSelected(['trait', ringTraitID, Number(a)]), 'is-draggable': submode === 'edit' }"
+				:style="getAttributeStyle( Number(a) )"
 				@mousedown="startRingDrag($event, 'traits')"
 				@touchstart="startRingDrag($event, 'traits')"
 			>
 
 				<div class="attribute-inner"
-					:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', ringTraitID, a]) }"
+					:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', ringTraitID, Number(a)]) }"
 					role="button"
 					tabindex="0"
 					:aria-label="attribute.name ? (`Stage d${ringDie(attribute) || 8} ${attribute.name}`) : 'Attribute'"
-					@click.stop="handleAttributeClick( ringTraitID, a, attribute )"
-					@keydown.enter.prevent="handleAttributeClick( ringTraitID, a, attribute )"
-					@keydown.space.prevent="handleAttributeClick( ringTraitID, a, attribute )"
+					@click.stop="handleAttributeClick( ringTraitID, Number(a), attribute )"
+					@keydown.enter.prevent="handleAttributeClick( ringTraitID, Number(a), attribute )"
+					@keydown.space.prevent="handleAttributeClick( ringTraitID, Number(a), attribute )"
 					:title="submode === 'play' ? (isRingPool ? 'Pool: Click to add all dice to roller' : 'Click to add d' + ringDie(attribute) + ' to roller') : ''"
 				>
 
@@ -395,7 +399,7 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 					></span>
 
 					<div class="attribute-name"
-						:style="getAttributeNameStyle( a )"
+						:style="getAttributeNameStyle( Number(a) )"
 					>{{ attribute.name }}</div>
 
 				</div>
