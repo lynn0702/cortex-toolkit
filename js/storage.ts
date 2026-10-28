@@ -239,7 +239,7 @@ export const cortexStorage: CortexStorage = {
 				c.traitSets.forEach( ( ts: any ) => {
 					const ctk = ts?.view || ts?.custom?.cortexToolkit;
 					// Normalize Distinctions with 'none' ratingPosition to 'inline'
-					if ( ( ctk?.style?.body === 'distinctions' || ts.name?.toLowerCase() === 'distinctions' ) &&
+					if ( ( ctk?.style?.body === 'sfx-rows' || ctk?.style?.body === 'distinctions' || ts.name?.toLowerCase() === 'distinctions' ) &&
 						( ts.ratingPosition === 'none' || ctk?.ratingPosition === 'none' ) ) {
 						ts.ratingPosition = 'inline';
 						if ( ctk ) ctk.ratingPosition = 'inline';

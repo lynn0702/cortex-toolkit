@@ -235,8 +235,8 @@
           },
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "multiDie": false,
           "ratingScale": [
@@ -489,8 +489,8 @@
           },
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "multiDie": false,
           "ratingScale": [

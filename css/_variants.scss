@@ -277,7 +277,7 @@
 	@extend .trait-set-style-default;
 }
 
-.trait-set-style-distinctions {
+.trait-set-style-sfx-rows {
 	@extend .trait-set-style-default;
 
 	.trait-title {
@@ -468,7 +468,7 @@
 	}
 }
 
-.trait-set-style-assets {
+.trait-set-style-boxed-rows {
 	border: 1px solid var(--color-primary);
 	background-color: var(--color-secondary);
 
@@ -544,7 +544,7 @@
 
 }
 
-.trait-set-style-resources {
+.trait-set-style-pool-rows {
 
 	.trait-set-header {
 		padding-bottom: .33rem;
@@ -679,7 +679,7 @@
 
 }
 
-.trait-set-style-stress {
+.trait-set-style-die-track {
 
 	.trait-set-header {
 		padding-bottom: .5rem;
@@ -1727,8 +1727,8 @@
 
 // PLAY MODE INTERACTIONS
 .submode-play {
-	.trait-set-style-stress .c,
-	.trait-set-style-stress .stress-out-badge,
+	.trait-set-style-die-track .c,
+	.trait-set-style-die-track .stress-out-badge,
 	.single-die-value .c,
 	.attribute-inner .c,
 	.subtrait-value .c {

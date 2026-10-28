@@ -220,7 +220,7 @@ export const cortexFunctions = {
 		}
 	},
 
-	hasAttachedStress: function( traitSetArg: any ): boolean {
+	hasTrackPart: function( traitSetArg: any ): boolean {
 		if ( !traitSetArg ) return false;
 		const view = getView( traitSetArg );
 		const parts = view?.parts;
@@ -230,7 +230,7 @@ export const cortexFunctions = {
 		return false;
 	},
 
-	getAttachedStressLabel: function( traitSetArg: any ): string {
+	getTrackLabel: function( traitSetArg: any ): string {
 		if ( !traitSetArg ) return 'Stress';
 		const view = getView( traitSetArg );
 		const labels = view?.labels;
@@ -238,9 +238,9 @@ export const cortexFunctions = {
 		return 'Stress';
 	},
 
-	getAttachedStressScale: function( traitSetArg: any ): number[] {
+	getTrackScale: function( traitSetArg: any ): number[] {
 		if ( !traitSetArg ) return [ 4, 6, 8, 10, 12 ];
-		const label = this.getAttachedStressLabel( traitSetArg ).toLowerCase();
+		const label = this.getTrackLabel( traitSetArg ).toLowerCase();
 		const rawTraits = traitSetArg?.traits;
 		const traits = Array.isArray( rawTraits )
 			? rawTraits
@@ -1548,8 +1548,8 @@ export const cortexFunctions = {
 					'location': 'left',
 					'reservedSlots': 3,
 					'style': {
-						'header': 'distinctions',
-						'body': 'distinctions',
+						'header': 'sfx-rows',
+						'body': 'sfx-rows',
 					}
 				},
 			},

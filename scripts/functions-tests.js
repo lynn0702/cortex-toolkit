@@ -38,7 +38,7 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingSca
   ok(F.isPlayAddRemovableSet({ name: 'Complications', view: { playMutable: false } }) === false, 'explicit false is not play-add/removable');
   ok(F.isPlayAddRemovableSet({ name: 'Complications' }) === false, 'unflagged complication set is not play-add/removable (no name sniffing)');
   ok(F.isPlayAddRemovableSet({ name: 'Session Complications' }) === false, 'fuzzy complication name does not match');
-  ok(F.isPlayAddRemovableSet({ name: 'Custom Stress', view: { style: { body: 'stress' } } }) === false, 'stress set is not play-add/removable (no stress fallback)');
+  ok(F.isPlayAddRemovableSet({ name: 'Custom Stress', view: { style: { body: 'die-track' } } }) === false, 'die-track set is not play-add/removable (no stress fallback)');
   ok(F.isPlayAddRemovableSet({ name: 'Skills', view: { playMutable: true } }) === true, 'explicit playMutable true wins on any set');
   ok(F.isPlayAddRemovableSet({ name: 'Distinctions' }) === false, 'unflagged set returns false');
   ok(F.isPlayAddRemovableSet(null) === false, 'null trait set returns false');

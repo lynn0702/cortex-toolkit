@@ -7,7 +7,7 @@
  * source of truth for those, so types never drift from validation.
  *
  * This module adds the **app-only** layer the schema intentionally leaves open:
- * the `custom.cortexToolkit` compartment (style, features, pips, ring, layout,
+ * the `view` compartment (and legacy `custom.cortexToolkit`: style, features, pips, ring, layout,
  * labels, …). The schema types `custom` as an open map on purpose (other apps
  * may compartmentalize their own keys); we refine our compartment here.
  *

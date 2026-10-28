@@ -4,9 +4,7 @@ import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.t
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie } from './model.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig } from './model.ts';
 
-export interface TraitSetEditorApi {
-	[ key: string ]: any;
-}
+export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
 
 // Pure branch-share normalization shared by the editor miniature and the
 // subtrait-columns renderer: finite numbers >= 0 win, else the CSS
@@ -27,7 +25,7 @@ export interface TraitSetEditorProps {
 
 export const TRAIT_SET_EDITOR_KEY: InjectionKey<TraitSetEditorApi> = Symbol( 'traitSetEditorApi' );
 
-export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): TraitSetEditorApi {
+export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 	const inst = getCurrentInstance();
 
 	const rootEl = ref<any>( null );
@@ -49,9 +47,9 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		{ id: 'portrait-ring',        label: 'Portrait Ring' },
 		{ id: 'two-columns-compact',  label: 'Compact Columns' },
 		{ id: 'two-columns-detailed', label: 'Detailed Columns' },
-		{ id: 'distinctions',         label: 'Distinctions' },
-		{ id: 'assets',               label: 'Assets' },
-		{ id: 'resources',            label: 'Resources' },
+		{ id: 'sfx-rows',             label: 'SFX Rows' },
+		{ id: 'boxed-rows',           label: 'Boxed Rows' },
+		{ id: 'pool-rows',            label: 'Pool Rows' },
 		{ id: 'dice-count',           label: 'Dice Count' },
 		{ id: 'subtrait-columns',     label: 'Subtrait Columns' },
 		{ id: 'paired-slots',         label: 'Paired Slots' },
@@ -59,7 +57,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		{ id: 'three-column-table',   label: 'Three Column Table' },
 		{ id: 'dice-ladder',          label: 'Dice Ladder' },
 		{ id: 'labeled-fields',       label: 'Labeled Fields' },
-		{ id: 'stress',               label: 'Stress' },
+		{ id: 'die-track',            label: 'Die Track' },
 		{ id: 'list',                 label: 'List' },
 		{ id: 'notes',                label: 'Notes' },
 		{ id: 'image',                label: 'Image' },
@@ -101,10 +99,10 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			if ( body === 'portrait-ring' || body === 'attributes' ) {
 				return 'portrait-ring';
 			}
-			// Backwards compatibility: default Attributes trait set to Ring when no style (or default) is specified
+			// Backwards compatibility: default legacy ring-located trait sets to portrait-ring when no style (or default) is specified
 			if ( !body || body === 'default' ) {
 				if ( getView( traitSet.value )?.location === 'attributes' ||
-					( isAttributesSet.value && cortexFunctions.getRingTrait( traitSet.value ) !== false ) ) {
+					( isRingCandidateSet.value && cortexFunctions.getRingTrait( traitSet.value ) !== false ) ) {
 					return 'portrait-ring';
 				}
 			}
@@ -134,7 +132,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 				view.style.header = 'portrait-ring';
 				view.location = 'attributes';
 				view.ringTrait = true;
-				view.isAttributes = true;
 			} else {
 				const view = ensureView( traitSet.value );
 				if ( !view.style ) view.style = {};
@@ -166,7 +163,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 
 	const isRing = computed( () => styleBody.value === 'portrait-ring' );
 
-	const isAttributesSet = computed( () => Boolean(
+	const isRingCandidateSet = computed( () => Boolean(
 		getView( traitSet.value )?.location === 'attributes' ||
 		getView( traitSet.value )?.isAttributes ||
 		getView( traitSet.value )?.style?.body === 'attributes' ||
@@ -195,7 +192,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		const scale = Array.isArray( ( view as any ).ratingScale ) && ( view as any ).ratingScale.length
 			? ( view as any ).ratingScale : [ 4, 6, 8, 10, 12 ];
 		const trackOn = partsHaveTrack();
-		const tScale = cortexFunctions.getAttachedStressScale( traitSet.value );
+		const tScale = cortexFunctions.getTrackScale( traitSet.value );
 		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
 		const statement = Boolean( ( traitSet.value as any )?.statement ?? ( view as any ).statement );
 		const features = ( view as any ).features || {};
@@ -353,10 +350,10 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		updateCharacter( props.character );
 	}
 
-	function hasCustomBranch() {
+	const hasCustomBranch = computed( () => {
 		const branch = getView( traitSet.value )?.branch;
 		return Boolean( branch && typeof branch === 'object' && !Array.isArray( branch ) );
-	}
+	} );
 
 	function resetParts() {
 		const view = getView( traitSet.value );
@@ -659,12 +656,12 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		return 'inline';
 	}
 
-	const hasAttachedStress = computed({
+	const hasTrackPart = computed({
 		get: () => partsHaveTrack(),
 		set: ( val: boolean ) => {
 			if ( !val ) {
 				const parts = getView( traitSet.value )?.parts;
-				if ( parts && typeof parts === 'object' ) {
+				if ( parts && typeof parts !== 'string' ) {
 					delete ( parts as Record<string, unknown> ).trackLabel;
 					delete ( parts as Record<string, unknown> ).track;
 				}
@@ -675,7 +672,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		}
 	});
 
-	const attachedStressLabel = computed({
+	const trackLabel = computed({
 		get: () => {
 			const labels = getView( traitSet.value )?.labels;
 			if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
@@ -687,7 +684,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 			if ( !view.labels || typeof view.labels !== 'object' ) view.labels = {};
 			if ( typeof val === 'string' && val.length ) view.labels.stress = val;
 			else delete view.labels.stress;
-			// Keep stress companions (subtraits named for the label) glued
+			// Keep track companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
 			const next = ( typeof val === 'string' && val.length ) ? val : 'Stress';
 			if ( next !== prev && Array.isArray( ( traitSet.value as any )?.traits ) ) {
@@ -809,12 +806,12 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	});
 
 	// Set header placement + alignment (generic; applies to every style).
-	const headerMode = computed({
+	const headerMode = computed<'sidebar' | 'top'>({
 		get: () => ( getView( traitSet.value )?.header === 'top' ? 'top' : 'sidebar' ),
 		set: ( val: 'sidebar' | 'top' ) => { setCustomProperty( 'header', val === 'top' ? 'top' : 'sidebar' ); }
 	});
 
-	const headerAlign = computed({
+	const headerAlign = computed<'left' | 'center' | 'right'>({
 		get: () => {
 			const a = getView( traitSet.value )?.headerAlign;
 			return a === 'center' || a === 'right' ? a : 'left';
@@ -982,8 +979,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	const hasLabelContent = computed( () => {
 		const body = styleBody.value;
 		if ( body === 'subtrait-columns' || body === 'three-column-table' || body === 'dice-count' ) return true;
-		if ( body === 'distinctions' ) return true;
-		if ( hasAttachedStress.value ) return true;
+		if ( body === 'sfx-rows' ) return true;
+		if ( hasTrackPart.value ) return true;
 		return body !== 'notes' && body !== 'image' && body !== 'pips';
 	} );
 
@@ -1188,9 +1185,9 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		scrollPosition.value = 'middle';
 	}
 
-	const api: TraitSetEditorApi = {
+	const api = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
-		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isAttributesSet,
+		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isRingCandidateSet,
 		ringTrait, isFullWidthSpan,
 		partPreview,
 		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,
@@ -1200,7 +1197,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
 		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
-		hasAttachedStress, attachedStressLabel, ratingPosition, labelPosition, isStatementSet,
+		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
 		scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,

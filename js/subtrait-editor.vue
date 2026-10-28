@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, getRating, ratingDice, setRatingDie } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, setRatingDie, type Character, type Trait } from './model.ts';
 
 const props = defineProps<{
-	character: any;
+	character: Character;
 	traitSetID: number;
 	traitID: number;
 	subtraitID: number;
@@ -14,7 +14,7 @@ const props = defineProps<{
 const isPlay = computed( () => props.submode === 'play' );
 
 const emit = defineEmits<{
-	( e: 'updateCharacter', character: any ): void;
+	( e: 'updateCharacter', character: Character ): void;
 	( e: 'removeSubtrait', subtraitID: number ): void;
 }>();
 
@@ -25,11 +25,11 @@ const confirmDelete = ref( false );
 
 watch( () => props.subtraitID, () => { confirmDelete.value = false; } );
 
-const subtrait = computed( () => {
+const subtrait = computed<Trait>( () => {
 	const s = props.traitSetID;
 	const t = props.traitID;
 	const u = props.subtraitID;
-	return props.character.traitSets[ s ].traits[ t ].traits[ u ];
+	return props.character.traitSets[ s ].traits[ t ].traits![ u ];
 } );
 
 const name = computed( {
@@ -97,7 +97,7 @@ function setSubtraitProperty( key: string, value: any ) {
 	const t = props.traitID;
 	const f = props.subtraitID;
 
-	character.traitSets[ s ].traits[ t ].traits[ f ][ key ] = value;
+	( character.traitSets[ s ].traits[ t ].traits![ f ] as Record<string, any> )[ key ] = value;
 
 	updateCharacter( character );
 }

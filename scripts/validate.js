@@ -162,6 +162,7 @@ templates.forEach((tpl, ti) => {
     checkNodeOptions(ts, `${where}.traitSets[${si}]`);
     const tbody = bag.style && typeof bag.style === 'object' ? bag.style.body : undefined;
     if (tbody === 'session-record' || tbody === 'angled-lines') err(`${where}.traitSets[${si}]: retired ${tbody} body (unified into pips+labels)`);
+    if (tbody === 'distinctions' || tbody === 'assets' || tbody === 'resources' || tbody === 'stress' || tbody === 'attributes') err(`${where}.traitSets[${si}]: retired game-named style.body '${tbody}'`);
     const branch = bag.branch;
     if (branch !== undefined) {
       const ok = branch && typeof branch === 'object' && !Array.isArray(branch) &&

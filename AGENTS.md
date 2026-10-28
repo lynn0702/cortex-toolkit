@@ -1,4 +1,4 @@
-﻿# AGENTS.md — Cortex Toolkit
+# AGENTS.md — Cortex Toolkit
 
 Repo conventions for AI coding sessions (OpenCode, Antigravity, or anything else).
 Every session starts here. If a rule below conflicts with an instruction in the
@@ -9,7 +9,7 @@ prompt, the prompt wins for that session — then update this file.
 - **Read `design/DECISIONS.md` first.** It is the distilled law and authoritative. `design/DECISIONS-history.md` is the full chronological record: reference, not required reading — read it only when a law entry points to it or a decision is disputed. Do not re-litigate ratified decisions or revive superseded ones (`removedTraits` in layered entities, `html.print-view`, `designerPrintPreview`, game-specific style IDs) without new evidence.
 - **Terse UI.** Short labels. No parenthetical explanations, no "e.g." examples.
   If a label needs a parenthetical to be understood, rename the thing.
-- **Name the layout, not the game concept.** Internal style IDs, component filenames, and CSS classes use geometric/structural names (`subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`).
+- **Name the layout, not the game concept.** Internal style IDs, component filenames, and CSS classes use geometric/structural names (`sfx-rows`, `boxed-rows`, `pool-rows`, `die-track`, `subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`).
 - **Build beyond the ask when it's genuinely helpful.** The test: does it
   surface something real, or invent something speculative?
   - Helpful: UI for a data element that can land at rest but currently has
@@ -63,9 +63,8 @@ prompt, the prompt wins for that session — then update this file.
 - TypeScript model types are generated from those schemas: `npm run types`
   (`scripts/gen-types.mjs`) writes `js/model.generated.ts` (do not hand-edit;
   chained into `npm run build`). `js/model.ts` re-exports the generated shapes
-  and adds the app-only `custom.cortexToolkit` types the schema leaves open.
-- App-only settings live under `custom.cortexToolkit`. Never add new
-  top-level fields to a character, trait set, or trait.
+  and adds the app-only `view` types the schema leaves open.
+- Presentation settings live under `view` (`getView` / `ensureView` in `js/model.ts`); `custom.cortexToolkit` is legacy import-only. Never add new unapproved top-level fields to a character, trait set, or trait.
 - localStorage: single key `cortexToolkitData`, namespaced as
   `{ "0.1": { characters } }`. Bump the namespace when the schema changes.
 - Deep clones: use `structuredClone()` everywhere (wrap Vue reactive proxies with `toRaw(v)` before cloning: `structuredClone(toRaw(v))`). Do not use the `JSON.parse(JSON.stringify(...))` idiom.
@@ -94,7 +93,7 @@ prompt, the prompt wins for that session — then update this file.
 
 1. `npm run build` passes with no errors or warnings.
 2. `npm run check` (`vue-tsc --noEmit`) passes.
-3. `npm test` passes all 11 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`, `export`, `rating`, `cost`, `functions`).
+3. `npm test` passes all 10 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`, `export`, `rating`, `functions`).
 4. `npm run validate` passes with 0 errors and 0 warnings.
 5. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
 6. `grep -rn 'v-html' js/` — every site accounted for per Security rules.

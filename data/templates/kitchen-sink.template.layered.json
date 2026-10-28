@@ -110,8 +110,8 @@
         "view": {
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "features": {
             "description": true,
@@ -768,7 +768,7 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "stress"
+            "body": "die-track"
           },
           "features": {
             "description": false,
@@ -1219,8 +1219,8 @@
         "view": {
           "page": 3,
           "style": {
-            "header": "resources",
-            "body": "resources"
+            "header": "pool-rows",
+            "body": "pool-rows"
           },
           "features": {
             "description": false,
@@ -1312,8 +1312,8 @@
         "view": {
           "page": 3,
           "style": {
-            "header": "assets",
-            "body": "assets"
+            "header": "boxed-rows",
+            "body": "boxed-rows"
           },
           "features": {
             "description": false,

@@ -26,7 +26,7 @@ function tpl() {
             { name: '', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
           ],
           sfx: [], tags: [],
-          view: { location: 'left', style: { header: 'distinctions', body: 'distinctions' }, reservedSlots: 3 },
+          view: { location: 'left', style: { header: 'sfx-rows', body: 'sfx-rows' }, reservedSlots: 3 },
         },
         {
           id: 'attributes', name: 'Attributes', description: '', noun: 'Attribute', plural: 'Attributes',

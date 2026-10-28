@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import type { Character } from './model.ts';
 
 const props = defineProps<{
-	character: any;
+	character: Character;
 	traitSetID: number;
 	traitID: number | null;
 	effectID: number;
 }>();
 
 const emit = defineEmits<{
-	( e: 'updateCharacter', character: any ): void;
+	( e: 'updateCharacter', character: Character ): void;
 	( e: 'removeEffect', effectID: number ): void;
 }>();
 

@@ -34,7 +34,7 @@ function commitPipRowName( traitSetIndex: number, itemIndex: number, event: Even
 					tabindex="0"
 					role="checkbox"
 					:aria-checked="row.filled ? 'true' : 'false'"
-					:aria-label="row.name || ((traitSet.noun || 'Milestone') + ' ' + (row.index + 1))"
+					:aria-label="row.name || ((traitSet.noun || 'Row') + ' ' + (row.index + 1))"
 					@keydown.enter.prevent="togglePipRow(s, row.index)"
 					@keydown.space.prevent="togglePipRow(s, row.index)"
 					@click.stop="togglePipRow(s, row.index)"

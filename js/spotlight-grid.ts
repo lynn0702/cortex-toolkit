@@ -396,7 +396,7 @@ export function partsGrid( parts: Record<string, { left: string; top: number; wi
 	return { columns, cells };
 }
 
-export function partCellStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> }, part: string ): string {
+export function partCellStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> } | null | undefined, part: string ): string {
 	const cell = grid?.cells?.[ part ];
 	if ( !cell ) return '';
 	return `grid-column: ${cell.col} / span ${cell.span}; grid-row: ${cell.row} / span ${cell.rowSpan}; min-width: 0;`;
@@ -410,7 +410,7 @@ export function partCellStyle( grid: { columns: number[]; cells: Record<string, 
 // Single-track rows are unaffected. (Note: max(data%, min-content) does
 // NOT parse in Chrome — the whole declaration drops — so the floor is a
 // minmax, never a max.)
-export function partsGridStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> }, floorName = false ): string {
+export function partsGridStyle( grid: { columns: number[]; cells: Record<string, PartGridCell> } | null | undefined, floorName = false ): string {
 	const cols = grid?.columns?.length ? grid.columns : [ 100 ];
 	const nameCol = floorName ? grid?.cells?.name?.col : undefined;
 	return 'grid-template-columns: ' + cols.map( ( c, i ) => {

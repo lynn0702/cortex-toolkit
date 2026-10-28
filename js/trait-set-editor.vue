@@ -27,7 +27,7 @@ const {
 	name, traitSetID, isRing, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
 	styleLabel, setStyleLabel, hasLabelContent, description, includeOut,
 	notesContent, sharedHinder, sharedHinderText, allowsTraitColumns, traitColumns, needsDiceUI,
-	hasAttachedStress, attachedStressLabel,
+	hasTrackPart, trackLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected, pipLabels,
 	noun, plural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
@@ -75,7 +75,7 @@ const {
 					<TraitSetEditorRing />
 
 				<!-- OUT MARKER (generic stepped-track indicator, default off) -->
-				<div class="editor-field" v-if="styleBody === 'stress' || styleBody === 'default'">
+				<div class="editor-field" v-if="styleBody === 'die-track' || styleBody === 'default'">
 					<div class="editor-label">Out Marker</div>
 					<div class="editor-toggles">
 						<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-stress-out'" name="stressOut" :true-value="true" :false-value="false" v-model="includeOut"></div>
@@ -100,7 +100,7 @@ const {
 					</div>
 
 					<!-- DISTINCTIONS COMPACT SFX & SHARED HINDER -->
-					<div class="editor-field" v-if="styleBody === 'distinctions'">
+					<div class="editor-field" v-if="styleBody === 'sfx-rows'">
 						<div class="editor-label">Distinctions Layout</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-shared-hinder'" name="sharedHinder" v-model="sharedHinder">
@@ -113,11 +113,11 @@ const {
 					</div>
 
 					<!-- ATTACHED STRESS / TRACK -->
-					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'stress'">
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'">
 						<div class="editor-label">Attached Stress / Track</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">
-							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-stress'" name="hasAttachedStress" v-model="hasAttachedStress">
-							<label :for="'trait-set-' + traitSetID + '-attached-stress'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Attached stress</label>
+							<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-track'" name="hasTrackPart" v-model="hasTrackPart">
+							<label :for="'trait-set-' + traitSetID + '-attached-track'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Attached track</label>
 						</div>
 					</div>
 
@@ -165,7 +165,7 @@ const {
 						<label :for="'trait-set-reserved-slots-' + traitSetID"><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
 						<div class="num-stepper">
 							<button type="button" class="btn-step" @click.stop="reservedSlots = Math.max(0, (reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1)" :disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0" title="Fewer reserved slots" aria-label="Fewer reserved slots">-</button>
-							<input type="number" :id="'trait-set-reserved-slots-' + traitSetID" name="reservedSlots" min="0" max="25" v-model.number="reservedSlots" placeholder="Automatic (matches current traits)" inputmode="numeric" aria-label="Reserved slots for print">
+							<input type="number" :id="'trait-set-reserved-slots-' + traitSetID" name="reservedSlots" min="0" max="25" v-model.number="reservedSlots" placeholder="Auto" inputmode="numeric" aria-label="Reserved slots for print">
 							<button type="button" class="btn-step" @click.stop="reservedSlots = (reservedSlots === '' || reservedSlots === null ? 0 : reservedSlots) + 1" title="More reserved slots" aria-label="More reserved slots">+</button>
 						</div>
 					</div>
@@ -300,12 +300,12 @@ const {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="hasAttachedStress">
-						<label :for="'trait-set-' + traitSetID + '-stress-label-words'">Stress Label</label>
-						<input type="text" :id="'trait-set-' + traitSetID + '-stress-label-words'" name="attachedStressLabelWords" v-model="attachedStressLabel" placeholder="Stress">
+					<div class="editor-field" v-if="hasTrackPart">
+						<label :for="'trait-set-' + traitSetID + '-track-label-words'">Track Label</label>
+						<input type="text" :id="'trait-set-' + traitSetID + '-track-label-words'" name="trackLabelWords" v-model="trackLabel" placeholder="Stress">
 					</div>
 
-					<div class="editor-field" v-if="styleBody === 'distinctions'">
+					<div class="editor-field" v-if="styleBody === 'sfx-rows'">
 						<label :for="'trait-set-' + traitSetID + '-hinder-sentence'">Per-trait Hinder sentence</label>
 						<input type="text" :id="'trait-set-' + traitSetID + '-hinder-sentence'" name="hinderSentence" :value="styleLabel('hinderSentence')" @change="setStyleLabel('hinderSentence', targetValue($event))" placeholder="Blank uses the built-in sentence">
 					</div>

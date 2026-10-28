@@ -24,9 +24,9 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set trait-set-style-default"><div class="trait-set-header"><div class="trait-set-header-inner"><div>VALUES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Courage</span><div class="trait-value single-die-value"><span class="c">4</span><span class="c active">6</span><span class="c">8</span></div></h2><div class="trait-description">Never back down.</div></div></div></div></div></div>'
 	},
 	{
-		id: 'distinctions', name: 'Distinctions', sing: 'Distinction', plur: 'Distinctions',
+		id: 'sfx-rows', name: 'SFX Rows', sing: 'Distinction', plur: 'Distinctions',
 		blurb: 'Signature descriptive traits with Hinder and SFX.',
-		preview: '<div class="trait-set trait-set-style-distinctions"><div class="trait-set-header"><div class="trait-set-header-inner"><div>DISTINCTIONS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Ship\'s Doctor</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2><ul class="trait-sfx"><li><span class="trait-sfx-name">Hinder</span>: <span class="trait-sfx-description">Gain a PP…</span></li></ul></div></div></div></div></div>'
+		preview: '<div class="trait-set trait-set-style-sfx-rows"><div class="trait-set-header"><div class="trait-set-header-inner"><div>DISTINCTIONS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Ship\'s Doctor</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2><ul class="trait-sfx"><li><span class="trait-sfx-name">Hinder</span>: <span class="trait-sfx-description">Gain a PP…</span></li></ul></div></div></div></div></div>'
 	},
 	{
 		id: 'subtrait-columns', name: 'Subtrait Columns', sing: 'Skill', plur: 'Skills',
@@ -34,14 +34,14 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 		preview: '<div class="trait-set trait-set-style-subtrait-columns"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SKILLS</div></div></div><div class="trait-set-body"><div class="trait-subtrait-columns"><div class="branch-head"><span>SKILL</span><span>SPECIALTIES</span></div><div class="branch-row"><div class="branch-main"><span class="trait-name">Guns</span><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="branch-link"></div><div class="branch-side"><div class="branch-slot"><span class="subtrait-name">Pistol</span><div class="subtrait-value"><span class="c active">8</span></div></div></div></div></div></div></div>'
 	},
 	{
-		id: 'assets', name: 'Assets', sing: 'Asset', plur: 'Assets',
-		blurb: 'Compact gear rows with a colored header bar.',
-		preview: '<div class="trait-set trait-set-style-assets"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SIGNATURE ASSETS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Medkit</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
+		id: 'boxed-rows', name: 'Boxed Rows', sing: 'Asset', plur: 'Assets',
+		blurb: 'Compact rows with a colored header bar.',
+		preview: '<div class="trait-set trait-set-style-boxed-rows"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SIGNATURE ASSETS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Medkit</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
 	},
 	{
-		id: 'resources', name: 'Resources', sing: 'Resource', plur: 'Resources',
-		blurb: 'Bulleted Dice pools.',
-		preview: '<div class="trait-set trait-set-style-resources"><div class="trait-set-header"><div class="trait-set-header-inner"><div>RESOURCES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Crew</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
+		id: 'pool-rows', name: 'Pool Rows', sing: 'Resource', plur: 'Resources',
+		blurb: 'Bulleted dice pools.',
+		preview: '<div class="trait-set trait-set-style-pool-rows"><div class="trait-set-header"><div class="trait-set-header-inner"><div>RESOURCES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Crew</span><div class="trait-value single-die-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
 	},
 	{
 		id: 'dice-count', name: 'Dice Count', sing: 'Resource', plur: 'Resources',
@@ -65,26 +65,26 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 	},
 	{
 		id: 'dice-ladder', name: 'Dice Ladder', sing: 'Rung', plur: 'Rungs',
-		blurb: 'Vertical die track for stepped ratings, e.g. an advancement ladder.',
+		blurb: 'Vertical die track for stepped ratings.',
 		preview: '<div class="trait-set trait-set-style-dice-ladder"><div class="trait-set-header"><div class="trait-set-header-inner"><div>DICE LADDER</div></div></div><div class="trait-set-body"><div class="trait-dice-ladder"><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">4</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">6</span></div></div><div class="ladder-rung"><div class="trait-value single-die-value"><span class="c active">8</span></div></div></div></div></div>'
 	},
 	{
 		id: 'labeled-fields', name: 'Labeled Fields', sing: 'Field', plur: 'Fields',
-		blurb: 'Stacked labeled blocks, e.g. faction dossiers. No dice.',
+		blurb: 'Stacked labeled blocks. No dice.',
 		preview: '<div class="trait-set trait-set-style-labeled-fields"><div class="trait-set-header"><div class="trait-set-header-inner"><div>FORCE</div></div></div><div class="trait-set-body"><div class="trait-labeled-fields"><div class="field-block"><span class="field-label">GOAL</span><span class="field-text">Gain as many members as possible.</span></div><div class="field-block"><span class="field-label">METHOD</span><span class="field-text">Offer peace and sanctuary.</span></div></div></div></div>'
 	},
 	{
-		id: 'stress', name: 'Stress', sing: 'Stress', plur: 'Stress',
-		blurb: 'Stepped stress tracks with an optional Out marker.',
-		preview: '<div class="trait-set trait-set-style-stress"><div class="trait-set-header"><div class="trait-set-header-inner"><div>STRESS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Injured</span><div class="trait-value stress-value"><span class="c">4</span><span class="c active">6</span><span class="c">8</span></div></h2></div></div></div></div></div>'
+		id: 'die-track', name: 'Die Track', sing: 'Stress', plur: 'Stress',
+		blurb: 'Stepped die tracks with an optional Out marker.',
+		preview: '<div class="trait-set trait-set-style-die-track"><div class="trait-set-header"><div class="trait-set-header-inner"><div>STRESS</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Injured</span><div class="trait-value stress-value"><span class="c">4</span><span class="c active">6</span><span class="c">8</span></div></h2></div></div></div></div></div>'
 	},
 	{
-		id: 'two-columns-compact', name: 'Two Columns (Compact)', sing: 'Trait', plur: 'Traits',
+		id: 'two-columns-compact', name: 'Two Columns Compact', sing: 'Trait', plur: 'Traits',
 		blurb: 'Pill-style dice badges in a tight two-column grid.',
 		preview: '<div class="trait-set trait-set-style-two-columns-compact"><div class="trait-set-header"><div class="trait-set-header-inner"><div>ATTRIBUTES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Mind</span><div class="trait-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
 	},
 	{
-		id: 'two-columns-detailed', name: 'Two Columns (Detailed)', sing: 'Trait', plur: 'Traits',
+		id: 'two-columns-detailed', name: 'Two Columns Detailed', sing: 'Trait', plur: 'Traits',
 		blurb: 'Full trait rows in a two-column grid.',
 		preview: '<div class="trait-set trait-set-style-two-columns-detailed"><div class="trait-set-header"><div class="trait-set-header-inner"><div>ROLES</div></div></div><div class="trait-set-body"><div class="trait-list"><div class="trait"><div class="trait-inner"><h2 class="trait-title"><span class="trait-name">Brains</span><div class="trait-value"><span class="c active">8</span></div></h2></div></div></div></div></div>'
 	},
@@ -105,12 +105,12 @@ const STYLE_GALLERY_STYLES: StyleCard[] = [
 	},
 	{
 		id: 'pips', name: 'Pips / Track', sing: 'Pip', plur: 'Pips',
-		blurb: 'Connected bubble track, e.g. XP.',
+		blurb: 'Connected bubble track.',
 		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>XP</div></div></div><div class="trait-set-body"><div class="trait-pips-body"><div class="pips-track-container connected"><div class="pip-row"><div class="pip-row-line"></div><div class="pip-bubble-wrap"><div class="pip-bubble filled"></div></div><div class="pip-bubble-wrap"><div class="pip-bubble filled"></div></div><div class="pip-bubble-wrap"><div class="pip-bubble"></div></div><div class="pip-bubble-wrap"><div class="pip-bubble"></div></div></div></div></div></div></div>'
 	},
 	{
 		id: 'pips', name: 'Sessions', sing: 'Session', plur: 'Sessions', pipLabels: true,
-		blurb: 'Checkable entries with names, e.g. a session log.',
+		blurb: 'Checkable entries with names.',
 		preview: '<div class="trait-set"><div class="trait-set-header"><div class="trait-set-header-inner"><div>SESSIONS</div></div></div><div class="trait-set-body"><div class="pip-label-list"><div class="pip-label-row"><div class="pip-bubble-wrap"><div class="pip-bubble filled"></div></div><span class="pip-label-name">Session 1</span></div><div class="pip-label-row"><div class="pip-bubble-wrap"><div class="pip-bubble"></div></div><span class="pip-label-name">Session 2</span></div></div></div></div>'
 	},
 	{

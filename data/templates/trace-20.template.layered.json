@@ -338,8 +338,8 @@
           ],
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "multiDie": false,
           "notes": "",
@@ -470,7 +470,7 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "stress"
+            "body": "die-track"
           },
           "multiDie": false,
           "notes": "",

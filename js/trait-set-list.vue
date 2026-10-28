@@ -10,13 +10,13 @@ const {
 	isSpotlightStyle, isSpotlightPrintStyle,
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
-	handleStressClick, handleStressOutClick, shouldShowOut, isStressOut, getTraitDice, getRating,
-	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, getSharedHinderLines, renderHinderLine, getDistinctionSfxText,
-	hasAttachedStress, getAttachedStressLabel, getAttachedStressScale, getAttachedStressValue, visibleSubtraits,
+	handleSteppedDieClick, handleOutClick, shouldShowOut, isTraitOut, getTraitDice, getRating,
+	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, getSharedHinderLines, renderHinderLine, getCompactSfxText,
+	hasTrackPart, getTrackLabel, getTrackScale, getTrackValue, visibleSubtraits,
 	getSetRatingDie,
-	shouldShowAttachedStressOut, isAttachedStressOut, handleAttachedStressClick, handleAttachedStressOutClick,
+	shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
 	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
-	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageStressDie
+	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie
 } = injectTraitSet();
 </script>
 
@@ -29,7 +29,7 @@ const {
 		<!-- SHARED HINDER BANNER (COMPACT DISTINCTIONS) -->
 		<div
 			class="distinctions-shared-hinder"
-			v-if="getView(traitSet)?.style?.body === 'distinctions' && getView(traitSet)?.sharedHinder"
+			v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder"
 		>
 			<div v-for="(ruleLine, rIdx) in getSharedHinderLines(traitSet)" :key="rIdx" class="hinder-rule-line">
 				<span class="hinder-bullet">•</span>
@@ -42,7 +42,7 @@ const {
 				:class="getTraitClasses(item.trait)"
 				:data-trait-name="item.trait.name || undefined"
 				:data-trait-rating="firstDie(item.trait) ? ('d' + firstDie(item.trait)) : undefined"
-				:data-trait-out="isStressOut(item.trait, traitSet) ? 'true' : undefined"
+				:data-trait-out="isTraitOut(item.trait, traitSet) ? 'true' : undefined"
 				:data-trait-questioned="isTraitQuestioned(item.trait) ? 'true' : undefined"
 			>
 				<transition name="trait" appear>
@@ -51,11 +51,11 @@ const {
 						:style="partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet))"
 					>
 						<!-- NAME (above: the asset box; the dice live in the rating cell) -->
-						<div v-if="partsGridFor(traitSet).cells.name" class="trait-part trait-part-name" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }" :style="partCellStyle(partsGridFor(traitSet), 'name')">
+						<div v-if="partsGridFor(traitSet)?.cells.name" class="trait-part trait-part-name" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }" :style="partCellStyle(partsGridFor(traitSet), 'name')">
 							<div :class="{ 'trait-title': getRatingPosition(traitSet) !== 'above', 'trait-title-statement': isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above', 'trait-title-stacked': getRatingPosition(traitSet) === 'below', 'trait-asset-box': getRatingPosition(traitSet) === 'above' }">
 								<span
 									class="distinction-die"
-									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
+									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
 									aria-hidden="true"
 									v-html="renderDieValueForPrint(firstDie(item.trait) || 8, !printBlank && !item.isPlaceholder && isTraitRated(item.trait))"
 								></span>
@@ -142,44 +142,44 @@ const {
 							</div>
 						</div>
 						<!-- RATING -->
-						<div v-if="partsGridFor(traitSet).cells.rating" class="trait-part trait-part-rating" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above', 'trait-title trait-title-stacked': getRatingPosition(traitSet) === 'below' }" :style="partCellStyle(partsGridFor(traitSet), 'rating')">
-							<div class="trait-value stress-value" v-if="getView(traitSet)?.style?.body === 'stress'">
+						<div v-if="partsGridFor(traitSet)?.cells.rating" class="trait-part trait-part-rating" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above', 'trait-title trait-title-stacked': getRatingPosition(traitSet) === 'below' }" :style="partCellStyle(partsGridFor(traitSet), 'rating')">
+							<div class="trait-value stress-value" v-if="getView(traitSet)?.style?.body === 'die-track'">
 								<span
 									v-for="size in getTraitSetRatings(traitSet)"
 									:key="size"
 									:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 									role="button"
 									tabindex="0"
-									:aria-label="`Stage d${size} from ${item.trait.name || 'stress'}`"
+									:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
 									:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
-									@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
-									@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
-									@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
+									@click.stop="!printBlank && !item.isPlaceholder ? handleSteppedDieClick(s, item.originalIndex, size) : null"
+									@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleSteppedDieClick(s, item.originalIndex, size) : null"
+									@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleSteppedDieClick(s, item.originalIndex, size) : null"
 									v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 								></span>
 								<span
 									v-if="shouldShowOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }"
+									:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
-									:aria-label="`Out for ${item.trait.name || 'stress'}`"
-									:aria-pressed="isStressOut(item.trait, traitSet) ? 'true' : 'false'"
-									@click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-									@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-									@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
+									:aria-label="`Out for ${item.trait.name || 'trait'}`"
+									:aria-pressed="isTraitOut(item.trait, traitSet) ? 'true' : 'false'"
+									@click.stop="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+									@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+									@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
 									title="Out"
 								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								<button
 									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && firstDie(item.trait) > 0"
 									type="button"
 									class="btn-stage-stress"
-									@click.stop="stageStressDie(item.trait, firstDie(item.trait), item.trait.name || 'Stress', traitSet)"
-									title="Stage stress die into pool"
-									aria-label="Stage stress die into pool"
+									@click.stop="stageTrackDie(item.trait, firstDie(item.trait), item.trait.name || traitSet.noun || 'Trait', traitSet)"
+									title="Stage die into pool"
+									aria-label="Stage die into pool"
 								>+<i class="fas fa-dice" aria-hidden="true"></i></button>
 							</div>
 							<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
-							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1"></div>
+							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1"></div>
 							<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">
 								<div
 									v-for="(dieSize, dIdx) in (printBlank || item.isPlaceholder ? getTraitSetRatings(traitSet) : getTraitDice(item.trait))"
@@ -241,67 +241,67 @@ const {
 								<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)" aria-hidden="true"></span>
 								<span
 									v-if="shouldShowOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }"
+									:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
 									:aria-label="`Out for ${item.trait.name || 'trait'}`"
-									:aria-pressed="isStressOut(item.trait, traitSet) ? 'true' : 'false'"
-									@click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-									@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-									@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
+									:aria-pressed="isTraitOut(item.trait, traitSet) ? 'true' : 'false'"
+									@click.stop="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+									@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+									@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
 									title="Out"
 								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
 						<!-- TRACK LABEL -->
-						<div v-if="partsGridFor(traitSet).cells.trackLabel" class="trait-part trait-part-track-label" :style="partCellStyle(partsGridFor(traitSet), 'trackLabel')">
+						<div v-if="partsGridFor(traitSet)?.cells.trackLabel" class="trait-part trait-part-track-label" :style="partCellStyle(partsGridFor(traitSet), 'trackLabel')">
 							<div class="attached-stress-divider" v-if="!isPartsInline(traitSet)"></div>
-							<span class="attached-stress-label">{{ getAttachedStressLabel(traitSet) }}</span>
+							<span class="attached-stress-label">{{ getTrackLabel(traitSet) }}</span>
 						</div>
 						<!-- TRACK CELLS -->
-						<div v-if="partsGridFor(traitSet).cells.track" class="trait-part trait-part-track" :style="partCellStyle(partsGridFor(traitSet), 'track') + '; --track-faces: ' + getAttachedStressScale(traitSet).length">
+						<div v-if="partsGridFor(traitSet)?.cells.track" class="trait-part trait-part-track" :style="partCellStyle(partsGridFor(traitSet), 'track') + '; --track-faces: ' + getTrackScale(traitSet).length">
 							<div class="attached-stress-track">
 								<span
-									v-for="size in getAttachedStressScale(traitSet)"
+									v-for="size in getTrackScale(traitSet)"
 									:key="size"
 									:class="{
 										'attached-stress-die': true,
 										'c': true,
-										'active': !printBlank && getAttachedStressValue(item.trait, traitSet) === size
+										'active': !printBlank && getTrackValue(item.trait, traitSet) === size
 									}"
 									role="button"
 									tabindex="0"
-									:aria-label="`Stage d${size} ${getAttachedStressLabel(traitSet)} from ${item.trait.name || 'trait'}`"
-									:aria-pressed="getAttachedStressValue(item.trait, traitSet) === size ? 'true' : 'false'"
-									@click.stop="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									@keydown.enter.prevent="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									@keydown.space.prevent="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									v-html="renderDieValueForPrint(size, !printBlank && getAttachedStressValue(item.trait, traitSet) === size)"
+									:aria-label="`Stage d${size} ${getTrackLabel(traitSet)} from ${item.trait.name || 'trait'}`"
+									:aria-pressed="getTrackValue(item.trait, traitSet) === size ? 'true' : 'false'"
+									@click.stop="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
+									@keydown.enter.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
+									@keydown.space.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
+									v-html="renderDieValueForPrint(size, !printBlank && getTrackValue(item.trait, traitSet) === size)"
 								></span>
 								<span
-									v-if="shouldShowAttachedStressOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && isAttachedStressOut(item.trait, traitSet) }"
+									v-if="shouldShowTrackOut(traitSet)"
+									:class="{ 'stress-out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
 									:aria-label="`Out for ${item.trait.name || 'trait'}`"
-									:aria-pressed="isAttachedStressOut(item.trait, traitSet) ? 'true' : 'false'"
-									@click.stop="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
-									@keydown.enter.prevent="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
-									@keydown.space.prevent="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
+									:aria-pressed="isTrackOut(item.trait, traitSet) ? 'true' : 'false'"
+									@click.stop="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
+									@keydown.enter.prevent="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
+									@keydown.space.prevent="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
 									title="Out"
 								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								<button
-									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getAttachedStressValue(item.trait, traitSet) > 0"
+									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getTrackValue(item.trait, traitSet) > 0"
 									type="button"
 									class="btn-stage-stress"
-									@click.stop="stageStressDie(item.trait, getAttachedStressValue(item.trait, traitSet), getAttachedStressLabel(traitSet), traitSet)"
-									title="Stage stress die into pool"
-									aria-label="Stage stress die into pool"
+									@click.stop="stageTrackDie(item.trait, getTrackValue(item.trait, traitSet), getTrackLabel(traitSet), traitSet)"
+									title="Stage track die into pool"
+									aria-label="Stage track die into pool"
 								>+<i class="fas fa-dice" aria-hidden="true"></i></button>
 							</div>
 						</div>
 						<!-- DESCRIPTION -->
-						<div v-if="partsGridFor(traitSet).cells.description" class="trait-part trait-part-description" :style="partCellStyle(partsGridFor(traitSet), 'description')">
+						<div v-if="partsGridFor(traitSet)?.cells.description" class="trait-part trait-part-description" :style="partCellStyle(partsGridFor(traitSet), 'description')">
 							<div class="trait-description">
 								<div v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></div>
 								<div class="desc-hint" v-else-if="submode === 'edit'">Description...</div>
@@ -312,7 +312,7 @@ const {
 							</div>
 						</div>
 						<!-- BLOCK (SFX) -->
-						<div v-if="partsGridFor(traitSet).cells.block && !getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-block" :style="partCellStyle(partsGridFor(traitSet), 'block')">
+						<div v-if="partsGridFor(traitSet)?.cells.block && !getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-block" :style="partCellStyle(partsGridFor(traitSet), 'block')">
 							<ul class="trait-sfx">
 								<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
 									<template v-if="sfx.isHinder">
@@ -331,7 +331,7 @@ const {
 							</ul>
 						</div>
 						<!-- SUBTRAITS -->
-						<div v-if="partsGridFor(traitSet).cells.subtraits" class="trait-part trait-part-subtraits" :style="partCellStyle(partsGridFor(traitSet), 'subtraits')">
+						<div v-if="partsGridFor(traitSet)?.cells.subtraits" class="trait-part trait-part-subtraits" :style="partCellStyle(partsGridFor(traitSet), 'subtraits')">
 							<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
 								<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '' }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, firstDie(subtrait), traitSet, s, item.originalIndex) : null">
 									<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
@@ -356,12 +356,12 @@ const {
 							</ul>
 						</div>
 						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
-						<div class="distinction-sfx-slot" style="grid-column: 1 / -1;" v-if="getView(traitSet)?.style?.body === 'distinctions' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
+						<div class="distinction-sfx-slot" style="grid-column: 1 / -1;" v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
 							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
 							<div class="distinction-sfx-line">
 								<span class="sfx-bullet">•</span>
 								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
-								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
+								<span class="sfx-content" v-if="getCompactSfxText(item.trait)" v-html="renderText(getCompactSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
 								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="openTraitAt(s, item)">Click to set SFX...</span>
 								<span class="sfx-blank-line" v-else></span>
@@ -408,7 +408,7 @@ const {
 								<span class="list-bullet" v-if="getView(traitSet)?.style?.body === 'list'">•</span>
 								<span
 									class="distinction-die"
-									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
+									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
 									v-html="renderDieValueForPrint(firstDie(item.trait) || 8, !printBlank && !item.isPlaceholder && isTraitRated(item.trait))"
 								></span>
 
@@ -482,40 +482,40 @@ const {
 									</button>
 								</template>
 
-								<!-- STRESS VALUE TRACK -->
-								<div class="trait-value stress-value" v-if="getView(traitSet)?.style?.body === 'stress'">
+								<!-- STEPPED VALUE TRACK -->
+								<div class="trait-value stress-value" v-if="getView(traitSet)?.style?.body === 'die-track'">
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
 										:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 										role="button"
 										tabindex="0"
-										:aria-label="`Stage d${size} from ${item.trait.name || 'stress'}`"
+										:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
 										:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
-										@click.stop="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
-										@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
-										@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleStressClick(s, item.originalIndex, size) : null"
+										@click.stop="!printBlank && !item.isPlaceholder ? handleSteppedDieClick(s, item.originalIndex, size) : null"
+										@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleSteppedDieClick(s, item.originalIndex, size) : null"
+										@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleSteppedDieClick(s, item.originalIndex, size) : null"
 										v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 									></span>
 									<span
 										v-if="shouldShowOut(traitSet)"
-										:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }"
+										:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 										role="button"
 										tabindex="0"
-										:aria-label="`Out for ${item.trait.name || 'stress'}`"
-										:aria-pressed="isStressOut(item.trait, traitSet) ? 'true' : 'false'"
-										@click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-										@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-										@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
+										:aria-label="`Out for ${item.trait.name || 'trait'}`"
+										:aria-pressed="isTraitOut(item.trait, traitSet) ? 'true' : 'false'"
+										@click.stop="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+										@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+										@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
 										title="Out"
 									>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 									<button
 										v-if="submode === 'play' && !printBlank && !item.isPlaceholder && firstDie(item.trait) > 0"
 										type="button"
 										class="btn-stage-stress"
-										@click.stop="stageStressDie(item.trait, firstDie(item.trait), item.trait.name || 'Stress', traitSet)"
-										title="Stage stress die into pool"
-										aria-label="Stage stress die into pool"
+										@click.stop="stageTrackDie(item.trait, firstDie(item.trait), item.trait.name || traitSet.noun || 'Trait', traitSet)"
+										title="Stage die into pool"
+										aria-label="Stage die into pool"
 									>+<i class="fas fa-dice" aria-hidden="true"></i></button>
 								</div>
 
@@ -523,7 +523,7 @@ const {
 								<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
 
 								<!-- DISTINCTIONS STYLE IN SPOTLIGHT: VALUE IS IN TITLE ONLY IF SINGLE FIXED RATING (EXCEPT ON BLANK PRINT SHEET WHERE FILLABLE DICE ARRAY IS EXPECTED) -->
-								<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'distinctions' && getTraitSetRatings(traitSet).length <= 1"></div>
+								<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1"></div>
 
 								<!-- NONE RATING POSITION: NO VALUE -->
 								<div class="trait-value" v-else-if="!printBlank && getRatingPosition(traitSet) === 'none'"></div>
@@ -593,14 +593,14 @@ const {
 									<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)" aria-hidden="true"></span>
 									<span
 										v-if="shouldShowOut(traitSet)"
-										:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }"
+										:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 										role="button"
 										tabindex="0"
 										:aria-label="`Out for ${item.trait.name || 'trait'}`"
-										:aria-pressed="isStressOut(item.trait, traitSet) ? 'true' : 'false'"
-										@click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-										@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
-										@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null"
+										:aria-pressed="isTraitOut(item.trait, traitSet) ? 'true' : 'false'"
+										@click.stop="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+										@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
+										@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleOutClick(s, item.originalIndex) : null"
 										title="Out"
 									>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								</div>
@@ -643,61 +643,61 @@ const {
 						</ul>
 
 						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
-						<div class="distinction-sfx-slot" v-if="getView(traitSet)?.style?.body === 'distinctions' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
+						<div class="distinction-sfx-slot" v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
 							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
 							<div class="distinction-sfx-line">
 								<span class="sfx-bullet">•</span>
 								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
-								<span class="sfx-content" v-if="getDistinctionSfxText(item.trait)" v-html="renderText(getDistinctionSfxText(item.trait))"></span>
+								<span class="sfx-content" v-if="getCompactSfxText(item.trait)" v-html="renderText(getCompactSfxText(item.trait))"></span>
 								<span class="sfx-blank-line" v-else-if="printBlank"></span>
 								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="openTraitAt(s, item)">Click to set SFX...</span>
 								<span class="sfx-blank-line" v-else></span>
 							</div>
 						</div>
 
-						<!-- ATTACHED STRESS / TRACK -->
-						<div class="attached-stress-block" v-if="hasAttachedStress(traitSet)">
+						<!-- ATTACHED TRACK -->
+						<div class="attached-stress-block" v-if="hasTrackPart(traitSet)">
 							<div class="attached-stress-divider"></div>
 							<div class="attached-stress-header">
-								<span class="attached-stress-label">{{ getAttachedStressLabel(traitSet) }}</span>
+								<span class="attached-stress-label">{{ getTrackLabel(traitSet) }}</span>
 							</div>
 							<div class="attached-stress-track">
 								<span
-									v-for="size in getAttachedStressScale(traitSet)"
+									v-for="size in getTrackScale(traitSet)"
 									:key="size"
 									:class="{
 										'attached-stress-die': true,
 										'c': true,
-										'active': !printBlank && getAttachedStressValue(item.trait, traitSet) === size
+										'active': !printBlank && getTrackValue(item.trait, traitSet) === size
 									}"
 									role="button"
 									tabindex="0"
-									:aria-label="`Stage d${size} from ${getAttachedStressLabel(traitSet) || 'stress'}`"
-									:aria-pressed="getAttachedStressValue(item.trait, traitSet) === size ? 'true' : 'false'"
-									@click.stop="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									@keydown.enter.prevent="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									@keydown.space.prevent="!printBlank ? handleAttachedStressClick(s, item.originalIndex, size) : null"
-									v-html="renderDieValueForPrint(size, !printBlank && getAttachedStressValue(item.trait, traitSet) === size)"
+									:aria-label="`Stage d${size} from ${getTrackLabel(traitSet) || 'track'}`"
+									:aria-pressed="getTrackValue(item.trait, traitSet) === size ? 'true' : 'false'"
+									@click.stop="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
+									@keydown.enter.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
+									@keydown.space.prevent="!printBlank ? handleTrackClick(s, item.originalIndex, size) : null"
+									v-html="renderDieValueForPrint(size, !printBlank && getTrackValue(item.trait, traitSet) === size)"
 								></span>
 								<span
-									v-if="shouldShowAttachedStressOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && isAttachedStressOut(item.trait, traitSet) }"
+									v-if="shouldShowTrackOut(traitSet)"
+									:class="{ 'stress-out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
-									:aria-label="`Out for ${getAttachedStressLabel(traitSet) || 'stress'}`"
-									:aria-pressed="isAttachedStressOut(item.trait, traitSet) ? 'true' : 'false'"
-									@click.stop="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
-									@keydown.enter.prevent="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
-									@keydown.space.prevent="!printBlank ? handleAttachedStressOutClick(s, item.originalIndex) : null"
+									:aria-label="`Out for ${getTrackLabel(traitSet) || 'track'}`"
+									:aria-pressed="isTrackOut(item.trait, traitSet) ? 'true' : 'false'"
+									@click.stop="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
+									@keydown.enter.prevent="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
+									@keydown.space.prevent="!printBlank ? handleTrackOutClick(s, item.originalIndex) : null"
 									title="Out"
 								>{{ getTraitSetLabel(traitSet, 'out') }}</span>
 								<button
-									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getAttachedStressValue(item.trait, traitSet) > 0"
+									v-if="submode === 'play' && !printBlank && !item.isPlaceholder && getTrackValue(item.trait, traitSet) > 0"
 									type="button"
 									class="btn-stage-stress"
-									@click.stop="stageStressDie(item.trait, getAttachedStressValue(item.trait, traitSet), getAttachedStressLabel(traitSet), traitSet)"
-									title="Stage stress die into pool"
-									aria-label="Stage stress die into pool"
+									@click.stop="stageTrackDie(item.trait, getTrackValue(item.trait, traitSet), getTrackLabel(traitSet), traitSet)"
+									title="Stage track die into pool"
+									aria-label="Stage track die into pool"
 								>+<i class="fas fa-dice" aria-hidden="true"></i></button>
 							</div>
 						</div>

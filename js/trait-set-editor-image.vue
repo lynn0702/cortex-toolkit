@@ -55,11 +55,11 @@ const {
 	<div class="editor-field" v-if="styleBody === 'image'">
 		<label :for="'trait-set-' + traitSetID + '-image-height'">Display Height</label>
 		<select :id="'trait-set-' + traitSetID + '-image-height'" name="imageHeight" v-model="imageHeight">
-			<option value="auto">Auto / Proportional</option>
-			<option value="120px">Small (120px)</option>
-			<option value="180px">Medium (180px)</option>
-			<option value="240px">Large (240px)</option>
-			<option value="320px">Extra Large (320px)</option>
+			<option value="auto">Auto</option>
+			<option value="120px">Small</option>
+			<option value="180px">Medium</option>
+			<option value="240px">Large</option>
+			<option value="320px">Extra Large</option>
 		</select>
 	</div>
 

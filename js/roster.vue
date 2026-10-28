@@ -2,7 +2,7 @@
 import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView } from './model.ts';
-import RingAttributes from './ring-attributes.vue';
+import PortraitRing from './portrait-ring.vue';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -684,7 +684,7 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 								<div class="portrait-inner">
 									<div class="portrait-circle portrait-alignment-top-center" :style="'background-image: url(' + safeImageUrl(tmpl.listing.image) + ');'"></div>
 								</div>
-								<RingAttributes
+								<PortraitRing
 									:character="cardRingCharacter(tmpl)"
 									:editing="[]"
 									:ringTraitID="0"

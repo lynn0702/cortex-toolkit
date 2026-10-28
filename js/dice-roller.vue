@@ -39,10 +39,10 @@ const emit = defineEmits<{
 	( e: 'settlePP', delta: number ): void;
 }>();
 
-const savedCombine = localStorage.getItem( 'cortexCombineResources' );
+const savedCombine = localStorage.getItem( 'cortexCombineSeparate' ) ?? localStorage.getItem( 'cortexCombineResources' );
 
 const keep = ref( 2 );
-const combineResources = ref( savedCombine !== null ? savedCombine === 'true' : false );
+const combineSeparate = ref( savedCombine !== null ? savedCombine === 'true' : false );
 const isRolled = ref( false );
 const lastRollResults = ref<RollResult[]>( [] );
 const separateGroupsResults = ref<SeparateGroup[]>( [] );
@@ -113,7 +113,7 @@ const separateKeepBonus = computed( () => separateSources.value.length );
 const defaultKeep = computed( () => {
 	let k = 2;
 	k += keepsExtraTotal.value;
-	if ( combineResources.value ) {
+	if ( combineSeparate.value ) {
 		k += separateKeepBonus.value;
 	}
 	return k;
@@ -143,8 +143,8 @@ const manualEffectDie = computed( () => {
 	return effects.length > 0 ? 'd' + effects[ 0 ].size : 'd4';
 } );
 
-watch( combineResources, ( newVal ) => {
-	localStorage.setItem( 'cortexCombineResources', newVal ? 'true' : 'false' );
+watch( combineSeparate, ( newVal ) => {
+	localStorage.setItem( 'cortexCombineSeparate', newVal ? 'true' : 'false' );
 	keep.value = defaultKeep.value;
 	if ( isRolled.value ) {
 		evaluateRollDisplay();
@@ -294,7 +294,7 @@ function evaluateRollDisplay() {
 	const actionResults = lastRollResults.value.filter( r => r.hitches > 0 );
 	const hasSeparate = separateResults.length > 0;
 
-	if ( !hasSeparate || combineResources.value ) {
+	if ( !hasSeparate || combineSeparate.value ) {
 		// COMBINED / NORMAL POOL MODE
 		separateGroupsResults.value = [];
 		const eligible = lastRollResults.value.filter( r => !r.isHitch );
@@ -494,7 +494,7 @@ function getGroupKeptValue( group: SeparateGroup ) {
 function cycleDieRole( dieResult: RollResult ) {
 	if ( dieResult.isHitch ) return; // Hitches cannot be used for total or effect
 
-	if ( !combineResources.value && dieResult.hitches === 0 ) {
+	if ( !combineSeparate.value && dieResult.hitches === 0 ) {
 		const group = separateGroupsResults.value.find( g => g.dice.some( d => d.id === dieResult.id ) );
 		if ( group ) {
 			if ( dieResult.manualRole === 'total' ) {
@@ -525,7 +525,7 @@ function applyBestTotal() {
 function applyBestEffect() {
 	if ( !bestEffectInfo.value || bestEffectInfo.value.isBotch ) return;
 
-	if ( !combineResources.value && separateGroupsResults.value.length > 0 ) {
+	if ( !combineSeparate.value && separateGroupsResults.value.length > 0 ) {
 		const actionKeep = 2 + actionKeepsExtra.value;
 		const actionEligible = actionRollResults.value.filter( r => !r.isHitch ).sort( ( a, b ) => {
 			if ( a.size !== b.size ) return b.size - a.size;
@@ -703,11 +703,11 @@ defineExpose( {
 					<!-- SEPARATE ROLL MODE TOGGLE (when apart-rolling dice are staged) -->
 					<div class="roller-toggle-row" v-if="hasSeparateDice">
 						<label class="roller-toggle-label" title="Toggle between rolling separate dice in the main action pool vs. rolling them separately">
-						<input type="checkbox" id="roller-combine-resources" name="combineResources" v-model="combineResources">
+						<input type="checkbox" id="roller-combine-separate" name="combineSeparate" v-model="combineSeparate">
 						<span class="toggle-text">Roll Separate Dice in Normal Pool</span>
 					</label>
 					<span class="toggle-hint">
-						{{ combineResources ? '+' + separateKeepBonus + ' Keep' : 'Rolled separately' }}
+						{{ combineSeparate ? '+' + separateKeepBonus + ' Keep' : 'Rolled separately' }}
 					</span>
 				</div>
 
@@ -761,7 +761,7 @@ defineExpose( {
 				<div v-show="activeTab === 'roller'" class="roller-interactive-view">
 
 					<!-- SEPARATE MODE: ACTION POOL DICE AND APART-ROLLING GROUPS -->
-					<template v-if="!combineResources && separateGroupsResults.length > 0">
+					<template v-if="!combineSeparate && separateGroupsResults.length > 0">
 						<!-- Action Pool Section -->
 						<div class="roller-group-section" v-if="actionRollResults.length > 0">
 							<div class="roller-group-header">
@@ -897,7 +897,7 @@ defineExpose( {
 
 					<!-- CURRENT SELECTION TOTAL / EFFECT -->
 					<div class="roller-calc-box custom-calc" v-if="!isBotch">
-						<template v-if="!combineResources && separateGroupsResults.length > 0">
+						<template v-if="!combineSeparate && separateGroupsResults.length > 0">
 							<div class="calc-row">
 								<span class="calc-label">Action Total</span>
 								<span class="calc-val">{{ manualActionTotal }}</span>

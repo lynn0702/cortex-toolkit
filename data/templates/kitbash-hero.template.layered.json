@@ -126,8 +126,8 @@
           "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "ratingScale": [
             8
@@ -349,8 +349,8 @@
           },
           "page": 1,
           "style": {
-            "header": "stress",
-            "body": "stress"
+            "header": "die-track",
+            "body": "die-track"
           },
           "ratingScale": [
             4,

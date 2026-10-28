@@ -5,7 +5,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetLabel, renderText, getTalentEffect
+	getRenderedTraits, getTraitClasses, getTraitSetLabel, renderText, getThreeColEffect
 } = injectTraitSet();
 </script>
 
@@ -27,7 +27,7 @@ const {
 						<span class="three-col-activation" v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></span>
 						<span class="three-col-activation three-col-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
 						<span class="three-col-activation" v-else></span>
-						<span class="three-col-effect" v-if="!printBlank && !item.isPlaceholder && getTalentEffect(item.trait)" v-html="renderText(getTalentEffect(item.trait))"></span>
+						<span class="three-col-effect" v-if="!printBlank && !item.isPlaceholder && getThreeColEffect(item.trait)" v-html="renderText(getThreeColEffect(item.trait))"></span>
 						<span class="three-col-effect three-col-blank" v-else-if="printBlank || item.isPlaceholder"><span class="trait-blank-line"></span></span>
 						<span class="three-col-effect" v-else></span>
 					</div>

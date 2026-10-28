@@ -2,13 +2,13 @@
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, getRating, ratingDice, setRatingDie, setRatingDice,
-isRated, resolveHitches, resolveVisibility, DIE_LADDER, rangeTop, isOutDie } from './model.ts';
+isRated, resolveHitches, resolveVisibility, DIE_LADDER, rangeTop, isOutDie, type Character } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
-	character: any;
+	character: Character;
 	traitSetID: number;
 	traitID: number;
 	open: boolean;
@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	( e: 'selectElement', selector: any[] ): void;
-	( e: 'updateCharacter', character: any ): void;
+	( e: 'updateCharacter', character: Character ): void;
 	( e: 'removeTrait', traitSetID: number, traitID: number ): void;
 }>();
 
@@ -53,7 +53,7 @@ const name = computed( {
 	},
 	set( val: string ) {
 		setProperty( 'name', val );
-		if ( isTalentsTable.value ) {
+		if ( isThreeColumnTable.value ) {
 			const entries = cortexFunctions.sfxChildren( trait.value );
 			const sfx = entries.find( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
 			if ( sfx && typeof sfx === 'object' ) {
@@ -87,14 +87,16 @@ const counterLabel = computed( () => traitSet.value?.counterLabel || getView( tr
 
 const counterValue = computed( {
 	get() {
-		return trait.value?.xp ?? trait.value?.counter ?? trait.value?.custom?.xp ?? trait.value?.custom?.counter ?? '';
+		return trait.value?.counter ?? trait.value?.xp ?? trait.value?.custom?.counter ?? trait.value?.custom?.xp ?? '';
 	},
 	set( val: any ) {
-		setProperty( 'xp', val );
-		setProperty( 'counter', val );
-		if ( !trait.value.custom ) trait.value.custom = {};
-		trait.value.custom.counter = val;
-		trait.value.custom.xp = val;
+		if ( !trait.value ) return;
+		trait.value.counter = val;
+		delete trait.value.xp;
+		if ( trait.value.custom ) {
+			delete trait.value.custom.counter;
+			delete trait.value.custom.xp;
+		}
 		updateCharacter( props.character );
 	},
 } );
@@ -454,32 +456,32 @@ const subtraits = computed( () => {
 } );
 
 const scrollable = computed( () => Boolean(
-	( getView( traitSet.value )?.features?.sfx && editableSFX.value.length > 0 && !isTalentsTable.value )
+	( getView( traitSet.value )?.features?.sfx && editableSFX.value.length > 0 && !isThreeColumnTable.value )
 	||
 	( getView( traitSet.value )?.features?.subtraits && subtraits.value.length > 0 )
 ) );
 
-const isTalentsTable = computed( () => getView( traitSet.value )?.style?.body === 'three-column-table' );
+const isThreeColumnTable = computed( () => getView( traitSet.value )?.style?.body === 'three-column-table' );
 
-const talentCol1Label = computed( () => {
+const tableCol1Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col1 ) return labels.col1;
 	return cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col1' ) || 'TALENT';
 } );
 
-const talentCol2Label = computed( () => {
+const tableCol2Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col2 ) return labels.col2;
 	return cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col2' ) || 'ACTIVATION';
 } );
 
-const talentCol3Label = computed( () => {
+const tableCol3Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;
 	if ( labels && labels.col3 ) return labels.col3;
 	return cortexFunctions.labelDefaultForStyle( 'three-column-table', 'col3' ) || 'EFFECT';
 } );
 
-const talentEffect = computed( {
+const tableCol3Text = computed( {
 	get() {
 		const entries = cortexFunctions.sfxChildren( trait.value );
 		const sfx = entries.find( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
@@ -506,7 +508,7 @@ const talentEffect = computed( {
 } );
 
 const canHinderTrait = computed( () => {
-	if ( isListStyle.value || isLabeledPipsSet.value || isTalentsTable.value ) return false;
+	if ( isListStyle.value || isLabeledPipsSet.value || isThreeColumnTable.value ) return false;
 	const body = getView( traitSet.value )?.style?.body;
 	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' ) {
 		return false;
@@ -514,7 +516,7 @@ const canHinderTrait = computed( () => {
 	return isRated( trait.value );
 } );
 
-const isAttributesTrait = computed( () => {
+const isRingTrait = computed( () => {
 	const body = getView( traitSet.value )?.style?.body;
 	return getView( traitSet.value )?.location === 'attributes' || body === 'portrait-ring' || body === 'attributes';
 } );
@@ -535,17 +537,17 @@ const isScaleDie = computed( {
 		} else {
 			delete t.keepsExtra;
 		}
-		if ( val && ( !t.name || t.name === 'New trait' || t.name === 'New Attribute' ) ) {
+		if ( val && ( !t.name || t.name === 'New ' + ( traitSet.value?.noun || 'Trait' ) || t.name === 'New trait' || t.name === 'New Attribute' ) ) {
 			setProperty( 'name', 'Scale' );
 		}
 		updateCharacter( props.character );
 	},
 } );
 
-const isStressSet = computed( () => getView( traitSet.value )?.style?.body === 'stress' );
+const isSteppedTrackSet = computed( () => getView( traitSet.value )?.style?.body === 'die-track' );
 
-const shouldShowStressOut = computed( () => {
-	if ( !isStressSet.value ) return false;
+const shouldShowTrackOut = computed( () => {
+	if ( !isSteppedTrackSet.value ) return false;
 	const cfg = getView( traitSet.value )?.stressConfig;
 	if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 	return true;
@@ -561,21 +563,21 @@ const outLabel = computed( () => {
 
 const availableValues = computed( () => cortexFunctions.getTraitSetRatings( traitSet.value ) );
 
-const hasAttachedStress = computed( () => cortexFunctions.hasAttachedStress( traitSet.value ) );
-const attachedStressLabel = computed( () => cortexFunctions.getAttachedStressLabel( traitSet.value ) );
-const attachedStressScale = computed( () => cortexFunctions.getAttachedStressScale( traitSet.value ) );
+const hasTrackPart = computed( () => cortexFunctions.hasTrackPart( traitSet.value ) );
+const trackLabel = computed( () => cortexFunctions.getTrackLabel( traitSet.value ) );
+const trackScale = computed( () => cortexFunctions.getTrackScale( traitSet.value ) );
 
-const attachedStressCompanion = computed( () => {
+const trackCompanion = computed( () => {
 	const subs = trait.value?.traits;
 	if ( !Array.isArray( subs ) ) return undefined;
-	const target = attachedStressLabel.value.toLowerCase();
+	const target = trackLabel.value.toLowerCase();
 	return subs.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 } );
 
-const attachedStressValue = computed( {
+const trackValue = computed( {
 	get() {
-		if ( attachedStressCompanion.value ) {
-			const dice = cortexFunctions.getTraitDice( attachedStressCompanion.value );
+		if ( trackCompanion.value ) {
+			const dice = cortexFunctions.getTraitDice( trackCompanion.value );
 			return dice[0] || 0;
 		}
 		return 0;
@@ -584,12 +586,12 @@ const attachedStressValue = computed( {
 		const character = props.character;
 		const t = character.traitSets[ props.traitSetID ].traits[ props.traitID ];
 		if ( !Array.isArray( t.traits ) ) t.traits = [];
-		const label = attachedStressLabel.value;
+		const label = trackLabel.value;
 		const target = label.toLowerCase();
 		let companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 		if ( val ) {
 			if ( companion ) cortexFunctions.setTraitDice( companion, [ val ] );
-			else t.traits.push( { name: label, rating: { type: 'Die', value: [ val ], range: attachedStressScale.value.slice() } } );
+			else t.traits.push( { name: label, description: '', tags: [], rating: { type: 'Die', value: [ val ], range: trackScale.value.slice() } } );
 		} else if ( companion ) {
 			t.traits.splice( t.traits.indexOf( companion ), 1 );
 		}
@@ -628,13 +630,14 @@ const branchRole = computed( {
 	},
 } );
 
-const branchSkillOptions = computed( () => {
+const branchParentOptions = computed( () => {
 	const traits = traitSet.value?.traits || [];
+	const fallbackNoun = traitSet.value?.noun || 'Trait';
 	const opts: any[] = [];
 	traits.forEach( ( tr: any, idx: number ) => {
 		if ( idx === props.traitID ) return;
 		if ( getView( tr )?.branchRole === 'specialty' ) return;
-		opts.push( { index: idx, name: tr?.name?.length ? tr.name : ( 'Skill ' + ( idx + 1 ) ) } );
+		opts.push( { index: idx, name: tr?.name?.length ? tr.name : ( fallbackNoun + ' ' + ( idx + 1 ) ) } );
 	} );
 	return opts;
 } );
@@ -667,7 +670,7 @@ const setRating = computed( () => {
 	return dice.length ? dice[0] : null;
 } );
 
-const hideSkillDice = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setRating.value && !isRated( trait.value ) ) );
+const hideUnratedSetDie = computed( () => Boolean( parentIsBranch.value && branchRole.value !== 'specialty' && setRating.value && !isRated( trait.value ) ) );
 
 const parentIsFullWidth = computed( () => {
 	const place = getView( traitSet.value )?.place;
@@ -743,7 +746,7 @@ function setProperty( key: string, val: any ) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
-	character.traitSets[ s ].traits[ t ][ key ] = val;
+	( character.traitSets[ s ].traits[ t ] as Record<string, any> )[ key ] = val;
 	updateCharacter( character );
 }
 
@@ -755,11 +758,11 @@ function setHinder( val: any ) {
 	updateCharacter( character );
 }
 
-function setAttachedStress( val: any ) {
+function setTrackValue( val: any ) {
 	const character = props.character;
 	const t = character.traitSets[ props.traitSetID ].traits[ props.traitID ];
 	if ( !Array.isArray( t.traits ) ) t.traits = [];
-	const label = attachedStressLabel.value;
+	const label = trackLabel.value;
 	const target = label.toLowerCase();
 	const companion = t.traits.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
 	const current = companion ? ( cortexFunctions.getTraitDice( companion )[0] || 0 ) : 0;
@@ -768,7 +771,7 @@ function setAttachedStress( val: any ) {
 	} else if ( companion ) {
 		cortexFunctions.setTraitDice( companion, [ val ] );
 	} else {
-		t.traits.push( { name: label, rating: { type: 'Die', value: [ val ], range: attachedStressScale.value.slice() } } );
+		t.traits.push( { name: label, description: '', tags: [], rating: { type: 'Die', value: [ val ], range: trackScale.value.slice() } } );
 	}
 	updateCharacter( character );
 }
@@ -1015,7 +1018,9 @@ function addSubtrait() {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
-	character.traitSets[ s ].traits[ t ].traits.push( subtrait );
+	const tr = character.traitSets[ s ].traits[ t ];
+	if ( !Array.isArray( tr.traits ) ) tr.traits = [];
+	tr.traits.push( subtrait );
 	updateCharacter( character );
 }
 
@@ -1146,30 +1151,30 @@ function getDieDisplayValue( val: any ) {
 	
 				<div class="editor-fields">
 
-					<template v-if="isTalentsTable">
+					<template v-if="isThreeColumnTable">
 						<div class="editor-field">
-							<label :for="'trait-talent-col1-' + traitID">{{ talentCol1Label }}</label>
+							<label :for="'trait-col1-' + traitID">{{ tableCol1Label }}</label>
 							<div class="editor-readonly-title" v-if="isPlay">{{ name }}</div>
-							<input v-else type="text" :id="'trait-talent-col1-' + traitID" name="talentName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" placeholder="e.g. Look, A Clue!">
+							<input v-else type="text" :id="'trait-col1-' + traitID" name="col1Name" v-model="name" ref="inputName" @focus="nameBeforeEdit = name">
 						</div>
 
 						<div class="editor-field">
-							<label :for="'trait-talent-col2-' + traitID">{{ talentCol2Label }}</label>
+							<label :for="'trait-col2-' + traitID">{{ tableCol2Label }}</label>
 							<div class="editor-readonly-text" v-if="isPlay">{{ description }}</div>
-							<textarea v-else :id="'trait-talent-col2-' + traitID" name="talentDescription" v-model="description" rows="2" placeholder="e.g. When searching for information in a test..."></textarea>
+							<textarea v-else :id="'trait-col2-' + traitID" name="col2Description" v-model="description" rows="2"></textarea>
 						</div>
 
 						<div class="editor-field">
-							<label :for="'trait-talent-col3-' + traitID">{{ talentCol3Label }}</label>
-							<div class="editor-readonly-text" v-if="isPlay">{{ talentEffect }}</div>
-							<textarea v-else :id="'trait-talent-col3-' + traitID" name="talentEffect" v-model="talentEffect" rows="3" placeholder="e.g. Gain a d8 asset, even on a failure. Counts as a second asset on a success."></textarea>
+							<label :for="'trait-col3-' + traitID">{{ tableCol3Label }}</label>
+							<div class="editor-readonly-text" v-if="isPlay">{{ tableCol3Text }}</div>
+							<textarea v-else :id="'trait-col3-' + traitID" name="col3Text" v-model="tableCol3Text" rows="3"></textarea>
 						</div>
 					</template>
 
 					<div class="editor-field" v-else>
-						<label :for="'trait-name-' + traitID">{{ isLabeledPipsSet ? 'Label' : (isPairedSlotsStyle ? 'Standing Name' : 'Trait Name') }}</label>
+						<label :for="'trait-name-' + traitID">{{ isLabeledPipsSet ? 'Label' : 'Trait Name' }}</label>
 						<div class="editor-readonly-title" v-if="isPlay && !canDeleteInPlay">{{ name }}</div>
-						<input v-else type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name" :placeholder="isLabeledPipsSet ? 'e.g. A friendly local delivery' : (isPairedSlotsStyle ? 'e.g. Camp Director' : '')">
+						<input v-else type="text" :id="'trait-name-' + traitID" name="traitName" v-model="name" ref="inputName" @focus="nameBeforeEdit = name">
 					</div>
 
 					<div class="editor-hint" v-if="renameWarning && !isPlay">Renaming unlinks this trait from template updates — the original name will reappear as inherited.</div>
@@ -1189,7 +1194,7 @@ function getDieDisplayValue( val: any ) {
 					<!-- STATEMENT FIELD -->
 					<div class="editor-field" v-if="isStatementSet || isPairedSlotsStyle">
 						<label :for="'trait-statement-' + traitID">Statement</label>
-						<textarea :id="'trait-statement-' + traitID" name="traitStatement" v-model="statementText" rows="2" placeholder="e.g. I'll try anything once."></textarea>
+						<textarea :id="'trait-statement-' + traitID" name="traitStatement" v-model="statementText" rows="2"></textarea>
 					</div>
 
 					<!-- QUESTIONED PIP TOGGLE -->
@@ -1237,8 +1242,8 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<!-- SCALE DIE TOGGLE FOR RING ATTRIBUTES -->
-					<div class="editor-field" v-if="isAttributesTrait && !isPlay">
+					<!-- SCALE DIE TOGGLE FOR PORTRAIT RING -->
+					<div class="editor-field" v-if="isRingTrait && !isPlay">
 						<div class="editor-toggles">
 							<div>
 								<input
@@ -1260,21 +1265,21 @@ function getDieDisplayValue( val: any ) {
 						<div class="editor-label">Branch Role</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'skill' }" @click.stop="branchRole = 'skill'">
-								<i class="fas fa-arrow-right"></i> Skill
+								<i class="fas fa-arrow-right"></i> {{ traitSet?.noun || 'Trait' }}
 							</button>
 							<button type="button" class="editor-group-btn" :class="{ active: branchRole === 'specialty' }" @click.stop="branchRole = 'specialty'">
-								Specialty
+								Subtrait
 							</button>
 						</div>
 					</div>
 
 					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty' && !isPlay">
-						<label :for="'trait-branch-link-' + traitID">Connects To Skill</label>
+						<label :for="'trait-branch-link-' + traitID">Connects To {{ traitSet?.noun || 'Trait' }}</label>
 						<select :id="'trait-branch-link-' + traitID" name="branchLink" v-model="branchLink">
 							<option :value="null">Unlinked</option>
-							<option v-for="opt in branchSkillOptions" :key="opt.index" :value="opt.index">{{ opt.name }}</option>
+							<option v-for="opt in branchParentOptions" :key="opt.index" :value="opt.index">{{ opt.name }}</option>
 						</select>
-						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Draws the connecting arrow from this specialty to any skill in the set.</span>
+						<span class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35;">Draws the connecting arrow from this subtrait to any parent trait in the set.</span>
 					</div>
 
 					<div class="editor-field" v-if="parentIsBranch && branchRole === 'specialty' && !isPlay">
@@ -1289,7 +1294,7 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideSkillDice">
+					<div class="editor-field" v-if="!isListStyle && !isLabeledPipsSet && !hideUnratedSetDie">
 
 						<div class="editor-label" v-if="!isPlay || isRatedTrait">Rating</div>
 
@@ -1347,7 +1352,7 @@ function getDieDisplayValue( val: any ) {
 								<span class="c" v-html="getDieDisplayValue(val)"></span>
 							</li>
 							<li
-								v-if="shouldShowStressOut"
+								v-if="shouldShowTrackOut"
 								class="editor-value-out"
 								:class="{ 'active': isOut }"
 								tabindex="0"
@@ -1506,7 +1511,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- RATING RANGE (the die ladder Die/Dice ratings may take) -->
-					<div class="editor-field" v-if="!isPlay && isRatedTrait && ( ratingType === 'Die' || ratingType === 'Dice' ) && !isListStyle && !isLabeledPipsSet && !hideSkillDice">
+					<div class="editor-field" v-if="!isPlay && isRatedTrait && ( ratingType === 'Die' || ratingType === 'Dice' ) && !isListStyle && !isLabeledPipsSet && !hideUnratedSetDie">
 						<div class="editor-label">Range</div>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
@@ -1542,36 +1547,36 @@ function getDieDisplayValue( val: any ) {
 						</div>
 					</div>
 
-					<!-- ATTACHED STRESS SELECTOR -->
-					<div class="editor-field" v-if="hasAttachedStress">
-						<div class="editor-label">Attached {{ attachedStressLabel }}</div>
+					<!-- ATTACHED TRACK SELECTOR -->
+					<div class="editor-field" v-if="hasTrackPart">
+						<div class="editor-label">Attached {{ trackLabel }}</div>
 						<ul class="editor-values">
 							<li
-								:class="{ 'active': attachedStressValue === 0 }"
+								:class="{ 'active': trackValue === 0 }"
 								tabindex="0"
 								role="button"
-								@keydown.enter.prevent="setAttachedStress(0)"
-								@keydown.space.prevent="setAttachedStress(0)"
-								@click.stop="setAttachedStress(0)"
-								title="No stress"
+								@keydown.enter.prevent="setTrackValue(0)"
+								@keydown.space.prevent="setTrackValue(0)"
+								@click.stop="setTrackValue(0)"
+								title="None"
 							>
 								<span style="font-size: 0.75rem; font-weight: 700;">-</span>
 							</li>
 							<li
-								v-for="val in attachedStressScale"
-								:class="{ 'active': attachedStressValue === val }"
+								v-for="val in trackScale"
+								:class="{ 'active': trackValue === val }"
 								tabindex="0"
 								role="button"
-								@keydown.enter.prevent="setAttachedStress(val)"
-								@keydown.space.prevent="setAttachedStress(val)"
-								@click.stop="setAttachedStress(val)"
+								@keydown.enter.prevent="setTrackValue(val)"
+								@keydown.space.prevent="setTrackValue(val)"
+								@click.stop="setTrackValue(val)"
 							>
 								<span class="c" v-html="getDieDisplayValue(val)"></span>
 							</li>
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.description && !isTalentsTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
+					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.description && !isThreeColumnTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
 					</div>
@@ -1610,7 +1615,7 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- SFX -->
-					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.sfx && !isTalentsTable">
+					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.sfx && !isThreeColumnTable">
 
 						<div class="editor-label">SFX</div>
 

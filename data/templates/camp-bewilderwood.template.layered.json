@@ -122,8 +122,8 @@
           },
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "sharedHinder": true,
           "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",

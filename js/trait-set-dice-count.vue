@@ -6,8 +6,8 @@ const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getTraitSetLabel, isSpotlightStyle,
-	renderDieValueForPrint, handleSingleDieClick, getResourceDiceCount, setResourceDiceCount,
-	getResourcePoolDice, getPrintTallyPips, isDieSpent, toggleDieSpentInPlay, handleDieClick, isSpendable,
+	renderDieValueForPrint, handleSingleDieClick, getDiceCount, setDiceCount,
+	getDiceCountPool, getPrintTallyPips, isDieSpent, toggleDieSpentInPlay, handleDieClick, isSpendable,
 	firstDie, isDieActive, isPlayAddRemovableSet
 } = injectTraitSet();
 </script>
@@ -42,7 +42,7 @@ const {
 					<!-- ONLINE (EDIT / PLAY): DYNAMICALLY RENDER THE POOL -->
 					<div class="trait-value multidie-value" v-if="submode !== 'print'">
 						<div
-							v-for="(dieSize, dIdx) in (item.isPlaceholder ? [6] : getResourcePoolDice(item.trait, traitSet))"
+							v-for="(dieSize, dIdx) in (item.isPlaceholder ? [6] : getDiceCountPool(item.trait, traitSet))"
 							:key="dIdx"
 							class="multidie-badge-wrap"
 							:class="{ 'spent': !item.isPlaceholder && isDieSpent(item.trait, dIdx) }"
@@ -84,9 +84,7 @@ const {
 						<span class="dice-count-count-label">{{ getTraitSetLabel(traitSet, 'dice') }}</span>
 						<div class="dice-count-track">
 							<span v-for="n in getPrintTallyPips(item.trait)" :key="n" class="dice-count-pip"
-								:class="{ 'filled': !printBlank && !item.isPlaceholder && getResourceDiceCount(item.trait) >= n }"
-								@click.stop="submode === 'edit' && !printBlank && !item.isPlaceholder ? setResourceDiceCount(s, item.originalIndex, n) : null"
-								:title="submode === 'edit' && !item.isPlaceholder ? 'Set dice count to ' + n : ''">{{ n }}</span>
+								:class="{ 'filled': !printBlank && !item.isPlaceholder && getDiceCount(item.trait) >= n }">{{ n }}</span>
 						</div>
 					</template>
 				</div>

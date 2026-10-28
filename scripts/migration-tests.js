@@ -532,6 +532,29 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(JSON.stringify(layeredSet.traits.Prowess.traits.STRESS.rating.range) === '[6,8,10,12]', 'layered companion range matches scale');
 }
 
+// =====================================================================
+// Section 16: migrateStyleBody (game-named style.body -> structural ID)
+// =====================================================================
+{
+  const ch = {
+    name: 'Legacy Styles',
+    traitSets: [
+      { name: 'Distinctions', view: { style: { header: 'distinctions', body: 'distinctions' } }, traits: [] },
+      { name: 'Assets', view: { style: { header: 'assets', body: 'assets' } }, traits: [] },
+      { name: 'Resources', view: { style: { header: 'resources', body: 'resources' } }, traits: [] },
+      { name: 'Stress', view: { style: { header: 'stress', body: 'stress' } }, traits: [] },
+      { name: 'Attributes', view: { style: { header: 'attributes', body: 'attributes' } }, traits: [] },
+    ],
+  };
+  M.normalizeView(ch);
+  const byName = Object.fromEntries(ch.traitSets.map(s => [s.name, s]));
+  ok(byName.Distinctions.view.style.body === 'sfx-rows' && byName.Distinctions.view.style.header === 'sfx-rows', 'distinctions migrated to sfx-rows');
+  ok(byName.Assets.view.style.body === 'boxed-rows' && byName.Assets.view.style.header === 'boxed-rows', 'assets migrated to boxed-rows');
+  ok(byName.Resources.view.style.body === 'pool-rows' && byName.Resources.view.style.header === 'pool-rows', 'resources migrated to pool-rows');
+  ok(byName.Stress.view.style.body === 'die-track' && byName.Stress.view.style.header === 'die-track', 'stress migrated to die-track');
+  ok(byName.Attributes.view.style.body === 'portrait-ring' && byName.Attributes.view.style.header === 'portrait-ring', 'attributes migrated to portrait-ring');
+}
+
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
 

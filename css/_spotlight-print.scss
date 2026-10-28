@@ -1358,7 +1358,7 @@
 	}
 
 	// DISTINCTIONS BORDERED TITLE
-	.trait-set-style-distinctions {
+	.trait-set-style-sfx-rows {
 		.trait {
 			border-bottom: none;
 			margin-bottom: 0.45rem;
@@ -3695,18 +3695,18 @@ body:has(.character-sheet.submode-print) .main {
    children and render unchanged. SFX lists sit tighter under titles. */
 .character-sheet.spotlight-print-style .trait .trait-sfx { margin-top: 0.05rem; }
 .character-sheet.spotlight-print-style ul.subtraits { margin-top: 0.15rem; margin-bottom: 0; }
-.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait .trait-title { padding-top: 0.1rem; padding-bottom: 0.1rem; }
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait .trait-title { padding-top: 0.1rem; padding-bottom: 0.1rem; }
 .character-sheet.spotlight-print-style .trait .trait-description:not(:has(*)) { display: none; }
 /* Distinctions bordered titles keep their box, with tighter padding. */
-.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait .trait-title { padding-top: 0.15rem; padding-bottom: 0.15rem; }
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait .trait-title { padding-top: 0.15rem; padding-bottom: 0.15rem; }
 /* Empty sfx description placeholders are bare struts (no ruling, unlike
    the dotted write-in treatment for nameless sfx, which is kept): they
    take vertical space without showing anything to write on. */
 .character-sheet.spotlight-print-style:not(.print-blank-mode) .sfx-blank-line:empty { display: none; }
 /* Distinctions sfx/descriptions are short phrases; tighter leading fits
    long sfx blocks (Eidolon) without touching glyph sizes. */
-.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait-sfx li,
-.character-sheet.spotlight-print-style .trait-set-style-distinctions .trait-description { line-height: 1.05; }
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait-sfx li,
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait-description { line-height: 1.05; }
 
 /* Long names must not overspill (2026-10-23): on lines where a name
    renders inline with a right-aligned rating scale, the name wraps

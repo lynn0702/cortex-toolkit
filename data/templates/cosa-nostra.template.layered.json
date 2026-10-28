@@ -124,8 +124,8 @@
           "traitColumns": 3,
           "page": 1,
           "style": {
-            "header": "distinctions",
-            "body": "distinctions"
+            "header": "sfx-rows",
+            "body": "sfx-rows"
           },
           "ratingScale": [
             8,

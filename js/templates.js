@@ -154,8 +154,8 @@ const cortexSpotlightTemplates = [
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "ratingScale": [
@@ -818,8 +818,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
@@ -1414,8 +1414,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "sharedHinder": true,
             "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
@@ -2083,8 +2083,8 @@ const cortexSpotlightTemplates = [
             "traitColumns": 3,
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "ratingScale": [
               8,
@@ -2753,8 +2753,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "ratingScale": [
@@ -3034,8 +3034,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "ratingScale": [
@@ -3505,8 +3505,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "ratingScale": [
               8
@@ -4297,8 +4297,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "ratingScale": [
               8
@@ -4765,8 +4765,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "stress",
-              "body": "stress"
+              "header": "die-track",
+              "body": "die-track"
             },
             "ratingScale": [
               4,
@@ -4813,8 +4813,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
@@ -6504,8 +6504,8 @@ const cortexSpotlightTemplates = [
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "ratingScale": [
               8
@@ -6755,8 +6755,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "stress",
-              "body": "stress"
+              "header": "die-track",
+              "body": "die-track"
             },
             "ratingScale": [
               4,
@@ -7431,8 +7431,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -8018,8 +8018,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -8695,8 +8695,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -9419,8 +9419,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -9942,8 +9942,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -10265,7 +10265,7 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "stress"
+              "body": "die-track"
             },
             "ratingScale": [
               4,
@@ -12254,8 +12254,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -12425,8 +12425,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "stress",
-              "body": "stress"
+              "header": "die-track",
+              "body": "die-track"
             },
             "ratingScale": [
               4,
@@ -13278,8 +13278,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -13772,8 +13772,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -14325,8 +14325,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -14629,8 +14629,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "stress",
-              "body": "stress"
+              "header": "die-track",
+              "body": "die-track"
             },
             "ratingScale": [
               4,
@@ -15013,8 +15013,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "reservedSlots": 3,
@@ -15544,8 +15544,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "reservedSlots": 6,
@@ -16502,8 +16502,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "ratingScale": [
               8
@@ -16980,8 +16980,8 @@ const cortexSpotlightTemplates = [
             },
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "ratingScale": [
               8
@@ -17596,8 +17596,8 @@ const cortexSpotlightTemplates = [
             ],
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "multiDie": false,
             "notes": "",
@@ -17763,7 +17763,7 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "stress"
+              "body": "die-track"
             },
             "multiDie": false,
             "notes": "",
@@ -18101,8 +18101,8 @@ const cortexSpotlightTemplates = [
           "view": {
             "page": 1,
             "style": {
-              "header": "distinctions",
-              "body": "distinctions"
+              "header": "sfx-rows",
+              "body": "sfx-rows"
             },
             "features": {
               "description": true,
@@ -18821,7 +18821,7 @@ const cortexSpotlightTemplates = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "stress"
+              "body": "die-track"
             },
             "features": {
               "description": false,
@@ -19321,8 +19321,8 @@ const cortexSpotlightTemplates = [
           "view": {
             "page": 3,
             "style": {
-              "header": "resources",
-              "body": "resources"
+              "header": "pool-rows",
+              "body": "pool-rows"
             },
             "features": {
               "description": false,
@@ -19422,8 +19422,8 @@ const cortexSpotlightTemplates = [
           "view": {
             "page": 3,
             "style": {
-              "header": "assets",
-              "body": "assets"
+              "header": "boxed-rows",
+              "body": "boxed-rows"
             },
             "features": {
               "description": false,

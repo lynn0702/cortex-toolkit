@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView } from './model.ts';
+import { getView, ensureView, type Character } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
-	character: any;
+	character: Character;
 	open: boolean;
 }>();
 

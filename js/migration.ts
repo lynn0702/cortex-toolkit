@@ -22,8 +22,17 @@ export const cortexMigration = {
 	// Set bodies whose trait rows are the list-family structure (name /
 	// rating / description / sfx / subtraits / attached stress) that
 	// view.parts can express. Bespoke bodies keep the legacy flags.
-	LIST_FAMILY_BODIES: ['default', 'distinctions', 'stress', 'list',
-		'two-columns-compact', 'two-columns-detailed', 'assets', 'resources'] as string[],
+	LIST_FAMILY_BODIES: ['default', 'sfx-rows', 'die-track', 'list',
+		'two-columns-compact', 'two-columns-detailed', 'boxed-rows', 'pool-rows',
+		'distinctions', 'stress', 'assets', 'resources'] as string[],
+
+	LEGACY_STYLE_BODIES: {
+		distinctions: 'sfx-rows',
+		assets: 'boxed-rows',
+		resources: 'pool-rows',
+		stress: 'die-track',
+		attributes: 'portrait-ring',
+	} as Record<string, string>,
 
 	// Seed filler from the original sample files. The terse reference example
 	// (Sendak_Eggers.layered.json) carries no descriptions, so exact-match
@@ -210,6 +219,7 @@ export const cortexMigration = {
 		const normalizeSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
+			this.migrateStyleBody( set );
 			this.migrateNodeRating( set, true );
 			normalizeTraitsArray( set.traits, set );
 			this.migrateResourceSet( set );
@@ -229,6 +239,7 @@ export const cortexMigration = {
 		const normalizeLayeredSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
+			this.migrateStyleBody( set );
 			this.migrateNodeRating( set, true );
 			if ( set.traits ) normalizeLayeredTraits( set.traits, set );
 			if ( set.slots ) normalizeLayeredTraits( set.slots, set );
@@ -443,6 +454,19 @@ export const cortexMigration = {
 		return node;
 	},
 
+	migrateStyleBody: function( set: any ) {
+		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
+		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );
+		for ( const bag of bags ) {
+			if ( bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) ) {
+				const mappedBody = this.LEGACY_STYLE_BODIES[ bag.style.body ];
+				if ( mappedBody ) bag.style.body = mappedBody;
+				const mappedHeader = this.LEGACY_STYLE_BODIES[ bag.style.header ];
+				if ( mappedHeader ) bag.style.header = mappedHeader;
+			}
+		}
+	},
+
 	// Resources stage whole and never hitch: rated traits gain spendable
 	// (unless stated) and the hitches exemption (unless stated).
 	migrateResourceSet: function( set: any ) {
@@ -450,7 +474,7 @@ export const cortexMigration = {
 		const bag = set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ? set.view : {};
 		const body = bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) ? bag.style.body : undefined;
 		const hay = ( ( set.name || '' ) + ' ' + ( set.noun || '' ) + ' ' + ( set.plural || '' ) ).toLowerCase();
-		if ( body !== 'resources' && body !== 'dice-count' && hay.indexOf( 'resource' ) === -1 ) return;
+		if ( body !== 'pool-rows' && body !== 'resources' && body !== 'dice-count' && hay.indexOf( 'resource' ) === -1 ) return;
 		const each = ( tr: any ) => {
 			if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
 			const r = this.normalizeRatingObject( tr.rating );

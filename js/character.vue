@@ -13,7 +13,7 @@ import {
 import TraitSetBlock from './trait-set-block.vue';
 import StyleGallery from './style-gallery.vue';
 import PrintToolbar from './print-toolbar.vue';
-import RingAttributes from './ring-attributes.vue';
+import PortraitRing from './portrait-ring.vue';
 
 const props = defineProps<{
 	submode?: string | null;
@@ -140,14 +140,14 @@ const isRingPool = computed( () => {
 } );
 const ringNoun = computed( () => {
 	const ts = ringTraitSet.value;
-	return ( ts?.noun && ts.noun.length ) ? ts.noun : 'Attribute';
+	return ( ts?.noun && ts.noun.length ) ? ts.noun : 'Trait';
 } );
 const scaleTrait = computed( () => {
 	const attrSet = ringTraitSet.value;
 	if ( !attrSet || !Array.isArray( attrSet.traits ) ) return null;
 	return attrSet.traits.find( ( t ) => t.name?.trim().toLowerCase() === 'scale' || ( typeof t.keepsExtra === 'number' && t.keepsExtra > 0 ) );
 } );
-const attributes = computed( () => {
+const ringTraits = computed( () => {
 	if ( !hasRingTrait.value ) return [];
 	const all = ringTraitSet.value?.traits || [];
 	return all.filter( ( t ) => !( t.name?.trim().toLowerCase() === 'scale') );
@@ -166,7 +166,7 @@ const scaleDieValue = computed( () => {
 	}
 	return 0;
 } );
-// (ring: attributes ring + scale die + drag now live in ring-attributes.vue)
+// (ring: portrait ring + scale die + drag now live in portrait-ring.vue)
 
 const pageCount = computed( () => {
 	const charView = getView( props.character );
@@ -986,7 +986,7 @@ watch( () => props.submode, () => {
 								</div>
 
 								<!-- ATTRIBUTES GRID (RING OVERLAY) -->
-								<RingAttributes
+								<PortraitRing
 									v-if="hasRingTrait && ringTraitID > -1"
 									ref="ringRef"
 									:character="character"
@@ -1003,7 +1003,7 @@ watch( () => props.submode, () => {
 							</div>
 
 							<!-- ATTRIBUTES -->
-							<div :class="{ 'attributes': true, 'vertical': attributes.length > 5 }" v-if="pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
+							<div :class="{ 'attributes': true, 'vertical': ringTraits.length > 5 }" v-if="pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
 
 								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR POOL (PLAY) -->
 								<transition appear>
@@ -1028,12 +1028,12 @@ watch( () => props.submode, () => {
 											<span><i class="fas fa-cog"></i> Settings</span>
 										</div>
 									</div>
-									<div class="preview-button-container-inner" v-if="submode === 'play' && isRingPool && attributes.length > 0">
+									<div class="preview-button-container-inner" v-if="submode === 'play' && isRingPool && ringTraits.length > 0">
 										<div class="preview-button"
-											@click.stop="ringRef?.handleAttributeClick( ringTraitID, 0, attributes[0] )"
+											@click.stop="ringRef?.handleTraitClick( ringTraitID, 0, ringTraits[0] )"
 											title="Add all pool dice to roller"
 										>
-											<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ attributes.length }} dice)</span>
+											<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ ringTraits.length }} dice)</span>
 										</div>
 									</div>
 								</div>

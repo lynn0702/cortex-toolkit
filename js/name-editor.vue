@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, resolveSheetStyle, defaultNameHidden, getRating } from './model.ts';
+import { getView, ensureView, resolveSheetStyle, defaultNameHidden, getRating, type Character } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 
@@ -106,7 +106,7 @@ const DICE_PRESETS: DicePreset[] = [
 ];
 
 const props = withDefaults( defineProps<{
-	character: any;
+	character: Character;
 	open: boolean;
 	initialTab?: string;
 }>(), {
@@ -485,7 +485,7 @@ async function focusFirstInput() {
 
 function setCharacterProperty( key: string, val: any ) {
 	const character = props.character;
-	character[ key ] = val;
+	( character as Record<string, any> )[ key ] = val;
 	updateCharacter( character );
 }
 
@@ -672,7 +672,7 @@ function updateCharacter( character: any ) {
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('name')" @change="setNameTraitLabel('name', targetValue($event))" placeholder="Character Name" title="Name heading (stored on the name trait)" aria-label="Name heading">
 								<visibility-eye :state="nameTraitVisibility('name')" @toggle="toggleNameVisibility('name')" />
 							</div>
-							<input type="text" id="char-field-name" name="characterName" v-model="name" ref="inputName" placeholder="e.g. Maya Lin, Vance Astro" aria-label="Character name">
+							<input type="text" id="char-field-name" name="characterName" v-model="name" ref="inputName" placeholder="Character name" aria-label="Character name">
 						</div>
 
 						<div class="editor-field">
@@ -680,7 +680,7 @@ function updateCharacter( character: any ) {
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('game')" @change="setNameTraitLabel('game', targetValue($event))" placeholder="Game / Campaign Title" title="Game heading (stored on the game trait)" aria-label="Game heading">
 								<visibility-eye :state="nameTraitVisibility('game')" @toggle="toggleNameVisibility('game')" />
 							</div>
-							<input type="text" id="char-field-game" name="gameTitle" v-model="game" placeholder="e.g. Terraverse, Dragon Brigade..." aria-label="Game title">
+							<input type="text" id="char-field-game" name="gameTitle" v-model="game" placeholder="Game title" aria-label="Game title">
 						</div>
 
 						<div class="editor-field">
@@ -688,7 +688,7 @@ function updateCharacter( character: any ) {
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('nickname')" @change="setNameTraitLabel('nickname', targetValue($event))" placeholder="Nickname / Call-Sign" title="Nickname heading (stored on the nickname trait)" aria-label="Nickname heading">
 								<visibility-eye :state="nameTraitVisibility('nickname')" @toggle="toggleNameVisibility('nickname')" />
 							</div>
-							<input type="text" id="char-field-nickname" name="nickname" v-model="nickname" placeholder="e.g. Apex, Kid" aria-label="Nickname">
+							<input type="text" id="char-field-nickname" name="nickname" v-model="nickname" placeholder="Nickname" aria-label="Nickname">
 						</div>
 
 						<div class="editor-field">
@@ -704,7 +704,7 @@ function updateCharacter( character: any ) {
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('pronouns')" @change="setNameTraitLabel('pronouns', targetValue($event))" placeholder="Pronouns" title="Pronouns heading (stored on the pronouns trait)" aria-label="Pronouns heading">
 								<visibility-eye :state="nameTraitVisibility('pronouns')" @toggle="toggleNameVisibility('pronouns')" />
 							</div>
-							<input type="text" id="char-field-pronouns" name="pronouns" v-model="pronouns" placeholder="e.g. she/her, they/them" aria-label="Pronouns">
+							<input type="text" id="char-field-pronouns" name="pronouns" v-model="pronouns" placeholder="Pronouns" aria-label="Pronouns">
 						</div>
 
 						<div class="editor-field">
@@ -747,7 +747,7 @@ function updateCharacter( character: any ) {
 							<div class="editor-label">Layout Template</div>
 							<div style="font-size: 0.75rem; opacity: 0.85; margin-bottom: 0.4rem;">
 								<span v-if="sheetTemplateId">Resolves against <strong>{{ sheetTemplateId }}</strong> — values you haven't changed come from the template, keeping this file clean.</span>
-								<span v-else>Inline layout (no template) — everything is stored on this character.</span>
+								<span v-else>Inline layout — everything is stored on this character.</span>
 							</div>
 							<div class="editor-button-container">
 								<div class="editor-button-container-inner">
@@ -894,7 +894,7 @@ function updateCharacter( character: any ) {
 								<span class="font-picker-sample">Ag</span>
 								<span class="font-picker-name">{{ fontPreview.heading || headingFont }}</span>
 							</div>
-							<input type="text" id="char-field-heading-font" name="headingFont" :value="headingFont" @input="previewFont('heading', targetValue($event))" @change="headingFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Syne">
+							<input type="text" id="char-field-heading-font" name="headingFont" :value="headingFont" @input="previewFont('heading', targetValue($event))" @change="headingFont = targetValue($event)" placeholder="Google Font family">
 							<div class="font-picker-custom" v-if="customFontsList.length">
 								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="headingFont = cf">{{ cf }}</button>
 							</div>
@@ -906,7 +906,7 @@ function updateCharacter( character: any ) {
 								<span class="font-picker-sample">Ag</span>
 								<span class="font-picker-name">{{ fontPreview.primary || primaryFont }}</span>
 							</div>
-							<input type="text" id="char-field-body-font" name="bodyFont" :value="primaryFont" @input="previewFont('primary', targetValue($event))" @change="primaryFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Inter">
+							<input type="text" id="char-field-body-font" name="bodyFont" :value="primaryFont" @input="previewFont('primary', targetValue($event))" @change="primaryFont = targetValue($event)" placeholder="Google Font family">
 							<div class="font-picker-custom" v-if="customFontsList.length">
 								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="primaryFont = cf">{{ cf }}</button>
 							</div>
@@ -918,7 +918,7 @@ function updateCharacter( character: any ) {
 								<span class="font-picker-sample">Ag</span>
 								<span class="font-picker-name">{{ fontPreview.secondary || secondaryFont }}</span>
 							</div>
-							<input type="text" id="char-field-secondary-font" name="secondaryFont" :value="secondaryFont" @input="previewFont('secondary', targetValue($event))" @change="secondaryFont = targetValue($event)" placeholder="Type any Google Font family, e.g. Oswald">
+							<input type="text" id="char-field-secondary-font" name="secondaryFont" :value="secondaryFont" @input="previewFont('secondary', targetValue($event))" @change="secondaryFont = targetValue($event)" placeholder="Google Font family">
 							<div class="font-picker-custom" v-if="customFontsList.length">
 								<button type="button" v-for="cf in customFontsList" :key="cf" class="btn-scale-preset" @click.stop="secondaryFont = cf">{{ cf }}</button>
 							</div>
@@ -932,7 +932,7 @@ function updateCharacter( character: any ) {
 							<label for="char-field-font-upload" style="font-size: 0.75rem;"><i class="fas fa-file-arrow-up"></i> Upload Custom Font</label>
 							<input type="file" id="char-field-font-upload" name="fontUpload" ref="fontFileInput" style="display:none" @change="handleFontUpload" accept=".woff,.woff2,.ttf,.otf">
 							<button type="button" class="editor-tab-btn" style="width: 100%; margin-top: 0.3rem; border: 1px solid rgba(255,255,255,0.25); text-align: center;" @click.stop="triggerFontUpload">
-								<i class="fas fa-upload"></i> Choose Font File (.woff2, .woff, .ttf)
+								<i class="fas fa-upload"></i> Choose Font File
 							</button>
 							<div class="editor-upload-error" v-if="fontUploadError">{{ fontUploadError }}</div>
 							<span class="editor-field-hint" style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; display: block;">

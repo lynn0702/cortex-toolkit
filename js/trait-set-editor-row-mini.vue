@@ -111,10 +111,10 @@ const setName = computed( () => ( traitSet.value as any )?.name || '' );
 // the rows inside the body column.
 const hinderText = computed( () => {
 	const ts = traitSet.value as any;
-	if ( getView( ts )?.style?.body !== 'distinctions' || !getView( ts )?.sharedHinder ) return '';
+	if ( getView( ts )?.style?.body !== 'sfx-rows' || !getView( ts )?.sharedHinder ) return '';
 	const custom = typeof getView( ts )?.sharedHinderText === 'string' ? ( getView( ts )?.sharedHinderText as string ).trim() : '';
 	if ( custom ) return custom;
-	const noun = ts?.noun?.length ? String( ts.noun ).toLowerCase() : 'distinction';
+	const noun = ts?.noun?.length ? String( ts.noun ).toLowerCase() : 'trait';
 	return 'Gain a PP when you trade out your ' + noun + '\'s d8 rating for a d4.';
 } );
 
@@ -348,7 +348,7 @@ onUnmounted( () => { partPreview.value = null; } );
 				<div
 					class="branch-box"
 					:style="'width: ' + branchShown('left') + '%;'"
-					:title="'Left specialties' + (branchView.implicit ? ' (preset)' : '')"
+					:title="'Left subtraits' + (branchView.implicit ? ' (preset)' : '')"
 				>
 					<span class="branch-name">Left</span>
 					<span class="branch-dims">{{ branchView.implicit ? '' : branchView.left + 'fr' }}</span>
@@ -361,9 +361,9 @@ onUnmounted( () => { partPreview.value = null; } );
 				<div
 					class="branch-box"
 					:style="'width: ' + branchShown('center') + '%;'"
-					:title="'Skill column'"
+					:title="'Center column'"
 				>
-					<span class="branch-name">Skill</span>
+					<span class="branch-name">Trait</span>
 				</div>
 				<div
 					class="branch-divider"
@@ -373,7 +373,7 @@ onUnmounted( () => { partPreview.value = null; } );
 				<div
 					class="branch-box"
 					:style="'width: ' + branchShown('right') + '%;'"
-					:title="'Right specialties'"
+					:title="'Right subtraits'"
 				>
 					<span class="branch-name">Right</span>
 					<span class="branch-dims">{{ branchView.implicit ? '' : branchView.right + 'fr' }}</span>
