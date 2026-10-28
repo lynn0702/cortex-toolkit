@@ -66,10 +66,21 @@ const bodyComponent = computed( () => {
 </script>
 
 <template>
-	<div :class="getTraitSetClasses(traitSet)" :data-set-index="s">
+	<section
+		:class="getTraitSetClasses(traitSet)"
+		:data-set-index="s"
+		:data-set-name="traitSet.name || undefined"
+		:aria-label="traitSet.name || 'Trait Set'"
+	>
 		<div class="trait-set-header">
 			<transition appear>
-				<div :class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
+				<div
+					:class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
+					:role="submode === 'edit' ? 'button' : undefined"
+					:tabindex="submode === 'edit' ? 0 : undefined"
+					:aria-label="submode === 'edit' ? ('Edit ' + (traitSet.name || 'trait set')) : undefined"
+					@keydown.enter.prevent="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
+					@keydown.space.prevent="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
 					@click.stop="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
@@ -88,5 +99,5 @@ const bodyComponent = computed( () => {
 				</li>
 			</ul>
 		</div>
-	</div>
+	</section>
 </template>

@@ -101,6 +101,12 @@
 	flex: 1 1 auto;
 	min-width: 0;
 
+	@media screen and (max-width: 768px) {
+		&, .character-sheet {
+			scroll-padding-top: 3.5rem;
+			scroll-padding-bottom: 5.5rem;
+		}
+	}
 
 	@media print {
 		top: 0;

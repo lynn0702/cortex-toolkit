@@ -378,7 +378,12 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 
 				<div class="attribute-inner"
 					:class="{ 'attribute-inner': true, 'selected': isSelected(['trait', ringTraitID, a]) }"
+					role="button"
+					tabindex="0"
+					:aria-label="attribute.name ? (`Stage d${ringDie(attribute) || 8} ${attribute.name}`) : 'Attribute'"
 					@click.stop="handleAttributeClick( ringTraitID, a, attribute )"
+					@keydown.enter.prevent="handleAttributeClick( ringTraitID, a, attribute )"
+					@keydown.space.prevent="handleAttributeClick( ringTraitID, a, attribute )"
 					:title="submode === 'play' ? (isRingPool ? 'Pool: Click to add all dice to roller' : 'Click to add d' + ringDie(attribute) + ' to roller') : ''"
 				>
 
@@ -386,6 +391,7 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 						:class="['die-' + (ringDie(attribute) || 8), { 'die-empty': !ringDie(attribute) }]"
 						v-html="renderDieValue(ringDie(attribute))"
 						:title="!ringDie(attribute) && submode === 'edit' ? 'Unrated — click to set a die rating' : ''"
+						aria-hidden="true"
 					></span>
 
 					<div class="attribute-name"
@@ -410,10 +416,15 @@ defineExpose( { setScaleDieValue, handleAttributeClick, handleScaleDieClick, sca
 			<div
 				class="scale-die-inner"
 				:class="{ 'selected': isSelected(['scaleDie']) }"
+				role="button"
+				tabindex="0"
+				:aria-label="submode === 'play' ? ('Stage d' + scaleDieValue + ' Scale die') : 'Edit Scale die'"
 				@click.stop="handleScaleDieClick()"
+				@keydown.enter.prevent="handleScaleDieClick()"
+				@keydown.space.prevent="handleScaleDieClick()"
 				:title="submode === 'play' ? 'Click to add d' + scaleDieValue + ' Scale die to pool (Keep 3)' : 'Click to edit Scale die'"
 			>
-				<span class="c" :class="'die-' + (scaleDieValue || 8)" v-html="renderDieValue(scaleDieValue)"></span>
+				<span class="c" :class="'die-' + (scaleDieValue || 8)" v-html="renderDieValue(scaleDieValue)" aria-hidden="true"></span>
 				<div class="scale-name">SCALE</div>
 			</div>
 

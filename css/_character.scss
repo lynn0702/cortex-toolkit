@@ -1321,4 +1321,99 @@
 	white-space: pre-wrap;
 }
 
+// Trait Title Button (Zone A Inspector / Edit Trigger)
+button.trait-title-btn {
+	background: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	text-transform: inherit;
+	letter-spacing: inherit;
+	text-align: inherit;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+
+	&.trait-asset-box {
+		display: block;
+		width: 100%;
+		text-align: left;
+		box-sizing: border-box;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-interactive);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+}
+
+.trait-title.trait-title-stacked:not(.trait-title-statement) > button.trait-title-btn {
+	width: 100%;
+	justify-content: center;
+	text-align: center;
+}
+
+.trait-title.trait-title-statement > button.trait-title-btn {
+	flex: 0 0 auto;
+	text-align: left;
+}
+
+// WCAG 2.2 AA Touch Targets in Mobile Play Mode
+@media screen and (max-width: 768px) {
+	.submode-play {
+		.trait-value .c,
+		.subtrait-value .c,
+		.attached-stress-track .c {
+			min-width: 36px;
+			min-height: 38px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.btn-play-spend,
+		.btn-stage-stress,
+		.stress-out-badge {
+			min-width: 36px;
+			min-height: 38px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			box-sizing: border-box;
+		}
+
+		.statement-pip {
+			position: relative;
+			&::after {
+				content: '';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				min-width: 36px;
+				min-height: 38px;
+			}
+		}
+
+		.btn-hinder-pill {
+			min-height: 38px;
+			padding: 0 0.5rem;
+		}
+
+		.jump-pill {
+			min-height: 38px;
+		}
+
+		.btn-pip-step {
+			min-width: 36px;
+			min-height: 38px;
+		}
+	}
+}
+
+
 

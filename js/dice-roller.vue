@@ -676,6 +676,9 @@ defineExpose( {
 							'chip-scale': item.isScale || (item.source && item.source.toLowerCase() === 'scale'),
 							'chip-resource': isExempt(item)
 						}"
+						:data-die-size="item.size"
+						:data-die-source="item.source || 'ad-hoc'"
+						:data-die-exempt="isExempt(item) ? 'true' : 'false'"
 					>
 						<span class="c">{{ getDieDisplayValue(item.size) }}</span>
 						<span class="chip-source" v-if="cleanTraitLabel(item.source)" :title="cleanTraitLabel(item.source)">{{ cleanTraitLabel(item.source) }}</span>
@@ -737,6 +740,17 @@ defineExpose( {
 						<button :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">Text Log</button>
 					</div>
 				</div>
+
+				<!-- ACCESSIBILITY & LLM LIVE RESULTS ANNOUNCEMENT -->
+				<div class="roller-results-announcement sr-only" aria-live="polite" role="status">
+					<template v-if="isRolled && !isBotch">
+						Rolled pool. Total: {{ manualTotal }}. Effect die: {{ manualEffectDie }}. Hitches: {{ totalHitches }}.
+					</template>
+					<template v-else-if="isRolled && isBotch">
+						Botch! All dice rolled hitches.
+					</template>
+				</div>
+				<output class="sr-only" aria-live="polite" aria-atomic="true">{{ cortexPalOutput }}</output>
 
 				<!-- BOTCH ALERT -->
 				<div class="roller-botch-banner" v-if="isBotch">

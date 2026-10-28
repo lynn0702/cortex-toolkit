@@ -1111,8 +1111,8 @@ function getDieDisplayValue( val: any ) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
-			<button v-if="!isPlay" type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait"><i class="fas fa-copy"></i></button>
+			<button type="button" @click.stop="selectElement([])" title="Done" aria-label="Close trait editor"><i class="fas fa-times"></i></button>
+			<button v-if="!isPlay" type="button" class="editor-copy" @click.stop="duplicateTrait" title="Duplicate trait" aria-label="Duplicate trait"><i class="fas fa-copy"></i></button>
 			<template v-if="!isPlay || canDeleteInPlay">
 				<button
 					v-if="!confirmDelete"
@@ -1120,6 +1120,7 @@ function getDieDisplayValue( val: any ) {
 					class="editor-delete"
 					@click.stop="confirmDelete = true"
 					title="Delete trait"
+					aria-label="Delete trait"
 				><i class="fas fa-trash"></i></button>
 				<button
 					v-else
@@ -1127,6 +1128,7 @@ function getDieDisplayValue( val: any ) {
 					class="editor-delete editor-delete-confirm"
 					@click.stop="removeTrait"
 					title="Click again to confirm deletion"
+					aria-label="Confirm delete trait"
 				><span>Confirm?</span></button>
 			</template>
 			<button
@@ -1135,6 +1137,7 @@ function getDieDisplayValue( val: any ) {
 				class="editor-delete"
 				@click.stop="removeFromSheet"
 				title="Remove from sheet — reversible via restore, no confirmation needed"
+				aria-label="Remove trait from sheet"
 			><i class="fas fa-eraser"></i></button>
 		</div>
 

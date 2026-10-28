@@ -2817,7 +2817,8 @@ body:has(.character-sheet.submode-print) .main {
         align-items: center;
         text-align: center;
 
-        > .trait-name {
+        > .trait-name,
+        > .trait-title-btn {
             justify-content: center;
             text-align: center;
             width: 100%;
@@ -2837,13 +2838,17 @@ body:has(.character-sheet.submode-print) .main {
         gap: 0.45rem;
         width: 100%;
 
-        > .trait-name:not(.trait-name-blank) {
+        > .trait-name:not(.trait-name-blank),
+        > .trait-title-btn {
             flex: 0 0 6.5rem;
             min-width: 6.5rem;
             max-width: 6.5rem;
             align-self: center;
             margin: 0;
             line-height: 1;
+            > .trait-name:not(.trait-name-blank) {
+                width: 100%;
+            }
         }
 
         > .statement-pip {
@@ -2880,7 +2885,8 @@ body:has(.character-sheet.submode-print) .main {
         align-items: stretch;
         text-align: left;
 
-        > .trait-name {
+        > .trait-name,
+        > .trait-title-btn {
             grid-column: 1;
             grid-row: 1;
             text-align: left;
@@ -2893,7 +2899,8 @@ body:has(.character-sheet.submode-print) .main {
             align-items: center;
             box-sizing: border-box;
 
-            &.trait-name-blank {
+            &.trait-name-blank,
+            > .trait-name.trait-name-blank {
                 .trait-blank-line {
                     border-bottom: none !important;
                 }
@@ -2946,7 +2953,8 @@ body:has(.character-sheet.submode-print) .main {
         justify-content: space-between;
         row-gap: 0.2rem;
 
-        > .trait-name {
+        > .trait-name,
+        > .trait-title-btn {
             order: 1;
             flex: 1 1 auto;
         }
