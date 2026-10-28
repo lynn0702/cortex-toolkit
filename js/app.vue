@@ -52,6 +52,40 @@ const main = ref<HTMLElement | null>( null );
 
 let _spotlightLoading: any = null;
 
+// ---- dark mode state ----
+const colorSchemePref = ref<'light' | 'dark' | 'system'>(
+	( typeof localStorage !== 'undefined' && localStorage.getItem( 'cortexColorScheme' ) as any ) || 'system'
+);
+const systemPrefersDark = ref(
+	Boolean( typeof window !== 'undefined' && window.matchMedia && window.matchMedia( '(prefers-color-scheme: dark)' ).matches )
+);
+
+const isDarkMode = computed( () => {
+	// Print mode and Print preview must ALWAYS render in ink-friendly Light Mode
+	if ( submode.value === 'print' ) return false;
+	if ( colorSchemePref.value === 'dark' ) return true;
+	if ( colorSchemePref.value === 'light' ) return false;
+	return systemPrefersDark.value;
+} );
+
+function toggleDarkMode() {
+	const next = isDarkMode.value ? 'light' : 'dark';
+	colorSchemePref.value = next;
+	try {
+		localStorage.setItem( 'cortexColorScheme', next );
+	} catch ( _e ) {}
+}
+
+watch( isDarkMode, ( dark ) => {
+	if ( typeof document !== 'undefined' ) {
+		document.documentElement.setAttribute( 'data-theme', dark ? 'dark' : 'light' );
+		document.documentElement.classList.toggle( 'theme-dark', dark );
+		if ( document.body ) {
+			document.body.classList.toggle( 'theme-dark', dark );
+		}
+	}
+}, { immediate: true } );
+
 // ---- computed ----
 const baseURL = computed( () => window.location.href.replace( '/index.html', '/' ) );
 const year = computed( () => ( new Date() ).getFullYear() );
@@ -125,6 +159,18 @@ onMounted( async () => {
 	// Mobile: when the keyboard opens on an editor field, re-assert
 	// the panel into view after the keyboard animation settles.
 	document.addEventListener( 'focusin', ( e ) => handleEditorFocusIn( e ) );
+
+	if ( typeof window !== 'undefined' && window.matchMedia ) {
+		const mql = window.matchMedia( '(prefers-color-scheme: dark)' );
+		const handler = ( e: MediaQueryListEvent ) => {
+			systemPrefersDark.value = e.matches;
+		};
+		if ( mql.addEventListener ) {
+			mql.addEventListener( 'change', handler );
+		} else if ( ( mql as any ).addListener ) {
+			( mql as any ).addListener( handler );
+		}
+	}
 } );
 
 // ---- methods: view ----
@@ -1402,6 +1448,7 @@ defineExpose( {
 	studioPanelRef, showPlaySaveConfirm, confirmPlaySave, discardPlaySession, cancelPlaySave,
 	hasUncommittedSessionChanges, baselineCharacters,
 	triggerRollFromPill, triggerClearFromPill, toggleMobileRollerDrawer,
+	colorSchemePref, isDarkMode, toggleDarkMode,
 } );
 </script>
 
@@ -1413,15 +1460,18 @@ defineExpose( {
 		:canPlay="canPlay"
 		:canUndo="canUndo"
 		:canRedo="canRedo"
+		:isDarkMode="isDarkMode"
 		@navigate="setMode"
 		@undo="undo"
 		@redo="redo"
+		@toggleTheme="toggleDarkMode"
 	/>
 
 			<!-- PLAY SHELL: STUDIO PANEL (INSPECTOR + ROLLER) + SHEET VIEWPORT -->
 			<div
 				class="play-shell"
 				:class="{
+					'theme-dark': isDarkMode,
 					'panel-open': isStudioPanelOpen && mode === 'character' && submode !== 'print',
 					'panel-right': panelPosition === 'right',
 					'panel-left': panelPosition === 'left',

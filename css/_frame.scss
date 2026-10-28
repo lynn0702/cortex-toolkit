@@ -1,19 +1,54 @@
+:root {
+	--bg-app-canvas: #e2e8f0;
+	--bg-surface-card: #ffffff;
+	--bg-surface-elevated: #f8fafc;
+	--bg-surface-muted: #f1f5f9;
+	--bg-sticky-glass: rgba(248, 250, 252, 0.92);
+	--text-main: #0f172a;
+	--text-secondary: #334155;
+	--text-muted: #64748b;
+	--border-subtle: rgba(15, 23, 42, 0.12);
+	--border-strong: #334155;
+	--die-outline-stroke: #1e293b;
+	--die-active-fill: var(--color-primary, #be123c);
+	--die-active-text: #ffffff;
+}
+
+@media screen {
+	[data-theme="dark"],
+	.theme-dark {
+		--bg-app-canvas: #090d16;        // Deep OLED-friendly midnight slate
+		--bg-surface-card: #111827;      // Soft dark slate for Trait Set cards
+		--bg-surface-elevated: #1e293b;  // Elevated inputs, chips, and headers
+		--bg-surface-muted: #0f172a;     // Recessed wells / empty tracks
+		--bg-sticky-glass: rgba(15, 23, 42, 0.92);
+		--text-main: #f1f5f9;            // Crisp off-white (no harsh #fff halation)
+		--text-secondary: #cbd5e1;
+		--text-muted: #94a3b8;
+		--border-subtle: rgba(255, 255, 255, 0.12);
+		--border-strong: #64748b;
+		--die-outline-stroke: #cbd5e1;   // Unfilled die range outlines stay legible!
+		--color-sheet-bg: #111827;
+		--color-separator: rgba(255, 255, 255, 0.12);
+		--color-label: #94a3b8;
+		--color-input: #f1f5f9;
+	}
+}
+
 %frame {
 	@extend %no-print;
 	position: fixed;
 	left: 0;
 	right: 0;
 	height: var(--header-size);
-	// background: hsla(0, 0%, 0%, 0.9);
-	// color: white;
 	z-index: var(--z-frame);
-	// overflow: hidden;
 	user-select: none;
 	border-style: solid;
-	border-color: var(--color-separator);
-	background: hsla(0, 0%, 100%, 0.9);
+	border-color: var(--border-subtle, var(--color-separator));
+	background: var(--bg-sticky-glass, hsla(0, 0%, 100%, 0.9));
 	backdrop-filter: blur(.5rem);
 	box-shadow: 0 0 .125rem rgba(0, 0, 0, 0.1);
+	color: var(--text-main);
 	> * {
 		display: flex;
 		height: 100%;
@@ -90,6 +125,33 @@
 		@media screen and (max-width: 600px) {
 			display: none;
 		}
+	}
+}
+
+.header-actions {
+	display: flex;
+	align-items: center;
+	margin-left: auto;
+	padding-right: 0.75rem;
+}
+
+.header-btn-theme {
+	background: transparent;
+	border: 1px solid var(--border-subtle);
+	color: var(--text-secondary);
+	border-radius: 999px;
+	width: 2rem;
+	height: 2rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	&:hover {
+		color: var(--text-main);
+		border-color: var(--border-strong);
+		background: var(--bg-surface-elevated);
 	}
 }
 

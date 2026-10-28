@@ -4,6 +4,9 @@ import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import DiceRoller from '../js/dice-roller.vue';
 import TraitEditor from '../js/trait-editor.vue';
+import AppHeader from '../js/app-header.vue';
+import SessionNav from '../js/session-nav.vue';
+import { cortexPal } from '../js/cortex-pal.ts';
 
 // 1. Axe-core runner configured for JSDOM / Component testing
 async function runAxeAudit( container: HTMLElement ) {
@@ -252,5 +255,100 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		expect( wrapper.find( 'input[name="traitName"]' ).exists() ).toBe( false );
 
 		wrapper.unmount();
+	} );
+
+	it( 'audits Dark Mode toggle buttons and verifies zero hardcoded inline styles in DiceRoller', async () => {
+		// 1. Verify DiceRoller has no inline background: white on quick scale/separate die buttons
+		const roller = mount( DiceRoller, {
+			props: {
+				dicePool: new cortexPal.DicePool()
+			} as any
+		} );
+		const scaleBtn = roller.find( '.roller-btn-scale-quick' );
+		expect( scaleBtn.exists() ).toBe( true );
+		expect( scaleBtn.attributes( 'style' ) ).toBeUndefined();
+
+		const sepBtn = roller.find( '.roller-btn-res-quick' );
+		expect( sepBtn.exists() ).toBe( true );
+		expect( sepBtn.attributes( 'style' ) ).toBeUndefined();
+
+		roller.unmount();
+
+		// 2. Verify AppHeader dark mode toggle button
+		const header = mount( AppHeader, {
+			props: {
+				mode: 'character',
+				submode: 'play',
+				hasCharacter: true,
+				canUndo: false,
+				canRedo: false,
+				isDarkMode: true
+			}
+		} );
+		const headerThemeBtn = header.find( '.header-btn-theme' );
+		expect( headerThemeBtn.exists() ).toBe( true );
+		expect( headerThemeBtn.attributes( 'aria-label' ) ).toBe( 'Switch to light mode' );
+		await runAxeAudit( header.element as HTMLElement );
+		header.unmount();
+
+		// 3. Verify SessionNav does NOT render theme toggle (per spec: toggle is header-only)
+		const sessionNav = mount( SessionNav, {
+			props: {
+				openCharacters: [ { id: 'char1', name: 'Test' } ],
+				characterID: 'char1',
+				submode: 'play',
+				playViewMode: 'split'
+			}
+		} );
+		expect( sessionNav.find( '.sheet-bar-theme-toggle' ).exists() ).toBe( false );
+		await runAxeAudit( sessionNav.element as HTMLElement );
+		sessionNav.unmount();
+	} );
+
+	it( 'enforces WCAG 2.2 AA Color Contrast (Criterion 1.4.3 & 1.4.11) across Dark and Light mode tokens', () => {
+		// Standard W3C relative luminance calculation: https://www.w3.org/WAI/GL/wiki/Relative_luminance
+		function getLuminance( hex: string ): number {
+			const cleanHex = hex.replace( '#', '' );
+			const r = parseInt( cleanHex.slice( 0, 2 ), 16 ) / 255;
+			const g = parseInt( cleanHex.slice( 2, 4 ), 16 ) / 255;
+			const b = parseInt( cleanHex.slice( 4, 6 ), 16 ) / 255;
+
+			const srgbToLin = ( c: number ) => ( c <= 0.04045 ? c / 12.92 : Math.pow( ( c + 0.055 ) / 1.055, 2.4 ) );
+			return 0.2126 * srgbToLin( r ) + 0.7152 * srgbToLin( g ) + 0.0722 * srgbToLin( b );
+		}
+
+		// WCAG Contrast Ratio formula: (L1 + 0.05) / (L2 + 0.05)
+		function getContrastRatio( fgHex: string, bgHex: string ): number {
+			const l1 = getLuminance( fgHex );
+			const l2 = getLuminance( bgHex );
+			const lighter = Math.max( l1, l2 );
+			const darker = Math.min( l1, l2 );
+			return ( lighter + 0.05 ) / ( darker + 0.05 );
+		}
+
+		// Dark Mode Palette tokens defined in _frame.scss
+		const darkCardBg = '#111827';
+		const darkElevatedBg = '#1e293b';
+		const darkTextMain = '#f1f5f9';
+		const darkTextSecondary = '#cbd5e1';
+		const darkTextMuted = '#94a3b8';
+
+		// WCAG 2.2 AA requirement: normal text >= 4.5:1, large/UI text >= 3.0:1
+		expect( getContrastRatio( darkTextMain, darkCardBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( darkTextMain, darkElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( darkTextSecondary, darkCardBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( darkTextSecondary, darkElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( darkTextMuted, darkCardBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( darkTextMuted, darkElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
+
+		// Light Mode Palette tokens
+		const lightCardBg = '#ffffff';
+		const lightElevatedBg = '#f8fafc';
+		const lightTextMain = '#0f172a';
+		const lightTextSecondary = '#334155';
+		expect( getContrastRatio( lightTextMain, lightCardBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( lightTextMain, lightElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( lightTextSecondary, lightCardBg ) ).toBeGreaterThanOrEqual( 4.5 );
+		expect( getContrastRatio( lightTextSecondary, lightElevatedBg ) ).toBeGreaterThanOrEqual( 4.5 );
 	} );
 } );

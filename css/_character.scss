@@ -588,7 +588,7 @@
 			left: -.083rem;
 		}
 
-		+ & {
+		& + & {
 			padding-top: .083rem;
 		}
 
@@ -1444,6 +1444,115 @@ button.trait-title-btn {
 		opacity: 1;
 	}
 }
+
+// LATE-NIGHT DARK MODE (Print-Immune: screen only, non-print submodes only)
+@media screen {
+	[data-theme="dark"],
+	.theme-dark {
+		.character-sheet:not(.submode-print) {
+			color: var(--text-main);
+
+			.page {
+				background-color: var(--bg-surface-card);
+				color: var(--text-main);
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+			}
+
+			.page-header,
+			.page-header-inner,
+			.trait-set,
+			.trait-asset-box,
+			.trait-asset-card {
+				background-color: var(--bg-surface-card) !important;
+				color: var(--text-main) !important;
+				border-color: var(--border-strong) !important;
+			}
+
+			.trait-name,
+			.trait-statement-text,
+			.subtrait-name,
+			.hinder-text,
+			.title,
+			.ladder-name,
+			.die-row-name,
+			.paired-slot-name-text {
+				color: var(--text-main);
+			}
+
+			.trait-sfx-description,
+			.trait-description,
+			.sfx-description,
+			.character-description {
+				color: var(--text-secondary);
+			}
+
+			.trait-blank-line,
+			.desc-blank-line,
+			.sfx-blank-line {
+				border-bottom-color: var(--border-subtle) !important;
+			}
+
+			// Unfilled die range outlines and glyphs remain crisp and legible
+			.c:not(.active) svg {
+				polygon, path, rect {
+					stroke: var(--die-outline-stroke) !important;
+				}
+				text {
+					fill: var(--die-outline-stroke) !important;
+				}
+			}
+
+			.pip-bubble:not(.filled),
+			.statement-pip:not(.questioned) {
+				border-color: var(--text-secondary) !important;
+				background-color: transparent !important;
+			}
+
+			.character-pp-badge {
+				background: var(--bg-surface-elevated);
+				border-color: var(--color-primary);
+
+				.pp-count {
+					color: var(--text-main);
+				}
+
+				.btn-pp-step {
+					background: var(--bg-surface-muted);
+					border-color: var(--border-subtle);
+					color: var(--text-main);
+
+					&:hover {
+						background: var(--border-strong);
+					}
+				}
+			}
+		}
+
+		// Roster View
+		.roster {
+			color: var(--text-main);
+
+			.roster-card,
+			.roster-item,
+			.character-card {
+				background: var(--bg-surface-card);
+				border-color: var(--border-subtle);
+				color: var(--text-main);
+
+				.character-name,
+				.roster-name {
+					color: var(--text-main);
+				}
+
+				.character-game,
+				.roster-sub {
+					color: var(--text-secondary);
+				}
+			}
+		}
+	}
+}
+
 
 
 

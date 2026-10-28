@@ -3387,9 +3387,9 @@ body:has(.character-sheet.submode-print) .main {
 		position: sticky;
 		top: calc(var(--header-size, 48px) + 42px);
 		z-index: calc(var(--z-frame, 10) + 20);
-		background: rgba(248, 250, 252, 0.92);
+		background: var(--bg-sticky-glass, rgba(248, 250, 252, 0.92));
 		backdrop-filter: blur(8px);
-		border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+		border-bottom: 1px solid var(--border-subtle, rgba(15, 23, 42, 0.08));
 		scrollbar-width: none;
 
 		&::-webkit-scrollbar {
@@ -3402,9 +3402,9 @@ body:has(.character-sheet.submode-print) .main {
 			gap: 0.35rem;
 			flex: 0 0 auto;
 			white-space: nowrap;
-			border: 1px solid #cbd5e1;
-			background: #ffffff;
-			color: #475569;
+			border: 1px solid var(--border-subtle, #cbd5e1);
+			background: var(--bg-surface-elevated, #ffffff);
+			color: var(--text-secondary, #475569);
 			padding: 0.35rem 0.8rem;
 			border-radius: 999px;
 			font-family: var(--font-heading, sans-serif);
@@ -3426,7 +3426,7 @@ body:has(.character-sheet.submode-print) .main {
 				border-style: dashed;
 				border-color: var(--color-interactive, #2563eb);
 				color: var(--color-interactive, #2563eb);
-				background: rgba(37, 99, 235, 0.06);
+				background: rgba(37, 99, 235, 0.08);
 			}
 		}
 
@@ -3514,7 +3514,7 @@ body:has(.character-sheet.submode-print) .main {
 			gap: 0.3rem;
 			overflow-x: auto;
 			padding: 0.35rem 0.5rem;
-			background: rgba(255, 255, 255, 0.94);
+			background: var(--bg-sticky-glass, rgba(255, 255, 255, 0.94));
 			backdrop-filter: blur(6px);
 			border-radius: 10px;
 			box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
@@ -3527,9 +3527,9 @@ body:has(.character-sheet.submode-print) .main {
 			.substack-pill {
 				flex: 0 0 auto;
 				white-space: nowrap;
-				border: 1px solid #e2e8f0;
-				background: #f8fafc;
-				color: #334155;
+				border: 1px solid var(--border-subtle, #e2e8f0);
+				background: var(--bg-surface-elevated, #f8fafc);
+				color: var(--text-secondary, #334155);
 				padding: 0.22rem 0.6rem;
 				border-radius: 999px;
 				font-size: 0.68rem;
@@ -3538,8 +3538,8 @@ body:has(.character-sheet.submode-print) .main {
 
 				&:hover,
 				&:active {
-					background: #e2e8f0;
-					color: #0f172a;
+					background: var(--bg-surface-muted, #e2e8f0);
+					color: var(--text-main, #0f172a);
 				}
 			}
 		}
@@ -3820,3 +3820,251 @@ body:has(.character-sheet.submode-print) .main {
 	flex-wrap: wrap;
 	min-width: 0;
 }
+
+// LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only)
+@media screen {
+	[data-theme="dark"],
+	.theme-dark {
+		.character-sheet.spotlight-style:not(.submode-print),
+		.character-sheet:not(.submode-print) {
+			// Name & Header Block
+			.page-header-inner.spotlight-header-card {
+				background: var(--bg-surface-card) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-main) !important;
+
+				.spotlight-header-meta-box,
+				.spotlight-header-desc-box {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+
+					.spotlight-cell-label {
+						color: var(--text-secondary) !important;
+					}
+
+					.spotlight-cell-sublabel {
+						color: var(--text-muted) !important;
+					}
+
+					.name-content,
+					.desc-content,
+					.spotlight-nickname-val,
+					.spotlight-pronoun-val {
+						color: var(--text-main) !important;
+
+						&.placeholder-dim {
+							color: var(--text-muted) !important;
+						}
+					}
+
+					.spotlight-blank-line,
+					.desc-blank-line,
+					.spotlight-meta-divider {
+						border-color: var(--border-subtle) !important;
+					}
+				}
+
+				.spotlight-header-portrait-box {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+
+					.portrait-small-placeholder {
+						color: var(--text-muted) !important;
+					}
+
+					.portrait-placeholder-logo {
+						filter: invert(0.85);
+					}
+				}
+			}
+
+			// Trait Sets & Inner Boxes
+			.trait-set {
+				background: var(--bg-surface-card) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-main) !important;
+
+				.trait-set-header {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+				}
+
+				.trait-statement-box {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+				}
+
+				.statement-pip:not(.questioned) {
+					background-color: transparent !important;
+					border-color: var(--border-strong) !important;
+				}
+
+				.trait-asset-box,
+				.trait-asset-card {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+				}
+			}
+
+			// Trait Names, Titles, and Labels across all Set Styles
+			.trait-title {
+				color: var(--text-main) !important;
+			}
+
+			.trait-name,
+			.trait-title-name,
+			.ladder-name,
+			.subtrait-name,
+			.die-row-name,
+			.branch-slot-name,
+			.dice-ladder-col-header,
+			.dice-ladder-step-name {
+				color: var(--text-main) !important;
+
+				.trait-name-hint {
+					color: var(--text-muted) !important;
+				}
+			}
+
+			// Distinctions Bordered Title (Heritage, Destiny, Camp Reputation)
+			.trait-set-style-sfx-rows {
+				.trait .trait-title {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+
+					.trait-name,
+					.trait-title-name {
+						color: var(--text-main) !important;
+					}
+				}
+			}
+
+			// Distinction SFX Slot & Badges
+			.distinction-sfx-slot {
+				.distinction-sfx-badge {
+					background: var(--bg-surface-muted) !important;
+					border: 1px solid var(--border-strong) !important;
+					color: var(--text-main) !important;
+				}
+
+				.distinction-sfx-line {
+					color: var(--text-secondary) !important;
+
+					.sfx-bullet {
+						color: var(--text-secondary) !important;
+					}
+
+					.sfx-prefix {
+						color: var(--text-main) !important;
+					}
+
+					.sfx-content {
+						color: var(--text-secondary) !important;
+					}
+
+					.sfx-blank-line {
+						border-color: var(--border-subtle) !important;
+					}
+
+					.sfx-placeholder-hint {
+						color: var(--text-muted) !important;
+					}
+				}
+			}
+
+			// Shared Hinder Block
+			.distinctions-shared-hinder {
+				border-bottom-color: var(--border-subtle) !important;
+				color: var(--text-secondary) !important;
+
+				.hinder-rule-line {
+					.hinder-bullet {
+						color: var(--text-secondary) !important;
+					}
+
+					.hinder-label {
+						color: var(--text-main) !important;
+					}
+
+					.hinder-text {
+						color: var(--text-secondary) !important;
+					}
+				}
+			}
+
+			// General SFX lists
+			.trait-sfx {
+				li {
+					color: var(--text-secondary) !important;
+
+					.trait-sfx-name {
+						background: var(--bg-surface-elevated) !important;
+						border: 1px solid var(--border-strong) !important;
+						color: var(--text-main) !important;
+					}
+				}
+			}
+
+			// Trait Descriptions & Body Text
+			.trait-description {
+				color: var(--text-secondary) !important;
+
+				&.placeholder-dim,
+				.placeholder-dim {
+					color: var(--text-muted) !important;
+				}
+			}
+
+			.spotlight-desc-textarea {
+				background: var(--bg-surface-elevated) !important;
+				color: var(--text-main) !important;
+				border-color: var(--border-subtle) !important;
+
+				&::placeholder {
+					color: var(--text-muted) !important;
+				}
+			}
+
+			// Paired Slots (Standing, Relationships)
+			.trait-paired-slots {
+				.paired-slot-name-box {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-main) !important;
+
+					.paired-slot-placeholder-hint {
+						color: var(--text-muted) !important;
+					}
+
+					.paired-slot-blank-line {
+						border-color: var(--border-subtle) !important;
+					}
+				}
+
+				.paired-slot-statement-box {
+					background: var(--bg-surface-elevated) !important;
+					border-color: var(--border-strong) !important;
+					color: var(--text-secondary) !important;
+				}
+
+				.paired-slot-sub-label {
+					color: var(--text-secondary) !important;
+				}
+			}
+
+			// Write-in blank lines & dividers
+			.die-blank-line,
+			.trait-blank-line,
+			.desc-blank-line {
+				border-color: var(--border-subtle) !important;
+			}
+		}
+	}
+}
+

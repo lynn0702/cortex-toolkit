@@ -6,12 +6,14 @@ defineProps<{
 	canPlay?: boolean;
 	canUndo: boolean;
 	canRedo: boolean;
+	isDarkMode?: boolean;
 }>();
 
 const emit = defineEmits<{
 	( e: 'navigate', mode: string, submode: string | null ): void;
 	( e: 'undo' ): void;
 	( e: 'redo' ): void;
+	( e: 'toggleTheme' ): void;
 }>();
 </script>
 
@@ -28,6 +30,17 @@ const emit = defineEmits<{
 					<li v-if="mode === 'character' && submode === 'edit'" @click.stop="emit('redo')" :class="{ disabled: !canRedo }" title="Redo (Ctrl+Y)"><div><span class="nav-icon"><i class="fas fa-redo"></i></span> <span class="nav-label">Redo</span></div></li>
 				</ul>
 			</nav>
+			<div class="header-actions">
+				<button
+					type="button"
+					class="header-btn-theme"
+					@click.stop="emit('toggleTheme')"
+					:aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+					:title="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+				>
+					<i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+				</button>
+			</div>
 		</div>
 	</header>
 </template>

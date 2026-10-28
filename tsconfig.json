@@ -8,7 +8,14 @@
 		"noEmit": true,
 		"allowImportingTsExtensions": true,
 		"allowJs": true,
-		"types": []
+		"types": [],
+		"plugins": [
+			{
+				"name": "@vue/typescript-plugin",
+				"location": "@vue/language-core",
+				"languages": ["vue"]
+			}
+		]
 	},
 	"include": ["js/**/*.ts", "js/**/*.vue"]
 }

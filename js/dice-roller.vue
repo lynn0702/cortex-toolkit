@@ -628,33 +628,33 @@ defineExpose( {
 						<span class="die-label">d{{ size }}</span>
 					</button>
 				</div>
-				<div class="roller-scale-row" style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
-					<span class="roller-sublabel" style="font-weight: 700; color: #1e293b; font-style: normal; font-size: 0.65rem; text-transform: uppercase;">Scale Die</span>
-					<div style="display: flex; gap: 0.25rem;">
+				<div class="roller-scale-row">
+					<span class="roller-sublabel">Scale Die</span>
+					<div class="roller-scale-btn-group">
 						<button
 							v-for="size in diceSizes"
 							:key="'scale-quick-d' + size"
+							type="button"
 							class="roller-btn-scale-quick"
 							@click="addScaleAdHoc(size)"
 							:title="'Add d' + size + ' Scale Die (Keep 3)'"
-							style="background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px 5px; cursor: pointer; line-height: 1;"
 						>
-							<span class="c" style="color: #1e293b; font-size: 1.3rem; line-height: 1;">{{ getDieDisplayValue(size) }}</span>
+							<span class="c">{{ getDieDisplayValue(size) }}</span>
 						</button>
 					</div>
 				</div>
-				<div class="roller-scale-row" style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
-					<span class="roller-sublabel" style="font-weight: 700; color: #0284c7; font-style: normal; font-size: 0.65rem; text-transform: uppercase;">Separate Die</span>
-					<div style="display: flex; gap: 0.25rem;">
+				<div class="roller-scale-row">
+					<span class="roller-sublabel roller-sublabel-sep">Separate Die</span>
+					<div class="roller-scale-btn-group">
 						<button
 							v-for="size in diceSizes"
 							:key="'res-quick-d' + size"
+							type="button"
 							class="roller-btn-res-quick"
 							@click="addSeparateAdHoc(size)"
 							:title="'Add d' + size + ' Separate Die'"
-							style="background: white; border: 1px solid #bae6fd; border-radius: 4px; padding: 2px 5px; cursor: pointer; line-height: 1;"
 						>
-							<span class="c" style="color: #0284c7; font-size: 1.3rem; line-height: 1;">{{ getDieDisplayValue(size) }}</span>
+							<span class="c">{{ getDieDisplayValue(size) }}</span>
 						</button>
 					</div>
 				</div>
