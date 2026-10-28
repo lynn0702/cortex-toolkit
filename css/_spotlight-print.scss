@@ -3529,7 +3529,7 @@ body:has(.character-sheet.submode-print) .main {
 .trait-parts-inline > .trait-part-name {
 	padding-right: 0.35rem;
 }
-.trait-part-stress-label {
+.trait-part-track-label {
 	text-align: center;
 	align-self: center;
 	display: flex;
@@ -3575,7 +3575,7 @@ body:has(.character-sheet.submode-print) .main {
 	flex: 0 0 auto;
 	min-width: 0;
 }
-/* Parts cells: dice wrap inside rating/stress cells instead of spilling
+/* Parts cells: dice wrap inside rating/track cells instead of spilling
    over neighbouring cells. Single-line rows render unchanged. The
    .character-sheet prefix outranks the dual-mode .trait-value rule
    (inline-flex, no shrink) so narrow tracks actually wrap. */
@@ -3588,23 +3588,27 @@ body:has(.character-sheet.submode-print) .main {
 	row-gap: 0.3rem;
 	align-items: center;
 }
-.character-sheet .trait-parts .trait-part-stress {
+.character-sheet .trait-parts .trait-part-track {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	width: 100%;
 }
 .character-sheet .trait-parts .attached-stress-track {
+	--face-size: 0.95rem;
+	--track-gap: 0.1rem;
 	display: flex;
 	flex-wrap: wrap;
-	column-gap: 0.1rem;
+	column-gap: var(--track-gap);
 	row-gap: 0.3rem;
 	align-items: center;
 	justify-content: center;
-	width: 100%;
+	width: calc(var(--track-faces, 5) * var(--face-size) + (var(--track-faces, 5) - 1) * var(--track-gap));
+	max-width: 100%;
 
 	.attached-stress-die {
-		font-size: 0.95rem;
+		font-size: var(--face-size);
+		width: var(--face-size);
 		cursor: pointer;
 		line-height: 1;
 		user-select: none;
@@ -3615,13 +3619,13 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 }
-.character-sheet .trait-parts-inline > .trait-part-stress {
+.character-sheet .trait-parts-inline > .trait-part-track {
 	justify-content: flex-start;
 	width: auto;
 }
 .character-sheet .trait-parts-inline .attached-stress-track {
 	justify-content: flex-start;
-	width: auto;
+	width: calc(var(--track-faces, 5) * var(--face-size) + (var(--track-faces, 5) - 1) * var(--track-gap));
 }
 /* Rating dice hug the name side: any residual spill goes right, away
    from the trait name, matching legacy row order. */

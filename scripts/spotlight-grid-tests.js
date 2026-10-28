@@ -115,29 +115,29 @@ const ctk = (o) => ({ view: o });
 
 // ---- buildParts: additive composition
 {
-  const inline = G.buildParts({ rating: 'inline', ratingDice: 5, stressDice: 0, description: false, sfx: false, subtraits: false });
+  const inline = G.buildParts({ rating: 'inline', ratingDice: 5, trackDice: 0, description: false, block: false, subtraits: false });
   ok(inline.name.width === '70%' && inline.rating.width === '30%' && inline.rating.top === 0, 'inline row', inline);
-  const stress = G.buildParts({ rating: 'inline', ratingDice: 5, stressDice: 5, description: false, sfx: false, subtraits: false });
-  ok(stress.name.width === '30%' && stress.rating.width === '30%' && stress.stressLabel.width === '13%' && stress.stress.width === '27%', 'four columns', stress);
-  ok(stress.stress.left === '73%', 'stress starts at 73', stress.stress.left);
-  const below = G.buildParts({ rating: 'below', ratingDice: 5, stressDice: 0, description: true, sfx: false, subtraits: false });
+  const track = G.buildParts({ rating: 'inline', ratingDice: 5, trackDice: 5, description: false, block: false, subtraits: false });
+  ok(track.name.width === '30%' && track.rating.width === '30%' && track.trackLabel.width === '13%' && track.track.width === '27%', 'four columns', track);
+  ok(track.track.left === '73%', 'track starts at 73', track.track.left);
+  const below = G.buildParts({ rating: 'below', ratingDice: 5, trackDice: 0, description: true, block: false, subtraits: false });
   ok(below.name.top === 0 && below.rating.top === 1 && below.description.top === 2, 'below adds rows, description after', below);
-  const above = G.buildParts({ rating: 'above', ratingDice: 4, stressDice: 0, description: false, sfx: true, subtraits: false });
-  ok(above.rating.top === 0 && above.name.top === 1 && above.sfx.top === 2, 'above pushes name down, sfx after', above);
-  const none = G.buildParts({ rating: 'none', ratingDice: 0, stressDice: 0, description: false, sfx: false, subtraits: false });
+  const above = G.buildParts({ rating: 'above', ratingDice: 4, trackDice: 0, description: false, block: true, subtraits: false });
+  ok(above.rating.top === 0 && above.name.top === 1 && above.block.top === 2, 'above pushes name down, block after', above);
+  const none = G.buildParts({ rating: 'none', ratingDice: 0, trackDice: 0, description: false, block: false, subtraits: false });
   ok(none.rating === undefined && none.name.width === '100%', 'none has no rating cell', none);
-  const stacked = G.buildParts({ rating: 'below', ratingDice: 5, stressDice: 5, description: false, sfx: false, subtraits: false });
-  ok(stacked.stressLabel.top === 2 && stacked.stress.top === 3, 'stacked stress rows below', stacked);
+  const stacked = G.buildParts({ rating: 'below', ratingDice: 5, trackDice: 5, description: false, block: false, subtraits: false });
+  ok(stacked.trackLabel.top === 2 && stacked.track.top === 3, 'stacked track rows below', stacked);
 }
 
 // ---- partsGridStyle: data-exact tracks plus the min-content name floor
 {
-  const grid = G.partsGrid({ name: { left: '0%', top: 0, width: '30%', height: 1 }, rating: { left: '30%', top: 0, width: '30%', height: 1 }, stressLabel: { left: '60%', top: 0, width: '13%', height: 1 }, stress: { left: '73%', top: 0, width: '27%', height: 1 } });
+  const grid = G.partsGrid({ name: { left: '0%', top: 0, width: '30%', height: 1 }, rating: { left: '30%', top: 0, width: '30%', height: 1 }, trackLabel: { left: '60%', top: 0, width: '13%', height: 1 }, track: { left: '73%', top: 0, width: '27%', height: 1 } });
   ok(G.partsGridStyle(grid) === 'grid-template-columns: 30% 30% 13% 27%;', 'plain percent tracks', G.partsGridStyle(grid));
   ok(G.partsGridStyle(grid, true) === 'grid-template-columns: minmax(min-content, 1fr) 30% 13% 27%;', 'name track floors at min-content', G.partsGridStyle(grid, true));
   const stacked = G.partsGrid({ name: { left: '0%', top: 0, width: '100%', height: 1 }, rating: { left: '0%', top: 1, width: '100%', height: 1 } });
   ok(G.partsGridStyle(stacked, true) === 'grid-template-columns: 100%;', 'single-track rows unaffected', G.partsGridStyle(stacked, true));
-  ok(G.partCellStyle(grid, 'stress') === 'grid-column: 4 / span 1; grid-row: 1 / span 1; min-width: 0;', 'part cell lines', G.partCellStyle(grid, 'stress'));
+  ok(G.partCellStyle(grid, 'track') === 'grid-column: 4 / span 1; grid-row: 1 / span 1; min-width: 0;', 'part cell lines', G.partCellStyle(grid, 'track'));
 }
 
 console.log(`spotlight-grid-tests: ${pass} passed, ${fail} failed`);

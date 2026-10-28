@@ -225,9 +225,9 @@ export const cortexFunctions = {
 		const view = getView( traitSetArg );
 		const parts = view?.parts;
 		if ( parts && typeof parts === 'object' && !Array.isArray( parts ) ) {
-			if ( ( parts as any ).stress ) return true;
+			if ( ( parts as any ).track ) return true;
 		}
-		return Boolean( view?.attachedStress?.enabled );
+		return false;
 	},
 
 	getAttachedStressLabel: function( traitSetArg: any ): string {
@@ -235,16 +235,41 @@ export const cortexFunctions = {
 		const view = getView( traitSetArg );
 		const labels = view?.labels;
 		if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
-		return view?.attachedStress?.label || 'Stress';
+		return 'Stress';
 	},
 
 	getAttachedStressScale: function( traitSetArg: any ): number[] {
 		if ( !traitSetArg ) return [ 4, 6, 8, 10, 12 ];
-		const view = getView( traitSetArg );
-		const legacy = view?.attachedStress;
-		if ( legacy && typeof legacy === 'object' ) {
-			if ( Array.isArray( legacy.scale ) && legacy.scale.length ) return legacy.scale;
-			if ( Array.isArray( legacy.ratingScale ) && legacy.ratingScale.length ) return legacy.ratingScale;
+		const label = this.getAttachedStressLabel( traitSetArg ).toLowerCase();
+		const rawTraits = traitSetArg?.traits;
+		const traits = Array.isArray( rawTraits )
+			? rawTraits
+			: ( rawTraits && typeof rawTraits === 'object' ? Object.values( rawTraits ) : [] );
+		for ( const tr of traits ) {
+			if ( !tr || typeof tr !== 'object' ) continue;
+			const rawSubs = ( tr as any ).traits;
+			if ( Array.isArray( rawSubs ) ) {
+				for ( const st of rawSubs ) {
+					if ( !st || typeof st !== 'object' ) continue;
+					if ( typeof st.name === 'string' && st.name.toLowerCase() === label ) {
+						const r = st.rating;
+						if ( r && typeof r === 'object' && Array.isArray( r.range ) && r.range.length ) {
+							return r.range.slice();
+						}
+					}
+				}
+			} else if ( rawSubs && typeof rawSubs === 'object' ) {
+				for ( const [ key, st ] of Object.entries( rawSubs ) ) {
+					if ( !st || typeof st !== 'object' ) continue;
+					const name = ( ( st as any ).name || key );
+					if ( typeof name === 'string' && name.toLowerCase() === label ) {
+						const r = ( st as any ).rating;
+						if ( r && typeof r === 'object' && Array.isArray( r.range ) && r.range.length ) {
+							return r.range.slice();
+						}
+					}
+				}
+			}
 		}
 		return [ 4, 6, 8, 10, 12 ];
 	},

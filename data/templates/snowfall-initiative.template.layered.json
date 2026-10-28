@@ -358,13 +358,13 @@
               "width": "30%",
               "height": 1
             },
-            "stressLabel": {
+            "trackLabel": {
               "left": "60%",
               "top": 0,
               "width": "13%",
               "height": 1
             },
-            "stress": {
+            "track": {
               "left": "73%",
               "top": 0,
               "width": "27%",

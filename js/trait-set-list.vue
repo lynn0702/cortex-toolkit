@@ -171,13 +171,13 @@ const {
 								<span v-if="shouldShowOut(traitSet)" :class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isStressOut(item.trait, traitSet) }" @click.stop="!printBlank && !item.isPlaceholder ? handleStressOutClick(s, item.originalIndex) : null" title="Out">{{ getTraitSetLabel(traitSet, 'out') }}</span>
 							</div>
 						</div>
-						<!-- STRESS LABEL -->
-						<div v-if="partsGridFor(traitSet).cells.stressLabel" class="trait-part trait-part-stress-label" :style="partCellStyle(partsGridFor(traitSet), 'stressLabel')">
+						<!-- TRACK LABEL -->
+						<div v-if="partsGridFor(traitSet).cells.trackLabel" class="trait-part trait-part-track-label" :style="partCellStyle(partsGridFor(traitSet), 'trackLabel')">
 							<div class="attached-stress-divider" v-if="!isPartsInline(traitSet)"></div>
 							<span class="attached-stress-label">{{ getAttachedStressLabel(traitSet) }}</span>
 						</div>
-						<!-- STRESS TRACK -->
-						<div v-if="partsGridFor(traitSet).cells.stress" class="trait-part trait-part-stress" :style="partCellStyle(partsGridFor(traitSet), 'stress')">
+						<!-- TRACK CELLS -->
+						<div v-if="partsGridFor(traitSet).cells.track" class="trait-part trait-part-track" :style="partCellStyle(partsGridFor(traitSet), 'track') + '; --track-faces: ' + getAttachedStressScale(traitSet).length">
 							<div class="attached-stress-track">
 								<span
 									v-for="size in getAttachedStressScale(traitSet)"
@@ -216,8 +216,8 @@ const {
 								<div class="desc-blank-line" v-else></div>
 							</div>
 						</div>
-						<!-- SFX -->
-						<div v-if="partsGridFor(traitSet).cells.sfx && !getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-sfx" :style="partCellStyle(partsGridFor(traitSet), 'sfx')">
+						<!-- BLOCK (SFX) -->
+						<div v-if="partsGridFor(traitSet).cells.block && !getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-block" :style="partCellStyle(partsGridFor(traitSet), 'block')">
 							<ul class="trait-sfx">
 								<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
 									<template v-if="sfx.isHinder">

@@ -131,7 +131,6 @@ function ok(cond, name, extra) {
   const str = { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } };
   ok(hasOutRange(str, [{ view: { outIndicator: true } }]) === true, 'outIndicator puts out in range');
   ok(hasOutRange(str, [{ view: { stressConfig: { includeOut: true } } }]) === true, 'legacy includeOut puts out in range');
-  ok(hasOutRange(str, [{ view: { attachedStress: { includeOut: true } } }]) === true, 'attached includeOut puts out in range');
   ok(hasOutRange(str, [{ view: {} }]) === false, 'flags default off');
   ok(rangeTop(plain) === 12, 'standard top is d12');
   ok(rangeTop({ rating: { type: 'Die', value: [8], range: [6, 8, 10] } }) === 10, 'custom top is the max step');

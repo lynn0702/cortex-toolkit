@@ -194,21 +194,17 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		const view = getView( traitSet.value ) || {};
 		const scale = Array.isArray( ( view as any ).ratingScale ) && ( view as any ).ratingScale.length
 			? ( view as any ).ratingScale : [ 4, 6, 8, 10, 12 ];
-		const legacyStress = ( view as any ).attachedStress;
-		const stressOn = partsHaveStress() || Boolean( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled );
-		const sScale = ( legacyStress && typeof legacyStress === 'object' &&
-			( ( Array.isArray( legacyStress.scale ) && legacyStress.scale.length && legacyStress.scale ) ||
-			( Array.isArray( legacyStress.ratingScale ) && legacyStress.ratingScale.length && legacyStress.ratingScale ) ) ) ||
-			[ 4, 6, 8, 10, 12 ];
+		const trackOn = partsHaveTrack();
+		const tScale = cortexFunctions.getAttachedStressScale( traitSet.value );
 		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
 		const statement = Boolean( ( traitSet.value as any )?.statement ?? ( view as any ).statement );
 		const features = ( view as any ).features || {};
 		return {
 			rating,
 			ratingDice: scale.length,
-			stressDice: stressOn ? sScale.length : 0,
+			trackDice: trackOn ? tScale.length : 0,
 			description: Boolean( features.description ) && !statement && rating !== 'above',
-			sfx: Boolean( features.sfx ),
+			block: Boolean( features.sfx ),
 			subtraits: Boolean( features.subtraits ),
 		};
 	}
@@ -626,27 +622,25 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		set: ( val: number ) => { setCustomProperty( 'traitColumns', parseInt( String( val ), 10 ) || 1 ); }
 	});
 
-	// Rebuild this set's trait-part layout, preserving its stress setup,
+	// Rebuild this set's trait-part layout, preserving its track setup,
 	// dice counts, features, and statement mode. Vertical ladders keep
 	// the legacy flag (no parts form); bespoke bodies are left alone.
-	// Pass stress true/false to force the track on/off (the toggle);
+	// Pass track true/false to force the track on/off (the toggle);
 	// otherwise the current setup carries over.
-	function rebuildParts( rating: 'inline' | 'above' | 'below' | 'none', stress?: boolean ) {
+	function rebuildParts( rating: 'inline' | 'above' | 'below' | 'none', track?: boolean ) {
 		const view = ensureView( traitSet.value );
-		const legacyStress = view.attachedStress;
 		const spec = partsSpec();
-		if ( stress === true && !spec.stressDice ) spec.stressDice = 5;
-		if ( stress === false ) spec.stressDice = 0;
+		if ( track === true && !spec.trackDice ) spec.trackDice = 5;
+		if ( track === false ) spec.trackDice = 0;
 		view.parts = buildParts( { ...spec, rating } );
 		if ( traitSet.value && typeof traitSet.value === 'object' ) delete ( traitSet.value as any ).ratingPosition;
 		delete view.ratingPosition;
-		if ( !legacyStress ) delete view.attachedStress;
 		updateCharacter( props.character );
 	}
 
-	function partsHaveStress() {
+	function partsHaveTrack() {
 		const parts = getView( traitSet.value )?.parts;
-		return Boolean( parts && typeof parts === 'object' && ( parts as Record<string, unknown> ).stress );
+		return Boolean( parts && typeof parts === 'object' && ( parts as Record<string, unknown> ).track );
 	}
 
 	function currentRatingPosition(): 'inline' | 'above' | 'below' | 'none' | 'vertical' {
@@ -666,30 +660,18 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 	}
 
 	const hasAttachedStress = computed({
-		get: () => {
-			if ( partsHaveStress() ) return true;
-			return Boolean( getView( traitSet.value )?.attachedStress?.enabled );
-		},
+		get: () => partsHaveTrack(),
 		set: ( val: boolean ) => {
-			const view = ensureView( traitSet.value );
-			const legacy = view.attachedStress;
-			if ( legacy && typeof legacy === 'object' && ( ( legacy as any ).scale || ( legacy as any ).ratingScale ) ) {
-				// Customized stress tracks stay legacy; only the switch flips.
-				( legacy as any ).enabled = Boolean( val );
+			if ( !val ) {
+				const parts = getView( traitSet.value )?.parts;
+				if ( parts && typeof parts === 'object' ) {
+					delete ( parts as Record<string, unknown> ).trackLabel;
+					delete ( parts as Record<string, unknown> ).track;
+				}
 				updateCharacter( props.character );
 				return;
 			}
-		if ( !val ) {
-			if ( legacy && typeof legacy === 'object' ) ( legacy as any ).enabled = false;
-			const parts = getView( traitSet.value )?.parts;
-			if ( parts && typeof parts === 'object' ) {
-				delete ( parts as Record<string, unknown> ).stressLabel;
-				delete ( parts as Record<string, unknown> ).stress;
-			}
-			updateCharacter( props.character );
-			return;
-		}
-		rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none', true );
+			rebuildParts( currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none', true );
 		}
 	});
 
@@ -697,20 +679,14 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ): Trai
 		get: () => {
 			const labels = getView( traitSet.value )?.labels;
 			if ( labels && typeof labels.stress === 'string' && labels.stress.length ) return labels.stress;
-			return getView( traitSet.value )?.attachedStress?.label ?? 'Stress';
+			return 'Stress';
 		},
 		set: ( val: string ) => {
 			const view = ensureView( traitSet.value );
-			const prev = getView( traitSet.value )?.labels?.stress
-				|| ( ( view.attachedStress as any )?.label ?? 'Stress' );
-			const legacy = view.attachedStress;
-			if ( legacy && typeof legacy === 'object' && ( ( legacy as any ).scale || ( legacy as any ).ratingScale ) ) {
-				( legacy as any ).label = val;
-			} else {
-				if ( !view.labels || typeof view.labels !== 'object' ) view.labels = {};
-				if ( typeof val === 'string' && val.length ) view.labels.stress = val;
-				else delete view.labels.stress;
-			}
+			const prev = getView( traitSet.value )?.labels?.stress ?? 'Stress';
+			if ( !view.labels || typeof view.labels !== 'object' ) view.labels = {};
+			if ( typeof val === 'string' && val.length ) view.labels.stress = val;
+			else delete view.labels.stress;
 			// Keep stress companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
 			const next = ( typeof val === 'string' && val.length ) ? val : 'Stress';

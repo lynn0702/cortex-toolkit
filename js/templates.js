@@ -1447,7 +1447,7 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               },
-              "sfx": {
+              "block": {
                 "left": "0%",
                 "top": 2,
                 "width": "100%",
@@ -2109,13 +2109,13 @@ const cortexSpotlightTemplates = [
                 "width": "18%",
                 "height": 1
               },
-              "stressLabel": {
+              "trackLabel": {
                 "left": "60%",
                 "top": 0,
                 "width": "13%",
                 "height": 1
               },
-              "stress": {
+              "track": {
                 "left": "73%",
                 "top": 0,
                 "width": "27%",
@@ -2699,13 +2699,13 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               },
-              "stressLabel": {
+              "trackLabel": {
                 "left": "0%",
                 "top": 2,
                 "width": "100%",
                 "height": 1
               },
-              "stress": {
+              "track": {
                 "left": "0%",
                 "top": 3,
                 "width": "100%",
@@ -3352,13 +3352,13 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               },
-              "stressLabel": {
+              "trackLabel": {
                 "left": "0%",
                 "top": 2,
                 "width": "100%",
                 "height": 1
               },
-              "stress": {
+              "track": {
                 "left": "0%",
                 "top": 3,
                 "width": "100%",
@@ -4966,7 +4966,7 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               },
-              "sfx": {
+              "block": {
                 "left": "0%",
                 "top": 3,
                 "width": "100%",
@@ -7561,13 +7561,13 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               },
-              "stressLabel": {
+              "trackLabel": {
                 "left": "60%",
                 "top": 0,
                 "width": "13%",
                 "height": 1
               },
-              "stress": {
+              "track": {
                 "left": "73%",
                 "top": 0,
                 "width": "27%",
@@ -12518,13 +12518,13 @@ const cortexSpotlightTemplates = [
                 "width": "30%",
                 "height": 1
               },
-              "stressLabel": {
+              "trackLabel": {
                 "left": "60%",
                 "top": 0,
                 "width": "13%",
                 "height": 1
               },
-              "stress": {
+              "track": {
                 "left": "73%",
                 "top": 0,
                 "width": "27%",
@@ -13423,7 +13423,7 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               },
-              "sfx": {
+              "block": {
                 "left": "0%",
                 "top": 2,
                 "width": "100%",
@@ -16849,7 +16849,6 @@ const cortexSpotlightTemplates = [
           "id": "titan-attributes-stress",
           "name": "Attributes",
           "description": "Heavy mechanized systems with stress tracks",
-          "ratingPosition": "below",
           "view": {
             "features": {
               "description": false,
@@ -16861,30 +16860,12 @@ const cortexSpotlightTemplates = [
               "header": "default",
               "body": "default"
             },
-            "ratingPosition": "below",
             "ratingScale": [
               6,
               8,
               10,
               12
             ],
-            "attachedStress": {
-              "enabled": true,
-              "label": "STRESS",
-              "ratingScale": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "scale": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "includeOut": false
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -16894,6 +16875,35 @@ const cortexSpotlightTemplates = [
               "top": 0,
               "width": "28%",
               "height": 1
+            },
+            "labels": {
+              "stress": "STRESS"
+            },
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "rating": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              },
+              "trackLabel": {
+                "left": "0%",
+                "top": 2,
+                "width": "100%",
+                "height": 1
+              },
+              "track": {
+                "left": "0%",
+                "top": 3,
+                "width": "100%",
+                "height": 1
+              }
             }
           },
           "noun": "Attribute",
@@ -16901,15 +16911,60 @@ const cortexSpotlightTemplates = [
           "traits": [
             {
               "name": "Prowess",
-              "traits": []
+              "traits": [
+                {
+                  "name": "STRESS",
+                  "rating": {
+                    "type": "Die",
+                    "value": [],
+                    "range": [
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             },
             {
               "name": "Control",
-              "traits": []
+              "traits": [
+                {
+                  "name": "STRESS",
+                  "rating": {
+                    "type": "Die",
+                    "value": [],
+                    "range": [
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             },
             {
               "name": "Renown",
-              "traits": []
+              "traits": [
+                {
+                  "name": "STRESS",
+                  "rating": {
+                    "type": "Die",
+                    "value": [],
+                    "range": [
+                      6,
+                      8,
+                      10,
+                      12
+                    ]
+                  },
+                  "traits": []
+                }
+              ]
             }
           ]
         },
@@ -18084,7 +18139,7 @@ const cortexSpotlightTemplates = [
                 "width": "100%",
                 "height": 1
               },
-              "sfx": {
+              "block": {
                 "left": "0%",
                 "top": 2,
                 "width": "100%",

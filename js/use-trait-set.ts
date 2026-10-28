@@ -323,7 +323,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 		if ( tsBody === 'attributes' || tsBody === 'stress' ||
 		     cortexFunctions.isFixedNameSet( tsName ) ||
 		     ( getView( traitSetArg )?.traitColumns ?? 0 ) > 1 ||
-		     Boolean( getView( traitSetArg )?.attachedStress?.enabled ) ) {
+		     cortexFunctions.hasAttachedStress( traitSetArg ) ) {
 			return true;
 		}
 		const spotlightId = getView( props.character )?.spotlight;
@@ -663,7 +663,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ): TraitSetApi {
 	}
 
 	function shouldShowAttachedStressOut( traitSetArg: TraitSet ) {
-		return Boolean( getView( traitSetArg )?.attachedStress?.includeOut );
+		return Boolean( getView( traitSetArg )?.outIndicator === true );
 	}
 
 	function isAttachedStressOut( trait: Trait, traitSetArg?: TraitSet ) {

@@ -155,7 +155,7 @@
               "width": "100%",
               "height": 1
             },
-            "sfx": {
+            "block": {
               "left": "0%",
               "top": 2,
               "width": "100%",

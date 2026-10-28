@@ -178,7 +178,7 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   // Below + inline stress become parts; flags removed.
   ok(byName('D').view.parts && byName('D').view.parts.name.top === 0 && byName('D').view.parts.rating.top === 1, 'below becomes parts rows', byName('D').view.parts);
   ok(byName('D').view.ratingPosition === undefined, 'ratingPosition removed');
-  ok(byName('E').view.parts && byName('E').view.parts.stress && byName('E').view.parts.stressLabel, 'stress becomes cells', byName('E').view.parts);
+  ok(byName('E').view.parts && byName('E').view.parts.track && byName('E').view.parts.trackLabel, 'stress becomes track cells', byName('E').view.parts);
   ok(byName('E').view.attachedStress === undefined, 'attachedStress removed');
   // Vertical ladders keep the legacy flag.
   ok(byName('F').view.parts === undefined && byName('F').view.ratingPosition === 'vertical', 'vertical stays legacy');
@@ -437,6 +437,99 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   const before = JSON.stringify(again.data);
   M.normalizeView(again.data);
   ok(JSON.stringify(again.data) === before, 're-normalizing migrated layered data is a no-op');
+}
+
+// ---- 15. Attached stress dissolve & layout area rename (Phase 2, item 3)
+{
+  // 15a. Custom-scale migration seeds value-less companions with the scale and sets labels.stress
+  const customScaleSet = {
+    name: 'Attributes',
+    ratingPosition: 'below',
+    view: {
+      ratingScale: [6, 8, 10, 12],
+      attachedStress: {
+        enabled: true,
+        label: 'STRESS',
+        ratingScale: [6, 8, 10, 12],
+        scale: [6, 8, 10, 12],
+        includeOut: false,
+      },
+    },
+    traits: [
+      { name: 'Prowess', traits: [] },
+      { name: 'Control', traits: [] },
+      { name: 'Renown', traits: [] },
+    ],
+  };
+  const resCustom = M.migrateSetParts(customScaleSet, customScaleSet.view);
+  ok(resCustom === 'parts', 'custom scale migrates to parts instead of bailing to legacy');
+  ok(customScaleSet.view.attachedStress === undefined, 'declaration removed');
+  ok(customScaleSet.view.labels && customScaleSet.view.labels.stress === 'STRESS', 'label migrated to labels.stress');
+  ok(customScaleSet.view.parts && customScaleSet.view.parts.track && customScaleSet.view.parts.trackLabel, 'track parts created');
+  ok(customScaleSet.traits[0].traits.length === 1, 'Prowess has 1 companion seeded');
+  const seeded = customScaleSet.traits[0].traits[0];
+  ok(seeded.name === 'STRESS' && seeded.rating.type === 'Die' && seeded.rating.value.length === 0, 'value-less companion seeded');
+  ok(JSON.stringify(seeded.rating.range) === '[6,8,10,12]', 'companion carries custom scale range');
+  ok(customScaleSet.traits[1].traits.length === 1 && customScaleSet.traits[2].traits.length === 1, 'all traits in set seeded');
+
+  // 15b. Default-scale migration seeds nothing
+  const defaultScaleSet = {
+    name: 'Skills',
+    ratingPosition: 'inline',
+    view: {
+      ratingScale: [4, 6, 8, 10, 12],
+      attachedStress: {
+        enabled: true,
+        label: 'Stress',
+        scale: [4, 6, 8, 10, 12],
+      },
+    },
+    traits: [
+      { name: 'Fight', traits: [] },
+      { name: 'Sneak', traits: [] },
+    ],
+  };
+  const resDefault = M.migrateSetParts(defaultScaleSet, defaultScaleSet.view);
+  ok(resDefault === 'parts', 'default scale migrates to parts');
+  ok(defaultScaleSet.view.attachedStress === undefined, 'default declaration removed');
+  ok(defaultScaleSet.view.labels?.stress === undefined, 'default label stays implicit');
+  ok(defaultScaleSet.traits[0].traits.length === 0 && defaultScaleSet.traits[1].traits.length === 0, 'default scale seeds nothing');
+
+  // 15c. includeOut: true migrates to outIndicator: true
+  const includeOutSet = {
+    name: 'Powers',
+    ratingPosition: 'inline',
+    view: {
+      outIndicator: false,
+      attachedStress: {
+        enabled: true,
+        includeOut: true,
+      },
+    },
+    traits: [{ name: 'Flight', traits: [] }],
+  };
+  M.migrateSetParts(includeOutSet, includeOutSet.view);
+  ok(includeOutSet.view.outIndicator === true, 'includeOut: true migrates to outIndicator: true');
+  ok(includeOutSet.view.attachedStress === undefined, 'declaration deleted');
+
+  // 15d. Layered format with non-default scale seeds object-form companions
+  const layeredSet = {
+    name: 'Attributes',
+    view: {
+      attachedStress: {
+        enabled: true,
+        label: 'STRESS',
+        scale: [6, 8, 10, 12],
+      },
+    },
+    traits: {
+      Prowess: {},
+      Control: {},
+    },
+  };
+  M.migrateSetParts(layeredSet, layeredSet.view);
+  ok(layeredSet.traits.Prowess.traits && layeredSet.traits.Prowess.traits.STRESS, 'layered trait received STRESS companion');
+  ok(JSON.stringify(layeredSet.traits.Prowess.traits.STRESS.rating.range) === '[6,8,10,12]', 'layered companion range matches scale');
 }
 
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);

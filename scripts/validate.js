@@ -557,7 +557,7 @@ function checkTemplateFile(where, data) {
 }
 
 // ---- 6. Nested-grid placement (2026-10-19): view.place + view.parts.
-const KNOWN_PARTS = ['name', 'rating', 'description', 'sfx', 'subtraits', 'stressLabel', 'stress'];
+const KNOWN_PARTS = ['name', 'rating', 'description', 'block', 'subtraits', 'trackLabel', 'track'];
 
 function parseStoredPct(v) {
   if (typeof v !== 'string') return null;
@@ -595,9 +595,12 @@ function checkSetPlacement(where, setName, set, pageOf) {
   const hasParts = view && typeof view === 'object' && view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts);
   const legacyRating = (set.ratingPosition !== undefined && set.ratingPosition !== null)
     || (view && view.ratingPosition !== undefined && view.ratingPosition !== null);
-  const legacyStress = view && view.attachedStress && typeof view.attachedStress === 'object' && view.attachedStress.enabled;
-  if (hasParts && (legacyRating || legacyStress)) {
-    err(`${where}/${setName}: carries parts and legacy flags (ratingPosition/attachedStress), never both`);
+  const legacyStress = view && view.attachedStress !== undefined;
+  if (legacyStress) {
+    err(`${where}/${setName}: carries dissolved attachedStress declaration`);
+  }
+  if (hasParts && legacyRating) {
+    err(`${where}/${setName}: carries parts and legacy ratingPosition, never both`);
   }
   let rect = null;
   if (view && view.place !== undefined) {

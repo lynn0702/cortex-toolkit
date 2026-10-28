@@ -113,7 +113,7 @@ export function setRatingDice( node: Record<string, any>, dice: number[], range?
 		...prev,
 		type: clean.length > 1 ? 'Dice' : 'Die',
 		value: clean,
-		range: Array.isArray( range ) && range.length ? [ ...range ] : [ ...DIE_LADDER ],
+		range: Array.isArray( range ) && range.length ? [ ...range ] : ( Array.isArray( prev.range ) && prev.range.length ? [ ...prev.range ] : [ ...DIE_LADDER ] ),
 	};
 }
 
@@ -125,7 +125,7 @@ export function setRatingDie( node: Record<string, any>, size: number | null, ra
 			...prev,
 			type: 'Die',
 			value: [ size ],
-			range: Array.isArray( range ) && range.length ? [ ...range ] : [ ...DIE_LADDER ],
+			range: Array.isArray( range ) && range.length ? [ ...range ] : ( Array.isArray( prev.range ) && prev.range.length ? [ ...prev.range ] : [ ...DIE_LADDER ] ),
 		};
 	} else {
 		delete node.rating;
@@ -196,8 +196,8 @@ export function keepsExtraDice( node: unknown ): number {
 /**
  * Out is a range option for die ratings, defaulted off: most ratings
  * lack it. Explicit `out: true` on the rating opts in; otherwise the
- * set flags that enable Out badges (outIndicator, stressConfig or
- * attachedStress includeOut) put it in range for the set's dice.
+ * set flags that enable Out badges (outIndicator or stressConfig
+ * includeOut) put it in range for the set's dice.
  */
 export function hasOutRange( node: unknown, fallbacks?: Array<unknown> ): boolean {
 	const r = getRating( node );
@@ -209,8 +209,6 @@ export function hasOutRange( node: unknown, fallbacks?: Array<unknown> ): boolea
 		if ( bag.outIndicator === true ) return true;
 		const sc = bag.stressConfig;
 		if ( sc && typeof sc === 'object' && ( sc as Record<string, unknown> ).includeOut === true ) return true;
-		const attached = bag.attachedStress;
-		if ( attached && typeof attached === 'object' && ( attached as Record<string, unknown> ).includeOut === true ) return true;
 	}
 	return false;
 }
@@ -279,14 +277,6 @@ export interface PipsConfig {
 	labels?: boolean;
 }
 
-export interface AttachedStressConfig {
-	enabled?: boolean;
-	label?: string;
-	scale?: number[];
-	ratingScale?: number[];
-	includeOut?: boolean;
-}
-
 export interface RingConfig {
 	arcAngle?: number;
 	arcSpread?: number;
@@ -336,8 +326,8 @@ export interface PlaceRect {
 /**
  * Trait-part cell (`view.parts.<part>`): a part's cell in the trait's own
  * grid, percent of the set's width. Same shape as `PlaceRect`.
- * Known parts: name, rating, description, sfx, subtraits, stressLabel,
- * stress. Anything else is a validation error.
+ * Known parts: name, rating, description, block, subtraits, trackLabel,
+ * track. Anything else is a validation error.
  */
 export interface PartCell {
 	left: string;
@@ -380,7 +370,6 @@ export interface CortexToolkitCustom {
 
 	// style-specific config
 	pips?: PipsConfig;
-	attachedStress?: AttachedStressConfig;
 	ringConfig?: RingConfig;
 	imageConfig?: ImageConfig;
 	stressConfig?: StressConfig;

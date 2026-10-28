@@ -6,8 +6,8 @@
 // parent width ("%"), top/height are relative row units, height is a floor
 // (rows stay content-sized, nothing clips). place is sparse: omitted for a
 // full-width set stacked in document order. Inside a set, view.parts places
-// trait parts (name, rating, description, sfx, subtraits, stressLabel,
-// stress) as cells in the trait's grid, percent of the set.
+// trait parts (name, rating, description, block, subtraits, trackLabel,
+// track) as cells in the trait's grid, percent of the set.
 import type { Character, TraitSet } from './model.ts';
 import { getView, isNameSet } from './model.ts';
 
@@ -39,7 +39,7 @@ export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, 
 // ---------- place primitives ----------
 
 // Known trait-part names. Anything else in view.parts is an error.
-export const KNOWN_PARTS = [ 'name', 'rating', 'description', 'sfx', 'subtraits', 'stressLabel', 'stress' ] as const;
+export const KNOWN_PARTS = [ 'name', 'rating', 'description', 'block', 'subtraits', 'trackLabel', 'track' ] as const;
 export type PartName = ( typeof KNOWN_PARTS )[ number ];
 
 // Parse a percent-of-parent value: "%" strings ("25%", decimals allowed)
@@ -297,39 +297,42 @@ export function findPlaceOverlaps( entries: { index: number; place: ParsedPlace 
 export interface PartsSpec {
 	rating: 'inline' | 'above' | 'below' | 'none';
 	ratingDice: number;
-	stressDice: number; // 0 when no attached stress
+	trackDice: number; // 0 when no track cells
 	description: boolean; // effective: feature on, not a statement set, rating not above (above carries desc in its asset box)
-	sfx: boolean;
+	block: boolean;
 	subtraits: boolean;
+	sfx?: boolean; // legacy caller compat
+	stressDice?: number; // legacy caller compat
 }
 
 // Compose a set's trait-part layout per the additive rules: base trait is
 // the name cell; rating inline adds a column, below/above add a row, none
-// adds nothing; attached stress inline appends label + track columns in
-// row 0, otherwise stacked full-width rows below; description and SFX are
+// adds nothing; track inline appends label + track columns in
+// row 0, otherwise stacked full-width rows below; description and block are
 // full-width cells in rows below, in that order. Widths are calibrated to
-// the current rendering (5-die track ≈ 30%: rating 6% per die, stress
-// label 13%, stress 5.4% per die, name takes the remainder).
+// the current rendering (5-die track ≈ 30%: rating 6% per die, track
+// label 13%, track 5.4% per die, name takes the remainder).
 export function buildParts( spec: PartsSpec ): Record<string, { left: string; top: number; width: string; height: number }> {
 	const ratingW = Math.round( 6 * Math.max( 1, Math.round( spec.ratingDice ) ) * 10 ) / 10;
-	const hasStress = spec.stressDice > 0;
-	const stressW = hasStress ? Math.round( 5.4 * Math.max( 1, Math.round( spec.stressDice ) ) * 10 ) / 10 : 0;
-	const labelW = hasStress ? 13 : 0;
+	const trackDice = spec.trackDice ?? spec.stressDice ?? 0;
+	const hasTrack = trackDice > 0;
+	const trackW = hasTrack ? Math.round( 5.4 * Math.max( 1, Math.round( trackDice ) ) * 10 ) / 10 : 0;
+	const labelW = hasTrack ? 13 : 0;
 	const parts: Record<string, { left: string; top: number; width: string; height: number }> = {};
 	let row = 0;
 
 	if ( spec.rating === 'inline' ) {
-		const nameW = Math.round( ( 100 - ratingW - labelW - stressW ) * 10 ) / 10;
+		const nameW = Math.round( ( 100 - ratingW - labelW - trackW ) * 10 ) / 10;
 		let cursor = 0;
 		parts.name = { left: formatPct( cursor ), top: 0, width: formatPct( nameW ), height: 1 };
 		cursor = Math.round( ( cursor + nameW ) * 10 ) / 10;
 		parts.rating = { left: formatPct( cursor ), top: 0, width: formatPct( ratingW ), height: 1 };
 		cursor = Math.round( ( cursor + ratingW ) * 10 ) / 10;
-		if ( hasStress ) {
-			parts.stressLabel = { left: formatPct( cursor ), top: 0, width: formatPct( labelW ), height: 1 };
+		if ( hasTrack ) {
+			parts.trackLabel = { left: formatPct( cursor ), top: 0, width: formatPct( labelW ), height: 1 };
 			cursor = Math.round( ( cursor + labelW ) * 10 ) / 10;
 			// Last cell absorbs rounding drift so the row sums to 100.
-			parts.stress = { left: formatPct( cursor ), top: 0, width: formatPct( Math.round( ( 100 - cursor ) * 10 ) / 10 ), height: 1 };
+			parts.track = { left: formatPct( cursor ), top: 0, width: formatPct( Math.round( ( 100 - cursor ) * 10 ) / 10 ), height: 1 };
 		}
 		row = 1;
 	} else if ( spec.rating === 'above' ) {
@@ -345,17 +348,17 @@ export function buildParts( spec: PartsSpec ): Record<string, { left: string; to
 		row = 1;
 	}
 
-	if ( hasStress && spec.rating !== 'inline' ) {
-		parts.stressLabel = { left: '0%', top: row, width: '100%', height: 1 };
-		parts.stress = { left: '0%', top: row + 1, width: '100%', height: 1 };
+	if ( hasTrack && spec.rating !== 'inline' ) {
+		parts.trackLabel = { left: '0%', top: row, width: '100%', height: 1 };
+		parts.track = { left: '0%', top: row + 1, width: '100%', height: 1 };
 		row += 2;
 	}
 	if ( spec.description ) {
 		parts.description = { left: '0%', top: row, width: '100%', height: 1 };
 		row += 1;
 	}
-	if ( spec.sfx ) {
-		parts.sfx = { left: '0%', top: row, width: '100%', height: 1 };
+	if ( spec.block || spec.sfx ) {
+		parts.block = { left: '0%', top: row, width: '100%', height: 1 };
 		row += 1;
 	}
 	if ( spec.subtraits ) {

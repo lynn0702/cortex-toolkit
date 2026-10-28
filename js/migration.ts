@@ -1195,11 +1195,6 @@ export const cortexMigration = {
 				: Array.isArray( stress.ratingScale ) && stress.ratingScale.length ? stress.ratingScale
 				: this.DEFAULT_SCALE )
 			: [];
-		// A customized stress track has no parts form; keep the flags.
-		if ( stressOn && JSON.stringify( [ ...sScale ].sort( ( a: number, b: number ) => a - b ) ) !==
-			JSON.stringify( [ ...this.DEFAULT_SCALE ].sort( ( a: number, b: number ) => a - b ) ) ) {
-			return 'legacy';
-		}
 		const pos = rating === undefined ? 'inline' : rating;
 		if ( pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none' ) return 'legacy';
 		const statement = Boolean( ( set && set.statement ) ?? bag?.statement );
@@ -1207,16 +1202,55 @@ export const cortexMigration = {
 		bag.parts = buildParts( {
 			rating: pos as 'inline' | 'above' | 'below' | 'none',
 			ratingDice: scale.length,
-			stressDice: stressOn ? sScale.length : 0,
+			trackDice: stressOn ? sScale.length : 0,
 			description: Boolean( features.description ) && !statement && pos !== 'above',
-			sfx: Boolean( features.sfx ),
+			block: Boolean( features.sfx ),
 			subtraits: Boolean( features.subtraits ),
 		} );
 		// Non-default stress labels ride in the generic labels dict so no
 		// content text is lost; the default ("Stress") stays implicit.
-		if ( stressOn && typeof stress.label === 'string' && stress.label.length && stress.label !== 'Stress' ) {
+		const stressLabel = ( stressOn && typeof stress.label === 'string' && stress.label.length ) ? stress.label : 'Stress';
+		if ( stressOn && stressLabel !== 'Stress' ) {
 			if ( !bag.labels || typeof bag.labels !== 'object' ) bag.labels = {};
-			bag.labels.stress = stress.label;
+			bag.labels.stress = stressLabel;
+		}
+		// includeOut: true migrates to outIndicator: true (leaving existing outIndicator untouched unless not already true)
+		if ( stressOn && stress.includeOut === true && bag.outIndicator !== true ) {
+			bag.outIndicator = true;
+		}
+		// A non-default scale seeds one value-less companion per trait in the set
+		const isNonDefaultScale = stressOn && JSON.stringify( [ ...sScale ].sort( ( a: number, b: number ) => a - b ) ) !==
+			JSON.stringify( [ ...this.DEFAULT_SCALE ].sort( ( a: number, b: number ) => a - b ) );
+		if ( isNonDefaultScale && set ) {
+			const label = stressLabel;
+			const target = label.toLowerCase();
+			if ( Array.isArray( set.traits ) ) {
+				set.traits.forEach( ( tr: any ) => {
+					if ( !tr || typeof tr !== 'object' ) return;
+					if ( !Array.isArray( tr.traits ) ) tr.traits = [];
+					const exists = tr.traits.some( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target );
+					if ( !exists ) {
+						tr.traits.push( {
+							name: label,
+							rating: { type: 'Die', value: [], range: sScale.slice() }
+						} );
+					}
+				} );
+			} else if ( set.traits && typeof set.traits === 'object' ) {
+				for ( const tr of Object.values( set.traits ) ) {
+					if ( !tr || typeof tr !== 'object' ) continue;
+					const trObj = tr as any;
+					if ( !trObj.traits || typeof trObj.traits !== 'object' || Array.isArray( trObj.traits ) ) {
+						trObj.traits = {};
+					}
+					const exists = Object.keys( trObj.traits ).some( ( k ) => k.toLowerCase() === target );
+					if ( !exists ) {
+						trObj.traits[ label ] = {
+							rating: { type: 'Die', value: [], range: sScale.slice() }
+						};
+					}
+				}
+			}
 		}
 		if ( set && typeof set === 'object' ) delete set.ratingPosition;
 		delete bag.ratingPosition;

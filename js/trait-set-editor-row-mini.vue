@@ -7,8 +7,8 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 const { traitSet, effectivePartCells, setPartCell, partPreview, headerMode, headerAlign, branchShares, setBranchShare } = injectTraitSetEditor();
 
 const PART_TITLES: Record<string, string> = {
-	name: 'Name', rating: 'Rating', description: 'Description', sfx: 'SFX',
-	subtraits: 'Subtraits', stressLabel: 'Stress Label', stress: 'Stress'
+	name: 'Name', rating: 'Rating', description: 'Description', block: 'Block',
+	subtraits: 'Subtraits', trackLabel: 'Track Label', track: 'Track'
 };
 
 const NON_ROW = [ 'image', 'notes', 'pips', 'portrait-ring' ];
