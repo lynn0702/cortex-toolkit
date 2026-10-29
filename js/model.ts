@@ -512,6 +512,8 @@ export interface CortexToolkitCustom {
 	spendable?: boolean;
 	/** Whether this set permits adding and removing traits during Play mode. */
 	playMutable?: boolean;
+	/** SVG Frame & Border layout configuration (Phase 3c). */
+	frame?: import('./frame-geometry.ts').FrameConfig | import('./frame-geometry.ts').FrameShape | string;
 
 	// ring / portrait ring
 	isAttributes?: boolean;
@@ -723,3 +725,5 @@ export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
 
 // Convenience aliases used across the app.
 export type CortexToolkit = CortexToolkitCustom;
+
+export * from './frame-geometry.ts';

@@ -39,7 +39,8 @@ const ts = useTraitSet( props, emit );
 const {
 	traitSet, s, submode, viewY, character,
 	getTraitSetClasses, isSelected, renderText, selectElement, updateCharacter, removeTraitSet,
-	hasCounterColumn, getCounterLabel, isHiddenIn
+	hasCounterColumn, getCounterLabel, isHiddenIn,
+	resolvedFrame, isFrameActive, isFrameForcedOff, frameToggledOff, frameSvgPath, frameStrokeClass, frameStrokeStyle
 } = ts;
 
 const canRemoveSetInPlay = computed( () => {
@@ -103,9 +104,49 @@ const bodyComponent = computed( () => {
 					</button>
 				</div>
 			</transition>
+			<button
+				v-if="resolvedFrame && resolvedFrame.shape !== 'line'"
+				type="button"
+				class="trait-set-frame-toggle-btn"
+				:class="{ 'frame-off': !isFrameActive }"
+				:aria-pressed="isFrameActive ? 'true' : 'false'"
+				:title="isFrameActive ? 'Toggle frame off' : (isFrameForcedOff ? 'Frame forced off on mobile' : 'Toggle frame on')"
+				:aria-label="isFrameActive ? 'Toggle frame off' : 'Toggle frame on'"
+				@click.stop="frameToggledOff = !frameToggledOff"
+			>
+				<i class="fas fa-vector-square"></i>
+			</button>
 		</div>
 
-		<div class="trait-set-body">
+		<div class="trait-set-body" :class="{ 'trait-set-body-framed': isFrameActive && resolvedFrame?.shape === 'block' }">
+			<!-- Bare-path divider if line -->
+			<svg
+				v-if="resolvedFrame?.shape === 'line'"
+				class="trait-set-frame-svg frame-line-svg"
+				:class="frameStrokeClass"
+				:style="frameStrokeStyle"
+				aria-hidden="true"
+				focusable="false"
+				viewBox="0 0 100 12"
+				preserveAspectRatio="none"
+			>
+				<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
+			</svg>
+
+			<!-- Block frame SVG behind body -->
+			<svg
+				v-if="isFrameActive && resolvedFrame?.shape === 'block'"
+				class="trait-set-frame-svg frame-block-svg"
+				:class="frameStrokeClass"
+				:style="frameStrokeStyle"
+				aria-hidden="true"
+				focusable="false"
+				viewBox="0 0 100 100"
+				preserveAspectRatio="none"
+			>
+				<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
+			</svg>
+
 			<component :is="bodyComponent" />
 
 			<ul class="sfx" v-if="getView(traitSet)?.features?.sfx && setSfxEntries.length">

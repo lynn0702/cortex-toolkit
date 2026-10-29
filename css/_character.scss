@@ -1445,6 +1445,142 @@ button.trait-title-btn {
 	}
 }
 
+// PHASE 3c: SVG FRAMES & DYNAMIC POSITIONAL ANCHORS
+.trait-set-frame-svg {
+	display: block;
+	pointer-events: none;
+	fill: none;
+}
+
+.frame-line-svg {
+	position: relative;
+	width: 100%;
+	height: 12px;
+	margin: 0.25rem 0;
+}
+
+.frame-block-svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+	pointer-events: none;
+}
+
+.frame-radial-svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+	pointer-events: none;
+}
+
+.frame-stroke-primary {
+	stroke: var(--color-primary, #e11d48);
+	stroke-width: 2px;
+}
+
+.frame-stroke-accent {
+	stroke: var(--color-interactive, #38bdf8);
+	stroke-width: 2px;
+}
+
+.frame-stroke-muted {
+	stroke: var(--color-separator, rgba(148, 163, 184, 0.4));
+	stroke-width: 1.5px;
+}
+
+.frame-stroke-double {
+	stroke: var(--color-primary, #e11d48);
+	stroke-width: 4px;
+	stroke-dasharray: 8 3;
+}
+
+.trait-set-body-framed {
+	position: relative;
+	padding: 0.5rem;
+}
+
+.trait-list-framed {
+	position: relative;
+	min-height: 280px;
+	width: 100%;
+	overflow: hidden; // strictly preventing horizontal overspill
+
+	.trait {
+		position: absolute;
+		z-index: 1;
+		max-width: 48%;
+		box-sizing: border-box;
+		transition: left 0.25s ease, top 0.25s ease;
+
+		&[data-frame-dock="left"] {
+			transform: translate(-100%, -50%);
+			text-align: right;
+
+			.trait-inner {
+				justify-content: flex-end;
+			}
+		}
+
+		&[data-frame-dock="right"] {
+			transform: translate(0%, -50%);
+			text-align: left;
+
+			.trait-inner {
+				justify-content: flex-start;
+			}
+		}
+
+		&[data-frame-dock="top"] {
+			transform: translate(-50%, -100%);
+			text-align: center;
+
+			.trait-inner {
+				justify-content: center;
+			}
+		}
+
+		&[data-frame-dock="bottom"] {
+			transform: translate(-50%, 0%);
+			text-align: center;
+
+			.trait-inner {
+				justify-content: center;
+			}
+		}
+	}
+}
+
+.trait-set-frame-toggle-btn {
+	background: transparent;
+	border: none;
+	color: inherit;
+	opacity: 0.65;
+	cursor: pointer;
+	padding: 0 0.35rem;
+	margin-left: auto;
+	font-size: 0.8rem;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+	transition: opacity 0.15s ease, color 0.15s ease;
+
+	&:hover {
+		opacity: 1;
+	}
+
+	&.frame-off {
+		opacity: 0.3;
+	}
+}
+
 // LATE-NIGHT DARK MODE (Print-Immune: screen only, non-print submodes only)
 @media screen {
 	[data-theme="dark"],

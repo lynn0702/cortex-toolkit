@@ -17,12 +17,33 @@ const {
 	shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
 	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 	getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
-	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie
+	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
+	resolvedFrame, isFrameActive, isPositionalFrameActive, frameSvgPath, frameStrokeClass, frameStrokeStyle, getTraitAnchorStyle, getTraitAnchorDock
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-list" :class="[ getView(traitSet)?.style?.body === 'list' ? 'trait-list-unrated' : '', (Number(getView(traitSet)?.traitColumns) > 1 ? ('trait-list-cols-' + getView(traitSet)?.traitColumns) : '') ]">
+	<div
+		class="trait-list"
+		:class="[
+			getView(traitSet)?.style?.body === 'list' ? 'trait-list-unrated' : '',
+			(Number(getView(traitSet)?.traitColumns) > 1 ? ('trait-list-cols-' + getView(traitSet)?.traitColumns) : ''),
+			isPositionalFrameActive ? ('trait-list-framed frame-shape-' + resolvedFrame?.shape) : ''
+		]"
+	>
+		<!-- Decorative SVG for positional frames (ring, ellipse, arc, path) -->
+		<svg
+			v-if="isPositionalFrameActive"
+			class="trait-set-frame-svg frame-radial-svg"
+			:class="frameStrokeClass"
+			:style="frameStrokeStyle"
+			aria-hidden="true"
+			focusable="false"
+			viewBox="0 0 100 100"
+		>
+			<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
+		</svg>
+
 		<!-- PIPS BODY (XP / TRACK) -->
 		<TraitSetPips v-if="getView(traitSet)?.style?.body === 'pips'" />
 
@@ -45,6 +66,8 @@ const {
 				:data-trait-rating="firstDie(item.trait) ? ('d' + firstDie(item.trait)) : undefined"
 				:data-trait-out="isTraitOut(item.trait, traitSet) ? 'true' : undefined"
 				:data-trait-questioned="isTraitQuestioned(item.trait) ? 'true' : undefined"
+				:style="isPositionalFrameActive ? getTraitAnchorStyle(t) : undefined"
+				:data-frame-dock="isPositionalFrameActive ? getTraitAnchorDock(t) : undefined"
 			>
 				<transition name="trait" appear>
 					<!-- PARTS GRID (explicit trait-part coordinates) -->

@@ -4237,3 +4237,14 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
+// Phase 3c: SVG Frames in Print
+.trait-list-framed {
+	min-height: 240px;
+	overflow: visible;
+
+	.trait-set-frame-svg {
+		stroke: #000000 !important;
+	}
+}
+
+

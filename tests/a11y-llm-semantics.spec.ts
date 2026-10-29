@@ -8,6 +8,7 @@ import AppHeader from '../js/app-header.vue';
 import SessionNav from '../js/session-nav.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
 import PageLayoutMini from '../js/page-layout-mini.vue';
+import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
 import { cortexFunctions } from '../js/functions.ts';
 import { cortexPal } from '../js/cortex-pal.ts';
 
@@ -791,6 +792,246 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect( document.body.querySelector( '.trait-set-mini' ) ).toBeNull();
 			expect( wrapper.find( '.place-mini-block' ).exists() ).toBe( true );
 
+			wrapper.unmount();
+		} );
+	} );
+
+	describe( 'Phase 3c: SVG Frames, Dynamic Positional Anchors, & Mobile Fallback', () => {
+		function createStressBearingFramedSet( shape: any = 'ring' ) {
+			return {
+				name: 'Attributes',
+				view: {
+					frame: typeof shape === 'string' ? shape : { stroke: 'primary', ...shape },
+					labels: { track: 'Stress' },
+					parts: {
+						name: { left: '0%', top: 0, width: '35%', height: 1 },
+						rating: { left: '35%', top: 0, width: '15%', height: 1 },
+						trackLabel: { left: '50%', top: 0, width: '20%', height: 1 },
+						track: { left: '70%', top: 0, width: '30%', height: 1 }
+					}
+				},
+				traits: [
+					{
+						name: 'Physical',
+						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: [
+							{ name: 'Stress', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+						]
+					},
+					{
+						name: 'Mental',
+						rating: { type: 'Die', value: [ 10 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: [
+							{ name: 'Stress', rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] } }
+						]
+					},
+					{
+						name: 'Social',
+						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: [
+							{ name: 'Stress', rating: { type: 'Die', value: [ 4 ], range: [ 4, 6, 8, 10, 12 ] } }
+						]
+					}
+				]
+			};
+		}
+
+		it( '1. Stress-Bearing Framed Set: renders ring frame with visible, clickable rating die and stress track in Edit, Play, and Print', async () => {
+			const set = createStressBearingFramedSet( 'ring' );
+			const char: any = { name: 'Framed Hero', traitSets: [ set ] };
+
+			for ( const mode of [ 'play', 'edit', 'print' ] ) {
+				const block = mount( TraitSetBlock, {
+					props: { character: char, traitSetID: 0, submode: mode },
+					attachTo: document.body
+				} );
+
+				expect( block.find( '.trait-list-framed' ).exists() ).toBe( true );
+				const svg = block.find( '.trait-set-frame-svg.frame-radial-svg' );
+				expect( svg.exists() ).toBe( true );
+				expect( svg.attributes( 'aria-hidden' ) ).toBe( 'true' );
+				expect( svg.attributes( 'focusable' ) ).toBe( 'false' );
+
+				// All 3 traits rendered in logical DOM order
+				const traits = block.findAll( '.trait' );
+				expect( traits.length ).toBe( 3 );
+				expect( traits[ 0 ].attributes( 'data-trait-name' ) ).toBe( 'Physical' );
+				expect( traits[ 1 ].attributes( 'data-trait-name' ) ).toBe( 'Mental' );
+				expect( traits[ 2 ].attributes( 'data-trait-name' ) ).toBe( 'Social' );
+
+				// Anchors & docking attributes present
+				expect( traits[ 0 ].attributes( 'data-frame-dock' ) ).toBeDefined();
+				expect( traits[ 0 ].attributes( 'style' ) ).toContain( 'position: absolute' );
+
+				// Rating die & stress track present and interactive
+				expect( block.findAll( '.attached-stress-track' ).length ).toBe( 3 );
+				expect( block.findAll( '.trait-part-rating' ).length ).toBe( 3 );
+
+				await runAxeAudit( block.element as HTMLElement );
+				block.unmount();
+			}
+		} );
+
+		it( '2. Circle -> Ellipse -> Block Morph: traits preserve 0..N-1 order and internal view.parts across all three shapes', async () => {
+			const set = createStressBearingFramedSet( 'ring' );
+			const char: any = { name: 'Morph Hero', traitSets: [ set ] };
+
+			const wrapper = mount( TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body
+			} );
+
+			// 1) Ring
+			expect( wrapper.find( '.trait-list-framed.frame-shape-ring' ).exists() ).toBe( true );
+			let names = wrapper.findAll( '.trait' ).map( t => t.attributes( 'data-trait-name' ) );
+			expect( names ).toEqual( [ 'Physical', 'Mental', 'Social' ] );
+
+			// 2) Morph to Ellipse
+			const ellipseSet = {
+				...set,
+				view: { ...set.view, frame: { shape: 'ellipse', span: [ 0, 360 ], stroke: 'accent', corner: 8 } }
+			};
+			await wrapper.setProps( { character: { name: 'Morph Hero', traitSets: [ ellipseSet ] } } );
+			await wrapper.vm.$nextTick();
+			expect( wrapper.find( '.trait-list-framed.frame-shape-ellipse' ).exists() ).toBe( true );
+			names = wrapper.findAll( '.trait' ).map( t => t.attributes( 'data-trait-name' ) );
+			expect( names ).toEqual( [ 'Physical', 'Mental', 'Social' ] );
+
+			// 3) Morph to Block
+			const blockSet = {
+				...set,
+				view: { ...set.view, frame: { shape: 'block', corner: 'cut', stroke: 'primary' } }
+			};
+			await wrapper.setProps( { character: { name: 'Morph Hero', traitSets: [ blockSet ] } } );
+			await wrapper.vm.$nextTick();
+			expect( wrapper.find( '.trait-set-body-framed' ).exists() ).toBe( true );
+			expect( wrapper.find( '.frame-block-svg' ).exists() ).toBe( true );
+			// Non-positional: trait-list-framed is removed, normal view.parts stack rendered
+			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( false );
+			names = wrapper.findAll( '.trait' ).map( t => t.attributes( 'data-trait-name' ) );
+			expect( names ).toEqual( [ 'Physical', 'Mental', 'Social' ] );
+
+			// Parts intact
+			expect( set.view.parts.track ).toBeDefined();
+			expect( set.view.parts.name ).toBeDefined();
+
+			wrapper.unmount();
+		} );
+
+		it( '3. Dynamic Anchor Re-Derivation: recomputes positions dynamically on add/remove trait with zero stored anchor count in JSON', () => {
+			const cfg = resolveFrame( { view: { frame: 'ring' } } )!;
+			expect( cfg ).not.toBeNull();
+
+			// 3 traits: 120° spacing
+			const anchors3 = computeFrameAnchors( 3, cfg );
+			expect( anchors3.length ).toBe( 3 );
+			expect( anchors3[ 0 ].angle ).toBe( 0 );
+			expect( anchors3[ 1 ].angle ).toBe( 120 );
+			expect( anchors3[ 2 ].angle ).toBe( 240 );
+
+			// 4 traits: 90° spacing
+			const anchors4 = computeFrameAnchors( 4, cfg );
+			expect( anchors4.length ).toBe( 4 );
+			expect( anchors4[ 0 ].angle ).toBe( 0 );
+			expect( anchors4[ 1 ].angle ).toBe( 90 );
+			expect( anchors4[ 2 ].angle ).toBe( 180 );
+			expect( anchors4[ 3 ].angle ).toBe( 270 );
+
+			// 2 traits open arc [-120, 120]
+			const arcCfg = resolveFrame( { view: { frame: { shape: 'arc', span: [ -120, 120 ] } } } )!;
+			const anchorsArc = computeFrameAnchors( 2, arcCfg );
+			expect( anchorsArc.length ).toBe( 2 );
+			expect( anchorsArc[ 0 ].angle ).toBe( -120 );
+			expect( anchorsArc[ 1 ].angle ).toBe( 120 );
+		} );
+
+		it( '4. Bare-Path Section Line (shape: "line"): renders crisp SVG section divider across Edit, Play, and Print', () => {
+			const lineSet: any = {
+				name: 'Divider Section',
+				view: { frame: { shape: 'line', stroke: 'accent' } },
+				traits: [ { name: 'Followup Trait' } ]
+			};
+			const char: any = { name: 'Line Hero', traitSets: [ lineSet ] };
+
+			for ( const mode of [ 'play', 'edit', 'print' ] ) {
+				const block = mount( TraitSetBlock, {
+					props: { character: char, traitSetID: 0, submode: mode }
+				} );
+
+				const lineSvg = block.find( '.trait-set-frame-svg.frame-line-svg' );
+				expect( lineSvg.exists() ).toBe( true );
+				expect( lineSvg.attributes( 'viewBox' ) ).toBe( '0 0 100 12' );
+				expect( lineSvg.attributes( 'preserveAspectRatio' ) ).toBe( 'none' );
+				expect( lineSvg.find( 'path' ).attributes( 'd' ) ).toBe( 'M 0,6 L 100,6' );
+
+				// Content guarantee: trait still renders
+				expect( block.find( '.trait' ).exists() ).toBe( true );
+				block.unmount();
+			}
+		} );
+
+		it( '5. Mobile Forced-Off & User Toggled-Off Fallback (Zero Overspill): turns off radial frame cleanly to view.parts stack', async () => {
+			const set = createStressBearingFramedSet( 'ring' );
+			const char: any = { name: 'Fallback Hero', traitSets: [ set ] };
+
+			const wrapper = mount( TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body
+			} );
+
+			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( true );
+			const toggleBtn = wrapper.find( '.trait-set-frame-toggle-btn' );
+			expect( toggleBtn.exists() ).toBe( true );
+			expect( toggleBtn.attributes( 'aria-pressed' ) ).toBe( 'true' );
+
+			// Click toggle button: user turns frame off
+			await toggleBtn.trigger( 'click' );
+			expect( toggleBtn.attributes( 'aria-pressed' ) ).toBe( 'false' );
+			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( false );
+			expect( wrapper.find( '.frame-radial-svg' ).exists() ).toBe( false );
+
+			// Traits still render stacked with stress track intact
+			const traits = wrapper.findAll( '.trait' );
+			expect( traits.length ).toBe( 3 );
+			expect( wrapper.findAll( '.attached-stress-track' ).length ).toBe( 3 );
+
+			// Click toggle button again: restores frame
+			await toggleBtn.trigger( 'click' );
+			expect( toggleBtn.attributes( 'aria-pressed' ) ).toBe( 'true' );
+			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( true );
+
+			wrapper.unmount();
+		} );
+
+		it( '6. A11y & Sparse JSON Compliance: SVG contains zero text, DOM order is 0..N-1, and JSON is terse', async () => {
+			const set = createStressBearingFramedSet( { shape: 'ring', span: [ 0, 360 ], stroke: 'primary', corner: 8 } );
+			const char: any = { name: 'A11y Hero', traitSets: [ set ] };
+
+			const wrapper = mount( TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body
+			} );
+
+			const svg = wrapper.find( '.trait-set-frame-svg' );
+			expect( svg.exists() ).toBe( true );
+			// Zero SVG <text> or <textPath> nodes!
+			expect( svg.find( 'text' ).exists() ).toBe( false );
+			expect( svg.find( 'textPath' ).exists() ).toBe( false );
+			expect( svg.attributes( 'aria-hidden' ) ).toBe( 'true' );
+
+			// DOM order strictly 0..N-1
+			const traitElements = wrapper.findAll( '.trait' );
+			expect( traitElements[ 0 ].text() ).toContain( 'Physical' );
+			expect( traitElements[ 1 ].text() ).toContain( 'Mental' );
+			expect( traitElements[ 2 ].text() ).toContain( 'Social' );
+
+			// Terse JSON compliance: no internal coordinates or IDs stored in JSON
+			const cloned = JSON.parse( JSON.stringify( set ) );
+			expect( cloned.view.frame ).toEqual( { shape: 'ring', span: [ 0, 360 ], stroke: 'primary', corner: 8 } );
+			expect( cloned.view.frame.anchors ).toBeUndefined();
+			expect( cloned.view.frame.count ).toBeUndefined();
+
+			await runAxeAudit( wrapper.element as HTMLElement );
 			wrapper.unmount();
 		} );
 	} );

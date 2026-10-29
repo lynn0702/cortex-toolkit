@@ -1,5 +1,6 @@
-import { computed, provide, inject, type InjectionKey } from 'vue';
+import { computed, provide, inject, ref, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-geometry.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
 	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,
 	hasOutRange, rangeTop, isOutDie } from './model.ts';
@@ -48,6 +49,84 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 
 	const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
 	const isSpotlightPrintStyle = computed( () => props.submode === 'print' && isSpotlightStyle.value );
+
+	// Phase 3c: SVG Frames & Dynamic Positional Anchors
+	const resolvedFrame = computed( () => resolveFrame( traitSet.value ) );
+	const frameToggledOff = ref( false );
+	const isMobileViewport = ref( typeof window !== 'undefined' && Boolean( window.matchMedia && window.matchMedia( '(max-width: 768px)' ).matches ) );
+
+	if ( typeof window !== 'undefined' && window.matchMedia ) {
+		const mql = window.matchMedia( '(max-width: 768px)' );
+		const handler = ( e: MediaQueryListEvent ) => { isMobileViewport.value = e.matches; };
+		if ( mql.addEventListener ) {
+			mql.addEventListener( 'change', handler );
+		} else if ( ( mql as any ).addListener ) {
+			( mql as any ).addListener( handler );
+		}
+	}
+
+	const isFrameForcedOff = computed( () => {
+		if ( !resolvedFrame.value ) return false;
+		const s = resolvedFrame.value.shape;
+		if ( s === 'block' || s === 'line' ) return false;
+		return isMobileViewport.value;
+	} );
+
+	const isFrameActive = computed( () =>
+		Boolean( resolvedFrame.value ) && !frameToggledOff.value && !isFrameForcedOff.value
+	);
+
+	const isPositionalFrameActive = computed( () => {
+		if ( !isFrameActive.value || !resolvedFrame.value ) return false;
+		const s = resolvedFrame.value.shape;
+		return s === 'ring' || s === 'ellipse' || s === 'arc' || ( s as any ) === 'path';
+	} );
+
+	const frameSvgPath = computed( () => {
+		if ( !resolvedFrame.value ) return '';
+		return buildFrameSvgPath( resolvedFrame.value );
+	} );
+
+	const frameStrokeClass = computed( () => {
+		const stroke = resolvedFrame.value?.stroke || 'primary';
+		if ( stroke === 'primary' || stroke === 'accent' || stroke === 'muted' || stroke === 'double' ) {
+			return 'frame-stroke-' + stroke;
+		}
+		return 'frame-stroke-custom';
+	} );
+
+	const frameStrokeStyle = computed( () => {
+		const stroke = resolvedFrame.value?.stroke;
+		if ( stroke && stroke !== 'primary' && stroke !== 'accent' && stroke !== 'muted' && stroke !== 'double' ) {
+			return { stroke };
+		}
+		return undefined;
+	} );
+
+	const frameAnchors = computed( () => {
+		if ( !isPositionalFrameActive.value || !resolvedFrame.value ) return [];
+		const rendered = getRenderedTraits( traitSet.value, s.value );
+		return computeFrameAnchors( rendered.length, resolvedFrame.value );
+	} );
+
+	function getTraitAnchorStyle( t: number ): Record<string, string> | undefined {
+		if ( !isPositionalFrameActive.value ) return undefined;
+		const a = frameAnchors.value[ t ];
+		if ( !a ) return undefined;
+		return {
+			position: 'absolute',
+			left: `${a.x}%`,
+			top: `${a.y}%`,
+			'--anchor-x': `${a.x}%`,
+			'--anchor-y': `${a.y}%`,
+			'--anchor-angle': `${a.angle}deg`
+		};
+	}
+
+	function getTraitAnchorDock( t: number ): string | undefined {
+		if ( !isPositionalFrameActive.value ) return undefined;
+		return frameAnchors.value[ t ]?.dock;
+	}
 
 	function getTraitSetLabel( traitSetArg: TraitSet, key: string ) {
 		const labels = getView( traitSetArg )?.labels;
@@ -1244,7 +1323,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
 		getSharedHinderText, getTraitSetSlotCount,
 		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
-		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun
+		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
+		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
+		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock
 	};
 
 	provide( TRAIT_SET_KEY, api );

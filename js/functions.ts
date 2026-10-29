@@ -1808,6 +1808,134 @@ export const cortexFunctions = {
 					style: { header: 'default', body: 'default' }
 				}
 			}
+		},
+		'framed-ring-attributes': {
+			id: 'framed-ring-attributes',
+			label: 'Framed Ring — Attributes + Stress',
+			blurb: 'Attributes arranged on a 360° ring frame with attached stress tracks.',
+			preset: {
+				name: 'Attributes',
+				noun: 'Attribute',
+				plural: 'Attributes',
+				description: '',
+				tags: [],
+				view: {
+					pillar: 'prime',
+					span: 2,
+					header: 'top',
+					headerAlign: 'center',
+					frame: {
+						shape: 'ring',
+						span: [ 0, 360 ],
+						stroke: 'primary'
+					},
+					labels: {
+						track: 'Stress',
+						out: 'OUT'
+					},
+					parts: {
+						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'L' },
+						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] },
+						trackLabel: { left: '0%', top: 1, width: '30%', height: 1, marker: 'L' },
+						track: { left: '30%', top: 1, width: '70%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] }
+					}
+				},
+				traits: [
+					{
+						name: 'Agility',
+						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: [
+							{ name: 'Stress', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+						]
+					},
+					{
+						name: 'Awareness',
+						rating: { type: 'Die', value: [ 10 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: []
+					},
+					{
+						name: 'Brawn',
+						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: []
+					},
+					{
+						name: 'Coordination',
+						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: []
+					},
+					{
+						name: 'Intellect',
+						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: [
+							{ name: 'Stress', rating: { type: 'Die', value: [ 4 ], range: [ 4, 6, 8, 10, 12 ] } }
+						]
+					},
+					{
+						name: 'Will',
+						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] },
+						traits: []
+					}
+				]
+			}
+		},
+		'framed-chamfer-block': {
+			id: 'framed-chamfer-block',
+			label: 'Sci-Fi Chamfered Block — Scene Traits',
+			blurb: 'Scene traits enclosed in a sci-fi chamfered cut-corner block frame.',
+			preset: {
+				name: 'Scene Traits',
+				noun: 'Scene Trait',
+				plural: 'Scene Traits',
+				description: '',
+				tags: [],
+				view: {
+					pillar: 'play',
+					visibility: 'play-only',
+					playMutable: true,
+					outIndicator: true,
+					reservedSlots: 2,
+					header: 'top',
+					frame: {
+						shape: 'block',
+						corner: 'cut',
+						stroke: 'accent'
+					},
+					parts: {
+						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'T' },
+						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] }
+					}
+				},
+				traits: [
+					{
+						name: 'Sensor Lock',
+						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] }
+					},
+					{
+						name: 'Hull Breach',
+						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ], out: true }
+					}
+				]
+			}
+		},
+		'framed-section-line': {
+			id: 'framed-section-line',
+			label: 'Section Divider Line',
+			blurb: 'Pure SVG section divider line acting as a horizon rule.',
+			preset: {
+				name: '',
+				noun: 'Divider',
+				plural: 'Dividers',
+				description: '',
+				traits: [],
+				tags: [],
+				view: {
+					span: 2,
+					frame: {
+						shape: 'line',
+						stroke: 'accent'
+					}
+				}
+			}
 		}
 	} as Record<string, { id: string; label: string; blurb?: string; preset: any }>,
 

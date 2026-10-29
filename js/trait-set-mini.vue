@@ -5,6 +5,7 @@ import { cortexFunctions } from './functions.ts';
 import { formatPct, parsePct, type PartName } from './spotlight-grid.ts';
 import VisibilityEye from './visibility-eye.vue';
 import TraitSetBlock from './trait-set-block.vue';
+import { resolveFrame, type FrameShape, type FrameConfig } from './frame-geometry.ts';
 
 export interface PartBlueprint extends PartCell {
 	marker?: 'L' | 'T';
@@ -261,6 +262,53 @@ function setHeaderPlacement( placement: 'sidebar' | 'top', align?: 'left' | 'cen
 		delete v.header;
 		delete v.headerAlign;
 	}
+}
+
+// Phase 3c: SVG Frame & Border Controls
+const activeFrame = computed<FrameConfig | null>( () => resolveFrame( workingSet.value ) );
+const currentFrameShape = computed<FrameShape>( () => activeFrame.value?.shape || 'none' );
+
+function setFrameShape( shape: FrameShape ) {
+	const v = ensureView( workingSet.value );
+	if ( shape === 'none' ) {
+		delete ( v as any ).frame;
+		return;
+	}
+	const prev = resolveFrame( workingSet.value );
+	const defaultSpan: [ number, number ] = shape === 'arc' ? [ -120, 120 ] : [ 0, 360 ];
+	v.frame = {
+		shape,
+		span: prev ? prev.span : defaultSpan,
+		corner: prev ? prev.corner : 8,
+		stroke: prev ? prev.stroke : 'primary',
+		path: prev?.path ?? null
+	};
+}
+
+function setFrameSpan( idx: 0 | 1, val: number ) {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	const span: [ number, number ] = cfg ? [ ...cfg.span ] : [ 0, 360 ];
+	span[ idx ] = val;
+	v.frame = { ...( cfg || { shape: 'ring', corner: 8, stroke: 'primary' } ), span };
+}
+
+function setFrameSpanPreset( start: number, end: number ) {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	v.frame = { ...( cfg || { shape: 'ring', corner: 8, stroke: 'primary' } ), span: [ start, end ] };
+}
+
+function setFrameCorner( corner: number | 'cut' ) {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	v.frame = { ...( cfg || { shape: 'block', span: [ 0, 360 ], stroke: 'primary' } ), corner };
+}
+
+function setFrameStroke( stroke: string ) {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	v.frame = { ...( cfg || { shape: 'block', span: [ 0, 360 ], corner: 8 } ), stroke };
 }
 
 // Die SVGs for palette icons
@@ -1203,6 +1251,99 @@ function onFileImportSelected( ev: Event ) {
 							:class="{ active: headerPlacement === 'top' && headerAlign === 'right' }"
 							@click="setHeaderPlacement('top', 'right')"
 						><i class="fas fa-align-right"></i> Top Right</button>
+					</div>
+				</section>
+
+				<!-- SVG Frame & Border Selector -->
+				<section class="mini-frame-section" aria-label="Set Frame & Border">
+					<div class="mini-section-label">FRAME &amp; BORDER</div>
+					<div class="mini-frame-bar" role="group" aria-label="Set Frame Shape">
+						<button
+							v-for="sh in ['none', 'block', 'ring', 'ellipse', 'arc', 'line']"
+							:key="'frame-sh-' + sh"
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: currentFrameShape === sh }"
+							@click="setFrameShape(sh as FrameShape)"
+						>
+							{{ sh.charAt(0).toUpperCase() + sh.slice(1) }}
+						</button>
+					</div>
+
+					<!-- Frame Parameters when active -->
+					<div v-if="activeFrame && currentFrameShape !== 'none'" class="mini-frame-params">
+						<!-- Angles for ring, ellipse, arc -->
+						<template v-if="currentFrameShape === 'ring' || currentFrameShape === 'ellipse' || currentFrameShape === 'arc'">
+							<div class="mini-param-row">
+								<label class="mini-param-label">
+									Start °
+									<input
+										type="number"
+										class="mini-param-num"
+										step="15"
+										:value="activeFrame.span[0]"
+										@change="setFrameSpan(0, Number(($event.target as HTMLInputElement).value) || 0)"
+									/>
+								</label>
+								<label class="mini-param-label">
+									End °
+									<input
+										type="number"
+										class="mini-param-num"
+										step="15"
+										:value="activeFrame.span[1]"
+										@change="setFrameSpan(1, Number(($event.target as HTMLInputElement).value) || 360)"
+									/>
+								</label>
+								<div class="mini-param-presets" role="group" aria-label="Span Presets">
+									<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(0, 360)">360° Loop</button>
+									<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(-120, 120)">Top Arch</button>
+									<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(180, 360)">Left Arc</button>
+								</div>
+							</div>
+						</template>
+
+						<!-- Corner for block -->
+						<template v-if="currentFrameShape === 'block'">
+							<div class="mini-param-row">
+								<label class="mini-param-label" v-if="activeFrame.corner !== 'cut'">
+									Radius
+									<input
+										type="number"
+										class="mini-param-num"
+										min="0"
+										max="32"
+										:value="activeFrame.corner"
+										@change="setFrameCorner(Math.max(0, Math.min(32, Number(($event.target as HTMLInputElement).value) || 0)))"
+									/>
+								</label>
+								<button
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: activeFrame.corner === 'cut' }"
+									@click="setFrameCorner(activeFrame.corner === 'cut' ? 8 : 'cut')"
+								>
+									Cut Chamfer
+								</button>
+							</div>
+						</template>
+
+						<!-- Stroke for all active frames -->
+						<div class="mini-param-row">
+							<span class="mini-param-label">Stroke:</span>
+							<div class="mini-param-presets" role="group" aria-label="Stroke Styles">
+								<button
+									v-for="stk in ['primary', 'accent', 'muted', 'double']"
+									:key="'stk-' + stk"
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: activeFrame.stroke === stk }"
+									@click="setFrameStroke(stk)"
+								>
+									{{ stk.charAt(0).toUpperCase() + stk.slice(1) }}
+								</button>
+							</div>
+						</div>
 					</div>
 				</section>
 
