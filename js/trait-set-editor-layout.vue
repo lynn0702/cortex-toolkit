@@ -5,7 +5,8 @@ import TraitSetEditorRowMini from './trait-set-editor-row-mini.vue';
 const {
 	isRing, isSpotlightSheet,
 	isPartsPreview, hasParts, hasCustomParts, hasCustomBranch, resetParts,
-	openBlockMini
+	openBlockMini,
+	frameOptions, frameShape, setFrameShape
 } = injectTraitSetEditor();
 </script>
 
@@ -38,5 +39,22 @@ const {
 			</button>
 		</div>
 		<TraitSetEditorRowMini />
+	</div>
+
+	<!-- FRAME SELECTION -->
+	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+		<div class="editor-label">Frame</div>
+		<div class="editor-button-group">
+			<button
+				v-for="opt in frameOptions"
+				:key="opt.id"
+				type="button"
+				class="editor-group-btn"
+				:class="{ 'active': (frameShape || 'none') === opt.id }"
+				@click.stop="setFrameShape( opt.id )"
+			>
+				{{ opt.label }}
+			</button>
+		</div>
 	</div>
 </template>

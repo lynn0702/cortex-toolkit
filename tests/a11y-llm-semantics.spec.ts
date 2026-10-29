@@ -980,13 +980,12 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			} );
 
 			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( true );
-			const toggleBtn = wrapper.find( '.trait-set-frame-toggle-btn' );
-			expect( toggleBtn.exists() ).toBe( true );
-			expect( toggleBtn.attributes( 'aria-pressed' ) ).toBe( 'true' );
+			expect( wrapper.find( '.frame-radial-svg' ).exists() ).toBe( true );
 
-			// Click toggle button: user turns frame off
-			await toggleBtn.trigger( 'click' );
-			expect( toggleBtn.attributes( 'aria-pressed' ) ).toBe( 'false' );
+			// 1. User selects "none" (or deletes frame in editor): turns frame off cleanly to view.parts
+			const unframedSet = structuredClone( set );
+			delete unframedSet.view.frame;
+			await wrapper.setProps( { character: { name: 'Fallback Hero', traitSets: [ unframedSet ] } } );
 			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( false );
 			expect( wrapper.find( '.frame-radial-svg' ).exists() ).toBe( false );
 
@@ -995,10 +994,12 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect( traits.length ).toBe( 3 );
 			expect( wrapper.findAll( '.attached-stress-track' ).length ).toBe( 3 );
 
-			// Click toggle button again: restores frame
-			await toggleBtn.trigger( 'click' );
-			expect( toggleBtn.attributes( 'aria-pressed' ) ).toBe( 'true' );
+			// 2. User re-enables frame: restores frame cleanly
+			const reframedSet = structuredClone( set );
+			reframedSet.view.frame = { shape: 'ring', span: [ 0, 360 ] };
+			await wrapper.setProps( { character: { name: 'Fallback Hero', traitSets: [ reframedSet ] } } );
 			expect( wrapper.find( '.trait-list-framed' ).exists() ).toBe( true );
+			expect( wrapper.find( '.frame-radial-svg' ).exists() ).toBe( true );
 
 			wrapper.unmount();
 		} );

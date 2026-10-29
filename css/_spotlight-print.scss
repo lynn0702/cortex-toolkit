@@ -825,6 +825,51 @@
 		position: relative;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
+		&.trait-set-framed {
+			background: var(--bg-surface-card, #ffffff);
+
+			&.trait-set-frame-ring,
+			&.trait-set-frame-ellipse,
+			&.trait-set-frame-arc {
+				border: 2px solid #111;
+				background: var(--bg-surface-card, #ffffff);
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+				.trait-set-header {
+					background: #f8fafc;
+				}
+			}
+
+			&.trait-set-frame-block {
+				border: none !important;
+				box-shadow: none !important;
+				background: transparent !important;
+				position: relative;
+
+				.trait-set-header {
+					background: transparent;
+					position: relative;
+					z-index: 1;
+				}
+
+				.trait-set-body {
+					position: relative;
+					z-index: 1;
+				}
+			}
+		}
+
+		&.trait-set-frame-line {
+			border: none !important;
+			background: transparent !important;
+			box-shadow: none !important;
+			margin: 0.75rem 0 !important;
+
+			.trait-set-header {
+				display: none !important;
+			}
+		}
+
 		// NOTE: no z-index here (see above) so an open .editor paints
 		// above the sticky edit/print toolbars instead of sliding under them.
 
@@ -1647,6 +1692,11 @@
 				background: #fee2e2;
 				color: #b91c1c;
 				cursor: pointer;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				vertical-align: middle;
+				line-height: 1;
 
 				&.active {
 					background: #dc2626;
@@ -2445,6 +2495,13 @@
 	align-items: center;
 	box-sizing: border-box;
 }
+.character-sheet.spotlight-style .trait-set.trait-set-frame-block > .trait-set-header,
+.character-sheet.spotlight-print-style .trait-set.trait-set-frame-block > .trait-set-header,
+.trait-set.trait-set-frame-block > .trait-set-header {
+	margin-inline: 1rem;
+	width: calc(100% - 2rem);
+	box-sizing: border-box;
+}
 .character-sheet.spotlight-style .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner,
 .character-sheet.spotlight-print-style .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner {
 	writing-mode: horizontal-tb;
@@ -2625,9 +2682,10 @@
 	}
 }
 
-// A top header sits flush on its table (no dead band under the header bar).
-.character-sheet.spotlight-style .trait-set-header-top .trait-set-body,
-.character-sheet.spotlight-print-style .trait-set-header-top .trait-set-body {
+// A top header sits flush on its table (no dead band under the header bar),
+// except framed sets which require vertical breathing room for anchored traits.
+.character-sheet.spotlight-style .trait-set-header-top .trait-set-body:not(.trait-set-body-framed),
+.character-sheet.spotlight-print-style .trait-set-header-top .trait-set-body:not(.trait-set-body-framed) {
 	padding-top: 0 !important;
 }
 
@@ -3856,28 +3914,61 @@ body:has(.character-sheet.submode-print) .main {
 	width: 100%;
 }
 .character-sheet .trait-parts .attached-stress-track {
-	--face-size: 0.95rem;
-	--track-gap: 0.1rem;
+	--face-size: var(--diecon-size, 1.45rem);
+	--track-gap: 1.6px;
 	display: flex;
-	flex-wrap: wrap;
-	column-gap: var(--track-gap);
-	row-gap: 0.3rem;
+	flex-wrap: nowrap !important;
+	column-gap: var(--track-gap) !important;
 	align-items: center;
 	justify-content: center;
-	width: calc(var(--track-faces, 5) * var(--face-size) + (var(--track-faces, 5) - 1) * var(--track-gap));
-	max-width: 100%;
+	width: auto;
+	max-width: none;
 
 	.attached-stress-die {
-		font-size: var(--face-size);
-		width: var(--face-size);
+		font-size: 1.15rem !important;
+		width: var(--face-size) !important;
+		display: inline-flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+		margin: 0 !important;
+		flex-shrink: 0;
 		cursor: pointer;
 		line-height: 1;
 		user-select: none;
+		vertical-align: middle;
 		transition: transform 0.1s ease;
 
 		&:hover {
 			transform: scale(1.15);
 		}
+	}
+
+	.stress-out-badge {
+		flex-shrink: 0;
+		display: inline-flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		vertical-align: middle !important;
+		line-height: 1 !important;
+		transform: translateY(1px);
+	}
+}
+
+.single-die-value {
+	display: inline-flex;
+	align-items: center;
+
+	.stress-out-badge {
+		flex-shrink: 0;
+		display: inline-flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		vertical-align: middle !important;
+		line-height: 1 !important;
+		height: var(--diecon-size, 1.45rem) !important;
+		margin-left: 0.35rem;
+		font-size: 0.82rem;
+		transform: translateY(2px);
 	}
 }
 .character-sheet .trait-parts-inline > .trait-part-track {
@@ -3886,7 +3977,7 @@ body:has(.character-sheet.submode-print) .main {
 }
 .character-sheet .trait-parts-inline .attached-stress-track {
 	justify-content: flex-start;
-	width: calc(var(--track-faces, 5) * var(--face-size) + (var(--track-faces, 5) - 1) * var(--track-gap));
+	width: auto;
 }
 /* Rating dice hug the name side: any residual spill goes right, away
    from the trait name, matching legacy row order. */

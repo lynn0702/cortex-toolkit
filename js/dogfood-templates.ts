@@ -28,7 +28,10 @@ export const VANGUARD_FRAME_SHOWCASE = {
 		notes: '',
 		tags: [],
 		view: {
-			sheetStyle: 'spotlight',
+			style: {
+				sheet: 'spotlight'
+			},
+			pageCount: 2,
 			columns: 2,
 			labels: {
 				pillars: {
@@ -45,12 +48,12 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				noun: 'Attribute',
 				view: {
 					pillar: 'prime',
-					span: 2,
+					page: 1,
+					place: { left: '0%', top: 0, width: '100%', height: 1 },
 					header: 'top',
-					headerAlign: 'center',
 					frame: {
 						shape: 'ring',
-						span: [ 0, 360 ],
+						span: [0, 360],
 						stroke: 'primary'
 					},
 					labels: {
@@ -58,45 +61,45 @@ export const VANGUARD_FRAME_SHOWCASE = {
 						out: 'OUT'
 					},
 					parts: {
-						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'L' },
-						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] },
-						trackLabel: { left: '0%', top: 1, width: '30%', height: 1, marker: 'L' },
-						track: { left: '30%', top: 1, width: '70%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] }
+						name: { left: '0%', top: 0, width: '25%', height: 1, marker: 'L' },
+						rating: { left: '25%', top: 0, width: '75%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+						trackLabel: { left: '0%', top: 1, width: '25%', height: 1, marker: 'L' },
+						track: { left: '25%', top: 1, width: '75%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] }
 					}
 				},
 				traits: [
 					{
 						name: 'Agility',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'Stress', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+							{ name: 'Stress', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }
 						]
 					},
 					{
 						name: 'Awareness',
-						rating: { type: 'Die', value: [ 10 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] },
 						traits: []
 					},
 					{
 						name: 'Brawn',
-						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 						traits: []
 					},
 					{
 						name: 'Coordination',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: []
 					},
 					{
 						name: 'Intellect',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'Stress', rating: { type: 'Die', value: [ 4 ], range: [ 4, 6, 8, 10, 12 ] } }
+							{ name: 'Stress', rating: { type: 'Die', value: [4], range: [4, 6, 8, 10, 12] } }
 						]
 					},
 					{
 						name: 'Will',
-						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 						traits: []
 					}
 				]
@@ -105,7 +108,8 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				name: '',
 				view: {
 					pillar: 'prime',
-					span: 2,
+					page: 1,
+					place: { left: '0%', top: 1, width: '100%', height: 1 },
 					frame: {
 						shape: 'line',
 						stroke: 'accent'
@@ -118,40 +122,38 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				noun: 'Distinction',
 				view: {
 					pillar: 'prime',
-					span: 2,
+					page: 1,
+					place: { left: '0%', top: 2, width: '100%', height: 2 },
 					header: 'top',
-					headerAlign: 'center',
-					sharedHinder: true,
 					style: { body: 'sfx-rows' },
 					features: { sfx: true },
 					frame: {
 						shape: 'arc',
-						span: [ -110, 110 ],
+						span: [-110, 110],
 						stroke: 'accent'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '70%', height: 1, marker: 'L' },
-						rating: { left: '70%', top: 0, width: '30%', height: 1, ratingType: 'Die', range: [ 4, 8 ] },
+						rating: { left: '70%', top: 0, width: '30%', height: 1, ratingType: 'Die', range: [4, 8] },
 						block: { left: '0%', top: 1, width: '100%', height: 1, marker: 'T' }
 					}
 				},
 				traits: [
 					{
 						name: 'Slipstream Test Pilot',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 8 ] },
+						rating: { type: 'Die', value: [8], range: [4, 8] },
 						traits: [
 							{
 								name: 'SFX',
 								traits: [
-									{ name: 'Hinder', description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' },
-									{ name: 'Redline', description: 'Step up or double a Pilot or Coordination die in a high-speed stunt, then step down that trait for the scene.' }
+									{ name: 'Hinder', description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
 								]
 							}
 						]
 					},
 					{
 						name: 'Jury-Rigged Telemetry',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 8 ] },
+						rating: { type: 'Die', value: [8], range: [4, 8] },
 						traits: [
 							{
 								name: 'SFX',
@@ -163,7 +165,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					},
 					{
 						name: 'Haunted by the Outer Rim',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 8 ] },
+						rating: { type: 'Die', value: [8], range: [4, 8] },
 						traits: [
 							{
 								name: 'SFX',
@@ -180,7 +182,8 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				noun: 'Role',
 				view: {
 					pillar: 'prime',
-					span: 1,
+					page: 1,
+					place: { left: '0%', top: 4, width: '50%', height: 1 },
 					header: 'top',
 					frame: {
 						shape: 'block',
@@ -189,15 +192,15 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '55%', height: 1, marker: 'L' },
-						rating: { left: '55%', top: 0, width: '45%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] }
+						rating: { left: '55%', top: 0, width: '45%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] }
 					}
 				},
 				traits: [
-					{ name: 'Commander', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } },
-					{ name: 'Engineer', rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] } },
-					{ name: 'Navigator', rating: { type: 'Die', value: [ 10 ], range: [ 4, 6, 8, 10, 12 ] } },
-					{ name: 'Scoundrel', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } },
-					{ name: 'Tactician', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+					{ name: 'Commander', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
+					{ name: 'Engineer', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
+					{ name: 'Navigator', rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] } },
+					{ name: 'Scoundrel', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
+					{ name: 'Tactician', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }
 				]
 			},
 			{
@@ -207,52 +210,48 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				hasQuestionedPip: true,
 				view: {
 					pillar: 'plus',
-					span: 1,
+					page: 1,
+					place: { left: '50%', top: 4, width: '50%', height: 1 },
 					header: 'top',
 					statement: true,
 					hasQuestionedPip: true,
 					frame: {
 						shape: 'ellipse',
-						span: [ 0, 360 ],
+						span: [0, 360],
 						stroke: 'muted'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '55%', height: 1, marker: 'L' },
-						rating: { left: '55%', top: 0, width: '45%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] }
+						rating: { left: '55%', top: 0, width: '45%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] }
 					}
 				},
 				traits: [
 					{
 						name: 'Duty',
-						statement: 'The crew comes home before the cargo.',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'The crew comes home before the cargo.', rating: { type: 'Pip', value: [ false ], range: [ 1 ] } }
+							{ name: 'The crew comes home before the cargo.', rating: { type: 'Pip', value: [false], range: [1] } }
 						]
 					},
 					{
 						name: 'Glory',
-						statement: 'No jump vector is impossible.',
-						questioned: true,
-						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'No jump vector is impossible.', rating: { type: 'Pip', value: [ true ], range: [ 1 ] } }
+							{ name: 'No jump vector is impossible.', rating: { type: 'Pip', value: [true], range: [1] } }
 						]
 					},
 					{
 						name: 'Justice',
-						statement: 'The Syndicate doesn\'t own the sky.',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'The Syndicate doesn\'t own the sky.', rating: { type: 'Pip', value: [ false ], range: [ 1 ] } }
+							{ name: 'The Syndicate doesn\'t own the sky.', rating: { type: 'Pip', value: [false], range: [1] } }
 						]
 					},
 					{
 						name: 'Truth',
-						statement: 'Every signal leaves a ghost in the static.',
-						rating: { type: 'Die', value: [ 10 ], range: [ 4, 6, 8, 10, 12 ] },
+						rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'Every signal leaves a ghost in the static.', rating: { type: 'Pip', value: [ false ], range: [ 1 ] } }
+							{ name: 'Every signal leaves a ghost in the static.', rating: { type: 'Pip', value: [false], range: [1] } }
 						]
 					}
 				]
@@ -262,26 +261,27 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				noun: 'Asset',
 				view: {
 					pillar: 'plus',
-					span: 2,
+					page: 1,
+					place: { left: '0%', top: 5, width: '100%', height: 1 },
 					header: 'top',
 					frame: {
 						shape: 'block',
 						corner: 12,
-						stroke: 'double'
+						stroke: 'dashed'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '65%', height: 1, marker: 'L' },
-						rating: { left: '65%', top: 0, width: '35%', height: 1, ratingType: 'Dice', range: [ 4, 6, 8, 10, 12 ] }
+						rating: { left: '65%', top: 0, width: '35%', height: 1, ratingType: 'Dice', range: [4, 6, 8, 10, 12] }
 					}
 				},
 				traits: [
 					{
 						name: 'Chronos-IV Interceptor',
-						rating: { type: 'Dice', value: [ 8, 6 ], range: [ 4, 6, 8, 10, 12 ] }
+						rating: { type: 'Dice', value: [8, 6], range: [4, 6, 8, 10, 12] }
 					},
 					{
 						name: 'Phase-Locked Grapple',
-						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] }
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }
 					}
 				]
 			},
@@ -290,6 +290,8 @@ export const VANGUARD_FRAME_SHOWCASE = {
 				noun: 'Scene Trait',
 				view: {
 					pillar: 'play',
+					page: 2,
+					place: { left: '0%', top: 0, width: '100%', height: 1 },
 					visibility: 'play-only',
 					playMutable: true,
 					outIndicator: true,
@@ -302,26 +304,28 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'T' },
-						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [ 4, 6, 8, 10, 12 ] }
+						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] }
 					}
 				},
 				traits: [
 					{
 						name: 'Sensor Lock',
-						rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] }
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }
 					},
 					{
 						name: 'Hull Breach',
-						rating: { type: 'Die', value: [ 8 ], range: [ 4, 6, 8, 10, 12 ], out: true }
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12], out: true }
 					}
 				]
 			},
 			{
 				name: 'Session Notes',
 				noun: 'Note',
-				notes: '### Telemetry Log\n- **Sector 7 Beacon:** Signal encrypted with pre-launch keys.\n- Try morphing `Attributes` from `ring` to `ellipse` or `block` in the JSON tab or Trait Block Mini!',
+				notes: '### Telemetry Log\n- **Sector 7 Beacon:** Signal encrypted with pre-launch keys.\n- Try morphing `Attributes` from `ring` to `ellipse` or `block` in the Card Builder (Trait Block Mini)!',
 				view: {
 					pillar: 'play',
+					page: 2,
+					place: { left: '0%', top: 1, width: '100%', height: 1 },
 					visibility: 'play-only',
 					playMutable: true,
 					style: { body: 'notes' },
@@ -337,4 +341,4 @@ export const VANGUARD_FRAME_SHOWCASE = {
 	}
 };
 
-export const DOGFOOD_TEMPLATES = [ VANGUARD_FRAME_SHOWCASE ];
+export const DOGFOOD_TEMPLATES = [VANGUARD_FRAME_SHOWCASE];

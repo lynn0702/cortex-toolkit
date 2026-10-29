@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import TraitSetBlock from '../js/trait-set-block.vue';
@@ -29,6 +29,92 @@ describe( 'Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', (
 		const linePreset = cortexSetPresets[ 'framed-section-line' ];
 		expect( linePreset, 'framed-section-line preset must exist' ).toBeDefined();
 		expect( linePreset?.preset?.view?.frame?.shape ).toBe( 'line' );
+	} );
+
+	it( 'F4: verifies span normalization preserves explicit 0 and anchors maintain >= 0.01 precision', () => {
+		const frameZero = resolveFrame( { shape: 'arc', span: [ 180, 0 ] } );
+		expect( frameZero, 'frame with span [180, 0] must resolve' ).not.toBeNull();
+		expect( frameZero?.span[ 0 ] ).toBe( 180 );
+		expect( frameZero?.span[ 1 ] ).toBe( 0 );
+
+		const anchors = computeFrameAnchors( 6, frameZero! );
+		expect( anchors.length ).toBe( 6 );
+		for ( const a of anchors ) {
+			const xStr = a.x.toString();
+			const yStr = a.y.toString();
+			const xDecimals = xStr.includes( '.' ) ? xStr.split( '.' )[ 1 ].length : 0;
+			const yDecimals = yStr.includes( '.' ) ? yStr.split( '.' )[ 1 ].length : 0;
+			expect( xDecimals ).toBeLessThanOrEqual( 2 );
+			expect( yDecimals ).toBeLessThanOrEqual( 2 );
+		}
+	} );
+
+	it( 'F5: verifies dead fields are stripped from dogfood template and presets', () => {
+		const char = VANGUARD_FRAME_SHOWCASE.character;
+		for ( const s of char.traitSets ) {
+			expect( ( s.view as any )?.headerAlign, 'headerAlign must be stripped' ).toBeUndefined();
+			expect( ( s.view as any )?.sharedHinder, 'sharedHinder must be stripped' ).toBeUndefined();
+		}
+
+		// Values set
+		const valuesSet = char.traitSets[ 4 ];
+		expect( valuesSet.name ).toBe( 'Values' );
+		for ( const t of valuesSet.traits ) {
+			expect( ( t as any ).statement, 'trait-level statement must be stripped' ).toBeUndefined();
+			expect( ( t as any ).questioned, 'trait-level questioned must be stripped' ).toBeUndefined();
+			expect( t.traits?.length ).toBe( 1 );
+			expect( t.traits?.[ 0 ].name ).toBeTruthy();
+		}
+		// Glory questioned pip
+		const glory = valuesSet.traits.find( t => t.name === 'Glory' );
+		expect( glory?.traits?.[ 0 ]?.rating?.value ).toEqual( [ true ] );
+
+		// Session notes does not reference JSON tab
+		const sessionNotes = char.traitSets[ 7 ];
+		expect( sessionNotes.notes ).not.toContain( 'JSON tab' );
+		expect( sessionNotes.notes ).toContain( 'Card Builder' );
+	} );
+
+	it( 'F6: verifies stroke tokens (strong, dashed) and unrecognized fallback to primary with warning', () => {
+		const warnSpy = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+
+		const character = structuredClone( VANGUARD_FRAME_SHOWCASE.character );
+		// Test unrecognized stroke fallback
+		character.traitSets[ 0 ].view.frame = {
+			shape: 'ring',
+			stroke: 'unknown-neon'
+		};
+		const wrapper = mount( TraitSetBlock, {
+			props: { character, traitSetID: 0, submode: 'play', editing: [] }
+		} );
+
+		expect( warnSpy ).toHaveBeenCalledWith( expect.stringContaining( 'unknown-neon' ) );
+		expect( wrapper.find( '.frame-stroke-primary' ).exists() ).toBe( true );
+
+		warnSpy.mockRestore();
+		wrapper.unmount();
+	} );
+
+	it( 'F8: verifies line divider set renders as a bare rule with no header or card chrome', () => {
+		const character = structuredClone( VANGUARD_FRAME_SHOWCASE.character );
+		const lineSet = character.traitSets[ 1 ];
+		expect( lineSet.name ).toBe( '' );
+		expect( lineSet.view.frame.shape ).toBe( 'line' );
+
+		const wrapper = mount( TraitSetBlock, {
+			props: { character, traitSetID: 1, submode: 'edit', editing: [] }
+		} );
+
+		// Section carries trait-set-frame-line
+		expect( wrapper.classes() ).toContain( 'trait-set-frame-line' );
+		// Header chrome is completely omitted
+		expect( wrapper.find( '.trait-set-header' ).exists() ).toBe( false );
+		// Line SVG is rendered
+		expect( wrapper.find( '.frame-line-svg' ).exists() ).toBe( true );
+		// No +Trait button or placeholder slot
+		expect( wrapper.find( '.trait-placeholder-slot' ).exists() ).toBe( false );
+
+		wrapper.unmount();
 	} );
 
 	it( 'Attributes: renders .trait-list-framed with 6 dynamically anchored traits and visible attached Stress tracks', () => {

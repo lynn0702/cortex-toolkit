@@ -1,4 +1,4 @@
-import { computed, provide, inject, ref, type InjectionKey } from 'vue';
+import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-geometry.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
@@ -53,23 +53,41 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 	// Phase 3c: SVG Frames & Dynamic Positional Anchors
 	const resolvedFrame = computed( () => resolveFrame( traitSet.value ) );
 	const frameToggledOff = ref( false );
-	const isMobileViewport = ref( typeof window !== 'undefined' && Boolean( window.matchMedia && window.matchMedia( '(max-width: 768px)' ).matches ) );
+	const containerWidth = ref<number>( 600 );
+	let resizeObserver: ResizeObserver | null = null;
 
-	if ( typeof window !== 'undefined' && window.matchMedia ) {
-		const mql = window.matchMedia( '(max-width: 768px)' );
-		const handler = ( e: MediaQueryListEvent ) => { isMobileViewport.value = e.matches; };
-		if ( mql.addEventListener ) {
-			mql.addEventListener( 'change', handler );
-		} else if ( ( mql as any ).addListener ) {
-			( mql as any ).addListener( handler );
+	function observeContainer( el: HTMLElement | null ) {
+		if ( resizeObserver ) {
+			resizeObserver.disconnect();
+			resizeObserver = null;
+		}
+		if ( el && typeof ResizeObserver !== 'undefined' ) {
+			resizeObserver = new ResizeObserver( ( entries ) => {
+				for ( const entry of entries ) {
+					const cr = entry.contentRect;
+					if ( cr && cr.width > 0 ) {
+						containerWidth.value = cr.width;
+					}
+				}
+			} );
+			resizeObserver.observe( el );
 		}
 	}
 
+	onBeforeUnmount( () => {
+		if ( resizeObserver ) {
+			resizeObserver.disconnect();
+			resizeObserver = null;
+		}
+	} );
+
+	// Width-based forced-off: radial frames force off when container is narrower than their minimum required width
 	const isFrameForcedOff = computed( () => {
 		if ( !resolvedFrame.value ) return false;
 		const s = resolvedFrame.value.shape;
 		if ( s === 'block' || s === 'line' ) return false;
-		return isMobileViewport.value;
+		const minWidth = s === 'arc' ? 360 : 480;
+		return containerWidth.value > 0 && containerWidth.value < minWidth;
 	} );
 
 	const isFrameActive = computed( () =>
@@ -87,19 +105,17 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		return buildFrameSvgPath( resolvedFrame.value );
 	} );
 
+	const VALID_STROKES = [ 'primary', 'accent', 'muted', 'strong', 'dashed' ];
 	const frameStrokeClass = computed( () => {
-		const stroke = resolvedFrame.value?.stroke || 'primary';
-		if ( stroke === 'primary' || stroke === 'accent' || stroke === 'muted' || stroke === 'double' ) {
-			return 'frame-stroke-' + stroke;
+		const raw = resolvedFrame.value?.stroke || 'primary';
+		if ( VALID_STROKES.includes( raw ) ) {
+			return 'frame-stroke-' + raw;
 		}
-		return 'frame-stroke-custom';
+		console.warn( `[frame] Unrecognized stroke token "${ raw }", falling back to "primary"` );
+		return 'frame-stroke-primary';
 	} );
 
 	const frameStrokeStyle = computed( () => {
-		const stroke = resolvedFrame.value?.stroke;
-		if ( stroke && stroke !== 'primary' && stroke !== 'accent' && stroke !== 'muted' && stroke !== 'double' ) {
-			return { stroke };
-		}
 		return undefined;
 	} );
 
@@ -208,6 +224,16 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		const vis = resolveVisibility( traitSetArg );
 		if ( vis === 'play-only' ) classes[ 'trait-set-play-only' ] = true;
 		if ( vis === 'editor-only' ) classes[ 'trait-set-editor-only' ] = true;
+
+		if ( isFrameActive.value ) {
+			classes[ 'trait-set-framed' ] = true;
+			if ( resolvedFrame.value?.shape ) {
+				classes[ 'trait-set-frame-' + resolvedFrame.value.shape ] = true;
+			}
+		}
+		if ( resolvedFrame.value?.shape === 'line' ) {
+			classes[ 'trait-set-frame-line' ] = true;
+		}
 
 		return classes;
 	}
@@ -1325,7 +1351,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
 		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
 		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
-		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock
+		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock,
+		containerWidth, observeContainer
 	};
 
 	provide( TRAIT_SET_KEY, api );

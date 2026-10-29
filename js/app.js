@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { cortexMigration } from './migration.ts';
 import { cloneDeep } from './clone-deep.ts';
+import { DOGFOOD_TEMPLATES } from './dogfood-templates.ts';
 import App from './app.vue';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,5 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.cortexFunctions = cortexFunctions;
 	window.cortexSetPresets = cortexFunctions.cortexSetPresets;
 	window.cortexCloneDeep = cloneDeep;
+	window.cortexDogfoodTemplates = DOGFOOD_TEMPLATES;
 
 });

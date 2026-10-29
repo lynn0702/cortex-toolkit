@@ -162,6 +162,14 @@ function useSpotlight( tmpl: any, asTemplate = false, openPrint = false ) {
 }
 
 function createCharacter() {
+	if ( selectedTemplateId.value && selectedTemplateId.value.startsWith( 'spotlight:' ) ) {
+		const id = selectedTemplateId.value.slice( 'spotlight:'.length );
+		const tmpl = spotlightTemplates.value.find( t => t.id === id );
+		if ( tmpl ) {
+			useSpotlight( tmpl, false, false );
+			return;
+		}
+	}
 	emit( 'createCharacter', false, selectedTemplateId.value || null );
 }
 
@@ -392,9 +400,16 @@ function getRelativeDateLabel( date1: any, date2: any ) {
 						<span class="picker-label">Template</span>
 						<select id="roster-template-picker" name="selectedTemplateId" v-model="selectedTemplateId" class="picker-select" aria-label="Template">
 							<option value="">None</option>
-							<option v-for="tmpl in templateSheets" :key="tmpl.id" :value="tmpl.id">
-								{{ tmpl.name || 'Unnamed Template' }}
-							</option>
+							<optgroup v-if="templateSheets.length" label="Saved Templates">
+								<option v-for="tmpl in templateSheets" :key="tmpl.id" :value="tmpl.id">
+									{{ tmpl.name || 'Unnamed Template' }}
+								</option>
+							</optgroup>
+							<optgroup label="Library Templates">
+								<option v-for="tmpl in spotlightTemplates" :key="tmpl.id" :value="'spotlight:' + tmpl.id">
+									{{ tmpl.title || tmpl.id }}
+								</option>
+							</optgroup>
 						</select>
 					</label>
 

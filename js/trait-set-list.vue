@@ -819,7 +819,7 @@ const {
 		<!-- BUTTON: ADD TRAIT -->
 		<transition appear>
 			<div class="preview-button-container"
-				v-show="submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet))"
+				v-show="!isPositionalFrameActive && resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet)))"
 			>
 				<div class="preview-button-container-inner">
 					<div class="preview-button"

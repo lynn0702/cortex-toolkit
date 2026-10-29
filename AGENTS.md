@@ -26,6 +26,29 @@ prompt, the prompt wins for that session — then update this file.
 - **When unsure, ask one question** instead of building the wrong thing.
   Never present a guess as a decision.
 
+## Skills (load before acting)
+
+This repo ships six skills in `.agents/skills/`. When a
+task matches a skill's trigger, load that skill's SKILL.md
+first and follow it; do not paraphrase it from memory.
+
+- measure-before-you-build — starting from a brief/spec,
+  or using any asserted constant, key, or formula.
+- provenance-labels — writing or reviewing a spec, brief,
+  or design doc.
+- vocabulary-check — writing or reviewing JSON data
+  (templates, presets, trait sets, view data).
+- paired-corpus-and-gates — changing paired files, adding
+  a file, or finishing any change.
+- session-scope — starting a session, when scope grows,
+  when work churns, before handing over.
+- mobile-verdict-separation — verifying mobile,
+  responsive, print, or geometric work, or writing
+  rendering claims.
+
+If skill discovery is unavailable in your tool, read the
+SKILL.md file directly from `.agents/skills/<name>/`.
+
 ## Stack
 
 - Vue 3 is **bundled** (no CDN). Components are `.vue` single-file components

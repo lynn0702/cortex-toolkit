@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getView } from './model.ts';
 import { cortexFunctions } from './functions.ts';
-import { computed } from 'vue';
+import { computed, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetNotes from './trait-set-notes.vue';
@@ -69,17 +69,40 @@ const bodyComponent = computed( () => {
 	const style = getView(traitSet.value)?.style?.body;
 	return ( style && BODY_COMPONENTS[ style ] ) || TraitSetList;
 } );
+
+const rootEl = ref<HTMLElement | null>( null );
+onMounted( () => {
+	ts.observeContainer( rootEl.value );
+} );
+watch( rootEl, ( el ) => {
+	ts.observeContainer( el );
+} );
 </script>
 
 <template>
 	<section
+		ref="rootEl"
 		v-if="traitSet && !isHiddenIn(traitSet, submode)"
 		:class="getTraitSetClasses(traitSet)"
 		:data-set-index="s"
 		:data-set-name="traitSet.name || undefined"
 		:aria-label="traitSet.name || 'Trait Set'"
 	>
-		<div class="trait-set-header">
+		<!-- Block frame SVG enclosing entire trait set (header + body) -->
+		<svg
+			v-if="isFrameActive && resolvedFrame?.shape === 'block'"
+			class="trait-set-frame-svg frame-block-svg"
+			:class="frameStrokeClass"
+			:style="frameStrokeStyle"
+			aria-hidden="true"
+			focusable="false"
+			viewBox="0 0 100 100"
+			preserveAspectRatio="none"
+		>
+			<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
+		</svg>
+
+		<div class="trait-set-header" v-if="resolvedFrame?.shape !== 'line' && traitSet.name">
 			<transition appear>
 				<div
 					:class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
@@ -104,21 +127,9 @@ const bodyComponent = computed( () => {
 					</button>
 				</div>
 			</transition>
-			<button
-				v-if="resolvedFrame && resolvedFrame.shape !== 'line'"
-				type="button"
-				class="trait-set-frame-toggle-btn"
-				:class="{ 'frame-off': !isFrameActive }"
-				:aria-pressed="isFrameActive ? 'true' : 'false'"
-				:title="isFrameActive ? 'Toggle frame off' : (isFrameForcedOff ? 'Frame forced off on mobile' : 'Toggle frame on')"
-				:aria-label="isFrameActive ? 'Toggle frame off' : 'Toggle frame on'"
-				@click.stop="frameToggledOff = !frameToggledOff"
-			>
-				<i class="fas fa-vector-square"></i>
-			</button>
 		</div>
 
-		<div class="trait-set-body" :class="{ 'trait-set-body-framed': isFrameActive && resolvedFrame?.shape === 'block' }">
+		<div class="trait-set-body" :class="{ 'trait-set-body-framed': isFrameActive }">
 			<!-- Bare-path divider if line -->
 			<svg
 				v-if="resolvedFrame?.shape === 'line'"
@@ -133,23 +144,9 @@ const bodyComponent = computed( () => {
 				<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
 			</svg>
 
-			<!-- Block frame SVG behind body -->
-			<svg
-				v-if="isFrameActive && resolvedFrame?.shape === 'block'"
-				class="trait-set-frame-svg frame-block-svg"
-				:class="frameStrokeClass"
-				:style="frameStrokeStyle"
-				aria-hidden="true"
-				focusable="false"
-				viewBox="0 0 100 100"
-				preserveAspectRatio="none"
-			>
-				<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
-			</svg>
+			<component :is="bodyComponent" v-if="!(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))" />
 
-			<component :is="bodyComponent" />
-
-			<ul class="sfx" v-if="getView(traitSet)?.features?.sfx && setSfxEntries.length">
+			<ul class="sfx" v-if="resolvedFrame?.shape !== 'line' && getView(traitSet)?.features?.sfx && setSfxEntries.length">
 				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 					<span class="sfx-name">{{ sfx.name }}</span>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>

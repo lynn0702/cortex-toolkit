@@ -1823,7 +1823,6 @@ export const cortexFunctions = {
 					pillar: 'prime',
 					span: 2,
 					header: 'top',
-					headerAlign: 'center',
 					frame: {
 						shape: 'ring',
 						span: [ 0, 360 ],

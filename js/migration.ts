@@ -1456,6 +1456,15 @@ export const cortexMigration = {
 				for ( let b = a + 1; b < list.length; b++ ) {
 					const A = list[a].rect, B = list[b].rect;
 					if ( A.left < B.left + B.width - 1e-6 && B.left < A.left + A.width - 1e-6 ) {
+						// Heal two sets sharing the same row that were both placed at the identical left edge
+						const setB = setsList[ list[b].index ];
+						const bagB = bagOf( setB );
+						if ( Math.abs( A.left - B.left ) < 1e-6 && A.width + B.width <= 100 + 1e-6 && bagB?.place ) {
+							const newLeft = Math.round( ( A.left + A.width ) * 1000 ) / 1000;
+							bagB.place.left = formatPct( newLeft );
+							B.left = newLeft;
+							continue;
+						}
 						warnings.push( 'page ' + key + ': horizontal collision between sets ' + list[a].index + ' and ' + list[b].index );
 					}
 				}

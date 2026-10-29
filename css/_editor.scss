@@ -1703,6 +1703,8 @@
 
 .editor-tabs {
 	display: flex;
+	flex-wrap: wrap;
+	max-width: 100%;
 	gap: 0.25rem;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 	margin-bottom: 0.85rem;

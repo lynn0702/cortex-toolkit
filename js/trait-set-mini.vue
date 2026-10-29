@@ -379,16 +379,17 @@ function setBlueprintRatingType( partKey: string, nextType: RatingType ) {
 	}
 }
 
-function toggleBlueprintRangeSide( partKey: string, side: number ) {
+function toggleBlueprintRangeSide( partKey: string, side: number | string ) {
+	const s = Number( side );
 	const map = ensurePartsMap();
 	const cell = map[ partKey ];
 	if ( !cell ) return;
 	const cur = Array.isArray( cell.range ) && cell.range.length ? [ ...cell.range ] : [ 4, 6, 8, 10, 12 ];
-	const idx = cur.indexOf( side );
+	const idx = cur.indexOf( s );
 	if ( idx >= 0 ) {
 		if ( cur.length > 1 ) cur.splice( idx, 1 );
 	} else {
-		cur.push( side );
+		cur.push( s );
 		cur.sort( ( a, b ) => a - b );
 	}
 	cell.range = cur;
@@ -409,17 +410,17 @@ function toggleBlueprintRangeSide( partKey: string, side: number ) {
 	} else if ( cell.noun ) {
 		const noun = cell.noun;
 		for ( const t of ( workingSet.value.traits || [] ) ) {
-			const sub = ( t.traits || [] ).find( ( s: any ) => ( s.name || '' ).toLowerCase() === noun.toLowerCase() );
+			const sub = ( t.traits || [] ).find( ( sSub: any ) => ( sSub.name || '' ).toLowerCase() === noun.toLowerCase() );
 			if ( sub && sub.rating ) sub.rating.range = [ ...cur ];
 		}
 	}
 }
 
-function setBlueprintPipCount( partKey: string, count: number ) {
+function setBlueprintPipCount( partKey: string, count: number | string ) {
 	const map = ensurePartsMap();
 	const cell = map[ partKey ];
 	if ( !cell ) return;
-	const n = Math.max( 1, Math.min( 25, Math.floor( count ) || 1 ) );
+	const n = Math.max( 1, Math.min( 25, Math.floor( Number( count ) ) || 1 ) );
 	cell.range = [ n ];
 
 	if ( partKey === 'rating' ) {
@@ -429,17 +430,19 @@ function setBlueprintPipCount( partKey: string, count: number ) {
 	} else if ( cell.noun ) {
 		const noun = cell.noun;
 		for ( const t of ( workingSet.value.traits || [] ) ) {
-			const sub = ( t.traits || [] ).find( ( s: any ) => ( s.name || '' ).toLowerCase() === noun.toLowerCase() );
+			const sub = ( t.traits || [] ).find( ( sSub: any ) => ( sSub.name || '' ).toLowerCase() === noun.toLowerCase() );
 			if ( sub ) sub.rating = createDefaultRatingForType( 'Pip', [ n ] );
 		}
 	}
 }
 
-function setBlueprintCounterBounds( partKey: string, min: number, max: number ) {
+function setBlueprintCounterBounds( partKey: string, min: number | string, max: number | string ) {
 	const map = ensurePartsMap();
 	const cell = map[ partKey ];
 	if ( !cell ) return;
-	cell.range = [ min, Math.max( min, max ) ];
+	const minVal = Number( min );
+	const maxVal = Number( max );
+	cell.range = [ minVal, Math.max( minVal, maxVal ) ];
 	if ( partKey === 'rating' ) {
 		for ( const t of ( workingSet.value.traits || [] ) ) {
 			t.rating = createDefaultRatingForType( 'Counter', cell.range );
@@ -930,9 +933,9 @@ function addTraitRow() {
 	workingSet.value.traits.push( newTrait );
 }
 
-function removeTraitRow( tIdx: number ) {
-	if ( !Array.isArray( workingSet.value.traits ) ) return;
-	workingSet.value.traits.splice( tIdx, 1 );
+function removeTraitRow( tIdx: number | string ) {
+	if ( !Array.isArray( workingSet.value?.traits ) ) return;
+	workingSet.value.traits.splice( Number( tIdx ), 1 );
 }
 
 function getChildTraitInstance( trait: any, noun: string ): any {
@@ -951,38 +954,43 @@ function getChildTraitInstance( trait: any, noun: string ): any {
 }
 
 // Value pickers on trait instances
-function setTraitDieValue( trait: any, dieVal: number ) {
-	if ( !trait.rating ) trait.rating = { type: 'Die', value: [ dieVal ], range: [ 4, 6, 8, 10, 12 ] };
-	trait.rating.value = [ dieVal ];
+function setTraitDieValue( trait: any, dieVal: number | string ) {
+	const val = Number( dieVal );
+	if ( !trait.rating ) trait.rating = { type: 'Die', value: [ val ], range: [ 4, 6, 8, 10, 12 ] };
+	trait.rating.value = [ val ];
 }
 
-function toggleTraitPoolDie( trait: any, dieVal: number ) {
-	if ( !trait.rating ) trait.rating = { type: 'Dice', value: [ dieVal ], range: [ 4, 6, 8, 10, 12 ] };
+function toggleTraitPoolDie( trait: any, dieVal: number | string ) {
+	const val = Number( dieVal );
+	if ( !trait.rating ) trait.rating = { type: 'Dice', value: [ val ], range: [ 4, 6, 8, 10, 12 ] };
 	if ( !Array.isArray( trait.rating.value ) ) trait.rating.value = [];
-	const idx = trait.rating.value.indexOf( dieVal );
+	const idx = trait.rating.value.indexOf( val );
 	if ( idx >= 0 && trait.rating.value.length > 1 ) {
 		trait.rating.value.splice( idx, 1 );
 	} else {
-		trait.rating.value.push( dieVal );
+		trait.rating.value.push( val );
 		trait.rating.value.sort( ( a: number, b: number ) => a - b );
 	}
 }
 
-function toggleTraitPipValue( trait: any, pIdx: number ) {
+function toggleTraitPipValue( trait: any, pIdx: number | string ) {
+	const idx = Number( pIdx );
 	if ( !trait.rating ) trait.rating = createDefaultRatingForType( 'Pip' );
 	if ( !Array.isArray( trait.rating.value ) ) trait.rating.value = [ false ];
-	trait.rating.value[ pIdx ] = !trait.rating.value[ pIdx ];
+	trait.rating.value[ idx ] = !trait.rating.value[ idx ];
 }
 
-function toggleChildPipValue( sub: any, pIdx: number ) {
+function toggleChildPipValue( sub: any, pIdx: number | string ) {
+	const idx = Number( pIdx );
 	if ( !sub.rating ) sub.rating = createDefaultRatingForType( 'Pip' );
 	if ( !Array.isArray( sub.rating.value ) ) sub.rating.value = [ false ];
-	sub.rating.value[ pIdx ] = !sub.rating.value[ pIdx ];
+	sub.rating.value[ idx ] = !sub.rating.value[ idx ];
 }
 
-function setChildDieValue( sub: any, dieVal: number ) {
-	if ( !sub.rating ) sub.rating = { type: 'Die', value: [ dieVal ], range: [ 4, 6, 8, 10, 12 ] };
-	sub.rating.value = [ dieVal ];
+function setChildDieValue( sub: any, dieVal: number | string ) {
+	const val = Number( dieVal );
+	if ( !sub.rating ) sub.rating = { type: 'Die', value: [ val ], range: [ 4, 6, 8, 10, 12 ] };
+	sub.rating.value = [ val ];
 }
 
 function addTraitSfx( trait: any ) {
@@ -995,9 +1003,9 @@ function addTraitSfx( trait: any ) {
 	} );
 }
 
-function removeChildTraitInstance( trait: any, sIdx: number ) {
+function removeChildTraitInstance( trait: any, sIdx: number | string ) {
 	if ( Array.isArray( trait.traits ) ) {
-		trait.traits.splice( sIdx, 1 );
+		trait.traits.splice( Number( sIdx ), 1 );
 	}
 }
 
@@ -1312,9 +1320,9 @@ function onFileImportSelected( ev: Event ) {
 										type="number"
 										class="mini-param-num"
 										min="0"
-										max="32"
+										max="48"
 										:value="activeFrame.corner"
-										@change="setFrameCorner(Math.max(0, Math.min(32, Number(($event.target as HTMLInputElement).value) || 0)))"
+										@change="setFrameCorner(Math.max(0, Math.min(48, Number(($event.target as HTMLInputElement).value) || 0)))"
 									/>
 								</label>
 								<button
@@ -1333,14 +1341,14 @@ function onFileImportSelected( ev: Event ) {
 							<span class="mini-param-label">Stroke:</span>
 							<div class="mini-param-presets" role="group" aria-label="Stroke Styles">
 								<button
-									v-for="stk in ['primary', 'accent', 'muted', 'double']"
+									v-for="stk in ['primary', 'accent', 'muted', 'strong', 'dashed']"
 									:key="'stk-' + stk"
 									type="button"
 									class="mini-chip-btn"
 									:class="{ active: activeFrame.stroke === stk }"
 									@click="setFrameStroke(stk)"
 								>
-									{{ stk.charAt(0).toUpperCase() + stk.slice(1) }}
+									{{ stk === 'strong' ? 'Strong' : (stk === 'dashed' ? 'Dashed' : (stk.charAt(0).toUpperCase() + stk.slice(1))) }}
 								</button>
 							</div>
 						</div>
@@ -1477,13 +1485,13 @@ function onFileImportSelected( ev: Event ) {
 									<button
 										type="button"
 										class="mini-icon-btn"
-										@click="setBlueprintPipCount( selectedPartKey, (selectedPart.range?.[0] || 5) - 1 )"
+										@click="setBlueprintPipCount( selectedPartKey, (Number(selectedPart?.range?.[0]) || 5) - 1 )"
 									>-</button>
-									<span class="pip-count-val">{{ selectedPart.range?.[0] || 5 }}</span>
+									<span class="pip-count-val">{{ Number(selectedPart?.range?.[0]) || 5 }}</span>
 									<button
 										type="button"
 										class="mini-icon-btn"
-										@click="setBlueprintPipCount( selectedPartKey, (selectedPart.range?.[0] || 5) + 1 )"
+										@click="setBlueprintPipCount( selectedPartKey, (Number(selectedPart?.range?.[0]) || 5) + 1 )"
 									>+</button>
 								</div>
 							</div>

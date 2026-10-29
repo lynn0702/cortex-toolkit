@@ -2,6 +2,7 @@ import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, prov
 import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
+import { resolveFrame } from './frame-geometry.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig, Visibility } from './model.ts';
 
 export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
@@ -843,6 +844,50 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		set: ( val: any ) => { setPipProperty( 'labels', Boolean( val ) ); }
 	});
 
+	const frameOptions = [
+		{ id: 'none',    label: 'None' },
+		{ id: 'block',   label: 'Block' },
+		{ id: 'ring',    label: 'Ring' },
+		{ id: 'ellipse', label: 'Ellipse' },
+		{ id: 'arc',     label: 'Arc' },
+		{ id: 'line',    label: 'Line' },
+	];
+
+	const frameShape = computed({
+		get: () => {
+			const res = resolveFrame( traitSet.value );
+			return res?.shape ?? 'none';
+		},
+		set: ( shape: string ) => {
+			setFrameShape( shape );
+		}
+	});
+
+	function setFrameShape( shape: string ) {
+		const s = props.traitSetID;
+		const ctk = ctkFor( s );
+		if ( shape === 'none' || !shape ) {
+			delete ctk.frame;
+		} else {
+			const existing = resolveFrame( props.character.traitSets[ s ] );
+			if ( existing ) {
+				ctk.frame = {
+					...existing,
+					shape: shape as any
+				};
+			} else {
+				ctk.frame = {
+					shape: shape as any,
+					span: [ 0, 360 ],
+					corner: 8,
+					stroke: 'primary',
+					path: null
+				};
+			}
+		}
+		updateCharacter( structuredClone( toRaw( props.character ) ) );
+	}
+
 	const pipsFilled = computed({
 		get: () => {
 			const rating = getRating( traitSet.value );
@@ -1264,6 +1309,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
 		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,
 		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
+		frameOptions, frameShape, setFrameShape,
 		scrollable, needsDiceUI, allowsTraitColumns,
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
