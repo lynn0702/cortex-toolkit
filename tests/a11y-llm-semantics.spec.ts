@@ -7,6 +7,7 @@ import TraitEditor from '../js/trait-editor.vue';
 import AppHeader from '../js/app-header.vue';
 import SessionNav from '../js/session-nav.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
+import PageLayoutMini from '../js/page-layout-mini.vue';
 import { cortexFunctions } from '../js/functions.ts';
 import { cortexPal } from '../js/cortex-pal.ts';
 
@@ -501,5 +502,296 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		mini.unmount();
 		block.unmount();
+	} );
+
+	describe( 'PageLayoutMini (Phase 4a & 4b)', () => {
+		it( 'renders PageLayoutMini with placed boxes and stacked bands, maintaining accessibility', async () => {
+			const char: any = {
+				name: 'Layout Test Hero',
+				view: { pageCount: 2, style: { sheet: 'spotlight' } },
+				traitSets: [
+					{
+						name: 'Distinctions',
+						view: { page: 1, place: { left: '0%', width: '100%', top: 0, height: 2 } },
+						traits: [ { name: 'Ace Pilot' } ]
+					},
+					{
+						name: 'Attributes',
+						view: { page: 1, place: { left: '0%', width: '50%', top: 2, height: 2 } },
+						traits: [ { name: 'Physical' } ]
+					},
+					{
+						name: 'Skills',
+						view: { page: 2 }, // unplaced band
+						traits: [ { name: 'Fight' } ]
+					}
+				]
+			};
+
+			const wrapper = mount( PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body
+			} );
+
+			expect( wrapper.findAll( '.place-mini' ).length ).toBe( 2 );
+			const boxes = wrapper.findAll( '.place-mini-ghost' );
+			expect( boxes.length ).toBeGreaterThanOrEqual( 3 );
+
+			// Click to select
+			await boxes[ 0 ].trigger( 'mousedown' );
+			expect( wrapper.find( '.place-mini-block' ).exists() ).toBe( true );
+
+			// Check Full Width button clears place
+			const fullWidthBtn = wrapper.find( 'button[title="Full width, stacked in document order"]' );
+			expect( fullWidthBtn.exists() ).toBe( true );
+			await fullWidthBtn.trigger( 'click' );
+			expect( char.traitSets[ 0 ].view.place ).toBeUndefined();
+
+			await runAxeAudit( wrapper.element as HTMLElement );
+			wrapper.unmount();
+		} );
+
+		it( 'commits place on release, while Escape key cancels gesture and leaves character model untouched', async () => {
+			const initialPlace = { left: '0%', width: '100%', top: 0, height: 2 };
+			const char: any = {
+				name: 'Drag Cancel Hero',
+				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				traitSets: [
+					{
+						name: 'Distinctions',
+						view: { page: 1, place: { ...initialPlace } },
+						traits: [ { name: 'Hero' } ]
+					}
+				]
+			};
+
+			const wrapper = mount( PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body
+			} );
+
+			// Select the block
+			const ghost = wrapper.find( '.place-mini-ghost' );
+			await ghost.trigger( 'mousedown' );
+
+			const block = wrapper.find( '.place-mini-block' );
+			expect( block.exists() ).toBe( true );
+
+			// Start drag
+			const mousedownEv = new MouseEvent( 'mousedown', { clientX: 50, clientY: 20 } );
+			block.element.dispatchEvent( mousedownEv );
+
+			// Move
+			const mousemoveEv = new MouseEvent( 'mousemove', { clientX: 100, clientY: 20 } );
+			window.dispatchEvent( mousemoveEv );
+
+			// Press Escape to cancel
+			const escapeEv = new KeyboardEvent( 'keydown', { key: 'Escape' } );
+			window.dispatchEvent( escapeEv );
+
+			// End mouseup
+			const mouseupEv = new MouseEvent( 'mouseup', { clientX: 100, clientY: 20 } );
+			window.dispatchEvent( mouseupEv );
+
+			// Verify place remains untouched
+			expect( char.traitSets[ 0 ].view.place.left ).toBe( '0%' );
+			expect( char.traitSets[ 0 ].view.place.width ).toBe( '100%' );
+
+			wrapper.unmount();
+		} );
+
+		it( 'moves set across pages in PageLayoutMini, reordering array, updating view.page, and leaving view.pillar untouched', async () => {
+			const char: any = {
+				name: 'Pillar Hero',
+				view: { pageCount: 2, style: { sheet: 'spotlight' } },
+				traitSets: [
+					{
+						name: 'Set 1',
+						view: { page: 1, pillar: 'prime', place: { left: '0%', width: '50%', top: 0, height: 1 } },
+						traits: []
+					},
+					{
+						name: 'Set 2',
+						view: { page: 2, pillar: 'identity', place: { left: '0%', width: '100%', top: 0, height: 1 } },
+						traits: []
+					}
+				]
+			};
+
+			const wrapper = mount( PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body
+			} );
+
+			// Select Set 1
+			const ghost = wrapper.findAll( '.place-mini-ghost' )[ 0 ];
+			await ghost.trigger( 'mousedown' );
+
+			// Click Page 2 button
+			const pageButtons = wrapper.findAll( '.editor-group-btn' );
+			const page2Btn = pageButtons.find( b => b.text() === 'Page 2' );
+			expect( page2Btn ).toBeDefined();
+			await page2Btn!.trigger( 'click' );
+
+			expect( char.traitSets[ 0 ].view.page ).toBe( 2 );
+			// Pillar must never be disturbed!
+			expect( char.traitSets[ 0 ].view.pillar ).toBe( 'prime' );
+			expect( char.traitSets[ 1 ].view.pillar ).toBe( 'identity' );
+
+			wrapper.unmount();
+		} );
+
+		it( 'supports keyboard navigation: arrows move, shift+arrows resize, enter/space opens block mini', async () => {
+			const char: any = {
+				name: 'Keyboard Hero',
+				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				traitSets: [
+					{
+						name: 'Movable Set',
+						view: { page: 1, place: { left: '10%', width: '40%', top: 1, height: 2 } },
+						traits: []
+					}
+				]
+			};
+
+			const wrapper = mount( PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body
+			} );
+
+			// Select Movable Set
+			const ghost = wrapper.find( '.place-mini-ghost' );
+			await ghost.trigger( 'mousedown' );
+
+			const block = wrapper.find( '.place-mini-block' );
+
+			// Move right (ArrowRight -> +5%)
+			await block.trigger( 'keydown', { key: 'ArrowRight' } );
+			expect( char.traitSets[ 0 ].view.place.left ).toBe( '15%' );
+
+			// Resize width (Shift+ArrowRight -> +5%)
+			await block.trigger( 'keydown', { key: 'ArrowRight', shiftKey: true } );
+			expect( char.traitSets[ 0 ].view.place.width ).toBe( '45%' );
+
+			// Move down (ArrowDown -> +1 row)
+			await block.trigger( 'keydown', { key: 'ArrowDown' } );
+			expect( char.traitSets[ 0 ].view.place.top ).toBe( 2 );
+
+			// Resize height (Shift+ArrowDown -> +1 row)
+			await block.trigger( 'keydown', { key: 'ArrowDown', shiftKey: true } );
+			expect( char.traitSets[ 0 ].view.place.height ).toBe( 3 );
+
+			// Enter opens block mini
+			await block.trigger( 'keydown', { key: 'Enter' } );
+			await wrapper.vm.$nextTick();
+			// TraitSetMini teleported to body
+			const bodyMini = document.body.querySelector( '.trait-set-mini' );
+			expect( bodyMini ).not.toBeNull();
+
+			wrapper.unmount();
+		} );
+
+		it( 'acceptance case: stress-bearing set with track, trackLabel, block, and companion scale preserves structure through move/resize', async () => {
+			const stressSet = {
+				name: 'Attributes',
+				view: {
+					place: { left: '0%', top: 0, width: '50%', height: 2 },
+					labels: { track: 'Stress' },
+					parts: {
+						name: { left: '0%', top: 0, width: '40%', height: 1 },
+						trackLabel: { left: '40%', top: 0, width: '25%', height: 1 },
+						track: { left: '65%', top: 0, width: '35%', height: 1 },
+						block: { left: '0%', top: 1, width: '100%', height: 1 }
+					}
+				},
+				traits: [
+					{
+						name: 'Physical',
+						rating: { type: 'Die', value: [ 8 ] },
+						traits: [
+							{ name: 'Stress', rating: { type: 'Die', value: [ 6 ], range: [ 4, 6, 8, 10, 12 ] } }
+						]
+					}
+				]
+			};
+
+			const char: any = {
+				name: 'Stress Acceptance Hero',
+				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				traitSets: [ stressSet ]
+			};
+
+			const wrapper = mount( PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body
+			} );
+
+			// Select the stress set
+			const ghost = wrapper.find( '.place-mini-ghost' );
+			await ghost.trigger( 'mousedown' );
+
+			const block = wrapper.find( '.place-mini-block' );
+
+			// Move set right and down via keyboard
+			await block.trigger( 'keydown', { key: 'ArrowRight' } );
+			await block.trigger( 'keydown', { key: 'ArrowDown' } );
+
+			// Verify place changed correctly
+			expect( char.traitSets[ 0 ].view.place.left ).toBe( '5%' );
+			expect( char.traitSets[ 0 ].view.place.top ).toBe( 1 );
+
+			// Verify stress parts and companion scale remain 100% intact
+			expect( char.traitSets[ 0 ].view.parts.track ).toEqual( { left: '65%', top: 0, width: '35%', height: 1 } );
+			expect( char.traitSets[ 0 ].view.parts.trackLabel ).toEqual( { left: '40%', top: 0, width: '25%', height: 1 } );
+			expect( char.traitSets[ 0 ].view.parts.block ).toEqual( { left: '0%', top: 1, width: '100%', height: 1 } );
+			expect( char.traitSets[ 0 ].traits[ 0 ].traits[ 0 ].rating.range ).toEqual( [ 4, 6, 8, 10, 12 ] );
+
+			wrapper.unmount();
+		} );
+
+		it( 'wires seamless TraitSetMini handoff: opens block mini, applies update, and returns with set selected', async () => {
+			const char: any = {
+				name: 'Handoff Hero',
+				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				traitSets: [
+					{
+						name: 'Handoff Set',
+						view: { page: 1, place: { left: '0%', width: '100%', top: 0, height: 1 } },
+						traits: [ { name: 'Initial Trait' } ]
+					}
+				]
+			};
+
+			const wrapper = mount( PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body
+			} );
+
+			// Select the set
+			const ghost = wrapper.find( '.place-mini-ghost' );
+			await ghost.trigger( 'mousedown' );
+
+			// Click "Edit Parts" button
+			const editPartsBtn = wrapper.find( '.btn-open-block-mini' );
+			expect( editPartsBtn.exists() ).toBe( true );
+			await editPartsBtn.trigger( 'click' );
+			await wrapper.vm.$nextTick();
+
+			// Verify TraitSetMini is rendered
+			expect( document.body.querySelector( '.trait-set-mini' ) ).not.toBeNull();
+
+			// Apply in TraitSetMini: update set name
+			const applyBtn = document.body.querySelector( '.btn-apply-sheet' ) as HTMLButtonElement;
+			expect( applyBtn ).not.toBeNull();
+			applyBtn.click();
+
+			await wrapper.vm.$nextTick();
+
+			// TraitSetMini closed, returned to same page mini, set still selected
+			expect( document.body.querySelector( '.trait-set-mini' ) ).toBeNull();
+			expect( wrapper.find( '.place-mini-block' ).exists() ).toBe( true );
+
+			wrapper.unmount();
+		} );
 	} );
 } );

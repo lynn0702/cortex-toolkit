@@ -1420,7 +1420,7 @@ function onFileImportSelected( ev: Event ) {
 									type="text"
 									class="mini-input mini-trait-noun-input"
 									:placeholder="workingSet.noun || 'Trait'"
-									:aria-label="`Trait ${tIdx + 1} Noun`"
+									:aria-label="`Trait ${Number(tIdx) + 1} Noun`"
 								/>
 
 								<!-- Rating Value Selector driven by blueprint -->
@@ -1461,7 +1461,7 @@ function onFileImportSelected( ev: Event ) {
 											type="button"
 											class="pip-bubble"
 											:class="{ filled }"
-											@click="toggleTraitPipValue( trait, pIdx )"
+											@click="toggleTraitPipValue( trait, Number(pIdx) )"
 										></button>
 									</div>
 
@@ -1487,7 +1487,7 @@ function onFileImportSelected( ev: Event ) {
 								<button
 									type="button"
 									class="mini-icon-btn mini-btn-danger"
-									@click="removeTraitRow( tIdx )"
+									@click="removeTraitRow( Number(tIdx) )"
 								>&times;</button>
 							</div>
 
@@ -1522,7 +1522,7 @@ function onFileImportSelected( ev: Event ) {
 										type="text"
 										class="mini-input mini-input-sm mini-subrow-noun"
 										:placeholder="slot.noun"
-										:aria-label="`Companion Track Noun ${tIdx + 1}`"
+										:aria-label="`Companion Track Noun ${Number(tIdx) + 1}`"
 									/>
 
 									<!-- Child Rating Picker -->
@@ -1569,7 +1569,7 @@ function onFileImportSelected( ev: Event ) {
 													type="button"
 													class="pip-bubble"
 													:class="{ filled }"
-													@click="toggleChildPipValue( getChildTraitInstance( trait, slot.noun ), pIdx )"
+													@click="toggleChildPipValue( getChildTraitInstance( trait, slot.noun ), Number(pIdx) )"
 												></button>
 											</div>
 										</template>
@@ -1608,7 +1608,7 @@ function onFileImportSelected( ev: Event ) {
 								<button
 									type="button"
 									class="mini-icon-btn mini-btn-danger"
-									@click="removeChildTraitInstance( trait, sIdx )"
+									@click="removeChildTraitInstance( trait, Number(sIdx) )"
 								>&times;</button>
 							</div>
 						</article>

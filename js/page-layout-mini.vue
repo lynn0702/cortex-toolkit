@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from 'vue';
 import { getView, ensureView } from './model.ts';
-import { getSpotlightSections, parsePct, formatPct } from './spotlight-grid.ts';
+import { getSpotlightSections, parsePct, formatPct, getTraitSetColumn, isFullWidthClassic } from './spotlight-grid.ts';
+import TraitSetMini from './trait-set-mini.vue';
 
 // Page-level arrangement: every set on every page as a draggable box on
 // the page grid (the layout engine section walk: grid groups in document
@@ -27,6 +28,7 @@ const pageCount = computed( () => {
 } );
 
 const selected = ref<number | null>( null );
+const editingSetIndex = ref<number | null>( null );
 
 interface Block {
 	kind: 'box' | 'band';
@@ -42,6 +44,7 @@ interface Block {
 
 function layoutFor( page: number, setsInput?: any[] ): { blocks: Block[]; rows: number } {
 	const sets = setsInput ?? props.character?.traitSets ?? [];
+	const isClassic = getView( props.character )?.style?.sheet === 'classic';
 	const sections = getSpotlightSections( sets as any, page );
 	const out: Block[] = [];
 	let cursor = 0;
@@ -52,7 +55,23 @@ function layoutFor( page: number, setsInput?: any[] ): { blocks: Block[]; rows: 
 	for ( const section of sections ) {
 		if ( section.type !== 'grid' ) {
 			for ( const item of section.ordered || [] ) {
-				out.push( { kind: 'band', index: item.index, name: labelOf( item.index ), left: 0, width: 100, top: cursor, height: 1, base: -1, set: ( sets as any[] )[ item.index ] } );
+				const sObj = ( sets as any[] )[ item.index ];
+				let left = 0;
+				let width = 100;
+				if ( isClassic ) {
+					const isFull = isFullWidthClassic( sObj );
+					if ( !isFull ) {
+						const col = getTraitSetColumn( sObj );
+						if ( col === 'left' ) {
+							left = 0;
+							width = 50;
+						} else {
+							left = 50;
+							width = 50;
+						}
+					}
+				}
+				out.push( { kind: 'band', index: item.index, name: labelOf( item.index ), left, width, top: cursor, height: 1, base: -1, set: sObj } );
 				cursor += 1;
 			}
 			continue;
@@ -115,20 +134,62 @@ function setNameOf( index: number ) {
 	return ( sets[ index ] as any )?.name || ( '#' + ( index + 1 ) );
 }
 
+function getOtherPlacedBlocks( page: number, excludeIndex: number ): { index: number; left: number; width: number; top: number; height: number }[] {
+	const sets = props.character?.traitSets || [];
+	const list: { index: number; left: number; width: number; top: number; height: number }[] = [];
+	sets.forEach( ( s: any, idx: number ) => {
+		if ( idx === excludeIndex ) return;
+		if ( ( Number( getView( s )?.page ) || 1 ) !== page ) return;
+		const p = getView( s )?.place;
+		if ( !p ) return;
+		const left = parsePct( p.left ) ?? 0;
+		const width = parsePct( p.width ) ?? 100;
+		const top = Number.isInteger( p.top ) ? p.top : 0;
+		const height = Number.isInteger( p.height ) ? p.height : 1;
+		list.push( { index: idx, left, width, top, height } );
+	} );
+	return list;
+}
+
+function checkOverlap(
+	a: { left: number; width: number; top: number; height: number },
+	b: { left: number; width: number; top: number; height: number }
+): boolean {
+	const h = a.left < b.left + b.width - 1e-6 && b.left < a.left + a.width - 1e-6;
+	const v = a.top < b.top + b.height && b.top < a.top + a.height;
+	return h && v;
+}
+
 function writePlace( index: number, rect: { left: number; width: number; top: number; height: number } ) {
 	const set = props.character?.traitSets?.[ index ];
 	if ( !set || typeof set !== 'object' ) return;
 	const view = ensureView( set );
+	const page = Number( view.page ) || 1;
+	const cl = Math.max( 0, Math.min( 100, Number( rect.left ) || 0 ) );
+	let cw = Math.max( 1, Math.min( 100 - cl, Number( rect.width ) || 100 ) );
+	const top = Number.isInteger( rect.top ) ? Math.max( 0, rect.top ) : 0;
+	let height = Number.isInteger( rect.height ) ? Math.max( 1, rect.height ) : 1;
+
+	// Clamp against other blocks on the same page
+	const others = getOtherPlacedBlocks( page, index );
+	for ( const o of others ) {
+		if ( top < o.top + o.height && o.top < top + height ) {
+			if ( cl < o.left + o.width - 1e-6 && o.left < cl + cw - 1e-6 ) {
+				if ( cl < o.left ) {
+					cw = Math.max( 1, o.left - cl );
+				}
+			}
+		}
+	}
+
 	if ( !view.place || typeof view.place !== 'object' ) {
 		view.place = { left: '0%', top: 0, width: '100%', height: 1 };
 	}
 	const place = view.place as unknown as Record<string, unknown>;
-	const cl = Math.max( 0, Math.min( 100, Number( rect.left ) || 0 ) );
-	const cw = Math.max( 1, Math.min( 100, Number( rect.width ) || 100 ) );
 	place.left = formatPct( Math.round( cl * 10 ) / 10 );
 	place.width = formatPct( Math.round( cw * 10 ) / 10 );
-	place.top = Number.isInteger( rect.top ) ? Math.max( 0, rect.top ) : 0;
-	place.height = Number.isInteger( rect.height ) ? Math.max( 1, rect.height ) : 1;
+	place.top = top;
+	place.height = height;
 	emit( 'updateCharacter', props.character );
 }
 
@@ -242,6 +303,7 @@ function startBoxDrag( event: MouseEvent | TouchEvent, b: Block, pg: number, mod
 	const base = { left: b.left, width: b.width, top: b.top, height: b.height };
 	const setObj = b.set;
 	let moved = false;
+	let cancelled = false;
 
 	const overAt = ( cx: number, cy: number ) => {
 		const hit = minis.find( ( m ) => cx >= m.rect.left && cx <= m.rect.right && cy >= m.rect.top && cy <= m.rect.bottom );
@@ -250,7 +312,26 @@ function startBoxDrag( event: MouseEvent | TouchEvent, b: Block, pg: number, mod
 		return { page: hit.page, row };
 	};
 
+	const onKeydown = ( e: KeyboardEvent ) => {
+		if ( e.key === 'Escape' ) {
+			e.preventDefault();
+			e.stopPropagation();
+			cancelled = true;
+			drag.value = null;
+			cleanup();
+		}
+	};
+
+	const cleanup = () => {
+		window.removeEventListener( 'mousemove', onMove );
+		window.removeEventListener( 'mouseup', onUp );
+		window.removeEventListener( 'touchmove', onMove );
+		window.removeEventListener( 'touchend', onUp );
+		window.removeEventListener( 'keydown', onKeydown );
+	};
+
 	const onMove = ( e: any ) => {
+		if ( cancelled ) return;
 		const cx = e.clientX ?? e.touches?.[ 0 ]?.clientX;
 		const cy = e.clientY ?? e.touches?.[ 0 ]?.clientY;
 		if ( cx === undefined || cy === undefined ) return;
@@ -260,43 +341,95 @@ function startBoxDrag( event: MouseEvent | TouchEvent, b: Block, pg: number, mod
 		const dxPct = ( cx - startX ) / w * 100;
 		if ( mode !== 'move' ) {
 			if ( mode === 'w' ) {
-				const w = snapPct( Math.max( 5, Math.min( 100 - base.left, base.width + dxPct ) ) );
+				let targetW = snapPct( Math.max( 5, Math.min( 100 - base.left, base.width + dxPct ) ) );
+				// Live clamp against other placed blocks on the same page
+				const others = getOtherPlacedBlocks( pageOfSet( b.index ), b.index );
+				for ( const o of others ) {
+					if ( base.top < o.top + o.height && o.top < base.top + base.height ) {
+						if ( o.left >= base.left + 1e-6 ) {
+							targetW = Math.min( targetW, o.left - base.left );
+						}
+					}
+				}
+				targetW = Math.max( 5, targetW );
 				drag.value = {
 					index: b.index, setObj, mode, base,
 					page: pageOfSet( b.index ),
-					left: base.left, width: w, top: base.top, height: base.height,
+					left: base.left, width: targetW, top: base.top, height: base.height,
 					overPage: pg, overRow: base.top, cx, cy,
 				};
 			} else {
 				const dyRows = ( cy - startY ) / ROW_H;
+				let targetH = Math.max( 1, Math.round( base.height + dyRows ) );
+				// Live clamp against other placed blocks below
+				const others = getOtherPlacedBlocks( pageOfSet( b.index ), b.index );
+				for ( const o of others ) {
+					if ( base.left < o.left + o.width - 1e-6 && o.left < base.left + base.width - 1e-6 ) {
+						if ( o.top >= base.top + 1 ) {
+							targetH = Math.min( targetH, o.top - base.top );
+						}
+					}
+				}
+				targetH = Math.max( 1, targetH );
 				drag.value = {
 					index: b.index, setObj, mode, base,
 					page: pageOfSet( b.index ),
 					left: base.left, width: base.width, top: base.top,
-					height: Math.max( 1, Math.round( base.height + dyRows ) ),
+					height: targetH,
 					overPage: pg, overRow: base.top, cx, cy,
 				};
 			}
 			return;
 		}
-		const left = snapPct( Math.max( 0, Math.min( 100 - base.width, base.left + dxPct ) ) );
-		const over = overAt( cx, cy ) ?? { page: pg, row: base.top };
-		const mapped = mapDrop( sets.filter( ( s: any ) => s !== setObj ), over.page, over.row );
+
+		let left = snapPct( Math.max( 0, Math.min( 100 - base.width, base.left + dxPct ) ) );
+		const over = overAt( cx, cy );
+		const overPage = over ? over.page : pg;
+		const overRow = over ? over.row : base.top;
+		const mapped = mapDrop( sets.filter( ( s: any ) => s !== setObj ), overPage, overRow );
+
+		// Live clamp left against other placed blocks on overPage that share target top
+		const targetTop = mapped.top;
+		const others = getOtherPlacedBlocks( overPage, b.index );
+		for ( const o of others ) {
+			if ( targetTop < o.top + o.height && o.top < targetTop + base.height ) {
+				if ( base.left + base.width <= o.left + 1e-6 ) {
+					left = Math.min( left, o.left - base.width );
+				} else if ( o.left + o.width <= base.left + 1e-6 ) {
+					left = Math.max( left, o.left + o.width );
+				} else if ( left < o.left + o.width - 1e-6 && o.left < left + base.width - 1e-6 ) {
+					if ( left + base.width / 2 < o.left + o.width / 2 ) {
+						left = Math.max( 0, o.left - base.width );
+					} else {
+						left = Math.min( 100 - base.width, o.left + o.width );
+					}
+				}
+			}
+		}
+		left = snapPct( Math.max( 0, Math.min( 100 - base.width, left ) ) );
+
 		drag.value = {
 			index: b.index, setObj, mode, base,
-			page: over.page, left, width: base.width, top: mapped.top, height: base.height,
-			overPage: over.page, overRow: over.row, cx, cy,
+			page: overPage, left, width: base.width, top: targetTop, height: base.height,
+			overPage, overRow, cx, cy,
 		};
 	};
 
-	const onUp = () => {
-		window.removeEventListener( 'mousemove', onMove );
-		window.removeEventListener( 'mouseup', onUp );
-		window.removeEventListener( 'touchmove', onMove );
-		window.removeEventListener( 'touchend', onUp );
+	const onUp = ( e?: any ) => {
+		cleanup();
+		if ( cancelled ) return;
 		const d = drag.value;
 		drag.value = null;
 		if ( !moved || !d ) return;
+
+		const cx = e ? ( e.clientX ?? e.changedTouches?.[ 0 ]?.clientX ?? d.cx ) : d.cx;
+		const cy = e ? ( e.clientY ?? e.changedTouches?.[ 0 ]?.clientY ?? d.cy ) : d.cy;
+		const hit = overAt( cx, cy );
+		if ( !hit ) {
+			// Dropped outside all page miniatures: cancel gesture, leave model untouched
+			return;
+		}
+
 		if ( d.mode !== 'move' ) {
 			writePlace( b.index, { left: d.left, width: d.width, top: d.top, height: d.height } );
 			return;
@@ -321,15 +454,94 @@ function startBoxDrag( event: MouseEvent | TouchEvent, b: Block, pg: number, mod
 	window.addEventListener( 'mouseup', onUp );
 	window.addEventListener( 'touchmove', onMove, { passive: false } );
 	window.addEventListener( 'touchend', onUp );
+	window.addEventListener( 'keydown', onKeydown );
+}
+
+function onBoxKeydown( e: KeyboardEvent, b: Block ) {
+	if ( e.key === 'Enter' || e.key === ' ' ) {
+		e.preventDefault();
+		openBlockMini( b.index );
+		return;
+	}
+	if ( !e.key.startsWith( 'Arrow' ) ) return;
+	e.preventDefault();
+	selected.value = b.index;
+
+	const curLeft = numOf( b.index, 'left' );
+	const curWidth = numOf( b.index, 'width' );
+	const curTop = numOf( b.index, 'top' );
+	const curHeight = numOf( b.index, 'height' );
+	const page = pageOfSet( b.index );
+	const others = getOtherPlacedBlocks( page, b.index );
+
+	let newLeft = curLeft;
+	let newWidth = curWidth;
+	let newTop = curTop;
+	let newHeight = curHeight;
+
+	if ( e.key === 'ArrowLeft' ) {
+		if ( e.shiftKey ) {
+			newWidth = Math.max( 5, curWidth - 5 );
+		} else {
+			newLeft = Math.max( 0, curLeft - 5 );
+			const obs = others.filter( o => curTop < o.top + o.height && o.top < curTop + curHeight && o.left + o.width <= curLeft + 1e-6 );
+			for ( const o of obs ) {
+				newLeft = Math.max( newLeft, o.left + o.width );
+			}
+		}
+	} else if ( e.key === 'ArrowRight' ) {
+		if ( e.shiftKey ) {
+			newWidth = Math.min( 100 - curLeft, curWidth + 5 );
+			const obs = others.filter( o => curTop < o.top + o.height && o.top < curTop + curHeight && o.left >= curLeft + 1e-6 );
+			for ( const o of obs ) {
+				newWidth = Math.min( newWidth, o.left - curLeft );
+			}
+		} else {
+			newLeft = Math.min( 100 - curWidth, curLeft + 5 );
+			const obs = others.filter( o => curTop < o.top + o.height && o.top < curTop + curHeight && o.left >= curLeft + curWidth - 1e-6 );
+			for ( const o of obs ) {
+				newLeft = Math.min( newLeft, o.left - curWidth );
+			}
+		}
+	} else if ( e.key === 'ArrowUp' ) {
+		if ( e.shiftKey ) {
+			newHeight = Math.max( 1, curHeight - 1 );
+		} else {
+			newTop = Math.max( 0, curTop - 1 );
+			const overlaps = others.some( o => checkOverlap( { left: curLeft, width: curWidth, top: newTop, height: curHeight }, o ) );
+			if ( overlaps ) newTop = curTop;
+		}
+	} else if ( e.key === 'ArrowDown' ) {
+		if ( e.shiftKey ) {
+			newHeight = curHeight + 1;
+			const overlaps = others.some( o => checkOverlap( { left: curLeft, width: curWidth, top: curTop, height: newHeight }, o ) );
+			if ( overlaps ) newHeight = curHeight;
+		} else {
+			newTop = curTop + 1;
+			const overlaps = others.some( o => checkOverlap( { left: curLeft, width: curWidth, top: newTop, height: curHeight }, o ) );
+			if ( overlaps ) newTop = curTop;
+		}
+	}
+
+	writePlace( b.index, { left: newLeft, width: newWidth, top: newTop, height: newHeight } );
+}
+
+function openBlockMini( index: number ) {
+	selected.value = index;
+	editingSetIndex.value = index;
+}
+
+function onApplyBlockMini( updatedSet: any ) {
+	if ( editingSetIndex.value !== null && props.character?.traitSets?.[ editingSetIndex.value ] ) {
+		props.character.traitSets[ editingSetIndex.value ] = updatedSet;
+		emit( 'updateCharacter', props.character );
+	}
+	editingSetIndex.value = null;
 }
 
 onUnmounted( () => { drag.value = null; clearArm(); lastPress.value = null; } );
 
-// Drill into the set editor on double-press: a real dblclick never
-// completes here (selecting swaps ghost for block between press and
-// release, retargeting the click), so two quick presses arm a drill
-// that fires on a clean release — any move first cancels it, exactly
-// like the OS (click-then-drag never drills).
+// Drill into the block mini on double-press:
 const lastPress = ref<{ index: number; at: number } | null>( null );
 let armCleanup: ( () => void ) | null = null;
 function clearArm() {
@@ -363,7 +575,7 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 	const onUp = () => {
 		if ( settled ) return;
 		done();
-		emit( 'openSet', index );
+		openBlockMini( index );
 	};
 	armCleanup = done;
 	window.addEventListener( 'mousemove', onMove );
@@ -374,7 +586,7 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 </script>
 
 <template>
-	<div>
+	<div class="page-layout-mini-wrap">
 		<div v-for="pg in pages" :key="'page-mini-' + pg.page" style="margin-bottom: 0.6rem;">
 			<div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.2rem;">Page {{ pg.page }}</div>
 			<div
@@ -400,9 +612,14 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 						class="place-mini-ghost place-mini-pick"
 						:class="{ 'place-mini-band': b.kind === 'band' }"
 						:data-index="b.index"
+						:data-page="pg.page"
 						:style="'left: ' + b.left + '%; top: ' + (b.top * ROW_H + 4) + 'px; width: ' + b.width + '%; height: ' + (b.height * ROW_H - 3) + 'px;'"
-						:title="b.name + (b.kind === 'band' ? ' (stacked)' : '') + ' — click to select, double-click to edit'"
+						:title="b.name + (b.kind === 'band' ? ' (stacked)' : '') + ' — click to select, double-click or Enter to edit parts'"
+						tabindex="0"
+						role="button"
+						:aria-label="b.name + (b.kind === 'band' ? ' (stacked)' : '') + ' — click to select, double-click or Enter to edit parts'"
 						@mousedown="selected = b.index; pressBox(b.index, $event)"
+						@keydown="onBoxKeydown($event, b)"
 						v-if="selected !== b.index"
 					>
 						<span class="place-mini-ghostname">{{ b.name }}</span>
@@ -412,19 +629,26 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 						class="place-mini-block"
 						:class="{ 'place-mini-stacked': b.kind === 'band', 'place-mini-dragging': drag && drag.index === b.index }"
 						:data-index="b.index"
+						:data-page="pg.page"
 						:style="'left: ' + b.left + '%; top: ' + (b.top * ROW_H + 4) + 'px; width: ' + b.width + '%; height: ' + (b.height * ROW_H - 3) + 'px;'"
+						tabindex="0"
+						role="button"
+						:aria-label="b.name + ' — arrows to move, shift+arrows to resize, enter to edit parts'"
 						@mousedown="startBoxDrag($event, b, pg.page, 'move')"
 						@touchstart="startBoxDrag($event, b, pg.page, 'move')"
-						:title="'Drag to move within and between pages · right and bottom edges resize · double-click to edit'"
+						@keydown="onBoxKeydown($event, b)"
+						:title="'Drag to move within and between pages · right and bottom edges resize · double-click or Enter to edit parts'"
 					>
 						<span class="place-mini-name">{{ b.name }}</span>
 						<span
 							class="place-mini-edge place-mini-edge-e"
+							title="Resize width"
 							@mousedown.stop="startBoxDrag($event, b, pg.page, 'w')"
 							@touchstart.stop="startBoxDrag($event, b, pg.page, 'w')"
 						></span>
 						<span
 							class="place-mini-edge place-mini-edge-s"
+							title="Resize height"
 							@mousedown.stop="startBoxDrag($event, b, pg.page, 'h')"
 							@touchstart.stop="startBoxDrag($event, b, pg.page, 'h')"
 						></span>
@@ -441,7 +665,7 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 		</div>
 		<div class="editor-field" v-if="selected !== null && props.character?.traitSets?.[selected]">
 			<div class="editor-label">{{ setNameOf(selected) }}</div>
-			<div class="editor-button-group" style="margin-bottom: 0.4rem; display: flex; gap: 0.4rem;">
+			<div class="editor-button-group" style="margin-bottom: 0.4rem; display: flex; gap: 0.4rem; flex-wrap: wrap;">
 				<button
 					v-for="p in pageCount"
 					:key="'sel-page-' + p"
@@ -460,6 +684,14 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 					title="Full width, stacked in document order"
 				>
 					Full Width
+				</button>
+				<button
+					type="button"
+					class="editor-group-btn btn-open-block-mini"
+					@click.stop="openBlockMini(selected as number)"
+					title="Open trait-block mini to edit set parts and layout"
+				>
+					<i class="fas fa-th"></i> Edit Parts
 				</button>
 			</div>
 			<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
@@ -490,5 +722,15 @@ function pressBox( index: number, event: MouseEvent | TouchEvent ) {
 		<div class="editor-field-hint" v-else style="font-size: 0.72rem; color: #94a3b8;">
 			Select a set on the miniature to edit its placement.
 		</div>
+
+		<!-- Teleport: Trait Block Mini Handoff -->
+		<teleport to="body">
+			<TraitSetMini
+				v-if="editingSetIndex !== null && props.character?.traitSets?.[editingSetIndex]"
+				:initialSet="props.character.traitSets[editingSetIndex]"
+				@close="editingSetIndex = null"
+				@applyToSet="onApplyBlockMini"
+			/>
+		</teleport>
 	</div>
 </template>
