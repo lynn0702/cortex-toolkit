@@ -1082,9 +1082,6 @@
             false,
             false,
             false
-          ],
-          "range": [
-            10
           ]
         },
         "noun": "Stress",
@@ -1183,9 +1180,6 @@
             false,
             false,
             false
-          ],
-          "range": [
-            12
           ]
         },
         "noun": "Session",
@@ -1197,9 +1191,6 @@
               "type": "Pip",
               "value": [
                 true
-              ],
-              "range": [
-                1
               ]
             }
           },
@@ -1208,9 +1199,6 @@
               "type": "Pip",
               "value": [
                 true
-              ],
-              "range": [
-                1
               ]
             }
           },
@@ -1219,9 +1207,6 @@
               "type": "Pip",
               "value": [
                 true
-              ],
-              "range": [
-                1
               ]
             }
           }

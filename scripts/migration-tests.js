@@ -335,7 +335,7 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   M.normalizeView(s);
   ok(JSON.stringify(s) === before, 'second pass is a no-op');
   const set = s.traitSets.find((x) => x.id === 'sr');
-  ok(set.rating && set.rating.type === 'Pip' && set.rating.range[0] === 12, 'set Pip rating untouched', set.rating);
+  ok(set.rating && set.rating.type === 'Pip' && set.rating.value.length === 12 && set.rating.range === undefined, 'set Pip rating padded and range stripped', set.rating);
   ok(set.noun === 'Session' && set.plural === 'Sessions', 'nouns untouched');
 }
 
@@ -458,6 +458,98 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   ok(byName.Resources.view.style.body === 'pool-rows' && byName.Resources.view.style.header === 'pool-rows', 'resources migrated to pool-rows');
   ok(byName.Stress.view.style.body === 'die-track' && byName.Stress.view.style.header === 'die-track', 'stress migrated to die-track');
   ok(byName.Attributes.view.style.body === 'portrait-ring' && byName.Attributes.view.style.header === 'portrait-ring', 'attributes migrated to portrait-ring');
+}
+
+
+// =====================================================================
+// Section 17: migrateRingTrait (attributesRing conversion & explicit inference)
+// =====================================================================
+{
+  // (a) attributesRing: false becomes ringTrait: false, key gone
+  const setA = { name: 'Skills', view: { attributesRing: false } };
+  M.normalizeView({ traitSets: [setA] });
+  ok(setA.view.ringTrait === false, '(a) attributesRing: false becomes ringTrait: false');
+  ok(setA.view.attributesRing === undefined, '(a) attributesRing key gone');
+
+  // (b) attributesRing: true becomes ringTrait: true, key gone
+  const setB = { name: 'Skills', view: { attributesRing: true } };
+  M.normalizeView({ traitSets: [setB] });
+  ok(setB.view.ringTrait === true, '(b) attributesRing: true becomes ringTrait: true');
+  ok(setB.view.attributesRing === undefined, '(b) attributesRing key gone');
+
+  // (c) both present: ringTrait wins, key gone
+  const setC = { name: 'Skills', view: { ringTrait: true, attributesRing: false } };
+  M.normalizeView({ traitSets: [setC] });
+  ok(setC.view.ringTrait === true, '(c) ringTrait wins over attributesRing');
+  ok(setC.view.attributesRing === undefined, '(c) attributesRing key gone');
+
+  const setC2 = { name: 'Skills', view: { ringTrait: false, attributesRing: true } };
+  M.normalizeView({ traitSets: [setC2] });
+  ok(setC2.view.ringTrait === false, '(c) ringTrait: false wins over attributesRing: true');
+  ok(setC2.view.attributesRing === undefined, '(c) attributesRing key gone');
+
+  // (d) classic fallback set (name 'Attributes', body 'default', no flag) gains ringTrait: true
+  const setD = { name: 'Attributes', view: { style: { body: 'default' } } };
+  M.normalizeView({ traitSets: [setD] });
+  ok(setD.view.ringTrait === true, '(d) classic fallback name Attributes gains ringTrait: true');
+
+  // Also layered set form:
+  const layeredD = { sets: { attr: { name: 'Attributes', view: { style: { body: 'default' } } } } };
+  M.normalizeView(layeredD);
+  ok(layeredD.sets.attr.view.ringTrait === true, '(d-layered) layered set name Attributes gains ringTrait: true');
+
+  // (e) same set with explicit false stays false
+  const setE = { name: 'Attributes', view: { ringTrait: false, style: { body: 'default' } } };
+  M.normalizeView({ traitSets: [setE] });
+  ok(setE.view.ringTrait === false, '(e) explicit false on Attributes stays false');
+
+  // (f) location-'attributes' set with no flag gains ringTrait: true
+  const setF = { name: 'Primary Traits', view: { location: 'attributes', style: { body: 'default' } } };
+  M.normalizeView({ traitSets: [setF] });
+  ok(setF.view.ringTrait === true, '(f) location attributes gains ringTrait: true');
+
+  // (g) isAttributes is stripped
+  const setG = { name: 'Skills', view: { isAttributes: true, style: { body: 'boxed-rows' } } };
+  M.normalizeView({ traitSets: [setG] });
+  ok(setG.view.isAttributes === undefined, '(g) isAttributes is stripped');
+
+  // (h) body 'attributes' is already 'portrait-ring' via migrateStyleBody
+  const setH = { name: 'Custom Ring', view: { style: { body: 'attributes' } } };
+  M.normalizeView({ traitSets: [setH] });
+  ok(setH.view.style.body === 'portrait-ring', '(h) body attributes mapped to portrait-ring');
+  ok(setH.view.ringTrait === undefined, '(h) portrait-ring body alone does not add ringTrait flag');
+}
+
+
+// ---- 18. Pip rating migration (derived range, padding on load) ----
+{
+  // (a) range: [3] and value length 1 pads to 3 values and loses range
+  const r1 = M.normalizeRatingObject({ type: 'Pip', value: [true], range: [3] });
+  ok(r1.type === 'Pip', 'pip type preserved');
+  ok(JSON.stringify(r1.value) === '[true,false,false]', 'pip value padded up to range[0]', r1.value);
+  ok(r1.range === undefined, 'pip range stripped', r1);
+
+  // (b) range: [2] and value length 2 loses range unchanged
+  const r2 = M.normalizeRatingObject({ type: 'Pip', value: [false, true], range: [2] });
+  ok(JSON.stringify(r2.value) === '[false,true]', 'pip value unchanged when length matches range', r2.value);
+  ok(r2.range === undefined, 'pip range stripped', r2);
+
+  // (c) Pip with no range is untouched
+  const r3 = M.normalizeRatingObject({ type: 'Pip', value: [true, false] });
+  ok(JSON.stringify(r3.value) === '[true,false]', 'pip without range preserved', r3.value);
+  ok(r3.range === undefined, 'pip without range has no range', r3);
+
+  // (d) empty value and range: [25] becomes 25 false values with no range
+  const r4 = M.normalizeRatingObject({ type: 'Pip', value: [], range: [25] });
+  ok(Array.isArray(r4.value) && r4.value.length === 25, 'empty pip value padded to 25', r4.value.length);
+  ok(r4.value.every(v => v === false), 'all 25 values are false');
+  ok(r4.range === undefined, 'pip range stripped', r4);
+
+  // (e) trait-level migration via migrateNodeRating
+  const t1 = { rating: { type: 'Pip', value: [true], range: [4] } };
+  M.migrateNodeRating(t1, false);
+  ok(JSON.stringify(t1.rating.value) === '[true,false,false,false]', 'migrateNodeRating pads pip');
+  ok(t1.rating.range === undefined, 'migrateNodeRating strips pip range');
 }
 
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);

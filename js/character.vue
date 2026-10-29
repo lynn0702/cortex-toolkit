@@ -116,42 +116,16 @@ const notes = computed( () => props.character?.notes ?? '' );
 const game = computed( () => props.character?.game ?? '' );
 const traitSets = computed( () => props.character?.traitSets ?? [] );
 
-const ringTraitSetIndex = computed( () => {
-	let idx = traitSets.value.findIndex( ( ts ) => {
-		const view = getView( ts );
-		const body = view?.style?.body;
-		if ( body === 'portrait-ring' || body === 'attributes' ) return true;
-		if ( cortexFunctions.getRingTrait( ts ) === true ) return true;
-		if ( view?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
-		return false;
-	} );
-	if ( idx !== -1 ) return idx;
-
-	idx = traitSets.value.findIndex( ( ts ) => {
-		const view = getView( ts );
-		const isAttr = view?.isAttributes ||
-			ts.noun?.toLowerCase() === 'attribute' ||
-			ts.name?.trim().toLowerCase() === 'attributes';
-		if ( !isAttr ) return false;
-		if ( cortexFunctions.getRingTrait( ts ) === false ) return false;
-		const body = view?.style?.body;
-		return !body || body === 'default' || body === 'attributes' || body === 'portrait-ring';
-	} );
-	return idx;
-} );
-
-const explicitRingSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
+const ringTraitSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
 	const view = getView( ts );
 	const body = view?.style?.body;
-	if ( body === 'portrait-ring' || body === 'attributes' ) return true;
+	if ( body === 'portrait-ring' ) return true;
 	if ( cortexFunctions.getRingTrait( ts ) === true ) return true;
-	if ( view?.location === 'attributes' && cortexFunctions.getRingTrait( ts ) !== false ) return true;
 	return false;
 } ) );
 
 const hasRingTrait = computed( () => {
 	if ( isSpotlightStyle.value ) return false;
-	if ( explicitRingSetIndex.value !== -1 ) return true;
 	const pSize = getView( portrait.value )?.size;
 	if ( pSize === 'spotlight' || pSize === 'none' ) return false;
 	return ringTraitSetIndex.value !== -1;
@@ -355,7 +329,7 @@ function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets
 
 function shouldShowClassicPortrait() {
 	if ( isSpotlightStyle.value ) return false;
-	if ( explicitRingSetIndex.value !== -1 ) return true;
+	if ( ringTraitSetIndex.value !== -1 ) return true;
 	const s = getView( portrait.value )?.size;
 	if ( s === 'none' || s === 'spotlight' ) return false;
 	return true;
@@ -451,7 +425,7 @@ function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string;
 	tsView.page = page ?? 1;
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	if ( styleId === 'pips' ) {
-		( traitSet as any ).rating = { type: 'Pip', value: [], range: [ 25 ] };
+		( traitSet as any ).rating = { type: 'Pip', value: Array.from( { length: 25 }, () => false ) };
 		tsView.pips = { perRow: 5, connected: true };
 		if ( styleEntry.pipLabels ) {
 			( tsView.pips as Record<string, unknown> ).labels = true;

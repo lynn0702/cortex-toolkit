@@ -44,6 +44,17 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingSca
   ok(F.isPlayAddRemovableSet(null) === false, 'null trait set returns false');
 }
 
+
+// ---- getRingTrait (ringTrait only, ignores attributesRing entirely)
+{
+  ok(F.getRingTrait({ view: { ringTrait: true } }) === true, 'getRingTrait returns ringTrait true');
+  ok(F.getRingTrait({ view: { ringTrait: false } }) === false, 'getRingTrait returns ringTrait false');
+  ok(F.getRingTrait({ view: { attributesRing: true } }) === undefined, 'getRingTrait ignores attributesRing true');
+  ok(F.getRingTrait({ view: { attributesRing: false } }) === undefined, 'getRingTrait ignores attributesRing false');
+  ok(F.getRingTrait({ view: { ringTrait: true, attributesRing: false } }) === true, 'getRingTrait returns ringTrait even if attributesRing differs');
+  ok(F.getRingTrait({}) === undefined, 'getRingTrait returns undefined for empty set');
+}
+
 // ---- setPlotPoints
 {
   const char = {

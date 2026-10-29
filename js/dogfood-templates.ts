@@ -230,28 +230,28 @@ export const VANGUARD_FRAME_SHOWCASE = {
 						name: 'Duty',
 						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'The crew comes home before the cargo.', rating: { type: 'Pip', value: [false], range: [1] } }
+							{ name: 'The crew comes home before the cargo.', rating: { type: 'Pip', value: [false] } }
 						]
 					},
 					{
 						name: 'Glory',
 						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'No jump vector is impossible.', rating: { type: 'Pip', value: [true], range: [1] } }
+							{ name: 'No jump vector is impossible.', rating: { type: 'Pip', value: [true] } }
 						]
 					},
 					{
 						name: 'Justice',
 						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'The Syndicate doesn\'t own the sky.', rating: { type: 'Pip', value: [false], range: [1] } }
+							{ name: 'The Syndicate doesn\'t own the sky.', rating: { type: 'Pip', value: [false] } }
 						]
 					},
 					{
 						name: 'Truth',
 						rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] },
 						traits: [
-							{ name: 'Every signal leaves a ghost in the static.', rating: { type: 'Pip', value: [false], range: [1] } }
+							{ name: 'Every signal leaves a ghost in the static.', rating: { type: 'Pip', value: [false] } }
 						]
 					}
 				]

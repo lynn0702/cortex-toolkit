@@ -253,3 +253,42 @@ https://github.com/kaelri/cortex-toolkit.
   follow-up. Grid question still OPEN; arc/dock resolutions
   still pending ratification. No dogfood or new-shape work
   in this slice.
+
+- 2026-10-29: Ring detection goes explicit-only; the legacy key moves to
+  migration only. `attributesRing` is converted at load/import in
+  `cortexMigration.migrateRingTrait` (existing `ringTrait` wins, otherwise the
+  legacy value carries over, then the key is deleted) and is never read at
+  runtime and never stored: `getRingTrait` returns `view.ringTrait` only,
+  `resolveFrame` unifies `ringTrait`/`ringConfig` only, and the pillar
+  `attributesRing` read is deleted. Runtime ring detection is body
+  `'portrait-ring'` OR `view.ringTrait === true` — the set-name, noun,
+  location, and `isAttributes` fallbacks are deleted from `character.vue`
+  and the set editor (Kaelri inferred the ring from sheet structure; this
+  codebase will not maintain or document that magic). Old files keep their
+  rings because migration infers once at import (name `'attributes'`, noun
+  `'attribute'`, `isAttributes`, or location `'attributes'` with a default
+  body gains `ringTrait: true`) and writes it explicitly. Supersedes the
+  2026-10-12 `getRingTrait` fallback line in DECISIONS.md. Corpus impact is
+  nil by measurement: the 13 stored `attributesRing: false` values (all
+  spotlight Attributes sets) convert 1:1 to `ringTrait: false`; no corpus set
+  relied on fallback for its ring.
+
+- 2026-10-29: Range rules (Phase 2 item 4) implemented per the 2026-10-26
+  decisions. Range controls render only on rated traits (Die/Dice section
+  already gated on rated; Counter and Pip sections verified gated). The
+  set-all-range action is built in the trait editor, type-scoped: it applies
+  the source trait's range verbatim to every rated trait and subtrait of the
+  same type in the set (Die/Dice ladder subsets, Counter [lo, hi] pairs),
+  preserves target values verbatim, writes locally, and does not exist for
+  Pip or unrated traits. Pip range is derived, not stored: bubble count is
+  the value-list length everywhere (editor, runtime writers, mini, dogfood);
+  migration pads stored pip values up to a stored range[0] and then strips
+  the range key, so the empty-value fresh-track case (value [] with range
+  [25]) becomes 25 false values. Validator already exempted Pip and is
+  unchanged. Corpus impact: 3 stored pip ranges stripped (all with range[0]
+  equal to value length); 15 corpus pips already carried no range. Note on
+  the record: commit 2f2a8f7's message claims an "open range array UX," but
+  its patches contain no range-array editor (clear-rating buttons, a Play
+  die-click fix, header/carousel work), so no range UX was kept, trimmed, or
+  reverted from it; the D3 range leg closes on that evidence, while D3's
+  header and name-card legs remain open.

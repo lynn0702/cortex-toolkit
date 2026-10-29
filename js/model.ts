@@ -229,6 +229,45 @@ export function isOutDie( node: unknown, fallbacks?: Array<unknown> ): boolean {
 	return n?.isOut === true;
 }
 
+/**
+ * Applies a source trait's range to every rated trait of the same type in the set
+ * (and subtraits recursively). Preserves target values verbatim.
+ * No-op for Pip or unrated source.
+ */
+export function applyTypeScopedRange( traitSet: any, sourceTrait: any ): void {
+	if ( !traitSet || !sourceTrait ) return;
+	const sourceRating = getRating( sourceTrait );
+	if ( !sourceRating || !sourceRating.type || sourceRating.type === 'Pip' ) return;
+	const sourceType = sourceRating.type;
+	const sourceRange = Array.isArray( sourceRating.range )
+		? [ ...sourceRating.range ]
+		: ( sourceType === 'Counter' ? [ 0, 20 ] : [ 4, 6, 8, 10, 12 ] );
+
+	function walk( targetTrait: any ) {
+		if ( !targetTrait || typeof targetTrait !== 'object' ) return;
+		const targetRating = getRating( targetTrait );
+		if ( targetRating && targetRating.type === sourceType ) {
+			targetTrait.rating = {
+				type: targetRating.type,
+				value: Array.isArray( targetRating.value ) ? [ ...targetRating.value ] : targetRating.value,
+				range: [ ...sourceRange ],
+				...( ( targetRating as any ).out !== undefined ? { out: ( targetRating as any ).out } : {} )
+			};
+		}
+		if ( Array.isArray( targetTrait.traits ) ) {
+			for ( const child of targetTrait.traits ) {
+				walk( child );
+			}
+		}
+	}
+
+	if ( Array.isArray( traitSet.traits ) ) {
+		for ( const rootTrait of traitSet.traits ) {
+			walk( rootTrait );
+		}
+	}
+}
+
 // ---------- visibility (2026-10-23: shown | editor-only | hidden) ----------
 
 /** Trait visibility: a general capability, not a name-set special case. */
@@ -285,7 +324,6 @@ export function resolveSetPillar( traitSet: unknown ): string {
 		body === 'attributes' ||
 		v?.location === 'attributes' ||
 		v?.ringTrait === true ||
-		v?.attributesRing === true ||
 		body === 'sfx-rows' ||
 		body === 'distinctions'
 	) {
@@ -509,11 +547,8 @@ export interface CortexToolkitCustom {
 	frame?: import('./frame-geometry.ts').FrameConfig | import('./frame-geometry.ts').FrameShape | string;
 
 	// ring / portrait ring
-	isAttributes?: boolean;
-	/** Whether this set owns the portrait ring. Supersedes the legacy `attributesRing`. */
+	/** Whether this set owns the portrait ring. */
 	ringTrait?: boolean;
-	/** @deprecated legacy key (`attributesRing`); read for back-compat, never write. */
-	attributesRing?: boolean;
 	scaleDie?: number;
 	scale?: number;
 

@@ -122,7 +122,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   const atp = sets.Attributes.view.parts;
   ok(atp && atp.name.top === 0 && atp.rating.top === 1, 'below adds a row', atp);
   ok(sets.Standing.view.parts === undefined, 'bespoke bodies keep legacy flex (no parts)');
-  ok(sets.Attributes.view.attributesRing === false, 'ring flag kept');
+  ok(sets.Attributes.view.ringTrait === false, 'ring flag kept');
   ok(L.character.view.columns === undefined &&
     L.character.view.watermark.opacity === 0.08, 'columns removed from sheet custom, watermark kept');
   ok(L.character.plotPoints === 1, 'plotPoints kept');
@@ -187,7 +187,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(ss.traits.Bout.slots['1'].view.branchSide === 'right', 'right slot marked');
   ok(L.character.sets['Session Record'].view.pips.labels === true, 'session rows labeled');
   ok(L.character.sets['Session Record'].rating && L.character.sets['Session Record'].rating.type === 'Pip' &&
-    L.character.sets['Session Record'].rating.range[0] === 20, 'session count carried on the set rating');
+    L.character.sets['Session Record'].rating.value.length === 20 && L.character.sets['Session Record'].rating.range === undefined, 'session count carried on the set rating');
   ok(L.character.sets['Session Record'].noun === 'Session', 'session noun');
   ok(L.version === 1, 'alien-us version baseline');
   const v = L.character.sets.Values;

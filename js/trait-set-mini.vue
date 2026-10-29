@@ -41,7 +41,7 @@ function createDefaultRatingForType( type: RatingType | 'None', customRange?: nu
 		const count = customRange && customRange[ 0 ] ? Math.max( 1, customRange[ 0 ] ) : 5;
 		const bubbles: boolean[] = [];
 		for ( let i = 0; i < count; i++ ) bubbles.push( false );
-		return { type: 'Pip', value: bubbles, range: [ count ] };
+		return { type: 'Pip', value: bubbles };
 	}
 	if ( type === 'Dice' ) {
 		const r = customRange && customRange.length ? [ ...customRange ] : [ 4, 6, 8, 10, 12 ];
@@ -71,7 +71,7 @@ function normalizeRating( r: any, defaultType: RatingType = 'Die' ): Rating {
 			else if ( typeof rawVal[ 0 ] === 'number' ) bubbles.push( i < rawVal[ 0 ] );
 			else bubbles.push( false );
 		}
-		return { type: 'Pip', value: bubbles, range: [ count ] };
+		return { type: 'Pip', value: bubbles };
 	}
 	if ( type === 'Counter' ) {
 		const val = typeof rawVal[ 0 ] === 'number' ? rawVal[ 0 ] : 0;

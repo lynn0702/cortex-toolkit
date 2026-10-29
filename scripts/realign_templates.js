@@ -63,7 +63,7 @@ templates = templates.map(item => {
         ctk.style.body = 'default';
         delete ctk.ringConfig;
         delete ctk.scaleDie;
-        ctk.attributesRing = false;
+        ctk.ringTrait = false;
       }
 
       // Ensure traits are blank empty slots

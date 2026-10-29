@@ -297,7 +297,7 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "attributesRing": false,
+          "ringTrait": false,
           "place": {
             "left": "66.663%",
             "top": 1,

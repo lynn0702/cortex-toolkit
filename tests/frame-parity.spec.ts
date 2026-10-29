@@ -220,6 +220,24 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 	} );
 
 	describe( 'Baseline 2: Ring Parity Geometry (Independent Oracle)', () => {
+		
+		it( 'resolveFrame with view.attributesRing: true and no ringTrait, no frame, and no ringConfig returns null', () => {
+			const setWithAttrRing = {
+				name: 'Attributes',
+				view: {
+					attributesRing: true
+				}
+			};
+			expect( resolveFrame( setWithAttrRing ) ).toBeNull();
+
+			const setLevelAttrRing = {
+				name: 'Attributes',
+				attributesRing: true,
+				view: {}
+			};
+			expect( resolveFrame( setLevelAttrRing ) ).toBeNull();
+		} );
+
 		it( 'unifies view.ringTrait === true to a frame ring carrying ringConfig', () => {
 			const legacySet = {
 				name: 'Attributes',

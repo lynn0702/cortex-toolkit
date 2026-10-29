@@ -190,7 +190,7 @@ export const cortexFunctions = {
 	getRingTrait: function( traitSet: TraitSet ) {
 		const ctk = getView( traitSet );
 		if ( !ctk ) return undefined;
-		return ctk.ringTrait !== undefined ? ctk.ringTrait : ctk.attributesRing;
+		return ctk.ringTrait !== undefined ? ctk.ringTrait : undefined;
 	},
 
 	getSubtraitRatings: function( traitSet: TraitSet ) {

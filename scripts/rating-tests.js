@@ -4,7 +4,7 @@
 const M = require('../js/migration.ts').cortexMigration;
 const { getRating, ratingDice, setRatingDice, setRatingDie, isRated,
   availableDice, getSpentIndices, resolveHitches, rollSeparate, keepsExtraDice,
-  hasOutRange, rangeTop, isOutDie,
+  hasOutRange, rangeTop, isOutDie, applyTypeScopedRange,
   DIE_LADDER } = require('../js/model.ts');
 
 let pass = 0, fail = 0;
@@ -149,6 +149,85 @@ function ok(cond, name, extra) {
   ok(t.rating.type === 'Dice' && t.rating.out === true, 'Dice rewrite keeps out', t.rating);
   setRatingDice(t, []);
   ok(t.rating === undefined, 'clearing drops the rating whole');
+}
+
+
+// ---- 7. Type-scoped set-all range (Phase 2 item 4 / Part B)
+{
+  const makeSet = () => ({
+    name: 'Test Set',
+    traits: [
+      {
+        name: 'Die 1',
+        rating: { type: 'Die', value: [8], range: [6, 8, 10] },
+        traits: [
+          { name: 'Die Sub', rating: { type: 'Die', value: [6], range: [4, 6, 8] } },
+          { name: 'Counter Sub', rating: { type: 'Counter', value: [1], range: [0, 5] } }
+        ]
+      },
+      {
+        name: 'Die 2',
+        rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] }
+      },
+      {
+        name: 'Dice Trait',
+        rating: { type: 'Dice', value: [8, 6], range: [4, 6, 8, 10, 12] }
+      },
+      {
+        name: 'Counter Trait',
+        rating: { type: 'Counter', value: [3], range: [0, 10] }
+      },
+      {
+        name: 'Pip Trait',
+        rating: { type: 'Pip', value: [false] }
+      },
+      {
+        name: 'Unrated Trait'
+      }
+    ]
+  });
+
+  // 1. Die source applies to Die traits only (including subtraits), preserving values verbatim
+  const s1 = makeSet();
+  applyTypeScopedRange(s1, s1.traits[0]);
+  ok(JSON.stringify(s1.traits[1].rating.range) === '[6,8,10]', 'Die source updates Die 2 range');
+  ok(JSON.stringify(s1.traits[1].rating.value) === '[10]', 'Die 2 value preserved verbatim');
+  ok(JSON.stringify(s1.traits[0].traits[0].rating.range) === '[6,8,10]', 'Die subtrait updated');
+  ok(JSON.stringify(s1.traits[0].traits[0].rating.value) === '[6]', 'Die subtrait value preserved');
+  ok(JSON.stringify(s1.traits[0].traits[1].rating.range) === '[0,5]', 'Counter subtrait untouched by Die source');
+  ok(JSON.stringify(s1.traits[2].rating.range) === '[4,6,8,10,12]', 'Dice trait untouched by Die source');
+  ok(JSON.stringify(s1.traits[3].rating.range) === '[0,10]', 'Counter trait untouched by Die source');
+  ok(s1.traits[4].rating.range === undefined, 'Pip trait untouched by Die source');
+  ok(s1.traits[5].rating === undefined, 'Unrated trait untouched by Die source');
+
+  // 2. Dice source applies to Dice only
+  const s2 = makeSet();
+  s2.traits[2].rating.range = [8, 10, 12];
+  applyTypeScopedRange(s2, s2.traits[2]);
+  ok(JSON.stringify(s2.traits[0].rating.range) === '[6,8,10]', 'Die 1 untouched by Dice source');
+  ok(JSON.stringify(s2.traits[2].rating.range) === '[8,10,12]', 'Dice trait has its range');
+
+  // 3. Counter source applies [lo, hi] to Counters only (including subtraits)
+  const s3 = makeSet();
+  s3.traits[3].rating.range = [2, 8];
+  applyTypeScopedRange(s3, s3.traits[3]);
+  ok(JSON.stringify(s3.traits[3].rating.range) === '[2,8]', 'Counter trait range set');
+  ok(JSON.stringify(s3.traits[3].rating.value) === '[3]', 'Counter value preserved verbatim');
+  ok(JSON.stringify(s3.traits[0].traits[1].rating.range) === '[2,8]', 'Counter subtrait updated by Counter source');
+  ok(JSON.stringify(s3.traits[0].traits[1].rating.value) === '[1]', 'Counter subtrait value preserved');
+  ok(JSON.stringify(s3.traits[0].rating.range) === '[6,8,10]', 'Die 1 untouched by Counter source');
+  ok(JSON.stringify(s3.traits[2].rating.range) === '[4,6,8,10,12]', 'Dice untouched by Counter source');
+  ok(s3.traits[4].rating.range === undefined, 'Pip untouched by Counter source');
+
+  // 4. Pip source is a no-op
+  const s4 = makeSet();
+  applyTypeScopedRange(s4, s4.traits[4]);
+  ok(JSON.stringify(s4) === JSON.stringify(makeSet()), 'Pip source is a no-op');
+
+  // 5. Unrated source is a no-op
+  const s5 = makeSet();
+  applyTypeScopedRange(s5, s5.traits[5]);
+  ok(JSON.stringify(s5) === JSON.stringify(makeSet()), 'Unrated source is a no-op');
 }
 
 console.log(`rating-tests: ${pass} passed, ${fail} failed`);

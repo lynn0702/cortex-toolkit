@@ -96,16 +96,10 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 
 	const styleBody = computed({
 		get: () => {
-			const body = getView( traitSet.value )?.style?.body;
-			if ( body === 'portrait-ring' || body === 'attributes' ) {
+			const view = getView( traitSet.value );
+			const body = view?.style?.body;
+			if ( body === 'portrait-ring' || view?.ringTrait === true ) {
 				return 'portrait-ring';
-			}
-			// Backwards compatibility: default legacy ring-located trait sets to portrait-ring when no style (or default) is specified
-			if ( !body || body === 'default' ) {
-				if ( getView( traitSet.value )?.location === 'attributes' ||
-					( isRingCandidateSet.value && cortexFunctions.getRingTrait( traitSet.value ) !== false ) ) {
-					return 'portrait-ring';
-				}
 			}
 			return body || 'default';
 		},
@@ -115,7 +109,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 				props.character.traitSets.forEach( ( ts: any, idx: number ) => {
 					if ( idx !== props.traitSetID ) {
 						const tsBody = getView( ts )?.style?.body;
-						if ( tsBody === 'portrait-ring' || tsBody === 'attributes' || getView( ts )?.location === 'attributes' || cortexFunctions.getRingTrait( ts ) ) {
+						if ( tsBody === 'portrait-ring' || cortexFunctions.getRingTrait( ts ) ) {
 							const view = ensureView( ts );
 							if ( !view.style ) view.style = {};
 							view.style.body = 'default';
@@ -164,14 +158,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 
 	const isRing = computed( () => styleBody.value === 'portrait-ring' );
 
-	const isRingCandidateSet = computed( () => Boolean(
-		getView( traitSet.value )?.location === 'attributes' ||
-		getView( traitSet.value )?.isAttributes ||
-		getView( traitSet.value )?.style?.body === 'attributes' ||
-		getView( traitSet.value )?.style?.body === 'portrait-ring' ||
-		traitSet.value?.noun?.toLowerCase() === 'attribute' ||
-		traitSet.value?.name?.trim().toLowerCase() === 'attributes'
-	) );
 
 	const ringTrait = computed({
 		get: () => isRing.value,
@@ -818,8 +804,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 	const pipCount = computed({
 		get: () => {
 			const rating = getRating( traitSet.value );
-			if ( rating && rating.type === 'Pip' && Array.isArray( rating.range ) && typeof rating.range[0] === 'number' && rating.range[0] > 0 ) {
-				return Math.floor( rating.range[0] );
+			if ( rating && rating.type === 'Pip' && Array.isArray( rating.value ) ) {
+				return rating.value.length;
 			}
 			return 25;
 		},
@@ -1201,7 +1187,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		}
 		const ts = traitSet.value as unknown as Record<string, any>;
 		if ( ts && ( !ts.rating || typeof ts.rating !== 'object' || ( ts.rating as any ).type !== 'Pip' ) ) {
-			ts.rating = { type: 'Pip', value: [], range: [ 25 ] };
+			ts.rating = { type: 'Pip', value: Array.from( { length: 25 }, () => false ) };
 		}
 	}
 
@@ -1212,7 +1198,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		if ( !ts ) return;
 		const bubbles: boolean[] = [];
 		for ( let i = 0; i < count; i++ ) bubbles.push( i < filled );
-		ts.rating = { type: 'Pip', value: bubbles, range: [ count ] };
+		ts.rating = { type: 'Pip', value: bubbles };
 		updateCharacter( props.character );
 	}
 
@@ -1292,7 +1278,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 
 	const api = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
-		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isRingCandidateSet,
+		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing,
 		ringTrait, isFullWidthSpan,
 		partPreview,
 		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,

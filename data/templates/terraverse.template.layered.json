@@ -135,7 +135,7 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
-          "attributesRing": false,
+          "ringTrait": false,
           "place": {
             "left": "0%",
             "top": 0,
@@ -486,9 +486,6 @@
             false,
             false,
             false
-          ],
-          "range": [
-            24
           ]
         },
         "noun": "Point",
@@ -720,9 +717,6 @@
             false,
             false,
             false
-          ],
-          "range": [
-            12
           ]
         },
         "noun": "Session",

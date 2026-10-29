@@ -38,7 +38,7 @@ export interface FrameAnchor {
 
 /**
  * Normalizes traitSet.view.frame (or direct frame config / shorthand) to full FrameConfig.
- * Unifies legacy rings (view.ringTrait === true, attributesRing, or ringConfig).
+ * Unifies legacy rings (view.ringTrait === true, set-level ringTrait, or legacyRing).
  */
 export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 	if (!traitSetOrFrame) return null;
@@ -50,8 +50,6 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 	const isLegacyRing = Boolean(
 		view?.ringTrait ||
 		(traitSetOrFrame as any)?.ringTrait ||
-		view?.attributesRing ||
-		(traitSetOrFrame as any)?.attributesRing ||
 		raw?.legacyRing
 	);
 

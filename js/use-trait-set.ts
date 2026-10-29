@@ -914,7 +914,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		if ( !ts ) return;
 		const bubbles: boolean[] = [];
 		for ( let i = 0; i < count; i++ ) bubbles.push( i < filled );
-		( ts as unknown as Record<string, any> ).rating = { type: 'Pip', value: bubbles, range: [ count ] };
+		( ts as unknown as Record<string, any> ).rating = { type: 'Pip', value: bubbles };
 		updateCharacter( props.character );
 	}
 
@@ -980,11 +980,11 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		if ( props.submode === 'print' || !trait ) return;
 		const r = getRating( trait );
 		if ( !r || r.type !== 'Pip' ) return;
-		const count = Array.isArray( r.range ) && r.range[ 0 ] ? r.range[ 0 ] : ( r.value.length || 5 );
+		const count = r.value.length || 5;
 		const bubbles: boolean[] = [];
 		for ( let i = 0; i < count; i++ ) bubbles.push( Boolean( r.value[ i ] === true ) );
 		bubbles[ pipIndex ] = !bubbles[ pipIndex ];
-		( trait as any ).rating = { type: 'Pip', value: bubbles, range: [ count ] };
+		( trait as any ).rating = { type: 'Pip', value: bubbles };
 		updateCharacter( props.character );
 	}
 
@@ -1038,7 +1038,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		const trait = ensurePipTrait( traitSetIndex, itemIndex );
 		if ( !trait ) return;
 		const next = !pipRowFilled( trait, itemIndex, 0 );
-		( trait as unknown as Record<string, any> ).rating = { type: 'Pip', value: [ next ], range: [ 1 ] };
+		( trait as unknown as Record<string, any> ).rating = { type: 'Pip', value: [ next ] };
 		updateCharacter( props.character );
 	}
 

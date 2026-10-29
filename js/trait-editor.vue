@@ -2,7 +2,7 @@
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, getRating, ratingDice, setRatingDie, setRatingDice,
-isRated, resolveHitches, resolveVisibility, nextVisibility, DIE_LADDER, rangeTop, isOutDie, type Character } from './model.ts';
+isRated, resolveHitches, resolveVisibility, nextVisibility, DIE_LADDER, rangeTop, isOutDie, applyTypeScopedRange, type Character } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
 import SfxEditor from './sfx-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
@@ -118,7 +118,7 @@ const pipRowChecked = computed( {
 	},
 	set( val: any ) {
 		const t = trait.value as unknown as Record<string, any>;
-		t.rating = { type: 'Pip', value: [ Boolean( val ) ], range: [ 1 ] };
+		t.rating = { type: 'Pip', value: [ Boolean( val ) ] };
 		updateCharacter( props.character );
 	},
 } );
@@ -193,7 +193,7 @@ function setRatingType( type: 'Counter' | 'Die' | 'Dice' | 'Pip' ) {
 	} else if ( type === 'Counter' ) {
 		t.rating = { type: 'Counter', value: [ 0 ], range: [ 0, 20 ] };
 	} else {
-		t.rating = { type: 'Pip', value: [ false ], range: [ 1 ] };
+		t.rating = { type: 'Pip', value: [ false ] };
 	}
 	updateCharacter( props.character );
 }
@@ -259,13 +259,10 @@ function commitPipBubbleCount( event: Event ) {
 	if ( el && document.activeElement === el ) el.blur();
 }
 
-// Pip inputs: a bubble row; a track is a list of bubbles. The range is
-// the bubble count.
+// Pip inputs: a bubble row; a track is a list of bubbles.
 const pipBubbleCount = computed( () => {
 	const r = getRating( trait.value );
 	if ( !r || r.type !== 'Pip' ) return 0;
-	const range = r.range || [];
-	if ( range.length && typeof range[0] === 'number' && range[0] > 0 ) return Math.floor( range[0] );
 	return r.value.length;
 } );
 
@@ -284,7 +281,7 @@ function togglePipBubble( index: number ) {
 		list.push( Boolean( cur && cur.type === 'Pip' && cur.value[ i ] === true ) );
 	}
 	list[ index ] = !list[ index ];
-	t.rating = { type: 'Pip', value: list, range: [ n ] };
+	t.rating = { type: 'Pip', value: list };
 	updateCharacter( props.character );
 }
 
@@ -297,7 +294,7 @@ function setPipBubbleCount( count: number ) {
 	for ( let i = 0; i < n; i++ ) {
 		list.push( Boolean( cur && cur.type === 'Pip' && cur.value[ i ] === true ) );
 	}
-	t.rating = { type: 'Pip', value: list, range: [ n ] };
+	t.rating = { type: 'Pip', value: list };
 	updateCharacter( props.character );
 }
 
@@ -323,6 +320,12 @@ function toggleRangeOption( size: number ) {
 	else base.push( size );
 	base.sort( ( a, b ) => a - b );
 	setTraitRange( base );
+}
+
+function applyRangeToAllInSet() {
+	if ( !traitSet.value || !trait.value ) return;
+	applyTypeScopedRange( traitSet.value, trait.value );
+	updateCharacter( props.character );
 }
 
 // Options render only what the shape makes meaningful: Pool and
@@ -1458,6 +1461,11 @@ function getDieDisplayValue( val: any ) {
 									<label :for="'trait-' + traitID + '-counter-max'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Max</label>
 									<input type="number" :id="'trait-' + traitID + '-counter-max'" name="counterMax" :value="counterBounds()[1]" @change="commitCounterBound(1, $event)" inputmode="numeric" style="width: 100%;">
 								</div>
+								<div style="width: 100%; margin-top: 0.5rem;" v-if="!isPlay">
+									<button type="button" class="editor-button" @click.stop="applyRangeToAllInSet" title="Apply to all counters in set">
+										<span>Apply to all counters in set</span>
+									</button>
+								</div>
 							</div>
 							<div v-else class="num-stepper">
 								<button
@@ -1523,6 +1531,11 @@ function getDieDisplayValue( val: any ) {
 								>
 									<span class="c" v-html="getDieDisplayValue(size)"></span>
 									<span class="chip-label">d{{ size }}</span>
+								</button>
+							</div>
+							<div class="rating-scale-actions mt-2" v-if="!isPlay">
+								<button type="button" class="editor-button" @click.stop="applyRangeToAllInSet" title="Apply to all dice in set">
+									<span>Apply to all dice in set</span>
 								</button>
 							</div>
 						</div>

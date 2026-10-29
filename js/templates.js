@@ -663,9 +663,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              20
             ]
           },
           "noun": "Session",
@@ -1266,9 +1263,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              25
             ]
           },
           "noun": "XP",
@@ -1709,7 +1703,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "66%",
               "top": 1,
@@ -2448,9 +2442,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              15
             ]
           },
           "noun": "Session",
@@ -2708,7 +2699,7 @@ const cortexSpotlightTemplates = [
             ],
             "notes": "",
             "reservedSlots": 5,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 1,
@@ -3197,9 +3188,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              20
             ]
           },
           "noun": "XP",
@@ -3366,7 +3354,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -3932,9 +3920,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              20
             ]
           },
           "noun": "XP",
@@ -4752,7 +4737,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -5381,9 +5366,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              25
             ]
           },
           "noun": "Pip",
@@ -7628,7 +7610,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "attributesRing": false,
+            "ringTrait": false,
             "parts": {
               "name": {
                 "left": "0%",
@@ -8484,9 +8466,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              10
             ]
           },
           "noun": "Session",
@@ -9863,9 +9842,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              20
             ]
           },
           "noun": "Session",
@@ -10293,7 +10269,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "66.663%",
               "top": 1,
@@ -12630,7 +12606,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "48%",
               "top": 1,
@@ -13134,9 +13110,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              20
             ]
           },
           "noun": "Pip",
@@ -13309,7 +13282,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -13394,9 +13367,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              15
             ]
           },
           "noun": "Session",
@@ -13861,7 +13831,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -15114,7 +15084,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -15640,7 +15610,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -16086,9 +16056,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              24
             ]
           },
           "noun": "Point",
@@ -16355,9 +16322,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              12
             ]
           },
           "noun": "Session",
@@ -16557,7 +16521,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -17051,7 +17015,7 @@ const cortexSpotlightTemplates = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "attributesRing": false,
+            "ringTrait": false,
             "place": {
               "left": "0%",
               "top": 0,
@@ -17365,9 +17329,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              15
             ]
           },
           "noun": "Session",
@@ -19240,9 +19201,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              10
             ]
           },
           "noun": "Pip",
@@ -19277,9 +19235,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              3
             ]
           },
           "noun": "Session",
@@ -21027,9 +20982,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              10
             ]
           },
           "noun": "Stress",
@@ -21134,9 +21086,6 @@ const cortexSpotlightTemplates = [
               false,
               false,
               false
-            ],
-            "range": [
-              12
             ]
           },
           "noun": "Session",
@@ -21148,9 +21097,6 @@ const cortexSpotlightTemplates = [
                 "type": "Pip",
                 "value": [
                   true
-                ],
-                "range": [
-                  1
                 ]
               },
               "traits": []
@@ -21161,9 +21107,6 @@ const cortexSpotlightTemplates = [
                 "type": "Pip",
                 "value": [
                   true
-                ],
-                "range": [
-                  1
                 ]
               },
               "traits": []
@@ -21174,9 +21117,6 @@ const cortexSpotlightTemplates = [
                 "type": "Pip",
                 "value": [
                   true
-                ],
-                "range": [
-                  1
                 ]
               },
               "traits": []

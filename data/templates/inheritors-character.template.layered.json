@@ -134,7 +134,7 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
-          "attributesRing": false,
+          "ringTrait": false,
           "place": {
             "left": "0%",
             "top": 0,
@@ -652,9 +652,6 @@
             false,
             false,
             false
-          ],
-          "range": [
-            25
           ]
         },
         "noun": "Pip",

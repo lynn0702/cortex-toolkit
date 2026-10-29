@@ -224,6 +224,7 @@ export const cortexMigration = {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
 			this.migrateStyleBody( set );
+			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
 			normalizeTraitsArray( set.traits, set );
 			this.migrateResourceSet( set );
@@ -244,6 +245,7 @@ export const cortexMigration = {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
 			this.migrateStyleBody( set );
+			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
 			if ( set.traits ) normalizeLayeredTraits( set.traits, set );
 			if ( set.slots ) normalizeLayeredTraits( set.slots, set );
@@ -415,11 +417,14 @@ export const cortexMigration = {
 		const value = Array.isArray( r.value )
 			? r.value.filter( ( x: unknown ) => ( typeof x === 'number' && Number.isFinite( x ) ) || typeof x === 'boolean' )
 			: [];
+		if ( r.type === 'Pip' ) {
+			const targetCount = Array.isArray( r.range ) && typeof r.range[ 0 ] === 'number' ? r.range[ 0 ] : 0;
+			while ( value.length < targetCount ) {
+				value.push( false );
+			}
+			return { type: 'Pip', value: value };
+		}
 		const range = Array.isArray( r.range ) ? r.range.filter( ( x: unknown ) => typeof x === 'number' && Number.isFinite( x ) ) : [];
-		// A Pip is a bubble, filled or not. Statement pips carry no ladder of
-		// their own (the [true, false] pair is derived); set-level tracks may
-		// still store a bubble count, which is kept when present.
-		if ( r.type === 'Pip' && !range.length ) return { type: r.type, value: value };
 		return { type: r.type, value: value, range: range.length ? range : [ 4, 6, 8, 10, 12 ] };
 	},
 
@@ -458,6 +463,61 @@ export const cortexMigration = {
 		return node;
 	},
 
+
+	// Converts legacy attributesRing to ringTrait and infers ringTrait for
+	// unflagged classic sets. Runs after migrateStyleBody so body 'attributes'
+	// is already 'portrait-ring'.
+	// Note: noun-triggered inference applies to layered files in practice because
+	// old-format files drop set nouns at migrateSet before reaching normalizeView.
+	migrateRingTrait: function( set: any ) {
+		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
+		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );
+
+		// 1. Per-bag conversion: if bag.attributesRing is not undefined
+		for ( const bag of bags ) {
+			if ( bag.attributesRing !== undefined ) {
+				if ( bag.ringTrait === undefined ) {
+					bag.ringTrait = bag.attributesRing;
+				}
+				delete bag.attributesRing;
+			}
+		}
+
+		// 2. Inference (writes to set.view only, only when effective ringTrait is undefined after step 1,
+		// where effective means view over custom).
+		const effectiveRingTrait = set.view?.ringTrait !== undefined
+			? set.view.ringTrait
+			: set.custom?.cortexToolkit?.ringTrait;
+
+		if ( effectiveRingTrait === undefined ) {
+			const effectiveBag = ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) )
+				? set.view
+				: ( set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object' && !Array.isArray( set.custom.cortexToolkit ) )
+					? set.custom.cortexToolkit
+					: null;
+			const postBody = effectiveBag?.style && typeof effectiveBag.style === 'object' ? effectiveBag.style.body : undefined;
+			const isAbsentOrDefaultBody = !postBody || postBody === 'default';
+
+			if ( isAbsentOrDefaultBody ) {
+				const nameMatch = typeof set.name === 'string' && set.name.trim().toLowerCase() === 'attributes';
+				const nounMatch = typeof set.noun === 'string' && set.noun.trim().toLowerCase() === 'attribute';
+				const isAttrFlag = set.view?.isAttributes === true || set.custom?.cortexToolkit?.isAttributes === true;
+				const locationMatch = set.view?.location === 'attributes' || set.custom?.cortexToolkit?.location === 'attributes';
+
+				if ( nameMatch || nounMatch || isAttrFlag || locationMatch ) {
+					if ( !set.view || typeof set.view !== 'object' || Array.isArray( set.view ) ) {
+						set.view = {};
+					}
+					set.view.ringTrait = true;
+				}
+			}
+		}
+
+		// 3. Strip view.isAttributes (and the custom-bag copy) unconditionally
+		for ( const bag of bags ) {
+			delete bag.isAttributes;
+		}
+	},
 	migrateStyleBody: function( set: any ) {
 		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
 		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );

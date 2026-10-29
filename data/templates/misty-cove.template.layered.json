@@ -234,7 +234,7 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
-          "attributesRing": false,
+          "ringTrait": false,
           "parts": {
             "name": {
               "left": "0%",
