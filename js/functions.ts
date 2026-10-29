@@ -1697,9 +1697,7 @@ export const cortexFunctions = {
 				header: 'default',
 				body: 'default',
 			},
-				stressConfig: {
-					includeOut: true
-				},
+				outIndicator: true,
 				notes: ''
 			}
 	},
@@ -2033,24 +2031,6 @@ export const cortexFunctions = {
 					charView.labels.pillars[ pKey ] = pVal.trim();
 				}
 			}
-		}
-		// Normalize legacy attachedStress if present in a user-supplied preset
-		const legacyStress = ( v as any ).attachedStress;
-		if ( legacyStress && typeof legacyStress === 'object' && legacyStress.enabled && !v.parts ) {
-			const scale = Array.isArray( v.ratingScale ) && v.ratingScale.length ? v.ratingScale : [ 4, 6, 8, 10, 12 ];
-			const sScale = Array.isArray( legacyStress.scale ) && legacyStress.scale.length ? legacyStress.scale : [ 4, 6, 8, 10, 12 ];
-			v.parts = buildParts( {
-				rating: 'inline',
-				ratingDice: scale.length,
-				trackDice: sScale.length,
-				description: Boolean( v.features?.description ),
-				block: Boolean( v.features?.sfx ),
-				subtraits: Boolean( v.features?.subtraits )
-			} );
-			if ( legacyStress.includeOut === true && v.outIndicator !== true ) {
-				v.outIndicator = true;
-			}
-			delete ( v as any ).attachedStress;
 		}
 		if ( !v.style || typeof v.style !== 'object' ) {
 			v.style = { header: 'default', body: 'default' };

@@ -130,7 +130,6 @@ function ok(cond, name, extra) {
   ok(hasOutRange({ rating: { type: 'Dice', value: [8, 6], range: [4, 6, 8, 10, 12], out: true } }) === true, 'explicit out opts Dice in');
   const str = { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } };
   ok(hasOutRange(str, [{ view: { outIndicator: true } }]) === true, 'outIndicator puts out in range');
-  ok(hasOutRange(str, [{ view: { stressConfig: { includeOut: true } } }]) === true, 'legacy includeOut puts out in range');
   ok(hasOutRange(str, [{ view: {} }]) === false, 'flags default off');
   ok(rangeTop(plain) === 12, 'standard top is d12');
   ok(rangeTop({ rating: { type: 'Die', value: [8], range: [6, 8, 10] } }) === 10, 'custom top is the max step');

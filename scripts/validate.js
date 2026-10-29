@@ -600,10 +600,6 @@ function checkSetPlacement(where, setName, set, pageOf) {
   const hasParts = view && typeof view === 'object' && view.parts && typeof view.parts === 'object' && !Array.isArray(view.parts);
   const legacyRating = (set.ratingPosition !== undefined && set.ratingPosition !== null)
     || (view && view.ratingPosition !== undefined && view.ratingPosition !== null);
-  const legacyStress = view && view.attachedStress !== undefined;
-  if (legacyStress) {
-    err(`${where}/${setName}: carries dissolved attachedStress declaration`);
-  }
   if (hasParts && legacyRating) {
     err(`${where}/${setName}: carries parts and legacy ratingPosition, never both`);
   }

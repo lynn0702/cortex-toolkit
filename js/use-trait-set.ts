@@ -667,13 +667,10 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 
 	// Generic Out indicator: any stepped track (stress, complications, or any
 	// hack's renamed equivalent) may offer an Out badge. Default off — most
-	// sets aren't complications. Legacy stressConfig.includeOut still wins
-	// when set, so existing templates keep their behavior.
+	// sets aren't complications.
 	function shouldShowOut( traitSetArg: TraitSet ) {
 		const view = getView( traitSetArg );
 		if ( view && typeof view.outIndicator === 'boolean' ) return view.outIndicator;
-		const cfg = view?.stressConfig;
-		if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 		return false;
 	}
 

@@ -196,8 +196,8 @@ export function keepsExtraDice( node: unknown ): number {
 /**
  * Out is a range option for die ratings, defaulted off: most ratings
  * lack it. Explicit `out: true` on the rating opts in; otherwise the
- * set flags that enable Out badges (outIndicator or stressConfig
- * includeOut) put it in range for the set's dice.
+ * set flag that enables Out badges (outIndicator) puts it in range
+ * for the set's dice.
  */
 export function hasOutRange( node: unknown, fallbacks?: Array<unknown> ): boolean {
 	const r = getRating( node );
@@ -207,8 +207,6 @@ export function hasOutRange( node: unknown, fallbacks?: Array<unknown> ): boolea
 		if ( !v || typeof v !== 'object' ) continue;
 		const bag = v as Record<string, unknown>;
 		if ( bag.outIndicator === true ) return true;
-		const sc = bag.stressConfig;
-		if ( sc && typeof sc === 'object' && ( sc as Record<string, unknown> ).includeOut === true ) return true;
 	}
 	return false;
 }
@@ -381,10 +379,6 @@ export interface Portrait {
 	custom?: Custom;
 }
 
-export interface StressConfig {
-	includeOut?: boolean;
-}
-
 /**
  * Nested-grid placement (`view.place`): a set's cell in its page grid.
  * `left`/`width` are percent of the parent width stored as "%" strings
@@ -449,8 +443,7 @@ export interface CortexToolkitCustom {
 	pips?: PipsConfig;
 	ringConfig?: RingConfig;
 	imageConfig?: ImageConfig;
-	stressConfig?: StressConfig;
-	/** Generic Out indicator for any stepped track; default off. Supersedes stressConfig.includeOut when set. */
+	/** Generic Out indicator for any stepped track; default off. */
 	outIndicator?: boolean;
 	labels?: { [ k: string ]: any; pillars?: Record<string, string>; };
 	/** Open permissive pillar key for the 2D mobile Play carousel. */

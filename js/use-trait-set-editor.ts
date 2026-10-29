@@ -486,14 +486,11 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		set: ( value: boolean ) => { setFeature( 'sfx', value ); }
 	});
 
-	// Generic Out indicator (default off); legacy stressConfig.includeOut
-	// still wins when set so existing templates keep their behavior.
+	// Generic Out indicator (default off).
 	const includeOut = computed({
 		get: () => {
 			const view = getView( traitSet.value );
 			if ( view && typeof view.outIndicator === 'boolean' ) return view.outIndicator;
-			const cfg = view?.stressConfig;
-			if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
 			return false;
 		},
 		set: ( value: boolean ) => { setCustomProperty( 'outIndicator', Boolean( value ) ); }

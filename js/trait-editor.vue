@@ -547,10 +547,7 @@ const isScaleDie = computed( {
 const isSteppedTrackSet = computed( () => getView( traitSet.value )?.style?.body === 'die-track' );
 
 const shouldShowTrackOut = computed( () => {
-	if ( !isSteppedTrackSet.value ) return false;
-	const cfg = getView( traitSet.value )?.stressConfig;
-	if ( cfg && typeof cfg.includeOut === 'boolean' ) return cfg.includeOut;
-	return true;
+	return isSteppedTrackSet.value;
 } );
 
 const isOut = computed( () => isOutDie( trait.value, [ traitSet.value ] ) );

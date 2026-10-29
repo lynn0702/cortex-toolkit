@@ -68,7 +68,7 @@ function walk(node, fn) {
   const legacy = {
     traitSets: [{
       name: 'Distinctions', id: 'distinctions',
-      view: { attachedStress: { enabled: true, label: 'Stress' } },
+      view: {},
       traits: [
         { name: 'Brawn', value: 8, dice: [8], traits: [{ name: 'Stress', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }], sfx: [] },
         { name: 'Lean', value: 6, dice: [6], traits: [], sfx: [] },
@@ -92,7 +92,7 @@ function walk(node, fn) {
     sets: {
       Distinctions: {
         id: 'distinctions',
-        view: { attachedStress: { enabled: true } },
+        view: {},
         traits: {
           Brawn: { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }, traits: { Stress: { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } } } },
           Lean: { rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
@@ -114,7 +114,7 @@ function walk(node, fn) {
     character: {
       name: '', traitSets: [{
         id: 'distinctions', name: 'Distinctions',
-        view: { attachedStress: { enabled: true, label: 'Fallout' } },
+        view: {},
         traits: [
           { name: 'Brawn', value: 8, dice: [], description: '', traits: [{ name: 'Fallout', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }], sfx: [], tags: [] },
           { name: 'Lean', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },

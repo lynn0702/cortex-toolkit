@@ -70,6 +70,18 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-27 (Attached stress declaration dissolve + layout area rename): `view.attachedStress` declaration dies as a set-level configuration. Attached stress is recognized purely by the presence of `parts.track` in the layout grid; its label defaults to 'Stress' or reads `view.labels.stress`. Stress scale lives exclusively on companions (`rating.range`), not at the set or parts level; track scale for empty rows resolves to the range of the first companion found in the set, falling back to default `[4, 6, 8, 10, 12]`. Migration converts legacy non-default scale declarations by seeding one value-less companion per trait (`{ name: <label>, rating: { type: "Die", value: [], range: <scale> } }`), preserves existing companions, migrates `includeOut: true` to `outIndicator: true`, and deletes `attachedStress`. Editor toggle only builds or removes `parts.track` / `parts.trackLabel` cells without writing declarations or seeding companions. Layout areas and parts renamed: `parts.stress` → `parts.track`, `parts.stressLabel` → `parts.trackLabel`, `parts.sfx` → `parts.block`, `stressDice` → `trackDice`, `.trait-part-stress` → `.trait-part-track`, `.trait-part-stress-label` → `.trait-part-track-label`, `.trait-part-sfx` → `.trait-part-block`. CSS sizing wires `--track-faces` dynamically for responsive cell scaling.
 - 2026-10-18: Stepped tracks get a generic `view.outIndicator` (default off); legacy `stressConfig.includeOut` still wins when set on `stress` bodies.
 - 2026-10-27 (playMutable carve-out): Play add/remove is decided strictly by `view.playMutable === true`. Name-sniffing ('complication' substring) and the unflagged stress fallback are removed. Stress sets never add or remove traits in Play (stress only steps ratings). Complications sets keep full add and remove capability in Play. The 6 complication sets in the spotlight corpus are flagged by meaning: Misty Cove Complications, Necromancer Complications, Retired No More Aging Complications, Snowfall Initiative Complications, Strange Towns Complications, Titans vs Leviathans Handler Complications. Assets and stress sets remain unflagged.
+- 2026-10-29: attachedStress code rip-out: all code
+  references deleted, including migration handling,
+  preset normalization, validator branch, and migration
+  tests. Delete, not deprecate, per the 2026-10-28
+  decision. Safety basis unchanged: no legacy file in
+  existence carries attachedStress; migration is partner
+  import, not legacy support; app not live; dev data
+  wiped. Companions stay (ordinary traits now);
+  DECISIONS history stays. stressConfig removed in the
+  same pass per the 2026-10-29 call: type, reads, editor
+  handling, and default gone; outIndicator is the only
+  Out path.
 
 ### Visibility & name block
 - 2026-10-28 (Play-only visibility, extends 2026-10-23): Node visibility (`view.visibility` on traits and trait sets) is `shown` | `play-only` | `editor-only` | `hidden` (`shown` is absence); `'play-only'` is visible in `edit` and `play` and hidden in `print` (and `@media print`). One shared 4-state eye toggle (`fa-eye` / `fa-gamepad` / `fa-eye-slash` / `fa-ban`); writes stay sparse against honest defaults.
