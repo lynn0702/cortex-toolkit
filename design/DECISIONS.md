@@ -237,3 +237,19 @@ https://github.com/kaelri/cortex-toolkit.
 ### 2026-10-29 — SVG Frames Correction & Width-Based Forcing (Follow-up to 2026-10-28 Phase 3c)
 - **Width-Based Forcing Correction:** Corrects the forced-off rule recorded in the 2026-10-28 entry from blanket mobile viewport threshold (`<= 768px`) to container width-based forcing. Radial frames measure container width via ResizeObserver and force off only when the container is narrower than their minimum required layout threshold (`360px` for arc, `480px` for ring/ellipse), allowing radial frames to render at mobile widths when container width allows, and falling back directly to unframed linear layout when container width overflows or collides. `block` and `line` frames never force off on width grounds.
 - **Implemented Spec Resolutions Pending Ratification:** Records the `arc` shape, outward quadrant docking (`left`, `right`, `top`, `bottom`), and the relationship where the Frame positions the Trait while `view.parts` shapes inside the Trait as implemented per Phase 3c execution spec and pending user ratification.
+- 2026-10-29: frames Step 1 chrome parity: dedicated
+  js/trait-set-frame.vue with live pixel viewBox via
+  ResizeObserver reproduces the Classic block (measured
+  perimeter + sidebar/top spine, legacy chrome suppressed
+  via existing framed classes) and the portrait-ring
+  (unified from view.ringTrait + view.ringConfig, anchors
+  matching the legacy getTraitAngle formula under 0.01
+  points, name offsets reproduced, center slot preserved).
+  Baselines measured at f105d4f, not copied: the old
+  draft's 10px/2px set chrome, view.style.body 'ring' /
+  view.ring keys, isRing flag, and .has-svg-frame class do
+  not exist in code and are struck. Classic ring overlay
+  NOT rewired in this slice — parity proven, swap is a
+  follow-up. Grid question still OPEN; arc/dock resolutions
+  still pending ratification. No dogfood or new-shape work
+  in this slice.

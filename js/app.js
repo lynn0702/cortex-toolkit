@@ -3,6 +3,7 @@ import { cortexFunctions } from './functions.ts';
 import { cortexMigration } from './migration.ts';
 import { cloneDeep } from './clone-deep.ts';
 import { DOGFOOD_TEMPLATES } from './dogfood-templates.ts';
+import TraitSetFrame from './trait-set-frame.vue';
 import App from './app.vue';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,5 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.cortexSetPresets = cortexFunctions.cortexSetPresets;
 	window.cortexCloneDeep = cloneDeep;
 	window.cortexDogfoodTemplates = DOGFOOD_TEMPLATES;
+	window.cortexTraitSetFrame = TraitSetFrame;
 
 });

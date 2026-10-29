@@ -172,6 +172,33 @@ describe( 'Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', (
 		expect( intellectActiveDie.exists() ).toBe( true );
 		expect( intellectActiveDie.text() ).toContain( '4' );
 
+		// In edit submode, Add Trait button is rendered and visible below framed set
+		const addBtn = wrapper.find( '.preview-button' );
+		expect( addBtn.exists(), 'Add button must exist in edit submode for framed set' ).toBe( true );
+		expect( addBtn.text() ).toContain( 'Attribute' );
+
+		wrapper.unmount();
+	} );
+
+	it( 'verifies Add Trait button renders in edit submode and emits addTrait on click for framed sets', async () => {
+		const character = structuredClone( VANGUARD_FRAME_SHOWCASE.character );
+		const wrapper = mount( TraitSetBlock, {
+			props: {
+				character,
+				traitSetID: 0, // Attributes (ring frame)
+				submode: 'edit',
+				editing: []
+			}
+		} );
+
+		const btn = wrapper.find( '.preview-button' );
+		expect( btn.exists() ).toBe( true );
+		expect( btn.text() ).toContain( 'Attribute' );
+
+		await btn.trigger( 'click' );
+		expect( wrapper.emitted( 'addTrait' ) ).toBeTruthy();
+		expect( wrapper.emitted( 'addTrait' )?.[ 0 ] ).toEqual( [ 0 ] );
+
 		wrapper.unmount();
 	} );
 

@@ -14,6 +14,7 @@ import TraitSetPairedSlots from './trait-set-paired-slots.vue';
 import TraitSetDieRows from './trait-set-die-rows.vue';
 import TraitSetDiceCount from './trait-set-dice-count.vue';
 import TraitSetList from './trait-set-list.vue';
+import TraitSetFrame from './trait-set-frame.vue';
 
 const props = defineProps<{
 	character: any;
@@ -89,18 +90,12 @@ watch( rootEl, ( el ) => {
 		:aria-label="traitSet.name || 'Trait Set'"
 	>
 		<!-- Block frame SVG enclosing entire trait set (header + body) -->
-		<svg
+		<TraitSetFrame
 			v-if="isFrameActive && resolvedFrame?.shape === 'block'"
-			class="trait-set-frame-svg frame-block-svg"
-			:class="frameStrokeClass"
-			:style="frameStrokeStyle"
-			aria-hidden="true"
-			focusable="false"
-			viewBox="0 0 100 100"
-			preserveAspectRatio="none"
-		>
-			<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
-		</svg>
+			:trait-set="traitSet"
+			:header-mode="headerTop ? 'top' : 'sidebar'"
+			:has-header="Boolean(traitSet.name)"
+		/>
 
 		<div class="trait-set-header" v-if="resolvedFrame?.shape !== 'line' && traitSet.name">
 			<transition appear>
@@ -131,18 +126,10 @@ watch( rootEl, ( el ) => {
 
 		<div class="trait-set-body" :class="{ 'trait-set-body-framed': isFrameActive }">
 			<!-- Bare-path divider if line -->
-			<svg
+			<TraitSetFrame
 				v-if="resolvedFrame?.shape === 'line'"
-				class="trait-set-frame-svg frame-line-svg"
-				:class="frameStrokeClass"
-				:style="frameStrokeStyle"
-				aria-hidden="true"
-				focusable="false"
-				viewBox="0 0 100 12"
-				preserveAspectRatio="none"
-			>
-				<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
-			</svg>
+				:trait-set="traitSet"
+			/>
 
 			<component :is="bodyComponent" v-if="!(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))" />
 

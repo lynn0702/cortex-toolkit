@@ -1614,6 +1614,29 @@ button.trait-title-btn {
 	pointer-events: none;
 }
 
+.frame-ring-hub-slot {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 52%;
+	height: 52%;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	z-index: 0;
+
+	.frame-hub-circle {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		border: 1px dashed var(--color-separator, rgba(148, 163, 184, 0.4));
+		box-sizing: border-box;
+	}
+}
+
 .frame-stroke-primary {
 	stroke: var(--color-primary, #e11d48);
 	stroke-width: 2px;
@@ -1630,8 +1653,20 @@ button.trait-title-btn {
 }
 
 .frame-stroke-strong {
-	stroke: var(--color-input, #111111);
+	stroke: #111111;
 	stroke-width: 2px;
+
+	@media screen {
+
+		[data-theme="dark"] &,
+		.theme-dark & {
+			stroke: var(--border-strong, #64748b);
+		}
+	}
+}
+
+.frame-spine-path {
+	fill: none !important;
 }
 
 .frame-stroke-dashed {

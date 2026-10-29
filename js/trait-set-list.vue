@@ -2,6 +2,7 @@
 import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
+import TraitSetFrame from './trait-set-frame.vue';
 
 const {
 	traitSet, s, submode, printBlank, viewY, character,
@@ -18,7 +19,7 @@ const {
 	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 	getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
 	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
-	resolvedFrame, isFrameActive, isPositionalFrameActive, frameSvgPath, frameStrokeClass, frameStrokeStyle, getTraitAnchorStyle, getTraitAnchorDock
+	resolvedFrame, isFrameActive, isPositionalFrameActive, frameSvgPath, frameStrokeClass, frameStrokeStyle, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle
 } = injectTraitSet();
 </script>
 
@@ -32,17 +33,21 @@ const {
 		]"
 	>
 		<!-- Decorative SVG for positional frames (ring, ellipse, arc, path) -->
-		<svg
+		<TraitSetFrame
 			v-if="isPositionalFrameActive"
-			class="trait-set-frame-svg frame-radial-svg"
-			:class="frameStrokeClass"
-			:style="frameStrokeStyle"
+			:trait-set="traitSet"
+		/>
+
+		<!-- Center Hub / Portrait slot for ring frames -->
+		<div
+			v-if="isPositionalFrameActive && resolvedFrame?.shape === 'ring'"
+			class="frame-ring-hub-slot"
 			aria-hidden="true"
-			focusable="false"
-			viewBox="0 0 100 100"
 		>
-			<path :d="frameSvgPath" vector-effect="non-scaling-stroke" />
-		</svg>
+			<slot name="hub">
+				<div class="frame-hub-circle"></div>
+			</slot>
+		</div>
 
 		<!-- PIPS BODY (XP / TRACK) -->
 		<TraitSetPips v-if="getView(traitSet)?.style?.body === 'pips'" />
@@ -75,7 +80,7 @@ const {
 						:style="partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet))"
 					>
 						<!-- NAME (above: the asset box; the dice live in the rating cell) -->
-						<div v-if="partsGridFor(traitSet)?.cells.name" class="trait-part trait-part-name" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }" :style="partCellStyle(partsGridFor(traitSet), 'name')">
+						<div v-if="partsGridFor(traitSet)?.cells.name" class="trait-part trait-part-name" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }" :style="[partCellStyle(partsGridFor(traitSet), 'name'), isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined]">
 							<div :class="{ 'trait-title': getRatingPosition(traitSet) !== 'above', 'trait-title-statement': isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above', 'trait-title-stacked': getRatingPosition(traitSet) === 'below', 'trait-asset-box': getRatingPosition(traitSet) === 'above' }">
 								<span
 									class="distinction-die"
@@ -496,7 +501,7 @@ const {
 
 						<!-- STANDARD OR OTHER RATING POSITIONS (INLINE, BELOW, NONE) -->
 						<template v-else>
-							<div class="trait-title" :class="{ 'trait-title-statement': isStatementSet(traitSet), 'trait-title-stacked': getRatingPosition(traitSet) === 'below' }">
+							<div class="trait-title" :class="{ 'trait-title-statement': isStatementSet(traitSet), 'trait-title-stacked': getRatingPosition(traitSet) === 'below' }" :style="isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined">
 								<span class="list-bullet" v-if="getView(traitSet)?.style?.body === 'list'">•</span>
 								<span
 									class="distinction-die"
@@ -815,20 +820,20 @@ const {
 			</div>
 		</template>
 		</template>
+	</div>
 
-		<!-- BUTTON: ADD TRAIT -->
-		<transition appear>
-			<div class="preview-button-container"
-				v-show="!isPositionalFrameActive && resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet)))"
-			>
-				<div class="preview-button-container-inner">
-					<div class="preview-button"
-						@click.stop="addTrait( s )"
-					>
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
-					</div>
+	<!-- BUTTON: ADD TRAIT -->
+	<transition appear>
+		<div class="preview-button-container"
+			v-show="resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet)))"
+		>
+			<div class="preview-button-container-inner">
+				<div class="preview-button"
+					@click.stop="addTrait( s )"
+				>
+					<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
 				</div>
 			</div>
-		</transition>
-	</div>
+		</div>
+	</transition>
 </template>

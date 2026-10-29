@@ -129,14 +129,21 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		if ( !isPositionalFrameActive.value ) return undefined;
 		const a = frameAnchors.value[ t ];
 		if ( !a ) return undefined;
+		const left = a.offsetMm ? `calc(${a.x}% + ${a.offsetMm.x}mm)` : `${a.x}%`;
+		const top = a.offsetMm ? `calc(${a.y}% + ${a.offsetMm.y}mm)` : `${a.y}%`;
 		return {
 			position: 'absolute',
-			left: `${a.x}%`,
-			top: `${a.y}%`,
+			left,
+			top,
 			'--anchor-x': `${a.x}%`,
 			'--anchor-y': `${a.y}%`,
 			'--anchor-angle': `${a.angle}deg`
 		};
+	}
+
+	function getTraitNameAnchorStyle( t: number ): Record<string, string> | undefined {
+		if ( !isPositionalFrameActive.value ) return undefined;
+		return frameAnchors.value[ t ]?.nameStyle;
 	}
 
 	function getTraitAnchorDock( t: number ): string | undefined {
@@ -1348,7 +1355,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
 		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
 		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
-		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock,
+		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,
 		containerWidth, observeContainer
 	};
 
