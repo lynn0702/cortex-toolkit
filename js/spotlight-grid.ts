@@ -39,7 +39,7 @@ export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, 
 // ---------- place primitives ----------
 
 // Known trait-part names. Anything else in view.parts is an error.
-export const KNOWN_PARTS = [ 'name', 'rating', 'description', 'block', 'subtraits', 'trackLabel', 'track' ] as const;
+export const KNOWN_PARTS = [ 'name', 'rating', 'description', 'badge', 'block', 'subtraits', 'trackLabel', 'track' ] as const;
 export type PartName = ( typeof KNOWN_PARTS )[ number ] | string;
 
 export function isKnownPart( part: string ): boolean {
@@ -304,6 +304,7 @@ export interface PartsSpec {
 	ratingDice: number;
 	trackDice: number; // 0 when no track cells
 	description: boolean; // effective: feature on, not a statement set, rating not above (above carries desc in its asset box)
+	badge?: boolean;
 	block: boolean;
 	subtraits: boolean;
 	sfx?: boolean; // legacy caller compat
@@ -360,6 +361,10 @@ export function buildParts( spec: PartsSpec ): Record<string, { left: string; to
 	}
 	if ( spec.description ) {
 		parts.description = { left: '0%', top: row, width: '100%', height: 1 };
+		row += 1;
+	}
+	if ( spec.badge ) {
+		parts.badge = { left: '0%', top: row, width: '100%', height: 1 };
 		row += 1;
 	}
 	if ( spec.block || spec.sfx ) {

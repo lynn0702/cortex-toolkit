@@ -71,6 +71,8 @@ const isListStyle = computed( () => {
 const isStatementSet = computed( () => Boolean( getView( traitSet.value )?.statement || traitSet.value?.statement ) );
 const hasQuestionedPip = computed( () => Boolean( getView( traitSet.value )?.hasQuestionedPip || traitSet.value?.hasQuestionedPip ) );
 
+const hasSfxChildren = computed( () => Array.isArray( cortexFunctions.sfxChildren( trait.value ) ) && cortexFunctions.sfxChildren( trait.value ).length > 0 );
+
 const isQuestioned = computed( {
 	get() {
 		return cortexFunctions.isStatementFilled( trait.value );
@@ -723,12 +725,51 @@ async function focusFirstInput() {
 	}
 }
 
+function targetValue( e: Event ) {
+	return ( e?.target as HTMLInputElement )?.value ?? '';
+}
+
 function setProperty( key: string, val: any ) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
 	( character.traitSets[ s ].traits[ t ] as Record<string, any> )[ key ] = val;
 	updateCharacter( character );
+}
+
+function badgeValue( key: string ): any {
+	return ( getView( trait.value ) as any )?.badge?.[ key ];
+}
+
+function setBadgeValue( key: string, val: any ) {
+	const t = trait.value;
+	if ( !t ) return;
+	const v = ensureView( t ) as Record<string, any>;
+	if ( !v.badge || typeof v.badge !== 'object' ) v.badge = {};
+	if ( val === '' || val === null || val === undefined ) {
+		delete v.badge[ key ];
+		if ( Object.keys( v.badge ).length === 0 ) delete v.badge;
+	} else {
+		v.badge[ key ] = val;
+	}
+	updateCharacter( props.character );
+}
+
+function prefixValue(): string {
+	return ( getView( trait.value ) as any )?.prefix?.text ?? '';
+}
+
+function setPrefixValue( val: any ) {
+	const t = trait.value;
+	if ( !t ) return;
+	const v = ensureView( t ) as Record<string, any>;
+	if ( !val ) {
+		delete v.prefix;
+	} else {
+		if ( !v.prefix || typeof v.prefix !== 'object' ) v.prefix = {};
+		v.prefix.text = val;
+	}
+	updateCharacter( props.character );
 }
 
 
@@ -1596,6 +1637,44 @@ function getDieDisplayValue( val: any ) {
 							</div>
 						</div>
 
+					</div>
+
+					<!-- BADGE -->
+					<div class="editor-field" v-if="!isPlay && hasSfxChildren">
+						<div class="editor-label">Badge</div>
+						<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap;">
+							<div style="flex: 1; min-width: 8rem;">
+								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Text</label>
+								<input type="text" :value="badgeValue('text')" @change="setBadgeValue('text', targetValue($event))" :placeholder="badgeValue('text') || 'SFX'">
+							</div>
+							<div style="min-width: 7rem;">
+								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Shape</label>
+								<select :value="badgeValue('shape') || 'vertical-bar'" @change="setBadgeValue('shape', targetValue($event))">
+									<option value="vertical-bar">Vertical bar</option>
+									<option value="pill">Pill</option>
+									<option value="square">Square</option>
+									<option value="chamfer">Chamfer</option>
+								</select>
+							</div>
+							<div style="min-width: 7rem;">
+								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Color</label>
+								<select :value="badgeValue('color') || 'black'" @change="setBadgeValue('color', targetValue($event))">
+									<option value="black">Black</option>
+									<option value="primary">Primary</option>
+									<option value="secondary">Secondary</option>
+									<option value="interactive">Interactive</option>
+									<option value="muted">Muted</option>
+								</select>
+							</div>
+							<div style="flex: 1; min-width: 8rem;">
+								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Icon</label>
+								<input type="text" :value="badgeValue('icon')" @change="setBadgeValue('icon', targetValue($event))" placeholder="fa-bolt">
+							</div>
+						</div>
+						<div style="margin-bottom: 0.4rem;">
+							<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Prefix</label>
+							<input type="text" :value="prefixValue()" @change="setPrefixValue(targetValue($event))" :placeholder="prefixValue()">
+						</div>
 					</div>
 
 					<!-- SFX -->

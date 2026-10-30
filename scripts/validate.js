@@ -558,7 +558,7 @@ function checkTemplateFile(where, data) {
 }
 
 // ---- 6. Nested-grid placement (2026-10-19): view.place + view.parts.
-const KNOWN_PARTS = ['name', 'rating', 'description', 'block', 'subtraits', 'trackLabel', 'track'];
+const KNOWN_PARTS = ['name', 'rating', 'description', 'badge', 'block', 'subtraits', 'trackLabel', 'track'];
 
 function isKnownPartName(part) {
   return KNOWN_PARTS.indexOf(part) !== -1 || part.startsWith('child:') || part.startsWith('child_');

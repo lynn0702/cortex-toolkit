@@ -167,6 +167,13 @@
                   }
                 }
               }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             }
           },
           "Necromancy:": {
@@ -200,6 +207,13 @@
                   }
                 }
               }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             }
           },
           "Desire:": {
@@ -232,6 +246,13 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
+              }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
               }
             }
           }
@@ -435,6 +456,13 @@
                     "description": "When you injure, maim, or kill with Necromancy or kill by any means, gain the Deathmark complication at d4 or step it up. When your Deathmark steps up past d12, add the d12 to the doom pool and lose access to your Necromancy for the duration of the scene."
                   }
                 }
+              }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
               }
             }
           }

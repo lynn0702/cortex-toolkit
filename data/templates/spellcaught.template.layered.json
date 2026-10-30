@@ -314,6 +314,13 @@
                   }
                 }
               }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             }
           },
           "1": {
@@ -347,6 +354,13 @@
                   }
                 }
               }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             }
           },
           "2": {
@@ -379,6 +393,13 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
+              }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
               }
             }
           }

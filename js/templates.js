@@ -1,7 +1,4 @@
-/**
- * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)
- */
-const cortexSpotlightTemplates = [
+module.exports = [
   {
     "id": "spotlight-alien-us",
     "version": 1,
@@ -176,12 +173,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Alien Role/Job:",
@@ -191,12 +203,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Personality/Quirk:",
@@ -206,12 +233,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -868,12 +910,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Quality:",
@@ -896,12 +953,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -924,12 +996,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -1463,6 +1550,12 @@ const cortexSpotlightTemplates = [
               },
               "block": {
                 "left": "0%",
+                "top": 3,
+                "width": "100%",
+                "height": 1
+              },
+              "badge": {
+                "left": "0%",
                 "top": 2,
                 "width": "100%",
                 "height": 1
@@ -1499,7 +1592,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "DESTINY:",
@@ -1527,7 +1627,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "CAMP REPUTATION:",
@@ -1555,7 +1662,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -2875,7 +2989,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -2886,7 +3008,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -3105,12 +3234,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Freeform Distinction",
@@ -3133,12 +3277,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -3579,7 +3738,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -3595,7 +3762,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Your Approach/Attitude:",
@@ -3618,7 +3792,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -3634,7 +3816,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Your Quirk/Quality:",
@@ -3657,7 +3846,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -3673,7 +3870,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -4898,7 +5102,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     },
                     {
@@ -4908,7 +5120,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Approach to Conflict",
@@ -4931,12 +5150,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Personality/Quirk",
@@ -4959,12 +5193,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -6610,12 +6859,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Past:",
@@ -6638,12 +6902,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Quirk:",
@@ -6666,12 +6945,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -7535,12 +7829,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Backstory:",
@@ -8136,12 +8445,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Necromancy:",
@@ -8164,12 +8488,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Desire:",
@@ -8192,12 +8531,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -8442,7 +8796,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -8827,12 +9188,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Retirement",
@@ -8855,12 +9231,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Satisfaction",
@@ -8883,12 +9274,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -9560,12 +9966,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Retirement:",
@@ -9588,12 +10009,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -10081,12 +10517,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Now:",
@@ -10109,12 +10560,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Future:",
@@ -10137,12 +10603,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -12421,12 +12902,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Background",
@@ -12449,12 +12945,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Personality",
@@ -12477,12 +12988,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -13461,12 +13987,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Community:",
@@ -13489,12 +14030,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Purpose:",
@@ -13517,12 +14073,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -13962,12 +14533,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Organization:",
@@ -13990,12 +14576,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Morale:",
@@ -14018,12 +14619,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -14522,12 +15138,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -14550,12 +15181,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -14578,12 +15224,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -15758,12 +16419,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -15786,12 +16462,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -15814,12 +16505,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -16164,7 +16870,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -16225,7 +16938,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -16286,7 +17006,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -16731,7 +17458,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -16747,7 +17482,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Persona:",
@@ -16770,7 +17512,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -16786,7 +17536,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Aspiration:",
@@ -16809,7 +17566,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -16825,7 +17590,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -17243,7 +18015,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Battle:",
@@ -17833,12 +18612,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Distinction #2:",
@@ -17861,12 +18655,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Distinction #3:",
@@ -17889,12 +18698,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -18347,6 +19171,12 @@ const cortexSpotlightTemplates = [
               },
               "block": {
                 "left": "0%",
+                "top": 3,
+                "width": "100%",
+                "height": 1
+              },
+              "badge": {
+                "left": "0%",
                 "top": 2,
                 "width": "100%",
                 "height": 1
@@ -18379,7 +19209,15 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     },
                     {
@@ -18389,7 +19227,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -18412,12 +19257,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "",
@@ -18440,12 +19300,27 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
-                      "rating": { "type": "Die", "value": [4], "range": [4] },
+                      "rating": {
+                        "type": "Die",
+                        "value": [
+                          4
+                        ],
+                        "range": [
+                          4
+                        ]
+                      },
                       "traits": []
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -18952,7 +19827,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -20002,7 +20884,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Infiltrator",
@@ -20031,7 +20920,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Specialist",
@@ -20060,7 +20956,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -20604,7 +21507,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             },
             {
               "name": "Cybernetic Maverick",
@@ -20633,7 +21543,14 @@ const cortexSpotlightTemplates = [
                     }
                   ]
                 }
-              ]
+              ],
+              "view": {
+                "badge": {
+                  "text": "SFX",
+                  "shape": "vertical-bar",
+                  "color": "black"
+                }
+              }
             }
           ]
         },
@@ -21181,7 +22098,3 @@ const cortexSpotlightTemplates = [
     }
   }
 ];
-
-if (typeof module !== "undefined" && module.exports) {
-	module.exports = cortexSpotlightTemplates;
-}

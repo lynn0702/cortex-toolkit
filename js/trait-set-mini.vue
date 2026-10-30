@@ -576,7 +576,8 @@ const inventoryGroups = computed<InventoryNounGroup[]>( () => {
 				{ kind: 'name', label: `${noun} Name`, noun, slotKind: 'primary', marker: getPartMarker( 'name' ) },
 				{ kind: 'rating', label: `${noun} Rating`, noun, slotKind: 'primary', marker: pRatingType === 'Pip' ? 'pip' : ( pRatingType === 'Dice' ? 'pool' : ( pRatingType === 'Counter' ? 'counter' : 'die' ) ), ratingType: pRatingType },
 				{ kind: 'description', label: `${noun} Description`, noun, slotKind: 'primary', marker: getPartMarker( 'description' ) },
-				{ kind: 'block', label: `${noun} SFX Block`, noun, slotKind: 'primary', marker: 'T' }
+				{ kind: 'block', label: `${noun} SFX Block`, noun, slotKind: 'primary', marker: 'T' },
+				{ kind: 'badge', label: `${noun} Badge`, noun, slotKind: 'primary', marker: 'L' }
 			]
 		} );
 	}

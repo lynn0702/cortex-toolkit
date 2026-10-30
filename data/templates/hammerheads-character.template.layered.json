@@ -308,6 +308,13 @@
                   }
                 }
               }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             }
           },
           "Your Approach/Attitude:": {
@@ -347,6 +354,13 @@
                   }
                 }
               }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             }
           },
           "Your Quirk/Quality:": {
@@ -385,6 +399,13 @@
                     "description": "Add d6 to the crisis pool to step up a relationship die you include in your pool when you embrace your quirk or quality."
                   }
                 }
+              }
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
               }
             }
           }

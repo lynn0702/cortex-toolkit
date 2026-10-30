@@ -344,10 +344,18 @@ const {
 								<div class="desc-blank-line" v-else></div>
 							</div>
 						</div>
+						<!-- BADGE -->
+						<div v-if="partsGridFor(traitSet)?.cells.badge && (getView(item.trait) as any)?.badge" class="trait-part trait-part-badge" :style="partCellStyle(partsGridFor(traitSet), 'badge')">
+							<span class="badge" :class="['badge--' + (((getView(item.trait) as any)?.badge?.shape) || 'vertical-bar'), 'badge--' + (((getView(item.trait) as any)?.badge?.color) || 'black')]">
+								<i v-if="(getView(item.trait) as any)?.badge?.icon" :class="['fa', (getView(item.trait) as any).badge.icon]" aria-hidden="true"></i>
+								<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
+							</span>
+						</div>
 						<!-- BLOCK (SFX) -->
 						<div v-if="partsGridFor(traitSet)?.cells.block && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-block" :style="partCellStyle(partsGridFor(traitSet), 'block')">
 							<ul class="trait-sfx">
 								<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
+									<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text">{{ (getView(item.trait) as any).prefix.text }} </span>
 									<template v-if="sfx.isHinder">
 										<span class="trait-sfx-name">Hinder</span>:
 										<span class="trait-sfx-description"
@@ -764,8 +772,15 @@ const {
 							</div>
 						</div>
 
+						<span v-if="(getView(item.trait) as any)?.badge" class="trait-part trait-part-badge trait-part-badge-fallback">
+							<span class="badge" :class="['badge--' + (((getView(item.trait) as any)?.badge?.shape) || 'vertical-bar'), 'badge--' + (((getView(item.trait) as any)?.badge?.color) || 'black')]">
+								<i v-if="(getView(item.trait) as any)?.badge?.icon" :class="['fa', (getView(item.trait) as any).badge.icon]" aria-hidden="true"></i>
+								<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
+							</span>
+						</span>
 						<ul class="trait-sfx" v-else-if="getDisplayTraitSfx(traitSet, item.trait).length">
 							<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
+								<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text">{{ (getView(item.trait) as any).prefix.text }} </span>
 								<template v-if="sfx.isHinder">
 									<span class="trait-sfx-name">Hinder</span>:
 									<span class="trait-sfx-description"

@@ -113,7 +113,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   // Nested grids: flags became parts (inline 70/30, above pushes name down, below adds a row).
   const dp = sets.Distinctions.view.parts;
   ok(dp && dp.name.width === '70%' && dp.rating.width === '30%' && dp.rating.top === 0 &&
-    dp.description.top === 1 && dp.block.top === 2, 'distinctions inline parts with description + block rows', dp);
+    dp.description.top === 1 && dp.badge.top === 2 && dp.block.top === 3, 'distinctions inline parts with description + badge + block rows', dp);
   ok(sets.Distinctions.ratingPosition === undefined && sets.Distinctions.view.ratingPosition === undefined, 'distinctions flags removed');
   const vp = sets.Values.view.parts;
   ok(vp && vp.name.width === '70%' && vp.rating.width === '30%', 'values inline parts', vp);

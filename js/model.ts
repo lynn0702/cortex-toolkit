@@ -550,6 +550,10 @@ export interface CortexToolkitCustom {
 	isResource?: boolean;
 /** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
 	visibility?: Visibility;
+	/** Badge part data (trait-level). */
+	badge?: { text: string; shape: string; color: string; icon?: string };
+	/** Prefix text rendered before each SFX line of this trait's block. */
+	prefix?: { text: string };
 	xp?: number | string;
 	counter?: number | string;
 	branchRole?: 'skill' | 'specialty';

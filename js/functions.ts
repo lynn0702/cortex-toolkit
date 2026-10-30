@@ -439,8 +439,6 @@ export const cortexFunctions = {
 	// Chrome words shared by every set body; settable via view.labels.*.
 	commonLabelDefaults: {
 		out: '💥 OUT',
-		sfxBadge: 'SFX',
-		sfxPrefix: 'SFX:',
 	} as Record<string, string>,
 
 	// The name block is the first trait set — see model.isNameSet.

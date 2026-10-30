@@ -2349,3 +2349,79 @@ button.trait-title-btn {
 		}
 	}
 }
+/* Badge part (trait part) */
+.badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-weight: 900;
+	line-height: 1;
+	padding: 0.2rem 0.4rem;
+	border-radius: 2px;
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.badge--vertical-bar {
+	flex-direction: column;
+	padding: 0.3rem 0.2rem;
+	border-radius: 2px;
+}
+.badge--vertical-bar .badge-label {
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+}
+.badge--pill {
+	border-radius: 999px;
+}
+.badge--square {
+	border-radius: 0;
+}
+.badge--chamfer {
+	clip-path: polygon(15% 0, 85% 0, 100% 25%, 100% 75%, 85% 100%, 15% 100%, 0 75%, 0 25%);
+}
+/* colors */
+.badge--black {
+	background: #000;
+	color: #fff;
+}
+.badge--primary {
+	background: var(--color-primary);
+	color: #fff;
+}
+.badge--secondary {
+	background: var(--color-secondary);
+	color: #111;
+}
+.badge--interactive {
+	background: var(--color-interactive);
+	color: #fff;
+}
+.badge--muted {
+	background: #f1f5f9;
+	color: #333;
+	border: 1px solid #cbd5e1;
+}
+.badge-icon {
+	font-size: 0.85em;
+}
+.trait-part-badge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.trait-part-badge-fallback {
+	margin: 0.2rem 0;
+}
+.block-prefix {
+	font-weight: 700;
+	margin-right: 0.25rem;
+}
+/* dark mode */
+@media (prefers-color-scheme: dark) {
+	.badge--muted {
+		background: #1e293b;
+		color: #e2e8f0;
+		border-color: #475569;
+	}
+}

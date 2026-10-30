@@ -64,6 +64,8 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-11: SFX is a traits map: old `sfx` arrays fold into `traits` under an `SFX` node, Hinder among them.
 - 2026-10-26 (SFX dissolve): `trait.sfx` / `set.sfx` die as named model fields. SFX are ordinary child traits grouped under an "SFX" child trait, distinguished by shape and view — no named field, no kind flag, no SFX boolean. Export stops emitting sfx arrays; old-format import still converts them into traits. Hinder shared-text behavior preserved.
 
+- 2026-10-30: Badge is a trait part. trait.view.badge carries text, shape, color, and an optional Font Awesome icon; trait.view.prefix carries text. Badge renders by data presence: trait badge data present in a placed badge cell, no visibility flag, no set-level badge, no fallthrough. badge joins KNOWN_PARTS; the mini gains a badge tile (marker L, Edit-only); shape is orientation + corners only, color is a fixed token set, icon renders upright in all shapes, FA only. The old labels.sfxBadge / labels.sfxPrefix migrate per trait to SFX traits; the corpus is seeded with badge data on every SFX trait plus a badge cell above its block (prefix unseeded, blank = no leaders). SFX is not model or render language: no sfx key, kind, class, or view key survives. This supersedes the 2026-10-30 dirty-commit note that left the badge object open.
+
 ### Stress & complications
 - 2026-10-22: Stress lives as an ordinary rated companion subtrait (the "stress ring" is display of the companion's value); `custom.stress` / `custom.isStressOut` normalize to it, templates carry stress as real traits.
 - 2026-10-18 (superseded by 2026-10-27 item 3 below): Attached stress is set-level config (`enabled`, `label`, scale) with an ordinary companion per trait; enabling forces the track on (default five-die scale), disabling deletes the cells.
@@ -170,6 +172,8 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-11: The model (`trait-layers.md`, `trait-usage.md`) is the UI spec.
 - 2026-10-10: Keep the `$noun` / default `"pronoun"` joke — load-bearing morale.
 - 2026-10-11: Shell discipline: content edits to generated files go through the edit tool with read-verified context; byte-level verification via git diff hunks.
+
+- 2026-10-30: Rebrief remainder. The a03690d dirty commit landed the skill patches, the gallery death, Hinder as data, label removals, header consolidation, Hinder part 2, and the features plane. What remained - badge as a trait part, statement-flag derivation, SFX editor retirement, the vocabulary remainder, and the JSON textarea dark variant - is this brief. The phone pass, classic-on-place section 4d, and item 5 follow after, as planned, and are not in this brief.
 
 ## Open (decisions needed)
 

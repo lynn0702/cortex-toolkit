@@ -613,23 +613,61 @@ export const cortexMigration = {
 			Object.values( set.slots ).forEach( processTrait );
 		}
 
+		// Badge migration: labels.sfxBadge / labels.sfxPrefix -> per-trait view.badge / view.prefix
+		const badgeBags = [ set.view, set.custom?.cortexToolkit ].filter( ( b: any ) => b && typeof b === 'object' && !Array.isArray( b ) );
+		let badgeWord: string | null = null;
+		let prefixWord: string | null = null;
+		for ( const b of badgeBags ) {
+			const labels = b?.labels;
+			if ( labels && typeof labels === 'object' ) {
+				if ( !badgeWord && typeof labels.sfxBadge === 'string' && labels.sfxBadge.trim().length ) badgeWord = labels.sfxBadge.trim();
+				if ( !prefixWord && typeof labels.sfxPrefix === 'string' && labels.sfxPrefix.trim().length ) prefixWord = labels.sfxPrefix.trim();
+			}
+		}
+		// also top-level labels
+		if ( set.labels && typeof set.labels === 'object' ) {
+			if ( !badgeWord && typeof set.labels.sfxBadge === 'string' && set.labels.sfxBadge.trim().length ) badgeWord = set.labels.sfxBadge.trim();
+			if ( !prefixWord && typeof set.labels.sfxPrefix === 'string' && set.labels.sfxPrefix.trim().length ) prefixWord = set.labels.sfxPrefix.trim();
+		}
+		const migTraits = Array.isArray( set.traits ) ? set.traits : ( set.traits && typeof set.traits === 'object' ? Object.values( set.traits ) : [] );
+		for ( const tr of migTraits ) {
+			if ( !tr || typeof tr !== 'object' ) continue;
+			const subs = Array.isArray( tr.traits ) ? tr.traits : ( tr.traits && typeof tr.traits === 'object' ? Object.values( tr.traits ) : [] );
+			const container = subs.find( ( st: any ) => st && typeof st === 'object' && !Array.isArray( st ) && st.name === 'SFX' && ( st.rating === undefined ) );
+			const hasSfx = container && ( Array.isArray( container.traits ) ? container.traits.length > 0 : ( container.traits && typeof container.traits === 'object' ? Object.keys( container.traits ).length > 0 : false ) );
+			if ( !hasSfx ) continue;
+			if ( !tr.view || typeof tr.view !== 'object' ) tr.view = {};
+			if ( badgeWord && !tr.view.badge ) {
+				tr.view.badge = { text: badgeWord, shape: 'vertical-bar', color: 'black' };
+			}
+			if ( prefixWord && !tr.view.prefix ) {
+				tr.view.prefix = { text: prefixWord };
+			}
+		}
+
 		if ( set.view && typeof set.view === 'object' ) {
 			delete set.view.sharedHinder;
 			delete set.view.sharedHinderText;
 			if ( set.view.labels && typeof set.view.labels === 'object' ) {
 				delete set.view.labels.hinderSentence;
+				delete set.view.labels.sfxBadge;
+				delete set.view.labels.sfxPrefix;
 			}
 		}
 		delete set.sharedHinder;
 		delete set.sharedHinderText;
 		if ( set.labels && typeof set.labels === 'object' ) {
 			delete set.labels.hinderSentence;
+			delete set.labels.sfxBadge;
+			delete set.labels.sfxPrefix;
 		}
 		if ( set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object' ) {
 			delete set.custom.cortexToolkit.sharedHinder;
 			delete set.custom.cortexToolkit.sharedHinderText;
 			if ( set.custom.cortexToolkit.labels && typeof set.custom.cortexToolkit.labels === 'object' ) {
 				delete set.custom.cortexToolkit.labels.hinderSentence;
+				delete set.custom.cortexToolkit.labels.sfxBadge;
+				delete set.custom.cortexToolkit.labels.sfxPrefix;
 			}
 		}
 	},
@@ -1410,6 +1448,7 @@ export const cortexMigration = {
 			ratingDice: scale.length,
 			trackDice: 0,
 			description: hasDesc && !statement && pos !== 'above',
+			badge: hasSfx,
 			block: hasSfx,
 			subtraits: hasSub,
 		} );
