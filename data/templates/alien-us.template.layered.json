@@ -120,8 +120,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "sharedHinder": true,
-          "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
           "page": 1,
           "style": {
             "header": "sfx-rows",
@@ -142,7 +140,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+                  }
                 }
               }
             }
@@ -151,7 +160,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+                  }
                 }
               }
             }
@@ -160,7 +180,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
+                  }
                 }
               }
             }

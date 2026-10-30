@@ -118,7 +118,6 @@
             "sfx": true,
             "subtraits": false
           },
-          "sharedHinder": true,
           "reservedSlots": 3,
           "ratingScale": [
             8
@@ -178,7 +177,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {},
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you switch out this distinction's d8 for a d4."
+                  },
                   "Pixel Parity": {
                     "description": "Spend 1 PP to step up or double a die when testing visual alignment against a reference PDF."
                   }
@@ -205,7 +215,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you switch out this distinction's d8 for a d4."
+                  }
                 }
               }
             }
@@ -227,7 +248,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you switch out this distinction's d8 for a d4."
+                  }
                 }
               }
             }

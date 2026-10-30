@@ -74,7 +74,7 @@
 // Not-wide viewports: panel header buttons are icons only (labels hide;
 // titles carry the names). Matches the JS narrow-viewport line in app.vue.
 @media screen and (max-width: 1399px) {
-	.studio-panel-tabs .studio-tab-label {
+	.studio-panel-actions .studio-tab-label {
 		display: none;
 	}
 }
@@ -149,19 +149,34 @@
 	min-width: 0;
 }
 
+// One toolbar row: sheet tabs or crumbs on the left, actions on the right.
+// The row never wraps: the left side truncates, the actions never shrink.
 .studio-panel-header {
 	display: flex;
+	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0.6rem 0.8rem;
+	gap: 0.4rem;
+	padding: 0.45rem 0.5rem;
 	background: #1e293b;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	flex-shrink: 0;
 }
 
-.studio-panel-tabs {
+.studio-toolbar-left {
+	flex: 1 1 auto;
+	min-width: 0;
 	display: flex;
-	gap: 0.35rem;
+	align-items: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.studio-sheet-tabs {
+	display: flex;
+	gap: 0.25rem;
+	min-width: 0;
 }
 
 .studio-tab-btn {
@@ -175,6 +190,7 @@
 	cursor: pointer;
 	display: inline-flex;
 	align-items: center;
+	flex-shrink: 0;
 	gap: 0.4rem;
 	transition: all 0.15s ease;
 
@@ -199,82 +215,92 @@
 	}
 }
 
+// Sheet tabs: compact so all three labels fit the 23rem panel and 360px.
+.studio-sheet-tabs {
+	gap: 0.15rem;
+
+	.studio-tab-btn {
+		font-size: 0.75rem;
+		padding: 0.35rem 0.45rem;
+		gap: 0.3rem;
+	}
+}
+
 .studio-panel-actions {
 	display: flex;
 	align-items: center;
-	gap: 0.25rem;
+	flex-shrink: 0;
+	gap: 0.1rem;
 
 	.studio-action-btn {
 		background: transparent;
 		border: none;
 		color: #94a3b8;
-		padding: 0.35rem 0.5rem;
+		padding: 0.35rem 0.45rem;
 		border-radius: 4px;
 		cursor: pointer;
+		flex-shrink: 0;
 		font-size: 0.85rem;
 
 		&:hover {
 			color: #ffffff;
 			background: rgba(255, 255, 255, 0.1);
 		}
+
+		&.active {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.12);
+		}
 	}
 }
 
-.studio-breadcrumb-bar {
+.studio-breadcrumb {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	padding: 0.5rem 0.8rem;
-	background: #0f172a;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	gap: 0.35rem;
+	min-width: 0;
+	color: #cbd5e1;
 	font-size: 0.75rem;
-	flex-shrink: 0;
+	font-weight: 600;
+	overflow: hidden;
+	white-space: nowrap;
 
-	.studio-breadcrumb {
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
-		color: #cbd5e1;
-		font-weight: 600;
+	.crumb-link,
+	.crumb-current {
+		flex: 0 1 auto;
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
 
-		.crumb-link {
-			color: #94a3b8;
-			cursor: pointer;
-			&:hover {
-				color: #38bdf8;
-				text-decoration: underline;
-			}
+	.crumb-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		color: #94a3b8;
+		cursor: pointer;
+
+		// The root link stays whole; set and trait names take the truncation.
+		&:first-child {
+			flex-shrink: 0;
 		}
 
-		.crumb-sep {
-			font-size: 0.65rem;
-			color: #64748b;
-		}
-
-		.crumb-current {
-			color: #ffffff;
+		&:hover {
+			color: #38bdf8;
+			text-decoration: underline;
 		}
 	}
 
-	.studio-btn-subtle {
-		background: rgba(255, 255, 255, 0.08);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-		color: #cbd5e1;
-		padding: 0.2rem 0.5rem;
-		border-radius: 3px;
-		font-size: 0.7rem;
-		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
+	.crumb-sep {
+		flex-shrink: 0;
+		font-size: 0.65rem;
+		color: #64748b;
+	}
 
-		&:hover {
-			color: #ffffff;
-			background: rgba(255, 255, 255, 0.15);
-		}
+	.crumb-current {
+		color: #ffffff;
 	}
 }
 
@@ -329,7 +355,7 @@
 			padding-bottom: 0.4rem !important;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 
-			// The 'X' close button is redundant with the breadcrumb 'Done' button
+			// The 'X' close button is redundant with the Sheet crumb link
 			button:first-child:not(.editor-copy):not(.editor-delete):not(.editor-delete-confirm):not(.editor-revert) {
 				display: none !important;
 			}

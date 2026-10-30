@@ -198,6 +198,7 @@ export const cortexMigration = {
 
 		const normalizeNode = ( node: any ) => {
 			if ( !node || typeof node !== 'object' ) return;
+			delete node.features;
 			if ( node.portrait && typeof node.portrait === 'object' ) {
 				normalizeNode( node.portrait );
 			}
@@ -226,6 +227,7 @@ export const cortexMigration = {
 			this.migrateStyleBody( set );
 			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
+			this.migrateHinderBackfill( set, false );
 			normalizeTraitsArray( set.traits, set );
 			this.migrateResourceSet( set );
 		};
@@ -247,6 +249,7 @@ export const cortexMigration = {
 			this.migrateStyleBody( set );
 			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
+			this.migrateHinderBackfill( set, true );
 			if ( set.traits ) normalizeLayeredTraits( set.traits, set );
 			if ( set.slots ) normalizeLayeredTraits( set.slots, set );
 			this.migrateResourceSet( set );
@@ -489,7 +492,15 @@ export const cortexMigration = {
 			? set.view.ringTrait
 			: set.custom?.cortexToolkit?.ringTrait;
 
-		if ( effectiveRingTrait === undefined ) {
+		const hasExplicitFrame = set.view?.frame !== undefined || set.frame !== undefined;
+		if ( hasExplicitFrame ) {
+			const isExplicitLegacy = Boolean( set.view?.frame?.legacyRing || set.frame?.legacyRing );
+			if ( !isExplicitLegacy ) {
+				for ( const bag of bags ) {
+					delete bag.ringTrait;
+				}
+			}
+		} else if ( effectiveRingTrait === undefined ) {
 			const effectiveBag = ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) )
 				? set.view
 				: ( set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object' && !Array.isArray( set.custom.cortexToolkit ) )
@@ -516,6 +527,110 @@ export const cortexMigration = {
 		// 3. Strip view.isAttributes (and the custom-bag copy) unconditionally
 		for ( const bag of bags ) {
 			delete bag.isAttributes;
+		}
+	},
+
+	migrateHinderBackfill: function( set: any, isLayered: boolean ) {
+		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
+		const sharedText = ( typeof set.view?.sharedHinderText === 'string' && set.view.sharedHinderText.trim().length > 0 )
+			? set.view.sharedHinderText.trim()
+			: ( typeof set.sharedHinderText === 'string' && set.sharedHinderText.trim().length > 0 )
+				? set.sharedHinderText.trim()
+				: ( typeof set.custom?.cortexToolkit?.sharedHinderText === 'string' && set.custom.cortexToolkit.sharedHinderText.trim().length > 0 )
+					? set.custom.cortexToolkit.sharedHinderText.trim()
+					: null;
+
+		const processTrait = ( tr: any ) => {
+			if ( !tr || typeof tr !== 'object' ) return;
+			const noun = ( typeof set.noun === 'string' && set.noun.length ) ? set.noun.toLowerCase() : 'trait';
+			let die = 8;
+			if ( tr.rating && typeof tr.rating === 'object' && Array.isArray( tr.rating.value ) && tr.rating.value.length ) {
+				die = tr.rating.value[ 0 ];
+			} else if ( typeof tr.rating === 'number' ) {
+				die = tr.rating;
+			} else if ( typeof tr.value === 'number' ) {
+				die = tr.value;
+			}
+			const defaultSentence = 'Gain a PP when you switch out this ' + noun + '\'s d' + die + ' for a d4.';
+
+			if ( Array.isArray( tr.traits ) ) {
+				for ( const child of tr.traits ) {
+					if ( !child || typeof child !== 'object' ) continue;
+					if ( child.name === 'SFX' && Array.isArray( child.traits ) ) {
+						for ( const sfx of child.traits ) {
+							if ( sfx && typeof sfx === 'object' && String( sfx.name || '' ).toLowerCase() === 'hinder' ) {
+								if ( typeof sfx.description !== 'string' || !sfx.description.trim().length ) {
+									sfx.description = sharedText || defaultSentence;
+								}
+								if ( !sfx.rating || typeof sfx.rating !== 'object' ) {
+									sfx.rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+								}
+							}
+						}
+					} else if ( String( child.name || '' ).toLowerCase() === 'hinder' ) {
+						if ( typeof child.description !== 'string' || !child.description.trim().length ) {
+							child.description = sharedText || defaultSentence;
+						}
+						if ( !child.rating || typeof child.rating !== 'object' ) {
+							child.rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+						}
+					}
+				}
+			} else if ( tr.traits && typeof tr.traits === 'object' ) {
+				for ( const [ cKey, child ] of Object.entries( tr.traits ) ) {
+					if ( !child || typeof child !== 'object' ) continue;
+					if ( cKey === 'SFX' && ( child as any ).traits && typeof ( child as any ).traits === 'object' && !Array.isArray( ( child as any ).traits ) ) {
+						for ( const [ sfxKey, sfx ] of Object.entries( ( child as any ).traits ) ) {
+							if ( sfxKey.toLowerCase() === 'hinder' ) {
+								const s = ( sfx && typeof sfx === 'object' ) ? sfx : {};
+								if ( typeof ( s as any ).description !== 'string' || !( s as any ).description.trim().length ) {
+									( s as any ).description = sharedText || defaultSentence;
+								}
+								if ( !( s as any ).rating || typeof ( s as any ).rating !== 'object' ) {
+									( s as any ).rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+								}
+								( child as any ).traits[ sfxKey ] = s;
+							}
+						}
+				} else if ( cKey.toLowerCase() === 'hinder' ) {
+					if ( typeof ( child as any ).description !== 'string' || !( child as any ).description.trim().length ) {
+						( child as any ).description = sharedText || defaultSentence;
+					}
+					if ( !( child as any ).rating || typeof ( child as any ).rating !== 'object' ) {
+						( child as any ).rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+					}
+				}
+				}
+			}
+		};
+
+		if ( Array.isArray( set.traits ) ) {
+			set.traits.forEach( processTrait );
+		} else if ( set.traits && typeof set.traits === 'object' ) {
+			Object.values( set.traits ).forEach( processTrait );
+		}
+		if ( set.slots && typeof set.slots === 'object' && !Array.isArray( set.slots ) ) {
+			Object.values( set.slots ).forEach( processTrait );
+		}
+
+		if ( set.view && typeof set.view === 'object' ) {
+			delete set.view.sharedHinder;
+			delete set.view.sharedHinderText;
+			if ( set.view.labels && typeof set.view.labels === 'object' ) {
+				delete set.view.labels.hinderSentence;
+			}
+		}
+		delete set.sharedHinder;
+		delete set.sharedHinderText;
+		if ( set.labels && typeof set.labels === 'object' ) {
+			delete set.labels.hinderSentence;
+		}
+		if ( set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object' ) {
+			delete set.custom.cortexToolkit.sharedHinder;
+			delete set.custom.cortexToolkit.sharedHinderText;
+			if ( set.custom.cortexToolkit.labels && typeof set.custom.cortexToolkit.labels === 'object' ) {
+				delete set.custom.cortexToolkit.labels.hinderSentence;
+			}
 		}
 	},
 	migrateStyleBody: function( set: any ) {
@@ -1276,14 +1391,27 @@ export const cortexMigration = {
 		const pos = rating;
 		if ( pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none' ) return 'legacy';
 		const statement = Boolean( ( set && set.statement ) ?? bag?.statement );
-		const features = bag?.features || {};
+		const traits = Array.isArray( set?.traits ) ? set.traits : ( set?.traits && typeof set.traits === 'object' ? Object.values( set.traits ) : [] );
+		const hasDesc = traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 );
+		const sfxChildrenOf = ( node: any ) => {
+			const subs = Array.isArray( node?.traits ) ? node.traits : [];
+			const container = subs.find( ( st: any ) => st && typeof st === 'object' && !Array.isArray( st ) && st.name === 'SFX' && ( st.rating === undefined ) );
+			return ( container && Array.isArray( container.traits ) ) ? container.traits : [];
+		};
+		const hasSfx = traits.some( ( t: any ) => sfxChildrenOf( t ).length > 0 );
+		const isSfxContainer = ( t: any ) => t && typeof t === 'object' && !Array.isArray( t ) && t.name === 'SFX' && t.rating === undefined;
+		const isStatementContainer = ( t: any ) => t && typeof t === 'object' && !Array.isArray( t ) && t.name === 'Statement' && t.rating === undefined;
+		const hasSub = traits.some( ( t: any ) => {
+			const subs = Array.isArray( t?.traits ) ? t.traits : ( t?.traits && typeof t.traits === 'object' ? Object.values( t.traits ) : [] );
+			return subs.some( ( s: any ) => !isSfxContainer( s ) && !isStatementContainer( s ) );
+		} );
 		bag.parts = buildParts( {
 			rating: pos as 'inline' | 'above' | 'below' | 'none',
 			ratingDice: scale.length,
 			trackDice: 0,
-			description: Boolean( features.description ) && !statement && pos !== 'above',
-			block: Boolean( features.sfx ),
-			subtraits: Boolean( features.subtraits ),
+			description: hasDesc && !statement && pos !== 'above',
+			block: hasSfx,
+			subtraits: hasSub,
 		} );
 		if ( set && typeof set === 'object' ) delete set.ratingPosition;
 		delete bag.ratingPosition;

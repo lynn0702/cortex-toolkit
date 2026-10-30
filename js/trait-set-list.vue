@@ -12,13 +12,12 @@ const {
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
 	handleSteppedDieClick, handleOutClick, shouldShowOut, isTraitOut, getTraitDice, getRating,
-	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, getSharedHinderLines, renderHinderLine, getCompactSfxText,
-	hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue, visibleSubtraits,
+	isDieSpent, toggleDieSpentInPlay, isSpendable, firstDie, isDieActive, isTraitRated, 	hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue, visibleSubtraits,
 	getSetRatingDie,
 	shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
-	getDisplayTraitSfx, getHinderSentence, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
+	getDisplayTraitSfx, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 	getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
-	isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
+	isPlayAddRemovableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
 	resolvedFrame, isFrameActive, isPositionalFrameActive, frameSvgPath, frameStrokeClass, frameStrokeStyle, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle
 } = injectTraitSet();
 </script>
@@ -53,16 +52,6 @@ const {
 		<TraitSetPips v-if="getView(traitSet)?.style?.body === 'pips'" />
 
 		<template v-else>
-		<!-- SHARED HINDER BANNER (COMPACT DISTINCTIONS) -->
-		<div
-			class="distinctions-shared-hinder"
-			v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder"
-		>
-			<div v-for="(ruleLine, rIdx) in getSharedHinderLines(traitSet)" :key="rIdx" class="hinder-rule-line">
-				<span class="hinder-bullet">•</span>
-				<span class="hinder-text" v-html="renderHinderLine(ruleLine)"></span>
-			</div>
-		</div>
 
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div
@@ -280,7 +269,7 @@ const {
 									title="Take d4 and gain 1 PP"
 									aria-label="Take d4 and gain 1 PP"
 								>
-									<span class="c" aria-hidden="true">d4</span><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
+									<span class="c" aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
 								</button>
 								<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)" aria-hidden="true"></span>
 								<span
@@ -356,7 +345,7 @@ const {
 							</div>
 						</div>
 						<!-- BLOCK (SFX) -->
-						<div v-if="partsGridFor(traitSet)?.cells.block && !getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-block" :style="partCellStyle(partsGridFor(traitSet), 'block')">
+						<div v-if="partsGridFor(traitSet)?.cells.block && getDisplayTraitSfx(traitSet, item.trait).length" class="trait-part trait-part-block" :style="partCellStyle(partsGridFor(traitSet), 'block')">
 							<ul class="trait-sfx">
 								<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
 									<template v-if="sfx.isHinder">
@@ -376,7 +365,7 @@ const {
 						</div>
 						<!-- SUBTRAITS -->
 						<div v-if="partsGridFor(traitSet)?.cells.subtraits" class="trait-part trait-part-subtraits" :style="partCellStyle(partsGridFor(traitSet), 'subtraits')">
-							<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
+							<ul class="subtraits" v-if="(visibleSubtraits(traitSet, item.trait).length || printBlank)">
 								<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '' }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, firstDie(subtrait), traitSet, s, item.originalIndex) : null">
 									<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
 									<span class="subtrait-name" v-else>
@@ -452,18 +441,6 @@ const {
 								</template>
 							</div>
 						</template>
-						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
-						<div class="distinction-sfx-slot" style="grid-column: 1 / -1;" v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
-							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
-							<div class="distinction-sfx-line">
-								<span class="sfx-bullet">•</span>
-								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
-								<span class="sfx-content" v-if="getCompactSfxText(item.trait)" v-html="renderText(getCompactSfxText(item.trait))"></span>
-								<span class="sfx-blank-line" v-else-if="printBlank"></span>
-								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="openTraitAt(s, item)">Click to set SFX...</span>
-								<span class="sfx-blank-line" v-else></span>
-							</div>
-						</div>
 					</div>
 					<div v-else :class="{ 'trait-inner': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }">
 						<!-- RATING POSITION ABOVE (e.g. Signature Assets) -->
@@ -685,7 +662,7 @@ const {
 										title="Take d4 and gain 1 PP"
 										aria-label="Take d4 and gain 1 PP"
 									>
-										<span class="c" aria-hidden="true">d4</span><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
+										<span class="c" aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
 									</button>
 									<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)" aria-hidden="true"></span>
 									<span
@@ -705,7 +682,7 @@ const {
 
 							<div
 								class="trait-description"
-								v-if="getView(traitSet)?.features?.description && !isStatementSet(traitSet)"
+								v-if="!isStatementSet(traitSet)"
 							>
 								<div v-if="!printBlank && !item.isPlaceholder && item.trait.description" v-html="renderText(item.trait.description)"></div>
 								<div class="desc-hint" v-else-if="submode === 'edit'">Description...</div>
@@ -716,7 +693,7 @@ const {
 							</div>
 						</template>
 
-						<ul class="subtraits" v-if="getView(traitSet)?.features?.subtraits && (visibleSubtraits(traitSet, item.trait).length || printBlank)">
+						<ul class="subtraits" v-if="(visibleSubtraits(traitSet, item.trait).length || printBlank)">
 							<li class="subtrait" v-for="(subtrait, u) in (visibleSubtraits(traitSet, item.trait).length ? visibleSubtraits(traitSet, item.trait) : (printBlank ? [{ name: '' }] : []))" :key="subtrait._lid || ('u' + u)" @click.stop="!printBlank ? handleSingleDieClick(subtrait, firstDie(subtrait), traitSet, s, item.originalIndex) : null">
 								<span class="subtrait-name" v-if="subtrait.name">{{ subtrait.name }}</span>
 								<span class="subtrait-name" v-else>
@@ -739,18 +716,6 @@ const {
 							</li>
 						</ul>
 
-						<!-- COMPACT SFX SLOT FOR DISTINCTIONS WITH SHARED HINDER -->
-						<div class="distinction-sfx-slot" v-if="getView(traitSet)?.style?.body === 'sfx-rows' && getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx !== false">
-							<div class="distinction-sfx-badge">{{ getTraitSetLabel(traitSet, 'sfxBadge') }}</div>
-							<div class="distinction-sfx-line">
-								<span class="sfx-bullet">•</span>
-								<span class="sfx-prefix">{{ getTraitSetLabel(traitSet, 'sfxPrefix') }}</span>
-								<span class="sfx-content" v-if="getCompactSfxText(item.trait)" v-html="renderText(getCompactSfxText(item.trait))"></span>
-								<span class="sfx-blank-line" v-else-if="printBlank"></span>
-								<span class="sfx-placeholder-hint" v-else-if="submode === 'edit'" @click.stop="openTraitAt(s, item)">Click to set SFX...</span>
-								<span class="sfx-blank-line" v-else></span>
-							</div>
-						</div>
 
 						<!-- ATTACHED TRACK -->
 						<div class="attached-stress-block" v-if="hasTrackPart(traitSet)">
@@ -799,7 +764,7 @@ const {
 							</div>
 						</div>
 
-						<ul class="trait-sfx" v-else-if="!getView(traitSet)?.sharedHinder && getView(traitSet)?.features?.sfx && getDisplayTraitSfx(traitSet, item.trait).length">
+						<ul class="trait-sfx" v-else-if="getDisplayTraitSfx(traitSet, item.trait).length">
 							<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
 								<template v-if="sfx.isHinder">
 									<span class="trait-sfx-name">Hinder</span>:

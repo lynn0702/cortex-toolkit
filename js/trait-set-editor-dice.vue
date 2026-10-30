@@ -4,8 +4,8 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 const {
 	needsDiceUI, isRatingIncluded, toggleRatingOption, getDieDisplayValue,
 	setRating, isSubtraitRatingIncluded, toggleSubtraitRatingOption,
-	featureSubtraits, isPool, setSpendable, setHitches, traitSetID,
-	styleBody, allowsTraitColumns, sharedHinder, sharedHinderText, hasTrackPart
+	isPool, setSpendable, setHitches, traitSetID,
+	styleBody, allowsTraitColumns, hasTrackPart
 } = injectTraitSetEditor();
 
 function toggleSetRating( size: number | null ) {
@@ -66,7 +66,7 @@ function toggleSetRating( size: number | null ) {
 	</div>
 
 	<!-- SUB-TRAIT RATING SCALE -->
-	<div class="editor-field" v-if="needsDiceUI && featureSubtraits">
+	<div class="editor-field" v-if="needsDiceUI">
 		<label>Subtrait scale</label>
 		<div class="rating-scale-container">
 			<div class="rating-scale-chips">
@@ -100,10 +100,6 @@ function toggleSetRating( size: number | null ) {
 				<label :for="'trait-set-' + traitSetID + '-spendable'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Spendable</label>
 			</div>
 
-			<div v-if="styleBody === 'sfx-rows'" class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.35rem;">
-				<input type="checkbox" :id="'trait-set-' + traitSetID + '-shared-hinder'" v-model="sharedHinder">
-				<label :for="'trait-set-' + traitSetID + '-shared-hinder'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Shared hinder</label>
-			</div>
 
 			<div v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'" class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.35rem;">
 				<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-track'" v-model="hasTrackPart">
@@ -111,10 +107,6 @@ function toggleSetRating( size: number | null ) {
 			</div>
 		</div>
 
-		<div v-if="styleBody === 'sfx-rows' && sharedHinder" style="margin-bottom: 0.5rem;">
-			<label :for="'trait-set-' + traitSetID + '-hinder-text'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Hinder text</label>
-			<textarea :id="'trait-set-' + traitSetID + '-hinder-text'" name="sharedHinderText" v-model="sharedHinderText" placeholder="Gain a PP when you trade out your distinction's [d8] rating for a [d4]." rows="2"></textarea>
-		</div>
 
 		<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.4rem;">
 			<label :for="'trait-set-' + traitSetID + '-hitches'" style="font-size: 0.8rem; margin: 0;">Hitches on</label>

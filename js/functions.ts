@@ -5,7 +5,7 @@ import { VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel, resolveShee
 defaultNameHidden, getRating, ratingDice, setRatingDice, resolveSetPillar, getPillarLabel,
 resolveVisibility, nextVisibility, isHiddenIn } from './model.ts';
 import { buildParts } from './spotlight-grid.ts';
-import type { Character, TraitSet, Trait, SetFeatures, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
+import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -338,31 +338,6 @@ export const cortexFunctions = {
 		}
 	},
 
-	// Hinder is a child trait named "Hinder" in the SFX container.
-	hasHinder: function( node: unknown ) {
-		return this.sfxChildren( node ).some( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
-	},
-	setHinder: function( node: unknown, present: boolean ) {
-		if ( !node || typeof node !== 'object' ) return;
-		const rec = node as any;
-		if ( !present ) {
-			if ( !Array.isArray( rec.traits ) ) return;
-			const container = rec.traits.find( ( st: any ) => this.isSfxContainer( st ) );
-			if ( !container || !Array.isArray( container.traits ) ) return;
-			const idx = container.traits.findIndex( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
-			if ( idx === -1 ) return;
-			container.traits.splice( idx, 1 );
-			if ( !container.traits.length ) {
-				const ci = rec.traits.indexOf( container );
-				if ( ci !== -1 ) rec.traits.splice( ci, 1 );
-			}
-			return;
-		}
-		const container = this.ensureSfxContainer( node );
-		if ( !container || !Array.isArray( container.traits ) ) return;
-		const idx = container.traits.findIndex( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
-		if ( idx === -1 ) container.traits.unshift( { name: 'Hinder' } );
-	},
 
 	// The statement container is a child trait literally named "Statement"
 	// with no rating of its own; its single child is the sentence, carrying
@@ -441,20 +416,6 @@ export const cortexFunctions = {
 	},
 
 	// Feature defaults seeded when a trait-set style is chosen.
-	// Used by the trait set editor and the style gallery alike.
-	defaultFeaturesForStyle: function( style: string ) {
-		const map: Record<string, { features: SetFeatures }> = {
-			'three-column-table':      { features: { description: true,  sfx: true,  subtraits: false } },
-			'paired-slots':           { features: { description: false, sfx: false, subtraits: true  } },
-			'subtrait-columns': { features: { description: false, sfx: false, subtraits: true  } },
-			'die-rows':       { features: { description: false, sfx: false, subtraits: false } },
-			'dice-count':    { features: { description: false, sfx: false, subtraits: false } },
-			'dice-ladder':      { features: { description: false, sfx: false, subtraits: false } },
-			'labeled-fields':     { features: { description: true,  sfx: false, subtraits: false } },
-		};
-		if ( map[ style ] ) return map[ style ];
-		return { features: { description: false, sfx: false, subtraits: false } };
-	},
 
 	// Central registry of default labels for trait-set style regions.
 	// Custom labels live in custom.cortexToolkit.labels under the same keys;
@@ -480,7 +441,6 @@ export const cortexFunctions = {
 		out: '💥 OUT',
 		sfxBadge: 'SFX',
 		sfxPrefix: 'SFX:',
-		hinderSentence: '',
 	} as Record<string, string>,
 
 	// The name block is the first trait set — see model.isNameSet.

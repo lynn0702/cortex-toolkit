@@ -142,17 +142,6 @@
 		color: #64748b;
 	}
 
-	.gallery-placement {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
-
-		.editor-button-group {
-			background: #e2e8f0;
-		}
-	}
-
 	.style-gallery-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -167,25 +156,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.4rem;
-	}
-
-	.style-gallery-preview {
-		background: #ffffff;
-		border: 1px solid #e2e8f0;
-		border-radius: 4px;
-		padding: 0.45rem;
-		max-height: 11rem;
-		overflow: hidden;
-		pointer-events: none;
-		user-select: none;
-
-		.character-sheet {
-			pointer-events: none;
-		}
-
-		.trait-set {
-			margin-bottom: 0;
-		}
 	}
 
 	.style-gallery-name {
@@ -216,28 +186,52 @@
 		cursor: pointer;
 		&:hover { background: #0369a1; }
 	}
+}
 
-	// Gallery-only mock helpers (ring)
-	.gallery-ring-mock {
-		position: relative;
-		width: 120px;
-		height: 120px;
-		margin: 0 auto;
+// Dark theme overrides for modals (Item D)
+[data-theme="dark"],
+.theme-dark {
+	.modal-backdrop,
+	.modal-veil {
+		background: rgba(0, 0, 0, 0.75);
 	}
 
-	.gallery-ring {
-		position: absolute;
-		inset: 18px;
-		border: 5px solid var(--color-primary);
-		border-radius: 50%;
-		background: color-mix(in srgb, var(--color-interactive), transparent 90%);
-	}
+	.modal-style-gallery {
+		background: #1e293b;
+		color: #f1f5f9;
 
-	.gallery-ring-die {
-		position: absolute;
-		transform: translate(-50%, -50%);
-		font-size: 1.4rem;
-	}
+		.modal-close {
+			color: #94a3b8;
+			&:hover { color: #f8fafc; }
+		}
 
+		h2 {
+			color: #f8fafc;
+		}
+
+		.gallery-sub {
+			color: #94a3b8;
+		}
+
+		.style-gallery-card {
+			background: #0f172a;
+			border-color: #334155;
+		}
+
+		.style-gallery-name {
+			color: #f8fafc;
+		}
+
+		.style-gallery-blurb {
+			color: #94a3b8;
+		}
+
+		.editor-header-btn {
+			background: transparent;
+			border: 1px solid #475569;
+			color: #94a3b8;
+			&:hover { color: #ef4444; border-color: #ef4444; }
+		}
+	}
 }
 

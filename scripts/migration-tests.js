@@ -518,6 +518,11 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   M.normalizeView({ traitSets: [setH] });
   ok(setH.view.style.body === 'portrait-ring', '(h) body attributes mapped to portrait-ring');
   ok(setH.view.ringTrait === undefined, '(h) portrait-ring body alone does not add ringTrait flag');
+
+  // (i) set with explicit frame does NOT gain ringTrait: true
+  const setI = { name: 'Attributes', noun: 'Attribute', view: { frame: { shape: 'ring', span: [0, 360] } } };
+  M.normalizeView({ traitSets: [setI] });
+  ok(setI.view.ringTrait === undefined, '(i) explicit frame set does not gain ringTrait: true');
 }
 
 
@@ -550,6 +555,82 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   M.migrateNodeRating(t1, false);
   ok(JSON.stringify(t1.rating.value) === '[true,false,false,false]', 'migrateNodeRating pads pip');
   ok(t1.rating.range === undefined, 'migrateNodeRating strips pip range');
+}
+
+
+// ---- 19. Hinder migration and backfill (Hinder as data) ----
+{
+  // (a) Hinder trait with own description preserves it verbatim
+  const setWithOwn = {
+    name: 'Distinctions',
+    noun: 'Distinction',
+    traits: [
+      {
+        name: 'Hero',
+        rating: { type: 'Die', value: [8] },
+        traits: [
+          {
+            name: 'SFX',
+            traits: [
+              { name: 'Hinder', description: 'Custom hinder text' }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+  M.normalizeView({ traitSets: [setWithOwn] });
+  ok(setWithOwn.traits[0].traits[0].traits[0].description === 'Custom hinder text', 'own description preserved');
+
+  // (b) Hinder trait backfilled from shared text
+  const setShared = {
+    name: 'Distinctions',
+    noun: 'Distinction',
+    view: {
+      sharedHinder: true,
+      sharedHinderText: 'Shared banner text'
+    },
+    traits: [
+      {
+        name: 'Hero',
+        rating: { type: 'Die', value: [8] },
+        traits: [
+          {
+            name: 'SFX',
+            traits: [
+              { name: 'Hinder' }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+  M.normalizeView({ traitSets: [setShared] });
+  ok(setShared.traits[0].traits[0].traits[0].description === 'Shared banner text', 'backfilled from shared text');
+  ok(setShared.view.sharedHinder === undefined, 'sharedHinder stripped');
+  ok(setShared.view.sharedHinderText === undefined, 'sharedHinderText stripped');
+
+  // (c) Hinder trait without shared text gains constructed default
+  const setDefault = {
+    name: 'Distinctions',
+    noun: 'Distinction',
+    traits: [
+      {
+        name: 'Ace',
+        rating: { type: 'Die', value: [10] },
+        traits: [
+          {
+            name: 'SFX',
+            traits: [
+              { name: 'Hinder' }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+  M.normalizeView({ traitSets: [setDefault] });
+  ok(setDefault.traits[0].traits[0].traits[0].description === "Gain a PP when you switch out this distinction's d10 for a d4.", 'constructed sentence backfill');
 }
 
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);

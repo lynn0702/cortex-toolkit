@@ -28,11 +28,30 @@ a brief into code or data. Measure it first.
      example JSON, which may be pre-refactor.
 3. If the measured value matches the brief, proceed and say
    so (one line: measured X at <file>).
-4. If it does NOT match, stop. Report the mismatch with both
-   values and the file that proves it. Do not silently use
-   the brief's value, and do not silently use the tree's
-   value when the brief's intent is unclear — the mismatch
-   is a question for the user, not a choice to make alone.
+4. If it does NOT match, first ask WHAT it mismatches:
+
+   - Brief versus TREE (the repo at HEAD): stop. Report the
+     mismatch with both values and the file that proves it.
+     Do not silently use the brief's value, and do not
+     silently use the tree's value when the brief's intent
+     is unclear — the mismatch is a question for the user,
+     not a choice to make alone. This half of the rule is
+     unchanged.
+   - Brief versus SKILL (a skill's text, example list, or
+     vocabulary list): the brief wins. Note the conflict in
+     one line (skill name + item), follow the brief, and
+     proceed. Do NOT stall the session on it. Carry the
+     note into the session report so the skill can be
+     refreshed — that note is how a frozen list gets
+     corrected instead of re-stalling the next session.
+     (Repo rule, unchanged: when a prompt and a standing
+     rule conflict, the prompt wins for that session.)
+
+Batch the census. One grep pass per item covering all
+its asserted facts — not a separate search per fact when
+one pass covers many. Report the census once per item
+(measured X at a named file, one line each), not once per
+fact per turn.
 5. If a fact cannot be measured (it depends on a rendered
    layout, a real viewport, or a visual result), say so
    plainly. Do not substitute an invented number. Route it

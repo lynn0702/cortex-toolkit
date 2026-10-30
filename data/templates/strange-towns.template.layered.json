@@ -173,8 +173,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "sharedHinder": true,
-          "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
           "ratingScale": [
             8
           ],

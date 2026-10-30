@@ -133,7 +133,7 @@ watch( rootEl, ( el ) => {
 
 			<component :is="bodyComponent" v-if="!(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))" />
 
-			<ul class="sfx" v-if="resolvedFrame?.shape !== 'line' && getView(traitSet)?.features?.sfx && setSfxEntries.length">
+			<ul class="sfx" v-if="resolvedFrame?.shape !== 'line' && setSfxEntries.length">
 				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 					<span class="sfx-name">{{ sfx.name }}</span>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>

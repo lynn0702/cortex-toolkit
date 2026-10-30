@@ -3,7 +3,7 @@ import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
 import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
 import { resolveFrame } from './frame-geometry.ts';
-import type { Character, TraitSet, CortexToolkitCustom, RingConfig, SetFeatures, ImageConfig, PipsConfig, Visibility } from './model.ts';
+import type { Character, TraitSet, CortexToolkitCustom, RingConfig, ImageConfig, PipsConfig, Visibility } from './model.ts';
 
 export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
 
@@ -145,12 +145,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 					view.location = 'right';
 				}
 				view.ringTrait = false;
-				// Spotlight PDF styles: seed the feature flags their layouts need.
-				if ( !view.features ) {
-					view.features = { description: false, sfx: false, subtraits: false };
-				}
-				const styleDefaults = cortexFunctions.defaultFeaturesForStyle( value );
-				Object.assign( view.features, styleDefaults.features );
 			}
 			updateCharacter( props.character );
 		}
@@ -182,14 +176,20 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		const tScale = cortexFunctions.getTrackScale( traitSet.value );
 		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
 		const statement = Boolean( ( traitSet.value as any )?.statement ?? ( view as any ).statement );
-		const features = ( view as any ).features || {};
+		const traits = Array.isArray( traitSet.value?.traits ) ? traitSet.value.traits : ( traitSet.value?.traits ? Object.values( traitSet.value.traits ) : [] );
+		const hasDesc = traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 );
+		const hasSfx = traits.some( ( t: any ) => Array.isArray( cortexFunctions.sfxChildren( t ) ) && cortexFunctions.sfxChildren( t ).length > 0 );
+		const hasSub = traits.some( ( t: any ) => {
+			const subs = Array.isArray( t?.traits ) ? t.traits : ( t?.traits && typeof t.traits === 'object' ? Object.values( t.traits ) : [] );
+			return subs.some( ( s: any ) => !cortexFunctions.isSfxContainer( s ) && !cortexFunctions.isStatementContainer( s ) );
+		} );
 		return {
 			rating,
 			ratingDice: scale.length,
 			trackDice: trackOn ? tScale.length : 0,
-			description: Boolean( features.description ) && !statement && rating !== 'above',
-			block: Boolean( features.sfx ),
-			subtraits: Boolean( features.subtraits ),
+			description: hasDesc && !statement && rating !== 'above',
+			block: hasSfx,
+			subtraits: hasSub,
 		};
 	}
 
@@ -457,20 +457,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		set: ( val: string ) => { setImageConfig( 'caption', val ); }
 	});
 
-	const featureDescription = computed({
-		get: () => Boolean( getView( traitSet.value )?.features?.description ),
-		set: ( value: boolean ) => { setFeature( 'description', value ); }
-	});
-
-	const featureSubtraits = computed({
-		get: () => Boolean( getView( traitSet.value )?.features?.subtraits ),
-		set: ( value: boolean ) => { setFeature( 'subtraits', value ); }
-	});
-
-	const featureSFX = computed({
-		get: () => Boolean( getView( traitSet.value )?.features?.sfx ),
-		set: ( value: boolean ) => { setFeature( 'sfx', value ); }
-	});
 
 	// Generic Out indicator (default off).
 	const includeOut = computed({
@@ -588,15 +574,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		}
 	});
 
-	const sharedHinder = computed({
-		get: () => Boolean( getView( traitSet.value )?.sharedHinder ),
-		set: ( val: boolean ) => { setCustomProperty( 'sharedHinder', Boolean( val ) ); }
-	});
-
-	const sharedHinderText = computed({
-		get: () => getView( traitSet.value )?.sharedHinderText ?? '',
-		set: ( val: string ) => { setCustomProperty( 'sharedHinderText', val ); }
-	});
 
 	const traitColumns = computed({
 		get: () => getView( traitSet.value )?.traitColumns ?? 1,
@@ -1021,20 +998,6 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		updateCharacter( structuredClone( toRaw( props.character ) ) );
 	}
 
-	function setFeature( featureID: keyof SetFeatures, value: any ) {
-		let s = props.traitSetID;
-		const ctk = ctkFor( s );
-		if ( !ctk.features ) {
-			ctk.features = {
-				description: false,
-				sfx: false,
-				subtraits: false
-			};
-		}
-		ctk.features[ featureID ] = value;
-
-		updateCharacter( props.character );
-	}
 
 	function setCustomProperty( key: string, value: any ) {
 		let s = props.traitSetID;
@@ -1286,8 +1249,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		templateEntry, restorableTraitNames, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
-		featureDescription, featureSubtraits, featureSFX, includeOut, ratingScale, subtraitRatingScale,
-		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, sharedHinder, sharedHinderText, traitColumns,
+		includeOut, ratingScale, subtraitRatingScale,
+		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, traitColumns,
 		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
 		showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
 		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,
@@ -1297,7 +1260,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		editorDock, branchArrows, headerMode, headerAlign, cssClass,
 		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
 		restoreTrait,
-		setRingConfig, resetRingPlacement, setFeature,
+		setRingConfig, resetRingPlacement,
 		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart,		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, getDieDisplayValue,
 		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty,

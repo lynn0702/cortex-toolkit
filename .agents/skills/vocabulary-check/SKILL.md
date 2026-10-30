@@ -30,13 +30,31 @@ Dissolved — these must NOT appear in new data:
   pip child traits; filled means questioned).
 
 Live and NOT dead — do not strip these:
-- Set-level `statement` / `hasQuestionedPip` (presentation
-  flags that do appear in the layered corpus).
-- `features.sfx`, `span`, `header`, track keys, companions.
+- `span`, `header`, track keys, companions.
 - `view.frame`, `view.pillar`, `view.place`,
   `view.playMutable`, `view.reservedSlots`,
   `view.labels.pillars`, visibility values `shown` /
   `editor-only` / `hidden` / `play-only`.
+
+In transition — decided direction, not yet landed.
+The current tree still carries these, but decided
+direction removes or moves them. Do NOT add them to
+new data, and do NOT treat a brief that removes them
+as a mismatch (see measure-before-you-build's
+brief-wins rule):
+- `features.sfx` → derived from SFX children presence
+  (no flag). Do not write it into new data.
+- Set-level `statement` / `hasQuestionedPip` →
+  derived from Statement container presence. Do not
+  write them into new data.
+- `labels.sfxBadge` / `labels.sfxPrefix` → moved to
+  per-trait `trait.view.badge` / `trait.view.prefix`.
+  Do not write the label keys into new data.
+- Layout areas gain `badge` (a trait part kind, per
+  the badge decision; joins KNOWN_PARTS when it lands).
+  Never write an `sfx` key, kind, class, or view key:
+  SFX is not model or render language — the word
+  survives only in data (trait names, badge text).
 
 Model rules that constrain data:
 - Rating shape: `rating { type: Counter | Die | Dice |
@@ -48,6 +66,11 @@ Model rules that constrain data:
   on optional fields, NO trait-level ids or
   database-management values in exported JSON.
 - `custom` is an open extension bag; never emit it empty.
+
+When the tree and a user-directed brief disagree, the
+brief wins (see measure-before-you-build). Note the
+drift for the skill maintainer in the session report
+instead of stalling.
 
 ## Procedure
 

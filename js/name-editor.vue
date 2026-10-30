@@ -108,9 +108,9 @@ const DICE_PRESETS: DicePreset[] = [
 const props = withDefaults( defineProps<{
 	character: Character;
 	open: boolean;
-	initialTab?: string;
+	tab?: string;
 }>(), {
-	initialTab: 'sheet',
+	tab: 'sheet',
 } );
 
 const emit = defineEmits<{
@@ -120,7 +120,7 @@ const emit = defineEmits<{
 	( e: 'exportSheetTemplate' ): void;
 }>();
 
-const currentTab = ref( 'sheet' );
+const currentTab = computed( () => props.tab );
 const fontPreview = ref<{ heading: string; primary: string; secondary: string }>( { heading: '', primary: '', secondary: '' } );
 const watermarkError = ref( '' );
 const fontUploadError = ref( '' );
@@ -503,18 +503,9 @@ const watermarkPage = computed( {
 
 watch( () => props.open, ( isOpen, wasOpen ) => {
 	if ( isOpen && !wasOpen ) {
-		if ( props.initialTab ) {
-			currentTab.value = props.initialTab;
-		}
 		if ( currentTab.value === 'sheet' ) {
 			focusFirstInput();
 		}
-	}
-} );
-
-watch( () => props.initialTab, ( newTab ) => {
-	if ( newTab ) {
-		currentTab.value = newTab;
 	}
 } );
 
@@ -692,22 +683,6 @@ function updateCharacter( character: any ) {
 
 		<div class="editor-inner">
 			<div>
-
-				<!-- 4-TIER INSPECTOR TAB NAVIGATION -->
-				<div class="editor-tabs">
-					<button type="button" class="editor-tab-btn" :class="{ active: currentTab === 'sheet' }" @click.stop="currentTab = 'sheet'" title="Sheet Details">
-						<i class="fas fa-id-card"></i> Sheet
-					</button>
-					<button type="button" class="editor-tab-btn" :class="{ active: currentTab === 'page' }" @click.stop="currentTab = 'page'" title="Page &amp; Columns Justification">
-						<i class="fas fa-columns"></i> Page
-					</button>
-					<button type="button" class="editor-tab-btn" :class="{ active: currentTab === 'theme' }" @click.stop="currentTab = 'theme'" title="Fonts &amp; Colors">
-						<i class="fas fa-font"></i> Fonts &amp; Colors
-					</button>
-					<button type="button" class="editor-tab-btn" :class="{ active: currentTab === 'dice' }" @click.stop="currentTab = 'dice'" title="Dice Editor">
-						<i class="fas fa-dice-d20"></i> Dice
-					</button>
-				</div>
 
 				<div class="editor-fields">
 
@@ -925,7 +900,7 @@ function updateCharacter( character: any ) {
 						</div>
 					</template>
 
-					<!-- ================= TAB 3: THEME & FONTS ================= -->
+					<!-- ================= TAB 3: THEME & DICE ================= -->
 					<template v-else-if="currentTab === 'theme'">
 						<div class="editor-field">
 							<label for="char-field-accent-color">Theme Accent Color</label>
@@ -1002,10 +977,10 @@ function updateCharacter( character: any ) {
 								Uploaded fonts are embedded into the character JSON and available immediately.
 							</span>
 						</div>
-					</template>
 
-					<!-- ================= TAB 4: VISUAL DICE EDITOR ================= -->
-					<template v-else-if="currentTab === 'dice'">
+						<!-- DIE STYLE & GEOMETRY -->
+						<div id="die-style-anchor" class="editor-section-divider">Die Style &amp; Geometry</div>
+
 						<!-- LIVE SVG PREVIEW OF ALL 5 DICE -->
 						<div class="editor-field" style="text-align: center; background: #ffffff; padding: 0.75rem; border-radius: 6px; border: 1px solid #cbd5e1;">
 							<div class="editor-label" style="font-size: 0.75rem; color: #1e293b; margin-bottom: 0.4rem; display: block; font-weight: 700;">Live Dice Appearance Preview</div>

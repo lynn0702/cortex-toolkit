@@ -209,16 +209,9 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 			classes[ 'trait-set-has-counter' ] = true;
 		}
 
-		if ( getView( traitSetArg )?.features?.description ) {
+		const traits = Array.isArray( traitSetArg?.traits ) ? traitSetArg.traits : ( traitSetArg?.traits ? Object.values( traitSetArg.traits ) : [] );
+		if ( traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 ) ) {
 			classes[ 'trait-set-has-feature-description' ] = true;
-		}
-
-		if ( getView( traitSetArg )?.features?.sfx ) {
-			classes[ 'trait-set-has-feature-sfx' ] = true;
-		}
-
-		if ( getView( traitSetArg )?.features?.subtraits ) {
-			classes[ 'trait-set-has-feature-subtraits' ] = true;
 		}
 
 		const ctk = getView( traitSetArg );
@@ -421,7 +414,11 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 	}
 
 	function createBlankSlotTrait( traitSetArg: TraitSet ): any {
-		const hasSubtraits = Boolean( getView( traitSetArg )?.features?.subtraits );
+		const traits = Array.isArray( traitSetArg?.traits ) ? traitSetArg.traits : ( traitSetArg?.traits && typeof traitSetArg.traits === 'object' ? Object.values( traitSetArg.traits ) : [] );
+		const hasSubtraits = traits.some( ( t: any ) => {
+			const subs = Array.isArray( t?.traits ) ? t.traits : ( t?.traits && typeof t.traits === 'object' ? Object.values( t.traits ) : [] );
+			return subs.some( ( s: any ) => !cortexFunctions.isSfxContainer( s ) && !cortexFunctions.isStatementContainer( s ) );
+		} );
 		return {
 			name: '',
 			description: '',
@@ -609,15 +606,23 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 
 	function traitHasHinder( trait: Trait, traitSetArg: TraitSet ): boolean {
 		if ( !trait || !isTraitRated( trait ) ) return false;
-		if ( cortexFunctions.hasHinder( trait ) ) return true;
-		if ( getView( traitSetArg )?.style?.body === 'sfx-rows' && getView( traitSetArg )?.sharedHinder ) return true;
-		return false;
+		const children = cortexFunctions.sfxChildren( trait );
+		return children.some( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+	}
+
+	function hinderDie( trait: Trait ): number {
+		const children = cortexFunctions.sfxChildren( trait );
+		const hinder = children.find( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+		return ratingDice( getRating( hinder ) )[0] || 0;
 	}
 
 	function handleHinderDieClick( trait: Trait, traitSetArg: TraitSet, sArg: any, t: any ) {
 		if ( props.submode === 'play' ) {
+			const children = cortexFunctions.sfxChildren( trait );
+			const hinder = children.find( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+			const size = ratingDice( getRating( hinder ) )[0] || 4;
 			emit( 'addDieToRoller', {
-				size: 4,
+				size: size,
 				qty: 1,
 				source: trait.name ? `${trait.name} (Hinder)` : 'Hinder',
 				hitches: resolveHitches( trait, [ traitSetArg ] ),
@@ -685,56 +690,19 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		return isOutDie( trait, traitSetArg ? [ traitSetArg ] : undefined );
 	}
 
-	function getSharedHinderLines( traitSetArg: TraitSet ) {
-		const text = getSharedHinderText( traitSetArg );
-		return text.split( '\n' ).map( ( l: string ) => l.trim() ).filter( Boolean );
-	}
-
-	function renderHinderLine( line: string ) {
-		const clean = line.replace( /^[•\-\*]\s*/, '' );
-		return renderText( clean );
-	}
-
-	function getCompactSfxText( trait: Trait ) {
-		const entries = cortexFunctions.sfxChildren( trait );
-		if ( !entries.length ) return '';
-		const nonHinder = entries.filter( ( sfx: any ) => String( sfx.name || '' ).toLowerCase() !== 'hinder' );
-		if ( !nonHinder.length ) return '';
-		const first = nonHinder[0];
-		return ( first.name && first.description ) ? `${first.name}: ${first.description}`
-			: first.description || first.name || '';
-	}
-
 	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
 		const entries = cortexFunctions.sfxChildren( trait );
 		if ( !entries.length ) return [];
-		const isSharedHinder = Boolean( getView( traitSetArg )?.sharedHinder );
-		let list = entries;
-		if ( isSharedHinder ) {
-			list = list.filter( ( sfx: any ) => String( sfx.name || '' ).toLowerCase() !== 'hinder' );
-		}
-		return list.map( ( sfx: any ) => {
+		return entries.map( ( sfx: any ) => {
 			if ( String( sfx.name || '' ).toLowerCase() === 'hinder' ) {
-				const hasOwn = typeof sfx.description === 'string' && sfx.description.length > 0;
 				return {
 					name: 'Hinder',
 					isHinder: true,
-					description: hasOwn ? sfx.description : getHinderSentence( traitSetArg, trait )
+					description: sfx.description || ''
 				};
 			}
 			return sfx;
 		} );
-	}
-
-	// Chrome words with label hooks (view.labels.*); static defaults live
-	// in the central label registry, so every on-sheet word is settable
-	// in data. Only the hinder sentence keeps a constructed default (it
-	// interpolates the live trait), overridable wholesale via
-	// labels.hinderSentence.
-	function getHinderSentence( traitSetArg: TraitSet, trait: Trait ) {
-		const labels = getView( traitSetArg )?.labels;
-		if ( labels && typeof labels.hinderSentence === 'string' && labels.hinderSentence.length ) return labels.hinderSentence;
-		return 'Gain a PP when you switch out this ' + ( traitSetArg.noun && traitSetArg.noun.length ? traitSetArg.noun.toLowerCase() : 'trait' ) + '’s d' + ( ratingDice( getRating( trait ) )[0] || 8 ) + ' for a d4.';
 	}
 
 	function hasTrackPart( traitSetArg: TraitSet ) {
@@ -1273,15 +1241,6 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		}
 	}
 
-	function getSharedHinderText( traitSetArg: TraitSet ) {
-		const hinderText = getView( traitSetArg )?.sharedHinderText?.trim();
-		if ( hinderText ) {
-			return hinderText;
-		}
-		const noun = ( traitSetArg?.noun && traitSetArg.noun.length ) ? traitSetArg.noun.toLowerCase() : 'trait';
-		return `Gain a PP when you trade out your ${noun}'s d8 rating for a d4.`;
-	}
-
 	// Template-facing rating reads (one shape; no value/dice in templates).
 	function firstDie( trait: Trait ) {
 		return ratingDice( getRating( trait ) )[0] || 0;
@@ -1336,8 +1295,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint, openTraitAt, fillPlaceholder, isTraitShown,
 		getTraitSetRatings, getSubtraitRatings, getTraitDice,
 		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleSteppedDieClick,
-		handleOutClick, shouldShowOut, isTraitOut, getSharedHinderLines, renderHinderLine,
-		getCompactSfxText, getDisplayTraitSfx, getHinderSentence,
+		handleOutClick, shouldShowOut, isTraitOut, getDisplayTraitSfx,
 		hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue,
 		getTrackCompanion, isTrackCompanion, visibleSubtraits,
 		shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
@@ -1351,8 +1309,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		nodePool, stagesWholePool, stageTraitDice, nodeSpendable, isSpendable,
 		firstDie, isDieActive, isTraitRated,
 		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
-		getSharedHinderText, getTraitSetSlotCount,
-		isPlayAddRemovableSet, traitHasHinder, handleHinderDieClick, stageTrackDie,
+		getTraitSetSlotCount,
+		isPlayAddRemovableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
 		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
 		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
 		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,

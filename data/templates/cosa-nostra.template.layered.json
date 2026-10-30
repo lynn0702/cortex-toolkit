@@ -132,8 +132,6 @@
             10,
             12
           ],
-          "sharedHinder": true,
-          "sharedHinderText": "Gain a PP when you trade out your distinction's die rating for a d4.\nShaken: When a distinction's stress rating is higher than its die rating, you may only keep one die for your result when using that distinction.",
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,

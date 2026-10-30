@@ -32,7 +32,7 @@ const {
 	notesContent, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasTrackPart, trackLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected, pipLabels,
-	noun, plural, reservedSlots, featureDescription, featureSubtraits, featureSFX,
+	noun, plural, reservedSlots,
 	ratingPosition, labelPosition, isStatementSet, hasQuestionedPip, hasCounterColumn, counterLabel,
 	restorableTraitNames, restoreTrait,
 	setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved,
@@ -190,25 +190,9 @@ function applyFromMini( updatedSet: any ) {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
-						<div class="editor-label">Trait Features</div>
-						<div class="editor-toggles">
-
-							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-feature-description'" name="featureDescription" :true-value="true" :false-value="false" v-model="featureDescription"></div>
-							<div><label :for="'trait-set-' + traitSetID + '-feature-description'">Description</label></div>
-
-							<div v-if="styleBody !== 'list'"><input type="checkbox" :id="'trait-set-' + traitSetID + '-feature-subtraits'" name="featureSubtraits" :true-value="true" :false-value="false" v-model="featureSubtraits"></div>
-							<div v-if="styleBody !== 'list'"><label :for="'trait-set-' + traitSetID + '-feature-subtraits'">Sub-Traits</label></div>
-
-							<div><input type="checkbox" :id="'trait-set-' + traitSetID + '-feature-sfx'" name="featureSFX" :true-value="true" :false-value="false" v-model="featureSFX"></div>
-							<div><label :for="'trait-set-' + traitSetID + '-feature-sfx'">SFX</label></div>
-
-						</div>
-					</div>
 
 					<!-- STATEMENT MODE -->
 					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots'">
-						<div class="editor-label">Statements</div>
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" name="statementMode" v-model="isStatementSet">
 							<label :for="'trait-set-' + traitSetID + '-statement-mode'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Statement field</label>
@@ -325,10 +309,6 @@ function applyFromMini( updatedSet: any ) {
 						<input type="text" :id="'trait-set-' + traitSetID + '-track-label-words'" name="trackLabelWords" v-model="trackLabel" placeholder="Stress">
 					</div>
 
-					<div class="editor-field" v-if="styleBody === 'sfx-rows'">
-						<label :for="'trait-set-' + traitSetID + '-hinder-sentence'">Per-trait Hinder sentence</label>
-						<input type="text" :id="'trait-set-' + traitSetID + '-hinder-sentence'" name="hinderSentence" :value="styleLabel('hinderSentence')" @change="setStyleLabel('hinderSentence', targetValue($event))" placeholder="Blank uses the built-in sentence">
-					</div>
 
 				</details>
 

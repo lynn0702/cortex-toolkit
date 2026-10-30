@@ -36,6 +36,13 @@ const isRollerOpen = ref( false );
 const rollerPosition = ref( 'right' );
 const isStudioPanelOpen = ref( true );
 const studioPanelTab = ref<'properties' | 'roller' | 'json'>( 'properties' );
+
+// The roller is a Play tool: leaving Play while on it lands on properties.
+watch( submode, ( sub ) => {
+	if ( sub !== 'play' && studioPanelTab.value === 'roller' ) {
+		studioPanelTab.value = 'properties';
+	}
+} );
 const panelPosition = ref<'left' | 'right'>( 'right' );
 const storeReady = ref( false );
 const storeError = ref<any>( null );
@@ -295,6 +302,7 @@ function setPanelOpen( open: boolean ) {
 }
 
 function handleToggleStudio( tab: 'properties' | 'roller' | 'json' ) {
+	if ( tab === 'roller' && submode.value !== 'play' ) tab = 'properties';
 	if ( isStudioPanelOpen.value && studioPanelTab.value === tab ) {
 		isStudioPanelOpen.value = false;
 		isRollerOpen.value = false;
@@ -322,7 +330,7 @@ function isNarrowViewport() {
 
 function addDieToRoller( dieData: any ) {
 	dicePool.value.add( dieData );
-	if ( !isNarrowViewport() ) {
+	if ( submode.value === 'play' && !isNarrowViewport() ) {
 		isStudioPanelOpen.value = true;
 		studioPanelTab.value = 'roller';
 		isRollerOpen.value = true;

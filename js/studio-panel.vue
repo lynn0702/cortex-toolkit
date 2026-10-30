@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import TraitEditor from './trait-editor.vue';
 import TraitSetEditor from './trait-set-editor.vue';
 import PortraitEditor from './portrait-editor.vue';
@@ -84,14 +84,76 @@ const trait = computed( () => {
 const traitSetName = computed( () => traitSet.value?.name || 'Trait Set' );
 const traitName = computed( () => trait.value?.name || ( traitSet.value?.noun ? `New ${traitSet.value.noun}` : 'Trait' ) );
 
-const nameEditorInitialTab = computed( () => {
-	const sel = props.editing;
-	if ( !Array.isArray( sel ) || !sel.length ) return 'sheet';
-	const primary = sel[ 0 ];
-	if ( primary === 'page' ) return 'page';
-	if ( primary === 'theme' ) return 'theme';
-	if ( primary === 'dice' ) return 'dice';
-	return 'sheet';
+type SheetTab = 'sheet' | 'page' | 'theme';
+
+const SHEET_TABS: { key: SheetTab; icon: string; label: string }[] = [
+	{ key: 'sheet', icon: 'fa-id-card', label: 'Sheet' },
+	{ key: 'page', icon: 'fa-columns', label: 'Page' },
+	{ key: 'theme', icon: 'fa-palette', label: 'Theme & Dice' },
+];
+
+const panelEl = ref<HTMLElement | null>( null );
+const sheetTab = ref<SheetTab>( 'sheet' );
+
+function pickSheetTab( tab: SheetTab ) {
+	sheetTab.value = tab;
+	if ( props.panelTab !== 'properties' ) emit( 'update:panelTab', 'properties' );
+}
+
+function toggleJson() {
+	emit( 'update:panelTab', props.panelTab === 'json' ? 'properties' : 'json' );
+}
+
+function goCrumb( selector: any[] ) {
+	if ( props.panelTab !== 'properties' ) emit( 'update:panelTab', 'properties' );
+	emit( 'selectElement', selector );
+}
+
+// Sheet-root selections that open a tab directly: page, theme, dice.
+// theme lands at the tab top; dice lands on the same tab with the
+// Die Style & Geometry section scrolled into view.
+function enterSheetTab( sel: any ) {
+	const primary = Array.isArray( sel ) ? sel[ 0 ] : undefined;
+	if ( primary === 'page' ) {
+		sheetTab.value = 'page';
+	} else if ( primary === 'theme' || primary === 'dice' ) {
+		sheetTab.value = 'theme';
+		nextTick( () => {
+			const body = panelEl.value?.querySelector<HTMLElement>( '.studio-panel-body' );
+			if ( !body ) return;
+			if ( primary === 'dice' ) {
+				const anchor = panelEl.value?.querySelector<HTMLElement>( '#die-style-anchor' );
+				if ( anchor ) {
+					const top = anchor.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
+					body.scrollTo( { top, behavior: 'auto' } );
+					return;
+				}
+			}
+			body.scrollTo( { top: 0, behavior: 'auto' } );
+		} );
+	}
+}
+
+watch( () => props.editing, enterSheetTab, { immediate: true } );
+
+interface Crumb { label: string; selector: any[] | null }
+
+// Crumb links only navigate in Edit; the current item is never a link.
+const canNavigate = computed( () => props.submode !== 'play' );
+
+const crumbs = computed<Crumb[]>( () => {
+	const list: Crumb[] = [];
+	const sheet: Crumb = { label: 'Sheet', selector: [] };
+	if ( editingType.value === 'trait' ) {
+		if ( canNavigate.value ) list.push( sheet );
+		list.push( { label: traitSetName.value, selector: [ 'traitSet', traitSetID.value ] } );
+		list.push( { label: traitName.value, selector: null } );
+	} else if ( editingType.value === 'traitSet' ) {
+		list.push( sheet, { label: traitSetName.value, selector: null } );
+	} else if ( editingType.value === 'portrait' ) {
+		list.push( sheet, { label: 'Portrait', selector: null } );
+	}
+	return list;
 } );
 
 const diceCount = computed( () => props.dicePool?.items?.length || 0 );
@@ -107,47 +169,78 @@ defineExpose( {
 <template>
 	<!-- DOCKED STUDIO SIDE PANEL -->
 	<aside
+		ref="panelEl"
 		class="studio-panel"
 		:class="[
 			'position-' + position,
 			{ 'panel-collapsed': !isOpen }
 		]"
 	>
-		<!-- PANEL HEADER: TABS + ACTIONS -->
+		<!-- TOOLBAR: SHEET TABS OR CRUMBS ON THE LEFT, ACTIONS ON THE RIGHT -->
 		<div class="studio-panel-header">
-			<div class="studio-panel-tabs">
-				<button
-					type="button"
-					class="studio-tab-btn"
-					:class="{ active: panelTab === 'properties' }"
-					@click="emit('update:panelTab', 'properties')"
-					title="Properties"
-				>
-					<i class="fas fa-sliders"></i><span class="studio-tab-label">Properties</span>
-				</button>
-				<button
-					type="button"
-					class="studio-tab-btn"
-					:class="{ active: panelTab === 'roller' }"
-					@click="emit('update:panelTab', 'roller')"
-					title="Roller"
-				>
-					<i class="fas fa-dice-d20"></i><span class="studio-tab-label">Roller</span>
-					<span class="studio-tab-badge" v-if="diceCount > 0">{{ diceCount }}</span>
-				</button>
-				<button
-					v-if="submode !== 'play'"
-					type="button"
-					class="studio-tab-btn"
-					:class="{ active: panelTab === 'json' }"
-					@click="emit('update:panelTab', 'json')"
-					title="JSON"
-				>
-					<i class="fas fa-code"></i><span class="studio-tab-label">JSON</span>
-				</button>
+			<div class="studio-toolbar-left">
+				<!-- EDIT, SHEET ROOT: SHEET TABS -->
+				<div v-if="submode !== 'play' && editingType === 'sheet'" class="studio-sheet-tabs" role="tablist">
+					<button
+						v-for="t in SHEET_TABS"
+						:key="t.key"
+						type="button"
+						role="tab"
+						class="studio-tab-btn"
+						:class="{ active: panelTab === 'properties' && sheetTab === t.key }"
+						:aria-selected="panelTab === 'properties' && sheetTab === t.key"
+						@click="pickSheetTab(t.key)"
+						:title="t.label"
+					>
+						<i class="fas" :class="t.icon"></i><span class="studio-tab-text">{{ t.label }}</span>
+					</button>
+				</div>
+				<!-- INSPECTION: CRUMBS (LINKS IN EDIT, PLAIN TEXT IN PLAY) -->
+				<div v-else-if="submode !== 'play' || panelTab === 'properties'" class="studio-breadcrumb">
+					<template v-for="(c, i) in crumbs" :key="i">
+						<span v-if="i > 0" class="crumb-sep">›</span>
+						<button v-if="c.selector && canNavigate" type="button" class="crumb-link" @click="goCrumb(c.selector)">{{ c.label }}</button>
+						<span v-else class="crumb-current">{{ c.label }}</span>
+					</template>
+				</div>
 			</div>
 
 			<div class="studio-panel-actions">
+				<!-- PLAY: PROPERTIES AND ROLLER TOGGLES -->
+				<template v-if="submode === 'play'">
+					<button
+						type="button"
+						class="studio-tab-btn"
+						:class="{ active: panelTab === 'properties' }"
+						@click="emit('update:panelTab', 'properties')"
+						title="Properties"
+					>
+						<i class="fas fa-sliders"></i><span class="studio-tab-label">Properties</span>
+					</button>
+					<button
+						type="button"
+						class="studio-tab-btn"
+						:class="{ active: panelTab === 'roller' }"
+						@click="emit('update:panelTab', 'roller')"
+						title="Roller"
+					>
+						<i class="fas fa-dice-d20"></i><span class="studio-tab-label">Roller</span>
+						<span class="studio-tab-badge" v-if="diceCount > 0">{{ diceCount }}</span>
+					</button>
+				</template>
+				<!-- EDIT: RAW JSON TOGGLE -->
+				<button
+					v-else
+					type="button"
+					class="studio-action-btn studio-action-json"
+					:class="{ active: panelTab === 'json' }"
+					:aria-pressed="panelTab === 'json'"
+					@click="toggleJson"
+					title="Raw JSON Editor"
+					aria-label="Raw JSON Editor"
+				>
+					<i class="fas fa-code"></i>
+				</button>
 				<button
 					type="button"
 					class="studio-action-btn studio-action-dock"
@@ -165,43 +258,6 @@ defineExpose( {
 					<i :class="position === 'right' ? 'fas fa-angles-right' : 'fas fa-angles-left'"></i>
 				</button>
 			</div>
-		</div>
-
-		<!-- BREADCRUMB SUB-BAR (PROPERTIES TAB) -->
-		<div class="studio-breadcrumb-bar" v-if="panelTab === 'properties'">
-			<div class="studio-breadcrumb">
-				<template v-if="editingType === 'trait'">
-					<span v-if="submode !== 'play'" class="crumb-link" @click="emit('selectElement', ['traitSet', traitSetID])">{{ traitSetName }}</span>
-					<span v-else class="crumb-current">{{ traitSetName }}</span>
-					<span class="crumb-sep">›</span>
-					<span class="crumb-current">{{ traitName }}</span>
-				</template>
-				<template v-else-if="editingType === 'traitSet'">
-					<span v-if="submode !== 'play'" class="crumb-link" @click="emit('selectElement', [])">Sheet</span>
-					<span v-else class="crumb-current">Sheet</span>
-					<span class="crumb-sep">›</span>
-					<span class="crumb-current">{{ traitSetName }}</span>
-				</template>
-				<template v-else-if="editingType === 'portrait'">
-					<span v-if="submode !== 'play'" class="crumb-link" @click="emit('selectElement', [])">Sheet</span>
-					<span v-else class="crumb-current">Sheet</span>
-					<span class="crumb-sep">›</span>
-					<span class="crumb-current">Portrait</span>
-				</template>
-				<template v-else>
-					<span class="crumb-current">Sheet Properties</span>
-				</template>
-			</div>
-
-			<button
-				v-if="editingType !== 'sheet' && submode !== 'play'"
-				type="button"
-				class="studio-btn-subtle"
-				@click="emit('selectElement', [])"
-				title="Back to sheet properties"
-			>
-				<i class="fas fa-check"></i> Done
-			</button>
 		</div>
 
 		<!-- PANEL BODY -->
@@ -251,12 +307,12 @@ defineExpose( {
 						@updateCharacter="emit('updateCharacter', $event)"
 					/>
 
-					<!-- SHEET PROPERTIES (NAME, PAGE, FONTS & COLORS, DICE) -->
+					<!-- SHEET TABS PANEL (NAME, PAGE, THEME & DICE) -->
 					<NameEditor
 						v-else
 						:character="character"
 						:open="true"
-						:initialTab="nameEditorInitialTab"
+						:tab="sheetTab"
 						:viewY="viewY"
 						@selectElement="emit('selectElement', $event)"
 						@updateCharacter="emit('updateCharacter', $event)"

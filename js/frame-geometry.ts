@@ -90,7 +90,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 	if (typeof raw === 'string') {
 		if (raw === 'none' || !raw.trim()) return null;
 		const shape = raw.trim() as FrameShape;
-		const hasLegacyRing = shape === 'ring' && (isLegacyRing || ringConfig !== null);
+		const hasLegacyRing = shape === 'ring' && Boolean((raw as any).legacyRing);
 		return {
 			shape,
 			span: shape === 'arc' ? [-120, 120] : [0, 360],
@@ -121,7 +121,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		const span: [number, number] = (Array.isArray(raw.span) && raw.span.length >= 2)
 			? [parseNum(raw.span[0], defaultSpan[0]), parseNum(raw.span[1], defaultSpan[1])]
 			: defaultSpan;
-		const hasLegacyRing = shape === 'ring' && (isLegacyRing || Boolean(raw.ringConfig) || ringConfig !== null);
+		const hasLegacyRing = shape === 'ring' && Boolean(raw.legacyRing || raw.ringConfig);
 		const effectiveRingConfig = hasLegacyRing ? (raw.ringConfig || ringConfig || {
 			arcAngle: -90,
 			arcSpread: 100,

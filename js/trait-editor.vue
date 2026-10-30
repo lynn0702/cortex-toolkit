@@ -431,20 +431,9 @@ const statementText = computed( {
 	},
 } );
 
-const hinder = computed( {
-	get() {
-		return cortexFunctions.hasHinder( trait.value );
-	},
-	set( val: any ) {
-		setHinder( val );
-	},
-} );
-
 const editableSFX = computed( () => {
 	const entries = cortexFunctions.sfxChildren( trait.value );
-	return entries
-		.map( ( effect: any, idx: number ) => ( String( effect.name || '' ).toLowerCase() === 'hinder' ? -1 : idx ) )
-		.filter( ( idx: number ) => idx !== -1 );
+	return entries.map( ( _effect: any, idx: number ) => idx );
 } );
 
 // Child traits that are subtraits, not the SFX or statement containers.
@@ -459,9 +448,9 @@ const subtraits = computed( () => {
 } );
 
 const scrollable = computed( () => Boolean(
-	( getView( traitSet.value )?.features?.sfx && editableSFX.value.length > 0 && !isThreeColumnTable.value )
+	( editableSFX.value.length > 0 && !isThreeColumnTable.value )
 	||
-	( getView( traitSet.value )?.features?.subtraits && subtraits.value.length > 0 )
+	( subtraits.value.length > 0 )
 ) );
 
 const isThreeColumnTable = computed( () => getView( traitSet.value )?.style?.body === 'three-column-table' );
@@ -510,14 +499,6 @@ const tableCol3Text = computed( {
 	},
 } );
 
-const canHinderTrait = computed( () => {
-	if ( isListStyle.value || isLabeledPipsSet.value || isThreeColumnTable.value ) return false;
-	const body = getView( traitSet.value )?.style?.body;
-	if ( body === 'three-column-table' || body === 'list' || body === 'notes' || body === 'labeled-fields' ) {
-		return false;
-	}
-	return isRated( trait.value );
-} );
 
 const isRingTrait = computed( () => {
 	const body = getView( traitSet.value )?.style?.body;
@@ -750,13 +731,6 @@ function setProperty( key: string, val: any ) {
 	updateCharacter( character );
 }
 
-function setHinder( val: any ) {
-	const character = props.character;
-	const s = props.traitSetID;
-	const t = props.traitID;
-	cortexFunctions.setHinder( character.traitSets[ s ].traits[ t ], Boolean( val ) );
-	updateCharacter( character );
-}
 
 function setTrackValue( val: any ) {
 	const character = props.character;
@@ -1586,13 +1560,13 @@ function getDieDisplayValue( val: any ) {
 						</ul>
 					</div>
 
-					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.description && !isThreeColumnTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
+					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet">
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
 					</div>
 
 					<!-- SUBTRAITS -->
-					<div class="editor-field" v-if="getView( traitSet )?.features?.subtraits">
+					<div class="editor-field">
 
 						<div class="editor-label">Subtraits</div>
 
@@ -1625,16 +1599,10 @@ function getDieDisplayValue( val: any ) {
 					</div>
 
 					<!-- SFX -->
-					<div class="editor-field" v-if="!isPlay && getView( traitSet )?.features?.sfx && !isThreeColumnTable">
+					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable">
 
 						<div class="editor-label">SFX</div>
 
-						<div class="editor-field" v-if="canHinderTrait">
-							<div class="editor-toggles">
-								<div><input type="checkbox" :id="'trait-' + traitSetID + '-' + traitID + '-hinder'" name="canHinder" :true-value="true" :false-value="false" v-model="hinder"></div>
-								<div><label :for="'trait-' + traitSetID + '-' + traitID + '-hinder'">Can Hinder</label></div>
-							</div>
-						</div>
 
 						<div class="editor-subgroups">
 

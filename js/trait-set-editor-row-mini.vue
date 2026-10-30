@@ -107,16 +107,6 @@ const align = computed( () => headerAlign.value );
 const setName = computed( () => ( traitSet.value as any )?.name || '' );
 
 // Shared hinder banner (distinctions sets): section chrome with no
-// stored geometry, so display-only — but shown, as it renders, above
-// the rows inside the body column.
-const hinderText = computed( () => {
-	const ts = traitSet.value as any;
-	if ( getView( ts )?.style?.body !== 'sfx-rows' || !getView( ts )?.sharedHinder ) return '';
-	const custom = typeof getView( ts )?.sharedHinderText === 'string' ? ( getView( ts )?.sharedHinderText as string ).trim() : '';
-	if ( custom ) return custom;
-	const noun = ts?.noun?.length ? String( ts.noun ).toLowerCase() : 'trait';
-	return 'Gain a PP when you trade out your ' + noun + '\'s d8 rating for a d4.';
-} );
 
 function cycleAlign() {
 	headerAlign.value = align.value === 'left' ? 'center' : align.value === 'center' ? 'right' : 'left';
@@ -332,13 +322,6 @@ onUnmounted( () => { partPreview.value = null; } );
 				</div>
 			</div>
 			<div class="row-mini-bodycol">
-				<div
-					v-if="hinderText"
-					class="row-mini-hinder"
-					:title="hinderText + ' (shared hinder banner — fixed above the rows)'"
-				>
-					<span class="row-mini-hindername">Hinder · {{ hinderText }}</span>
-				</div>
 			<div
 				v-if="isBranchBody"
 				class="branch-mini"

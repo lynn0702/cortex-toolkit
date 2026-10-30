@@ -292,3 +292,84 @@ https://github.com/kaelri/cortex-toolkit.
   die-click fix, header/carousel work), so no range UX was kept, trimmed, or
   reverted from it; the D3 range leg closes on that evidence, while D3's
   header and name-card legs remain open.
+
+- 2026-10-30: Hinder is data, not app fallback. The constructed
+  Hinder sentence (getHinderSentence), the labels.hinderSentence
+  hook, and the set-level sharedHinder/sharedHinderText props are
+  removed. A Hinder entry is an ordinary SFX child trait: its
+  sentence is its own description, its position is its place among
+  the set's traits. Corpus backfill preserved every current
+  rendering exactly: Hinder traits without a description gained
+  their set's shared text verbatim, else the constructed sentence
+  frozen at migration; shared-block placement moves into the
+  per-entry SFX list by design. Name-based Hinder identification
+  (the HINDER badge) is unchanged — it is a name match, not a
+  stored prop. Supersedes any earlier reading that Hinder inherits
+  shared text from the app.
+
+- 2026-10-30: Editor section labels removed, controls kept. The
+  "Statements" label is gone from the set editor (Statement field
+  checkbox + Questioned row stay); the "Trait Set SFX" label is
+  gone from the SFX editor (Badge Word + Line Prefix inputs, SFX
+  entries, New SFX stay). Badge Word / Line Prefix remain flat
+  view.labels strings; whether they become an object is an open
+  question, not decided here.
+
+- 2026-10-30: Modal direction noted. Modals were killed and have
+  resurrected in new form (Add Trait Set gallery, Add Play Card
+  picker, trait-set mini dialog). The Add Trait Set gallery dies
+  in this session: adding a set opens directly into the editor,
+  where the user names it and sets its style with the editor's
+  existing controls — no teaser UI, no sample cards, no fake data.
+  Presets and the mini entry move to a small inline, non-modal Add
+  area. Stacking is fixed without adding modal layers (opening
+  the mini closes its opener; the mini renders topmost when open).
+  Whether the picker and the mini dialog die too is a further
+  direction call, not decided here.
+
+- 2026-10-29 (correction to the 2026-10-29 range-rules entry
+  above): the corpus pip-strip count in that entry is wrong. 20
+  stored pip ranges were stripped in the layered corpus (17
+  set-level ratings plus 3 slot pips), mirrored in templates.js —
+  not 3. The 3 figure counted trait-level pips only and missed
+  set-level ratings (Session Record, XP, Progress Track, Mission
+  Chronicle, Stress, Life Points). All 20 strips were verified
+  value-preserving (range[0] equal to value length in every case);
+  the 15 range-free corpus pips in that entry are correct as
+  stated.
+
+- 2026-10-30: Regression fix for modern frame ring anchors (Vanguard Showcase).
+  `cortexMigration.migrateRingTrait` inferred `ringTrait: true` on unflagged
+  sets named 'Attributes', which inadvertently flagged Phase 3c sets carrying
+  modern `view.frame` objects. `resolveFrame` then treated the set as a
+  `legacyRing: true` portrait ring, collapsing 360° circular anchors into an
+  85° right-hand arc overspilling the card. Fixed: migration ignores sets
+  carrying explicit frames (`set.view.frame` or `set.frame`), and `resolveFrame`
+  treats explicit frame objects as modern frames unless explicitly configured
+  with `legacyRing: true` or `raw.ringConfig`.
+
+- 2026-10-30: Studio header consolidation. Edit chrome goes
+  from 5 rows at the sheet root (and 4 on inspection) to 3
+  rows everywhere: app header, session nav, one unified
+  toolbar row. The toolbar carries sheet tabs (Sheet, Page,
+  Theme & Dice) at the root or crumb links (Sheet › Set ›
+  Trait, Sheet › Portrait) on inspection, plus JSON, dock,
+  and collapse on the right. The standalone "Sheet
+  Properties" crumb and the Done button are deleted as
+  redundant; the active tab and the crumb links already say
+  where you are and how to get back.
+
+- 2026-10-30: Theme & Dice tab merge. Fonts & Colors and
+  Dice merge into one Theme & Dice tab (fa-palette): fonts
+  controls, then a "Die Style & Geometry" divider, then
+  dice controls. The theme entry lands at tab top; the dice
+  entry scrolls the dice section into view. This kills the
+  duplicate fa-dice-d20 between the sheet tabs and the
+  roller toggle.
+
+- 2026-10-30: Roller is a Play tool. The studio panel's
+  Roller toggle renders only in Play; entering Edit while
+  on the roller resets the panel tab to properties. The
+  roller pane itself is unchanged, and Play navigation
+  (pillar deck, roller pill) is untouched. Accepted cost:
+  die-theme testing becomes edit → Play → roll → back.

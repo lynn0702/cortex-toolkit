@@ -353,4 +353,26 @@ describe( 'Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', (
 		expect( wrapperAttributesPrint.find( '.frame-radial-svg' ).exists() ).toBe( true );
 		wrapperAttributesPrint.unmount();
 	} );
+
+	it( 'regression guard: Vanguard Attributes set normalizes without legacyRing and distributes 360° across all quadrants', () => {
+		const clone = structuredClone( VANGUARD_FRAME_SHOWCASE.character );
+		const { cortexMigration } = require( '../js/migration.ts' );
+		cortexMigration.normalizeView( clone );
+		const attrSet = clone.traitSets.find( ( s: any ) => s.name === 'Attributes' );
+		expect( attrSet ).toBeDefined();
+		expect( attrSet.view.ringTrait, 'Attributes with explicit frame must not gain ringTrait' ).toBeUndefined();
+
+		const resolved = resolveFrame( attrSet );
+		expect( resolved ).not.toBeNull();
+		expect( resolved?.legacyRing, 'Explicit frame ring must not be legacyRing' ).toBe( false );
+
+		const anchors = computeFrameAnchors( attrSet.traits.length, resolved! );
+		expect( anchors.length ).toBe( 6 );
+		const docks = new Set( anchors.map( a => a.dock ) );
+		expect( docks.size, 'Anchors must span multiple quadrants (not stacked on one side)' ).toBe( 4 );
+		expect( docks.has( 'top' ) ).toBe( true );
+		expect( docks.has( 'right' ) ).toBe( true );
+		expect( docks.has( 'bottom' ) ).toBe( true );
+		expect( docks.has( 'left' ) ).toBe( true );
+	} );
 } );

@@ -176,6 +176,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -190,6 +191,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -204,6 +206,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -865,6 +868,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -892,6 +896,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -919,6 +924,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -2869,6 +2875,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your endarch distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -3098,6 +3105,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -3125,6 +3133,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -3570,6 +3579,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -3608,6 +3618,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -3646,6 +3657,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -4886,6 +4898,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     },
                     {
@@ -4918,6 +4931,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -4945,6 +4959,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -6595,6 +6610,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -6622,6 +6638,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -6649,6 +6666,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -7517,6 +7535,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -8117,6 +8136,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -8144,6 +8164,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -8171,6 +8192,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -8805,6 +8827,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -8832,6 +8855,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -8859,6 +8883,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -9535,6 +9560,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -9562,6 +9588,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -10054,6 +10081,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -10081,6 +10109,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -10108,6 +10137,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -12391,6 +12421,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -12418,6 +12449,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -12445,6 +12477,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -13428,6 +13461,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -13455,6 +13489,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -13482,6 +13517,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -13926,6 +13962,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -13953,6 +13990,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -13980,6 +14018,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -14483,6 +14522,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -14510,6 +14550,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -14537,6 +14578,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -15716,6 +15758,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -15743,6 +15786,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -15770,6 +15814,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -16686,6 +16731,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -16724,6 +16770,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -16762,6 +16809,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
                       "traits": []
                     },
@@ -17785,6 +17833,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -17812,6 +17861,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -17839,6 +17889,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -18328,6 +18379,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     },
                     {
@@ -18360,6 +18412,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]
@@ -18387,6 +18440,7 @@ const cortexSpotlightTemplates = [
                   "traits": [
                     {
                       "name": "Hinder",
+                      "rating": { "type": "Die", "value": [4], "range": [4] },
                       "traits": []
                     }
                   ]

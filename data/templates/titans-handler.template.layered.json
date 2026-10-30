@@ -269,6 +269,15 @@
               "SFX": {
                 "traits": {
                   "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
                     "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
                   },
                   "Affirmation": {
@@ -299,6 +308,15 @@
               "SFX": {
                 "traits": {
                   "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
                     "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
                   },
                   "Shake it Off": {
@@ -329,6 +347,15 @@
               "SFX": {
                 "traits": {
                   "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
                     "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
                   },
                   "Cards on the Table": {

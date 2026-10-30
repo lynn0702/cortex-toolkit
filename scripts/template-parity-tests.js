@@ -78,9 +78,9 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(sfx && sfx.Heritage.description === 'Spend a PP to step up an attribute when you connect to your heritage.',
     'trait sfx kept with description');
   const dctk = sets.Distinctions.view;
-  ok(dctk.sharedHinder === true &&
-    dctk.sharedHinderText === 'Hinder: Gain a PP when you trade out your distinction\'s d8 rating for a d4.',
-    'shared hinder banner kept');
+  ok(dctk.sharedHinder === undefined &&
+    dctk.sharedHinderText === undefined,
+    'shared hinder props stripped');
   ok(sets.Values.traits.Bravery.questioned === undefined && sets.Values.traits.Bravery.statement === undefined, 'values statement keys dissolved');
   ok(sets.Values.traits.Bravery.traits === undefined, 'blank sentences leave no statement child');
   const hh = readLayered('spotlight-hammerheads-character').character.sets.Relationships.slots['0'];

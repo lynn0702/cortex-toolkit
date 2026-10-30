@@ -12,9 +12,7 @@ const sfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value )
 
 <template>
 	<!-- SFX -->
-	<div class="editor-field" v-if="getView(traitSet)?.features?.sfx">
-
-		<div class="editor-label">Trait Set SFX</div>
+	<div class="editor-field">
 
 		<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem;">
 			<div style="flex: 1;">

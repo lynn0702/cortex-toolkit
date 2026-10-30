@@ -631,12 +631,6 @@ function isPartActive( kind: string ): boolean {
 function addOrFocusPart( kind: string, noun?: string, slotKind?: 'label' | 'rating' | 'primary', rType?: RatingType ) {
 	const map = ensurePartsMap();
 	const v = ensureView( workingSet.value );
-	if ( !v.features || typeof v.features !== 'object' || Array.isArray( v.features ) ) {
-		v.features = {};
-	}
-
-	if ( kind === 'description' ) v.features.description = true;
-	if ( kind === 'block' ) v.features.sfx = true;
 
 	if ( noun ) {
 		ensureChildTraitOnAllInstances( noun, rType || 'Die' );
@@ -678,10 +672,6 @@ function removePartByKey( kind: string ) {
 		selectedPartKey.value = remaining[ 0 ];
 	}
 	const v = ensureView( workingSet.value );
-	if ( v.features && typeof v.features === 'object' && !Array.isArray( v.features ) ) {
-		if ( kind === 'description' ) delete v.features.description;
-		if ( kind === 'block' ) delete v.features.sfx;
-	}
 }
 
 function ensureChildTraitOnAllInstances( noun: string, rType: RatingType = 'Die' ) {
@@ -1098,12 +1088,13 @@ function onFileImportSelected( ev: Event ) {
 </script>
 
 <template>
-	<div
-		class="trait-set-mini"
-		role="dialog"
-		aria-modal="true"
-		aria-label="Trait Set Mini Editor"
-	>
+	<div class="trait-set-mini-backdrop" @click.self="emit('close')">
+		<div
+			class="trait-set-mini-dialog trait-set-mini"
+			role="dialog"
+			aria-modal="true"
+			aria-label="Trait Set Mini Editor"
+		>
 		<input
 			ref="fileImportInput"
 			type="file"
@@ -1866,5 +1857,6 @@ function onFileImportSelected( ev: Event ) {
 				</section>
 			</div>
 		</main>
+		</div>
 	</div>
 </template>

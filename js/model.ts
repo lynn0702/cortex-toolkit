@@ -376,12 +376,6 @@ export interface SetStyle {
 	sheet?: 'classic' | 'spotlight';
 }
 
-export interface SetFeatures {
-	description?: boolean;
-	sfx?: boolean;
-	subtraits?: boolean;
-}
-
 export interface PipsConfig {
 	rows?: number;
 	perRow?: number;
@@ -475,7 +469,6 @@ export interface CortexToolkitCustom {
 
 	// style / features
 	style?: SetStyle;
-	features?: SetFeatures;
 
 	// style-specific config
 	pips?: PipsConfig;
@@ -534,8 +527,6 @@ export interface CortexToolkitCustom {
 	hasQuestionedPip?: boolean;
 	hasCounterColumn?: boolean;
 	counterLabel?: string;
-	sharedHinder?: boolean;
-	sharedHinderText?: string;
 	branchArrows?: boolean;
 	/** Pool staging on the set node (one recursive shape): clicks stage the whole array. */
 	pool?: boolean;

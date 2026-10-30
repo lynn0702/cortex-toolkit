@@ -334,8 +334,6 @@
             "sfx": false,
             "subtraits": false
           },
-          "sharedHinder": true,
-          "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
           "ratingScale": [
             8
           ],
@@ -375,7 +373,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  }
                 }
               }
             }
@@ -397,7 +406,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  }
                 }
               }
             }
@@ -419,7 +439,18 @@
             "traits": {
               "SFX": {
                 "traits": {
-                  "Hinder": {}
+                  "Hinder": {
+                    "rating": {
+                      "type": "Die",
+                      "value": [
+                        4
+                      ],
+                      "range": [
+                        4
+                      ]
+                    },
+                    "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
+                  }
                 }
               }
             }

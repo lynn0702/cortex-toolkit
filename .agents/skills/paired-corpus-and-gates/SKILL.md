@@ -7,8 +7,12 @@ description: Change paired files together, wire new files into the build graph, 
 
 Files in this repo travel in pairs, and a change that
 touches one half of a pair without the other is
-incomplete. Gates are run by the agent at every turn, not
-by the reviewer after the fact.
+incomplete. Gates are run by the agent at every ITEM, not
+by the reviewer after the fact. In this skill, a turn is one
+brief item (or one slice), not one tool call and not one
+edit. Running the full suite after every edit is the chew
+this revision removes; the item boundary is where the full
+suite earns its keep.
 
 ## Paired files — change together
 
@@ -29,11 +33,33 @@ by the reviewer after the fact.
   values that are safe by construction. Grep for `v-html`
   before handing over.
 
-## Definition of Done — run every turn
+## Definition of Done — run at every item boundary, and
+## in full before handoff
 
-The agent runs the gates at every turn. A handoff with
-ungreen gates is not a handoff; it is a progress report
-that says so.
+The agent runs the full gates at every item boundary.
+A handoff with ungreen gates is not a handoff; it is a
+progress report that says so.
+
+Tiers (all three, no skipping):
+
+- Within an item: no full gates after every edit. Use
+  targeted checks only — the test file or files covering
+  the change, and editor/type feedback on the touched
+  code. If an edit breaks the build, the item-boundary
+  gates catch it; that is their job.
+- At each item boundary: the full gates — build zero
+  errors, type check zero errors, all test suites
+  passing, validation zero errors and zero warnings,
+  import-graph check if files were added, v-html grep
+  accounted for.
+- Browser smoke: once per RENDERING item (an item that
+  changes what renders on screen or in print), plus one
+  final smoke over all affected surfaces before handoff.
+  Non-rendering items (data, model, migration-only) get
+  no browser smoke; their proof is gates plus a data
+  census. A smoke pass that skips the affected surface
+  is still not a smoke pass — batching WHEN it runs
+  never narrows WHAT it covers.
 
 - Build: zero errors.
 - Type check: zero errors.

@@ -146,7 +146,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 							{
 								name: 'SFX',
 								traits: [
-									{ name: 'Hinder', description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
+									{ name: 'Hinder', rating: { type: 'Die', value: [4], range: [4] }, description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
 								]
 							}
 						]
@@ -158,7 +158,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 							{
 								name: 'SFX',
 								traits: [
-									{ name: 'Hinder', description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
+									{ name: 'Hinder', rating: { type: 'Die', value: [4], range: [4] }, description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
 								]
 							}
 						]
@@ -170,7 +170,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 							{
 								name: 'SFX',
 								traits: [
-									{ name: 'Hinder', description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
+									{ name: 'Hinder', rating: { type: 'Die', value: [4], range: [4] }, description: 'Gain a PP when you switch out this distinction\'s d8 for a d4.' }
 								]
 							}
 						]

@@ -306,8 +306,6 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "sharedHinder": true,
-          "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
           "place": {
             "left": "25%",
             "top": 0,

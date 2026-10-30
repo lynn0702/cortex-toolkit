@@ -646,8 +646,6 @@
             "header": "default",
             "body": "default"
           },
-          "sharedHinder": true,
-          "sharedHinderText": "Gain a PP when you trade out your distinction's rating for a d4.",
           "features": {
             "description": true,
             "sfx": true,

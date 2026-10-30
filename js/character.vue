@@ -11,7 +11,6 @@ import {
 	type SpotlightSection,
 } from './spotlight-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
-import StyleGallery from './style-gallery.vue';
 import PrintToolbar from './print-toolbar.vue';
 import PortraitRing from './portrait-ring.vue';
 import TraitSetMini from './trait-set-mini.vue';
@@ -44,9 +43,32 @@ const printPageView = ref<any>( 'all' );
 const printStyle = ref<string | null>( null );
 const printBlank = ref( false );
 const printBW = ref( false );
-const showStyleGallery = ref( false );
-const galleryPage = ref( 1 );
-const galleryLocation = ref( 'left' );
+const showInlineAddSet = ref( false );
+const inlineAddPage = ref( 1 );
+const inlineAddLocation = ref( 'left' );
+const inlineBuiltInPresets = Object.values( cortexSetPresets );
+const inlineCustomPresets = ref<SetPresetEntry[]>( [] );
+
+function toggleInlineAdd( page = 1, location = 'left' ) {
+	inlineAddPage.value = page;
+	inlineAddLocation.value = location;
+	inlineCustomPresets.value = cortexFunctions.getCustomSetPresets();
+	showInlineAddSet.value = !showInlineAddSet.value;
+}
+
+function removeInlineCustomPreset( id: string ) {
+	inlineCustomPresets.value = cortexFunctions.deleteCustomSetPreset( id );
+}
+
+function openMiniFromInline() {
+	showInlineAddSet.value = false;
+	showPlayMini.value = true;
+}
+
+function openPlayMini() {
+	showPlayPresetPicker.value = false;
+	showPlayMini.value = true;
+}
 const showPlayPresetPicker = ref( false );
 const showPlayMini = ref( false );
 const playBuiltInPresets = Object.values( cortexSetPresets );
@@ -196,13 +218,6 @@ const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotligh
 const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
 const effectivePrintBlank = computed( () => isPrintSubmode.value && printBlank.value );
 const pageJustification = computed( () => getView( props.character )?.pageJustification || 'top-base' );
-
-const nameEditorInitialTab = computed( () => {
-	if ( isSelected( [ 'page' ] ) ) return 'page';
-	if ( isSelected( [ 'theme' ] ) ) return 'theme';
-	if ( isSelected( [ 'dice' ] ) ) return 'dice';
-	return 'sheet';
-} );
 
 const pageOrientation = computed( () => {
 	const charView = getView( props.character );
@@ -390,9 +405,39 @@ function clearSelected() {
 // lands them on their own row at the end of the target page (sparse).
 // Classic sheets keep their left/right columns via location.
 function addTraitSet( page = 1, location?: string ) {
-	galleryPage.value = page ?? 1;
-	galleryLocation.value = location ?? 'left';
-	showStyleGallery.value = true;
+	const character = props.character as Character;
+	if ( !character ) return;
+
+	const styleId = 'default';
+	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
+
+	traitSet.name = 'New trait set';
+	traitSet.noun = 'Trait';
+	traitSet.plural = 'Traits';
+	const tsView = ensureView( traitSet );
+	tsView.style = { header: styleId, body: styleId };
+
+	if ( !isSpotlightStyle.value ) {
+		tsView.location = location ?? 'left';
+	}
+	tsView.page = page ?? 1;
+	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
+	const blank: any = structuredClone( cortexFunctions.defaultTrait );
+	blank.name = '';
+	delete blank.rating;
+	blank.description = '';
+	traitSet.traits.push( blank );
+
+	character.traitSets.push( traitSet );
+	updateCharacter( character );
+	showInlineAddSet.value = false;
+
+	const newTraitSetID = character.traitSets.length - 1;
+	selectElement( [ 'traitSet', newTraitSetID ] );
+	nextTick( () => {
+		const nameInput = document.querySelector<HTMLInputElement>( 'input[name="traitSetName"]' );
+		nameInput?.focus();
+	} );
 }
 
 function removeTraitSet( traitSetID: number ) {
@@ -406,48 +451,6 @@ function removeTraitSet( traitSetID: number ) {
 	updateCharacter( character );
 }
 
-function addGallerySet( styleEntry: { id?: string; name?: string; sing?: string; plur?: string; pipLabels?: boolean }, location: string, page: number ) {
-	const character = props.character as Character;
-	if ( !character || !styleEntry ) return;
-
-	const styleId = styleEntry.id || 'default';
-	const traitSet: any = structuredClone( cortexFunctions.defaultTraitSet );
-	const styleDefaults = cortexFunctions.defaultFeaturesForStyle( styleId );
-	traitSet.name = styleEntry.name || 'New trait set';
-	traitSet.noun = styleEntry.sing || 'Trait';
-	traitSet.plural = styleEntry.plur || 'Traits';
-	const tsView = ensureView( traitSet );
-	tsView.style = { header: styleId, body: styleId };
-	tsView.features = Object.assign( tsView.features || {}, styleDefaults.features );
-	if ( !isSpotlightStyle.value ) {
-		tsView.location = location ?? 'left';
-	}
-	tsView.page = page ?? 1;
-	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
-	if ( styleId === 'pips' ) {
-		( traitSet as any ).rating = { type: 'Pip', value: Array.from( { length: 25 }, () => false ) };
-		tsView.pips = { perRow: 5, connected: true };
-		if ( styleEntry.pipLabels ) {
-			( tsView.pips as Record<string, unknown> ).labels = true;
-		}
-	}
-	if ( styleId !== 'pips' && styleId !== 'notes' && styleId !== 'image' ) {
-		const blank: any = structuredClone( cortexFunctions.defaultTrait );
-		blank.name = '';
-		delete blank.rating;
-		blank.description = '';
-		traitSet.traits.push( blank );
-	}
-
-	character.traitSets.push( traitSet );
-
-	updateCharacter( character );
-	showStyleGallery.value = false;
-
-	const newTraitSetID = character.traitSets.length - 1;
-	selectElement( [ 'traitSet', newTraitSetID ] );
-}
-
 function addPresetSet( preset: SetPresetEntry, location?: string, page?: number ) {
 	const character = props.character as Character;
 	if ( !character || !preset ) return;
@@ -455,7 +458,7 @@ function addPresetSet( preset: SetPresetEntry, location?: string, page?: number 
 	const traitSet = cortexFunctions.instantiateSetPreset( preset, character, page ?? 1, loc );
 	character.traitSets.push( traitSet );
 	updateCharacter( character );
-	showStyleGallery.value = false;
+	showInlineAddSet.value = false;
 	showPlayPresetPicker.value = false;
 	const newTraitSetID = character.traitSets.length - 1;
 	if ( props.submode === 'edit' ) {
@@ -1281,11 +1284,60 @@ watch( () => props.submode, () => {
 							class="spotlight-add-set-bar"
 							v-if="submode === 'edit'"
 						>
-						<div class="add-set-slot slot-center">
-							<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
-								<i class="fas fa-plus"></i> Add Set
-							</button>
-						</div>
+							<div class="add-set-slot slot-center">
+								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
+									<i class="fas fa-plus"></i> Add Set
+								</button>
+								<button type="button" class="btn-spotlight-add btn-presets-toggle" @click.stop="toggleInlineAdd(pageIndex)">
+									<i class="fas fa-layer-group"></i> Presets
+								</button>
+							</div>
+
+							<!-- INLINE NON-MODAL ADD AREA -->
+							<div
+								class="inline-add-set-area"
+								v-if="showInlineAddSet"
+							>
+								<div class="inline-add-header">
+									<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
+									<div class="inline-add-quick-actions">
+										<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex)">
+											<i class="fas fa-plus"></i> Blank Set
+										</button>
+										<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
+											<i class="fas fa-th-large"></i> New Card in Mini
+										</button>
+										<button type="button" class="btn-inline-close" title="Close" @click.stop="showInlineAddSet = false">
+											<i class="fas fa-times"></i>
+										</button>
+									</div>
+								</div>
+								<div class="inline-presets-list">
+									<div class="inline-preset-card" v-for="preset in inlineBuiltInPresets" :key="'builtin-' + preset.id">
+										<div class="inline-preset-main">
+											<div class="inline-preset-name">{{ preset.label }}</div>
+											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+										</div>
+										<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
+											<i class="fas fa-plus"></i> Add Preset
+										</button>
+									</div>
+									<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'custom-' + preset.id">
+										<div class="inline-preset-main">
+											<div class="inline-preset-name">{{ preset.label }}</div>
+											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+										</div>
+										<div class="inline-preset-actions">
+											<button type="button" class="btn-inline-delete" title="Delete custom preset" @click.stop="removeInlineCustomPreset(preset.id)">
+												<i class="fas fa-trash-alt"></i>
+											</button>
+											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
+												<i class="fas fa-plus"></i> Add Preset
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -1399,6 +1451,57 @@ watch( () => props.submode, () => {
 									>
 										<span><i class="fas fa-plus"></i> Trait Set{{ pageCount > 1 ? ' (P' + pageIndex + ')' : '' }}</span>
 									</div>
+									<div class="preview-button preview-button-secondary"
+										@click.stop="toggleInlineAdd( pageIndex, pageLocation )"
+									>
+										<span><i class="fas fa-layer-group"></i> Presets</span>
+									</div>
+								</div>
+
+								<!-- INLINE NON-MODAL ADD AREA (CLASSIC) -->
+								<div
+									class="inline-add-set-area classic-inline-add"
+									v-if="showInlineAddSet && inlineAddPage === pageIndex && inlineAddLocation === pageLocation"
+								>
+									<div class="inline-add-header">
+										<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
+										<div class="inline-add-quick-actions">
+											<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex, pageLocation)">
+												<i class="fas fa-plus"></i> Blank
+											</button>
+											<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
+												<i class="fas fa-th-large"></i> Mini
+											</button>
+											<button type="button" class="btn-inline-close" title="Close" @click.stop="showInlineAddSet = false">
+												<i class="fas fa-times"></i>
+											</button>
+										</div>
+									</div>
+									<div class="inline-presets-list">
+										<div class="inline-preset-card" v-for="preset in inlineBuiltInPresets" :key="'classic-builtin-' + preset.id">
+											<div class="inline-preset-main">
+												<div class="inline-preset-name">{{ preset.label }}</div>
+												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+											</div>
+											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageLocation, pageIndex)">
+												<i class="fas fa-plus"></i> Add
+											</button>
+										</div>
+										<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'classic-custom-' + preset.id">
+											<div class="inline-preset-main">
+												<div class="inline-preset-name">{{ preset.label }}</div>
+												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+											</div>
+											<div class="inline-preset-actions">
+												<button type="button" class="btn-inline-delete" title="Delete custom preset" @click.stop="removeInlineCustomPreset(preset.id)">
+													<i class="fas fa-trash-alt"></i>
+												</button>
+												<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageLocation, pageIndex)">
+													<i class="fas fa-plus"></i> Add
+												</button>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 							</transition>
@@ -1423,19 +1526,6 @@ watch( () => props.submode, () => {
 			</div> <!-- .page -->
 		</div> <!-- .pages -->
 
-		<StyleGallery
-			v-if="submode === 'edit'"
-			:open="showStyleGallery"
-			:columnCount="columnCount"
-			:pageCount="pageCount"
-			:allowCenter="isSpotlightStyle && columnCount === 3"
-			:initialPage="galleryPage"
-			:initialLocation="galleryLocation"
-			@close="showStyleGallery = false"
-			@addGallerySet="addGallerySet"
-			@addPresetSet="addPresetSet"
-		></StyleGallery>
-
 		<teleport to="body">
 			<transition>
 				<div class="modal-veil" v-if="showPlayPresetPicker" @click.stop="showPlayPresetPicker = false"></div>
@@ -1446,7 +1536,7 @@ watch( () => props.submode, () => {
 					<div class="modal-inner">
 						<div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
 							<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
-							<button type="button" class="btn-gallery-add btn-open-mini" style="width: auto; padding: 0.35rem 0.75rem;" @click.stop="showPlayMini = true">
+							<button type="button" class="btn-gallery-add btn-open-mini" style="width: auto; padding: 0.35rem 0.75rem;" @click.stop="openPlayMini">
 								<i class="fas fa-th-large"></i> New Card in Mini
 							</button>
 						</div>
