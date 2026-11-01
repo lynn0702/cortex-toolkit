@@ -119,7 +119,7 @@ function createTestCharacter() {
 				noun: 'Value',
 				statement: true,
 				hasQuestionedPip: true,
-				view: { pillar: 'prime', statement: true, hasQuestionedPip: true },
+				view: { pillar: 'prime' },
 				traits: [
 					{
 						name: 'Justice',

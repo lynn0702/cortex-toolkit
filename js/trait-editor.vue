@@ -68,8 +68,8 @@ const isListStyle = computed( () => {
 	return b === 'list' || b === 'notes' || b === 'three-column-table' || b === 'labeled-fields';
 } );
 
-const isStatementSet = computed( () => Boolean( getView( traitSet.value )?.statement || traitSet.value?.statement ) );
-const hasQuestionedPip = computed( () => Boolean( getView( traitSet.value )?.hasQuestionedPip || traitSet.value?.hasQuestionedPip ) );
+const isStatementSet = computed( () => Boolean( traitSet.value?.statement ) );
+const hasQuestionedPip = computed( () => Boolean( traitSet.value?.hasQuestionedPip ) );
 
 const hasSfxChildren = computed( () => Array.isArray( cortexFunctions.sfxChildren( trait.value ) ) && cortexFunctions.sfxChildren( trait.value ).length > 0 );
 
@@ -84,7 +84,7 @@ const isQuestioned = computed( {
 	},
 } );
 
-const hasCounterColumn = computed( () => Boolean( traitSet.value?.hasCounterColumn ?? getView( traitSet.value )?.hasCounterColumn ) );
+const hasCounterColumn = computed( () => Boolean( traitSet.value?.hasCounterColumn ) );
 const counterLabel = computed( () => traitSet.value?.counterLabel || getView( traitSet.value )?.counterLabel || 'XP' );
 
 const counterValue = computed( {

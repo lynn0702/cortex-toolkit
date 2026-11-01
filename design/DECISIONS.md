@@ -377,3 +377,15 @@ https://github.com/kaelri/cortex-toolkit.
   roller pane itself is unchanged, and Play navigation
   (pillar deck, roller pill) is untouched. Accepted cost:
   die-theme testing becomes edit → Play → roll → back.
+
+- 2026-10-31: Statement flags single-home on the set.
+  `statement`, `hasQuestionedPip`, and `hasCounterColumn`
+  live at set level only; `view.statement`,
+  `view.hasQuestionedPip`, and `view.hasCounterColumn` are
+  retired. Flags stay as flags; they are not derived from
+  Statement containers or pips. The set editor writes the
+  set home only. Migration copies a view value to the set
+  only when the set home is absent, strips the view keys,
+  and reports set-vs-view disagreement without overwriting
+  the set. Corpus gate: effective values identical on all
+  253 sets.

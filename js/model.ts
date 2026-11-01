@@ -523,9 +523,6 @@ export interface CortexToolkitCustom {
 	ratingPosition?: 'inline' | 'above' | 'below' | 'none' | 'vertical';
 	/** Rung label direction on ladder layouts: horizontal text or rotated vertical. */
 	labelPosition?: 'horizontal' | 'vertical';
-	statement?: boolean;
-	hasQuestionedPip?: boolean;
-	hasCounterColumn?: boolean;
 	counterLabel?: string;
 	branchArrows?: boolean;
 	/** Pool staging on the set node (one recursive shape): clicks stage the whole array. */

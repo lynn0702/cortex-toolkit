@@ -75,9 +75,32 @@ export const cortexMigration = {
 		const bag = ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) )
 			? set.view
 			: ( set.custom && set.custom.cortexToolkit && typeof set.custom.cortexToolkit === 'object' ? set.custom.cortexToolkit : null );
-		const flag = ( set.statement !== undefined && set.statement !== null ) ? set.statement : bag?.statement;
+		const flag = ( set.statement !== undefined && set.statement !== null ) ? set.statement : undefined;
 		if ( flag ) return true;
 		return Boolean( bag && bag.style && typeof bag.style === 'object' && bag.style.body === 'paired-slots' );
+	},
+
+	// Statement flags live on the set. Older data sometimes wrote them into
+	// the view bag; copy each one home only when the set has no value, then
+	// strip the view copy. A view value never overwrites a set value.
+	migrateStatementFlags: function( set: any, warnings?: string[] ) {
+		if ( !set || typeof set !== 'object' ) return;
+		const bags: any[] = [];
+		if ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ) bags.push( set.view );
+		if ( set.custom && set.custom.cortexToolkit && typeof set.custom.cortexToolkit === 'object' && !Array.isArray( set.custom.cortexToolkit ) ) {
+			bags.push( set.custom.cortexToolkit );
+		}
+		[ 'statement', 'hasQuestionedPip', 'hasCounterColumn' ].forEach( ( key: string ) => {
+			const seen = bags.filter( ( bag: any ) => Object.prototype.hasOwnProperty.call( bag, key ) ).map( ( bag: any ) => bag[key] );
+			if ( seen.length ) {
+				if ( set[key] === undefined ) {
+					set[key] = seen[0];
+				} else if ( seen.some( ( val: any ) => val !== set[key] ) ) {
+					this.warn( warnings, 'set/' + ( set.name || '?' ) + ': dropped view ' + key + ' that disagreed with set home' );
+				}
+			}
+			bags.forEach( ( bag: any ) => { delete bag[key]; } );
+		} );
 	},
 
 	isStatementContainerNode: function( node: any ) {
@@ -224,6 +247,7 @@ export const cortexMigration = {
 		const normalizeSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
+			this.migrateStatementFlags( set, warnings );
 			this.migrateStyleBody( set );
 			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
@@ -246,6 +270,7 @@ export const cortexMigration = {
 		const normalizeLayeredSet = ( set: any ) => {
 			if ( !set || typeof set !== 'object' ) return;
 			normalizeNode( set );
+			this.migrateStatementFlags( set, warnings );
 			this.migrateStyleBody( set );
 			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
@@ -1428,7 +1453,7 @@ export const cortexMigration = {
 			? bag.ratingScale : this.DEFAULT_SCALE;
 		const pos = rating;
 		if ( pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none' ) return 'legacy';
-		const statement = Boolean( ( set && set.statement ) ?? bag?.statement );
+		const statement = Boolean( set && set.statement );
 		const traits = Array.isArray( set?.traits ) ? set.traits : ( set?.traits && typeof set.traits === 'object' ? Object.values( set.traits ) : [] );
 		const hasDesc = traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 );
 		const sfxChildrenOf = ( node: any ) => {

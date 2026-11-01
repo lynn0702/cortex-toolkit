@@ -276,11 +276,11 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 	}
 
 	function isStatementSet( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.statement ?? getView( traitSetArg )?.statement );
+		return Boolean( traitSetArg?.statement );
 	}
 
 	function hasQuestionedPip( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.hasQuestionedPip ?? getView( traitSetArg )?.hasQuestionedPip );
+		return Boolean( traitSetArg?.hasQuestionedPip );
 	}
 
 	function isTraitQuestioned( trait: Trait ) {
@@ -296,7 +296,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 	}
 
 	function hasCounterColumn( traitSetArg: TraitSet ) {
-		return Boolean( traitSetArg?.hasCounterColumn ?? getView( traitSetArg )?.hasCounterColumn );
+		return Boolean( traitSetArg?.hasCounterColumn );
 	}
 
 	function getCounterLabel( traitSetArg: TraitSet ) {

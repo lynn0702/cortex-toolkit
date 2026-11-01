@@ -213,8 +213,6 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					page: 1,
 					place: { left: '50%', top: 4, width: '50%', height: 1 },
 					header: 'top',
-					statement: true,
-					hasQuestionedPip: true,
 					frame: {
 						shape: 'ellipse',
 						span: [0, 360],

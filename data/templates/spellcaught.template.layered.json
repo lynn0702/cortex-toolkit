@@ -420,7 +420,6 @@
             "header": "default",
             "body": "default"
           },
-          "statement": true,
           "ratingScale": [
             4,
             6,
@@ -525,7 +524,6 @@
             "header": "default",
             "body": "default"
           },
-          "statement": true,
           "ratingScale": [
             4,
             6,

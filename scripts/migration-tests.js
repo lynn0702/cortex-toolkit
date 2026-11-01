@@ -435,6 +435,26 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   const before = JSON.stringify(again.data);
   M.normalizeView(again.data);
   ok(JSON.stringify(again.data) === before, 're-normalizing migrated layered data is a no-op');
+
+  // 14j. View-home statement flags move to the set; a set value wins.
+  const flags = {
+    sets: {
+      Values: { id: 'values', view: { statement: true, hasQuestionedPip: true }, traits: {} },
+      Badges: { id: 'badges', statement: false, view: { statement: true, hasCounterColumn: true }, traits: {} },
+    },
+  };
+  const flagWarnings = [];
+  M.normalizeView(flags, flagWarnings);
+  ok(flags.sets.Values.statement === true && flags.sets.Values.hasQuestionedPip === true,
+    'view-only statement flags copy to the set', flags.sets.Values);
+  ok(flags.sets.Values.view['statement'] === undefined && flags.sets.Values.view['hasQuestionedPip'] === undefined,
+    'view-home statement flags are stripped', flags.sets.Values.view);
+  ok(flags.sets.Badges.statement === false && flags.sets.Badges.hasCounterColumn === true,
+    'set statement wins; absent counter flag copies', flags.sets.Badges);
+  ok(flags.sets.Badges.view['statement'] === undefined && flags.sets.Badges.view['hasCounterColumn'] === undefined,
+    'disagreeing view flags are stripped', flags.sets.Badges.view);
+  ok(flagWarnings.some((w) => w.indexOf('dropped view statement that disagreed') !== -1),
+    'set-vs-view disagreement is reported', flagWarnings);
 }
 
 // =====================================================================

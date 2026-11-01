@@ -269,6 +269,9 @@ function checkViewRetired(bag, where) {
     err(`${where}: view.visibility must be shown|play-only|editor-only|hidden`);
   }
   if (bag.pool !== undefined) err(`${where}: retired view.pool (node pool supersedes it)`);
+  for (const k of ['statement', 'hasQuestionedPip', 'hasCounterColumn']) {
+    if (bag[k] !== undefined) err(`${where}: view-home flag ${k} belongs on the set`);
+  }
 }
 
 function checkRetiredTraitKeys(node, where) {
@@ -373,7 +376,7 @@ function checkLayeredFile(where, data) {
     if (set.value !== undefined) err(`${where}/${name}: retired value key (rating supersedes it)`);
     if (set.dice !== undefined) err(`${where}/${name}: retired dice key (rating supersedes it)`);
     if (Array.isArray(set.traits)) err(`${where}/${name}: traits must be a name-keyed map, not an array`);
-    for (const k of ['ratingPosition', 'statement', 'hasQuestionedPip', 'hasCounterColumn', 'counterLabel']) {
+    for (const k of ['ratingPosition', 'counterLabel']) {
       if (set[k] !== undefined) err(`${where}/${name}: presentation key ${k} lives in the type layer`);
     }
     if (set.usableBy !== undefined && ['owner', 'anyone', 'opposition'].indexOf(set.usableBy) === -1) {

@@ -175,7 +175,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		const trackOn = partsHaveTrack();
 		const tScale = cortexFunctions.getTrackScale( traitSet.value );
 		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
-		const statement = Boolean( ( traitSet.value as any )?.statement ?? ( view as any ).statement );
+		const statement = Boolean( ( traitSet.value as any )?.statement );
 		const traits = Array.isArray( traitSet.value?.traits ) ? traitSet.value.traits : ( traitSet.value?.traits ? Object.values( traitSet.value.traits ) : [] );
 		const hasDesc = traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 );
 		const hasSfx = traits.some( ( t: any ) => Array.isArray( cortexFunctions.sfxChildren( t ) ) && cortexFunctions.sfxChildren( t ).length > 0 );
@@ -747,26 +747,23 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 	});
 
 	const isStatementSet = computed({
-		get: () => Boolean( traitSet.value?.statement ?? getView( traitSet.value )?.statement ),
+		get: () => Boolean( traitSet.value?.statement ),
 		set: ( val: boolean ) => {
 			setProperty( 'statement', Boolean( val ) );
-			setCustomProperty( 'statement', Boolean( val ) );
 		}
 	});
 
 	const hasQuestionedPip = computed({
-		get: () => Boolean( traitSet.value?.hasQuestionedPip ?? getView( traitSet.value )?.hasQuestionedPip ),
+		get: () => Boolean( traitSet.value?.hasQuestionedPip ),
 		set: ( val: boolean ) => {
 			setProperty( 'hasQuestionedPip', Boolean( val ) );
-			setCustomProperty( 'hasQuestionedPip', Boolean( val ) );
 		}
 	});
 
 	const hasCounterColumn = computed({
-		get: () => Boolean( traitSet.value?.hasCounterColumn ?? getView( traitSet.value )?.hasCounterColumn ),
+		get: () => Boolean( traitSet.value?.hasCounterColumn ),
 		set: ( val: boolean ) => {
 			setProperty( 'hasCounterColumn', Boolean( val ) );
-			setCustomProperty( 'hasCounterColumn', Boolean( val ) );
 		}
 	});
 

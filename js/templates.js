@@ -1690,8 +1690,6 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "statement": true,
-            "hasQuestionedPip": true,
             "ratingScale": [
               4,
               6,
@@ -2011,7 +2009,6 @@ module.exports = [
               "header": "default",
               "body": "die-rows"
             },
-            "hasCounterColumn": true,
             "counterLabel": "XP",
             "ratingScale": [
               6,
@@ -7927,7 +7924,6 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "statement": true,
             "ratingScale": [
               4,
               6,
@@ -8573,7 +8569,6 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "statement": true,
             "ratingScale": [
               4,
               6,
@@ -15264,7 +15259,6 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "statement": true,
             "ratingScale": [
               4,
               6,
@@ -15389,7 +15383,6 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "statement": true,
             "ratingScale": [
               4,
               6,
