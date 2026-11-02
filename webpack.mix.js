@@ -21,7 +21,9 @@ mix
 	]
 })
 .combine([
+	'js/templates-bundle-prelude.js',
 	'js/templates.js',
+	'js/templates-bundle-assign.js',
 ], 'js/templates.bundle.js' )
 .sass( 'css/app.scss', 'css/app.min.css', { sassOptions: { outputStyle: mix.inProduction() ? 'compressed' : 'expanded' }} )
 .then(() => {

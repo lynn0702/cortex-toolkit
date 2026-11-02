@@ -392,3 +392,19 @@ https://github.com/kaelri/cortex-toolkit.
   and reports set-vs-view disagreement without overwriting
   the set. Corpus gate: effective values identical on all
   253 sets.
+
+- 2026-11-02: Spotlight Library lazy-load fixed: the bundle
+  (`js/templates.bundle.js`, built by Mix
+  `.combine` from `js/templates.js`) was a bare
+  `module.exports` assignment, which throws in a
+  browser classic script, so the roster/app
+  loaders' `onload` never fired, the loading
+  spinner stuck, and only the DOGFOOD template
+  rendered. The bundle is now bookended by two
+  combine inputs — a prelude defining
+  `window.module` and a trailing file assigning
+  `window.cortexSpotlightTemplates` — with
+  `js/templates.js` unchanged for its Node
+  consumers. Verified live in the local build:
+  29 library cards, spinner clears, no bundle
+  console error.
