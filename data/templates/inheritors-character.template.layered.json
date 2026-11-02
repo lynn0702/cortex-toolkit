@@ -125,7 +125,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -181,7 +181,7 @@
             "header": "die-track",
             "body": "die-track"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -229,7 +229,7 @@
             "header": "sfx-rows",
             "body": "sfx-rows"
           },
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "multiDie": false,
@@ -386,7 +386,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -469,7 +469,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -522,7 +522,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -559,7 +559,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [],
+          "ratingLadder": [],
           "reservedSlots": 3,
           "place": {
             "left": "75%",
@@ -613,7 +613,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [],
+          "ratingLadder": [],
           "reservedSlots": 3,
           "place": {
             "left": "75%",

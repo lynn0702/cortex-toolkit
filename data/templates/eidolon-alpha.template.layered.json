@@ -113,7 +113,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -169,7 +169,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -241,10 +241,10 @@
             "body": "sfx-rows"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
-          "subtraitRatingScale": [
+          "subtraitRatingLadder": [
             8
           ],
           "notes": "",
@@ -368,7 +368,7 @@
             "body": "default"
           },
           "multiDie": true,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             8,
             10,
@@ -513,7 +513,7 @@
             "body": "sfx-rows"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "notes": "",

@@ -112,11 +112,11 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             8,
             10
           ],
-          "subtraitRatingScale": [
+          "subtraitRatingLadder": [
             8,
             10
           ],
@@ -300,7 +300,7 @@
             "header": "sfx-rows",
             "body": "sfx-rows"
           },
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "multiDie": false,
@@ -379,7 +379,7 @@
             "header": "default",
             "body": "dice-count"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6
           ],
           "multiDie": true,

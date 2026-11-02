@@ -367,8 +367,8 @@ defineExpose( { setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDi
 </script>
 
 <template>
-	<div ref="rootEl" class="attributes-grid">
-		<div class="attributes-items"
+	<div ref="rootEl" class="ring-grid">
+		<div class="ring-items"
 			:class="{ 'has-open-editor': isTraitEditorOpen }"
 		>
 			<div v-for="( trait, t ) in traits"

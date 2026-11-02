@@ -17,7 +17,7 @@ const {
 	shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
 	getDisplayTraitSfx, getTraitSetLabel, getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 	getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
-	isPlayAddRemovableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
+	isPlayMutableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
 	resolvedFrame, isFrameActive, isPositionalFrameActive, frameSvgPath, frameStrokeClass, frameStrokeStyle, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle
 } = injectTraitSet();
 </script>
@@ -177,7 +177,7 @@ const {
 								></span>
 								<span
 									v-if="shouldShowOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
+									:class="{ 'out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
 									:aria-label="`Out for ${item.trait.name || 'trait'}`"
@@ -274,7 +274,7 @@ const {
 								<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)" aria-hidden="true"></span>
 								<span
 									v-if="shouldShowOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
+									:class="{ 'out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
 									:aria-label="`Out for ${item.trait.name || 'trait'}`"
@@ -313,7 +313,7 @@ const {
 								></span>
 								<span
 									v-if="shouldShowTrackOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
+									:class="{ 'out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
 									:aria-label="`Out for ${item.trait.name || 'trait'}`"
@@ -581,7 +581,7 @@ const {
 									></span>
 									<span
 										v-if="shouldShowOut(traitSet)"
-										:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
+										:class="{ 'out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 										role="button"
 										tabindex="0"
 										:aria-label="`Out for ${item.trait.name || 'trait'}`"
@@ -675,7 +675,7 @@ const {
 									<span v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)" class="c set-rating-die" v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)" :title="'Rating d' + getSetRatingDie(traitSet)" aria-hidden="true"></span>
 									<span
 										v-if="shouldShowOut(traitSet)"
-										:class="{ 'stress-out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
+										:class="{ 'out-badge': true, 'active': !printBlank && !item.isPlaceholder && isTraitOut(item.trait, traitSet) }"
 										role="button"
 										tabindex="0"
 										:aria-label="`Out for ${item.trait.name || 'trait'}`"
@@ -751,7 +751,7 @@ const {
 								></span>
 								<span
 									v-if="shouldShowTrackOut(traitSet)"
-									:class="{ 'stress-out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
+									:class="{ 'out-badge': true, 'active': !printBlank && isTrackOut(item.trait, traitSet) }"
 									role="button"
 									tabindex="0"
 									:aria-label="`Out for ${getTraitTrackLabel(traitSet, item.trait) || 'track'}`"
@@ -778,7 +778,7 @@ const {
 								<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
 							</span>
 						</span>
-						<ul class="trait-sfx" v-else-if="getDisplayTraitSfx(traitSet, item.trait).length">
+						<ul class="trait-sfx" v-if="!hasTrackPart(traitSet) && getDisplayTraitSfx(traitSet, item.trait).length">
 							<li v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)" :key="(sfx && sfx._lid) || ('sfx' + sfIdx)">
 								<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text">{{ (getView(item.trait) as any).prefix.text }} </span>
 								<template v-if="sfx.isHinder">
@@ -805,7 +805,7 @@ const {
 	<!-- BUTTON: ADD TRAIT -->
 	<transition appear>
 		<div class="preview-button-container"
-			v-show="resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayAddRemovableSet(traitSet)))"
+			v-show="resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet)))"
 		>
 			<div class="preview-button-container-inner">
 				<div class="preview-button"

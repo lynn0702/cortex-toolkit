@@ -125,7 +125,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -239,7 +239,7 @@
             "header": "sfx-rows",
             "body": "sfx-rows"
           },
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "multiDie": false,
@@ -336,7 +336,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -371,7 +371,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,

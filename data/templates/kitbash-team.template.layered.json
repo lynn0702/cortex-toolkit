@@ -155,7 +155,7 @@
             "header": "default",
             "body": "dice-count"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,

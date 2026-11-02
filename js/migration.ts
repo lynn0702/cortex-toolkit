@@ -249,6 +249,7 @@ export const cortexMigration = {
 			normalizeNode( set );
 			this.migrateStatementFlags( set, warnings );
 			this.migrateStyleBody( set );
+			this.migrateSetVocabulary( set );
 			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
 			this.migrateHinderBackfill( set, false );
@@ -272,6 +273,7 @@ export const cortexMigration = {
 			normalizeNode( set );
 			this.migrateStatementFlags( set, warnings );
 			this.migrateStyleBody( set );
+			this.migrateSetVocabulary( set );
 			this.migrateRingTrait( set );
 			this.migrateNodeRating( set, true );
 			this.migrateHinderBackfill( set, true );
@@ -705,6 +707,32 @@ export const cortexMigration = {
 				if ( mappedBody ) bag.style.body = mappedBody;
 				const mappedHeader = this.LEGACY_STYLE_BODIES[ bag.style.header ];
 				if ( mappedHeader ) bag.style.header = mappedHeader;
+			}
+		}
+	},
+
+	// Renamed view keys keep one vocabulary. The current key wins when
+	// both are present; the legacy key is read once and stripped.
+	migrateSetVocabulary: function( set: any ) {
+		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
+		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );
+		for ( const bag of bags ) {
+			if ( bag.ratingScale !== undefined ) {
+				if ( bag.ratingLadder === undefined ) bag.ratingLadder = bag.ratingScale;
+				delete bag.ratingScale;
+			}
+			if ( bag.subtraitRatingScale !== undefined ) {
+				if ( bag.subtraitRatingLadder === undefined ) bag.subtraitRatingLadder = bag.subtraitRatingScale;
+				delete bag.subtraitRatingScale;
+			}
+			if ( bag.blankSlots !== undefined ) {
+				if ( bag.reservedSlots === undefined ) bag.reservedSlots = bag.blankSlots;
+				delete bag.blankSlots;
+			}
+			const parts = bag.parts;
+			if ( parts && typeof parts === 'object' && !Array.isArray( parts ) && parts.stressDice !== undefined ) {
+				if ( parts.trackDice === undefined ) parts.trackDice = parts.stressDice;
+				delete parts.stressDice;
 			}
 		}
 	},
@@ -1449,8 +1477,8 @@ export const cortexMigration = {
 		const body = bag?.style?.body;
 		if ( rating === 'vertical' ) return 'legacy';
 		if ( body !== undefined && this.LIST_FAMILY_BODIES.indexOf( body ) === -1 ) return 'legacy';
-		const scale = Array.isArray( bag?.ratingScale ) && bag.ratingScale.length
-			? bag.ratingScale : this.DEFAULT_SCALE;
+		const scale = Array.isArray( bag?.ratingLadder ) && bag.ratingLadder.length
+			? bag.ratingLadder : this.DEFAULT_SCALE;
 		const pos = rating;
 		if ( pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none' ) return 'legacy';
 		const statement = Boolean( set && set.statement );

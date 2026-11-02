@@ -181,8 +181,8 @@ export const cortexFunctions = {
 
 	getTraitSetRatings: function( traitSet: TraitSet ) {
 		const custom = getView( traitSet );
-		if ( Array.isArray(custom?.ratingScale) && custom.ratingScale.length > 0 ) {
-			return [...custom.ratingScale].sort((a, b) => a - b);
+		if ( Array.isArray(custom?.ratingLadder) && custom.ratingLadder.length > 0 ) {
+			return [...custom.ratingLadder].sort((a, b) => a - b);
 		}
 		return [4, 6, 8, 10, 12];
 	},
@@ -195,8 +195,8 @@ export const cortexFunctions = {
 
 	getSubtraitRatings: function( traitSet: TraitSet ) {
 		const custom = getView( traitSet );
-		if ( Array.isArray(custom?.subtraitRatingScale) && custom.subtraitRatingScale.length > 0 ) {
-			return [...custom.subtraitRatingScale].sort((a, b) => a - b);
+		if ( Array.isArray(custom?.subtraitRatingLadder) && custom.subtraitRatingLadder.length > 0 ) {
+			return [...custom.subtraitRatingLadder].sort((a, b) => a - b);
 		}
 		return [4, 6, 8, 10, 12];
 	},
@@ -222,7 +222,7 @@ export const cortexFunctions = {
 		return this.fixedNameSetKeys.some( ( k: string ) => n.includes( k ) );
 	},
 
-	isPlayAddRemovableSet: function( traitSetArg: any ): boolean {
+	isPlayMutableSet: function( traitSetArg: any ): boolean {
 		if ( !traitSetArg ) return false;
 		const view = getView( traitSetArg );
 		return view?.playMutable === true;

@@ -126,7 +126,7 @@
             "body": "sfx-rows"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "notes": "",
@@ -283,7 +283,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -328,7 +328,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -378,7 +378,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -428,7 +428,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [],
+          "ratingLadder": [],
           "reservedSlots": 3,
           "place": {
             "left": "64%",
@@ -476,7 +476,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [],
+          "ratingLadder": [],
           "reservedSlots": 3,
           "place": {
             "left": "64%",

@@ -1,13 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getView } from './model.ts';
 import { cortexFunctions } from './functions.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
-import SfxEditor from './sfx-editor.vue';
+import SubtraitEditor from './subtrait-editor.vue';
 
-const { traitSet, traitSetID, character, addEffect, removeEffect, updateCharacter, styleLabel, setStyleLabel, targetValue } = injectTraitSetEditor();
+const { traitSet, traitSetID, character, updateCharacter } = injectTraitSetEditor();
 
 const sfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value ) );
+
+function addSfxEntry() {
+	const container = cortexFunctions.ensureSfxContainer( traitSet.value );
+	if ( container && Array.isArray( container.traits ) ) {
+		container.traits.push( structuredClone( cortexFunctions.defaultSFX ) );
+	}
+	updateCharacter( character );
+}
+
+function removeSfxEntry( entryIndex: number ) {
+	cortexFunctions.removeSfxAt( traitSet.value, entryIndex );
+	updateCharacter( character );
+}
 </script>
 
 <template>
@@ -17,23 +29,25 @@ const sfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value )
 		<div class="editor-subgroups">
 
 			<transition-group appear>
-				<SfxEditor
-					v-for="(effect, effectID) in sfxEntries"
-					:key="traitSetID + '-' + effectID"
+				<subtrait-editor
+					v-for="(entry, entryIndex) in sfxEntries"
+					:key="traitSetID + '-' + entryIndex"
 					:character="character"
 					:traitSetID="traitSetID"
 					:traitID="null"
-					:effectID="Number(effectID)"
+					:subtraitID="entryIndex"
+					:entries="sfxEntries"
+					entryLabel="SFX"
 					@updateCharacter="updateCharacter"
-					@removeEffect="removeEffect"
-				></SfxEditor>
+					@removeSubtrait="removeSfxEntry"
+				></subtrait-editor>
 			</transition-group>
 
 		</div>
 
 		<div class="editor-button-container">
 			<div class="editor-button-container-inner">
-				<div class="editor-button" @click.stop="addEffect">
+				<div class="editor-button" @click.stop="addSfxEntry">
 					<span><i class="fas fa-plus"></i> New SFX</span>
 				</div>
 			</div>

@@ -119,7 +119,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -173,7 +173,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -217,7 +217,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10
@@ -334,7 +334,7 @@
             "sfx": false,
             "subtraits": false
           },
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "page": 1,
@@ -492,7 +492,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [],
+          "ratingLadder": [],
           "multiDie": false,
           "notes": "",
           "reservedSlots": 6,
@@ -532,7 +532,7 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 5,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -573,7 +573,7 @@
             "header": "default",
             "body": "dice-count"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,

@@ -1567,7 +1567,7 @@
 				}
 			}
 
-			.stress-out-badge {
+			.out-badge {
 				font-size: var(--text-meta);
 				font-weight: 800;
 				padding: 0.15rem 0.35rem;
@@ -2210,7 +2210,7 @@
 				border-width: 4px;
 			}
 
-			.attributes-grid,
+			.ring-grid,
 			.attribute,
 			.attribute-inner {
 				pointer-events: none;
@@ -2378,9 +2378,9 @@
 	align-items: center;
 	box-sizing: border-box;
 }
-.character-sheet.spotlight-style .trait-set.trait-set-frame-block > .trait-set-header,
-.character-sheet.spotlight-print-style .trait-set.trait-set-frame-block > .trait-set-header,
-.trait-set.trait-set-frame-block > .trait-set-header {
+.character-sheet.spotlight-style .trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header,
+.character-sheet.spotlight-print-style .trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header,
+.trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header {
 	margin-inline: 1rem;
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
@@ -3826,7 +3826,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	.stress-out-badge {
+	.out-badge {
 		flex-shrink: 0;
 		display: inline-flex !important;
 		align-items: center !important;
@@ -3841,7 +3841,7 @@ body:has(.character-sheet.submode-print) .main {
 	display: inline-flex;
 	align-items: center;
 
-	.stress-out-badge {
+	.out-badge {
 		flex-shrink: 0;
 		display: inline-flex !important;
 		align-items: center !important;

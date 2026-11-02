@@ -751,7 +751,7 @@
 			padding: .1em;
 		}
 
-		.stress-out-badge {
+		.out-badge {
 			position: relative;
 			background: white;
 			padding: 0.1em 0.35em;
@@ -1731,7 +1731,7 @@
 // PLAY MODE INTERACTIONS
 .submode-play {
 	.trait-set-style-die-track .c,
-	.trait-set-style-die-track .stress-out-badge,
+	.trait-set-style-die-track .out-badge,
 	.single-die-value .c,
 	.attribute-inner .c,
 	.subtrait-value .c {

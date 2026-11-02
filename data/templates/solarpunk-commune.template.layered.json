@@ -125,7 +125,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8
@@ -173,7 +173,7 @@
             "sfx": false,
             "subtraits": false
           },
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "page": 1,
@@ -333,7 +333,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6
           ],
           "reservedSlots": 4,
@@ -440,11 +440,11 @@
             "header": "default",
             "body": "subtrait-columns"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8
           ],
-          "subtraitRatingScale": [],
+          "subtraitRatingLadder": [],
           "reservedSlots": 9,
           "labels": {
             "left": "SKILL",

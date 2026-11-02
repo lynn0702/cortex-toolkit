@@ -4,7 +4,6 @@ import { cortexFunctions } from './functions.ts';
 import { getView, ensureView, getRating, ratingDice, setRatingDie, setRatingDice,
 isRated, resolveHitches, resolveVisibility, nextVisibility, DIE_LADDER, rangeTop, isOutDie, applyTypeScopedRange, type Character } from './model.ts';
 import SubtraitEditor from './subtrait-editor.vue';
-import SfxEditor from './sfx-editor.vue';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
@@ -38,7 +37,7 @@ const traitSet = computed( () => props.character?.traitSets?.[ props.traitSetID 
 const trait = computed( () => props.character?.traitSets?.[ props.traitSetID ]?.traits?.[ props.traitID ] );
 
 const isPlay = computed( () => props.submode === 'play' );
-const canDeleteInPlay = computed( () => cortexFunctions.isPlayAddRemovableSet( traitSet.value ) );
+const canDeleteInPlay = computed( () => cortexFunctions.isPlayMutableSet( traitSet.value ) );
 
 const templateEntry = computed( () => cortexFunctions.resolveTemplateFor( props.character, rootTemplates() ) );
 
@@ -433,10 +432,7 @@ const statementText = computed( {
 	},
 } );
 
-const editableSFX = computed( () => {
-	const entries = cortexFunctions.sfxChildren( trait.value );
-	return entries.map( ( _effect: any, idx: number ) => idx );
-} );
+const sfxEntries = computed( () => cortexFunctions.sfxChildren( trait.value ) );
 
 // Child traits that are subtraits, not the SFX or statement containers.
 // Index is the real position in `trait.traits`, so the subtrait editor
@@ -450,7 +446,7 @@ const subtraits = computed( () => {
 } );
 
 const scrollable = computed( () => Boolean(
-	( editableSFX.value.length > 0 && !isThreeColumnTable.value )
+	( sfxEntries.value.length > 0 && !isThreeColumnTable.value )
 	||
 	( subtraits.value.length > 0 )
 ) );
@@ -1002,7 +998,7 @@ function removeFromSheet() {
 	updateCharacter( props.character );
 }
 
-function addEffect() {
+function addSfxEntry() {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
@@ -1013,11 +1009,11 @@ function addEffect() {
 	updateCharacter( character );
 }
 
-function removeEffect( effectID: number ) {
+function removeSfxEntry( entryIndex: number ) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const t = props.traitID;
-	cortexFunctions.removeSfxAt( character.traitSets[ s ].traits[ t ], effectID );
+	cortexFunctions.removeSfxAt( character.traitSets[ s ].traits[ t ], entryIndex );
 	updateCharacter( character );
 }
 
@@ -1686,23 +1682,25 @@ function getDieDisplayValue( val: any ) {
 						<div class="editor-subgroups">
 
 							<transition-group appear>
-								<sfx-editor
-									v-for="effectID in editableSFX"
-									:key="traitSetID + '-' + traitID + '-' + effectID"
+								<subtrait-editor
+									v-for="(entry, entryIndex) in sfxEntries"
+									:key="traitSetID + '-' + traitID + '-' + entryIndex"
 									:character="character"
 									:traitSetID="traitSetID"
 									:traitID="traitID"
-									:effectID="effectID"
+									:subtraitID="entryIndex"
+									:entries="sfxEntries"
+									entryLabel="SFX"
 									@updateCharacter="updateCharacter"
-									@removeEffect="removeEffect"
-								></sfx-editor>
+									@removeSubtrait="removeSfxEntry"
+								></subtrait-editor>
 							</transition-group>
 
 						</div>
 
 						<div class="editor-button-container">
 							<div class="editor-button-container-inner">
-								<div class="editor-button" @click.stop="addEffect">
+								<div class="editor-button" @click.stop="addSfxEntry">
 									<span><i class="fas fa-plus"></i> New SFX</span>
 								</div>
 							</div>

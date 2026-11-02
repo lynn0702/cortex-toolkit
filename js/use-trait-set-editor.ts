@@ -170,8 +170,8 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 	// changes and Reset restores exactly what the generator would emit.
 	function partsSpec() {
 		const view = getView( traitSet.value ) || {};
-		const scale = Array.isArray( ( view as any ).ratingScale ) && ( view as any ).ratingScale.length
-			? ( view as any ).ratingScale : [ 4, 6, 8, 10, 12 ];
+		const scale = Array.isArray( ( view as any ).ratingLadder ) && ( view as any ).ratingLadder.length
+			? ( view as any ).ratingLadder : [ 4, 6, 8, 10, 12 ];
 		const trackOn = partsHaveTrack();
 		const tScale = cortexFunctions.getTrackScale( traitSet.value );
 		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
@@ -468,20 +468,20 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		set: ( value: boolean ) => { setCustomProperty( 'outIndicator', Boolean( value ) ); }
 	});
 
-	const ratingScale = computed({
+	const ratingLadder = computed({
 		get: () => cortexFunctions.getTraitSetRatings( traitSet.value ),
 		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
-			ctkFor( s ).ratingScale = scale;
+			ctkFor( s ).ratingLadder = scale;
 			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
 
-	const subtraitRatingScale = computed({
+	const subtraitRatingLadder = computed({
 		get: () => cortexFunctions.getSubtraitRatings( traitSet.value ),
 		set: ( scale: number[] ) => {
 			let s = props.traitSetID;
-			ctkFor( s ).subtraitRatingScale = scale;
+			ctkFor( s ).subtraitRatingLadder = scale;
 			updateCharacter( structuredClone( toRaw( props.character ) ) );
 		}
 	});
@@ -1075,11 +1075,11 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 	}
 
 	function isRatingIncluded( size: any ) {
-		return ratingScale.value.includes( size );
+		return ratingLadder.value.includes( size );
 	}
 
 	function toggleRatingOption( size: any ) {
-		let current = [ ...ratingScale.value ];
+		let current = [ ...ratingLadder.value ];
 		if ( current.includes( size ) ) {
 			if ( current.length > 1 ) {
 				current = current.filter( ( s: number ) => s !== size );
@@ -1088,15 +1088,15 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 			current.push( size );
 			current.sort( ( a, b ) => a - b );
 		}
-		ratingScale.value = current;
+		ratingLadder.value = current;
 	}
 
 	function isSubtraitRatingIncluded( size: any ) {
-		return subtraitRatingScale.value.includes( size );
+		return subtraitRatingLadder.value.includes( size );
 	}
 
 	function toggleSubtraitRatingOption( size: any ) {
-		let current = [ ...subtraitRatingScale.value ];
+		let current = [ ...subtraitRatingLadder.value ];
 		if ( current.includes( size ) ) {
 			if ( current.length > 1 ) {
 				current = current.filter( ( s: number ) => s !== size );
@@ -1105,32 +1105,11 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 			current.push( size );
 			current.sort( ( a, b ) => a - b );
 		}
-		subtraitRatingScale.value = current;
+		subtraitRatingLadder.value = current;
 	}
 
 	function getDieDisplayValue( value: any ) {
 		return cortexFunctions.getDieDisplayValue( value );
-	}
-
-	function addEffect() {
-		let character = props.character;
-		let s = props.traitSetID;
-
-		const container = cortexFunctions.ensureSfxContainer( character.traitSets[s] );
-		if ( container && Array.isArray( container.traits ) ) {
-			container.traits.push( structuredClone( cortexFunctions.defaultSFX ) );
-		}
-
-		updateCharacter( character );
-	}
-
-	function removeEffect( effectID: any ) {
-		let character = props.character;
-		let s = props.traitSetID;
-
-		cortexFunctions.removeSfxAt( character.traitSets[s], effectID );
-
-		updateCharacter( character );
 	}
 
 	function updateCharacter( character?: any ) {
@@ -1246,7 +1225,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		templateEntry, restorableTraitNames, isSpotlightSheet,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
-		includeOut, ratingScale, subtraitRatingScale,
+		includeOut, ratingLadder, subtraitRatingLadder,
 		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, traitColumns,
 		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
 		showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
@@ -1260,7 +1239,7 @@ export function useTraitSetEditor( props: TraitSetEditorProps, emit: any ) {
 		setRingConfig, resetRingPlacement,
 		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart,		uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption,
 		isSubtraitRatingIncluded, toggleSubtraitRatingOption, getDieDisplayValue,
-		addEffect, removeEffect, updateCharacter, ensurePipStruct, setPipProperty,
+		updateCharacter, ensurePipStruct, setPipProperty,
 		checkAnchorPosition, checkScrollPosition,
 	};
 

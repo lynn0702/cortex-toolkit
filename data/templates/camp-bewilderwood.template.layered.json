@@ -282,7 +282,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -338,7 +338,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -387,7 +387,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -444,14 +444,14 @@
             "body": "paired-slots"
           },
           "ratingPosition": "inline",
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
             10,
             12
           ],
-          "subtraitRatingScale": [
+          "subtraitRatingLadder": [
             4,
             6,
             8,
@@ -533,7 +533,7 @@
             "body": "die-rows"
           },
           "counterLabel": "XP",
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,

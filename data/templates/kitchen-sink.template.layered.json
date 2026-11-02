@@ -119,7 +119,7 @@
             "subtraits": false
           },
           "reservedSlots": 3,
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "place": {
@@ -308,7 +308,7 @@
             "sfx": false,
             "subtraits": false
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -559,13 +559,13 @@
             "slot0": "COMPLICATION",
             "slot1": "BONUS"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
             12
           ],
-          "subtraitRatingScale": [
+          "subtraitRatingLadder": [
             6,
             8,
             10,
@@ -662,7 +662,7 @@
             "sfx": false,
             "subtraits": false
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -849,7 +849,7 @@
             "subtraits": false
           },
           "outIndicator": true,
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,

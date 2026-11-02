@@ -155,7 +155,7 @@ module.exports = [
               "body": "sfx-rows"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "notes": "",
@@ -274,7 +274,7 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8,
               10,
               12
@@ -460,7 +460,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -571,7 +571,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -624,7 +624,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -873,7 +873,7 @@ module.exports = [
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "notes": "",
@@ -1038,7 +1038,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -1099,7 +1099,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -1150,7 +1150,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -1201,7 +1201,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [],
+            "ratingLadder": [],
             "reservedSlots": 3,
             "place": {
               "left": "64%",
@@ -1259,7 +1259,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [],
+            "ratingLadder": [],
             "reservedSlots": 3,
             "place": {
               "left": "64%",
@@ -1690,7 +1690,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -1762,7 +1762,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -1812,7 +1812,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -1879,14 +1879,14 @@ module.exports = [
               "body": "paired-slots"
             },
             "ratingPosition": "inline",
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               4,
               6,
               8,
@@ -2010,7 +2010,7 @@ module.exports = [
               "body": "die-rows"
             },
             "counterLabel": "XP",
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -2218,7 +2218,7 @@ module.exports = [
               "header": "sfx-rows",
               "body": "sfx-rows"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8,
               10,
               12
@@ -2294,7 +2294,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -2336,7 +2336,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -2410,7 +2410,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -2462,7 +2462,7 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -2738,7 +2738,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -2807,7 +2807,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -2895,10 +2895,10 @@ module.exports = [
               "body": "sfx-rows"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8
             ],
             "notes": "",
@@ -3034,7 +3034,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": true,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               8,
               10,
@@ -3194,7 +3194,7 @@ module.exports = [
               "body": "sfx-rows"
             },
             "multiDie": false,
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "notes": "",
@@ -3509,7 +3509,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -3589,7 +3589,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -3697,7 +3697,7 @@ module.exports = [
               "header": "sfx-rows",
               "body": "sfx-rows"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "multiDie": false,
@@ -3894,7 +3894,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -4157,7 +4157,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -4329,11 +4329,11 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8,
               10
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8,
               10
             ],
@@ -4539,7 +4539,7 @@ module.exports = [
               "header": "sfx-rows",
               "body": "sfx-rows"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "multiDie": false,
@@ -4627,7 +4627,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6
             ],
             "multiDie": true,
@@ -4941,7 +4941,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -5010,7 +5010,7 @@ module.exports = [
               "header": "die-track",
               "body": "die-track"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -5061,7 +5061,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "multiDie": false,
@@ -5230,7 +5230,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -5334,7 +5334,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -5430,7 +5430,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -5468,7 +5468,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [],
+            "ratingLadder": [],
             "reservedSlots": 3,
             "place": {
               "left": "75%",
@@ -5529,7 +5529,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [],
+            "ratingLadder": [],
             "reservedSlots": 3,
             "place": {
               "left": "75%",
@@ -6818,7 +6818,7 @@ module.exports = [
               "header": "sfx-rows",
               "body": "sfx-rows"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "multiDie": false,
@@ -6983,7 +6983,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10
@@ -7047,7 +7047,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8,
               10,
               12
@@ -7084,7 +7084,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -7121,7 +7121,7 @@ module.exports = [
               "header": "die-track",
               "body": "die-track"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -7184,7 +7184,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -7623,7 +7623,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -7794,7 +7794,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's die rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8,
               10,
               12
@@ -7873,7 +7873,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -7924,7 +7924,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -8008,7 +8008,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -8066,7 +8066,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -8217,7 +8217,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -8404,7 +8404,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -8569,7 +8569,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -8629,7 +8629,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -8693,7 +8693,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -8745,7 +8745,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8,
               10,
               12
@@ -8866,7 +8866,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -9063,7 +9063,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -9140,7 +9140,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -9310,7 +9310,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6
             ],
             "multiDie": true,
@@ -9480,7 +9480,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -9535,7 +9535,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -9592,11 +9592,11 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8,
               10,
               12
@@ -9841,7 +9841,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -9918,7 +9918,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -10045,7 +10045,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6
             ],
             "multiDie": true,
@@ -10169,7 +10169,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -10225,11 +10225,11 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8,
               10,
               12
@@ -10475,7 +10475,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -10639,11 +10639,11 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8,
               10,
               12
@@ -10765,7 +10765,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -10818,7 +10818,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -10857,7 +10857,7 @@ module.exports = [
               "header": "default",
               "body": "die-track"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -10952,7 +10952,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -11248,7 +11248,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6
             ],
             "multiDie": true,
@@ -11366,7 +11366,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6
             ],
             "multiDie": true,
@@ -11482,14 +11482,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -11598,14 +11598,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -11714,14 +11714,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -11830,14 +11830,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -11946,14 +11946,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -12062,14 +12062,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -12179,7 +12179,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12237,7 +12237,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12295,7 +12295,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12353,7 +12353,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12411,7 +12411,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12469,7 +12469,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12527,7 +12527,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12585,7 +12585,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12643,7 +12643,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -12860,7 +12860,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -13024,7 +13024,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -13089,7 +13089,7 @@ module.exports = [
               "header": "die-track",
               "body": "die-track"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -13150,7 +13150,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -13242,14 +13242,14 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6
             ],
             "multiDie": false,
@@ -13355,7 +13355,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -13444,7 +13444,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -13510,7 +13510,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [],
+            "ratingLadder": [],
             "reservedSlots": 3,
             "place": {
               "left": "25%",
@@ -13571,7 +13571,7 @@ module.exports = [
               "body": "default"
             },
             "multiDie": false,
-            "ratingScale": [],
+            "ratingLadder": [],
             "reservedSlots": 3,
             "place": {
               "left": "25%",
@@ -13826,7 +13826,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -13939,7 +13939,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -14110,7 +14110,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -14169,14 +14169,14 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6
             ],
             "multiDie": false,
@@ -14425,7 +14425,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8
@@ -14485,7 +14485,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -14655,7 +14655,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6
             ],
             "reservedSlots": 4,
@@ -14770,11 +14770,11 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8
             ],
-            "subtraitRatingScale": [],
+            "subtraitRatingLadder": [],
             "reservedSlots": 9,
             "labels": {
               "left": "SKILL",
@@ -14941,7 +14941,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15090,7 +15090,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -15259,7 +15259,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15334,7 +15334,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -15383,7 +15383,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15452,7 +15452,7 @@ module.exports = [
               "header": "die-track",
               "body": "die-track"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15522,7 +15522,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15772,7 +15772,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10
@@ -15832,7 +15832,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -15869,7 +15869,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15945,7 +15945,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -15980,7 +15980,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "reservedSlots": 2,
@@ -16065,7 +16065,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -16120,7 +16120,7 @@ module.exports = [
               "header": "default",
               "body": "dice-ladder"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -16296,7 +16296,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -16370,7 +16370,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -16537,7 +16537,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8,
               10,
               12
@@ -16574,11 +16574,11 @@ module.exports = [
               "header": "default",
               "body": "subtrait-columns"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               8,
               10,
               12
@@ -16693,7 +16693,7 @@ module.exports = [
               "header": "default",
               "body": "dice-ladder"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -16729,7 +16729,7 @@ module.exports = [
               "header": "default",
               "body": "dice-ladder"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -16823,7 +16823,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -16891,7 +16891,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -16959,7 +16959,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -17278,7 +17278,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10
@@ -17341,7 +17341,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -17413,7 +17413,7 @@ module.exports = [
               "header": "sfx-rows",
               "body": "sfx-rows"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "multiDie": false,
@@ -17611,7 +17611,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -17648,7 +17648,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -17819,7 +17819,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -17943,7 +17943,7 @@ module.exports = [
               "header": "sfx-rows",
               "body": "sfx-rows"
             },
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "multiDie": false,
@@ -18051,7 +18051,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -18087,7 +18087,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -18305,7 +18305,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -18369,7 +18369,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -18435,7 +18435,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10
@@ -18562,7 +18562,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you switch out your distinction's rating of d8 for a d4.",
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "page": 1,
@@ -18730,7 +18730,7 @@ module.exports = [
               "header": "default",
               "body": "default"
             },
-            "ratingScale": [],
+            "ratingLadder": [],
             "multiDie": false,
             "notes": "",
             "reservedSlots": 6,
@@ -18789,7 +18789,7 @@ module.exports = [
             "multiDie": false,
             "notes": "",
             "reservedSlots": 5,
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -18846,7 +18846,7 @@ module.exports = [
               "header": "default",
               "body": "dice-count"
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -19134,7 +19134,7 @@ module.exports = [
             },
             "sharedHinder": true,
             "reservedSlots": 3,
-            "ratingScale": [
+            "ratingLadder": [
               8
             ],
             "place": {
@@ -19333,7 +19333,7 @@ module.exports = [
               "sfx": false,
               "subtraits": false
             },
-            "ratingScale": [
+            "ratingLadder": [
               4,
               6,
               8,
@@ -19606,13 +19606,13 @@ module.exports = [
               "slot0": "COMPLICATION",
               "slot1": "BONUS"
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
               12
             ],
-            "subtraitRatingScale": [
+            "subtraitRatingLadder": [
               6,
               8,
               10,
@@ -19718,7 +19718,7 @@ module.exports = [
               "sfx": false,
               "subtraits": false
             },
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,
@@ -19920,7 +19920,7 @@ module.exports = [
               "subtraits": false
             },
             "outIndicator": true,
-            "ratingScale": [
+            "ratingLadder": [
               6,
               8,
               10,

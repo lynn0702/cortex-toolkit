@@ -99,7 +99,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(sets['Signature Assets'].view.reservedSlots === 3 && sets.Standing.view.reservedSlots === 6, 'reservedSlots intact');
   ok(sets.Talents.view.reservedSlots !== undefined, 'talent blanks counted', sets.Talents.view.reservedSlots);
   ok(sets['Signature Assets'].view.reservedSlots === 3 && sets.Standing.view.reservedSlots === 6, 'reservedSlots intact');
-  ok(JSON.stringify(sets.Values.view.ratingScale) === '[4,6,8,10,12]', 'rating scale kept');
+  ok(JSON.stringify(sets.Values.view.ratingLadder) === '[4,6,8,10,12]', 'rating ladder kept');
   ok(sets.Badges.hasCounterColumn === true && sets.Badges.counterLabel === 'XP', 'counter column kept');
   const tctk = sets.Talents.view;
   ok(tctk.place === undefined && tctk.span === undefined && tctk.colSpan === undefined && tctk.columnSpan === undefined, 'talents stacks sparsely full-width');
@@ -177,7 +177,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
     ss.view.labels.left === 'Specialties' &&
     ss.view.labels.center === 'Skills' &&
     ss.view.labels.right === 'Specialties', 'branch labels authored');
-  ok(JSON.stringify(ss.view.subtraitRatingScale) === '[8,10,12]', 'specialty scale authored');
+  ok(JSON.stringify(ss.view.subtraitRatingLadder) === '[8,10,12]', 'specialty ladder authored');
   ok(JSON.stringify(Object.keys(ss.traits)) === JSON.stringify(['Bout', 'Chat', 'Find', 'Make', 'Play', 'Operate', 'Work']),
     'seven skills in sheet order', Object.keys(ss.traits));
   ok(ss.traits.Bout.value === undefined, 'skills unrated');

@@ -126,7 +126,7 @@
             "body": "sfx-rows"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "notes": "",
@@ -235,7 +235,7 @@
             "header": "default",
             "body": "subtrait-columns"
           },
-          "subtraitRatingScale": [
+          "subtraitRatingLadder": [
             8,
             10,
             12
@@ -385,7 +385,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -473,7 +473,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -525,7 +525,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,

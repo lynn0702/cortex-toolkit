@@ -6,9 +6,11 @@ import { getView, ensureView, getRating, ratingDice, setRatingDie, type Characte
 const props = defineProps<{
 	character: Character;
 	traitSetID: number;
-	traitID: number;
+	traitID: number | null;
 	subtraitID: number;
 	submode?: string | null;
+	entries?: Trait[];
+	entryLabel?: string;
 }>();
 
 const isPlay = computed( () => props.submode === 'play' );
@@ -25,12 +27,17 @@ const confirmDelete = ref( false );
 
 watch( () => props.subtraitID, () => { confirmDelete.value = false; } );
 
-const subtrait = computed<Trait>( () => {
-	const s = props.traitSetID;
-	const t = props.traitID;
-	const u = props.subtraitID;
-	return props.character.traitSets[ s ].traits[ t ].traits![ u ];
+const parent = computed<any>( () => {
+	const traitSet = props.character.traitSets[ props.traitSetID ];
+	return props.traitID === null ? traitSet : traitSet?.traits?.[ props.traitID ];
 } );
+
+const subtrait = computed<Trait>( () => {
+	if ( props.entries ) return props.entries[ props.subtraitID ];
+	return parent.value.traits![ props.subtraitID ];
+} );
+
+const entryLabel = computed( () => props.entryLabel || 'Subtrait' );
 
 const name = computed( {
 	get() {
@@ -38,6 +45,15 @@ const name = computed( {
 	},
 	set( value: string ) {
 		setSubtraitProperty( 'name', value );
+	},
+} );
+
+const description = computed( {
+	get() {
+		return subtrait.value.description || '';
+	},
+	set( value: string ) {
+		setSubtraitProperty( 'description', value );
 	},
 } );
 
@@ -80,6 +96,7 @@ const branchSide = computed( {
 
 const templateSubtraitMatched = computed( () => {
 	const s = props.traitSetID, t = props.traitID;
+	if ( props.entries || t === null ) return false;
 	const ts = props.character?.traitSets?.[ s ];
 	const tr = ts?.traits?.[ t ];
 	if ( !tr || !subtrait.value || !subtrait.value.name || !ts || !ts.id || !tr.name ) return false;
@@ -93,11 +110,7 @@ const templateSubtraitMatched = computed( () => {
 
 function setSubtraitProperty( key: string, value: any ) {
 	const character = props.character;
-	const s = props.traitSetID;
-	const t = props.traitID;
-	const f = props.subtraitID;
-
-	( character.traitSets[ s ].traits[ t ].traits![ f ] as Record<string, any> )[ key ] = value;
+	( subtrait.value as Record<string, any> )[ key ] = value;
 
 	updateCharacter( character );
 }
@@ -123,6 +136,7 @@ function removeSubtrait() {
 }
 
 function removeFromSheet() {
+	if ( props.traitID === null ) return;
 	const entry = cortexFunctions.resolveTemplateFor( props.character, rootTemplates() );
 	cortexFunctions.removeSubtraitFromSheet(
 		props.character, entry, props.traitSetID, props.traitID, props.subtraitID );
@@ -180,7 +194,7 @@ function stepSubtraitUp() {
 		<div class="editor-fields">
 
 			<div class="editor-field">
-				<label :for="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID">Subtrait Name</label>
+				<label :for="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID">{{ entryLabel }} Name</label>
 				<div class="editor-readonly-title" v-if="isPlay">{{ name }}</div>
 				<input v-else type="text" :id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitName" v-model="name">
 			</div>
@@ -230,7 +244,12 @@ function stepSubtraitUp() {
 				><i class="fas fa-xmark" aria-hidden="true"></i></button>
 			</div>
 
-			<div class="editor-field" v-if="parentIsBranch && !isPlay">
+			<div class="editor-field" v-if="!isPlay">
+				<label :for="'subtrait-desc-' + traitSetID + '-' + traitID + '-' + subtraitID">{{ entryLabel }} Description</label>
+				<textarea :id="'subtrait-desc-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitDescription" v-model="description"></textarea>
+			</div>
+
+			<div class="editor-field" v-if="parentIsBranch && !isPlay && !entries">
 				<div class="editor-label">Side</div>
 				<div class="editor-button-group">
 					<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
@@ -245,7 +264,7 @@ function stepSubtraitUp() {
 			<div class="editor-button-container" v-if="!isPlay">
 				<div class="editor-button-container-inner">
 					<div v-if="!confirmDelete" class="editor-button editor-button-remove editor-button-secondary" @click.prevent="confirmDelete = true">
-						<span><i class="fas fa-trash"></i> Remove Subtrait</span>
+						<span><i class="fas fa-trash"></i> Remove {{ entryLabel }}</span>
 					</div>
 					<div v-else class="editor-button editor-button-remove editor-button-delete-confirm" @click.prevent="removeSubtrait">
 						<span><i class="fas fa-exclamation-triangle"></i> Confirm Remove?</span>

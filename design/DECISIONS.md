@@ -175,6 +175,9 @@ https://github.com/kaelri/cortex-toolkit.
 
 - 2026-10-30: Rebrief remainder. The a03690d dirty commit landed the skill patches, the gallery death, Hinder as data, label removals, header consolidation, Hinder part 2, and the features plane. What remained - badge as a trait part, statement-flag derivation, SFX editor retirement, the vocabulary remainder, and the JSON textarea dark variant - is this brief. The phone pass, classic-on-place section 4d, and item 5 follow after, as planned, and are not in this brief.
 
+- 2026-11-01: Supersedes the 2026-10-30 "Rebrief remainder" line's "statement-flag derivation" clause: statement flags were ratified and landed on 2026-10-31 and are not part of this brief. The rest of that line stands.
+- 2026-11-01: Rebrief remainder part 2. Completed F1 (badge renders before SFX list), R3 (SFX editor retirement via shared SubtraitEditor), R4 (vocabulary rename/migration: ratingLadder, subtraitRatingLadder, reservedSlots, trackDice, out-badge, ring-grid/ring-items, isPlayMutableSet), and R5 dark badge toggle. Remaining phone pass, classic-on-place section 4d, and item 5 remain out of scope.
+
 ## Open (decisions needed)
 
 - (none pending)

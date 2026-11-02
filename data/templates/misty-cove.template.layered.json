@@ -120,7 +120,7 @@
             "sfx": true,
             "subtraits": false
           },
-          "ratingScale": [
+          "ratingLadder": [
             8,
             10,
             12
@@ -189,7 +189,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -239,7 +239,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -307,7 +307,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -364,7 +364,7 @@
             "header": "default",
             "body": "dice-count"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -504,7 +504,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,

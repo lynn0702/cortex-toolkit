@@ -178,6 +178,8 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   // Below becomes parts; flags removed.
   ok(byName('D').view.parts && byName('D').view.parts.name.top === 0 && byName('D').view.parts.rating.top === 1, 'below becomes parts rows', byName('D').view.parts);
   ok(byName('D').view.ratingPosition === undefined, 'ratingPosition removed');
+  ok(JSON.stringify(byName('D').view.ratingLadder) === '[4,6,8,10,12]' && byName('D').view.ratingScale === undefined,
+    'legacy ratingScale becomes ratingLadder');
   // Vertical ladders keep the legacy flag.
   ok(byName('F').view.parts === undefined && byName('F').view.ratingPosition === 'vertical', 'vertical stays legacy');
   // Band keys are gone everywhere.
@@ -651,6 +653,41 @@ const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Senda
   };
   M.normalizeView({ traitSets: [setDefault] });
   ok(setDefault.traits[0].traits[0].traits[0].description === "Gain a PP when you switch out this distinction's d10 for a d4.", 'constructed sentence backfill');
+}
+
+// ---- 17. Renamed set view vocabulary: copy once, strip, current key wins.
+{
+  const set = {
+    name: 'Values',
+    view: {
+      ratingScale: [4, 6, 8],
+      subtraitRatingScale: [6, 8],
+      blankSlots: 4,
+      parts: { stressDice: 3 },
+    },
+  };
+  M.normalizeView({ traitSets: [set] });
+  ok(JSON.stringify(set.view.ratingLadder) === '[4,6,8]' && set.view.ratingScale === undefined, 'ratingScale copied and stripped');
+  ok(JSON.stringify(set.view.subtraitRatingLadder) === '[6,8]' && set.view.subtraitRatingScale === undefined,
+    'subtraitRatingScale copied and stripped');
+  ok(set.view.reservedSlots === 4 && set.view.blankSlots === undefined, 'blankSlots copied and stripped');
+  ok(set.view.parts.trackDice === 3 && set.view.parts.stressDice === undefined, 'parts stressDice copied and stripped');
+
+  const both = {
+    name: 'Values',
+    view: { ratingScale: [4, 6], ratingLadder: [8, 10], subtraitRatingScale: [4], subtraitRatingLadder: [12] },
+  };
+  M.normalizeView({ traitSets: [both] });
+  ok(JSON.stringify(both.view.ratingLadder) === '[8,10]' && JSON.stringify(both.view.subtraitRatingLadder) === '[12]',
+    'current keys win over legacy keys', both.view);
+  ok(both.view.ratingScale === undefined && both.view.subtraitRatingScale === undefined, 'colliding legacy keys strip');
+
+  const custom = { name: 'Values', custom: { cortexToolkit: { blankSlots: 2, ratingScale: [6, 8] } } };
+  M.normalizeView({ traitSets: [custom] });
+  ok(custom.custom.cortexToolkit.reservedSlots === 2 && custom.custom.cortexToolkit.blankSlots === undefined,
+    'custom compartment migrates blankSlots');
+  ok(JSON.stringify(custom.custom.cortexToolkit.ratingLadder) === '[6,8]' && custom.custom.cortexToolkit.ratingScale === undefined,
+    'custom compartment migrates ratingScale');
 }
 
 console.log(`migration-tests: ${pass} passed, ${fail} failed`);

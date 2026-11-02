@@ -21,8 +21,8 @@ export interface TraitSetProps {
 
 export const TRAIT_SET_KEY: InjectionKey<TraitSetApi> = Symbol( 'traitSetApi' );
 
-export function isPlayAddRemovableSet( traitSetArg: TraitSet ): boolean {
-	return cortexFunctions.isPlayAddRemovableSet( traitSetArg );
+export function isPlayMutableSet( traitSetArg: TraitSet ): boolean {
+	return cortexFunctions.isPlayMutableSet( traitSetArg );
 }
 
 export function useTraitSet( props: TraitSetProps, emit: any ) {
@@ -396,7 +396,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 	function openTraitAt( sArg: any, item: any ) {
 		if ( !item ) return;
 		if ( item.isPlaceholder ) {
-			if ( props.submode === 'play' && !isPlayAddRemovableSet( traitSet.value ) ) {
+			if ( props.submode === 'play' && !isPlayMutableSet( traitSet.value ) ) {
 				return;
 			}
 			fillPlaceholder( sArg );
@@ -434,7 +434,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		if ( name.endsWith( ':' ) ) return false;
 		const tsBody = getView( traitSetArg )?.style?.body;
 		const tsName = ( traitSetArg?.name || '' ).toLowerCase();
-		if ( tsBody === 'portrait-ring' || tsBody === 'attributes' || tsBody === 'die-track' ||
+		if ( tsBody === 'portrait-ring' || tsBody === 'die-track' ||
 		     cortexFunctions.isFixedNameSet( tsName ) ||
 		     ( getView( traitSetArg )?.traitColumns ?? 0 ) > 1 ||
 		     cortexFunctions.hasTrackPart( traitSetArg ) ) {
@@ -1276,7 +1276,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		const bodyStyle = custom?.style?.body;
 		if ( bodyStyle === 'notes' || bodyStyle === 'image' ) return 0;
 
-		const configured = custom?.reservedSlots ?? custom?.blankSlots;
+		const configured = custom?.reservedSlots;
 		if ( configured !== undefined && configured !== null && String( configured ) !== '' ) {
 			return Math.max( Number( configured ) || 0, ( traitSetArg.traits || [] ).length );
 		}
@@ -1310,7 +1310,7 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		firstDie, isDieActive, isTraitRated,
 		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
 		getTraitSetSlotCount,
-		isPlayAddRemovableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
+		isPlayMutableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
 		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
 		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
 		frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,

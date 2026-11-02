@@ -120,7 +120,7 @@
             "sfx": false,
             "subtraits": false
           },
-          "ratingScale": [
+          "ratingLadder": [
             8
           ],
           "page": 1,
@@ -274,7 +274,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -329,7 +329,7 @@
             "header": "die-track",
             "body": "die-track"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -383,7 +383,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -456,14 +456,14 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
             10,
             12
           ],
-          "subtraitRatingScale": [
+          "subtraitRatingLadder": [
             6
           ],
           "multiDie": false,
@@ -511,7 +511,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             6,
             8,
             10,
@@ -598,7 +598,7 @@
             "header": "default",
             "body": "default"
           },
-          "ratingScale": [
+          "ratingLadder": [
             4,
             6,
             8,
@@ -657,7 +657,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [],
+          "ratingLadder": [],
           "reservedSlots": 3,
           "place": {
             "left": "25%",
@@ -711,7 +711,7 @@
             "body": "default"
           },
           "multiDie": false,
-          "ratingScale": [],
+          "ratingLadder": [],
           "reservedSlots": 3,
           "place": {
             "left": "25%",

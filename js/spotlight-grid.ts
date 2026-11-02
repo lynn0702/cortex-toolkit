@@ -307,8 +307,6 @@ export interface PartsSpec {
 	badge?: boolean;
 	block: boolean;
 	subtraits: boolean;
-	sfx?: boolean; // legacy caller compat
-	stressDice?: number; // legacy caller compat
 }
 
 // Compose a set's trait-part layout per the additive rules: base trait is
@@ -320,7 +318,7 @@ export interface PartsSpec {
 // label 13%, track 5.4% per die, name takes the remainder).
 export function buildParts( spec: PartsSpec ): Record<string, { left: string; top: number; width: string; height: number }> {
 	const ratingW = Math.round( 6 * Math.max( 1, Math.round( spec.ratingDice ) ) * 10 ) / 10;
-	const trackDice = spec.trackDice ?? spec.stressDice ?? 0;
+	const trackDice = spec.trackDice ?? 0;
 	const hasTrack = trackDice > 0;
 	const trackW = hasTrack ? Math.round( 5.4 * Math.max( 1, Math.round( trackDice ) ) * 10 ) / 10 : 0;
 	const labelW = hasTrack ? 13 : 0;
@@ -367,7 +365,7 @@ export function buildParts( spec: PartsSpec ): Record<string, { left: string; to
 		parts.badge = { left: '0%', top: row, width: '100%', height: 1 };
 		row += 1;
 	}
-	if ( spec.block || spec.sfx ) {
+	if ( spec.block ) {
 		parts.block = { left: '0%', top: row, width: '100%', height: 1 };
 		row += 1;
 	}

@@ -513,10 +513,9 @@ export interface CortexToolkitCustom {
 	colWidth?: number | null;
 	editorDock?: 'left' | 'right';
 	traitColumns?: number;
-	ratingScale?: number[];
-	subtraitRatingScale?: number[];
+	ratingLadder?: number[];
+	subtraitRatingLadder?: number[];
 	reservedSlots?: number | null;
-	blankSlots?: number | null;
 
 	// behavior / labels
 	/** @deprecated superseded by parts; read for legacy migration only (kept for vertical ladders). */

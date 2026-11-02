@@ -10,7 +10,7 @@ function ok(cond, name, extra) {
 
 const paired = { view: { style: { body: 'paired-slots' } } };
 const plain = { view: { style: { body: 'default' } } };
-const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingScale: [6, 8, 10] } };
+const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLadder: [6, 8, 10] } };
 
 // ---- slot ratings: secondary slots floor at d6 on standard scales.
 {
@@ -32,16 +32,16 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingSca
   ok(F.isFixedNameSet('Eidolon Strain') === true, 'eidolon matches', F.fixedNameSetKeys.length);
 }
 
-// ---- isPlayAddRemovableSet (playMutable-only carveout)
+// ---- isPlayMutableSet (playMutable-only carveout)
 {
-  ok(F.isPlayAddRemovableSet({ name: 'Complications', view: { playMutable: true } }) === true, 'flagged complication set is play-add/removable');
-  ok(F.isPlayAddRemovableSet({ name: 'Complications', view: { playMutable: false } }) === false, 'explicit false is not play-add/removable');
-  ok(F.isPlayAddRemovableSet({ name: 'Complications' }) === false, 'unflagged complication set is not play-add/removable (no name sniffing)');
-  ok(F.isPlayAddRemovableSet({ name: 'Session Complications' }) === false, 'fuzzy complication name does not match');
-  ok(F.isPlayAddRemovableSet({ name: 'Custom Stress', view: { style: { body: 'die-track' } } }) === false, 'die-track set is not play-add/removable (no stress fallback)');
-  ok(F.isPlayAddRemovableSet({ name: 'Skills', view: { playMutable: true } }) === true, 'explicit playMutable true wins on any set');
-  ok(F.isPlayAddRemovableSet({ name: 'Distinctions' }) === false, 'unflagged set returns false');
-  ok(F.isPlayAddRemovableSet(null) === false, 'null trait set returns false');
+  ok(F.isPlayMutableSet({ name: 'Complications', view: { playMutable: true } }) === true, 'flagged complication set is play-add/removable');
+  ok(F.isPlayMutableSet({ name: 'Complications', view: { playMutable: false } }) === false, 'explicit false is not play-add/removable');
+  ok(F.isPlayMutableSet({ name: 'Complications' }) === false, 'unflagged complication set is not play-add/removable (no name sniffing)');
+  ok(F.isPlayMutableSet({ name: 'Session Complications' }) === false, 'fuzzy complication name does not match');
+  ok(F.isPlayMutableSet({ name: 'Custom Stress', view: { style: { body: 'die-track' } } }) === false, 'die-track set is not play-add/removable (no stress fallback)');
+  ok(F.isPlayMutableSet({ name: 'Skills', view: { playMutable: true } }) === true, 'explicit playMutable true wins on any set');
+  ok(F.isPlayMutableSet({ name: 'Distinctions' }) === false, 'unflagged set returns false');
+  ok(F.isPlayMutableSet(null) === false, 'null trait set returns false');
 }
 
 
