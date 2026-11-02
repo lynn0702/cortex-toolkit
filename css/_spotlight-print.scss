@@ -2049,14 +2049,14 @@
 	max-height: 90vh !important;
 	display: flex;
 	flex-direction: column;
-	background: #ffffff !important;
-	color: #0f172a !important;
+	background: #ffffff;
+	color: #0f172a;
 	border: 1px solid #cbd5e1;
 	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
 
 	.modal-close {
-		color: #64748b !important;
-		&:hover { color: #0f172a !important; }
+		color: #64748b;
+		&:hover { color: #0f172a; }
 	}
 
 	.modal-inner {
@@ -2281,6 +2281,66 @@
 					color: #ffffff;
 					&:hover { background: #047857; }
 				}
+			}
+		}
+	}
+}
+
+// DARK MODE FOR SPOTLIGHT LIBRARY MODAL (screen only)
+@media screen {
+	[data-theme="dark"],
+	.theme-dark {
+		.modal-spotlight-library {
+			background: #1e293b;
+			color: #f1f5f9;
+			border-color: #334155;
+
+			.modal-close {
+				color: #94a3b8;
+				&:hover { color: #f8fafc; }
+			}
+
+			.spotlight-library-header {
+				border-bottom-color: #334155;
+				h2 { color: #f8fafc; }
+				p { color: #94a3b8; }
+			}
+
+			.spotlight-search-input {
+				input {
+					background: #0f172a;
+					color: #f1f5f9;
+					border-color: #334155;
+					&::placeholder { color: #94a3b8; }
+				}
+				i { color: #94a3b8; }
+			}
+
+			.spotlight-loading { color: #94a3b8; }
+
+			.spotlight-card {
+				background: #0f172a;
+				border-color: #334155;
+			}
+
+			.spotlight-card-title { color: #f8fafc; }
+			.spotlight-card-subtitle { color: #94a3b8; }
+			.spotlight-card-title a { color: #0284c7; }
+
+			.badge-genre {
+				background: #1e293b;
+				color: #cbd5e1;
+				border-color: #334155;
+			}
+
+			.spotlight-card-hero .attribute-name { color: #f1f5f9; }
+
+			.spotlight-card-desc { color: #e2e8f0; }
+
+			.trait-tag {
+				background: #1e293b;
+				color: #cbd5e1;
+				border-color: #334155;
 			}
 		}
 	}

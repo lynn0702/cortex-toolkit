@@ -408,3 +408,27 @@ https://github.com/kaelri/cortex-toolkit.
   consumers. Verified live in the local build:
   29 library cards, spinner clears, no bundle
   console error.
+
+- 2026-11-02: Spotlight Library modal dark mode: the modal
+  forced light rendering (`background: #ffffff
+  !important`, hardcoded light cards/pills/rows)
+  with no dark-theme rules targeting it, so it
+  stayed white while the app ran dark. Removed
+  the base `!important` flags (safe: the modal
+  stylesheet imports after the generic modal
+  stylesheet) and added a screen-only dark block
+  in the same file using the app's existing dark
+  tokens; light-mode values unchanged, action
+  buttons and hero images unchanged, print rules
+  untouched. Verified in the local build: light
+  identical, dark legible across panel, cards,
+  pills, rows, and search input, theme toggle
+  while open switches the modal.
+
+- 2026-11-02: Spotlight Library card hero readability in dark
+  mode: `.attribute-name` (Setting/Prep/Complexity
+  labels on the card ring) was hardcoded `color: black`
+  and unreadable on the dark card. Added a dark-mode
+  override (`#f1f5f9`) scoped to the library modal's
+  dark block, aligned with the modal's other dark text
+  tokens. Verified in the local build.
