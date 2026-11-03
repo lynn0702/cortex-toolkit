@@ -869,6 +869,8 @@ export function useTraitSet( props: TraitSetProps, emit: any ) {
 		if ( rating && rating.type === 'Pip' ) {
 			if ( Array.isArray( rating.range ) && typeof rating.range[0] === 'number' && rating.range[0] > 0 ) {
 				count = Math.floor( rating.range[0] );
+			} else if ( Array.isArray( rating.value ) && rating.value.length > 0 ) {
+				count = rating.value.length;
 			}
 			if ( Array.isArray( rating.value ) ) {
 				filled = rating.value.filter( ( v ) => v === true ).length;

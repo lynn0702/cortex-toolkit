@@ -87,6 +87,9 @@ const isPillarPlay = computed( () => props.submode === 'play' && ( isMobileViewp
 
 function toggleDesktopPillars() {
 	const next = !effectiveDesktopPillars.value;
+	if ( next && typeof window !== 'undefined' ) {
+		savedSheetScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+	}
 	internalDesktopPillars.value = next;
 	if ( typeof localStorage !== 'undefined' ) {
 		localStorage.setItem( 'cortexPlayPillars', String( next ) );
@@ -97,11 +100,12 @@ function toggleDesktopPillars() {
 let savedSheetScrollY = 0;
 watch( isPillarPlay, ( isPillar, wasPillar ) => {
 	if ( !wasPillar && isPillar ) {
-		if ( typeof window !== 'undefined' ) {
+		if ( typeof window !== 'undefined' && !savedSheetScrollY ) {
 			savedSheetScrollY = window.scrollY || document.documentElement.scrollTop || 0;
 		}
 	} else if ( wasPillar && !isPillar ) {
 		const targetY = savedSheetScrollY;
+		savedSheetScrollY = 0;
 		nextTick( () => {
 			if ( typeof window !== 'undefined' ) {
 				window.scrollTo( 0, targetY );
@@ -440,9 +444,14 @@ function addHeaderPortrait() {
 
 // SELECTING
 function selectElement( selector: unknown[] ) {
-	if ( props.submode === 'edit' ) {
-		emit( 'selectElement', selector );
+	if ( props.submode === 'print' ) return;
+	if ( props.submode === 'play' ) {
+		if ( !selector.length || selector[ 0 ] === 'trait' ) {
+			emit( 'selectElement', selector );
+		}
+		return;
 	}
+	emit( 'selectElement', selector );
 }
 
 function clearSelected() {
