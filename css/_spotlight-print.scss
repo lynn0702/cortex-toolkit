@@ -4230,3 +4230,26 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 
+// CLASSIC PLACED (GRID) SETS - companion rule
+// Classic sheets do not carry spotlight-style, so the nested spotlight
+// grid rules do not apply to them. Give the classic grid region (rendered
+// with the same .columns.spotlight-columns.spotlight-grid classes) the
+// same grid display, via a top-level (non-spotlight-scoped) rule.
+.classic-grid-sections .columns.spotlight-columns,
+.classic-grid-sections .columns.spotlight-columns.spotlight-grid {
+	display: grid;
+	gap: 0;
+	align-items: stretch;
+	align-content: start;
+
+	> .trait-set {
+		min-width: 0;
+		width: auto;
+		margin-bottom: 0;
+		break-inside: avoid;
+	}
+}
+
+.classic-grid-sections .columns.spotlight-columns + .columns.spotlight-columns {
+	margin-top: -2px;
+}

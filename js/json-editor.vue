@@ -98,7 +98,7 @@ watch( () => props.open, ( isOpen ) => {
 		<div class="editor-label">Character JSON</div>
 		<div class="editor-hint">Stored layered form: name-keyed maps, dice strings, no slots, no internal ids. Apply runs the import path — a syntax error changes nothing on the sheet.</div>
 		<div v-if="error" class="json-error" role="alert">{{ error }}</div>
-		<textarea
+		<textarea v-if="open"
 			v-model="text"
 			class="json-text"
 			rows="24"

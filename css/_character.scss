@@ -1718,6 +1718,9 @@ button.trait-title-btn {
 		max-width: min(320px, 90vw) !important;
 		box-sizing: border-box;
 		white-space: normal;
+		border-bottom: none !important;
+		margin-bottom: 0 !important;
+		padding-bottom: 0 !important;
 		transition: left 0.25s ease, top 0.25s ease;
 
 		.trait-inner {

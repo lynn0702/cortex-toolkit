@@ -8,7 +8,9 @@ import {
 	hasClassicFullSets as gridHasClassicFullSets,
 	getSpotlightSections as gridGetSpotlightSections,
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
+	placeOf as gridPlaceOf,
 	type SpotlightSection,
+	type SpotlightCell,
 } from './spotlight-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
 import PrintToolbar from './print-toolbar.vue';
@@ -91,6 +93,28 @@ function toggleDesktopPillars() {
 	}
 	setupCarouselObserver();
 }
+
+let savedSheetScrollY = 0;
+watch( isPillarPlay, ( isPillar, wasPillar ) => {
+	if ( !wasPillar && isPillar ) {
+		if ( typeof window !== 'undefined' ) {
+			savedSheetScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+		}
+	} else if ( wasPillar && !isPillar ) {
+		const targetY = savedSheetScrollY;
+		nextTick( () => {
+			if ( typeof window !== 'undefined' ) {
+				window.scrollTo( 0, targetY );
+				requestAnimationFrame( () => {
+					window.scrollTo( 0, targetY );
+				} );
+			}
+		} );
+	}
+} );
+watch( () => props.character?.id, () => {
+	savedSheetScrollY = 0;
+} );
 
 const name = computed( () => props.character?.name ?? '' );
 const description = computed( () => props.character?.description ?? '' );
@@ -341,6 +365,31 @@ function renderDieValue( value: number ) { return cortexFunctions.getDieDisplayV
 function getTraitSetColumn( traitSet: TraitSet ) { return gridTraitSetColumn( traitSet ); }
 function isFullWidthClassic( traitSet: TraitSet ) { return gridIsFullWidthClassic( traitSet ); }
 function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets( traitSets.value, ringTraitID.value, pageIndex ); }
+function hasPlace( traitSet: TraitSet ) { return gridPlaceOf( traitSet ) !== null; }
+function hasClassicUnplacedFullSets( pageIndex: number ) {
+	return ( traitSets.value || [] ).some( ( traitSet, s ) =>
+		s !== ringTraitID.value &&
+		!isNameSet( traitSet ) &&
+		( ( getView( traitSet )?.page || 1 ) === pageIndex ) &&
+		isFullWidthClassic( traitSet ) &&
+		!hasPlace( traitSet )
+	);
+}
+function getClassicGridSections( pageIndex: number ): SpotlightSection[] {
+	const sections = getSpotlightSections( pageIndex );
+	const out: SpotlightSection[] = [];
+	for ( const section of sections ) {
+		if ( section.type !== 'grid' ) continue;
+		const ordered = section.ordered.filter( ( { index: s } ) => s !== ringTraitID.value );
+		if ( ordered.length === 0 ) continue;
+		const cells: Record<number, SpotlightCell> = {};
+		for ( const { index: s } of ordered ) {
+			if ( section.cells[ s ] ) cells[ s ] = section.cells[ s ];
+		}
+		out.push( { ...section, ordered, cells } );
+	}
+	return out;
+}
 
 function shouldShowClassicPortrait() {
 	if ( isSpotlightStyle.value ) return false;
@@ -1240,7 +1289,7 @@ watch( () => props.submode, () => {
 					</header>
 
 					<!-- SPOTLIGHT MODE LAYOUT (NESTED GRIDS, EXPLICIT COORDINATES) -->
-					<div v-if="isSpotlightStyle" class="spotlight-layout">
+					<div v-if="isSpotlightStyle && !isPillarPlay" class="spotlight-layout">
 						<template v-for="(section, secIdx) in getSpotlightSections(pageIndex)" :key="secIdx">
 							<div
 								v-if="section.type === 'full-width'"
@@ -1342,7 +1391,7 @@ watch( () => props.submode, () => {
 					</div>
 
 					<!-- COLUMNS: CLASSIC MODE -->
-					<div class="columns" v-else>
+					<div class="columns" v-if="!isSpotlightStyle && !isPillarPlay">
 
 						<div v-for="pageLocation in ['left', 'right']" :class="'column-' + pageLocation">
 
@@ -1402,7 +1451,7 @@ watch( () => props.submode, () => {
 							<div class="preview-button-container"
 								v-if="pageLocation === 'right'"
 							>
-									<div class="preview-button-container-inner" v-show="submode === 'edit'">
+									<div class="preview-button-container-inner" v-if="submode === 'edit'">
 										<div class="preview-button"
 											@click.stop="addTrait( ringTraitID )"
 										>
@@ -1435,7 +1484,7 @@ watch( () => props.submode, () => {
 
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
-									v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet)"
+									v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
 									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
@@ -1443,7 +1492,7 @@ watch( () => props.submode, () => {
 							<!-- BUTTON: ADD TRAIT SET -->
 							<transition appear>
 							<div class="preview-button-container"
-								v-show="submode === 'edit'"
+								v-if="submode === 'edit'"
 							>
 								<div class="preview-button-container-inner">
 									<div class="preview-button"
@@ -1510,11 +1559,41 @@ watch( () => props.submode, () => {
 
 					</div> <!-- .columns -->
 
+					<!-- CLASSIC PLACED (GRID) SETS -->
+					<div class="classic-grid-sections" v-if="!isSpotlightStyle && !isPillarPlay && getClassicGridSections(pageIndex).length">
+						<template v-for="(section, secIdx) in getClassicGridSections(pageIndex)" :key="'classic-grid-' + secIdx">
+							<div
+								:class="['columns', 'spotlight-columns', 'spotlight-grid']"
+								:style="getSpotlightGridStyle(section)"
+							>
+								<TraitSetBlock
+									v-for="{ traitSet, index: s } in section.ordered"
+									:key="s"
+									:character="character"
+									:traitSetID="s"
+									:submode="submode"
+									:editing="editing"
+									:viewY="viewY"
+									:printBlank="effectivePrintBlank"
+									:printStyle="printStyle"
+									:style="section.cells[s] && section.cells[s].style"
+									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
+									@selectElement="selectElement"
+									@updateCharacter="updateCharacter"
+									@removeTrait="removeTrait"
+									@removeTraitSet="removeTraitSet"
+									@addTrait="addTrait"
+									@addDieToRoller="emit('addDieToRoller', $event)"
+								></TraitSetBlock>
+							</div>
+						</template>
+					</div>
+
 					<!-- CLASSIC FULL-WIDTH SETS -->
-					<div class="classic-full-band" v-if="!isSpotlightStyle && hasClassicFullSets(pageIndex)">
-						<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
-							<TraitSetBlock
-								v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet)"
+<div class="classic-full-band" v-if="!isSpotlightStyle && !isPillarPlay && hasClassicUnplacedFullSets(pageIndex)">
+		<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
+			<TraitSetBlock
+				v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
 								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>

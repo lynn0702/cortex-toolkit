@@ -432,3 +432,55 @@ https://github.com/kaelri/cortex-toolkit.
   override (`#f1f5f9`) scoped to the library modal's
   dark block, aligned with the modal's other dark text
   tokens. Verified in the local build.
+
+- 2026-11-02: Classic rendering unified on place (section 4d):
+  classic sheets now read view.place - a classic
+  set with place renders on the grid through the
+  shared section engine (same place semantics as
+  spotlight: percent left/width, integer-row
+  top/height, height as floor), while unplaced
+  sets keep the existing column rendering
+  (location/track left/right, span full-width)
+  and the full band. Placed sets are excluded
+  from the column and full-band loops (including
+  the band's guard), ring sets never enter grid
+  sections, and a classic-scoped companion rule
+  gives the grid region the spotlight grid
+  display (the screen grid rules are scoped
+  under spotlight-style and do not apply to
+  classic sheets on their own). Page order is
+  columns, then grid sections, then the full
+  band; document-order interleaving between
+  column sets and grid sets is not preserved.
+  No migration: no existing set gained place,
+  and the corpus (all spotlight) renders
+  identically. Verified in the local build on
+  constructed classic cases in Edit, with the
+  mini agreeing.
+
+
+## 2026-11-02 — DOM diet: scoped v-show diet + pillar gating; page windowing deferred
+
+Decided: shrink the live DOM in two scoped moves, with no visible change.
+(1) Preview-button containers convert v-show → v-if (conditions unchanged):
+buttons only, no state, and in Play they are hidden for every non-playMutable
+set, so v-if removes them from the DOM instead of hiding them.
+(2) JsonEditor v-ifs its textarea on its existing open prop; the draft stays
+in a ref and refill-on-open-unless-mid-edit is preserved. The JSON pane div
+stays v-show: v-if on the pane would destroy mid-edit drafts.
+Explicitly NOT converted: the roller pane (roll results, text log, and tab
+selection are component-local refs; unmounting wipes the last roll's record
+even though the staged pool, a prop, would survive) and the properties pane
+(its editors are already v-if'd by editing type; the idle pane is light).
+(3) In pillar Play, the sheet sections (spotlight layout, columns, full band,
+and the classic-grid-sections region where it exists) gain !isPillarPlay, so
+page-1 sets are no longer instantiated twice (sheet block hidden by
+display:none + pillar block). The pillar track is untouched and the page loop
+is NOT gated (the track lives inside page 1). Sheet scroll position is
+preserved across the pillar toggle (record before, restore after re-mount).
+Page windowing is DEFERRED, not rejected: it needs a screen page control
+(screen has no current-page state; pages scroll, jump pills need targets in
+DOM, browser find works across pages today) and must earn its UX cost with
+measurement. This brief's before/after node counts (Vanguard + kitchen-sink,
+Edit/Play/pillar) are the evidence that decides whether windowing is still
+needed. Print renders all pages regardless and is untouched.
