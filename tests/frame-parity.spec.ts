@@ -58,7 +58,7 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Attribute',
 						view: {
 							header: 'sidebar',
-							frame: { shape: 'block', stroke: 'strong' }
+							frame: { shape: 'block', color: 'strong' }
 						},
 						traits: [
 							{ name: 'Agility', rating: { type: 'Die', value: [ 8 ] } }
@@ -69,7 +69,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 			const wrapper = mount( TraitSetBlock, {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] }
+				it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
 			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
 
 			// Check framed suppression classes (disables legacy CSS border)
 			expect( wrapper.classes() ).toContain( 'trait-set-framed' );
@@ -79,7 +94,7 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 			const frameSvg = wrapper.findComponent( TraitSetFrame );
 			expect( frameSvg.exists() ).toBe( true );
 			expect( frameSvg.classes() ).toContain( 'frame-block-svg' );
-			expect( frameSvg.classes() ).toContain( 'frame-stroke-strong' );
+			expect( frameSvg.classes() ).toContain( 'frame-color-strong' );
 
 			// Check perimeter path exists
 			const perimeter = frameSvg.find( '.frame-perimeter-path' );
@@ -93,7 +108,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect( spineD ).toMatch( /^M [\d.]+,1 L [\d.]+,/ );
 
 			wrapper.unmount();
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'renders horizontal spine line for top header mode', () => {
 			const character = {
@@ -104,7 +134,7 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Skill',
 						view: {
 							header: 'top',
-							frame: { shape: 'block', stroke: 'strong' }
+							frame: { shape: 'block', color: 'strong' }
 						},
 						traits: [
 							{ name: 'Fight', rating: { type: 'Die', value: [ 6 ] } }
@@ -115,7 +145,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 			const wrapper = mount( TraitSetBlock, {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] }
+				it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
 			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
 
 			const frameSvg = wrapper.findComponent( TraitSetFrame );
 			expect( frameSvg.exists() ).toBe( true );
@@ -127,7 +172,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect( spineD ).toMatch( /^M 1,[\d.]+ L \d+,[\d.]+/ );
 
 			wrapper.unmount();
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'suppresses spine line when set has no header (empty name)', () => {
 			const character = {
@@ -138,7 +198,7 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Trait',
 						view: {
 							header: 'top',
-							frame: { shape: 'block', stroke: 'strong' }
+							frame: { shape: 'block', color: 'strong' }
 						},
 						traits: [
 							{ name: 'Stealth', rating: { type: 'Die', value: [ 6 ] } }
@@ -149,7 +209,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 			const wrapper = mount( TraitSetBlock, {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] }
+				it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
 			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
 
 			// No header rendered
 			expect( wrapper.find( '.trait-set-header' ).exists() ).toBe( false );
@@ -161,7 +236,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect( frameSvg.find( '.frame-spine-path' ).exists() ).toBe( false );
 
 			wrapper.unmount();
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'preserves custom set background tint in perimeter path fill', () => {
 			const character = {
@@ -172,7 +262,7 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 						noun: 'Asset',
 						view: {
 							tint: '#e0f2fe',
-							frame: { shape: 'block', stroke: 'primary' }
+							frame: { shape: 'block', color: 'primary' }
 						},
 						traits: [
 							{ name: 'Hoverbike', rating: { type: 'Die', value: [ 8 ] } }
@@ -183,20 +273,50 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 
 			const wrapper = mount( TraitSetBlock, {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] }
+				it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
 			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
 
 			const frameSvg = wrapper.findComponent( TraitSetFrame );
 			const perimeter = frameSvg.find( '.frame-perimeter-path' );
 			expect( perimeter.attributes( 'style' ) ).toMatch( /fill:\s*(#e0f2fe|rgb\(224,\s*242,\s*254\))/ );
 
 			wrapper.unmount();
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'renders non-squashed corner radius with live pixel dimensions', () => {
 			const traitSet = {
 				name: 'Test Block',
 				view: {
-					frame: { shape: 'block', stroke: 'primary', corner: 4 }
+					frame: { shape: 'block', color: 'primary', corner: 4 }
 				}
 			};
 
@@ -208,7 +328,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 					headerWidth: 30.4,
 					hasHeader: true
 				}
+				it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
 			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
 
 			expect( wrapper.attributes( 'viewBox' ) ).toBe( '0 0 400 200' );
 			const d = wrapper.find( '.frame-perimeter-path' ).attributes( 'd' ) || '';
@@ -216,6 +351,36 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect( d ).toContain( 'M 5,1 L 395,1 Q 399,1 399,5' );
 
 			wrapper.unmount();
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
+		it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
 	} );
 
@@ -236,7 +401,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				view: {}
 			};
 			expect( resolveFrame( setLevelAttrRing ) ).toBeNull();
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'unifies view.ringTrait === true to a frame ring carrying ringConfig', () => {
 			const legacySet = {
@@ -258,7 +438,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect( resolved?.ringConfig ).toBeDefined();
 			expect( resolved?.ringConfig?.arcAngle ).toBe( -90 );
 			expect( resolved?.ringConfig?.arcSpread ).toBe( 100 );
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'verifies frame anchors match independent oracle for N=3, 4, 5, 6 under 0.01 percentage points (default config)', () => {
 			const ringConfig = { arcAngle: -90, arcSpread: 100, arcDistance: 0 };
@@ -266,7 +461,9 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				shape: 'ring',
 				span: [ 0, 360 ],
 				corner: 8,
-				stroke: 'primary',
+				stroke: '2px',
+				color: 'primary',
+				box: false,
 				legacyRing: true,
 				ringConfig
 			};
@@ -283,7 +480,22 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 					expect( deltaY, `N=${n} idx=${i} y delta must be < 0.01, got ${deltaY}` ).toBeLessThan( 0.01 );
 				}
 			}
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'verifies frame anchors match independent oracle for N=3, 4, 5, 6 under 0.01 points (non-default config: arcAngle, arcSpread, arcDistance)', () => {
 			const customConfig = { arcAngle: -45, arcSpread: 120, arcDistance: 6 };
@@ -291,7 +503,9 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				shape: 'ring',
 				span: [ 0, 360 ],
 				corner: 8,
-				stroke: 'strong',
+				stroke: '2px',
+				color: 'strong',
+				box: false,
 				legacyRing: true,
 				ringConfig: customConfig
 			};
@@ -315,14 +529,31 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 					}
 				}
 			}
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
+	} );
 
 		it( 'verifies name-offset styles reproduce 6mm offset with 0.35 cos threshold', () => {
 			const frameConfig: FrameConfig = {
 				shape: 'ring',
 				span: [ 0, 360 ],
 				corner: 8,
-				stroke: 'primary',
+				stroke: '2px',
+				color: 'primary',
+				box: false,
 				legacyRing: true,
 				ringConfig: { arcAngle: -90, arcSpread: 100, arcDistance: 0 }
 			};
@@ -337,6 +568,52 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				expect( a.nameStyle?.textAlign ).toBe( 'left' );
 				expect( a.nameStyle?.left ).toMatch( /calc\(50% \+ [\d.]+mm\)/ );
 			}
+			it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+
+		it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
+		} );
+	} );
+		it( 'resolves frame defaults: { shape: arc } resolves to color primary, stroke 2px, no dash, box false', () => {
+			const res = resolveFrame( { shape: 'arc' } );
+			expect( res ).toEqual( {
+				shape: 'arc',
+				span: [ -120, 120 ],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				ringConfig: null,
+				legacyRing: false
+			} );
+			expect( 'dash' in res! ).toBe( false );
 		} );
 	} );
 } );

@@ -45,7 +45,7 @@ export interface Rating {
 }
 
 /** The die ladder. The word is `range`, never `scale` — Scale is a trait name. */
-export const DIE_LADDER = [ 4, 6, 8, 10, 12 ] as number[];
+export const DIE_LADDER = [4, 6, 8, 10, 12] as number[];
 
 /** Base default: faces 1..hitches hitch; absent inherits; 0 is the exemption. */
 export const DEFAULT_HITCHES = 1;
@@ -53,79 +53,81 @@ export const DEFAULT_HITCHES = 1;
 /** Loose node access for rating helpers (array-model and layered nodes alike). */
 type RatedNode = { rating?: unknown; value?: unknown; dice?: unknown; hitches?: unknown; pool?: unknown; spendable?: unknown; keepsExtra?: unknown } | null | undefined;
 
-function asNumberList( v: unknown ): number[] {
-	return Array.isArray( v )
-		? v.filter( ( x ): x is number => typeof x === 'number' && Number.isFinite( x ) )
+function asNumberList(v: unknown): number[] {
+	return Array.isArray(v)
+		? v.filter((x): x is number => typeof x === 'number' && Number.isFinite(x))
 		: [];
 }
 
-function asRatingValue( v: unknown ): Array<number | boolean> {
-	if ( !Array.isArray( v ) ) return [];
-	return v.filter( ( x ): x is number | boolean => ( typeof x === 'number' && Number.isFinite( x ) ) || typeof x === 'boolean' );
+function asRatingValue(v: unknown): Array<number | boolean> {
+	if (!Array.isArray(v)) return [];
+	return v.filter((x): x is number | boolean => (typeof x === 'number' && Number.isFinite(x)) || typeof x === 'boolean');
 }
 
 /** Read the rating off any node; undefined when unrated (containers of subtraits/SFX only). */
-export function getRating( node: unknown ): Rating | undefined {
-	const n = ( node && typeof node === 'object' ? node : undefined ) as RatedNode;
-	if ( !n || typeof n !== 'object' ) return undefined;
+export function getRating(node: unknown): Rating | undefined {
+	const n = (node && typeof node === 'object' ? node : undefined) as RatedNode;
+	if (!n || typeof n !== 'object') return undefined;
 	const r = n.rating;
-	if ( r && typeof r === 'object' && !Array.isArray( r ) ) {
+	if (r && typeof r === 'object' && !Array.isArray(r)) {
 		const rec = r as Record<string, unknown>;
 		const type = rec.type;
-		if ( type === 'Counter' || type === 'Die' || type === 'Dice' || type === 'Pip' ) {
-			return { type, value: asRatingValue( rec.value ), range: asNumberList( rec.range ),
-				...( typeof rec.out === 'boolean' ? { out: rec.out } : {} ) };
+		if (type === 'Counter' || type === 'Die' || type === 'Dice' || type === 'Pip') {
+			return {
+				type, value: asRatingValue(rec.value), range: asNumberList(rec.range),
+				...(typeof rec.out === 'boolean' ? { out: rec.out } : {})
+			};
 		}
 		return undefined;
 	}
 	// Defensive read of pre-rating encodings (migration owns the write path).
-	const dice = Array.isArray( n.dice ) ? n.dice.filter( ( d ): d is number => typeof d === 'number' && d > 0 ) : [];
-	if ( dice.length > 0 ) {
-		return { type: dice.length > 1 ? 'Dice' : 'Die', value: dice, range: [ ...DIE_LADDER ] };
+	const dice = Array.isArray(n.dice) ? n.dice.filter((d): d is number => typeof d === 'number' && d > 0) : [];
+	if (dice.length > 0) {
+		return { type: dice.length > 1 ? 'Dice' : 'Die', value: dice, range: [...DIE_LADDER] };
 	}
-	if ( typeof n.value === 'number' && n.value > 0 ) {
-		return { type: 'Die', value: [ n.value ], range: [ ...DIE_LADDER ] };
+	if (typeof n.value === 'number' && n.value > 0) {
+		return { type: 'Die', value: [n.value], range: [...DIE_LADDER] };
 	}
 	return undefined;
 }
 
 /** A node is rated iff it carries a rating. */
-export function isRated( node: unknown ): boolean {
-	return getRating( node ) !== undefined;
+export function isRated(node: unknown): boolean {
+	return getRating(node) !== undefined;
 }
 
 /** Dice staged to the roller from a rating (Die/Dice values only; Counter/Pip stage nothing). */
-export function ratingDice( rating: Rating | undefined ): number[] {
-	if ( !rating ) return [];
-	if ( rating.type !== 'Die' && rating.type !== 'Dice' ) return [];
-	return rating.value.filter( ( v ): v is number => typeof v === 'number' && v > 0 );
+export function ratingDice(rating: Rating | undefined): number[] {
+	if (!rating) return [];
+	if (rating.type !== 'Die' && rating.type !== 'Dice') return [];
+	return rating.value.filter((v): v is number => typeof v === 'number' && v > 0);
 }
 
 /** Write dice onto a node as a Die/Dice rating. Empty clears to unrated. Range options (out) survive the rewrite. */
-export function setRatingDice( node: Record<string, any>, dice: number[], range?: number[] ): void {
-	const clean = Array.isArray( dice ) ? dice.filter( ( d ) => typeof d === 'number' && d > 0 ) : [];
-	if ( clean.length === 0 ) {
+export function setRatingDice(node: Record<string, any>, dice: number[], range?: number[]): void {
+	const clean = Array.isArray(dice) ? dice.filter((d) => typeof d === 'number' && d > 0) : [];
+	if (clean.length === 0) {
 		delete node.rating;
 		return;
 	}
-	const prev = ( node.rating && typeof node.rating === 'object' && !Array.isArray( node.rating ) ) ? node.rating : {};
+	const prev = (node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating)) ? node.rating : {};
 	node.rating = {
 		...prev,
 		type: clean.length > 1 ? 'Dice' : 'Die',
 		value: clean,
-		range: Array.isArray( range ) && range.length ? [ ...range ] : ( Array.isArray( prev.range ) && prev.range.length ? [ ...prev.range ] : [ ...DIE_LADDER ] ),
+		range: Array.isArray(range) && range.length ? [...range] : (Array.isArray(prev.range) && prev.range.length ? [...prev.range] : [...DIE_LADDER]),
 	};
 }
 
 /** Step a single-die rating to a size (or clear when size is null/0). Never touches siblings. Range options (out) survive the rewrite. */
-export function setRatingDie( node: Record<string, any>, size: number | null, range?: number[] ): void {
-	if ( typeof size === 'number' && size > 0 ) {
-		const prev = ( node.rating && typeof node.rating === 'object' && !Array.isArray( node.rating ) ) ? node.rating : {};
+export function setRatingDie(node: Record<string, any>, size: number | null, range?: number[]): void {
+	if (typeof size === 'number' && size > 0) {
+		const prev = (node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating)) ? node.rating : {};
 		node.rating = {
 			...prev,
 			type: 'Die',
-			value: [ size ],
-			range: Array.isArray( range ) && range.length ? [ ...range ] : ( Array.isArray( prev.range ) && prev.range.length ? [ ...prev.range ] : [ ...DIE_LADDER ] ),
+			value: [size],
+			range: Array.isArray(range) && range.length ? [...range] : (Array.isArray(prev.range) && prev.range.length ? [...prev.range] : [...DIE_LADDER]),
 		};
 	} else {
 		delete node.rating;
@@ -136,29 +138,29 @@ export function setRatingDie( node: Record<string, any>, size: number | null, ra
  * Build a rating from legacy encodings (migration/import read path).
  * pool/spendable/hitches ride alongside; range defaults to the die ladder.
  */
-export function ratingFromLegacy( value: unknown, dice: unknown, opts?: { range?: number[]; type?: RatingType } ): Rating | undefined {
-	const list = Array.isArray( dice ) ? dice.filter( ( d ): d is number => typeof d === 'number' && d > 0 ) : [];
-	if ( list.length > 0 ) {
-		return { type: list.length > 1 ? 'Dice' : 'Die', value: list, range: opts?.range ? [ ...opts.range ] : [ ...DIE_LADDER ] };
+export function ratingFromLegacy(value: unknown, dice: unknown, opts?: { range?: number[]; type?: RatingType }): Rating | undefined {
+	const list = Array.isArray(dice) ? dice.filter((d): d is number => typeof d === 'number' && d > 0) : [];
+	if (list.length > 0) {
+		return { type: list.length > 1 ? 'Dice' : 'Die', value: list, range: opts?.range ? [...opts.range] : [...DIE_LADDER] };
 	}
-	if ( typeof value === 'number' && value > 0 ) {
-		return { type: opts?.type ?? 'Die', value: [ value ], range: opts?.range ? [ ...opts.range ] : [ ...DIE_LADDER ] };
+	if (typeof value === 'number' && value > 0) {
+		return { type: opts?.type ?? 'Die', value: [value], range: opts?.range ? [...opts.range] : [...DIE_LADDER] };
 	}
 	return undefined;
 }
 
 /** Spent indices live beside the rating (view.spentDice), never in it. */
-export function getSpentIndices( node: unknown ): number[] {
-	const v = getView( node );
+export function getSpentIndices(node: unknown): number[] {
+	const v = getView(node);
 	const spent = v?.spentDice;
-	return Array.isArray( spent ) ? spent.filter( ( x ): x is number => typeof x === 'number' ) : [];
+	return Array.isArray(spent) ? spent.filter((x): x is number => typeof x === 'number') : [];
 }
 
 /** Dice available for staging: rating dice minus spent. Value is never mutated. */
-export function availableDice( node: unknown ): number[] {
-	const dice = ratingDice( getRating( node ) );
-	const spent = new Set( getSpentIndices( node ) );
-	return dice.filter( ( _d, i ) => !spent.has( i ) );
+export function availableDice(node: unknown): number[] {
+	const dice = ratingDice(getRating(node));
+	const spent = new Set(getSpentIndices(node));
+	return dice.filter((_d, i) => !spent.has(i));
 }
 
 /**
@@ -166,12 +168,12 @@ export function availableDice( node: unknown ): number[] {
  * that sets it, base default 1. `fallbacks` runs nearest-first (parent
  * trait … set). Only hitches 0 is special — the exemption.
  */
-export function resolveHitches( node: unknown, fallbacks?: Array<unknown> ): number {
-	const chain: Array<unknown> = [ node, ...( Array.isArray( fallbacks ) ? fallbacks : [] ) ];
-	for ( const link of chain ) {
-		const n = ( link && typeof link === 'object' ? link : undefined ) as RatedNode;
-		if ( n && typeof n.hitches === 'number' && Number.isFinite( n.hitches ) && n.hitches >= 0 ) {
-			return Math.floor( n.hitches );
+export function resolveHitches(node: unknown, fallbacks?: Array<unknown>): number {
+	const chain: Array<unknown> = [node, ...(Array.isArray(fallbacks) ? fallbacks : [])];
+	for (const link of chain) {
+		const n = (link && typeof link === 'object' ? link : undefined) as RatedNode;
+		if (n && typeof n.hitches === 'number' && Number.isFinite(n.hitches) && n.hitches >= 0) {
+			return Math.floor(n.hitches);
 		}
 	}
 	return DEFAULT_HITCHES;
@@ -182,14 +184,14 @@ export function resolveHitches( node: unknown, fallbacks?: Array<unknown> ): num
  * roll in their own pool so the exemption holds. Computed where rolling
  * happens, stored nowhere.
  */
-export function rollSeparate( node: unknown, fallbacks?: Array<unknown> ): boolean {
-	return resolveHitches( node, fallbacks ) === 0;
+export function rollSeparate(node: unknown, fallbacks?: Array<unknown>): boolean {
+	return resolveHitches(node, fallbacks) === 0;
 }
 
 /** keepsExtra: the Scale effect, named where data must name it. */
-export function keepsExtraDice( node: unknown ): number {
-	const n = ( node && typeof node === 'object' ? node : undefined ) as RatedNode;
-	const k = n && typeof n.keepsExtra === 'number' && Number.isFinite( n.keepsExtra ) ? Math.floor( n.keepsExtra ) : 0;
+export function keepsExtraDice(node: unknown): number {
+	const n = (node && typeof node === 'object' ? node : undefined) as RatedNode;
+	const k = n && typeof n.keepsExtra === 'number' && Number.isFinite(n.keepsExtra) ? Math.floor(n.keepsExtra) : 0;
 	return k > 0 ? k : 0;
 }
 
@@ -199,33 +201,33 @@ export function keepsExtraDice( node: unknown ): number {
  * set flag that enables Out badges (outIndicator) puts it in range
  * for the set's dice.
  */
-export function hasOutRange( node: unknown, fallbacks?: Array<unknown> ): boolean {
-	const r = getRating( node );
-	if ( ( r?.type === 'Die' || r?.type === 'Dice' ) && ( r as RatedNode & { out?: unknown } ).out === true ) return true;
-	for ( const fb of Array.isArray( fallbacks ) ? fallbacks : [] ) {
-		const v = getView( fb );
-		if ( !v || typeof v !== 'object' ) continue;
+export function hasOutRange(node: unknown, fallbacks?: Array<unknown>): boolean {
+	const r = getRating(node);
+	if ((r?.type === 'Die' || r?.type === 'Dice') && (r as RatedNode & { out?: unknown }).out === true) return true;
+	for (const fb of Array.isArray(fallbacks) ? fallbacks : []) {
+		const v = getView(fb);
+		if (!v || typeof v !== 'object') continue;
 		const bag = v as Record<string, unknown>;
-		if ( bag.outIndicator === true ) return true;
+		if (bag.outIndicator === true) return true;
 	}
 	return false;
 }
 
 /** Top of a die ladder: max range step, default d12. Out sits one step past it. */
-export function rangeTop( node: unknown ): number {
-	const r = getRating( node );
-	const steps = r && Array.isArray( ( r as RatedNode & { range?: unknown } ).range )
-		? ( ( r as RatedNode & { range?: unknown } ).range as unknown[] ).filter( ( x ): x is number => typeof x === 'number' )
+export function rangeTop(node: unknown): number {
+	const r = getRating(node);
+	const steps = r && Array.isArray((r as RatedNode & { range?: unknown }).range)
+		? ((r as RatedNode & { range?: unknown }).range as unknown[]).filter((x): x is number => typeof x === 'number')
 		: [];
-	return steps.length ? Math.max( ...steps ) : 12;
+	return steps.length ? Math.max(...steps) : 12;
 }
 
 /** Out state: out in range, and the die stepped past the top or flagged out. */
-export function isOutDie( node: unknown, fallbacks?: Array<unknown> ): boolean {
-	if ( !hasOutRange( node, fallbacks ) ) return false;
-	const first = ratingDice( getRating( node ) )[0] || 0;
-	if ( first > rangeTop( node ) ) return true;
-	const n = ( node && typeof node === 'object' ? node : undefined ) as { isOut?: unknown } | undefined;
+export function isOutDie(node: unknown, fallbacks?: Array<unknown>): boolean {
+	if (!hasOutRange(node, fallbacks)) return false;
+	const first = ratingDice(getRating(node))[0] || 0;
+	if (first > rangeTop(node)) return true;
+	const n = (node && typeof node === 'object' ? node : undefined) as { isOut?: unknown } | undefined;
 	return n?.isOut === true;
 }
 
@@ -234,36 +236,36 @@ export function isOutDie( node: unknown, fallbacks?: Array<unknown> ): boolean {
  * (and subtraits recursively). Preserves target values verbatim.
  * No-op for Pip or unrated source.
  */
-export function applyTypeScopedRange( traitSet: any, sourceTrait: any ): void {
-	if ( !traitSet || !sourceTrait ) return;
-	const sourceRating = getRating( sourceTrait );
-	if ( !sourceRating || !sourceRating.type || sourceRating.type === 'Pip' ) return;
+export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
+	if (!traitSet || !sourceTrait) return;
+	const sourceRating = getRating(sourceTrait);
+	if (!sourceRating || !sourceRating.type || sourceRating.type === 'Pip') return;
 	const sourceType = sourceRating.type;
-	const sourceRange = Array.isArray( sourceRating.range )
-		? [ ...sourceRating.range ]
-		: ( sourceType === 'Counter' ? [ 0, 20 ] : [ 4, 6, 8, 10, 12 ] );
+	const sourceRange = Array.isArray(sourceRating.range)
+		? [...sourceRating.range]
+		: (sourceType === 'Counter' ? [0, 20] : [4, 6, 8, 10, 12]);
 
-	function walk( targetTrait: any ) {
-		if ( !targetTrait || typeof targetTrait !== 'object' ) return;
-		const targetRating = getRating( targetTrait );
-		if ( targetRating && targetRating.type === sourceType ) {
+	function walk(targetTrait: any) {
+		if (!targetTrait || typeof targetTrait !== 'object') return;
+		const targetRating = getRating(targetTrait);
+		if (targetRating && targetRating.type === sourceType) {
 			targetTrait.rating = {
 				type: targetRating.type,
-				value: Array.isArray( targetRating.value ) ? [ ...targetRating.value ] : targetRating.value,
-				range: [ ...sourceRange ],
-				...( ( targetRating as any ).out !== undefined ? { out: ( targetRating as any ).out } : {} )
+				value: Array.isArray(targetRating.value) ? [...targetRating.value] : targetRating.value,
+				range: [...sourceRange],
+				...((targetRating as any).out !== undefined ? { out: (targetRating as any).out } : {})
 			};
 		}
-		if ( Array.isArray( targetTrait.traits ) ) {
-			for ( const child of targetTrait.traits ) {
-				walk( child );
+		if (Array.isArray(targetTrait.traits)) {
+			for (const child of targetTrait.traits) {
+				walk(child);
 			}
 		}
 	}
 
-	if ( Array.isArray( traitSet.traits ) ) {
-		for ( const rootTrait of traitSet.traits ) {
-			walk( rootTrait );
+	if (Array.isArray(traitSet.traits)) {
+		for (const rootTrait of traitSet.traits) {
+			walk(rootTrait);
 		}
 	}
 }
@@ -275,29 +277,29 @@ export type Visibility = 'shown' | 'play-only' | 'editor-only' | 'hidden';
 export type VisibilityState = Visibility;
 
 /** Resolve visibility; absent is shown. */
-export function resolveVisibility( node: unknown ): Visibility {
-	const v = getView( node );
-	if ( v && typeof v === 'object' ) {
-		const named = ( v as Record<string, unknown> ).visibility;
-		if ( named === 'hidden' || named === 'editor-only' || named === 'play-only' || named === 'shown' ) return named;
+export function resolveVisibility(node: unknown): Visibility {
+	const v = getView(node);
+	if (v && typeof v === 'object') {
+		const named = (v as Record<string, unknown>).visibility;
+		if (named === 'hidden' || named === 'editor-only' || named === 'play-only' || named === 'shown') return named;
 	}
 	return 'shown';
 }
 
 /** Hidden in a render context: hidden everywhere, editor-only outside Edit. */
-export function isHiddenIn( node: unknown, submode: unknown ): boolean {
-	const vis = resolveVisibility( node );
-	if ( vis === 'hidden' ) return true;
-	if ( vis === 'play-only' ) return submode === 'print';
-	if ( vis === 'editor-only' ) return submode !== 'edit';
+export function isHiddenIn(node: unknown, submode: unknown): boolean {
+	const vis = resolveVisibility(node);
+	if (vis === 'hidden') return true;
+	if (vis === 'play-only') return submode === 'print';
+	if (vis === 'editor-only') return submode !== 'edit';
 	return false;
 }
 
 /** Cycle visibility state: shown -> play-only -> editor-only -> hidden -> shown. */
-export function nextVisibility( cur: Visibility ): Visibility {
-	if ( cur === 'shown' ) return 'play-only';
-	if ( cur === 'play-only' ) return 'editor-only';
-	if ( cur === 'editor-only' ) return 'hidden';
+export function nextVisibility(cur: Visibility): Visibility {
+	if (cur === 'shown') return 'play-only';
+	if (cur === 'play-only') return 'editor-only';
+	if (cur === 'editor-only') return 'hidden';
 	return 'shown';
 }
 
@@ -306,9 +308,9 @@ export function nextVisibility( cur: Visibility ): Visibility {
  * Explicit `view.pillar` in JSON always wins; otherwise falls back to
  * structural/behavioral conventions without mutating stored data.
  */
-export function resolveSetPillar( traitSet: unknown ): string {
-	const v = getView( traitSet );
-	if ( v && typeof v.pillar === 'string' && v.pillar.trim().length > 0 ) {
+export function resolveSetPillar(traitSet: unknown): string {
+	const v = getView(traitSet);
+	if (v && typeof v.pillar === 'string' && v.pillar.trim().length > 0) {
 		return v.pillar.trim();
 	}
 	if (
@@ -337,34 +339,34 @@ export function resolveSetPillar( traitSet: unknown ): string {
  * Reads `view.labels.pillars[pillarKey]` or `view.labels['pillar_' + pillarKey]`,
  * falling back to capitalizing the pillar key.
  */
-export function getPillarLabel( character: unknown, pillarKey: string ): string {
-	const key = String( pillarKey || '' ).trim();
-	if ( !key ) return '';
-	const labels = getView( character )?.labels as Record<string, any> | undefined;
-	if ( labels && typeof labels === 'object' ) {
+export function getPillarLabel(character: unknown, pillarKey: string): string {
+	const key = String(pillarKey || '').trim();
+	if (!key) return '';
+	const labels = getView(character)?.labels as Record<string, any> | undefined;
+	if (labels && typeof labels === 'object') {
 		const map = labels.pillars;
-		if ( map && typeof map === 'object' && !Array.isArray( map ) ) {
-			const custom = map[ key ];
-			if ( typeof custom === 'string' && custom.trim().length > 0 ) return custom.trim();
+		if (map && typeof map === 'object' && !Array.isArray(map)) {
+			const custom = map[key];
+			if (typeof custom === 'string' && custom.trim().length > 0) return custom.trim();
 		}
-		const flat = labels[ 'pillar_' + key ];
-		if ( typeof flat === 'string' && flat.trim().length > 0 ) return flat.trim();
+		const flat = labels['pillar_' + key];
+		if (typeof flat === 'string' && flat.trim().length > 0) return flat.trim();
 	}
-	const sets = ( character && typeof character === 'object' && Array.isArray( ( character as any ).traitSets ) )
-		? ( character as any ).traitSets : [];
-	for ( const ts of sets ) {
-		const tsLabels = getView( ts )?.labels as Record<string, any> | undefined;
-		if ( tsLabels && typeof tsLabels === 'object' ) {
+	const sets = (character && typeof character === 'object' && Array.isArray((character as any).traitSets))
+		? (character as any).traitSets : [];
+	for (const ts of sets) {
+		const tsLabels = getView(ts)?.labels as Record<string, any> | undefined;
+		if (tsLabels && typeof tsLabels === 'object') {
 			const tsMap = tsLabels.pillars;
-			if ( tsMap && typeof tsMap === 'object' && !Array.isArray( tsMap ) ) {
-				const tsCustom = tsMap[ key ];
-				if ( typeof tsCustom === 'string' && tsCustom.trim().length > 0 ) return tsCustom.trim();
+			if (tsMap && typeof tsMap === 'object' && !Array.isArray(tsMap)) {
+				const tsCustom = tsMap[key];
+				if (typeof tsCustom === 'string' && tsCustom.trim().length > 0) return tsCustom.trim();
 			}
-			const tsFlat = tsLabels[ 'pillar_' + key ];
-			if ( typeof tsFlat === 'string' && tsFlat.trim().length > 0 ) return tsFlat.trim();
+			const tsFlat = tsLabels['pillar_' + key];
+			if (typeof tsFlat === 'string' && tsFlat.trim().length > 0) return tsFlat.trim();
 		}
 	}
-	return key.charAt( 0 ).toUpperCase() + key.slice( 1 );
+	return key.charAt(0).toUpperCase() + key.slice(1);
 }
 
 // ---------- custom.cortexToolkit sub-shapes (set + character scope) ----------
@@ -440,7 +442,8 @@ export interface PartCell {
 }
 
 /** Dice-render styling (`view.diceConfig`). */
-export interface DiceConfig {	[ k: string ]: unknown;
+export interface DiceConfig {
+	[k: string]: unknown;
 	style?: string;
 	backgroundType?: string;
 	background?: string;
@@ -465,7 +468,7 @@ export const VIEW_KEY = 'view' as const;
  * still has to be narrowed before use.
  */
 export interface CortexToolkitCustom {
-	[ k: string ]: unknown;
+	[k: string]: unknown;
 
 	// style / features
 	style?: SetStyle;
@@ -476,7 +479,7 @@ export interface CortexToolkitCustom {
 	imageConfig?: ImageConfig;
 	/** Generic Out indicator for any stepped track; default off. */
 	outIndicator?: boolean;
-	labels?: { [ k: string ]: any; pillars?: Record<string, string>; };
+	labels?: { [k: string]: any; pillars?: Record<string, string>; };
 	/** Open permissive pillar key for the 2D mobile Play carousel. */
 	pillar?: string;
 	notes?: string;
@@ -531,7 +534,7 @@ export interface CortexToolkitCustom {
 	/** Whether this set permits adding and removing traits during Play mode. */
 	playMutable?: boolean;
 	/** SVG Frame & Border layout configuration (Phase 3c). */
-	frame?: import('./frame-geometry.ts').FrameConfig | import('./frame-geometry.ts').FrameShape | string;
+	frame?: import('./frame-geometry.ts').FrameConfig | Partial<import('./frame-geometry.ts').FrameConfig> | import('./frame-geometry.ts').FrameShape | string;
 
 	// ring / portrait ring
 	/** Whether this set owns the portrait ring. */
@@ -544,7 +547,7 @@ export interface CortexToolkitCustom {
 	rowSpan?: number;
 	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
-/** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
+	/** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
 	visibility?: Visibility;
 	/** Badge part data (trait-level). */
 	badge?: { text: string; shape: string; color: string; icon?: string };
@@ -573,7 +576,7 @@ export interface CortexToolkitCustom {
 		scale?: number;
 	};
 	theme?: {
-		[ k: string ]: unknown;
+		[k: string]: unknown;
 		fonts?: {
 			heading?: string;
 			primary?: string;
@@ -583,7 +586,7 @@ export interface CortexToolkitCustom {
 	customFonts?: Array<{ name?: string; data?: string }>;
 	nickname?: string;
 	hasNickname?: boolean;
-	columnOffsets?: { [ k: string ]: unknown; left?: number; center?: number; right?: number };
+	columnOffsets?: { [k: string]: unknown; left?: number; center?: number; right?: number };
 	columnAlignment?: string;
 	accentColor?: string;
 	primaryColor?: string;
@@ -603,9 +606,9 @@ export type ViewConfig = CortexToolkitCustom;
  * forms may prune the view away; migration's detector also accepts the
  * reserved id 'name' (which ensureTraitSetIds never assigns elsewhere).
  */
-export function isNameSet( set: unknown ): boolean {
-	const v = getView( set );
-	return Boolean( set && typeof set === 'object' && v && typeof v === 'object' && v.style?.body === 'name' );
+export function isNameSet(set: unknown): boolean {
+	const v = getView(set);
+	return Boolean(set && typeof set === 'object' && v && typeof v === 'object' && v.style?.body === 'name');
 }
 
 /**
@@ -613,13 +616,13 @@ export function isNameSet( set: unknown ): boolean {
  * the only stored key; a sheet template link resolves spotlight, and
  * anything else defaults classic. No reader hard-codes set-type checks.
  */
-export function resolveSheetStyle( holder: unknown ): 'classic' | 'spotlight' {
-	const h = ( holder && typeof holder === 'object' ) ? holder as any : undefined;
-	const v = getView( h );
+export function resolveSheetStyle(holder: unknown): 'classic' | 'spotlight' {
+	const h = (holder && typeof holder === 'object') ? holder as any : undefined;
+	const v = getView(h);
 	const s = v && typeof v === 'object' ? v : undefined;
-	const sheet = s?.style && typeof s.style === 'object' ? ( s.style as any ).sheet : undefined;
-	if ( sheet === 'spotlight' || sheet === 'classic' ) return sheet;
-	if ( h?.sheet && typeof h.sheet === 'object' && ( h.sheet as any ).template ) return 'spotlight';
+	const sheet = s?.style && typeof s.style === 'object' ? (s.style as any).sheet : undefined;
+	if (sheet === 'spotlight' || sheet === 'classic') return sheet;
+	if (h?.sheet && typeof h.sheet === 'object' && (h.sheet as any).template) return 'spotlight';
 	return 'classic';
 }
 
@@ -629,48 +632,48 @@ export function resolveSheetStyle( holder: unknown ): 'classic' | 'spotlight' {
  * shown. A stored `hidden` boolean always wins — this only fills the gap
  * so the editor never shows an open eye for something no layout renders.
  */
-const NAME_HIDDEN_IN_SPOTLIGHT = [ 'game', 'plotPoints', 'notes' ];
+const NAME_HIDDEN_IN_SPOTLIGHT = ['game', 'plotPoints', 'notes'];
 
-export function defaultNameHidden( key: string, holder: unknown ): boolean {
-	return NAME_HIDDEN_IN_SPOTLIGHT.includes( key ) && resolveSheetStyle( holder ) === 'spotlight';
+export function defaultNameHidden(key: string, holder: unknown): boolean {
+	return NAME_HIDDEN_IN_SPOTLIGHT.includes(key) && resolveSheetStyle(holder) === 'spotlight';
 }
 
 /**
  * Accessor for the presentation view bag on any character, set, trait, or portrait.
  * Routes through VIEW_KEY and falls back to legacy custom.cortexToolkit for pre-migration data.
  */
-export function getView<T = ViewBag>( obj: unknown ): T | undefined {
-	if ( !obj || typeof obj !== 'object' ) return undefined;
+export function getView<T = ViewBag>(obj: unknown): T | undefined {
+	if (!obj || typeof obj !== 'object') return undefined;
 	const record = obj as Record<string, any>;
-	return ( record[ VIEW_KEY ] ?? record.custom?.cortexToolkit ) as T | undefined;
+	return (record[VIEW_KEY] ?? record.custom?.cortexToolkit) as T | undefined;
 }
 
 /**
  * Ensures the presentation view bag exists on an object, migrating legacy custom.cortexToolkit
  * if present, and returns the mutable view bag.
  */
-export function ensureView<T = ViewBag>( obj: unknown ): T {
-	if ( !obj || typeof obj !== 'object' ) {
-		throw new TypeError( 'ensureView called on non-object' );
+export function ensureView<T = ViewBag>(obj: unknown): T {
+	if (!obj || typeof obj !== 'object') {
+		throw new TypeError('ensureView called on non-object');
 	}
 	const record = obj as Record<string, any>;
-	if ( !record[ VIEW_KEY ] ) {
-		if ( record.custom && typeof record.custom === 'object' && record.custom.cortexToolkit ) {
-			record[ VIEW_KEY ] = record.custom.cortexToolkit;
+	if (!record[VIEW_KEY]) {
+		if (record.custom && typeof record.custom === 'object' && record.custom.cortexToolkit) {
+			record[VIEW_KEY] = record.custom.cortexToolkit;
 			delete record.custom.cortexToolkit;
-			if ( Object.keys( record.custom ).length === 0 ) {
+			if (Object.keys(record.custom).length === 0) {
 				delete record.custom;
 			}
 		} else {
-			record[ VIEW_KEY ] = {};
+			record[VIEW_KEY] = {};
 		}
 	}
-	return record[ VIEW_KEY ] as T;
+	return record[VIEW_KEY] as T;
 }
 
 /** `trait.custom` — includes legacy nested `cortexToolkit` compartment for back-compat. */
 export interface TraitCustom {
-	[ k: string ]: unknown;
+	[k: string]: unknown;
 	spentDice?: number[];
 	linkTo?: number;
 	branchRole?: 'skill' | 'specialty';
@@ -684,7 +687,7 @@ export interface TraitCustom {
 
 /** The open `custom` map, with legacy `cortexToolkit` compartment for back-compat. */
 export interface Custom {
-	[ k: string ]: unknown;
+	[k: string]: unknown;
 	cortexToolkit?: CortexToolkitCustom;
 }
 
@@ -694,7 +697,7 @@ export interface CharacterPrefs {
 	setOrder?: string[];
 	traitOrders?: Record<string, string[]>;
 	declinedTemplateVersions?: Record<string, number>;
-	[ k: string ]: unknown;
+	[k: string]: unknown;
 }
 
 // ---------- app document types (schema shape + typed view & custom) ----------

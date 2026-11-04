@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { getView } from './model.ts';
-import { resolveFrame, buildFrameSvgPath, type FrameConfig } from './frame-geometry.ts';
+import { resolveFrame, buildBlockPath, buildRadialShapePath, type FrameConfig } from './frame-geometry.ts';
 
 const props = withDefaults( defineProps<{
 	traitSet: any;
@@ -104,14 +104,27 @@ const hasHeaderComputed = computed( () => {
 	return Boolean( props.traitSet?.name ) && shape.value !== 'line';
 } );
 
-const VALID_STROKES = [ 'primary', 'accent', 'muted', 'strong', 'dashed' ];
-const frameStrokeClass = computed( () => {
-	const raw = resolvedFrame.value?.stroke || 'primary';
-	if ( VALID_STROKES.includes( raw ) ) {
-		return 'frame-stroke-' + raw;
+const VALID_COLORS = [ 'primary', 'accent', 'muted', 'strong', 'black' ];
+const frameColorClass = computed( () => {
+	const raw = resolvedFrame.value?.color || 'primary';
+	if ( VALID_COLORS.includes( raw ) ) {
+		return 'frame-color-' + raw;
 	}
-	console.warn( `[frame] Unrecognized stroke token "${ raw }", falling back to "primary"` );
-	return 'frame-stroke-primary';
+	console.warn( `[frame] Unrecognized color token "${ raw }", falling back to "primary"` );
+	return 'frame-color-primary';
+} );
+
+const frameStrokeStyle = computed( () => {
+	const f = resolvedFrame.value;
+	if ( !f ) return undefined;
+	const style: Record<string, string> = {};
+	if ( f.stroke ) {
+		style['--frame-stroke-width'] = f.stroke;
+	}
+	if ( f.dash ) {
+		style['--frame-stroke-dash'] = f.dash;
+	}
+	return Object.keys( style ).length > 0 ? style : undefined;
 } );
 
 const shapeClass = computed( () => {
@@ -126,6 +139,12 @@ const viewBoxString = computed( () => {
 	return '0 0 100 100';
 } );
 
+const boxPath = computed( () => {
+	if ( !resolvedFrame.value || !resolvedFrame.value.box ) return '';
+	if ( !isRadial.value ) return '';
+	return buildBlockPath( resolvedFrame.value.corner, 100, 100 );
+} );
+
 const perimeterPath = computed( () => {
 	if ( !resolvedFrame.value ) return '';
 	if ( resolvedFrame.value.path ) return resolvedFrame.value.path;
@@ -135,23 +154,10 @@ const perimeterPath = computed( () => {
 	}
 
 	if ( isBlock.value ) {
-		const width = w.value;
-		const height = h.value;
-		if ( resolvedFrame.value.corner === 'cut' ) {
-			return `M 6,1 L ${ width - 6 },1 L ${ width - 1 },6 L ${ width - 1 },${ height - 6 } L ${ width - 6 },${ height - 1 } L 6,${ height - 1 } L 1,${ height - 6 } L 1,6 Z`;
-		}
-		// Measured classic baseline radius is 4px
-		let r = 4;
-		if ( typeof resolvedFrame.value.corner === 'number' && resolvedFrame.value.corner !== 8 ) {
-			r = Math.min( Math.min( ( width - 2 ) / 2, ( height - 2 ) / 2 ), Math.max( 0, resolvedFrame.value.corner ) );
-		}
-		if ( r <= 0 ) {
-			return `M 1,1 L ${ width - 1 },1 L ${ width - 1 },${ height - 1 } L 1,${ height - 1 } Z`;
-		}
-		return `M ${ 1 + r },1 L ${ width - 1 - r },1 Q ${ width - 1 },1 ${ width - 1 },${ 1 + r } L ${ width - 1 },${ height - 1 - r } Q ${ width - 1 },${ height - 1 } ${ width - 1 - r },${ height - 1 } L ${ 1 + r },${ height - 1 } Q 1,${ height - 1 } 1,${ height - 1 - r } L 1,${ 1 + r } Q 1,1 ${ 1 + r },1 Z`;
+		return buildBlockPath( resolvedFrame.value.corner, w.value, h.value );
 	}
 
-	return buildFrameSvgPath( resolvedFrame.value );
+	return buildRadialShapePath( resolvedFrame.value );
 } );
 
 const spinePath = computed( () => {
@@ -184,12 +190,21 @@ const perimeterStyle = computed( () => {
 	<svg
 		ref="svgEl"
 		class="trait-set-frame-svg"
-		:class="[shapeClass, frameStrokeClass]"
+		:class="[shapeClass, frameColorClass]"
+		:style="frameStrokeStyle"
 		aria-hidden="true"
 		focusable="false"
 		:viewBox="viewBoxString"
 		preserveAspectRatio="none"
 	>
+		<!-- Box path for radial shapes with box: true -->
+		<path
+			v-if="boxPath"
+			class="frame-box-path"
+			:d="boxPath"
+			fill="none"
+			vector-effect="non-scaling-stroke"
+		/>
 		<!-- Perimeter / background fill -->
 		<path
 			class="frame-perimeter-path"

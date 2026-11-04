@@ -276,39 +276,94 @@ function setFrameShape( shape: FrameShape ) {
 	}
 	const prev = resolveFrame( workingSet.value );
 	const defaultSpan: [ number, number ] = shape === 'arc' ? [ -120, 120 ] : [ 0, 360 ];
-	v.frame = {
+	const f: any = {
 		shape,
 		span: prev ? prev.span : defaultSpan,
-		corner: prev ? prev.corner : 8,
-		stroke: prev ? prev.stroke : 'primary',
-		path: prev?.path ?? null
+		corner: prev ? prev.corner : 8
 	};
+	if ( prev?.color && prev.color !== 'primary' ) f.color = prev.color;
+	if ( prev?.stroke && prev.stroke !== '2px' ) f.stroke = prev.stroke;
+	if ( prev?.dash ) f.dash = prev.dash;
+	if ( prev?.box ) f.box = true;
+	if ( prev?.path ) f.path = prev.path;
+	v.frame = f;
 }
+
+const defaultFrame: FrameConfig = {
+	shape: 'block',
+	span: [ 0, 360 ],
+	corner: 8,
+	color: 'primary',
+	stroke: '2px',
+	box: false
+};
 
 function setFrameSpan( idx: 0 | 1, val: number ) {
 	const v = ensureView( workingSet.value );
 	const cfg = resolveFrame( workingSet.value );
 	const span: [ number, number ] = cfg ? [ ...cfg.span ] : [ 0, 360 ];
 	span[ idx ] = val;
-	v.frame = { ...( cfg || { shape: 'ring', corner: 8, stroke: 'primary' } ), span };
+	v.frame = { ...( cfg || { ...defaultFrame, shape: 'ring' } ), span };
 }
 
 function setFrameSpanPreset( start: number, end: number ) {
 	const v = ensureView( workingSet.value );
 	const cfg = resolveFrame( workingSet.value );
-	v.frame = { ...( cfg || { shape: 'ring', corner: 8, stroke: 'primary' } ), span: [ start, end ] };
+	v.frame = { ...( cfg || { ...defaultFrame, shape: 'ring' } ), span: [ start, end ] };
 }
 
 function setFrameCorner( corner: number | 'cut' ) {
 	const v = ensureView( workingSet.value );
 	const cfg = resolveFrame( workingSet.value );
-	v.frame = { ...( cfg || { shape: 'block', span: [ 0, 360 ], stroke: 'primary' } ), corner };
+	v.frame = { ...( cfg || defaultFrame ), corner };
 }
 
 function setFrameStroke( stroke: string ) {
 	const v = ensureView( workingSet.value );
 	const cfg = resolveFrame( workingSet.value );
-	v.frame = { ...( cfg || { shape: 'block', span: [ 0, 360 ], corner: 8 } ), stroke };
+	const f: any = { ...( cfg || defaultFrame ) };
+	if ( stroke && stroke.trim() && stroke.trim() !== '2px' ) {
+		f.stroke = stroke.trim();
+	} else {
+		delete f.stroke;
+	}
+	v.frame = f;
+}
+
+function setFrameColor( color: string ) {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	const f: any = { ...( cfg || defaultFrame ) };
+	if ( color && color !== 'primary' ) {
+		f.color = color as any;
+	} else {
+		delete f.color;
+	}
+	v.frame = f;
+}
+
+function setFrameDash( dash: string ) {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	const f: any = { ...( cfg || defaultFrame ) };
+	if ( dash && dash.trim() ) {
+		f.dash = dash.trim();
+	} else {
+		delete f.dash;
+	}
+	v.frame = f;
+}
+
+function toggleFrameBox() {
+	const v = ensureView( workingSet.value );
+	const cfg = resolveFrame( workingSet.value );
+	const f: any = { ...( cfg || { ...defaultFrame, shape: 'ring' } ) };
+	if ( f.box ) {
+		delete f.box;
+	} else {
+		f.box = true;
+	}
+	v.frame = f;
 }
 
 // Die SVGs for palette icons
@@ -1328,19 +1383,65 @@ function onFileImportSelected( ev: Event ) {
 							</div>
 						</template>
 
-						<!-- Stroke for all active frames -->
+						<!-- Width for all active frames -->
 						<div class="mini-param-row">
-							<span class="mini-param-label">Stroke:</span>
-							<div class="mini-param-presets" role="group" aria-label="Stroke Styles">
+							<span class="mini-param-label">Width:</span>
+							<div class="mini-param-presets" role="group" aria-label="Frame Widths">
 								<button
-									v-for="stk in ['primary', 'accent', 'muted', 'strong', 'dashed']"
-									:key="'stk-' + stk"
+									v-for="w in ['1px', '1.5px', '2px', '3px', '4px']"
+									:key="'w-' + w"
 									type="button"
 									class="mini-chip-btn"
-									:class="{ active: activeFrame.stroke === stk }"
-									@click="setFrameStroke(stk)"
+									:class="{ active: (activeFrame.stroke || '2px') === w }"
+									@click="setFrameStroke(w)"
 								>
-									{{ stk === 'strong' ? 'Strong' : (stk === 'dashed' ? 'Dashed' : (stk.charAt(0).toUpperCase() + stk.slice(1))) }}
+									{{ w }}
+								</button>
+							</div>
+						</div>
+
+						<!-- Color for all active frames -->
+						<div class="mini-param-row">
+							<span class="mini-param-label">Color:</span>
+							<div class="mini-param-presets" role="group" aria-label="Frame Colors">
+								<button
+									v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
+									:key="'c-' + c"
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: (activeFrame.color || 'primary') === c }"
+									@click="setFrameColor(c)"
+								>
+									{{ c.charAt(0).toUpperCase() + c.slice(1) }}
+								</button>
+							</div>
+						</div>
+
+						<!-- Dash pattern for all active frames -->
+						<div class="mini-param-row">
+							<label class="mini-param-label">
+								Dash:
+								<input
+									type="text"
+									class="mini-param-text"
+									:value="activeFrame.dash || ''"
+									placeholder="Solid"
+									@change="setFrameDash(($event.target as HTMLInputElement).value)"
+								/>
+							</label>
+						</div>
+
+						<!-- Box toggle for radial frames -->
+						<div v-if="['ring', 'ellipse', 'arc'].includes(currentFrameShape)" class="mini-param-row">
+							<span class="mini-param-label">Box:</span>
+							<div class="mini-param-presets" role="group" aria-label="Frame Box">
+								<button
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: activeFrame.box }"
+									@click="toggleFrameBox"
+								>
+									{{ activeFrame.box ? 'Box On' : 'Box Off' }}
 								</button>
 							</div>
 						</div>

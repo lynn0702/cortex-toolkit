@@ -1780,9 +1780,7 @@ export const cortexFunctions = {
 					span: 2,
 					header: 'top',
 					frame: {
-						shape: 'ring',
-						span: [ 0, 360 ],
-						stroke: 'primary'
+						shape: 'ring', span: [ 0, 360 ], color: 'primary'
 					},
 					labels: {
 						track: 'Stress',
@@ -1853,7 +1851,7 @@ export const cortexFunctions = {
 					frame: {
 						shape: 'block',
 						corner: 'cut',
-						stroke: 'accent'
+						color: 'accent'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'T' },
@@ -1886,8 +1884,7 @@ export const cortexFunctions = {
 				view: {
 					span: 2,
 					frame: {
-						shape: 'line',
-						stroke: 'accent'
+						shape: 'line', color: 'accent'
 					}
 				}
 			}

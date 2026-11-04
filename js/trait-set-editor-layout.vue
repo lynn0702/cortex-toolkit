@@ -6,7 +6,8 @@ const {
 	isRing, isSpotlightSheet,
 	isPartsPreview, hasParts, hasCustomParts, hasCustomBranch, resetParts,
 	openBlockMini,
-	frameOptions, frameShape, setFrameShape
+	frameOptions, frameShape, setFrameShape,
+	frameWidth, setFrameWidth, frameColor, setFrameColor, frameDash, setFrameDash, frameBox, setFrameBox
 } = injectTraitSetEditor();
 </script>
 
@@ -57,4 +58,63 @@ const {
 			</button>
 		</div>
 	</div>
+
+	<!-- FRAME PARAMS -->
+	<template v-if="!isRing && isSpotlightSheet && frameShape && frameShape !== 'none'">
+		<div class="editor-field">
+			<div class="editor-label">Frame Width</div>
+			<div class="editor-button-group">
+				<button
+					v-for="w in ['1px', '1.5px', '2px', '3px', '4px']"
+					:key="w"
+					type="button"
+					class="editor-group-btn"
+					:class="{ 'active': frameWidth === w }"
+					@click.stop="setFrameWidth( w )"
+				>
+					{{ w }}
+				</button>
+			</div>
+		</div>
+
+		<div class="editor-field">
+			<div class="editor-label">Frame Color</div>
+			<div class="editor-button-group">
+				<button
+					v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
+					:key="c"
+					type="button"
+					class="editor-group-btn"
+					:class="{ 'active': frameColor === c }"
+					@click.stop="setFrameColor( c )"
+				>
+					{{ c.charAt(0).toUpperCase() + c.slice(1) }}
+				</button>
+			</div>
+		</div>
+
+		<div class="editor-field">
+			<div class="editor-label">Frame Dash</div>
+			<input
+				type="text"
+				:value="frameDash"
+				placeholder="Solid"
+				@change="setFrameDash( ($event.target as HTMLInputElement).value )"
+			/>
+		</div>
+
+		<div class="editor-field" v-if="['ring', 'ellipse', 'arc'].includes(frameShape)">
+			<div class="editor-label">Frame Box</div>
+			<div class="editor-button-group">
+				<button
+					type="button"
+					class="editor-group-btn"
+					:class="{ 'active': frameBox }"
+					@click.stop="setFrameBox( !frameBox )"
+				>
+					{{ frameBox ? 'Box On' : 'Box Off' }}
+				</button>
+			</div>
+		</div>
+	</template>
 </template>

@@ -6,6 +6,8 @@ import { getView } from './model.ts';
 
 export type FrameShape = 'ring' | 'ellipse' | 'arc' | 'block' | 'line' | 'none';
 
+export type FrameColor = 'primary' | 'accent' | 'muted' | 'strong' | 'black';
+
 export interface RingConfig {
 	arcAngle?: number;
 	arcSpread?: number;
@@ -22,6 +24,9 @@ export interface FrameConfig {
 	span: [number, number];
 	corner: number | 'cut';
 	stroke: string;
+	color: FrameColor;
+	dash?: string;
+	box?: boolean;
 	path?: string | null;
 	ringConfig?: RingConfig | null;
 	legacyRing?: boolean;
@@ -70,7 +75,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 				shape: 'ring',
 				span: [0, 360],
 				corner: 8,
-				stroke: 'primary',
+				stroke: '2px',
+				color: 'primary',
+				box: false,
 				path: null,
 				ringConfig: ringConfig || {
 					arcAngle: -90,
@@ -95,7 +102,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			shape,
 			span: shape === 'arc' ? [-120, 120] : [0, 360],
 			corner: 8,
-			stroke: 'primary',
+			stroke: '2px',
+			color: 'primary',
+			box: false,
 			path: null,
 			ringConfig: hasLegacyRing ? (ringConfig || {
 				arcAngle: -90,
@@ -132,11 +141,19 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			scaleDieY: 0
 		}) : null;
 
+		const color: FrameColor = typeof raw.color === 'string' && raw.color.trim() ? (raw.color.trim() as FrameColor) : 'primary';
+		const stroke = typeof raw.stroke === 'string' && raw.stroke.trim() ? raw.stroke.trim() : '2px';
+		const dash = typeof raw.dash === 'string' && raw.dash.trim() ? raw.dash.trim() : undefined;
+		const box = Boolean(raw.box);
+
 		return {
 			shape,
 			span,
 			corner: raw.corner === 'cut' ? 'cut' : (Number.isFinite(Number(raw.corner)) ? Number(raw.corner) : 8),
-			stroke: typeof raw.stroke === 'string' && raw.stroke.trim() ? raw.stroke.trim() : 'primary',
+			stroke,
+			color,
+			...(dash ? { dash } : {}),
+			box,
 			path: typeof raw.path === 'string' && raw.path.trim() ? raw.path.trim() : null,
 			ringConfig: effectiveRingConfig,
 			legacyRing: hasLegacyRing
@@ -287,52 +304,75 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 }
 
 /**
- * Deterministic SVG path generator for frame shapes inside a 100x100 (or 100x12 for line) viewBox.
+ * Builds the rectangular block perimeter path.
  */
-export function buildFrameSvgPath(config: FrameConfig): string {
-	if (config.path) return config.path;
+		export function buildBlockPath(corner: number | 'cut' | undefined, width = 100, height = 100): string {
+			if (corner === 'cut') {
+				return `M 6,1 L ${width - 6},1 L ${width - 1},6 L ${width - 1},${height - 6} L ${width - 6},${height - 1} L 6,${height - 1} L 1,${height - 6} L 1,6 Z`;
+			}
+				let r = 4;
+				if (typeof corner === 'number' && corner !== 8) {
+					r = Math.min(Math.min((width - 2) / 2, (height - 2) / 2), Math.max(0, corner));
+				}
+				if (r <= 0) {
+					return `M 1,1 L ${width - 1},1 L ${width - 1},${height - 1} L 1,${height - 1} Z`;
+				}
+				return `M ${1 + r},1 L ${width - 1 - r},1 Q ${width - 1},1 ${width - 1},${1 + r} L ${width - 1},${height - 1 - r} Q ${width - 1},${height - 1} ${width - 1 - r},${height - 1} L ${1 + r},${height - 1} Q 1,${height - 1} 1,${height - 1 - r} L 1,${1 + r} Q 1,1 ${1 + r},1 Z`;
+			}
 
-	if (config.shape === 'line') {
-		return 'M 0,6 L 100,6';
-	}
+			/**
+			 * Builds the radial shape path (ring, ellipse, or arc) in a 100x100 viewBox.
+			 */
+			export function buildRadialShapePath(config: FrameConfig): string {
+				let rx = 26;
+				let ry = 26;
+				if (config.shape === 'ellipse') {
+					rx = 30;
+					ry = 22;
+				} else if (config.shape === 'arc') {
+					rx = 28;
+					ry = 24;
+				}
 
-	if (config.shape === 'block') {
-		if (config.corner === 'cut') {
-			return 'M 6,1 L 94,1 L 99,6 L 99,94 L 94,99 L 6,99 L 1,94 L 1,6 Z';
-		}
-		const r = Math.min(48, Math.max(0, Number(config.corner) || 8));
-		if (r <= 0) {
-			return 'M 1,1 L 99,1 L 99,99 L 1,99 Z';
-		}
-		return `M ${1 + r},1 L ${99 - r},1 Q 99,1 99,${1 + r} L 99,${99 - r} Q 99,99 ${99 - r},99 L ${1 + r},99 Q 1,99 1,${99 - r} L 1,${1 + r} Q 1,1 ${1 + r},1 Z`;
-	}
+				const delta = config.span[1] - config.span[0];
+				if (Math.abs(delta) >= 360) {
+					return `M 50,${(50 - ry).toFixed(2)} A ${rx} ${ry} 0 1 1 49.99,${(50 - ry).toFixed(2)} Z`;
+				}
 
-	let rx = 26;
-	let ry = 26;
-	if (config.shape === 'ellipse') {
-		rx = 30;
-		ry = 22;
-	} else if (config.shape === 'arc') {
-		rx = 28;
-		ry = 24;
-	}
+				const theta0 = config.span[0];
+				const theta1 = config.span[1];
+				const rad0 = (theta0 - 90) * (Math.PI / 180);
+				const rad1 = (theta1 - 90) * (Math.PI / 180);
+				const x0 = 50 + rx * Math.cos(rad0);
+				const y0 = 50 + ry * Math.sin(rad0);
+				const x1 = 50 + rx * Math.cos(rad1);
+				const y1 = 50 + ry * Math.sin(rad1);
+				const largeArc = Math.abs(delta) > 180 ? 1 : 0;
+				const sweep = delta >= 0 ? 1 : 0;
 
-	const delta = config.span[1] - config.span[0];
-	if (Math.abs(delta) >= 360) {
-		return `M 50,${(50 - ry).toFixed(2)} A ${rx} ${ry} 0 1 1 49.99,${(50 - ry).toFixed(2)} Z`;
-	}
+				return `M ${x0.toFixed(2)},${y0.toFixed(2)} A ${rx} ${ry} 0 ${largeArc} ${sweep} ${x1.toFixed(2)},${y1.toFixed(2)}`;
+			}
 
-	const theta0 = config.span[0];
-	const theta1 = config.span[1];
-	const rad0 = (theta0 - 90) * (Math.PI / 180);
-	const rad1 = (theta1 - 90) * (Math.PI / 180);
-	const x0 = 50 + rx * Math.cos(rad0);
-	const y0 = 50 + ry * Math.sin(rad0);
-	const x1 = 50 + rx * Math.cos(rad1);
-	const y1 = 50 + ry * Math.sin(rad1);
-	const largeArc = Math.abs(delta) > 180 ? 1 : 0;
-	const sweep = delta >= 0 ? 1 : 0;
+			/**
+			 * Deterministic SVG path generator for frame shapes inside a 100x100 (or 100x12 for line) viewBox.
+			 */
+			export function buildFrameSvgPath(config: FrameConfig): string {
+				if (config.path) return config.path;
 
-	return `M ${x0.toFixed(2)},${y0.toFixed(2)} A ${rx} ${ry} 0 ${largeArc} ${sweep} ${x1.toFixed(2)},${y1.toFixed(2)}`;
-}
+				if (config.shape === 'line') {
+					return 'M 0,6 L 100,6';
+				}
+
+				if (config.shape === 'block') {
+					return buildBlockPath(config.corner, 100, 100);
+				}
+
+				const radial = buildRadialShapePath(config);
+				if (config.box && (config.shape === 'ring' || config.shape === 'ellipse' || config.shape === 'arc')) {
+					const box = buildBlockPath(config.corner, 100, 100);
+					return `${box} ${radial}`;
+				}
+
+				return radial;
+			}
 

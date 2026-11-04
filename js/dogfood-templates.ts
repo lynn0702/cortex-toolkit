@@ -54,7 +54,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'ring',
 						span: [0, 360],
-						stroke: 'primary'
+						color: 'primary'
 					},
 					labels: {
 						track: 'Stress',
@@ -112,7 +112,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					place: { left: '0%', top: 1, width: '100%', height: 1 },
 					frame: {
 						shape: 'line',
-						stroke: 'accent'
+						color: 'accent'
 					}
 				},
 				traits: []
@@ -130,7 +130,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'arc',
 						span: [-110, 110],
-						stroke: 'accent'
+						color: 'accent'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '70%', height: 1, marker: 'L' },
@@ -188,7 +188,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'block',
 						corner: 'cut',
-						stroke: 'primary'
+						color: 'primary'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '55%', height: 1, marker: 'L' },
@@ -216,7 +216,8 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'ellipse',
 						span: [0, 360],
-						stroke: 'muted'
+						color: 'muted',
+						stroke: '1.5px'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '55%', height: 1, marker: 'L' },
@@ -265,7 +266,8 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'block',
 						corner: 12,
-						stroke: 'dashed'
+						color: 'primary',
+						dash: '6 3'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '65%', height: 1, marker: 'L' },
@@ -298,7 +300,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'block',
 						corner: 'cut',
-						stroke: 'accent'
+						color: 'accent'
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'T' },
@@ -330,7 +332,8 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					frame: {
 						shape: 'block',
 						corner: 8,
-						stroke: 'muted'
+						color: 'muted',
+						stroke: '1.5px'
 					}
 				},
 				traits: []
