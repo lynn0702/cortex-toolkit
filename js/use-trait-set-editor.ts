@@ -837,7 +837,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 					shape: shape as any,
 					span: [0, 360],
 					corner: 8,
-					stroke: 'primary',
 					color: 'primary',
 					stroke: '2px',
 					path: null

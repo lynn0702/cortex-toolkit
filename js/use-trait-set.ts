@@ -1,11 +1,9 @@
 import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-geometry.ts';
-import {
-	getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
+import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
 	resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,
-	hasOutRange, rangeTop, isOutDie
-} from './model.ts';
+	hasOutRange, rangeTop, isOutDie } from './model.ts';
 import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
@@ -21,1331 +19,1322 @@ export interface TraitSetProps {
 	printStyle?: string | null;
 }
 
-export const TRAIT_SET_KEY: InjectionKey<TraitSetApi> = Symbol('traitSetApi');
+export const TRAIT_SET_KEY: InjectionKey<TraitSetApi> = Symbol( 'traitSetApi' );
 
-export function isPlayMutableSet(traitSetArg: TraitSet): boolean {
-	return cortexFunctions.isPlayMutableSet(traitSetArg);
+export function isPlayMutableSet( traitSetArg: TraitSet ): boolean {
+	return cortexFunctions.isPlayMutableSet( traitSetArg );
 }
 
-export function useTraitSet(props: TraitSetProps, emit: any) {
-	const traitSet = computed(() => props.character?.traitSets?.[props.traitSetID as any]);
-	const s = computed<number>(() => props.traitSetID as number);
-	const traitSets = computed(() => props.character?.traitSets ?? []);
-	const character = computed(() => props.character);
-	const submode = computed(() => props.submode);
-	const editing = computed(() => props.editing);
-	const printBlank = computed(() => props.printBlank);
-	const printStyle = computed(() => props.printStyle);
-	const viewY = computed(() => props.viewY);
-	const columnCount = computed(() => {
-		const c = Number(getView(props.character)?.columns);
-		return (c >= 2 && c <= 4) ? c : 2;
-	});
+export function useTraitSet( props: TraitSetProps, emit: any ) {
+	const traitSet = computed( () => props.character?.traitSets?.[ props.traitSetID as any ] );
+	const s = computed<number>( () => props.traitSetID as number );
+	const traitSets = computed( () => props.character?.traitSets ?? [] );
+	const character = computed( () => props.character );
+	const submode = computed( () => props.submode );
+	const editing = computed( () => props.editing );
+	const printBlank = computed( () => props.printBlank );
+	const printStyle = computed( () => props.printStyle );
+	const viewY = computed( () => props.viewY );
+	const columnCount = computed( () => {
+		const c = Number( getView( props.character )?.columns );
+		return ( c >= 2 && c <= 4 ) ? c : 2;
+	} );
 
-	const sheetStyle = computed(() => {
-		if (props.submode === 'print' && props.printStyle) {
+	const sheetStyle = computed( () => {
+		if ( props.submode === 'print' && props.printStyle ) {
 			return props.printStyle;
 		}
-		return resolveSheetStyle(props.character);
-	});
+		return resolveSheetStyle( props.character );
+	} );
 
-	const isSpotlightStyle = computed(() => sheetStyle.value === 'spotlight');
-	const isSpotlightPrintStyle = computed(() => props.submode === 'print' && isSpotlightStyle.value);
+	const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
+	const isSpotlightPrintStyle = computed( () => props.submode === 'print' && isSpotlightStyle.value );
 
 	// Phase 3c: SVG Frames & Dynamic Positional Anchors
-	const resolvedFrame = computed(() => resolveFrame(traitSet.value));
-	const frameToggledOff = ref(false);
-	const containerWidth = ref<number>(600);
+	const resolvedFrame = computed( () => resolveFrame( traitSet.value ) );
+	const frameToggledOff = ref( false );
+	const containerWidth = ref<number>( 600 );
 	let resizeObserver: ResizeObserver | null = null;
 
-	function observeContainer(el: HTMLElement | null) {
-		if (resizeObserver) {
+	function observeContainer( el: HTMLElement | null ) {
+		if ( resizeObserver ) {
 			resizeObserver.disconnect();
 			resizeObserver = null;
 		}
-		if (el && typeof ResizeObserver !== 'undefined') {
-			resizeObserver = new ResizeObserver((entries) => {
-				for (const entry of entries) {
+		if ( el && typeof ResizeObserver !== 'undefined' ) {
+			resizeObserver = new ResizeObserver( ( entries ) => {
+				for ( const entry of entries ) {
 					const cr = entry.contentRect;
-					if (cr && cr.width > 0) {
+					if ( cr && cr.width > 0 ) {
 						containerWidth.value = cr.width;
 					}
 				}
-			});
-			resizeObserver.observe(el);
+			} );
+			resizeObserver.observe( el );
 		}
 	}
 
-	onBeforeUnmount(() => {
-		if (resizeObserver) {
+	onBeforeUnmount( () => {
+		if ( resizeObserver ) {
 			resizeObserver.disconnect();
 			resizeObserver = null;
 		}
-	});
+	} );
 
 	// Width-based forced-off: radial frames force off when container is narrower than their minimum required width
-	const isFrameForcedOff = computed(() => {
-		if (!resolvedFrame.value) return false;
+	const isFrameForcedOff = computed( () => {
+		if ( !resolvedFrame.value ) return false;
 		const s = resolvedFrame.value.shape;
-		if (s === 'block' || s === 'line') return false;
+		if ( s === 'block' || s === 'line' ) return false;
 		const minWidth = s === 'arc' ? 360 : 480;
 		return containerWidth.value > 0 && containerWidth.value < minWidth;
-	});
+	} );
 
-	const isFrameActive = computed(() =>
-		Boolean(resolvedFrame.value) && !frameToggledOff.value && !isFrameForcedOff.value
+	const isFrameActive = computed( () =>
+		Boolean( resolvedFrame.value ) && !frameToggledOff.value && !isFrameForcedOff.value
 	);
 
-	const isPositionalFrameActive = computed(() => {
-		if (!isFrameActive.value || !resolvedFrame.value) return false;
+	const isPositionalFrameActive = computed( () => {
+		if ( !isFrameActive.value || !resolvedFrame.value ) return false;
 		const s = resolvedFrame.value.shape;
-		return s === 'ring' || s === 'ellipse' || s === 'arc' || (s as any) === 'path';
-	});
+		return s === 'ring' || s === 'ellipse' || s === 'arc' || ( s as any ) === 'path';
+	} );
 
-	const frameSvgPath = computed(() => {
-		if (!resolvedFrame.value) return '';
-		return buildFrameSvgPath(resolvedFrame.value);
-	});
+	const frameSvgPath = computed( () => {
+		if ( !resolvedFrame.value ) return '';
+		return buildFrameSvgPath( resolvedFrame.value );
+	} );
 
-	const VALID_STROKES = ['primary', 'accent', 'muted', 'strong', 'dashed'];
-	const frameStrokeClass = computed(() => {
-		const raw = resolvedFrame.value?.stroke || 'primary';
-		if (VALID_STROKES.includes(raw)) {
-			return 'frame-stroke-' + raw;
-			const VALID_COLORS = ['primary', 'accent', 'muted', 'strong', 'black'];
-			const frameColorClass = computed(() => {
-				const raw = resolvedFrame.value?.color || 'primary';
-				if (VALID_COLORS.includes(raw)) {
-					return 'frame-color-' + raw;
+	const VALID_COLORS = [ 'primary', 'accent', 'muted', 'strong', 'black' ];
+	const frameColorClass = computed( () => {
+		const raw = resolvedFrame.value?.color || 'primary';
+		if ( VALID_COLORS.includes( raw ) ) {
+			return 'frame-color-' + raw;
+		}
+		console.warn( `[frame] Unrecognized color token "${ raw }", falling back to "primary"` );
+		return 'frame-color-primary';
+	} );
+	const frameStrokeClass = frameColorClass;
+
+	const frameStrokeStyle = computed( () => {
+		const f = resolvedFrame.value;
+		if ( !f ) return undefined;
+		const style: Record<string, string> = {};
+		if ( f.stroke ) {
+			style[ '--frame-stroke-width' ] = f.stroke;
+		}
+		if ( f.dash ) {
+			style[ '--frame-stroke-dash' ] = f.dash;
+		}
+		return Object.keys( style ).length > 0 ? style : undefined;
+	} );
+
+	const frameAnchors = computed( () => {
+		if ( !isPositionalFrameActive.value || !resolvedFrame.value ) return [];
+		const rendered = getRenderedTraits( traitSet.value, s.value );
+		return computeFrameAnchors( rendered.length, resolvedFrame.value );
+	} );
+
+	function getTraitAnchorStyle( t: number ): Record<string, string> | undefined {
+		if ( !isPositionalFrameActive.value ) return undefined;
+		const a = frameAnchors.value[ t ];
+		if ( !a ) return undefined;
+		const left = a.offsetMm ? `calc(${a.x}% + ${a.offsetMm.x}mm)` : `${a.x}%`;
+		const top = a.offsetMm ? `calc(${a.y}% + ${a.offsetMm.y}mm)` : `${a.y}%`;
+		return {
+			position: 'absolute',
+			left,
+			top,
+			'--anchor-x': `${a.x}%`,
+			'--anchor-y': `${a.y}%`,
+			'--anchor-angle': `${a.angle}deg`
+		};
+	}
+
+	function getTraitNameAnchorStyle( t: number ): Record<string, string> | undefined {
+		if ( !isPositionalFrameActive.value ) return undefined;
+		return frameAnchors.value[ t ]?.nameStyle;
+	}
+
+	function getTraitAnchorDock( t: number ): string | undefined {
+		if ( !isPositionalFrameActive.value ) return undefined;
+		return frameAnchors.value[ t ]?.dock;
+	}
+
+	function getTraitSetLabel( traitSetArg: TraitSet, key: string ) {
+		const labels = getView( traitSetArg )?.labels;
+		if ( labels && labels[ key ] !== undefined && labels[ key ] !== null && String( labels[ key ] ).length ) {
+			return labels[ key ];
+		}
+		const style = getView( traitSetArg )?.style?.body;
+		return cortexFunctions.labelDefaultForStyle( style, key );
+	}
+
+	function isSelected( selector: unknown[] ) {
+		return cortexFunctions.arraysMatch( props.editing, selector );
+	}
+
+	function renderText( text: unknown ) {
+		return cortexFunctions.renderText( text );
+	}
+
+	function renderNotesText( text: unknown ) {
+		if ( !text ) return '';
+		return cortexFunctions.renderMarkdown( text );
+	}
+
+	function getTraitSetClasses( traitSetArg: TraitSet ) {
+		const classes: Record<string, boolean> = { 'trait-set': true };
+
+		const bodyStyle = getView( traitSetArg )?.style?.body || 'default';
+		classes[ 'trait-set-style-' + bodyStyle ] = true;
+
+		if ( bodyStyle === 'subtrait-columns' && getView( traitSetArg )?.branchArrows === false ) {
+			classes[ 'hide-branch-arrows' ] = true;
+		}
+
+		if ( isSpotlightStyle.value ) {
+			const rawSpan = getView( traitSetArg )?.span ?? getView( traitSetArg )?.colSpan ?? getView( traitSetArg )?.columnSpan;
+			const colSpan = Number( rawSpan ) || 1;
+			if ( colSpan >= columnCount.value || rawSpan === 'full' ) {
+				classes['span-full'] = true;
+				classes['span-' + columnCount.value] = true;
+			} else if ( colSpan === 2 ) {
+				classes['span-2'] = true;
+			} else {
+				classes['span-1'] = true;
+			}
+		}
+
+		const ratingPos = getRatingPosition( traitSetArg );
+		if ( ratingPos && ratingPos !== 'inline' ) {
+			classes[ 'rating-pos-' + ratingPos ] = true;
+		}
+
+		if ( isStatementSet( traitSetArg ) ) {
+			classes[ 'trait-set-statement-mode' ] = true;
+		}
+
+		if ( hasCounterColumn( traitSetArg ) ) {
+			classes[ 'trait-set-has-counter' ] = true;
+		}
+
+		const traits = Array.isArray( traitSetArg?.traits ) ? traitSetArg.traits : ( traitSetArg?.traits ? Object.values( traitSetArg.traits ) : [] );
+		if ( traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 ) ) {
+			classes[ 'trait-set-has-feature-description' ] = true;
+		}
+
+		const ctk = getView( traitSetArg );
+		if ( ctk?.header === 'top' ) {
+			classes[ 'trait-set-header-top' ] = true;
+		}
+		const align = ctk?.headerAlign;
+		classes[ 'trait-set-header-align-' + ( align === 'center' || align === 'right' ? align : 'left' ) ] = true;
+
+		const vis = resolveVisibility( traitSetArg );
+		if ( vis === 'play-only' ) classes[ 'trait-set-play-only' ] = true;
+		if ( vis === 'editor-only' ) classes[ 'trait-set-editor-only' ] = true;
+
+		if ( isFrameActive.value ) {
+			classes[ 'trait-set-framed' ] = true;
+			if ( resolvedFrame.value?.shape ) {
+				classes[ 'trait-set-frame-' + resolvedFrame.value.shape ] = true;
+			}
+		}
+		if ( resolvedFrame.value?.shape === 'line' ) {
+			classes[ 'trait-set-frame-line' ] = true;
+		}
+
+		return classes;
+	}
+
+	function getRatingPosition( traitSetArg: TraitSet ) {
+		const parts = getParts( traitSetArg );
+		if ( parts && parts.rating ) {
+			const rTop = Number( parts.rating.top ) || 0;
+			const nTop = parts.name ? ( Number( parts.name.top ) || 0 ) : 0;
+			if ( rTop === 0 && nTop === 0 ) return 'inline';
+			if ( rTop === 0 ) return 'above';
+			return 'below';
+		}
+		if ( parts ) return 'none';
+		return traitSetArg?.ratingPosition || getView( traitSetArg )?.ratingPosition || 'inline';
+	}
+
+	// Trait-part layout (view.parts), or null for legacy flex rows.
+	// Unknown part names never reach the grid: validation rejects them.
+	function getParts( traitSetArg: TraitSet ) {
+		const parts = getView( traitSetArg )?.parts;
+		if ( !parts || typeof parts !== 'object' || Array.isArray( parts ) ) return null;
+		const known = Object.keys( parts ).filter( ( k ) => isKnownPart( k ) );
+		if ( !known.length ) return null;
+		return parts as Record<string, { left: string; top: number; width: string; height: number }>;
+	}
+
+	function partsGridFor( traitSetArg: TraitSet ) {
+		const parts = getParts( traitSetArg );
+		if ( !parts ) return null;
+		return partsGrid( parts );
+	}
+
+	// Name and rating share row 0 (inline): the stacked-vs-inline divider rules key off this.
+	function isPartsInline( traitSetArg: TraitSet ) {
+		const grid = partsGridFor( traitSetArg );
+		const name = grid?.cells?.name;
+		const rating = grid?.cells?.rating;
+		return Boolean( grid && name && rating && name.row === 1 && rating.row === 1 );
+	}
+
+	function isStatementSet( traitSetArg: TraitSet ) {
+		return Boolean( traitSetArg?.statement );
+	}
+
+	function hasQuestionedPip( traitSetArg: TraitSet ) {
+		return Boolean( traitSetArg?.hasQuestionedPip );
+	}
+
+	function isTraitQuestioned( trait: Trait ) {
+		return cortexFunctions.isStatementFilled( trait );
+	}
+
+	function toggleTraitQuestioned( sArg: any, t: any, traitArg?: Trait ) {
+		if ( props.submode === 'print' ) return;
+		const trait = traitArg ?? props.character?.traitSets?.[ sArg ]?.traits?.[ t ];
+		if ( !trait ) return;
+		if ( !cortexFunctions.setStatementFilled( trait, !cortexFunctions.isStatementFilled( trait ) ) ) return;
+		updateCharacter( props.character );
+	}
+
+	function hasCounterColumn( traitSetArg: TraitSet ) {
+		return Boolean( traitSetArg?.hasCounterColumn );
+	}
+
+	function getCounterLabel( traitSetArg: TraitSet ) {
+		return traitSetArg?.counterLabel || getView( traitSetArg )?.counterLabel || 'XP';
+	}
+
+	function getTraitCounter( trait: Trait ) {
+		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView( trait )?.xp ?? '';
+	}
+
+	// Statement boxes read the sentence child only; description is a general
+	// fallback for asset-style boxes, not a second statement home.
+	function getTraitStatement( trait: Trait, statementOnly = false ) {
+		const sentence = cortexFunctions.statementText( trait );
+		if ( sentence ) return sentence;
+		return statementOnly ? '' : ( trait?.description ?? '' );
+	}
+
+	function renderDieValue( value: number ) {
+		return cortexFunctions.getDieDisplayValue( value );
+	}
+
+	function selectElement( selector: unknown[] ) {
+		emit( 'selectElement', selector );
+	}
+
+	function updateCharacter( character: Character ) {
+		emit( 'updateCharacter', character );
+	}
+
+	function addTrait( traitSetID: number ) {
+		emit( 'addTrait', traitSetID );
+	}
+
+	function removeTrait( traitSetID: number, traitID: number ) {
+		emit( 'removeTrait', traitSetID, traitID );
+	}
+
+	function removeTraitSet( traitSetID: number ) {
+		emit( 'removeTraitSet', traitSetID );
+	}
+
+	function getTraitClasses( trait: Trait ) {
+		const classes: Record<string, boolean> = { 'trait': true };
+		if ( trait?.description?.length ) classes['trait-has-description'] = true;
+		if ( cortexFunctions.sfxChildren( trait ).length ) classes['trait-has-sfx'] = true;
+		if ( nonSfxSubtraits( trait ).length ) classes['trait-has-subtraits'] = true;
+		const vis = resolveVisibility( trait );
+		if ( vis === 'play-only' ) classes['trait-play-only'] = true;
+		if ( vis === 'editor-only' ) classes['trait-editor-only'] = true;
+		return classes;
+	}
+
+	function getRenderedTraits( traitSetArg: TraitSet, sArg: number ) {
+		const existing = traitSetArg?.traits || [];
+
+		if ( props.printBlank ) {
+			const targetCount = getTraitSetSlotCount( traitSetArg );
+			const list: any[] = [];
+			const visible = existing
+				.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx }) )
+				.filter( ( { trait } ) => isTraitShown( trait ) );
+			for ( let i = 0; i < targetCount; i++ ) {
+				if ( i < visible.length ) {
+					list.push({ trait: visible[i].trait, originalIndex: visible[i].originalIndex, isPlaceholder: false });
+				} else {
+					list.push({ trait: createBlankSlotTrait( traitSetArg ), originalIndex: null, isPlaceholder: true });
 				}
-				console.warn(`[frame] Unrecognized stroke token "${raw}", falling back to "primary"`);
-				return 'frame-stroke-primary';
-				console.warn(`[frame] Unrecognized color token "${raw}", falling back to "primary"`);
-				return 'frame-color-primary';
-			});
-			const frameStrokeClass = frameColorClass;
-
-			const frameStrokeStyle = computed(() => {
-				return undefined;
-				const f = resolvedFrame.value;
-				if (!f) return undefined;
-				const style: Record<string, string> = {};
-				if (f.stroke) {
-					style['--frame-stroke-width'] = f.stroke;
-				}
-				if (f.dash) {
-					style['--frame-stroke-dash'] = f.dash;
-				}
-				return Object.keys(style).length > 0 ? style : undefined;
-			});
-
-			const frameAnchors = computed(() => {
-				if (!isPositionalFrameActive.value || !resolvedFrame.value) return [];
-				const rendered = getRenderedTraits(traitSet.value, s.value);
-				return computeFrameAnchors(rendered.length, resolvedFrame.value);
-			});
-
-			function getTraitAnchorStyle(t: number): Record<string, string> | undefined {
-				if (!isPositionalFrameActive.value) return undefined;
-				const a = frameAnchors.value[t];
-				if (!a) return undefined;
-				const left = a.offsetMm ? `calc(${a.x}% + ${a.offsetMm.x}mm)` : `${a.x}%`;
-				const top = a.offsetMm ? `calc(${a.y}% + ${a.offsetMm.y}mm)` : `${a.y}%`;
-				return {
-					position: 'absolute',
-					left,
-					top,
-					'--anchor-x': `${a.x}%`,
-					'--anchor-y': `${a.y}%`,
-					'--anchor-angle': `${a.angle}deg`
-				};
 			}
+			return list;
+		}
 
-			function getTraitNameAnchorStyle(t: number): Record<string, string> | undefined {
-				if (!isPositionalFrameActive.value) return undefined;
-				return frameAnchors.value[t]?.nameStyle;
+		// Slots are not traits: every mode expands trailing blank slots to
+		// the slot count (reservedSlots floor). Placeholders are render-time
+		// objects — clicking one fills it (openTraitAt); nothing blank is stored.
+	// Visibility filters first (hidden traits leave no row), so counts
+	// stay stable. Original indices survive the filter for editor routing.
+		const mapped = existing.map( ( t, idx: number ) => ({ trait: t, originalIndex: idx, isPlaceholder: false }) );
+		const visible = mapped.filter( ( { trait } ) => isTraitShown( trait ) );
+		const targetCount = Math.max( getTraitSetSlotCount( traitSetArg ), visible.length );
+		const list: any[] = [ ...visible ];
+		for ( let i = visible.length; i < targetCount; i++ ) {
+			list.push({ trait: createBlankSlotTrait( traitSetArg ), originalIndex: null, isPlaceholder: true });
+		}
+		return list;
+	}
+
+	// Trait visibility (shown | editor-only | hidden): hidden leaves no row
+	// anywhere, editor-only renders in Edit only. Editors bypass the
+	// filter; only sheet rendering applies it.
+	function isTraitShown( trait: Trait ) {
+		return !isHiddenIn( trait, props.submode );
+	}
+
+	// Open a trait row for editing; a blank placeholder becomes a real
+	// (still unnamed) trait first, so pencil rows fill in place.
+	function openTraitAt( sArg: any, item: any ) {
+		if ( !item ) return;
+		if ( item.isPlaceholder ) {
+			if ( props.submode === 'play' && !isPlayMutableSet( traitSet.value ) ) {
+				return;
 			}
+			fillPlaceholder( sArg );
+			return;
+		}
+		selectElement([ 'trait', sArg, item.originalIndex ]);
+	}
 
-			function getTraitAnchorDock(t: number): string | undefined {
-				if (!isPositionalFrameActive.value) return undefined;
-				return frameAnchors.value[t]?.dock;
-			}
+	function fillPlaceholder( sArg: any ) {
+		const set = props.character.traitSets[ sArg ];
+		if ( !set || !Array.isArray( set.traits ) ) return;
+		set.traits.push( createBlankSlotTrait( set ) );
+		updateCharacter( props.character );
+		selectElement([ 'trait', sArg, set.traits.length - 1 ]);
+	}
 
-			function getTraitSetLabel(traitSetArg: TraitSet, key: string) {
-				const labels = getView(traitSetArg)?.labels;
-				if (labels && labels[key] !== undefined && labels[key] !== null && String(labels[key]).length) {
-					return labels[key];
-				}
-				const style = getView(traitSetArg)?.style?.body;
-				return cortexFunctions.labelDefaultForStyle(style, key);
-			}
+	function createBlankSlotTrait( traitSetArg: TraitSet ): any {
+		const traits = Array.isArray( traitSetArg?.traits ) ? traitSetArg.traits : ( traitSetArg?.traits && typeof traitSetArg.traits === 'object' ? Object.values( traitSetArg.traits ) : [] );
+		const hasSubtraits = traits.some( ( t: any ) => {
+			const subs = Array.isArray( t?.traits ) ? t.traits : ( t?.traits && typeof t.traits === 'object' ? Object.values( t.traits ) : [] );
+			return subs.some( ( s: any ) => !cortexFunctions.isSfxContainer( s ) && !cortexFunctions.isStatementContainer( s ) );
+		} );
+		return {
+			name: '',
+			description: '',
+			traits: hasSubtraits ? [{ name: '' }] : [],
+			tags: [],
+			custom: {}
+		};
+	}
 
-			function isSelected(selector: unknown[]) {
-				return cortexFunctions.arraysMatch(props.editing, selector);
-			}
-
-			function renderText(text: unknown) {
-				return cortexFunctions.renderText(text);
-			}
-
-			function renderNotesText(text: unknown) {
-				if (!text) return '';
-				return cortexFunctions.renderMarkdown(text);
-			}
-
-			function getTraitSetClasses(traitSetArg: TraitSet) {
-				const classes: Record<string, boolean> = { 'trait-set': true };
-
-				const bodyStyle = getView(traitSetArg)?.style?.body || 'default';
-				classes['trait-set-style-' + bodyStyle] = true;
-
-				if (bodyStyle === 'subtrait-columns' && getView(traitSetArg)?.branchArrows === false) {
-					classes['hide-branch-arrows'] = true;
-				}
-
-				if (isSpotlightStyle.value) {
-					const rawSpan = getView(traitSetArg)?.span ?? getView(traitSetArg)?.colSpan ?? getView(traitSetArg)?.columnSpan;
-					const colSpan = Number(rawSpan) || 1;
-					if (colSpan >= columnCount.value || rawSpan === 'full') {
-						classes['span-full'] = true;
-						classes['span-' + columnCount.value] = true;
-					} else if (colSpan === 2) {
-						classes['span-2'] = true;
-					} else {
-						classes['span-1'] = true;
+	function isFixedSystemTrait( traitSetArg: TraitSet, trait: Trait ) {
+		if ( !trait || !trait.name ) return false;
+		const name = trait.name.trim();
+		if ( name.endsWith( ':' ) ) return false;
+		const tsBody = getView( traitSetArg )?.style?.body;
+		const tsName = ( traitSetArg?.name || '' ).toLowerCase();
+		if ( tsBody === 'portrait-ring' || tsBody === 'die-track' ||
+		     cortexFunctions.isFixedNameSet( tsName ) ||
+		     ( getView( traitSetArg )?.traitColumns ?? 0 ) > 1 ||
+		     cortexFunctions.hasTrackPart( traitSetArg ) ) {
+			return true;
+		}
+		const spotlightId = getView( props.character )?.spotlight;
+		if ( spotlightId && typeof ( window as any )?.cortexSpotlightTemplates !== 'undefined' ) {
+			const tpls = ( window as any ).cortexSpotlightTemplates;
+			if ( Array.isArray( tpls ) ) {
+				const tpl = tpls.find( ( t: any ) => t.id === spotlightId || t.title === spotlightId || t.spotlight === spotlightId );
+				if ( tpl?.sets ) {
+					for ( const sKey of Object.keys( tpl.sets ) ) {
+						const setDef = tpl.sets[ sKey ];
+						if ( setDef?.traits && Object.prototype.hasOwnProperty.call( setDef.traits, name ) ) return true;
 					}
 				}
+			}
+		}
+		return false;
+	}
 
-				const ratingPos = getRatingPosition(traitSetArg);
-				if (ratingPos && ratingPos !== 'inline') {
-					classes['rating-pos-' + ratingPos] = true;
+	function renderDieValueForPrint( size: number | null | undefined, isActive = false ) {
+		const isFilled = props.printBlank ? false : Boolean( isActive );
+		return cortexFunctions.renderDieconSVG( size || 0, isFilled, '', getView( props.character )?.diceConfig );
+	}
+
+	function getTraitSetRatings( traitSetArg: TraitSet ) {
+		return cortexFunctions.getTraitSetRatings( traitSetArg );
+	}
+
+	function getSubtraitRatings( traitSetArg: TraitSet ) {
+		return cortexFunctions.getSubtraitRatings( traitSetArg );
+	}
+
+	function getTraitDice( trait: Trait ) {
+		return cortexFunctions.getTraitDice( trait );
+	}
+
+	// Positional subtrait access: paired slots keep complication at 0
+	// and bonus at 1. Index is the truth; names are labels. The SFX
+	// container is a child trait, not a subtrait, so positional access
+	// reads past it.
+	function nonSfxSubtraits( trait: Trait ) {
+		const subs = ( trait as any )?.traits;
+		return ( Array.isArray( subs ) ? subs : [] )
+			.filter( ( st: any ) => !cortexFunctions.isSfxContainer( st ) && !cortexFunctions.isStatementContainer( st ) );
+	}
+
+	function getSubtraitAt( trait: Trait, index: number ) {
+		return nonSfxSubtraits( trait )[ index ] || null;
+	}
+
+	function getSubtraitSlotRatings( traitSetArg: TraitSet, slot: number ) {
+		return cortexFunctions.getSubtraitSlotRatings( traitSetArg, slot );
+	}
+
+	// A pool set (e.g. Growth Pool) is a plain multi-die pool, not apart-rolling:
+	// clicking a trait adds its whole pool to the roller. Apart-rolling
+	// derives from hitches (0 rolls apart), never from names.
+	function isPoolSet( traitSetArg: TraitSet ) {
+		return nodePool( traitSetArg ) === true;
+	}
+
+	function isDieSpent( trait: Trait, index: number ) {
+		const spent = getView( trait )?.spentDice;
+		return Array.isArray( spent ) && spent.includes( index );
+	}
+
+	function toggleDieSpentInPlay( sArg: any, t: any, index: number ) {
+		const trait = props.character.traitSets[sArg].traits[t];
+		const view = ensureView( trait );
+		if ( !Array.isArray( view.spentDice ) ) {
+			view.spentDice = [];
+		}
+		const spentList = view.spentDice;
+		const idx = spentList.indexOf( index );
+		if ( idx !== -1 ) {
+			spentList.splice( idx, 1 );
+		} else {
+			spentList.push( index );
+		}
+		updateCharacter( props.character );
+	}
+
+	// Pool staging (one recursive shape): a trait stages its whole array
+	// of available dice when it carries pool itself or inherits it from
+	// its set. Challenge/boss pools are not flags — both are Dice ratings
+	// with pool and spendable on the set, differing only in size.
+	function nodePool( node: unknown ): boolean | undefined {
+		const n = ( node && typeof node === 'object' ? node : undefined ) as { pool?: unknown } | undefined;
+		if ( n && typeof n.pool === 'boolean' ) return n.pool;
+		return undefined;
+	}
+
+	function stagesWholePool( trait: Trait, traitSetArg: TraitSet ) {
+		return ( nodePool( trait ) ?? nodePool( traitSetArg ) ) === true;
+	}
+
+	// Stage entries carry hitches (resolved with inheritance) and keepsExtra
+	// so the roller never re-resolves trait data from a source name.
+	function stageTraitDice( trait: Trait, traitSetArg: TraitSet ) {
+		const dice = availableDice( trait );
+		if ( !dice.length ) return [];
+		const hitches = resolveHitches( trait, [ traitSetArg ] );
+		const keep = keepsExtraDice( trait );
+		return dice.map( ( size: number ) => ({
+			size: size,
+			qty: 1,
+			source: trait.name,
+			hitches: hitches,
+			keepsExtra: keep
+		} ) );
+	}
+
+	function handleDieClick( trait: Trait, dieSize: number, dIdx: number, traitSetArg: TraitSet, sArg: any, t: any ) {
+		if ( props.submode === 'play' ) {
+			if ( isDieSpent( trait, dIdx ) ) {
+				toggleDieSpentInPlay( sArg, t, dIdx );
+				return;
+			}
+			if ( stagesWholePool( trait, traitSetArg ) ) {
+				// Pools add whole: every available die on the trait enters
+				// the roller, and the roller sheds dice individually.
+				const staged = stageTraitDice( trait, traitSetArg );
+				if ( !staged.length ) return;
+				emit( 'addDieToRoller', staged );
+				return;
+			}
+			emit( 'addDieToRoller', {
+				size: dieSize,
+				qty: 1,
+				source: trait.name,
+				hitches: resolveHitches( trait, [ traitSetArg ] )
+			} );
+		} else {
+			selectElement([ 'trait', sArg, t ]);
+		}
+	}
+
+	function handleSingleDieClick( trait: Trait, value: number | null | undefined, traitSetArg: TraitSet, sArg: any, t: any ) {
+		if ( props.submode === 'play' ) {
+			const first = ratingDice( getRating( trait ) )[0];
+			const targetVal = value || first;
+			if ( value !== undefined && value !== null ) {
+				if ( !first || first !== value ) {
+					setRatingDie( trait as unknown as Record<string, any>, value );
+					updateCharacter( props.character );
 				}
-
-				if (isStatementSet(traitSetArg)) {
-					classes['trait-set-statement-mode'] = true;
-				}
-
-				if (hasCounterColumn(traitSetArg)) {
-					classes['trait-set-has-counter'] = true;
-				}
-
-				const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : (traitSetArg?.traits ? Object.values(traitSetArg.traits) : []);
-				if (traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0)) {
-					classes['trait-set-has-feature-description'] = true;
-				}
-
-				const ctk = getView(traitSetArg);
-				if (ctk?.header === 'top') {
-					classes['trait-set-header-top'] = true;
-				}
-				const align = ctk?.headerAlign;
-				classes['trait-set-header-align-' + (align === 'center' || align === 'right' ? align : 'left')] = true;
-
-				const vis = resolveVisibility(traitSetArg);
-				if (vis === 'play-only') classes['trait-set-play-only'] = true;
-				if (vis === 'editor-only') classes['trait-set-editor-only'] = true;
-
-				if (isFrameActive.value) {
-					classes['trait-set-framed'] = true;
-					if (resolvedFrame.value?.shape) {
-						classes['trait-set-frame-' + resolvedFrame.value.shape] = true;
-					}
-				}
-				if (resolvedFrame.value?.shape === 'line') {
-					classes['trait-set-frame-line'] = true;
-				}
-
-				return classes;
 			}
-
-			function getRatingPosition(traitSetArg: TraitSet) {
-				const parts = getParts(traitSetArg);
-				if (parts && parts.rating) {
-					const rTop = Number(parts.rating.top) || 0;
-					const nTop = parts.name ? (Number(parts.name.top) || 0) : 0;
-					if (rTop === 0 && nTop === 0) return 'inline';
-					if (rTop === 0) return 'above';
-					return 'below';
-				}
-				if (parts) return 'none';
-				return traitSetArg?.ratingPosition || getView(traitSetArg)?.ratingPosition || 'inline';
-			}
-
-			// Trait-part layout (view.parts), or null for legacy flex rows.
-			// Unknown part names never reach the grid: validation rejects them.
-			function getParts(traitSetArg: TraitSet) {
-				const parts = getView(traitSetArg)?.parts;
-				if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return null;
-				const known = Object.keys(parts).filter((k) => isKnownPart(k));
-				if (!known.length) return null;
-				return parts as Record<string, { left: string; top: number; width: string; height: number }>;
-			}
-
-			function partsGridFor(traitSetArg: TraitSet) {
-				const parts = getParts(traitSetArg);
-				if (!parts) return null;
-				return partsGrid(parts);
-			}
-
-			// Name and rating share row 0 (inline): the stacked-vs-inline divider rules key off this.
-			function isPartsInline(traitSetArg: TraitSet) {
-				const grid = partsGridFor(traitSetArg);
-				const name = grid?.cells?.name;
-				const rating = grid?.cells?.rating;
-				return Boolean(grid && name && rating && name.row === 1 && rating.row === 1);
-			}
-
-			function isStatementSet(traitSetArg: TraitSet) {
-				return Boolean(traitSetArg?.statement);
-			}
-
-			function hasQuestionedPip(traitSetArg: TraitSet) {
-				return Boolean(traitSetArg?.hasQuestionedPip);
-			}
-
-			function isTraitQuestioned(trait: Trait) {
-				return cortexFunctions.isStatementFilled(trait);
-			}
-
-			function toggleTraitQuestioned(sArg: any, t: any, traitArg?: Trait) {
-				if (props.submode === 'print') return;
-				const trait = traitArg ?? props.character?.traitSets?.[sArg]?.traits?.[t];
-				if (!trait) return;
-				if (!cortexFunctions.setStatementFilled(trait, !cortexFunctions.isStatementFilled(trait))) return;
-				updateCharacter(props.character);
-			}
-
-			function hasCounterColumn(traitSetArg: TraitSet) {
-				return Boolean(traitSetArg?.hasCounterColumn);
-			}
-
-			function getCounterLabel(traitSetArg: TraitSet) {
-				return traitSetArg?.counterLabel || getView(traitSetArg)?.counterLabel || 'XP';
-			}
-
-			function getTraitCounter(trait: Trait) {
-				return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView(trait)?.xp ?? '';
-			}
-
-			// Statement boxes read the sentence child only; description is a general
-			// fallback for asset-style boxes, not a second statement home.
-			function getTraitStatement(trait: Trait, statementOnly = false) {
-				const sentence = cortexFunctions.statementText(trait);
-				if (sentence) return sentence;
-				return statementOnly ? '' : (trait?.description ?? '');
-			}
-
-			function renderDieValue(value: number) {
-				return cortexFunctions.getDieDisplayValue(value);
-			}
-
-			function selectElement(selector: unknown[]) {
-				emit('selectElement', selector);
-			}
-
-			function updateCharacter(character: Character) {
-				emit('updateCharacter', character);
-			}
-
-			function addTrait(traitSetID: number) {
-				emit('addTrait', traitSetID);
-			}
-
-			function removeTrait(traitSetID: number, traitID: number) {
-				emit('removeTrait', traitSetID, traitID);
-			}
-
-			function removeTraitSet(traitSetID: number) {
-				emit('removeTraitSet', traitSetID);
-			}
-
-			function getTraitClasses(trait: Trait) {
-				const classes: Record<string, boolean> = { 'trait': true };
-				if (trait?.description?.length) classes['trait-has-description'] = true;
-				if (cortexFunctions.sfxChildren(trait).length) classes['trait-has-sfx'] = true;
-				if (nonSfxSubtraits(trait).length) classes['trait-has-subtraits'] = true;
-				const vis = resolveVisibility(trait);
-				if (vis === 'play-only') classes['trait-play-only'] = true;
-				if (vis === 'editor-only') classes['trait-editor-only'] = true;
-				return classes;
-			}
-
-			function getRenderedTraits(traitSetArg: TraitSet, sArg: number) {
-				const existing = traitSetArg?.traits || [];
-
-				if (props.printBlank) {
-					const targetCount = getTraitSetSlotCount(traitSetArg);
-					const list: any[] = [];
-					const visible = existing
-						.map((t, idx: number) => ({ trait: t, originalIndex: idx }))
-						.filter(({ trait }) => isTraitShown(trait));
-					for (let i = 0; i < targetCount; i++) {
-						if (i < visible.length) {
-							list.push({ trait: visible[i].trait, originalIndex: visible[i].originalIndex, isPlaceholder: false });
-						} else {
-							list.push({ trait: createBlankSlotTrait(traitSetArg), originalIndex: null, isPlaceholder: true });
-						}
-					}
-					return list;
-				}
-
-				// Slots are not traits: every mode expands trailing blank slots to
-				// the slot count (reservedSlots floor). Placeholders are render-time
-				// objects — clicking one fills it (openTraitAt); nothing blank is stored.
-				// Visibility filters first (hidden traits leave no row), so counts
-				// stay stable. Original indices survive the filter for editor routing.
-				const mapped = existing.map((t, idx: number) => ({ trait: t, originalIndex: idx, isPlaceholder: false }));
-				const visible = mapped.filter(({ trait }) => isTraitShown(trait));
-				const targetCount = Math.max(getTraitSetSlotCount(traitSetArg), visible.length);
-				const list: any[] = [...visible];
-				for (let i = visible.length; i < targetCount; i++) {
-					list.push({ trait: createBlankSlotTrait(traitSetArg), originalIndex: null, isPlaceholder: true });
-				}
-				return list;
-			}
-
-			// Trait visibility (shown | editor-only | hidden): hidden leaves no row
-			// anywhere, editor-only renders in Edit only. Editors bypass the
-			// filter; only sheet rendering applies it.
-			function isTraitShown(trait: Trait) {
-				return !isHiddenIn(trait, props.submode);
-			}
-
-			// Open a trait row for editing; a blank placeholder becomes a real
-			// (still unnamed) trait first, so pencil rows fill in place.
-			function openTraitAt(sArg: any, item: any) {
-				if (!item) return;
-				if (item.isPlaceholder) {
-					if (props.submode === 'play' && !isPlayMutableSet(traitSet.value)) {
-						return;
-					}
-					fillPlaceholder(sArg);
+			if ( targetVal ) {
+				if ( stagesWholePool( trait, traitSetArg ) ) {
+					const staged = stageTraitDice( trait, traitSetArg );
+					if ( !staged.length ) return;
+					emit( 'addDieToRoller', staged );
 					return;
 				}
-				selectElement(['trait', sArg, item.originalIndex]);
-			}
-
-			function fillPlaceholder(sArg: any) {
-				const set = props.character.traitSets[sArg];
-				if (!set || !Array.isArray(set.traits)) return;
-				set.traits.push(createBlankSlotTrait(set));
-				updateCharacter(props.character);
-				selectElement(['trait', sArg, set.traits.length - 1]);
-			}
-
-			function createBlankSlotTrait(traitSetArg: TraitSet): any {
-				const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : (traitSetArg?.traits && typeof traitSetArg.traits === 'object' ? Object.values(traitSetArg.traits) : []);
-				const hasSubtraits = traits.some((t: any) => {
-					const subs = Array.isArray(t?.traits) ? t.traits : (t?.traits && typeof t.traits === 'object' ? Object.values(t.traits) : []);
-					return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && !cortexFunctions.isStatementContainer(s));
-				});
-				return {
-					name: '',
-					description: '',
-					traits: hasSubtraits ? [{ name: '' }] : [],
-					tags: [],
-					custom: {}
-				};
-			}
-
-			function isFixedSystemTrait(traitSetArg: TraitSet, trait: Trait) {
-				if (!trait || !trait.name) return false;
-				const name = trait.name.trim();
-				if (name.endsWith(':')) return false;
-				const tsBody = getView(traitSetArg)?.style?.body;
-				const tsName = (traitSetArg?.name || '').toLowerCase();
-				if (tsBody === 'portrait-ring' || tsBody === 'die-track' ||
-					cortexFunctions.isFixedNameSet(tsName) ||
-					(getView(traitSetArg)?.traitColumns ?? 0) > 1 ||
-					cortexFunctions.hasTrackPart(traitSetArg)) {
-					return true;
-				}
-				const spotlightId = getView(props.character)?.spotlight;
-				if (spotlightId && typeof (window as any)?.cortexSpotlightTemplates !== 'undefined') {
-					const tpls = (window as any).cortexSpotlightTemplates;
-					if (Array.isArray(tpls)) {
-						const tpl = tpls.find((t: any) => t.id === spotlightId || t.title === spotlightId || t.spotlight === spotlightId);
-						if (tpl?.sets) {
-							for (const sKey of Object.keys(tpl.sets)) {
-								const setDef = tpl.sets[sKey];
-								if (setDef?.traits && Object.prototype.hasOwnProperty.call(setDef.traits, name)) return true;
-							}
-						}
-					}
-				}
-				return false;
-			}
-
-			function renderDieValueForPrint(size: number | null | undefined, isActive = false) {
-				const isFilled = props.printBlank ? false : Boolean(isActive);
-				return cortexFunctions.renderDieconSVG(size || 0, isFilled, '', getView(props.character)?.diceConfig);
-			}
-
-			function getTraitSetRatings(traitSetArg: TraitSet) {
-				return cortexFunctions.getTraitSetRatings(traitSetArg);
-			}
-
-			function getSubtraitRatings(traitSetArg: TraitSet) {
-				return cortexFunctions.getSubtraitRatings(traitSetArg);
-			}
-
-			function getTraitDice(trait: Trait) {
-				return cortexFunctions.getTraitDice(trait);
-			}
-
-			// Positional subtrait access: paired slots keep complication at 0
-			// and bonus at 1. Index is the truth; names are labels. The SFX
-			// container is a child trait, not a subtrait, so positional access
-			// reads past it.
-			function nonSfxSubtraits(trait: Trait) {
-				const subs = (trait as any)?.traits;
-				return (Array.isArray(subs) ? subs : [])
-					.filter((st: any) => !cortexFunctions.isSfxContainer(st) && !cortexFunctions.isStatementContainer(st));
-			}
-
-			function getSubtraitAt(trait: Trait, index: number) {
-				return nonSfxSubtraits(trait)[index] || null;
-			}
-
-			function getSubtraitSlotRatings(traitSetArg: TraitSet, slot: number) {
-				return cortexFunctions.getSubtraitSlotRatings(traitSetArg, slot);
-			}
-
-			// A pool set (e.g. Growth Pool) is a plain multi-die pool, not apart-rolling:
-			// clicking a trait adds its whole pool to the roller. Apart-rolling
-			// derives from hitches (0 rolls apart), never from names.
-			function isPoolSet(traitSetArg: TraitSet) {
-				return nodePool(traitSetArg) === true;
-			}
-
-			function isDieSpent(trait: Trait, index: number) {
-				const spent = getView(trait)?.spentDice;
-				return Array.isArray(spent) && spent.includes(index);
-			}
-
-			function toggleDieSpentInPlay(sArg: any, t: any, index: number) {
-				const trait = props.character.traitSets[sArg].traits[t];
-				const view = ensureView(trait);
-				if (!Array.isArray(view.spentDice)) {
-					view.spentDice = [];
-				}
-				const spentList = view.spentDice;
-				const idx = spentList.indexOf(index);
-				if (idx !== -1) {
-					spentList.splice(idx, 1);
-				} else {
-					spentList.push(index);
-				}
-				updateCharacter(props.character);
-			}
-
-			// Pool staging (one recursive shape): a trait stages its whole array
-			// of available dice when it carries pool itself or inherits it from
-			// its set. Challenge/boss pools are not flags — both are Dice ratings
-			// with pool and spendable on the set, differing only in size.
-			function nodePool(node: unknown): boolean | undefined {
-				const n = (node && typeof node === 'object' ? node : undefined) as { pool?: unknown } | undefined;
-				if (n && typeof n.pool === 'boolean') return n.pool;
-				return undefined;
-			}
-
-			function stagesWholePool(trait: Trait, traitSetArg: TraitSet) {
-				return (nodePool(trait) ?? nodePool(traitSetArg)) === true;
-			}
-
-			// Stage entries carry hitches (resolved with inheritance) and keepsExtra
-			// so the roller never re-resolves trait data from a source name.
-			function stageTraitDice(trait: Trait, traitSetArg: TraitSet) {
-				const dice = availableDice(trait);
-				if (!dice.length) return [];
-				const hitches = resolveHitches(trait, [traitSetArg]);
-				const keep = keepsExtraDice(trait);
-				return dice.map((size: number) => ({
-					size: size,
+				emit( 'addDieToRoller', {
+					size: targetVal,
 					qty: 1,
 					source: trait.name,
-					hitches: hitches,
-					keepsExtra: keep
-				}));
+					hitches: resolveHitches( trait, [ traitSetArg ] ),
+					ppDelta: 0
+				} );
 			}
+		} else {
+			selectElement([ 'trait', sArg, t ]);
+		}
+	}
 
-			function handleDieClick(trait: Trait, dieSize: number, dIdx: number, traitSetArg: TraitSet, sArg: any, t: any) {
-				if (props.submode === 'play') {
-					if (isDieSpent(trait, dIdx)) {
-						toggleDieSpentInPlay(sArg, t, dIdx);
-						return;
-					}
-					if (stagesWholePool(trait, traitSetArg)) {
-						// Pools add whole: every available die on the trait enters
-						// the roller, and the roller sheds dice individually.
-						const staged = stageTraitDice(trait, traitSetArg);
-						if (!staged.length) return;
-						emit('addDieToRoller', staged);
-						return;
-					}
-					emit('addDieToRoller', {
-						size: dieSize,
-						qty: 1,
-						source: trait.name,
-						hitches: resolveHitches(trait, [traitSetArg])
-					});
-				} else {
-					selectElement(['trait', sArg, t]);
-				}
+	function traitHasHinder( trait: Trait, traitSetArg: TraitSet ): boolean {
+		if ( !trait || !isTraitRated( trait ) ) return false;
+		const children = cortexFunctions.sfxChildren( trait );
+		return children.some( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+	}
+
+	function hinderDie( trait: Trait ): number {
+		const children = cortexFunctions.sfxChildren( trait );
+		const hinder = children.find( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+		return ratingDice( getRating( hinder ) )[0] || 0;
+	}
+
+	function handleHinderDieClick( trait: Trait, traitSetArg: TraitSet, sArg: any, t: any ) {
+		if ( props.submode === 'play' ) {
+			const children = cortexFunctions.sfxChildren( trait );
+			const hinder = children.find( ( e: any ) => String( e.name || '' ).toLowerCase() === 'hinder' );
+			const size = ratingDice( getRating( hinder ) )[0] || 4;
+			emit( 'addDieToRoller', {
+				size: size,
+				qty: 1,
+				source: trait.name ? `${trait.name} (Hinder)` : 'Hinder',
+				hitches: resolveHitches( trait, [ traitSetArg ] ),
+				ppDelta: 1,
+				ppCommitted: false
+			} );
+		}
+	}
+
+	function stageTrackDie( trait: Trait, size: number, label: string, traitSetArg: TraitSet ) {
+		if ( props.submode === 'play' && size > 0 ) {
+			emit( 'addDieToRoller', {
+				size: size,
+				qty: 1,
+				source: label || trait.name || traitSetArg?.noun || 'Trait',
+				hitches: resolveHitches( trait, [ traitSetArg ] ),
+				ppDelta: 0
+			} );
+		}
+	}
+
+	function handleSteppedDieClick( sArg: any, t: any, value: number ) {
+		if ( props.submode === 'play' ) {
+			const trait = props.character.traitSets[sArg].traits[t];
+			const cur = ratingDice( getRating( trait ) )[0];
+			if ( cur === value && !trait.isOut ) {
+				setRatingDie( trait as unknown as Record<string, any>, null );
+			} else {
+				setRatingDie( trait as unknown as Record<string, any>, value );
+				trait.isOut = false;
 			}
+			updateCharacter( props.character );
+		} else {
+			selectElement([ 'trait', sArg, t ]);
+		}
+	}
 
-			function handleSingleDieClick(trait: Trait, value: number | null | undefined, traitSetArg: TraitSet, sArg: any, t: any) {
-				if (props.submode === 'play') {
-					const first = ratingDice(getRating(trait))[0];
-					const targetVal = value || first;
-					if (value !== undefined && value !== null) {
-						if (!first || first !== value) {
-							setRatingDie(trait as unknown as Record<string, any>, value);
-							updateCharacter(props.character);
-						}
-					}
-					if (targetVal) {
-						if (stagesWholePool(trait, traitSetArg)) {
-							const staged = stageTraitDice(trait, traitSetArg);
-							if (!staged.length) return;
-							emit('addDieToRoller', staged);
-							return;
-						}
-						emit('addDieToRoller', {
-							size: targetVal,
-							qty: 1,
-							source: trait.name,
-							hitches: resolveHitches(trait, [traitSetArg]),
-							ppDelta: 0
-						});
-					}
-				} else {
-					selectElement(['trait', sArg, t]);
-				}
+	function handleOutClick( sArg: any, t: any ) {
+		if ( props.submode === 'play' ) {
+			const trait = props.character.traitSets[sArg].traits[t];
+			trait.isOut = !trait.isOut;
+			if ( trait.isOut ) {
+				setRatingDie( trait as unknown as Record<string, any>, rangeTop( trait ) + 2 );
+				const r = ( trait as any ).rating;
+				if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) r.out = true;
+			} else {
+				setRatingDie( trait as unknown as Record<string, any>, null );
 			}
+			updateCharacter( props.character );
+		} else {
+			selectElement([ 'trait', sArg, t ]);
+		}
+	}
 
-			function traitHasHinder(trait: Trait, traitSetArg: TraitSet): boolean {
-				if (!trait || !isTraitRated(trait)) return false;
-				const children = cortexFunctions.sfxChildren(trait);
-				return children.some((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-			}
+	// Generic Out indicator: any stepped track (stress, complications, or any
+	// hack's renamed equivalent) may offer an Out badge. Default off — most
+	// sets aren't complications.
+	function shouldShowOut( traitSetArg: TraitSet ) {
+		const view = getView( traitSetArg );
+		if ( view && typeof view.outIndicator === 'boolean' ) return view.outIndicator;
+		return false;
+	}
 
-			function hinderDie(trait: Trait): number {
-				const children = cortexFunctions.sfxChildren(trait);
-				const hinder = children.find((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-				return ratingDice(getRating(hinder))[0] || 0;
-			}
+	function isTraitOut( trait: Trait, traitSetArg?: TraitSet ) {
+		return isOutDie( trait, traitSetArg ? [ traitSetArg ] : undefined );
+	}
 
-			function handleHinderDieClick(trait: Trait, traitSetArg: TraitSet, sArg: any, t: any) {
-				if (props.submode === 'play') {
-					const children = cortexFunctions.sfxChildren(trait);
-					const hinder = children.find((e: any) => String(e.name || '').toLowerCase() === 'hinder');
-					const size = ratingDice(getRating(hinder))[0] || 4;
-					emit('addDieToRoller', {
-						size: size,
-						qty: 1,
-						source: trait.name ? `${trait.name} (Hinder)` : 'Hinder',
-						hitches: resolveHitches(trait, [traitSetArg]),
-						ppDelta: 1,
-						ppCommitted: false
-					});
-				}
-			}
-
-			function stageTrackDie(trait: Trait, size: number, label: string, traitSetArg: TraitSet) {
-				if (props.submode === 'play' && size > 0) {
-					emit('addDieToRoller', {
-						size: size,
-						qty: 1,
-						source: label || trait.name || traitSetArg?.noun || 'Trait',
-						hitches: resolveHitches(trait, [traitSetArg]),
-						ppDelta: 0
-					});
-				}
-			}
-
-			function handleSteppedDieClick(sArg: any, t: any, value: number) {
-				if (props.submode === 'play') {
-					const trait = props.character.traitSets[sArg].traits[t];
-					const cur = ratingDice(getRating(trait))[0];
-					if (cur === value && !trait.isOut) {
-						setRatingDie(trait as unknown as Record<string, any>, null);
-					} else {
-						setRatingDie(trait as unknown as Record<string, any>, value);
-						trait.isOut = false;
-					}
-					updateCharacter(props.character);
-				} else {
-					selectElement(['trait', sArg, t]);
-				}
-			}
-
-			function handleOutClick(sArg: any, t: any) {
-				if (props.submode === 'play') {
-					const trait = props.character.traitSets[sArg].traits[t];
-					trait.isOut = !trait.isOut;
-					if (trait.isOut) {
-						setRatingDie(trait as unknown as Record<string, any>, rangeTop(trait) + 2);
-						const r = (trait as any).rating;
-						if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) r.out = true;
-					} else {
-						setRatingDie(trait as unknown as Record<string, any>, null);
-					}
-					updateCharacter(props.character);
-				} else {
-					selectElement(['trait', sArg, t]);
-				}
-			}
-
-			// Generic Out indicator: any stepped track (stress, complications, or any
-			// hack's renamed equivalent) may offer an Out badge. Default off — most
-			// sets aren't complications.
-			function shouldShowOut(traitSetArg: TraitSet) {
-				const view = getView(traitSetArg);
-				if (view && typeof view.outIndicator === 'boolean') return view.outIndicator;
-				return false;
-			}
-
-			function isTraitOut(trait: Trait, traitSetArg?: TraitSet) {
-				return isOutDie(trait, traitSetArg ? [traitSetArg] : undefined);
-			}
-
-			function getDisplayTraitSfx(traitSetArg: TraitSet, trait: Trait) {
-				const entries = cortexFunctions.sfxChildren(trait);
-				if (!entries.length) return [];
-				return entries.map((sfx: any) => {
-					if (String(sfx.name || '').toLowerCase() === 'hinder') {
-						return {
-							name: 'Hinder',
-							isHinder: true,
-							description: sfx.description || ''
-						};
-					}
-					return sfx;
-				});
-			}
-
-			function hasTrackPart(traitSetArg: TraitSet) {
-				return cortexFunctions.hasTrackPart(traitSetArg);
-			}
-
-			function getTrackLabel(traitSetArg: TraitSet) {
-				return cortexFunctions.getTrackLabel(traitSetArg);
-			}
-
-			function getTraitTrackLabel(traitSetArg: TraitSet, trait: Trait): string {
-				const companion = getTrackCompanion(traitSetArg, trait);
-				if (companion && typeof companion.name === 'string' && companion.name.trim().length > 0) {
-					return companion.name.trim();
-				}
-				return getTrackLabel(traitSetArg);
-			}
-
-			function getTrackScale(traitSetArg: TraitSet) {
-				return cortexFunctions.getTrackScale(traitSetArg);
-			}
-
-			function getTrackValue(trait: Trait, traitSetArg?: TraitSet) {
-				const companion = traitSetArg ? getTrackCompanion(traitSetArg, trait) : undefined;
-				if (companion) return getTraitDice(companion)[0] || 0;
-				return 0;
-			}
-
-			// The track companion is an ordinary subtrait on the trait. Its name
-			// defaults to the set's track label (fallback "Stress"), but can be
-			// customized individually (e.g. Physical's companion is "Injured", Mental is "Worried").
-			function getTrackCompanion(traitSetArg: TraitSet, trait: Trait) {
-				const subs = (trait as any)?.traits;
-				if (!Array.isArray(subs)) return undefined;
-				const fallbackName = getTrackLabel(traitSetArg).toLowerCase();
-				// 1. Direct match by set's track label
-				const direct = subs.find((st: any) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === fallbackName);
-				if (direct) return direct;
-				// 2. Trait-specific companion track (e.g. Physical's companion is named "Injured", Mental is "Worried")
-				if (hasTrackPart(traitSetArg)) {
-					return subs.find((st: any) =>
-						st && typeof st === 'object' && st.rating &&
-						st.rating.type !== 'SFX' && st.rating.type !== 'Statement' &&
-						Array.isArray(st.rating.range)
-					);
-				}
-				return undefined;
-			}
-
-			function isTrackCompanion(traitSetArg: TraitSet, sub: unknown, trait?: Trait) {
-				if (!hasTrackPart(traitSetArg) || !sub || typeof sub !== 'object') return false;
-				if (trait) {
-					return getTrackCompanion(traitSetArg, trait) === sub;
-				}
-				const subName = (sub as any)?.name;
-				if (typeof subName === 'string' && subName.toLowerCase() === getTrackLabel(traitSetArg).toLowerCase()) {
-					return true;
-				}
-				const r = (sub as any)?.rating;
-				return Boolean(r && r.type !== 'SFX' && r.type !== 'Statement' && Array.isArray(r.range));
-			}
-
-			function visibleSubtraits(traitSetArg: TraitSet, trait: Trait) {
-				const subs = nonSfxSubtraits(trait);
-				if (!subs.length) return [];
-				const comp = hasTrackPart(traitSetArg) ? getTrackCompanion(traitSetArg, trait) : null;
-				const list = comp
-					? subs.filter((st: any) => st !== comp)
-					: subs;
-				return list.filter((st: any) => isTraitShown(st));
-			}
-
-			function shouldShowTrackOut(traitSetArg: TraitSet) {
-				return Boolean(getView(traitSetArg)?.outIndicator === true);
-			}
-
-			function isTrackOut(trait: Trait, traitSetArg?: TraitSet) {
-				const companion = traitSetArg ? getTrackCompanion(traitSetArg, trait) : undefined;
-				if (!companion) return false;
-				return isOutDie(companion, traitSetArg ? [traitSetArg] : undefined);
-			}
-
-			function handleTrackClick(sArg: any, t: any, size: number) {
-				if (props.submode === 'print') return;
-				const set = props.character.traitSets[sArg];
-				const trait = set?.traits?.[t];
-				if (!trait) return;
-				if (!Array.isArray(trait.traits)) trait.traits = [];
-				const companion: any = getTrackCompanion(set, trait);
-				if (companion) {
-					const cur = getTraitDice(companion)[0] || 0;
-					if (cur === size) {
-						const idx = trait.traits.indexOf(companion);
-						if (idx !== -1) trait.traits.splice(idx, 1);
-					} else {
-						cortexFunctions.setTraitDice(companion, [size]);
-					}
-				} else {
-					const name = getTrackLabel(set);
-					(trait.traits as any[]).push({ name, rating: { type: 'Die', value: [size], range: getTrackScale(set).slice() } });
-				}
-				updateCharacter(props.character);
-			}
-
-			function handleTrackOutClick(sArg: any, t: any) {
-				if (props.submode === 'print') return;
-				const set = props.character.traitSets[sArg];
-				const trait = set?.traits?.[t];
-				if (!trait) return;
-				if (!Array.isArray(trait.traits)) trait.traits = [];
-				let companion: any = getTrackCompanion(set, trait);
-				if (!companion) {
-					const name = getTrackLabel(set);
-					const scale = getTrackScale(set);
-					companion = { name, rating: { type: 'Die', value: [scale[0] || 4], range: scale.slice(), out: true } };
-					(trait.traits as any[]).push(companion);
-				} else {
-					companion.isOut = !companion.isOut;
-					const r = companion.rating;
-					if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) {
-						r.out = Boolean(companion.isOut);
-					}
-					if (!companion.isOut && !((getTraitDice(companion)[0] || 0) > 0)) {
-						trait.traits.splice(trait.traits.indexOf(companion), 1);
-					}
-				}
-				updateCharacter(props.character);
-			}
-
-			function getPipConfig(traitSetArg: TraitSet) {
-				const ctk = getView(traitSetArg);
-				const p = ctk?.pips;
-				const perRow = (p as any)?.perRow ?? 5;
-				const connected = (p as any)?.connected !== false;
+	function getDisplayTraitSfx( traitSetArg: TraitSet, trait: Trait ) {
+		const entries = cortexFunctions.sfxChildren( trait );
+		if ( !entries.length ) return [];
+		return entries.map( ( sfx: any ) => {
+			if ( String( sfx.name || '' ).toLowerCase() === 'hinder' ) {
 				return {
-					perRow: Math.max(1, perRow),
-					connected,
-					labels: (p as any)?.labels === true
+					name: 'Hinder',
+					isHinder: true,
+					description: sfx.description || ''
 				};
 			}
+			return sfx;
+		} );
+	}
 
-			function getPipRowCount(traitSetArg: TraitSet) {
-				const cfg = getPipConfig(traitSetArg);
-				return Math.ceil(getPipTrack(traitSetArg).count / cfg.perRow);
+	function hasTrackPart( traitSetArg: TraitSet ) {
+		return cortexFunctions.hasTrackPart( traitSetArg );
+	}
+
+	function getTrackLabel( traitSetArg: TraitSet ) {
+		return cortexFunctions.getTrackLabel( traitSetArg );
+	}
+
+	function getTraitTrackLabel( traitSetArg: TraitSet, trait: Trait ): string {
+		const companion = getTrackCompanion( traitSetArg, trait );
+		if ( companion && typeof companion.name === 'string' && companion.name.trim().length > 0 ) {
+			return companion.name.trim();
+		}
+		return getTrackLabel( traitSetArg );
+	}
+
+	function getTrackScale( traitSetArg: TraitSet ) {
+		return cortexFunctions.getTrackScale( traitSetArg );
+	}
+
+	function getTrackValue( trait: Trait, traitSetArg?: TraitSet ) {
+		const companion = traitSetArg ? getTrackCompanion( traitSetArg, trait ) : undefined;
+		if ( companion ) return getTraitDice( companion )[0] || 0;
+		return 0;
+	}
+
+	// The track companion is an ordinary subtrait on the trait. Its name
+	// defaults to the set's track label (fallback "Stress"), but can be
+	// customized individually (e.g. Physical's companion is "Injured", Mental is "Worried").
+	function getTrackCompanion( traitSetArg: TraitSet, trait: Trait ) {
+		const subs = ( trait as any )?.traits;
+		if ( !Array.isArray( subs ) ) return undefined;
+		const fallbackName = getTrackLabel( traitSetArg ).toLowerCase();
+		// 1. Direct match by set's track label
+		const direct = subs.find( ( st: any ) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === fallbackName );
+		if ( direct ) return direct;
+		// 2. Trait-specific companion track (e.g. Physical's companion is named "Injured", Mental is "Worried")
+		if ( hasTrackPart( traitSetArg ) ) {
+			return subs.find( ( st: any ) =>
+				st && typeof st === 'object' && st.rating &&
+				st.rating.type !== 'SFX' && st.rating.type !== 'Statement' &&
+				Array.isArray( st.rating.range )
+			);
+		}
+		return undefined;
+	}
+
+	function isTrackCompanion( traitSetArg: TraitSet, sub: unknown, trait?: Trait ) {
+		if ( !hasTrackPart( traitSetArg ) || !sub || typeof sub !== 'object' ) return false;
+		if ( trait ) {
+			return getTrackCompanion( traitSetArg, trait ) === sub;
+		}
+		const subName = ( sub as any )?.name;
+		if ( typeof subName === 'string' && subName.toLowerCase() === getTrackLabel( traitSetArg ).toLowerCase() ) {
+			return true;
+		}
+		const r = ( sub as any )?.rating;
+		return Boolean( r && r.type !== 'SFX' && r.type !== 'Statement' && Array.isArray( r.range ) );
+	}
+
+	function visibleSubtraits( traitSetArg: TraitSet, trait: Trait ) {
+		const subs = nonSfxSubtraits( trait );
+		if ( !subs.length ) return [];
+		const comp = hasTrackPart( traitSetArg ) ? getTrackCompanion( traitSetArg, trait ) : null;
+		const list = comp
+			? subs.filter( ( st: any ) => st !== comp )
+			: subs;
+		return list.filter( ( st: any ) => isTraitShown( st ) );
+	}
+
+	function shouldShowTrackOut( traitSetArg: TraitSet ) {
+		return Boolean( getView( traitSetArg )?.outIndicator === true );
+	}
+
+	function isTrackOut( trait: Trait, traitSetArg?: TraitSet ) {
+		const companion = traitSetArg ? getTrackCompanion( traitSetArg, trait ) : undefined;
+		if ( !companion ) return false;
+		return isOutDie( companion, traitSetArg ? [ traitSetArg ] : undefined );
+	}
+
+	function handleTrackClick( sArg: any, t: any, size: number ) {
+		if ( props.submode === 'print' ) return;
+		const set = props.character.traitSets[sArg];
+		const trait = set?.traits?.[t];
+		if ( !trait ) return;
+		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
+		const companion: any = getTrackCompanion( set, trait );
+		if ( companion ) {
+			const cur = getTraitDice( companion )[0] || 0;
+			if ( cur === size ) {
+				const idx = trait.traits.indexOf( companion );
+				if ( idx !== -1 ) trait.traits.splice( idx, 1 );
+			} else {
+				cortexFunctions.setTraitDice( companion, [ size ] );
 			}
+		} else {
+			const name = getTrackLabel( set );
+			( trait.traits as any[] ).push( { name, rating: { type: 'Die', value: [ size ], range: getTrackScale( set ).slice() } } );
+		}
+		updateCharacter( props.character );
+	}
 
-			function getPipRowCols(traitSetArg: TraitSet, rowIdx: number) {
-				const cfg = getPipConfig(traitSetArg);
-				const remaining = getPipTrack(traitSetArg).count - (rowIdx - 1) * cfg.perRow;
-				return Math.min(cfg.perRow, Math.max(0, remaining));
+	function handleTrackOutClick( sArg: any, t: any ) {
+		if ( props.submode === 'print' ) return;
+		const set = props.character.traitSets[sArg];
+		const trait = set?.traits?.[t];
+		if ( !trait ) return;
+		if ( !Array.isArray( trait.traits ) ) trait.traits = [];
+		let companion: any = getTrackCompanion( set, trait );
+		if ( !companion ) {
+			const name = getTrackLabel( set );
+			const scale = getTrackScale( set );
+			companion = { name, rating: { type: 'Die', value: [ scale[0] || 4 ], range: scale.slice(), out: true } };
+			( trait.traits as any[] ).push( companion );
+		} else {
+			companion.isOut = !companion.isOut;
+			const r = companion.rating;
+			if ( r && typeof r === 'object' && ( r.type === 'Die' || r.type === 'Dice' ) ) {
+				r.out = Boolean( companion.isOut );
 			}
-
-			function getPipIndex(traitSetArg: TraitSet, rowIdx: number, colIdx: number) {
-				const cfg = getPipConfig(traitSetArg);
-				return (rowIdx - 1) * cfg.perRow + (colIdx - 1);
+			if ( !companion.isOut && !( ( getTraitDice( companion )[0] || 0 ) > 0 ) ) {
+				trait.traits.splice( trait.traits.indexOf( companion ), 1 );
 			}
+		}
+		updateCharacter( props.character );
+	}
 
-			// Pure-track state lives on the set node's own Pip rating: value is
-			// the list of bubbles, range[0] the bubble count.
-			function getPipTrack(traitSetArg: TraitSet): { count: number; filled: number } {
-				const rating = getRating(traitSetArg);
-				let count = 25;
-				let filled = 0;
-				if (rating && rating.type === 'Pip') {
-					if (Array.isArray(rating.range) && typeof rating.range[0] === 'number' && rating.range[0] > 0) {
-						count = Math.floor(rating.range[0]);
-					} else if (Array.isArray(rating.value) && rating.value.length > 0) {
-						count = rating.value.length;
-					}
-					if (Array.isArray(rating.value)) {
-						filled = rating.value.filter((v) => v === true).length;
-					}
-				}
-				return { count, filled };
+	function getPipConfig( traitSetArg: TraitSet ) {
+		const ctk = getView( traitSetArg );
+		const p = ctk?.pips;
+		const perRow = ( p as any )?.perRow ?? 5;
+		const connected = ( p as any )?.connected !== false;
+		return {
+			perRow: Math.max( 1, perRow ),
+			connected,
+			labels: ( p as any )?.labels === true
+		};
+	}
+
+	function getPipRowCount( traitSetArg: TraitSet ) {
+		const cfg = getPipConfig( traitSetArg );
+		return Math.ceil( getPipTrack( traitSetArg ).count / cfg.perRow );
+	}
+
+	function getPipRowCols( traitSetArg: TraitSet, rowIdx: number ) {
+		const cfg = getPipConfig( traitSetArg );
+		const remaining = getPipTrack( traitSetArg ).count - ( rowIdx - 1 ) * cfg.perRow;
+		return Math.min( cfg.perRow, Math.max( 0, remaining ) );
+	}
+
+	function getPipIndex( traitSetArg: TraitSet, rowIdx: number, colIdx: number ) {
+		const cfg = getPipConfig( traitSetArg );
+		return ( rowIdx - 1 ) * cfg.perRow + ( colIdx - 1 );
+	}
+
+	// Pure-track state lives on the set node's own Pip rating: value is
+	// the list of bubbles, range[0] the bubble count.
+	function getPipTrack( traitSetArg: TraitSet ): { count: number; filled: number } {
+		const rating = getRating( traitSetArg );
+		let count = 25;
+		let filled = 0;
+		if ( rating && rating.type === 'Pip' ) {
+			if ( Array.isArray( rating.range ) && typeof rating.range[0] === 'number' && rating.range[0] > 0 ) {
+				count = Math.floor( rating.range[0] );
+			} else if ( Array.isArray( rating.value ) && rating.value.length > 0 ) {
+				count = rating.value.length;
 			}
-
-			function setPipTrack(traitSetIndex: number, count: number, filled: number) {
-				const ts = traitSets.value[traitSetIndex];
-				if (!ts) return;
-				const bubbles: boolean[] = [];
-				for (let i = 0; i < count; i++) bubbles.push(i < filled);
-				(ts as unknown as Record<string, any>).rating = { type: 'Pip', value: bubbles };
-				updateCharacter(props.character);
+			if ( Array.isArray( rating.value ) ) {
+				filled = rating.value.filter( ( v ) => v === true ).length;
 			}
+		}
+		return { count, filled };
+	}
 
-			function isPipFilled(traitSetArg: TraitSet, pipIdx: number) {
-				if (props.printBlank) return false;
-				return pipIdx < getPipTrack(traitSetArg).filled;
+	function setPipTrack( traitSetIndex: number, count: number, filled: number ) {
+		const ts = traitSets.value[ traitSetIndex ];
+		if ( !ts ) return;
+		const bubbles: boolean[] = [];
+		for ( let i = 0; i < count; i++ ) bubbles.push( i < filled );
+		( ts as unknown as Record<string, any> ).rating = { type: 'Pip', value: bubbles };
+		updateCharacter( props.character );
+	}
+
+	function isPipFilled( traitSetArg: TraitSet, pipIdx: number ) {
+		if ( props.printBlank ) return false;
+		return pipIdx < getPipTrack( traitSetArg ).filled;
+	}
+
+	function handlePipClick( traitSetIndex: number, pipIdx: number ) {
+		if ( props.submode === 'print' ) return;
+		const ts = traitSets.value[ traitSetIndex ];
+		if ( !ts ) return;
+		const track = getPipTrack( ts );
+		const curFilled = track.filled;
+		const next = ( curFilled === pipIdx + 1 ) ? pipIdx : pipIdx + 1;
+		setPipTrack( traitSetIndex, track.count, next );
+	}
+
+	// Pip-with-label rows (the unified pips style): row i pairs the count
+	// grid with the i-th trait, if any. Named traits render beside their
+	// bubble; blank rows render bare. Filled prefers the trait's own Pip
+	// rating, then its legacy checked flag, then the filled count.
+	function isPipLabels( traitSetArg: TraitSet ) {
+		return getPipConfig( traitSetArg ).labels === true;
+	}
+
+	function pipRowFilled( t: any, index: number, filledCount: number ): boolean {
+		if ( t && typeof t === 'object' ) {
+			const rating = getRating( t );
+			if ( rating && rating.type === 'Pip' && Array.isArray( rating.value ) && rating.value.length ) {
+				return rating.value[0] === true;
 			}
+		}
+		return !props.printBlank && index < filledCount;
+	}
 
-			function handlePipClick(traitSetIndex: number, pipIdx: number) {
-				if (props.submode === 'print') return;
-				const ts = traitSets.value[traitSetIndex];
-				if (!ts) return;
-				const track = getPipTrack(ts);
-				const curFilled = track.filled;
-				const next = (curFilled === pipIdx + 1) ? pipIdx : pipIdx + 1;
-				setPipTrack(traitSetIndex, track.count, next);
+	function pipRows( traitSetArg: TraitSet ) {
+		const cfg = getPipConfig( traitSetArg );
+		const track = getPipTrack( traitSetArg );
+		const traits = Array.isArray( traitSetArg?.traits ) ? traitSetArg.traits : [];
+		const n = Math.max( track.count, traits.length );
+		const rows: { index: number; trait: any; filled: boolean; name: string }[] = [];
+		for ( let i = 0; i < n; i++ ) {
+			const t = traits[ i ];
+			const named = t && typeof t === 'object' && typeof t.name === 'string' && t.name.length ? t : null;
+			rows.push({ index: i, trait: named, filled: pipRowFilled( t, i, track.filled ), name: named ? ( named as any ).name : '' });
+		}
+		return rows;
+	}
+
+	function getTraitPipBubbles( trait: Trait | undefined ): boolean[] {
+		const r = getRating( trait );
+		if ( r && r.type === 'Pip' && Array.isArray( r.value ) ) {
+			const count = Array.isArray( r.range ) && r.range[ 0 ] ? r.range[ 0 ] : ( r.value.length || 5 );
+			const bubbles: boolean[] = [];
+			for ( let i = 0; i < count; i++ ) bubbles.push( Boolean( r.value[ i ] === true ) );
+			return bubbles;
+		}
+		return [];
+	}
+
+	function toggleTraitPipBubble( trait: Trait | undefined, pipIndex: number ) {
+		if ( props.submode === 'print' || !trait ) return;
+		const r = getRating( trait );
+		if ( !r || r.type !== 'Pip' ) return;
+		const count = r.value.length || 5;
+		const bubbles: boolean[] = [];
+		for ( let i = 0; i < count; i++ ) bubbles.push( Boolean( r.value[ i ] === true ) );
+		bubbles[ pipIndex ] = !bubbles[ pipIndex ];
+		( trait as any ).rating = { type: 'Pip', value: bubbles };
+		updateCharacter( props.character );
+	}
+
+	function getDynamicChildParts( traitSetArg: TraitSet ): string[] {
+		const parts = getParts( traitSetArg ) || {};
+		return Object.keys( parts ).filter( ( k ) => k.startsWith( 'child:' ) || k.startsWith( 'child_' ) );
+	}
+
+	function parseChildPartKey( partKey: string ): { noun: string; kind: 'label' | 'rating' } {
+		if ( partKey.startsWith( 'child:' ) ) {
+			const segs = partKey.slice( 6 ).split( ':' );
+			return { noun: segs[ 0 ] || 'Child', kind: ( segs[ 1 ] === 'rating' ? 'rating' : 'label' ) };
+		}
+		if ( partKey.startsWith( 'child_' ) ) {
+			const rest = partKey.slice( 6 );
+			if ( rest.endsWith( '_rating' ) ) {
+				return { noun: rest.slice( 0, -7 ), kind: 'rating' };
 			}
-
-			// Pip-with-label rows (the unified pips style): row i pairs the count
-			// grid with the i-th trait, if any. Named traits render beside their
-			// bubble; blank rows render bare. Filled prefers the trait's own Pip
-			// rating, then its legacy checked flag, then the filled count.
-			function isPipLabels(traitSetArg: TraitSet) {
-				return getPipConfig(traitSetArg).labels === true;
+			if ( rest.endsWith( '_text' ) || rest.endsWith( '_label' ) ) {
+				return { noun: rest.slice( 0, -5 ), kind: 'label' };
 			}
+			return { noun: rest, kind: 'label' };
+		}
+		return { noun: partKey, kind: 'label' };
+	}
 
-			function pipRowFilled(t: any, index: number, filledCount: number): boolean {
-				if (t && typeof t === 'object') {
-					const rating = getRating(t);
-					if (rating && rating.type === 'Pip' && Array.isArray(rating.value) && rating.value.length) {
-						return rating.value[0] === true;
-					}
-				}
-				return !props.printBlank && index < filledCount;
-			}
+	function getChildTraitByNoun( trait: Trait | undefined, noun: string ): Trait | undefined {
+		if ( !trait || !Array.isArray( trait.traits ) ) return undefined;
+		return trait.traits.find( ( t ) => ( t?.name || '' ).trim().toLowerCase() === noun.trim().toLowerCase() );
+	}
 
-			function pipRows(traitSetArg: TraitSet) {
-				const cfg = getPipConfig(traitSetArg);
-				const track = getPipTrack(traitSetArg);
-				const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
-				const n = Math.max(track.count, traits.length);
-				const rows: { index: number; trait: any; filled: boolean; name: string }[] = [];
-				for (let i = 0; i < n; i++) {
-					const t = traits[i];
-					const named = t && typeof t === 'object' && typeof t.name === 'string' && t.name.length ? t : null;
-					rows.push({ index: i, trait: named, filled: pipRowFilled(t, i, track.filled), name: named ? (named as any).name : '' });
-				}
-				return rows;
-			}
+	function blankPipTrait(): any {
+		return { name: '', description: '', traits: [], tags: [], custom: {} };
+	}
 
-			function getTraitPipBubbles(trait: Trait | undefined): boolean[] {
-				const r = getRating(trait);
-				if (r && r.type === 'Pip' && Array.isArray(r.value)) {
-					const count = Array.isArray(r.range) && r.range[0] ? r.range[0] : (r.value.length || 5);
-					const bubbles: boolean[] = [];
-					for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
-					return bubbles;
-				}
-				return [];
-			}
+	function ensurePipTrait( traitSetIndex: number, itemIndex: number ) {
+		const ts = traitSets.value[ traitSetIndex ];
+		if ( !ts ) return null;
+		if ( !ts.traits ) ts.traits = [];
+		while ( ts.traits.length <= itemIndex ) {
+			ts.traits.push( blankPipTrait() );
+		}
+		return ts.traits[ itemIndex ];
+	}
 
-			function toggleTraitPipBubble(trait: Trait | undefined, pipIndex: number) {
-				if (props.submode === 'print' || !trait) return;
-				const r = getRating(trait);
-				if (!r || r.type !== 'Pip') return;
-				const count = r.value.length || 5;
-				const bubbles: boolean[] = [];
-				for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
-				bubbles[pipIndex] = !bubbles[pipIndex];
-				(trait as any).rating = { type: 'Pip', value: bubbles };
-				updateCharacter(props.character);
-			}
+	function togglePipRow( traitSetIndex: number, itemIndex: number ) {
+		if ( props.submode === 'print' ) return;
+		const ts = traitSets.value[ traitSetIndex ];
+		if ( !ts ) return;
+		if ( !isPipLabels( ts ) ) return handlePipClick( traitSetIndex, itemIndex );
+		const trait = ensurePipTrait( traitSetIndex, itemIndex );
+		if ( !trait ) return;
+		const next = !pipRowFilled( trait, itemIndex, 0 );
+		( trait as unknown as Record<string, any> ).rating = { type: 'Pip', value: [ next ] };
+		updateCharacter( props.character );
+	}
 
-			function getDynamicChildParts(traitSetArg: TraitSet): string[] {
-				const parts = getParts(traitSetArg) || {};
-				return Object.keys(parts).filter((k) => k.startsWith('child:') || k.startsWith('child_'));
-			}
+	function openPipRow( traitSetIndex: number, itemIndex: number ) {
+		if ( props.submode === 'print' ) return;
+		ensurePipTrait( traitSetIndex, itemIndex );
+		updateCharacter( props.character );
+		selectElement([ 'trait', traitSetIndex, itemIndex ]);
+	}
 
-			function parseChildPartKey(partKey: string): { noun: string; kind: 'label' | 'rating' } {
-				if (partKey.startsWith('child:')) {
-					const segs = partKey.slice(6).split(':');
-					return { noun: segs[0] || 'Child', kind: (segs[1] === 'rating' ? 'rating' : 'label') };
-				}
-				if (partKey.startsWith('child_')) {
-					const rest = partKey.slice(6);
-					if (rest.endsWith('_rating')) {
-						return { noun: rest.slice(0, -7), kind: 'rating' };
-					}
-					if (rest.endsWith('_text') || rest.endsWith('_label')) {
-						return { noun: rest.slice(0, -5), kind: 'label' };
-					}
-					return { noun: rest, kind: 'label' };
-				}
-				return { noun: partKey, kind: 'label' };
-			}
+	// Inline rename for labeled rows: the name is a write-in line on the
+	// row itself. Position (and the Pip rating) is untouched.
+	function setPipRowName( traitSetIndex: number, itemIndex: number, name: string ) {
+		if ( props.submode === 'print' ) return;
+		const trait = ensurePipTrait( traitSetIndex, itemIndex );
+		if ( !trait ) return;
+		const clean = typeof name === 'string' ? name.trim() : '';
+		if ( ( trait as any ).name === clean ) return;
+		( trait as any ).name = clean;
+		updateCharacter( props.character );
+	}
 
-			function getChildTraitByNoun(trait: Trait | undefined, noun: string): Trait | undefined {
-				if (!trait || !Array.isArray(trait.traits)) return undefined;
-				return trait.traits.find((t) => (t?.name || '').trim().toLowerCase() === noun.trim().toLowerCase());
-			}
+	function addPipRow( traitSetIndex: number ) {
+		const ts = traitSets.value[ traitSetIndex ];
+		if ( !ts ) return;
+		if ( !ts.traits ) ts.traits = [];
+		ts.traits.push( blankPipTrait() );
+		const track = getPipTrack( ts );
+		if ( track.count < ts.traits.length ) {
+			setPipTrack( traitSetIndex, ts.traits.length, track.filled );
+			const view = ensureView( ts );
+			view.reservedSlots = ts.traits.length;
+		}
+		updateCharacter( props.character );
+	}
 
-			function blankPipTrait(): any {
-				return { name: '', description: '', traits: [], tags: [], custom: {} };
-			}
+	function getImageSetContainerStyle( traitSetArg: TraitSet ) {
+		const h = getView( traitSetArg )?.imageConfig?.height;
+		if ( h && h !== 'auto' ) {
+			return { height: h };
+		}
+		return { minHeight: '140px', height: 'auto' };
+	}
 
-			function ensurePipTrait(traitSetIndex: number, itemIndex: number) {
-				const ts = traitSets.value[traitSetIndex];
-				if (!ts) return null;
-				if (!ts.traits) ts.traits = [];
-				while (ts.traits.length <= itemIndex) {
-					ts.traits.push(blankPipTrait());
-				}
-				return ts.traits[itemIndex];
-			}
+	function getImageSetGraphicStyle( traitSetArg: TraitSet ) {
+		const url = cortexFunctions.safeImageUrl( getView( traitSetArg )?.imageConfig?.url );
+		if ( !url ) return {};
+		return {
+			backgroundImage: `url("${url}")`,
+			backgroundSize: 'cover',
+			backgroundRepeat: 'no-repeat'
+		};
+	}
 
-			function togglePipRow(traitSetIndex: number, itemIndex: number) {
-				if (props.submode === 'print') return;
-				const ts = traitSets.value[traitSetIndex];
-				if (!ts) return;
-				if (!isPipLabels(ts)) return handlePipClick(traitSetIndex, itemIndex);
-				const trait = ensurePipTrait(traitSetIndex, itemIndex);
-				if (!trait) return;
-				const next = !pipRowFilled(trait, itemIndex, 0);
-				(trait as unknown as Record<string, any>).rating = { type: 'Pip', value: [next] };
-				updateCharacter(props.character);
-			}
+	function getBranchGroups( traitSetArg: TraitSet, items: any[] ) {
+		const list = items || [];
+		const parents = list.filter( ( it: any ) => getBranchRole( it.trait ) !== 'specialty' );
+		const flats = list.filter( ( it: any ) => !it.isPlaceholder && getBranchRole( it.trait ) === 'specialty' );
+		const parentIdx = new Set( parents.filter( ( p: any ) => p.originalIndex !== null && p.originalIndex !== undefined ).map( ( p: any ) => p.originalIndex ) );
+		const groups: any[] = parents.map( ( traitItem: any ) => {
+			const tIdx = traitItem.originalIndex;
+			const nested = ( traitItem.trait?.traits || [] )
+				.filter( ( sub: any ) => !cortexFunctions.isStatementContainer( sub ) )
+				.map( ( sub: any, u: number ) => ({ kind: 'sub', sub, u }) );
+			const linked = flats
+				.filter( ( f: any ) => getView( f.trait )?.linkTo === tIdx )
+				.map( ( f: any ) => ({ kind: 'flat', item: f }) );
+			return { traitItem, subs: [ ...nested, ...linked ] };
+		} );
+		const orphans = flats.filter( ( f: any ) => {
+			const lt = getView( f.trait )?.linkTo;
+			return !( typeof lt === 'number' && parentIdx.has( lt ) );
+		} ).map( ( f: any ) => ({ kind: 'flat', item: f }) );
+		if ( orphans.length ) {
+			groups.push({ traitItem: null, subs: orphans });
+		}
+		const split = groups.some( ( g: any ) => ( g.subs || [] ).some( ( e: any ) => {
+			const t = e.kind === 'sub' ? e.sub : ( e.item ? e.item.trait : null );
+			return getBranchSide( t ) === 'left';
+		} ) );
+		groups.forEach( ( g: any ) => { g.split = split; } );
+		return groups;
+	}
 
-			function openPipRow(traitSetIndex: number, itemIndex: number) {
-				if (props.submode === 'print') return;
-				ensurePipTrait(traitSetIndex, itemIndex);
-				updateCharacter(props.character);
-				selectElement(['trait', traitSetIndex, itemIndex]);
-			}
+	function hasBranchSplit( traitSetArg: TraitSet, items: any[] ) {
+		if ( getView( traitSetArg )?.style?.body !== 'subtrait-columns' ) return false;
+		return getBranchGroups( traitSetArg, items ).some( ( g: any ) => g.split );
+	}
 
-			// Inline rename for labeled rows: the name is a write-in line on the
-			// row itself. Position (and the Pip rating) is untouched.
-			function setPipRowName(traitSetIndex: number, itemIndex: number, name: string) {
-				if (props.submode === 'print') return;
-				const trait = ensurePipTrait(traitSetIndex, itemIndex);
-				if (!trait) return;
-				const clean = typeof name === 'string' ? name.trim() : '';
-				if ((trait as any).name === clean) return;
-				(trait as any).name = clean;
-				updateCharacter(props.character);
-			}
+	// Flank layout: a subtrait-columns set with traitColumns 2 spreads
+	// parent traits across outer columns with subtraits down the middle.
+	// Explicit left-side subtraits (split) win over it.
+	function hasBranchFlank( traitSetArg: TraitSet, items: any[] ) {
+		if ( getView( traitSetArg )?.style?.body !== 'subtrait-columns' ) return false;
+		if ( Number( getView( traitSetArg )?.traitColumns ) !== 2 ) return false;
+		return !hasBranchSplit( traitSetArg, items );
+	}
 
-			function addPipRow(traitSetIndex: number) {
-				const ts = traitSets.value[traitSetIndex];
-				if (!ts) return;
-				if (!ts.traits) ts.traits = [];
-				ts.traits.push(blankPipTrait());
-				const track = getPipTrack(ts);
-				if (track.count < ts.traits.length) {
-					setPipTrack(traitSetIndex, ts.traits.length, track.filled);
-					const view = ensureView(ts);
-					view.reservedSlots = ts.traits.length;
-				}
-				updateCharacter(props.character);
-			}
+	function getFlankColumns( traitSetArg: TraitSet, items: any[] ) {
+		const groups = getBranchGroups( traitSetArg, items );
+		const parents = groups.filter( ( g: any ) => g.traitItem );
+		const mid = Math.ceil( parents.length / 2 );
+		const center: any[] = [];
+		groups.forEach( ( g: any ) => {
+			const tIdx = g.traitItem ? g.traitItem.originalIndex : null;
+			( g.subs || [] ).forEach( ( e: any ) => {
+				center.push({ ...e, traitIndex: tIdx, traitItem: g.traitItem });
+			} );
+		} );
+		return { left: parents.slice( 0, mid ), right: parents.slice( mid ), center: center };
+	}
 
-			function getImageSetContainerStyle(traitSetArg: TraitSet) {
-				const h = getView(traitSetArg)?.imageConfig?.height;
-				if (h && h !== 'auto') {
-					return { height: h };
-				}
-				return { minHeight: '140px', height: 'auto' };
-			}
+	function getBranchRole( trait: Trait ) {
+		return getView( trait )?.branchRole === 'specialty' ? 'specialty' : 'skill';
+	}
 
-			function getImageSetGraphicStyle(traitSetArg: TraitSet) {
-				const url = cortexFunctions.safeImageUrl(getView(traitSetArg)?.imageConfig?.url);
-				if (!url) return {};
-				return {
-					backgroundImage: `url("${url}")`,
-					backgroundSize: 'cover',
-					backgroundRepeat: 'no-repeat'
-				};
-			}
+	// The set-level die is the set node's own Rating; traits without a
+	// rating of their own fall through to it.
+	function getSetRatingDie( traitSetArg: TraitSet ) {
+		const dice = ratingDice( getRating( traitSetArg ) );
+		if ( dice.length ) return dice[0];
+		return null;
+	}
 
-			function getBranchGroups(traitSetArg: TraitSet, items: any[]) {
-				const list = items || [];
-				const parents = list.filter((it: any) => getBranchRole(it.trait) !== 'specialty');
-				const flats = list.filter((it: any) => !it.isPlaceholder && getBranchRole(it.trait) === 'specialty');
-				const parentIdx = new Set(parents.filter((p: any) => p.originalIndex !== null && p.originalIndex !== undefined).map((p: any) => p.originalIndex));
-				const groups: any[] = parents.map((traitItem: any) => {
-					const tIdx = traitItem.originalIndex;
-					const nested = (traitItem.trait?.traits || [])
-						.filter((sub: any) => !cortexFunctions.isStatementContainer(sub))
-						.map((sub: any, u: number) => ({ kind: 'sub', sub, u }));
-					const linked = flats
-						.filter((f: any) => getView(f.trait)?.linkTo === tIdx)
-						.map((f: any) => ({ kind: 'flat', item: f }));
-					return { traitItem, subs: [...nested, ...linked] };
-				});
-				const orphans = flats.filter((f: any) => {
-					const lt = getView(f.trait)?.linkTo;
-					return !(typeof lt === 'number' && parentIdx.has(lt));
-				}).map((f: any) => ({ kind: 'flat', item: f }));
-				if (orphans.length) {
-					groups.push({ traitItem: null, subs: orphans });
-				}
-				const split = groups.some((g: any) => (g.subs || []).some((e: any) => {
-					const t = e.kind === 'sub' ? e.sub : (e.item ? e.item.trait : null);
-					return getBranchSide(t) === 'left';
-				}));
-				groups.forEach((g: any) => { g.split = split; });
-				return groups;
-			}
+	function getBranchSide( trait: Trait ) {
+		return getView( trait )?.branchSide === 'left' ? 'left' : 'right';
+	}
 
-			function hasBranchSplit(traitSetArg: TraitSet, items: any[]) {
-				if (getView(traitSetArg)?.style?.body !== 'subtrait-columns') return false;
-				return getBranchGroups(traitSetArg, items).some((g: any) => g.split);
-			}
+	function branchSubs( subs: any[], side: string ) {
+		return ( subs || [] ).filter( ( e: any ) => {
+			const t = e.kind === 'sub' ? e.sub : ( e.item ? e.item.trait : null );
+			const sd = getBranchSide( t );
+			return side === 'left' ? sd === 'left' : sd !== 'left';
+		} );
+	}
 
-			// Flank layout: a subtrait-columns set with traitColumns 2 spreads
-			// parent traits across outer columns with subtraits down the middle.
-			// Explicit left-side subtraits (split) win over it.
-			function hasBranchFlank(traitSetArg: TraitSet, items: any[]) {
-				if (getView(traitSetArg)?.style?.body !== 'subtrait-columns') return false;
-				if (Number(getView(traitSetArg)?.traitColumns) !== 2) return false;
-				return !hasBranchSplit(traitSetArg, items);
-			}
-
-			function getFlankColumns(traitSetArg: TraitSet, items: any[]) {
-				const groups = getBranchGroups(traitSetArg, items);
-				const parents = groups.filter((g: any) => g.traitItem);
-				const mid = Math.ceil(parents.length / 2);
-				const center: any[] = [];
-				groups.forEach((g: any) => {
-					const tIdx = g.traitItem ? g.traitItem.originalIndex : null;
-					(g.subs || []).forEach((e: any) => {
-						center.push({ ...e, traitIndex: tIdx, traitItem: g.traitItem });
-					});
-				});
-				return { left: parents.slice(0, mid), right: parents.slice(mid), center: center };
-			}
-
-			function getBranchRole(trait: Trait) {
-				return getView(trait)?.branchRole === 'specialty' ? 'specialty' : 'skill';
-			}
-
-			// The set-level die is the set node's own Rating; traits without a
-			// rating of their own fall through to it.
-			function getSetRatingDie(traitSetArg: TraitSet) {
-				const dice = ratingDice(getRating(traitSetArg));
-				if (dice.length) return dice[0];
-				return null;
-			}
-
-			function getBranchSide(trait: Trait) {
-				return getView(trait)?.branchSide === 'left' ? 'left' : 'right';
-			}
-
-			function branchSubs(subs: any[], side: string) {
-				return (subs || []).filter((e: any) => {
-					const t = e.kind === 'sub' ? e.sub : (e.item ? e.item.trait : null);
-					const sd = getBranchSide(t);
-					return side === 'left' ? sd === 'left' : sd !== 'left';
-				});
-			}
-
-			function handleBranchFlatClick(sArg: any, t: any, trait: Trait) {
-				if (props.submode === 'play') {
-					const first = ratingDice(getRating(trait))[0];
-					if (first) {
-						const traitSetArg = props.character.traitSets[sArg];
-						handleSingleDieClick(trait, first, traitSetArg, sArg, t);
-					}
-				} else {
-					selectElement(['trait', sArg, t]);
-				}
-			}
-
-			function getSubtraitNameOr(trait: Trait, traitSetArg: TraitSet, index: number) {
-				const sub = nonSfxSubtraits(trait)[index];
-				if (sub && sub.name && String(sub.name).trim().length) {
-					return sub.name;
-				}
-				return getTraitSetLabel(traitSetArg, 'slot' + index);
-			}
-
-			function getThreeColEffect(trait: Trait) {
-				const entries = cortexFunctions.sfxChildren(trait);
-				const sfx = entries.find((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
-				if (!sfx) return '';
-				return sfx.description || sfx.name || '';
-			}
-
-			function getExplicitPoolCount(trait: Trait) {
-				const raw = getView(trait)?.poolCount;
-				if (raw === undefined || raw === null || raw === '') return null;
-				const n = Number(raw);
-				if (!Number.isFinite(n) || n < 0) return null;
-				return Math.floor(n);
-			}
-
-			function getDiceCount(trait: Trait) {
-				const dice = cortexFunctions.getTraitDice(trait);
-				if (dice.length > 1) return dice.length;
-				const poolCount = getExplicitPoolCount(trait);
-				if (poolCount !== null) return poolCount;
-				return dice.length;
-			}
-
-			function getDiceCountPool(trait: Trait, traitSetArg?: TraitSet) {
-				if (!trait) return [];
-				const dice = cortexFunctions.getTraitDice(trait);
-				if (dice.length > 1) return dice;
-				const poolCount = getExplicitPoolCount(trait);
-				const val = dice[0] || (traitSetArg ? getTraitSetRatings(traitSetArg)[0] : 6) || 6;
-				if (poolCount !== null) {
-					const res: number[] = [];
-					for (let i = 0; i < poolCount; i++) res.push(val);
-					return res;
-				}
-				return dice.length > 0 ? dice : [val];
-			}
-
-			// Print tally pips: the fixed 1–5 track saturates, so extend the track
-			// to the live count for bigger pools (growth pools grow past 5).
-			function getPrintTallyPips(trait: Trait) {
-				const count = getDiceCount(trait);
-				const total = Math.max(5, count);
-				const list: number[] = [];
-				for (let n = 1; n <= total; n++) list.push(n);
-				return list;
-			}
-
-			function setDiceCount(sArg: any, t: any, count: number) {
+	function handleBranchFlatClick( sArg: any, t: any, trait: Trait ) {
+		if ( props.submode === 'play' ) {
+			const first = ratingDice( getRating( trait ) )[0];
+			if ( first ) {
 				const traitSetArg = props.character.traitSets[sArg];
-				const trait = traitSetArg?.traits?.[t];
-				if (!trait) return;
-				const clamped = Math.max(1, Math.min(5, Number(count) || 1));
-				const ratings = getTraitSetRatings(traitSetArg);
-				const size = ratingDice(getRating(trait))[0] || (ratings[0] || 6);
-				const dice = [];
-				for (let i = 0; i < clamped; i++) dice.push(size);
-				cortexFunctions.setTraitDice(trait, dice);
-				ensureView(trait).poolCount = clamped;
-				updateCharacter(props.character);
+				handleSingleDieClick( trait, first, traitSetArg, sArg, t );
 			}
+		} else {
+			selectElement([ 'trait', sArg, t ]);
+		}
+	}
 
-			function addTraitSetDiceToRoller(traitSetArg: TraitSet) {
-				if (!traitSetArg) return;
-				const diceToAdd: any[] = [];
-				const poolName = traitSetArg.name || props.character.name || 'Challenge Pool';
-				for (const tr of (traitSetArg.traits || [])) {
-					const dice = availableDice(tr);
-					const hitches = resolveHitches(tr, [traitSetArg]);
-					const keep = keepsExtraDice(tr);
-					for (const d of dice) {
-						diceToAdd.push({ size: d, qty: 1, source: tr.name || poolName, hitches: hitches, keepsExtra: keep });
-					}
-				}
-				if (diceToAdd.length > 0) {
-					emit('addDieToRoller', diceToAdd);
-				}
+	function getSubtraitNameOr( trait: Trait, traitSetArg: TraitSet, index: number ) {
+		const sub = nonSfxSubtraits( trait )[ index ];
+		if ( sub && sub.name && String( sub.name ).trim().length ) {
+			return sub.name;
+		}
+		return getTraitSetLabel( traitSetArg, 'slot' + index );
+	}
+
+	function getThreeColEffect( trait: Trait ) {
+		const entries = cortexFunctions.sfxChildren( trait );
+		const sfx = entries.find( ( e: any ) => String( e.name || '' ).toLowerCase() !== 'hinder' );
+		if ( !sfx ) return '';
+		return sfx.description || sfx.name || '';
+	}
+
+	function getExplicitPoolCount( trait: Trait ) {
+		const raw = getView( trait )?.poolCount;
+		if ( raw === undefined || raw === null || raw === '' ) return null;
+		const n = Number( raw );
+		if ( !Number.isFinite( n ) || n < 0 ) return null;
+		return Math.floor( n );
+	}
+
+	function getDiceCount( trait: Trait ) {
+		const dice = cortexFunctions.getTraitDice( trait );
+		if ( dice.length > 1 ) return dice.length;
+		const poolCount = getExplicitPoolCount( trait );
+		if ( poolCount !== null ) return poolCount;
+		return dice.length;
+	}
+
+	function getDiceCountPool( trait: Trait, traitSetArg?: TraitSet ) {
+		if ( !trait ) return [];
+		const dice = cortexFunctions.getTraitDice( trait );
+		if ( dice.length > 1 ) return dice;
+		const poolCount = getExplicitPoolCount( trait );
+		const val = dice[0] || ( traitSetArg ? getTraitSetRatings( traitSetArg )[0] : 6 ) || 6;
+		if ( poolCount !== null ) {
+			const res: number[] = [];
+			for ( let i = 0; i < poolCount; i++ ) res.push( val );
+			return res;
+		}
+		return dice.length > 0 ? dice : [ val ];
+	}
+
+	// Print tally pips: the fixed 1–5 track saturates, so extend the track
+	// to the live count for bigger pools (growth pools grow past 5).
+	function getPrintTallyPips( trait: Trait ) {
+		const count = getDiceCount( trait );
+		const total = Math.max( 5, count );
+		const list: number[] = [];
+		for ( let n = 1; n <= total; n++ ) list.push( n );
+		return list;
+	}
+
+	function setDiceCount( sArg: any, t: any, count: number ) {
+		const traitSetArg = props.character.traitSets[sArg];
+		const trait = traitSetArg?.traits?.[t];
+		if ( !trait ) return;
+		const clamped = Math.max( 1, Math.min( 5, Number( count ) || 1 ) );
+		const ratings = getTraitSetRatings( traitSetArg );
+		const size = ratingDice( getRating( trait ) )[0] || ( ratings[0] || 6 );
+		const dice = [];
+		for ( let i = 0; i < clamped; i++ ) dice.push( size );
+		cortexFunctions.setTraitDice( trait, dice );
+		ensureView( trait ).poolCount = clamped;
+		updateCharacter( props.character );
+	}
+
+	function addTraitSetDiceToRoller( traitSetArg: TraitSet ) {
+		if ( !traitSetArg ) return;
+		const diceToAdd: any[] = [];
+		const poolName = traitSetArg.name || props.character.name || 'Challenge Pool';
+		for ( const tr of ( traitSetArg.traits || [] ) ) {
+			const dice = availableDice( tr );
+			const hitches = resolveHitches( tr, [ traitSetArg ] );
+			const keep = keepsExtraDice( tr );
+			for ( const d of dice ) {
+				diceToAdd.push({ size: d, qty: 1, source: tr.name || poolName, hitches: hitches, keepsExtra: keep });
 			}
+		}
+		if ( diceToAdd.length > 0 ) {
+			emit( 'addDieToRoller', diceToAdd );
+		}
+	}
 
-			// Template-facing rating reads (one shape; no value/dice in templates).
-			function firstDie(trait: Trait) {
-				return ratingDice(getRating(trait))[0] || 0;
-			}
+	// Template-facing rating reads (one shape; no value/dice in templates).
+	function firstDie( trait: Trait ) {
+		return ratingDice( getRating( trait ) )[0] || 0;
+	}
 
-			function isDieActive(trait: Trait, size: number) {
-				return firstDie(trait) === size;
-			}
+	function isDieActive( trait: Trait, size: number ) {
+		return firstDie( trait ) === size;
+	}
 
-			function isTraitRated(trait: Trait) {
-				return isRated(trait);
-			}
+	function isTraitRated( trait: Trait ) {
+		return isRated( trait );
+	}
 
-			// Spendable drives the spend control (trait wins, set inherits).
-			function nodeSpendable(node: unknown): boolean | undefined {
-				const n = (node && typeof node === 'object' ? node : undefined) as { spendable?: unknown } | undefined;
-				if (n && typeof n.spendable === 'boolean') return n.spendable;
-				return undefined;
-			}
+	// Spendable drives the spend control (trait wins, set inherits).
+	function nodeSpendable( node: unknown ): boolean | undefined {
+		const n = ( node && typeof node === 'object' ? node : undefined ) as { spendable?: unknown } | undefined;
+		if ( n && typeof n.spendable === 'boolean' ) return n.spendable;
+		return undefined;
+	}
 
-			function isSpendable(trait: Trait, traitSetArg?: TraitSet) {
-				const t = nodeSpendable(trait);
-				if (t !== undefined) return t;
-				if (traitSetArg) {
-					const s = nodeSpendable(traitSetArg);
-					if (s !== undefined) return s;
-				}
-				return false;
-			}
+	function isSpendable( trait: Trait, traitSetArg?: TraitSet ) {
+		const t = nodeSpendable( trait );
+		if ( t !== undefined ) return t;
+		if ( traitSetArg ) {
+			const s = nodeSpendable( traitSetArg );
+			if ( s !== undefined ) return s;
+		}
+		return false;
+	}
 
-			function getTraitSetSlotCount(traitSetArg: TraitSet) {
-				const custom = getView(traitSetArg);
-				const bodyStyle = custom?.style?.body;
-				if (bodyStyle === 'notes' || bodyStyle === 'image') return 0;
+	function getTraitSetSlotCount( traitSetArg: TraitSet ) {
+		const custom = getView( traitSetArg );
+		const bodyStyle = custom?.style?.body;
+		if ( bodyStyle === 'notes' || bodyStyle === 'image' ) return 0;
 
-				const configured = custom?.reservedSlots;
-				if (configured !== undefined && configured !== null && String(configured) !== '') {
-					return Math.max(Number(configured) || 0, (traitSetArg.traits || []).length);
-				}
-
-				return (traitSetArg.traits || []).length;
-			}
-
-			const api = {
-				traitSet, s, traitSets, character, submode, editing, printBlank, printStyle, viewY,
-				columnCount, sheetStyle, isSpotlightPrintStyle, getView, ensureView,
-				getTraitSetLabel, isSpotlightStyle, isSelected, renderText, renderNotesText, getTraitSetClasses,
-				getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
-				getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
-				hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
-				selectElement, updateCharacter, addTrait, removeTrait, removeTraitSet, getTraitClasses,
-				getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint, openTraitAt, fillPlaceholder, isTraitShown,
-				getTraitSetRatings, getSubtraitRatings, getTraitDice,
-				isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleSteppedDieClick,
-				handleOutClick, shouldShowOut, isTraitOut, getDisplayTraitSfx,
-				hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue,
-				getTrackCompanion, isTrackCompanion, visibleSubtraits,
-				shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
-				getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
-				getPipTrack, setPipTrack, pipRowFilled,
-				isPipLabels, pipRows, ensurePipTrait, togglePipRow, openPipRow, addPipRow, setPipRowName,
-				getImageSetContainerStyle, getImageSetGraphicStyle,
-				getBranchGroups, hasBranchSplit, hasBranchFlank, getFlankColumns, getBranchRole, getSetRatingDie, getBranchSide, branchSubs, handleBranchFlatClick,
-				getSubtraitAt, getSubtraitSlotRatings, getSubtraitNameOr,
-				getThreeColEffect, getDiceCount, setDiceCount, getDiceCountPool, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
-				nodePool, stagesWholePool, stageTraitDice, nodeSpendable, isSpendable,
-				firstDie, isDieActive, isTraitRated,
-				getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
-				getTraitSetSlotCount,
-				isPlayMutableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
-				getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
-				resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
-				frameSvgPath, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,
-				frameSvgPath, frameColorClass, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,
-				containerWidth, observeContainer
-			};
-
-			provide(TRAIT_SET_KEY, api);
-			return api;
+		const configured = custom?.reservedSlots;
+		if ( configured !== undefined && configured !== null && String( configured ) !== '' ) {
+			return Math.max( Number( configured ) || 0, ( traitSetArg.traits || [] ).length );
 		}
 
-		export function injectTraitSet(): TraitSetApi {
-			const api = inject(TRAIT_SET_KEY);
-			if (!api) throw new Error('use-trait-set: injectTraitSet() called outside a TraitSetBlock');
-			return api;
-		}
+		return ( traitSetArg.traits || [] ).length;
+	}
+
+	const api = {
+		traitSet, s, traitSets, character, submode, editing, printBlank, printStyle, viewY,
+		columnCount, sheetStyle, isSpotlightPrintStyle, getView, ensureView,
+		getTraitSetLabel, isSpotlightStyle, isSelected, renderText, renderNotesText, getTraitSetClasses,
+		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
+		getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
+		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
+		selectElement, updateCharacter, addTrait, removeTrait, removeTraitSet, getTraitClasses,
+		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint, openTraitAt, fillPlaceholder, isTraitShown,
+		getTraitSetRatings, getSubtraitRatings, getTraitDice,
+		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleSteppedDieClick,
+		handleOutClick, shouldShowOut, isTraitOut, getDisplayTraitSfx,
+		hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue,
+		getTrackCompanion, isTrackCompanion, visibleSubtraits,
+		shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
+		getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
+		getPipTrack, setPipTrack, pipRowFilled,
+		isPipLabels, pipRows, ensurePipTrait, togglePipRow, openPipRow, addPipRow, setPipRowName,
+		getImageSetContainerStyle, getImageSetGraphicStyle,
+		getBranchGroups, hasBranchSplit, hasBranchFlank, getFlankColumns, getBranchRole, getSetRatingDie, getBranchSide, branchSubs, handleBranchFlatClick,
+		getSubtraitAt, getSubtraitSlotRatings, getSubtraitNameOr,
+		getThreeColEffect, getDiceCount, setDiceCount, getDiceCountPool, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
+		nodePool, stagesWholePool, stageTraitDice, nodeSpendable, isSpendable,
+		firstDie, isDieActive, isTraitRated,
+		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
+		getTraitSetSlotCount,
+		isPlayMutableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
+		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
+		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
+		frameSvgPath, frameColorClass, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,
+		containerWidth, observeContainer
+	};
+
+	provide( TRAIT_SET_KEY, api );
+	return api;
+}
+
+export function injectTraitSet(): TraitSetApi {
+	const api = inject( TRAIT_SET_KEY );
+	if ( !api ) throw new Error( 'use-trait-set: injectTraitSet() called outside a TraitSetBlock' );
+	return api;
+}

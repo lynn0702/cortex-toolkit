@@ -141,9 +141,29 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			scaleDieY: 0
 		}) : null;
 
-		const color: FrameColor = typeof raw.color === 'string' && raw.color.trim() ? (raw.color.trim() as FrameColor) : 'primary';
-		const stroke = typeof raw.stroke === 'string' && raw.stroke.trim() ? raw.stroke.trim() : '2px';
-		const dash = typeof raw.dash === 'string' && raw.dash.trim() ? raw.dash.trim() : undefined;
+		let color: FrameColor = 'primary';
+		let stroke = '2px';
+		let dash = typeof raw.dash === 'string' && raw.dash.trim() ? raw.dash.trim() : undefined;
+
+		if (typeof raw.color === 'string' && raw.color.trim()) {
+			color = raw.color.trim() as FrameColor;
+			stroke = typeof raw.stroke === 'string' && raw.stroke.trim() ? raw.stroke.trim() : '2px';
+		} else if (typeof raw.stroke === 'string' && raw.stroke.trim()) {
+			const sVal = raw.stroke.trim();
+			if (sVal === 'dashed') {
+				color = 'primary';
+				stroke = '2px';
+				dash = dash || '6 3';
+			} else if (sVal === 'muted') {
+				color = 'muted';
+				stroke = '1.5px';
+			} else if (['primary', 'accent', 'strong', 'black'].includes(sVal)) {
+				color = sVal as FrameColor;
+				stroke = '2px';
+			} else {
+				stroke = sVal;
+			}
+		}
 		const box = Boolean(raw.box);
 
 		return {
