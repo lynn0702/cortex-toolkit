@@ -632,10 +632,8 @@ export function resolveSheetStyle(holder: unknown): 'classic' | 'spotlight' {
  * shown. A stored `hidden` boolean always wins — this only fills the gap
  * so the editor never shows an open eye for something no layout renders.
  */
-const NAME_HIDDEN_IN_SPOTLIGHT = ['game', 'plotPoints', 'notes'];
-
-export function defaultNameHidden(key: string, holder: unknown): boolean {
-	return NAME_HIDDEN_IN_SPOTLIGHT.includes(key) && resolveSheetStyle(holder) === 'spotlight';
+export function defaultNameHidden(_key?: string, _holder?: unknown): boolean {
+	return false;
 }
 
 /**

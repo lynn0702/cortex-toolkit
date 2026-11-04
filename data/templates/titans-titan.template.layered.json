@@ -36,9 +36,6 @@
     "view": {
       "pageCount": 1,
       "spotlight": "Titans vs Leviathans",
-      "style": {
-        "sheet": "spotlight"
-      },
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

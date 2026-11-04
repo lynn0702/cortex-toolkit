@@ -36,9 +36,6 @@
     "view": {
       "pageCount": 1,
       "spotlight": "Cosa Nostra",
-      "style": {
-        "sheet": "spotlight"
-      },
       "hasNickname": true,
       "watermark": {
         "enabled": true,

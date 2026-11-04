@@ -39,9 +39,6 @@ module.exports = [
       "view": {
         "pageCount": 2,
         "spotlight": "Alien, Us",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -757,9 +754,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "BrighterStars",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -1405,9 +1399,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Camp Bewilderwood",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -2103,9 +2094,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Cosa Nostra",
-        "style": {
-          "sheet": "spotlight"
-        },
         "hasNickname": true,
         "watermark": {
           "enabled": true,
@@ -2631,9 +2619,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Eidolon Alpha",
-        "style": {
-          "sheet": "spotlight"
-        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -3396,9 +3381,6 @@ module.exports = [
       "view": {
         "pageCount": 2,
         "spotlight": "Hammerheads",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -4223,9 +4205,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Hammerheads",
-        "style": {
-          "sheet": "spotlight"
-        },
         "columnAlignment": "top-base",
         "columnOffsets": {
           "left": 0,
@@ -4828,9 +4807,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Inheritors",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -5676,9 +5652,6 @@ module.exports = [
       "view": {
         "pageCount": 2,
         "spotlight": "Inheritors",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -6701,9 +6674,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "KitBash",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -7464,9 +7434,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "KitBash",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -7684,9 +7651,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Misty Cove",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -8294,9 +8258,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Necromancer",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -8950,9 +8911,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Retired No More",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -9728,9 +9686,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Retired No More",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -10365,9 +10320,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Safe Zone",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -11132,9 +11084,6 @@ module.exports = [
       "view": {
         "pageCount": 2,
         "spotlight": "Safe Zone",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -12750,9 +12699,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Snowfall Initiative",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -13713,9 +13659,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "SolarPunk",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -14312,9 +14255,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "SolarPunk",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -14829,9 +14769,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Spellcaught",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -15659,9 +15596,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Strange Towns",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -16183,9 +16117,6 @@ module.exports = [
       "view": {
         "pageCount": 2,
         "spotlight": "Terraverse",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -17165,9 +17096,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Titans vs Leviathans",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -17706,9 +17634,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "Titans vs Leviathans",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -18192,9 +18117,6 @@ module.exports = [
       "view": {
         "pageCount": 1,
         "spotlight": "TRACE 2.0",
-        "style": {
-          "sheet": "spotlight"
-        },
         "watermark": {
           "enabled": true,
           "url": "images/cortex_prime_logo_light_transparent.png",
@@ -19033,9 +18955,6 @@ module.exports = [
           "center": 0,
           "right": 0
         },
-        "style": {
-          "sheet": "spotlight"
-        }
       },
       "traitSets": [
         {
@@ -20743,9 +20662,6 @@ module.exports = [
           "center": 0,
           "right": 0
         },
-        "style": {
-          "sheet": "spotlight"
-        }
       },
       "traitSets": [
         {

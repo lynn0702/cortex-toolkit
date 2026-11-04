@@ -1,7 +1,6 @@
 <script setup lang="ts">
 defineProps<{
 	printStyle: string | null;
-	sheetStyle: string;
 	printBlank: boolean;
 	printBW: boolean;
 	printPageView: any;
@@ -38,15 +37,7 @@ function toggleBW( e: Event ) {
 		</div>
 
 		<div class="toolbar-group">
-			<div class="toolbar-segmented">
-				<button type="button" :class="{ active: (printStyle || sheetStyle) === 'spotlight' }" @click.stop="emit('update:printStyle', 'spotlight')">
-					<i class="fas fa-id-card"></i> Spotlight Style
-				</button>
-				<button type="button" :class="{ active: (printStyle || sheetStyle) === 'classic' }" @click.stop="emit('update:printStyle', 'classic')">
-					<i class="fas fa-file"></i> Classic Style
-				</button>
-			</div>
-
+			
 			<label class="toolbar-checkbox">
 				<input type="checkbox" id="print-blank-sheet" name="printBlank" :checked="printBlank" @change="toggleBlank">
 								<span><i class="fas fa-pencil-alt"></i> Blank Sheet</span>

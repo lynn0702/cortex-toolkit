@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, toRaw, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
-import { getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
+import { getView, ensureView, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
 import { resolveFrame, type FrameConfig } from './frame-geometry.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, ImageConfig, PipsConfig, Visibility } from './model.ts';
 
@@ -367,10 +367,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	// Template traits by name not currently on this sheet (D19 restore menu).
 	const restorableTraitNames = computed(() => cortexFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID));
-
-	const isSpotlightSheet = computed(() => {
-		return resolveSheetStyle(props.character) === 'spotlight';
-	});
 
 	const ringSpread = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.arcSpread ?? 100,
@@ -1336,7 +1332,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		partPreview,
 		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,
 		branchShares, setBranchShare, hasCustomBranch,
-		templateEntry, restorableTraitNames, isSpotlightSheet,
+		templateEntry, restorableTraitNames,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
 		includeOut, ratingLadder, subtraitRatingLadder,

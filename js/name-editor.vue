@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, getRating, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
+import { getView, ensureView, isNameSet, defaultNameHidden, getRating, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 
@@ -321,18 +321,6 @@ const plotPoints = computed( {
 	},
 } );
 
-const sheetStyle = computed( {
-	get() {
-		return resolveSheetStyle( props.character );
-	},
-	set( style: string ) {
-		if ( !props.character ) return;
-		const view = ensureView( props.character );
-		if ( !view.style || typeof view.style !== 'object' ) view.style = {};
-		view.style.sheet = ( style === 'classic' ) ? 'classic' : 'spotlight';
-		emit( 'updateCharacter', props.character );
-	},
-} );
 
 const pageCount = computed( {
 	get() {
@@ -756,14 +744,7 @@ function updateCharacter( character: any ) {
 							<textarea id="char-field-notes" name="characterNotes" v-model="notes" rows="2" placeholder="Player notes..." aria-label="Notes"></textarea>
 						</div>
 
-						<div class="editor-field">
-							<label for="char-field-sheet-style">Sheet Layout Style</label>
-							<select id="char-field-sheet-style" name="sheetStyle" v-model="sheetStyle">
-								<option value="spotlight">Spotlight Style</option>
-								<option value="classic">Classic Style</option>
-							</select>
-						</div>
-
+						
 						<div class="editor-field">
 							<div class="editor-label">Pillar Labels</div>
 							<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.45rem; margin-top: 0.35rem;">

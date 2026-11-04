@@ -30,9 +30,6 @@
     "view": {
       "pageCount": 1,
       "spotlight": "Eidolon Alpha",
-      "style": {
-        "sheet": "spotlight"
-      },
       "columnAlignment": "top-base",
       "columnOffsets": {
         "left": 0,

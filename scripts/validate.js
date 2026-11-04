@@ -153,7 +153,7 @@ templates.forEach((tpl, ti) => {
     if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key (use view.style.sheet)`);
     const cs = (cv.style && typeof cv.style === 'object') ? cv.style : {};
     if (cs.hasAttributes !== undefined) err(`${where}: retired view.style.hasAttributes key`);
-    if (cs.sheet !== 'classic' && cs.sheet !== 'spotlight') err(`${where}: view.style.sheet must be classic|spotlight`);
+    if (cs.sheet !== undefined) err(`${where}: retired view.style.sheet key`);
   }
   ch.traitSets.forEach((ts, si) => {
     const bag = (ts && (ts.view || (ts.custom && ts.custom.cortexToolkit))) || {};
@@ -689,7 +689,7 @@ if (fs.existsSync(dataDir)) {
       if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key (use view.style.sheet)`);
       const cs = (cv.style && typeof cv.style === 'object') ? cv.style : {};
       if (cs.hasAttributes !== undefined) err(`${where}: retired view.style.hasAttributes key`);
-      if (cs.sheet !== 'classic' && cs.sheet !== 'spotlight') err(`${where}: view.style.sheet must be classic|spotlight`);
+      if (cs.sheet !== undefined) err(`${where}: retired view.style.sheet key`);
     }
     const pinned = ch.view && ch.view.pageCount;
     if (pinned !== undefined && pinned !== null) {

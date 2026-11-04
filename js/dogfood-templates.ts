@@ -28,9 +28,6 @@ export const VANGUARD_FRAME_SHOWCASE = {
 		notes: '',
 		tags: [],
 		view: {
-			style: {
-				sheet: 'spotlight'
-			},
 			pageCount: 2,
 			columns: 2,
 			labels: {

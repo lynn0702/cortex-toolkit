@@ -3,7 +3,7 @@ import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 import TraitSetEditorRowMini from './trait-set-editor-row-mini.vue';
 
 const {
-	isRing, isSpotlightSheet,
+	isRing,
 	isPartsPreview, hasParts, hasCustomParts, hasCustomBranch, resetParts,
 	openBlockMini,
 	frameOptions, frameShape, setFrameShape,
@@ -13,7 +13,7 @@ const {
 
 <template>
 	<!-- SECTION LAYOUT (set header always; trait-row cells for every row body) -->
-	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+	<div class="editor-field" v-if="!isRing">
 		<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
 			<div class="editor-label" style="margin: 0;">Section Layout</div>
 			<button
@@ -43,7 +43,7 @@ const {
 	</div>
 
 	<!-- FRAME SELECTION -->
-	<div class="editor-field" v-if="!isRing && isSpotlightSheet">
+	<div class="editor-field" v-if="!isRing">
 		<div class="editor-label">Frame</div>
 		<div class="editor-button-group">
 			<button
@@ -60,7 +60,7 @@ const {
 	</div>
 
 	<!-- FRAME PARAMS -->
-	<template v-if="!isRing && isSpotlightSheet && frameShape && frameShape !== 'none'">
+	<template v-if="!isRing && frameShape && frameShape !== 'none'">
 		<div class="editor-field">
 			<div class="editor-label">Frame Width</div>
 			<div class="editor-button-group">

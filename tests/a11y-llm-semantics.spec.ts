@@ -509,7 +509,7 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it( 'renders PageLayoutMini with placed boxes and stacked bands, maintaining accessibility', async () => {
 			const char: any = {
 				name: 'Layout Test Hero',
-				view: { pageCount: 2, style: { sheet: 'spotlight' } },
+				view: { pageCount: 2 },
 				traitSets: [
 					{
 						name: 'Distinctions',
@@ -556,7 +556,7 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const initialPlace = { left: '0%', width: '100%', top: 0, height: 2 };
 			const char: any = {
 				name: 'Drag Cancel Hero',
-				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				view: { pageCount: 1 },
 				traitSets: [
 					{
 						name: 'Distinctions',
@@ -604,7 +604,7 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it( 'moves set across pages in PageLayoutMini, reordering array, updating view.page, and leaving view.pillar untouched', async () => {
 			const char: any = {
 				name: 'Pillar Hero',
-				view: { pageCount: 2, style: { sheet: 'spotlight' } },
+				view: { pageCount: 2 },
 				traitSets: [
 					{
 						name: 'Set 1',
@@ -645,7 +645,7 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it( 'supports keyboard navigation: arrows move, shift+arrows resize, enter/space opens block mini', async () => {
 			const char: any = {
 				name: 'Keyboard Hero',
-				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				view: { pageCount: 1 },
 				traitSets: [
 					{
 						name: 'Movable Set',
@@ -718,7 +718,7 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			const char: any = {
 				name: 'Stress Acceptance Hero',
-				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				view: { pageCount: 1 },
 				traitSets: [ stressSet ]
 			};
 
@@ -753,7 +753,7 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it( 'wires seamless TraitSetMini handoff: opens block mini, applies update, and returns with set selected', async () => {
 			const char: any = {
 				name: 'Handoff Hero',
-				view: { pageCount: 1, style: { sheet: 'spotlight' } },
+				view: { pageCount: 1 },
 				traitSets: [
 					{
 						name: 'Handoff Set',

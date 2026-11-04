@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
-import { getView, ensureView, isNameSet, resolveSheetStyle, defaultNameHidden, resolveVisibility, isHiddenIn, resolveSetPillar, getPillarLabel, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
+import { getView, ensureView, isNameSet, defaultNameHidden, resolveVisibility, isHiddenIn, resolveSetPillar, getPillarLabel, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
@@ -125,7 +125,8 @@ const description = computed( () => props.character?.description ?? '' );
 const player = computed( () => props.character?.player ?? '' );
 const pronouns = computed( () => props.character?.pronouns ?? '' );
 const nickname = computed( () => props.character?.nickname ?? getView( props.character )?.nickname ?? '' );
-const hasNickname = computed( () => Boolean( nickname.value || ( isSpotlightStyle.value && getView( props.character )?.hasNickname ) ) );
+const hasNickname = computed( () => Boolean( nickname.value || getView( props.character )?.hasNickname ) );
+const nicknameLabelClassic = computed( () => nameLabel( 'nickname', 'AKA' ) );
 // The name block is the first trait set: header labels come from its
 // traits' `label` fields, visibility from trait `view`. Values stay on the
 // character fields. Absent traits fall back to the long-standing words,
@@ -175,9 +176,11 @@ const ringTraitSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
 } ) );
 
 const hasRingTrait = computed( () => {
-	if ( isSpotlightStyle.value ) return false;
-	const pSize = getView( portrait.value )?.size;
+	const pView = getView( portrait.value );
+	const pSize = pView?.size;
 	if ( pSize === 'spotlight' || pSize === 'none' ) return false;
+	const loc = pView?.location;
+	if ( loc === 'header' ) return false;
 	return ringTraitSetIndex.value !== -1;
 } );
 
@@ -233,14 +236,8 @@ const pageCount = computed( () => {
 	return maxPage;
 } );
 
-const sheetStyle = computed( () => {
-	if ( props.submode === 'print' && printStyle.value ) {
-		return printStyle.value;
-	}
-	return resolveSheetStyle( props.character );
-} );
-
-const isSpotlightStyle = computed( () => sheetStyle.value === 'spotlight' );
+const isSpotlightStyle = computed( () => hasHeaderPortrait.value );
+const sheetStyle = computed( () => hasHeaderPortrait.value ? 'spotlight' : 'classic' );
 const isPrintSubmode = computed( () => props.submode === 'print' );
 const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotlightStyle.value );
 const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
@@ -260,13 +257,11 @@ const columnCount = computed( () => {
 } );
 
 const hasHeaderPortrait = computed( () => {
-	if ( !isSpotlightStyle.value ) return false;
 	const pView = getView( portrait.value );
 	const size = pView?.size;
 	if ( size === 'none' ) return false;
 	const loc = pView?.location;
-	if ( loc && loc !== 'header' ) return false;
-	return true;
+	return loc === 'header';
 } );
 
 const descriptionText = computed( {
@@ -379,6 +374,19 @@ function hasClassicUnplacedFullSets( pageIndex: number ) {
 		!hasPlace( traitSet )
 	);
 }
+function hasColumnContent( pageIndex: number ): boolean {
+	if ( shouldShowClassicPortrait() && pageIndex === 1 ) return true;
+	if ( hasRingTrait.value && ringTraitID.value > -1 ) return true;
+	if ( shouldShowColumnSmallPortrait( 'left', pageIndex ) || shouldShowColumnSmallPortrait( 'right', pageIndex ) ) return true;
+	const sets = traitSets.value || [];
+	return sets.some( ( ts, s ) =>
+		!isNameSet( ts ) &&
+		s !== ringTraitID.value &&
+		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
+		!isFullWidthClassic( ts ) &&
+		!hasPlace( ts )
+	);
+}
 function getClassicGridSections( pageIndex: number ): SpotlightSection[] {
 	const sections = getSpotlightSections( pageIndex );
 	const out: SpotlightSection[] = [];
@@ -396,19 +404,22 @@ function getClassicGridSections( pageIndex: number ): SpotlightSection[] {
 }
 
 function shouldShowClassicPortrait() {
-	if ( isSpotlightStyle.value ) return false;
 	if ( ringTraitSetIndex.value !== -1 ) return true;
-	const s = getView( portrait.value )?.size;
+	const pView = getView( portrait.value );
+	const s = pView?.size;
 	if ( s === 'none' || s === 'spotlight' ) return false;
+	const loc = pView?.location;
+	if ( loc === 'header' ) return false;
 	return true;
 }
 
 function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number ) {
-	if ( isSpotlightStyle.value ) return false;
 	if ( pageIndex !== 1 ) return false;
 	const pView = getView( portrait.value );
 	const s = pView?.size;
+	if ( s === 'none' ) return false;
 	const loc = pView?.location;
+	if ( loc === 'header' ) return false;
 	if ( s === 'spotlight' && loc === pageLocation ) return true;
 	return false;
 }
@@ -475,9 +486,7 @@ function addTraitSet( page = 1, location?: string ) {
 	const tsView = ensureView( traitSet );
 	tsView.style = { header: styleId, body: styleId };
 
-	if ( !isSpotlightStyle.value ) {
-		tsView.location = location ?? 'left';
-	}
+	tsView.location = location ?? 'left';
 	tsView.page = page ?? 1;
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	const blank: any = structuredClone( cortexFunctions.defaultTrait );
@@ -512,7 +521,7 @@ function removeTraitSet( traitSetID: number ) {
 function addPresetSet( preset: SetPresetEntry, location?: string, page?: number ) {
 	const character = props.character as Character;
 	if ( !character || !preset ) return;
-	const loc = !isSpotlightStyle.value ? ( location ?? 'left' ) : undefined;
+	const loc = location ?? 'left';
 	const traitSet = cortexFunctions.instantiateSetPreset( preset, character, page ?? 1, loc );
 	character.traitSets.push( traitSet );
 	updateCharacter( character );
@@ -711,7 +720,7 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>( () => {
 	ensureBucket( 'identity' );
 
 	let ringPillarKey: string | null = null;
-	if ( !isSpotlightStyle.value && shouldShowClassicPortrait() ) {
+	if ( shouldShowClassicPortrait() ) {
 		if ( hasRingTrait.value && ringTraitSet.value && !isHiddenIn( ringTraitSet.value, 'play' ) ) {
 			ringPillarKey = resolveSetPillar( ringTraitSet.value );
 			ensureBucket( ringPillarKey );
@@ -896,7 +905,6 @@ watch( () => props.submode, () => {
 		<PrintToolbar
 			v-if="submode === 'print'"
 			:printStyle="printStyle"
-			:sheetStyle="sheetStyle"
 			:printBlank="printBlank"
 			:printBW="printBW"
 			:printPageView="printPageView"
@@ -988,7 +996,7 @@ watch( () => props.submode, () => {
 
 							<header class="page-header" v-if="col.hasHeader" :data-set-index="-1">
 								<div
-									v-if="isSpotlightStyle"
+									v-if="hasHeaderPortrait"
 									class="page-header-inner spotlight-header-card"
 									:class="{ 'has-portrait': hasHeaderPortrait }"
 								>
@@ -1000,6 +1008,12 @@ watch( () => props.submode, () => {
 											</div>
 											<div class="spotlight-cell-content name-content" v-if="name" v-html="renderNameHtml(name)"></div>
 											<div class="spotlight-blank-line" v-else></div>
+									<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
+										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
+										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
+										<span class="pp-count">{{ plotPoints }}</span>
+										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
+									</div>
 										</div>
 										<div class="spotlight-meta-divider"></div>
 										<div class="spotlight-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
@@ -1133,7 +1147,7 @@ watch( () => props.submode, () => {
 
 						<!-- SPOTLIGHT HEADER (EDIT, PLAY, PRINT) -->
 						<div
-							v-if="isSpotlightStyle"
+							v-if="hasHeaderPortrait"
 							class="page-header-inner spotlight-header-card"
 							:class="{ 'has-portrait': hasHeaderPortrait, 'selected': isSelected(['name']) }"
 						>
@@ -1144,10 +1158,17 @@ watch( () => props.submode, () => {
 										<span class="spotlight-cell-label">NAME</span>
 										<span class="spotlight-cell-sublabel" v-if="player && !printBlank && nameShown('player')">{{ playerLabel }} {{ player }}</span>
 									</div>
+									<div class="character-game-title" v-if="game && !printBlank && nameShown('game')" v-html="renderText(game)"></div>
 									<div class="spotlight-cell-content name-content" v-if="!printBlank && name" v-html="renderNameHtml(name)"></div>
 									<div class="spotlight-blank-line" v-else-if="printBlank"></div>
 									<div class="spotlight-cell-content name-content placeholder-dim" v-else-if="submode === 'edit'">Click to set name...</div>
 									<div class="spotlight-blank-line" v-else></div>
+									<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
+										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
+										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
+										<span class="pp-count">{{ plotPoints }}</span>
+										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
+									</div>
 								</div>
 
 								<div class="spotlight-meta-divider"></div>
@@ -1199,6 +1220,9 @@ watch( () => props.submode, () => {
 								<div class="desc-blank-area" v-else>
 									<div class="desc-blank-line"></div>
 									<div class="desc-blank-line"></div>
+								</div>
+								<div class="character-notes-summary" v-if="notes && notes.length && nameShown('notes')">
+									<div class="character-notes-body" v-html="renderNotesText(notes)"></div>
 								</div>
 							</div>
 
@@ -1263,6 +1287,9 @@ watch( () => props.submode, () => {
 									<div class="character-player" v-if="player && player.length && nameShown('player')">
 										<span class="meta-label">{{ playerLabelClassic }}</span> <span>{{ player }}</span>
 									</div>
+									<div class="character-nickname" v-if="hasNickname && nameShown('nickname')">
+										<span class="meta-label">{{ nicknameLabelClassic }}</span> <span v-html="renderText(nickname)"></span>
+									</div>
 
 									<div class="character-pronouns" v-if="pronouns.length && nameShown('pronouns')">
 										<span v-html="renderText(pronouns)"></span>
@@ -1297,110 +1324,8 @@ watch( () => props.submode, () => {
 						</div>
 					</header>
 
-					<!-- SPOTLIGHT MODE LAYOUT (NESTED GRIDS, EXPLICIT COORDINATES) -->
-					<div v-if="isSpotlightStyle && !isPillarPlay" class="spotlight-layout">
-						<template v-for="(section, secIdx) in getSpotlightSections(pageIndex)" :key="secIdx">
-							<div
-								v-if="section.type === 'full-width'"
-								:class="['columns', 'spotlight-columns', 'spotlight-full-width']"
-							>
-								<div :class="['spotlight-column', 'spotlight-full-column']">
-									<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
-										<TraitSetBlock :character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"></TraitSetBlock>
-									</template>
-								</div>
-							</div>
-							<div
-								v-else
-								:class="['columns', 'spotlight-columns', 'spotlight-grid']"
-								:style="getSpotlightGridStyle(section)"
-							>
-								<TraitSetBlock
-									v-for="{ traitSet, index: s } in section.ordered"
-									:key="s"
-									:character="character"
-									:traitSetID="s"
-									:submode="submode"
-									:editing="editing"
-									:viewY="viewY"
-									:printBlank="effectivePrintBlank"
-									:printStyle="printStyle"
-									:style="section.cells[s] && section.cells[s].style"
-									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
-									@selectElement="selectElement"
-									@updateCharacter="updateCharacter"
-									@removeTrait="removeTrait"
-									@removeTraitSet="removeTraitSet"
-									@addTrait="addTrait"
-									@addDieToRoller="emit('addDieToRoller', $event)"
-								></TraitSetBlock>
-							</div>
-						</template>
-
-						<!-- BUTTON: ADD TRAIT SET IN SPOTLIGHT MODE -->
-						<div
-							class="spotlight-add-set-bar"
-							v-if="submode === 'edit'"
-						>
-							<div class="add-set-slot slot-center">
-								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
-									<i class="fas fa-plus"></i> Add Set
-								</button>
-								<button type="button" class="btn-spotlight-add btn-presets-toggle" @click.stop="toggleInlineAdd(pageIndex)">
-									<i class="fas fa-layer-group"></i> Presets
-								</button>
-							</div>
-
-							<!-- INLINE NON-MODAL ADD AREA -->
-							<div
-								class="inline-add-set-area"
-								v-if="showInlineAddSet"
-							>
-								<div class="inline-add-header">
-									<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
-									<div class="inline-add-quick-actions">
-										<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex)">
-											<i class="fas fa-plus"></i> Blank Set
-										</button>
-										<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
-											<i class="fas fa-th-large"></i> New Card in Mini
-										</button>
-										<button type="button" class="btn-inline-close" title="Close" @click.stop="showInlineAddSet = false">
-											<i class="fas fa-times"></i>
-										</button>
-									</div>
-								</div>
-								<div class="inline-presets-list">
-									<div class="inline-preset-card" v-for="preset in inlineBuiltInPresets" :key="'builtin-' + preset.id">
-										<div class="inline-preset-main">
-											<div class="inline-preset-name">{{ preset.label }}</div>
-											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-										</div>
-										<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
-											<i class="fas fa-plus"></i> Add Preset
-										</button>
-									</div>
-									<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'custom-' + preset.id">
-										<div class="inline-preset-main">
-											<div class="inline-preset-name">{{ preset.label }}</div>
-											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-										</div>
-										<div class="inline-preset-actions">
-											<button type="button" class="btn-inline-delete" title="Delete custom preset" @click.stop="removeInlineCustomPreset(preset.id)">
-												<i class="fas fa-trash-alt"></i>
-											</button>
-											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
-												<i class="fas fa-plus"></i> Add Preset
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
 					<!-- COLUMNS: CLASSIC MODE -->
-					<div class="columns" v-if="!isSpotlightStyle && !isPillarPlay">
+					<div class="columns" v-if="!isPillarPlay && (hasColumnContent(pageIndex) || !getClassicGridSections(pageIndex).length)">
 
 						<div v-for="pageLocation in ['left', 'right']" :class="'column-' + pageLocation">
 
@@ -1569,7 +1494,7 @@ watch( () => props.submode, () => {
 					</div> <!-- .columns -->
 
 					<!-- CLASSIC PLACED (GRID) SETS -->
-					<div class="classic-grid-sections" v-if="!isSpotlightStyle && !isPillarPlay && getClassicGridSections(pageIndex).length">
+					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay && getClassicGridSections(pageIndex).length">
 						<template v-for="(section, secIdx) in getClassicGridSections(pageIndex)" :key="'classic-grid-' + secIdx">
 							<div
 								:class="['columns', 'spotlight-columns', 'spotlight-grid']"
@@ -1596,10 +1521,70 @@ watch( () => props.submode, () => {
 								></TraitSetBlock>
 							</div>
 						</template>
-					</div>
+<!-- BUTTON: ADD TRAIT SET IN SPOTLIGHT MODE -->
+						<div
+							class="spotlight-add-set-bar"
+							v-if="submode === 'edit'"
+						>
+							<div class="add-set-slot slot-center">
+								<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
+									<i class="fas fa-plus"></i> Add Set
+								</button>
+								<button type="button" class="btn-spotlight-add btn-presets-toggle" @click.stop="toggleInlineAdd(pageIndex)">
+									<i class="fas fa-layer-group"></i> Presets
+								</button>
+							</div>
+
+							<!-- INLINE NON-MODAL ADD AREA -->
+							<div
+								class="inline-add-set-area"
+								v-if="showInlineAddSet"
+							>
+								<div class="inline-add-header">
+									<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
+									<div class="inline-add-quick-actions">
+										<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex)">
+											<i class="fas fa-plus"></i> Blank Set
+										</button>
+										<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
+											<i class="fas fa-th-large"></i> New Card in Mini
+										</button>
+										<button type="button" class="btn-inline-close" title="Close" @click.stop="showInlineAddSet = false">
+											<i class="fas fa-times"></i>
+										</button>
+									</div>
+								</div>
+								<div class="inline-presets-list">
+									<div class="inline-preset-card" v-for="preset in inlineBuiltInPresets" :key="'builtin-' + preset.id">
+										<div class="inline-preset-main">
+											<div class="inline-preset-name">{{ preset.label }}</div>
+											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+										</div>
+										<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
+											<i class="fas fa-plus"></i> Add Preset
+										</button>
+									</div>
+									<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'custom-' + preset.id">
+										<div class="inline-preset-main">
+											<div class="inline-preset-name">{{ preset.label }}</div>
+											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+										</div>
+										<div class="inline-preset-actions">
+											<button type="button" class="btn-inline-delete" title="Delete custom preset" @click.stop="removeInlineCustomPreset(preset.id)">
+												<i class="fas fa-trash-alt"></i>
+											</button>
+											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
+												<i class="fas fa-plus"></i> Add Preset
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+										</div>
 
 					<!-- CLASSIC FULL-WIDTH SETS -->
-<div class="classic-full-band" v-if="!isSpotlightStyle && !isPillarPlay && hasClassicUnplacedFullSets(pageIndex)">
+<div class="classic-full-band" v-if="!isPillarPlay && hasClassicUnplacedFullSets(pageIndex)">
 		<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 			<TraitSetBlock
 				v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet) && !hasPlace(traitSet)"

@@ -30,9 +30,6 @@
     "view": {
       "pageCount": 2,
       "spotlight": "Hammerheads",
-      "style": {
-        "sheet": "spotlight"
-      },
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

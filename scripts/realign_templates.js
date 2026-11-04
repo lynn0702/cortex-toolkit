@@ -40,7 +40,6 @@ templates = templates.map(item => {
   delete char.view.columnsPage2;
   char.view.pageCount = item.pages || 1;
   char.view.spotlight = item.spotlight || cleanTitle;
-  char.view.style = { sheet: 'spotlight' };
   char.view.columnAlignment = item.id === 'spotlight-alien-us' ? 'full-width' : 'top-base';
   char.view.columnOffsets = { left: 0, center: 0, right: 0 };
 
