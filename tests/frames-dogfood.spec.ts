@@ -1,3 +1,4 @@
+import { cortexMigration } from '../js/migration.ts';
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
@@ -59,14 +60,14 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		// Values set
 		const valuesSet = char.traitSets[4];
 		expect(valuesSet.name).toBe('Values');
-		for (const t of valuesSet.traits) {
+		for (const t of (valuesSet.traits as any[])) {
 			expect((t as any).statement, 'trait-level statement must be stripped').toBeUndefined();
 			expect((t as any).questioned, 'trait-level questioned must be stripped').toBeUndefined();
 			expect(t.traits?.length).toBe(1);
 			expect(t.traits?.[0].name).toBeTruthy();
 		}
 		// Glory questioned pip
-		const glory = valuesSet.traits.find(t => t.name === 'Glory');
+		const glory = (valuesSet.traits as any[]).find(t => t.name === 'Glory');
 		expect(glory?.traits?.[0]?.rating?.value).toEqual([true]);
 
 		// Session notes does not reference JSON tab
@@ -236,10 +237,11 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 
 		// 3. Morph to block (container border frame)
 		const characterBlock = structuredClone(character);
-		characterBlock.traitSets[0].view.frame = {
+		(characterBlock.traitSets[0].view as any).frame = {
 			shape: 'block',
 			corner: 'cut',
-			stroke: 'primary'
+			stroke: '2px',
+			color: 'primary'
 		};
 		await wrapper.setProps({ character: characterBlock });
 		await nextTick();
@@ -280,7 +282,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 
 		// Mount with 7 traits
 		const character7 = structuredClone(character);
-		character7.traitSets[0].traits.push({
+		(character7.traitSets[0].traits as any[]).push({
 			name: 'Resolve',
 			rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }
 		});
@@ -356,9 +358,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 
 	it('regression guard: Vanguard Attributes set normalizes without legacyRing and distributes 360° across all quadrants', () => {
 		const clone = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-		const { cortexMigration } = require('../js/migration.ts');
-		cortexMigration.normalizeView(clone);
-		const attrSet = clone.traitSets.find((s: any) => s.name === 'Attributes');
+				cortexMigration.normalizeView(clone);
+		const attrSet = (clone.traitSets as any[]).find((s: any) => s.name === 'Attributes');
 		expect(attrSet).toBeDefined();
 		expect(attrSet.view.ringTrait, 'Attributes with explicit frame must not gain ringTrait').toBeUndefined();
 

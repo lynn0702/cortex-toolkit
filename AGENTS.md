@@ -114,14 +114,11 @@ SKILL.md file directly from `.agents/skills/<name>/`.
 
 ## Definition of Done (applies to every change)
 
-1. `npm run build` passes with no errors or warnings.
-2. `npm run check` (`vue-tsc --noEmit`) passes.
-3. `npm test` passes all 10 test suites (`cortex-pal`, `spotlight-grid`, `merge`, `migration`, `materialize`, `template-parity`, `storage`, `export`, `rating`, `functions`).
-4. `npm run validate` passes with 0 errors and 0 warnings.
-5. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
-6. `grep -rn 'v-html' js/` — every site accounted for per Security rules.
-7. Smoke-tested the touched feature from the checklist below, in a real browser.
-8. Push to `main` only when 1–7 are green.
+1. `npm run gate` passes (runs `npm run check`, `npm run build`, `npm test`, `npm run validate`, and `v-html` security scan with zero errors).
+2. Git hooks: `.githooks/` configured (`npm run prepare`, core.hooksPath set to `.githooks`) enforces fast checks on `pre-commit` and full `npm run gate` on `pre-push`.
+3. New file? Imported into the graph from `js/app.js` or its parent `.vue`/`.ts` consumer (or intentionally standalone).
+4. Smoke-tested the touched feature from the checklist below, in a real browser.
+5. Push to `main` only when 1–4 are green.
 
 ## Smoke checklist
 

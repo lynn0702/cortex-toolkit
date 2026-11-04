@@ -266,6 +266,7 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				shape: 'ring',
 				span: [ 0, 360 ],
 				corner: 8,
+				stroke: '2px',
 				color: 'primary',
 				legacyRing: true,
 				ringConfig
@@ -291,7 +292,8 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				shape: 'ring',
 				span: [ 0, 360 ],
 				corner: 8,
-				stroke: 'strong',
+				stroke: '2px',
+				color: 'strong',
 				legacyRing: true,
 				ringConfig: customConfig
 			};
@@ -322,7 +324,8 @@ describe( 'Step 1: Frame Chrome & Ring Parity Suite', () => {
 				shape: 'ring',
 				span: [ 0, 360 ],
 				corner: 8,
-				stroke: 'primary',
+				stroke: '2px',
+				color: 'primary',
 				legacyRing: true,
 				ringConfig: { arcAngle: -90, arcSpread: 100, arcDistance: 0 }
 			};

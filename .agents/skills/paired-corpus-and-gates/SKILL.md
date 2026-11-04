@@ -61,16 +61,9 @@ Tiers (all three, no skipping):
   is still not a smoke pass — batching WHEN it runs
   never narrows WHAT it covers.
 
-- Build: zero errors.
-- Type check: zero errors.
-- Test suites: node suites plus the vitest accessibility
-  spec, all passing with zero failures (the a11y spec is
-  wired into `npm test` first — it gates, it does not
-  advise).
-- Validation: `validate.js` zero errors, zero warnings on
-  the corpus.
+- Full gates via `npm run gate`: type check zero errors, build zero errors, test suites all passing, validation zero errors and zero warnings, v-html scan clean.
+- Git hooks: `.githooks/` configured (`npm run prepare`) enforcing fast checks on pre-commit and `npm run gate` on pre-push.
 - Import-graph check: every new file reachable.
-- `v-html` grep: no new raw bindings.
 - Browser smoke: roster, editors, Play, reload, and the
   device width the change affects. A smoke pass that skips
   the affected surface is not a smoke pass.

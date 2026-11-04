@@ -1,7 +1,6 @@
 import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-geometry.ts';
-	getView, ensureView, resolveSheetStyle, getRating, ratingDice, setRatingDice, setRatingDie,
 import {
 		getView, ensureView, getRating, ratingDice, setRatingDice, setRatingDie,
 		resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,

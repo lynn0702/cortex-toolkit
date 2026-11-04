@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+echo ""
+echo "=== [PRE-PUSH] Full Definition of Done gates ==="
+npm run gate
+echo "=== [PRE-PUSH] All gates passed! Proceeding with push. ==="
+echo ""
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+echo ""
+echo "=== [PRE-COMMIT] Fast gate: typecheck + schema validation ==="
+npm run check
+npm run validate
+echo "=== [PRE-COMMIT] Passed! ==="
+echo ""
+

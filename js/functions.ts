@@ -1,7 +1,6 @@
 import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
-	VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel, resolveSheetStyle,
 import {
 		VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel,
 		defaultNameHidden, getRating, ratingDice, setRatingDice, resolveSetPillar, getPillarLabel,
