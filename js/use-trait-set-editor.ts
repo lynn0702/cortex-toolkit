@@ -1,7 +1,7 @@
 import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, toRaw, type InjectionKey } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
-import { getView, ensureView, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
+import { getView, ensureView, isNameSet, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
 import { resolveFrame, type FrameConfig } from './frame-geometry.ts';
 import type { Character, TraitSet, CortexToolkitCustom, RingConfig, ImageConfig, PipsConfig, Visibility } from './model.ts';
 
@@ -151,6 +151,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const isRing = computed(() => styleBody.value === 'portrait-ring');
+	const isName = computed(() => isNameSet(traitSet.value));
 
 
 	const ringTrait = computed({
@@ -434,12 +435,22 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const imageURL = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.url ?? '',
+		get: () => {
+			const cfgUrl = getView(traitSet.value)?.imageConfig?.url;
+			if (cfgUrl) return cfgUrl;
+			if (isName.value || isRing.value) return props.character?.portrait?.url ?? '';
+			return '';
+		},
 		set: (val: string) => { setImageConfig('url', val); }
 	});
 
 	const imageAlignment = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.alignment ?? 'center',
+		get: () => {
+			const cfgAlign = getView(traitSet.value)?.imageConfig?.alignment;
+			if (cfgAlign) return cfgAlign;
+			if (isName.value || isRing.value) return getView(props.character?.portrait)?.alignment ?? 'center';
+			return 'center';
+		},
 		set: (val: string) => { setImageConfig('alignment', val); }
 	});
 
@@ -449,9 +460,39 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const imageCaption = computed({
-		get: () => getView(traitSet.value)?.imageConfig?.caption ?? '',
+		get: () => {
+			const cfgCap = getView(traitSet.value)?.imageConfig?.caption;
+			if (cfgCap !== undefined) return cfgCap;
+			if (isName.value) {
+				const t = cortexFunctions.getNameTrait(props.character, 'caption');
+				return typeof t?.label === 'string' ? t.label : '';
+			}
+			return '';
+		},
 		set: (val: string) => { setImageConfig('caption', val); }
 	});
+
+	const namePortraitVisibility = computed<Visibility>(() => {
+		const t = cortexFunctions.getNameTrait(props.character, 'portrait');
+		const v = getView(t) as Record<string, unknown> | undefined;
+		const word = v?.visibility;
+		if (word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown') return word;
+		return 'shown';
+	});
+
+	function toggleNamePortraitVisibility() {
+		const cur = namePortraitVisibility.value;
+		const next = nextVisibility(cur);
+		const t = cortexFunctions.ensureNameTrait(props.character, 'portrait');
+		if (!t) return;
+		const v = ensureView(t) as Record<string, unknown>;
+		if (next === 'shown') {
+			delete v.visibility;
+		} else {
+			v.visibility = next;
+		}
+		updateCharacter(props.character);
+	}
 
 
 	// Generic Out indicator (default off).
@@ -970,10 +1011,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	// Styles sampled from the official Spotlight character sheet PDFs.
 	// Talents rows and dossier fields carry no dice.
-	const needsDiceUI = computed(() => styleBody.value !== 'three-column-table' && styleBody.value !== 'labeled-fields');
+	const needsDiceUI = computed(() => styleBody.value !== 'three-column-table' && styleBody.value !== 'labeled-fields' && styleBody.value !== 'name');
 
 	// Fixed-layout styles manage their own internal columns.
-	const allowsTraitColumns = computed(() => !['subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'dice-ladder', 'labeled-fields'].includes(styleBody.value));
+	const allowsTraitColumns = computed(() => !['subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'dice-ladder', 'labeled-fields', 'name'].includes(styleBody.value));
 
 	const editorDock = computed({
 		get: () => getView(traitSet.value)?.editorDock === 'right' ? 'right' : 'left',
@@ -1053,6 +1094,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function promptDeleteTraitSet() {
+		if (isName.value) return;
 		showDeleteConfirm.value = true;
 	}
 
@@ -1061,6 +1103,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function confirmDeleteTraitSet() {
+		if (isName.value) return;
 		showDeleteConfirm.value = false;
 		emit('removeTraitSet', props.traitSetID);
 	}
@@ -1142,7 +1185,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (body === 'subtrait-columns' || body === 'three-column-table' || body === 'dice-count') return true;
 		if (body === 'sfx-rows') return true;
 		if (hasTrackPart.value) return true;
-		return body !== 'notes' && body !== 'image' && body !== 'pips';
+		return body !== 'notes' && body !== 'image' && body !== 'pips' && body !== 'name';
 	});
 
 	function setImageConfig(key: keyof ImageConfig, value: any) {
@@ -1152,6 +1195,22 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			ctk.imageConfig = {};
 		}
 		ctk.imageConfig[key] = value;
+
+		if ((isName.value || isRing.value) && props.character) {
+			if (key === 'url') {
+				if (!props.character.portrait) props.character.portrait = {};
+				props.character.portrait.url = value;
+			} else if (key === 'alignment') {
+				if (!props.character.portrait) props.character.portrait = {};
+				ensureView(props.character.portrait).alignment = value;
+			} else if (key === 'caption' && isName.value) {
+				const t = cortexFunctions.ensureNameTrait(props.character, 'caption');
+				if (t) {
+					if (typeof value === 'string' && value.trim().length) t.label = value.trim();
+					else delete t.label;
+				}
+			}
+		}
 
 		updateCharacter(props.character);
 	}
@@ -1327,14 +1386,14 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const api = {
 		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
-		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing,
+		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isName,
 		ringTrait, isFullWidthSpan,
 		partPreview,
 		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,
 		branchShares, setBranchShare, hasCustomBranch,
 		templateEntry, restorableTraitNames,
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
-		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption,
+		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption, namePortraitVisibility, toggleNamePortraitVisibility,
 		includeOut, ratingLadder, subtraitRatingLadder,
 		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, traitColumns,
 		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,

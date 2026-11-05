@@ -9,7 +9,7 @@
 // trait parts (name, rating, description, block, subtraits, trackLabel,
 // track) as cells in the trait's grid, percent of the set.
 import type { Character, TraitSet } from './model.ts';
-import { getView, isNameSet, isHiddenIn, resolveVisibility } from './model.ts';
+import { getView, isHiddenIn, resolveVisibility } from './model.ts';
 
 // Classic flow has left/right tracks only; 'center' (and anything
 // unexpected) folds left so no set ever vanishes.
@@ -30,7 +30,6 @@ export function isFullWidthClassic( traitSet: TraitSet ): boolean {
 export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, pageIndex: number ): boolean {
 	return ( traitSets || [] ).some( ( traitSet, s ) =>
 		s !== ringTraitID &&
-		!isNameSet( traitSet ) &&
 		( ( getView( traitSet )?.page || 1 ) === pageIndex ) &&
 		isFullWidthClassic( traitSet )
 	);
@@ -178,8 +177,6 @@ export interface SpotlightSection {
 export function getSpotlightSections( traitSets: TraitSet[], pageIndex: number, submode?: string | null ): SpotlightSection[] {
 	const pageSets: SpotlightSectionItem[] = [];
 	( traitSets || [] ).forEach( ( traitSet, s ) => {
-		// The name block renders as the page header, never as a grid cell.
-		if ( isNameSet( traitSet ) ) return;
 		if ( submode ? isHiddenIn( traitSet, submode ) : resolveVisibility( traitSet ) === 'hidden' ) return;
 		const page = getView( traitSet )?.page || 1;
 		if ( page === pageIndex ) {

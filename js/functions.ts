@@ -850,7 +850,7 @@ export const cortexFunctions = {
 	// Template-derived sets are remembered by id; custom sets just splice.
 	removeTraitSetFromSheet: function (character: Character, templateEntry: SheetTemplate | null, s: number): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
-		if (!ts) return false;
+		if (!ts || this.isNameSet(ts) || ts.id === 'name') return false;
 		let inherited = false;
 		if (ts.id && templateEntry) {
 			inherited = Boolean(this.templateSetById(templateEntry, ts.id));
@@ -1489,6 +1489,17 @@ export const cortexFunctions = {
 		'pronouns': '',
 		'traitSets': [
 			{
+				'id': 'name',
+				'name': 'Name',
+				'traits': [],
+				'view': {
+					'style': {
+						'header': 'default',
+						'body': 'name',
+					}
+				}
+			},
+			{
 				'name': 'Distinctions',
 				'description': '',
 				'noun': 'Distinction',
@@ -1615,9 +1626,7 @@ export const cortexFunctions = {
 			'alt': '',
 			'tags': [],
 			'view': {
-				'alignment': 'top-center',
-				'size': 'spotlight',
-				'location': 'header'
+				'alignment': 'top-center'
 			}
 		},
 		'plotPoints': 1,
@@ -1631,9 +1640,6 @@ export const cortexFunctions = {
 				'left': 0,
 				'center': 0,
 				'right': 0
-			},
-			'style': {
-				'sheet': 'spotlight',
 			}
 		}
 	},

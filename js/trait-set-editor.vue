@@ -27,7 +27,7 @@ const api = useTraitSetEditor( props, emit );
 
 const {
 	rootEl, inputName, cssClass, checkScrollPosition,
-	name, traitSetID, isRing, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
+	name, traitSetID, isRing, isName, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
 	styleLabel, setStyleLabel, hasLabelContent, description, includeOut,
 	notesContent, allowsTraitColumns, traitColumns, needsDiceUI,
 	hasTrackPart, trackLabel,
@@ -82,7 +82,7 @@ function applyFromMini( updatedSet: any ) {
 		<div class="editor-controls">
 			<button type="button" @click.stop="openBlockMini" title="Open in Trait Block Mini / Save as Preset"><i :class="presetSaved ? 'fas fa-check' : 'fas fa-bookmark'"></i></button>
 			<button type="button" @click.stop="selectElement([])" title="Done"><i class="fas fa-times"></i></button>
-			<button type="button" class="editor-delete" @click.stop="promptDeleteTraitSet" title="Delete trait set"><i class="fas fa-trash"></i></button>
+			<button v-if="!isName" type="button" class="editor-delete" @click.stop="promptDeleteTraitSet" title="Delete trait set"><i class="fas fa-trash"></i></button>
 		</div>
 
 		<div class="editor-inner">
@@ -102,7 +102,7 @@ function applyFromMini( updatedSet: any ) {
 						<input type="text" :id="'trait-set-name-' + traitSetID" name="traitSetName" v-model="name" ref="inputName">
 					</div>
 
-					<div class="editor-field">
+					<div class="editor-field" v-if="!isName">
 						<label :for="'trait-set-style-select-' + traitSetID">Style</label>
 						<select :id="'trait-set-style-select-' + traitSetID" name="traitSetStyle" v-model="styleBody">
 							<option v-for="option in styleOptions" :value="option.id" :selected="option.id === styleBody">{{ option.label }}</option>
@@ -181,7 +181,7 @@ function applyFromMini( updatedSet: any ) {
 						<textarea :id="'trait-set-desc-' + traitSetID" name="traitSetDescription" v-model="description"></textarea>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && !isName">
 						<label :for="'trait-set-reserved-slots-' + traitSetID"><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
 						<div class="num-stepper">
 							<button type="button" class="btn-step" @click.stop="reservedSlots = Math.max(0, (reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1)" :disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0" title="Fewer reserved slots" aria-label="Fewer reserved slots">-</button>
@@ -192,7 +192,7 @@ function applyFromMini( updatedSet: any ) {
 
 
 					<!-- STATEMENT MODE -->
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots'">
+					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots' && !isName">
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" name="statementMode" v-model="isStatementSet">
 							<label :for="'trait-set-' + traitSetID + '-statement-mode'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Statement field</label>

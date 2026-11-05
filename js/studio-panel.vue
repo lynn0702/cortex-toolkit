@@ -2,7 +2,6 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import TraitEditor from './trait-editor.vue';
 import TraitSetEditor from './trait-set-editor.vue';
-import PortraitEditor from './portrait-editor.vue';
 import NameEditor from './name-editor.vue';
 import DiceRoller from './dice-roller.vue';
 import JsonEditor from './json-editor.vue';
@@ -49,7 +48,6 @@ const editingType = computed( () => {
 	const type = sel[ 0 ];
 	if ( type === 'trait' && sel[ 1 ] !== undefined && sel[ 2 ] !== undefined ) return 'trait';
 	if ( type === 'traitSet' && sel[ 1 ] !== undefined ) return 'traitSet';
-	if ( type === 'portrait' ) return 'portrait';
 	return 'sheet';
 } );
 
@@ -150,8 +148,6 @@ const crumbs = computed<Crumb[]>( () => {
 		list.push( { label: traitName.value, selector: null } );
 	} else if ( editingType.value === 'traitSet' ) {
 		list.push( sheet, { label: traitSetName.value, selector: null } );
-	} else if ( editingType.value === 'portrait' ) {
-		list.push( sheet, { label: 'Portrait', selector: null } );
 	}
 	return list;
 } );
@@ -296,15 +292,6 @@ defineExpose( {
 						@selectElement="emit('selectElement', $event)"
 						@updateCharacter="emit('updateCharacter', $event)"
 						@removeTraitSet="(s) => emit('removeTraitSet', s)"
-					/>
-
-					<!-- PORTRAIT EDITOR -->
-					<PortraitEditor
-						v-else-if="editingType === 'portrait'"
-						:character="character"
-						:open="true"
-						@selectElement="emit('selectElement', $event)"
-						@updateCharacter="emit('updateCharacter', $event)"
 					/>
 
 					<!-- SHEET TABS PANEL (NAME, PAGE, THEME & DICE) -->

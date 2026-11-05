@@ -120,49 +120,7 @@ watch( () => props.character?.id, () => {
 } );
 
 const name = computed( () => props.character?.name ?? '' );
-const description = computed( () => props.character?.description ?? '' );
-const player = computed( () => props.character?.player ?? '' );
-const pronouns = computed( () => props.character?.pronouns ?? '' );
-const nickname = computed( () => props.character?.nickname ?? getView( props.character )?.nickname ?? '' );
-const hasNickname = computed( () => Boolean( nickname.value || getView( props.character )?.hasNickname ) );
-const nicknameLabelClassic = computed( () => nameLabel( 'nickname', 'AKA' ) );
-// The name block is the first trait set: header labels come from its
-// traits' `label` fields, visibility from trait `view`. Values stay on the
-// character fields. Absent traits fall back to the long-standing words,
-// so files predating the set render exactly as before.
-function nameTrait( key: string ) {
-	return cortexFunctions.getNameTrait( props.character, key );
-}
-function nameLabel( key: string, fallback: string ) {
-	const custom = nameTrait( key )?.label;
-	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim().toUpperCase();
-	return fallback;
-}
-function nameWord( key: string, fallback: string ) {
-	const custom = nameTrait( key )?.label;
-	if ( typeof custom === 'string' && custom.trim().length ) return custom.trim();
-	return fallback;
-}
-function nameShown( key: string ) {
-	const t = nameTrait( key );
-	if ( !t ) return true;
-	const vis = resolveVisibility( t );
-	if ( vis === 'hidden' ) return false;
-	if ( vis === 'play-only' ) return props.submode !== 'print';
-	if ( vis === 'editor-only' ) return props.submode === 'edit';
-	return true;
-}
-const nicknameLabel = computed( () => nameLabel( 'nickname', 'NICKNAME' ) );
-const pronounsLabel = computed( () => nameLabel( 'pronouns', 'PRONOUNS' ) );
-const descriptionLabel = computed( () => nameLabel( 'description', 'DESCRIPTION' ) );
-const playerLabel = computed( () => nameWord( 'player', 'PLAYER:' ) );
-const playerLabelClassic = computed( () => nameWord( 'player', 'Player:' ) );
-const portraitCaption = computed( () => nameWord( 'caption', '' ) );
-const plotPointsLabel = computed( () => nameWord( 'plotPoints', 'PP' ) );
-const plotPoints = computed( () => Number( props.character?.plotPoints ) || 0 );
 const portrait = computed( () => props.character?.portrait ?? null );
-const effectivePortraitUrl = computed( () => portrait.value?.url || '' );
-const notes = computed( () => props.character?.notes ?? '' );
 const game = computed( () => props.character?.game ?? '' );
 const traitSets = computed( () => props.character?.traitSets ?? [] );
 
@@ -174,17 +132,11 @@ const ringTraitSetIndex = computed( () => traitSets.value.findIndex( ( ts ) => {
 	return false;
 } ) );
 
-const hasRingTrait = computed( () => {
-	const pView = getView( portrait.value );
-	const pSize = pView?.size;
-	if ( pSize === 'spotlight' || pSize === 'none' ) return false;
-	const loc = pView?.location;
-	if ( loc === 'header' ) return false;
-	return ringTraitSetIndex.value !== -1;
-} );
+const hasRingTrait = computed( () => ringTraitSetIndex.value !== -1 );
 
 const ringTraitID = computed( () => ( hasRingTrait.value ? ringTraitSetIndex.value : -1 ) );
 const ringTraitSet = computed( () => ( hasRingTrait.value ? traitSets.value[ ringTraitID.value ] : null ) );
+const effectivePortraitUrl = computed( () => getView( ringTraitSet.value )?.imageConfig?.url || portrait.value?.url || '' );
 const isRingPool = computed( () => {
 	const ts = ringTraitSet.value as unknown as Record<string, unknown> | null;
 	if ( ts && typeof ts.pool === 'boolean' ) return ts.pool;
@@ -235,9 +187,7 @@ const pageCount = computed( () => {
 	return maxPage;
 } );
 
-const isSpotlightStyle = computed( () => hasHeaderPortrait.value );
 const isPrintSubmode = computed( () => props.submode === 'print' );
-const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotlightStyle.value );
 const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
 const effectivePrintBlank = computed( () => isPrintSubmode.value && printBlank.value );
 const pageJustification = computed( () => getView( props.character )?.pageJustification || 'top-base' );
@@ -252,14 +202,6 @@ const isLandscape = computed( () => pageOrientation.value === 'landscape' );
 const columnCount = computed( () => {
 	const c = Number( getView( props.character )?.columns );
 	return ( c === 2 || c === 3 ) ? c : 2;
-} );
-
-const hasHeaderPortrait = computed( () => {
-	const pView = getView( portrait.value );
-	const size = pView?.size;
-	if ( size === 'none' ) return false;
-	const loc = pView?.location;
-	return loc === 'header';
 } );
 
 const descriptionText = computed( {
@@ -366,31 +308,39 @@ function hasPlace( traitSet: TraitSet ) { return gridPlaceOf( traitSet ) !== nul
 function hasClassicUnplacedFullSets( pageIndex: number ) {
 	return ( traitSets.value || [] ).some( ( traitSet, s ) =>
 		s !== ringTraitID.value &&
-		!isNameSet( traitSet ) &&
 		( ( getView( traitSet )?.page || 1 ) === pageIndex ) &&
 		isFullWidthClassic( traitSet ) &&
 		!hasPlace( traitSet )
 	);
 }
+function isColumnSet( ts: TraitSet ): boolean {
+	if ( isFullWidthClassic( ts ) || hasPlace( ts ) ) return false;
+	const v = getView( ts );
+	if ( isNameSet( ts ) ) {
+		return v?.location === 'left' || v?.location === 'right' || v?.track !== undefined;
+	}
+	return true;
+}
 function hasColumnContent( pageIndex: number ): boolean {
-	if ( shouldShowClassicPortrait() && pageIndex === 1 ) return true;
-	if ( hasRingTrait.value && ringTraitID.value > -1 ) return true;
-	if ( shouldShowColumnSmallPortrait( 'left', pageIndex ) || shouldShowColumnSmallPortrait( 'right', pageIndex ) ) return true;
+	if ( hasRingTrait.value && ringTraitID.value > -1 && pageIndex === 1 ) return true;
 	const sets = traitSets.value || [];
 	return sets.some( ( ts, s ) =>
-		!isNameSet( ts ) &&
 		s !== ringTraitID.value &&
 		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
-		!isFullWidthClassic( ts ) &&
-		!hasPlace( ts )
+		isColumnSet( ts )
 	);
 }
 function getClassicGridSections( pageIndex: number ): SpotlightSection[] {
 	const sections = getSpotlightSections( pageIndex );
 	const out: SpotlightSection[] = [];
 	for ( const section of sections ) {
-		if ( section.type !== 'grid' ) continue;
-		const ordered = section.ordered.filter( ( { index: s } ) => s !== ringTraitID.value );
+		const ordered = section.ordered.filter( ( { traitSet, index: s } ) => {
+			if ( s === ringTraitID.value ) return false;
+			if ( section.type === 'full-width' ) {
+				return !isColumnSet( traitSet ) && !isFullWidthClassic( traitSet );
+			}
+			return true;
+		} );
 		if ( ordered.length === 0 ) continue;
 		const cells: Record<number, SpotlightCell> = {};
 		for ( const { index: s } of ordered ) {
@@ -400,56 +350,33 @@ function getClassicGridSections( pageIndex: number ): SpotlightSection[] {
 	}
 	return out;
 }
-
-function shouldShowClassicPortrait() {
-	if ( ringTraitSetIndex.value !== -1 ) return true;
-	const pView = getView( portrait.value );
-	const s = pView?.size;
-	if ( s === 'none' || s === 'spotlight' ) return false;
-	const loc = pView?.location;
-	if ( loc === 'header' ) return false;
-	return true;
+function getLeadingGridSections( pageIndex: number ): SpotlightSection[] {
+	const all = getClassicGridSections( pageIndex );
+	if ( !hasColumnContent( pageIndex ) ) return all;
+	const firstColIdx = ( traitSets.value || [] ).findIndex( ( ts, s ) =>
+		s !== ringTraitID.value &&
+		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
+		isColumnSet( ts )
+	);
+	if ( firstColIdx === -1 ) return [];
+	const cut = all.findIndex( ( sec ) => sec.ordered.some( ( item ) => item.index > firstColIdx ) );
+	return cut === -1 ? all : all.slice( 0, cut );
 }
-
-function shouldShowColumnSmallPortrait( pageLocation: string, pageIndex: number ) {
-	if ( pageIndex !== 1 ) return false;
-	const pView = getView( portrait.value );
-	const s = pView?.size;
-	if ( s === 'none' ) return false;
-	const loc = pView?.location;
-	if ( loc === 'header' ) return false;
-	if ( s === 'spotlight' && loc === pageLocation ) return true;
-	return false;
+function getTrailingGridSections( pageIndex: number ): SpotlightSection[] {
+	const all = getClassicGridSections( pageIndex );
+	if ( !hasColumnContent( pageIndex ) ) return [];
+	const firstColIdx = ( traitSets.value || [] ).findIndex( ( ts, s ) =>
+		s !== ringTraitID.value &&
+		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
+		isColumnSet( ts )
+	);
+	if ( firstColIdx === -1 ) return all;
+	const cut = all.findIndex( ( sec ) => sec.ordered.some( ( item ) => item.index > firstColIdx ) );
+	return cut === -1 ? [] : all.slice( cut );
 }
 
 function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex, props.submode ); }
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
-
-function renderNameHtml( value: unknown ) {
-	if ( !value ) return '';
-	return cortexFunctions.renderText( value );
-}
-
-function removeHeaderPortrait() {
-	const character = props.character as Character;
-	if ( !character.portrait ) character.portrait = {};
-	character.portrait.url = '';
-	ensureView( character.portrait ).size = 'none';
-	updateCharacter( character );
-	if ( isSelected( [ 'portrait' ] ) ) {
-		selectElement( [] );
-	}
-}
-
-function addHeaderPortrait() {
-	const character = props.character as Character;
-	if ( !character.portrait ) character.portrait = {};
-	const pView = ensureView( character.portrait );
-	pView.size = 'spotlight';
-	pView.location = 'header';
-	updateCharacter( character );
-	selectElement( [ 'portrait' ] );
-}
 
 // SELECTING
 function selectElement( selector: unknown[] ) {
@@ -506,9 +433,10 @@ function addTraitSet( page = 1, location?: string ) {
 }
 
 function removeTraitSet( traitSetID: number ) {
-	clearSelected();
-
 	const character = props.character as Character;
+	if ( isNameSet( character?.traitSets?.[ traitSetID ] ) ) return;
+
+	clearSelected();
 
 	const entry = cortexFunctions.resolveTemplateFor( character, rootTemplates() );
 	cortexFunctions.removeTraitSetFromSheet( character, entry, traitSetID );
@@ -649,7 +577,6 @@ interface MobilePillarSetItem {
 interface MobilePillarColumn {
 	key: string;
 	label: string;
-	hasHeader: boolean;
 	hasClassicRing: boolean;
 	sets: MobilePillarSetItem[];
 	stagedCount: number;
@@ -662,6 +589,7 @@ let mediaQuery: MediaQueryList | null = null;
 let handleMediaChange: ( () => void ) | null = null;
 
 function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
+	if ( isNameSet( traitSet ) ) return props.character?.name?.trim() || traitSet?.name || 'Name';
 	if ( traitSet?.name && String( traitSet.name ).trim().length ) return String( traitSet.name ).trim();
 	if ( traitSet?.noun && String( traitSet.noun ).trim().length ) return String( traitSet.noun ).trim();
 	const body = getView( traitSet )?.style?.body;
@@ -718,17 +646,12 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>( () => {
 	ensureBucket( 'identity' );
 
 	let ringPillarKey: string | null = null;
-	if ( shouldShowClassicPortrait() ) {
-		if ( hasRingTrait.value && ringTraitSet.value && !isHiddenIn( ringTraitSet.value, 'play' ) ) {
-			ringPillarKey = resolveSetPillar( ringTraitSet.value );
-			ensureBucket( ringPillarKey );
-		} else if ( !hasRingTrait.value ) {
-			ringPillarKey = 'identity';
-		}
+	if ( hasRingTrait.value && ringTraitSet.value && !isHiddenIn( ringTraitSet.value, 'play' ) ) {
+		ringPillarKey = resolveSetPillar( ringTraitSet.value );
+		ensureBucket( ringPillarKey );
 	}
 
 	allSets.forEach( ( ts, idx ) => {
-		if ( isNameSet( ts ) ) return;
 		if ( hasRingTrait.value && idx === ringTraitID.value ) return;
 		if ( isHiddenIn( ts, 'play' ) ) return;
 		const pKey = resolveSetPillar( ts );
@@ -759,25 +682,16 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>( () => {
 			return {
 				key,
 				label: getPillarLabel( props.character, key ),
-				hasHeader: key === 'identity',
 				hasClassicRing,
 				sets,
 				stagedCount: countStagedDiceForSets( setsForCount ),
 			};
 		} )
-		.filter( ( col ) => col.sets.length > 0 || col.hasClassicRing || col.hasHeader );
+		.filter( ( col ) => col.sets.length > 0 || col.hasClassicRing );
 } );
 
 function columnStackItems( col: MobilePillarColumn ): { index: number; label: string }[] {
 	const items: { index: number; label: string }[] = [];
-	if ( col.hasHeader ) {
-		items.push( {
-			index: -1,
-			label: ( props.character?.name && String( props.character.name ).trim().length )
-				? String( props.character.name ).trim()
-				: 'Bio',
-		} );
-	}
 	if ( col.hasClassicRing && hasRingTrait.value && ringTraitSet.value ) {
 		items.push( {
 			index: -2,
@@ -815,11 +729,9 @@ function scrollToSetInColumn( pillarKey: string, setIndex: number ) {
 	const root = rootEl.value || document;
 	const colEl = root.querySelector( `.mobile-pillar-column[data-pillar-key="${ pillarKey }"]` ) as HTMLElement | null;
 	const scope = colEl || root;
-	const card = setIndex === -1
-		? ( scope.querySelector( '.page-header[data-set-index="-1"]' ) as HTMLElement | null )
-		: setIndex === -2
-			? ( scope.querySelector( '.portrait[data-set-index="-2"]' ) as HTMLElement | null )
-			: ( scope.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null );
+	const card = setIndex === -2
+		? ( scope.querySelector( '.portrait[data-set-index="-2"]' ) as HTMLElement | null )
+		: ( scope.querySelector( `.trait-set[data-set-index="${ setIndex }"]` ) as HTMLElement | null );
 	if ( card && typeof card.scrollIntoView === 'function' ) {
 		card.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
 	}
@@ -897,7 +809,7 @@ watch( () => props.submode, () => {
 </script>
 
 <template>
-	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isSpotlightPrintStyle, 'spotlight-style': isSpotlightStyle, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'pillar-deck-view': isPillarPlay }]" :style="characterSheetStyle">
+	<section ref="rootEl" :class="['character-sheet', 'submode-' + submode, 'orientation-' + pageOrientation, { 'spotlight-print-style': isPrintSubmode, 'spotlight-style': true, 'print-blank-mode': effectivePrintBlank, 'print-bw': effectivePrintBW, 'has-watermark': hasAnyWatermark, 'pillar-deck-view': isPillarPlay }]" :style="characterSheetStyle">
 	
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
@@ -990,106 +902,10 @@ watch( () => props.submode, () => {
 								</button>
 							</div>
 
-							<header class="page-header" v-if="col.hasHeader" :data-set-index="-1">
-								<div
-									v-if="hasHeaderPortrait"
-									class="page-header-inner spotlight-header-card"
-									:class="{ 'has-portrait': hasHeaderPortrait }"
-								>
-									<div class="spotlight-header-meta-box trait-set-box">
-										<div class="spotlight-meta-name-cell">
-											<div class="spotlight-cell-header">
-												<span class="spotlight-cell-label">NAME</span>
-												<span class="spotlight-cell-sublabel" v-if="player && nameShown('player')">{{ playerLabel }} {{ player }}</span>
-											</div>
-											<div class="spotlight-cell-content name-content" v-if="name" v-html="renderNameHtml(name)"></div>
-											<div class="spotlight-blank-line" v-else></div>
-									<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
-										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
-										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
-										<span class="pp-count">{{ plotPoints }}</span>
-										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
-									</div>
-										</div>
-										<div class="spotlight-meta-divider"></div>
-										<div class="spotlight-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
-											<span class="spotlight-cell-label">{{ nicknameLabel }}</span>
-											<span class="spotlight-nickname-val" v-if="nickname" v-html="renderText(nickname)"></span>
-											<span class="spotlight-blank-line" v-else></span>
-										</div>
-										<div class="spotlight-meta-divider" v-if="hasNickname && nameShown('nickname')"></div>
-										<div class="spotlight-meta-pronoun-cell" v-if="nameShown('pronouns')">
-											<span class="spotlight-cell-label">{{ pronounsLabel }}</span>
-											<span class="spotlight-pronoun-val" v-if="pronouns" v-html="renderText(pronouns)"></span>
-											<span class="spotlight-blank-line" v-else></span>
-										</div>
-									</div>
-
-									<div class="spotlight-header-desc-box trait-set-box" v-if="nameShown('description')">
-										<div class="spotlight-cell-header">
-											<span class="spotlight-cell-label">{{ descriptionLabel }}</span>
-										</div>
-										<div class="desc-content" v-if="description" v-html="renderText(description)"></div>
-										<div class="desc-blank-area" v-else>
-											<div class="desc-blank-line"></div>
-											<div class="desc-blank-line"></div>
-										</div>
-									</div>
-
-									<div v-if="hasHeaderPortrait && nameShown('portrait')" class="spotlight-header-portrait-wrap">
-										<div class="spotlight-header-portrait-box" :class="{ 'has-image': Boolean(effectivePortraitUrl) }">
-											<img
-												v-if="effectivePortraitUrl"
-												class="portrait-small-image"
-												:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'center')"
-												:src="safeImageUrl(effectivePortraitUrl)"
-												alt="Portrait / Logo"
-											/>
-											<div v-else class="portrait-small-placeholder">
-												<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
-											</div>
-										</div>
-										<div v-if="portraitCaption && nameShown('caption')" class="spotlight-portrait-caption">{{ portraitCaption }}</div>
-									</div>
-								</div>
-
-								<div v-else class="page-header-inner">
-									<div>
-										<div class="title-container">
-											<div class="character-game-title" v-if="game && nameShown('game')" v-html="renderText(game)"></div>
-											<div class="title">{{ name }}</div>
-											<div class="title-decoration">
-												<svg height="4" width="100%"><line x1="0" y1="0" x2="10000" y2="0" style="stroke:#C50852;stroke-width:4pt"/></svg>
-											</div>
-										</div>
-										<div class="character-meta">
-											<div class="character-player" v-if="player && player.length && nameShown('player')">
-												<span class="meta-label">{{ playerLabelClassic }}</span> <span>{{ player }}</span>
-											</div>
-											<div class="character-pronouns" v-if="pronouns.length && nameShown('pronouns')">
-												<span v-html="renderText(pronouns)"></span>
-											</div>
-											<div class="character-description" v-if="description.length && nameShown('description')">
-												<span v-html="renderText(description)"></span>
-											</div>
-											<div class="character-pp-badge" v-if="nameShown('plotPoints')">
-												<span class="pp-badge-label">{{ plotPointsLabel }}</span>
-												<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
-												<span class="pp-count">{{ plotPoints }}</span>
-												<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
-											</div>
-											<div class="character-notes-summary" v-if="notes && notes.length && nameShown('notes')">
-												<div class="character-notes-body" v-html="renderNotesText(notes)"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</header>
-
-							<!-- CLASSIC PORTRAIT & RING IN PILLAR COLUMN -->
+							<!-- PORTRAIT RING IN PILLAR COLUMN -->
 							<div v-if="col.hasClassicRing" :class="{ 'portrait': true, 'portrait-standalone': !hasRingTrait }" :data-set-index="-2">
-								<div class="portrait-inner">
-									<div :class="'portrait-circle portrait-alignment-' + (getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
+								<div class="portrait-inner" @click.stop="selectElement(['traitSet', ringTraitID])">
+									<div :class="'portrait-circle portrait-alignment-' + (getView(ringTraitSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
 										<img class="portrait-placeholder" v-if="!effectivePortraitUrl" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
 									</div>
 								</div>
@@ -1138,179 +954,6 @@ watch( () => props.submode, () => {
 
 					<div v-else class="mobile-carousel-track">
 
-					<header class="page-header" v-if="pageIndex === 1" :data-set-index="-1">
-
-						<!-- SPOTLIGHT HEADER (EDIT, PLAY, PRINT) -->
-						<div
-							v-if="hasHeaderPortrait"
-							class="page-header-inner spotlight-header-card"
-							:class="{ 'has-portrait': hasHeaderPortrait, 'selected': isSelected(['name']) }"
-						>
-							<!-- LEFT BOX: NAME | PRONOUNS (TRAIT SET STYLE) -->
-							<div class="spotlight-header-meta-box trait-set-box" @click.stop="selectElement(['name'])">
-								<div class="spotlight-meta-name-cell">
-									<div class="spotlight-cell-header">
-										<span class="spotlight-cell-label">NAME</span>
-										<span class="spotlight-cell-sublabel" v-if="player && !printBlank && nameShown('player')">{{ playerLabel }} {{ player }}</span>
-									</div>
-									<div class="character-game-title" v-if="game && !printBlank && nameShown('game')" v-html="renderText(game)"></div>
-									<div class="spotlight-cell-content name-content" v-if="!printBlank && name" v-html="renderNameHtml(name)"></div>
-									<div class="spotlight-blank-line" v-else-if="printBlank"></div>
-									<div class="spotlight-cell-content name-content placeholder-dim" v-else-if="submode === 'edit'">Click to set name...</div>
-									<div class="spotlight-blank-line" v-else></div>
-									<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
-										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
-										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
-										<span class="pp-count">{{ plotPoints }}</span>
-										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
-									</div>
-								</div>
-
-								<div class="spotlight-meta-divider"></div>
-
-								<div class="spotlight-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
-									<span class="spotlight-cell-label">{{ nicknameLabel }}</span>
-									<span class="spotlight-nickname-val" v-if="!printBlank && nickname" v-html="renderText(nickname)"></span>
-									<span class="spotlight-blank-line" v-else-if="printBlank"></span>
-									<span class="spotlight-nickname-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
-									<span class="spotlight-blank-line" v-else></span>
-								</div>
-
-								<div class="spotlight-meta-divider" v-if="hasNickname && nameShown('nickname')"></div>
-
-								<div class="spotlight-meta-pronoun-cell" v-if="nameShown('pronouns')">
-									<span class="spotlight-cell-label">{{ pronounsLabel }}</span>
-									<span class="spotlight-pronoun-val" v-if="!printBlank && pronouns" v-html="renderText(pronouns)"></span>
-									<span class="spotlight-blank-line" v-else-if="printBlank"></span>
-									<span class="spotlight-pronoun-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
-									<span class="spotlight-blank-line" v-else></span>
-								</div>
-							</div>
-
-							<!-- CENTER BOX: DESCRIPTION (TRAIT SET STYLE) -->
-							<div class="spotlight-header-desc-box trait-set-box" v-if="nameShown('description')" @click.stop="selectElement(['name'])">
-								<div class="spotlight-cell-header">
-									<label for="spotlight-header-desc" class="spotlight-cell-label">{{ descriptionLabel }}</label>
-									<button
-										v-if="!hasHeaderPortrait && submode === 'edit'"
-										type="button"
-										class="spotlight-add-portrait-link"
-										@click.stop="addHeaderPortrait"
-										title="Add Portrait to Header"
-									>
-										<i class="fas fa-plus"></i> Add Portrait
-									</button>
-								</div>
-								<textarea
-									v-if="submode === 'edit'"
-									id="spotlight-header-desc"
-									name="spotlightHeaderDesc"
-									class="spotlight-desc-textarea"
-									v-model="descriptionText"
-									placeholder="Character description..."
-									aria-label="Character description"
-									@click.stop
-								></textarea>
-								<div class="desc-content" v-else-if="!printBlank && description" v-html="renderText(description)"></div>
-								<div class="desc-blank-area" v-else>
-									<div class="desc-blank-line"></div>
-									<div class="desc-blank-line"></div>
-								</div>
-								<div class="character-notes-summary" v-if="notes && notes.length && nameShown('notes')">
-									<div class="character-notes-body" v-html="renderNotesText(notes)"></div>
-								</div>
-							</div>
-
-							<!-- RIGHT BOX: PORTRAIT (25% OF HEADER WIDTH, HALF SIZE, REMOVABLE) -->
-							<div v-if="hasHeaderPortrait && nameShown('portrait')" class="spotlight-header-portrait-wrap">
-								<div
-									class="spotlight-header-portrait-box"
-									:class="{ 'selected': isSelected(['portrait']), 'has-image': Boolean(effectivePortraitUrl) }"
-									@click.stop="selectElement(['portrait'])"
-									title="Click to edit portrait"
-								>
-									<img
-										v-if="effectivePortraitUrl"
-										class="portrait-small-image"
-										:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'center')"
-										:src="safeImageUrl(effectivePortraitUrl)"
-										alt="Portrait / Logo"
-									/>
-									<div v-else class="portrait-small-placeholder" title="Click to add portrait">
-										<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
-										<span class="spotlight-add-hint" v-if="submode === 'edit'">Click to add portrait</span>
-									</div>
-
-									<button
-										v-if="submode === 'edit'"
-										type="button"
-										class="btn-remove-header-portrait"
-										@click.stop="removeHeaderPortrait"
-										title="Remove portrait"
-									>
-										<i class="fas fa-trash-alt"></i>
-									</button>
-								</div>
-								<div v-if="portraitCaption && nameShown('caption')" class="spotlight-portrait-caption">{{ portraitCaption }}</div>
-							</div>
-						</div>
-
-						<!-- CLASSIC HEADER -->
-						<div
-							v-else
-							:class="{'page-header-inner': true, 'selected': isSelected(['name'])}"
-							@click.stop="selectElement([ 'name' ])"
-						>
-							<div>
-
-								<!-- CHARACTER NAME -->
-								<div class="title-container">
-
-									<div class="character-game-title" v-if="game && nameShown('game')" v-html="renderText(game)"></div>
-
-									<div class="title">{{ name }}</div>
-
-									<div class="title-decoration">
-										<svg height="4" width="100%"><line x1="0" y1="0" x2="10000" y2="0" style="stroke:#C50852;stroke-width:4pt"/></svg>
-									</div>
-
-								</div>
-
-								<!-- CHARACTER DESCRIPTION -->
-								<div class="character-meta">
-						
-									<div class="character-player" v-if="player && player.length && nameShown('player')">
-										<span class="meta-label">{{ playerLabelClassic }}</span> <span>{{ player }}</span>
-									</div>
-									<div class="character-nickname" v-if="hasNickname && nameShown('nickname')">
-										<span class="meta-label">{{ nicknameLabelClassic }}</span> <span v-html="renderText(nickname)"></span>
-									</div>
-
-									<div class="character-pronouns" v-if="pronouns.length && nameShown('pronouns')">
-										<span v-html="renderText(pronouns)"></span>
-									</div>
-
-									<div class="character-description" v-if="description.length && nameShown('description')">
-										<span v-html="renderText(description)"></span>
-									</div>
-
-									<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
-										<span class="pp-badge-label">{{ plotPointsLabel }}</span>
-										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(-1)" :disabled="plotPoints <= 0" title="Spend Plot Point">-</button>
-										<span class="pp-count">{{ plotPoints }}</span>
-										<button type="button" class="btn-pp-step" @click.stop="adjustPlotPoints(1)" title="Gain Plot Point">+</button>
-									</div>
-
-									<div class="character-notes-summary" v-if="notes && notes.length && nameShown('notes')">
-										<div class="character-notes-body" v-html="renderNotesText(notes)"></div>
-									</div>
-			
-								</div>
-
-							</div>
-						</div>
-					</header>
-
 					<!-- PAGE 2+ HEADER -->
 					<header class="page-header page-2-header" v-if="pageIndex > 1">
 						<div class="page-2-header-inner">
@@ -1319,38 +962,47 @@ watch( () => props.submode, () => {
 						</div>
 					</header>
 
+					<!-- LEADING PLACED / FULL-WIDTH SECTIONS (BEFORE COLUMNS) -->
+					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay && getLeadingGridSections(pageIndex).length">
+						<template v-for="(section, secIdx) in getLeadingGridSections(pageIndex)" :key="'leading-grid-' + secIdx">
+							<div
+								:class="['columns', 'spotlight-columns', section.type === 'grid' ? 'spotlight-grid' : 'cols-1']"
+								:style="section.type === 'grid' ? getSpotlightGridStyle(section) : undefined"
+							>
+								<TraitSetBlock
+									v-for="{ traitSet, index: s } in section.ordered"
+									:key="s"
+									:character="character"
+									:traitSetID="s"
+									:submode="submode"
+									:editing="editing"
+									:viewY="viewY"
+									:printBlank="effectivePrintBlank"
+									:style="section.cells[s] && section.cells[s].style"
+									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
+									@selectElement="selectElement"
+									@updateCharacter="updateCharacter"
+									@removeTrait="removeTrait"
+									@removeTraitSet="removeTraitSet"
+									@addTrait="addTrait"
+									@addDieToRoller="emit('addDieToRoller', $event)"
+								></TraitSetBlock>
+							</div>
+						</template>
+					</div>
+
 					<!-- COLUMNS: CLASSIC MODE -->
 					<div class="columns" v-if="!isPillarPlay && (hasColumnContent(pageIndex) || !getClassicGridSections(pageIndex).length)">
 
 						<div v-for="pageLocation in ['left', 'right']" :class="'column-' + pageLocation">
 
-							<!-- SMALL PORTRAIT (COLUMN PLACEMENT) -->
-							<div
-								class="portrait-small-card"
-								:class="{ 'selected': isSelected(['portrait']) }"
-								v-if="shouldShowColumnSmallPortrait(pageLocation, pageIndex)"
-								@click.stop="selectElement([ 'portrait' ])"
-								title="Click to edit portrait"
-							>
-								<img
-									v-if="effectivePortraitUrl"
-									class="portrait-small-image"
-									:class="'portrait-alignment-' + (getView(portrait)?.alignment || 'top-center')"
-									:src="safeImageUrl(effectivePortraitUrl)"
-									alt="Portrait"
-								/>
-								<div v-else class="portrait-small-placeholder">
-									<img class="portrait-placeholder-logo" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
-								</div>
-							</div>
+							<!-- PORTRAIT RING (PAGE 1 RIGHT ONLY) -->
+							<div :class="{ 'portrait': true }" v-if="pageIndex === 1 && pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
 
-							<!-- CLASSIC PORTRAIT & RING (PAGE 1 RIGHT ONLY) -->
-							<div :class="{ 'portrait': true, 'portrait-standalone': !hasRingTrait }" v-if="pageIndex === 1 && pageLocation === 'right' && shouldShowClassicPortrait()">
-
-								<div :class="{ 'portrait-inner': true, 'selected': isSelected(['portrait']) }"
-									@click.stop="selectElement([ 'portrait' ])"
+								<div :class="{ 'portrait-inner': true, 'selected': isSelected(['traitSet', ringTraitID]) }"
+									@click.stop="selectElement([ 'traitSet', ringTraitID ])"
 								>
-									<div :class="'portrait-circle portrait-alignment-' + (getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
+									<div :class="'portrait-circle portrait-alignment-' + (getView(ringTraitSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
 										<img class="portrait-placeholder" v-if="!effectivePortraitUrl" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
 									</div>
 								</div>
@@ -1413,7 +1065,7 @@ watch( () => props.submode, () => {
 
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
-									v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
+									v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && isColumnSet(traitSet)"
 									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
@@ -1488,12 +1140,12 @@ watch( () => props.submode, () => {
 
 					</div> <!-- .columns -->
 
-					<!-- CLASSIC PLACED (GRID) SETS -->
-					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay && getClassicGridSections(pageIndex).length">
-						<template v-for="(section, secIdx) in getClassicGridSections(pageIndex)" :key="'classic-grid-' + secIdx">
+					<!-- TRAILING PLACED (GRID) SETS -->
+					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay && (getTrailingGridSections(pageIndex).length || !hasColumnContent(pageIndex))">
+						<template v-for="(section, secIdx) in getTrailingGridSections(pageIndex)" :key="'classic-grid-' + secIdx">
 							<div
-								:class="['columns', 'spotlight-columns', 'spotlight-grid']"
-								:style="getSpotlightGridStyle(section)"
+								:class="['columns', 'spotlight-columns', section.type === 'grid' ? 'spotlight-grid' : 'cols-1']"
+								:style="section.type === 'grid' ? getSpotlightGridStyle(section) : undefined"
 							>
 								<TraitSetBlock
 									v-for="{ traitSet, index: s } in section.ordered"
@@ -1581,7 +1233,7 @@ watch( () => props.submode, () => {
 <div class="classic-full-band" v-if="!isPillarPlay && hasClassicUnplacedFullSets(pageIndex)">
 		<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 			<TraitSetBlock
-				v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
+				v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
 								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>

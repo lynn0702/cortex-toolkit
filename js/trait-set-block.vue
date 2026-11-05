@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getView } from './model.ts';
+import { getView, isNameSet } from './model.ts';
 import { cortexFunctions } from './functions.ts';
 import { computed, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
@@ -15,6 +15,7 @@ import TraitSetDieRows from './trait-set-die-rows.vue';
 import TraitSetDiceCount from './trait-set-dice-count.vue';
 import TraitSetList from './trait-set-list.vue';
 import TraitSetFrame from './trait-set-frame.vue';
+import TraitSetName from './trait-set-name.vue';
 
 const props = defineProps<{
 	character: any;
@@ -43,7 +44,10 @@ const {
 	resolvedFrame, isFrameActive, isFrameForcedOff, frameToggledOff, frameSvgPath, frameStrokeClass, frameStrokeStyle
 } = ts;
 
+const isName = computed( () => isNameSet( traitSet.value ) );
+
 const canRemoveSetInPlay = computed( () => {
+	if ( isName.value ) return false;
 	const v = getView( traitSet.value );
 	return Boolean( v?.playMutable || v?.visibility === 'play-only' );
 } );
@@ -53,6 +57,7 @@ const headerTop = computed( () => getView(traitSet.value)?.header === 'top' );
 const setSfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value ) );
 
 const BODY_COMPONENTS: Record<string, any> = {
+	'name': TraitSetName,
 	'image': TraitSetImage,
 	'notes': TraitSetNotes,
 	'pips': TraitSetPips,
@@ -96,7 +101,7 @@ watch( rootEl, ( el ) => {
 			:has-header="Boolean(traitSet.name)"
 		/>
 
-		<div class="trait-set-header" v-if="resolvedFrame?.shape !== 'line' && traitSet.name">
+		<div class="trait-set-header" v-if="!isName && resolvedFrame?.shape !== 'line' && traitSet.name">
 			<transition appear>
 				<div
 					:class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
@@ -130,9 +135,9 @@ watch( rootEl, ( el ) => {
 				:trait-set="traitSet"
 			/>
 
-			<component :is="bodyComponent" v-if="!(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))" />
+			<component :is="bodyComponent" v-if="isName || !(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))" />
 
-			<ul class="sfx" v-if="resolvedFrame?.shape !== 'line' && setSfxEntries.length">
+			<ul class="sfx" v-if="!isName && resolvedFrame?.shape !== 'line' && setSfxEntries.length">
 				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
 					<span class="sfx-name">{{ sfx.name }}</span>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>

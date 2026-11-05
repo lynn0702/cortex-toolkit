@@ -1,16 +1,24 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
+import VisibilityEye from './visibility-eye.vue';
 
 const {
-	styleBody, imageURL, imageFileInput, uploadError, imageAlignment, imageHeight, imageCaption,
+	styleBody, isName, isRing, imageURL, imageFileInput, uploadError, imageAlignment, imageHeight, imageCaption,
+	namePortraitVisibility, toggleNamePortraitVisibility,
 	uploadImageStart, uploadImageProcess, removeImage, traitSetID
 } = injectTraitSetEditor();
+
+const showImageEditor = computed( () => styleBody.value === 'image' || isName.value || isRing.value );
 </script>
 
 <template>
 	<!-- IMAGE CONTENT -->
-	<div class="editor-field" v-if="styleBody === 'image'">
-		<label>Illustration / Image</label>
+	<div class="editor-field" v-if="showImageEditor">
+		<div class="name-heading-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem;">
+			<label style="margin: 0;">Illustration / Image</label>
+			<VisibilityEye v-if="isName" :state="namePortraitVisibility" @toggle="toggleNamePortraitVisibility" />
+		</div>
 
 		<div class="image-set-preview" v-if="imageURL" style="margin-bottom: 0.5rem;">
 			<img :src="imageURL" style="max-height: 120px; border-radius: 4px; display: block; border: 1px solid #cbd5e1; margin-bottom: 0.5rem;">
@@ -37,7 +45,7 @@ const {
 		</div>
 	</div>
 
-	<div class="editor-field" v-if="styleBody === 'image'">
+	<div class="editor-field" v-if="showImageEditor">
 		<label>Alignment / Focus</label>
 		<div class="editor-portrait-alignment">
 			<div @click.stop="imageAlignment = 'top-left'"      :class="{'active': imageAlignment === 'top-left' }"></div>
@@ -52,7 +60,7 @@ const {
 		</div>
 	</div>
 
-	<div class="editor-field" v-if="styleBody === 'image'">
+	<div class="editor-field" v-if="styleBody === 'image' || isName">
 		<label :for="'trait-set-' + traitSetID + '-image-height'">Display Height</label>
 		<select :id="'trait-set-' + traitSetID + '-image-height'" name="imageHeight" v-model="imageHeight">
 			<option value="auto">Auto</option>
@@ -63,7 +71,7 @@ const {
 		</select>
 	</div>
 
-	<div class="editor-field" v-if="styleBody === 'image'">
+	<div class="editor-field" v-if="styleBody === 'image' || isName">
 		<label :for="'trait-set-' + traitSetID + '-image-caption'">Caption</label>
 		<input type="text" :id="'trait-set-' + traitSetID + '-image-caption'" name="imageCaption" v-model="imageCaption" placeholder="Optional image caption...">
 	</div>

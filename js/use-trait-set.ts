@@ -4,7 +4,7 @@ import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-ge
 import {
 		getView, ensureView, getRating, ratingDice, setRatingDice, setRatingDie,
 		resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,
-		hasOutRange, rangeTop, isOutDie
+		hasOutRange, rangeTop, isOutDie, isNameSet
 	} from './model.ts';
 import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
@@ -1049,11 +1049,13 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (h && h !== 'auto') {
 			return { height: h };
 		}
+		if (isNameSet(traitSetArg)) return { minHeight: '96px', height: '100%' };
 		return { minHeight: '140px', height: 'auto' };
 	}
 
 	function getImageSetGraphicStyle(traitSetArg: TraitSet) {
-		const url = cortexFunctions.safeImageUrl(getView(traitSetArg)?.imageConfig?.url);
+		const rawUrl = getView(traitSetArg)?.imageConfig?.url || (isNameSet(traitSetArg) ? props.character?.portrait?.url : '');
+		const url = cortexFunctions.safeImageUrl(rawUrl);
 		if (!url) return {};
 		return {
 			backgroundImage: `url("${url}")`,

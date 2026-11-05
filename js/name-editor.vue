@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, isNameSet, getRating, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
+import { getView, ensureView, isNameSet, getRating, resolveVisibility, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 
@@ -238,6 +238,41 @@ function setNameTraitVisibility( key: string, vis: string ) {
 function toggleNameVisibility( key: string ) {
 	const cur = nameTraitVisibility( key );
 	setNameTraitVisibility( key, nextVisibility( cur as Visibility ) );
+}
+
+function ensureNameSet() {
+	if ( !props.character ) return { set: null, index: -1 };
+	if ( !Array.isArray( props.character.traitSets ) ) props.character.traitSets = [];
+	let idx = props.character.traitSets.findIndex( ( s: any ) => isNameSet( s ) );
+	if ( idx === -1 ) {
+		const set: any = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
+		props.character.traitSets.unshift( set );
+		idx = 0;
+	}
+	return { set: props.character.traitSets[ idx ], index: idx };
+}
+
+function nameSetVisibility(): Visibility {
+	const set = ( props.character?.traitSets || [] ).find( ( s: any ) => isNameSet( s ) );
+	return resolveVisibility( set );
+}
+
+function toggleNameSetVisibility() {
+	const { set } = ensureNameSet();
+	if ( !set ) return;
+	const cur = resolveVisibility( set );
+	const next = nextVisibility( cur );
+	const v = ensureView( set ) as Record<string, unknown>;
+	if ( next === 'shown' ) delete v.visibility;
+	else v.visibility = next;
+	updateCharacter( props.character );
+}
+
+function openNameSetEditor() {
+	const { index } = ensureNameSet();
+	if ( index === -1 ) return;
+	updateCharacter( props.character );
+	selectElement( [ 'traitSet', index ] );
 }
 
 const activePillarKeys = computed<string[]>( () => {
@@ -676,6 +711,19 @@ function updateCharacter( character: any ) {
 
 				<!-- ================= TAB 1: SHEET LEVEL ================= -->
 				<template v-if="currentTab === 'sheet'">
+						<div class="editor-field">
+							<div class="name-heading-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+								<span class="editor-label" style="margin: 0;">Name Block Set</span>
+								<visibility-eye :state="nameSetVisibility()" @toggle="toggleNameSetVisibility()" />
+							</div>
+							<div class="editor-button-container">
+								<div class="editor-button-container-inner">
+									<div class="editor-button" @click.stop="openNameSetEditor()">
+										<span><i class="fas fa-sliders"></i> Configure Name Set / Image</span>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="editor-field">
 							<div class="name-heading-row">
 								<input type="text" class="name-heading-input" :value="nameTraitLabel('name')" @change="setNameTraitLabel('name', targetValue($event))" placeholder="Character Name" title="Name heading (stored on the name trait)" aria-label="Name heading">

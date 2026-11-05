@@ -313,6 +313,9 @@ export function resolveSetPillar(traitSet: unknown): string {
 	if (v && typeof v.pillar === 'string' && v.pillar.trim().length > 0) {
 		return v.pillar.trim();
 	}
+	if (isNameSet(traitSet)) {
+		return 'identity';
+	}
 	if (
 		v?.visibility === 'play-only' ||
 		v?.playMutable === true ||
