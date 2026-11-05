@@ -11,30 +11,6 @@
 import type { Character, TraitSet } from './model.ts';
 import { getView, isHiddenIn, resolveVisibility } from './model.ts';
 
-// Classic flow has left/right tracks only; 'center' (and anything
-// unexpected) folds left so no set ever vanishes.
-export function getTraitSetColumn( traitSet: TraitSet ): 'left' | 'right' {
-	const ctk = getView( traitSet );
-	if ( ctk?.track === 2 || ctk?.track === 3 || ctk?.location === 'right' ) {
-		return 'right';
-	}
-	return 'left';
-}
-
-export function isFullWidthClassic( traitSet: TraitSet ): boolean {
-	const ctk = getView( traitSet );
-	const span = ctk?.span ?? ctk?.colSpan ?? ctk?.columnSpan;
-	return span === 'full' || Number( span ) >= 2;
-}
-
-export function hasClassicFullSets( traitSets: TraitSet[], ringTraitID: number, pageIndex: number ): boolean {
-	return ( traitSets || [] ).some( ( traitSet, s ) =>
-		s !== ringTraitID &&
-		( ( getView( traitSet )?.page || 1 ) === pageIndex ) &&
-		isFullWidthClassic( traitSet )
-	);
-}
-
 // ---------- place primitives ----------
 
 // Known trait-part names. Anything else in view.parts is an error.

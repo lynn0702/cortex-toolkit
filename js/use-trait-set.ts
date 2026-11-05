@@ -35,11 +35,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	const editing = computed(() => props.editing);
 	const printBlank = computed(() => props.printBlank);
 	const viewY = computed(() => props.viewY);
-	const columnCount = computed(() => {
-		const c = Number(getView(props.character)?.columns);
-		return (c >= 2 && c <= 4) ? c : 2;
-	});
-
 
 	// Phase 3c: SVG Frames & Dynamic Positional Anchors
 	const resolvedFrame = computed(() => resolveFrame(traitSet.value));
@@ -182,17 +177,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 		if (bodyStyle === 'subtrait-columns' && getView(traitSetArg)?.branchArrows === false) {
 			classes['hide-branch-arrows'] = true;
-		}
-
-		const rawSpan = getView(traitSetArg)?.span ?? getView(traitSetArg)?.colSpan ?? getView(traitSetArg)?.columnSpan;
-		const colSpan = Number(rawSpan) || 1;
-		if (colSpan >= columnCount.value || rawSpan === 'full') {
-			classes['span-full'] = true;
-			classes['span-' + columnCount.value] = true;
-		} else if (colSpan === 2) {
-			classes['span-2'] = true;
-		} else {
-			classes['span-1'] = true;
 		}
 
 		const ratingPos = getRatingPosition(traitSetArg);
@@ -1289,7 +1273,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	const api = {
 		traitSet, s, traitSets, character, submode, editing, printBlank, viewY,
-		columnCount, getView, ensureView,
+		getView, ensureView,
 		getTraitSetLabel, isSelected, renderText, renderNotesText, getTraitSetClasses,
 		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
 		getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,

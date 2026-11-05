@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from 'vue';
 import { getView, ensureView } from './model.ts';
-import { getSpotlightSections, parsePct, formatPct, getTraitSetColumn, isFullWidthClassic } from './spotlight-grid.ts';
+import { getSpotlightSections, parsePct, formatPct } from './spotlight-grid.ts';
 import TraitSetMini from './trait-set-mini.vue';
 
 // Page-level arrangement: every set on every page as a draggable box on
@@ -55,21 +55,7 @@ function layoutFor( page: number, setsInput?: any[] ): { blocks: Block[]; rows: 
 		if ( section.type !== 'grid' ) {
 			for ( const item of section.ordered || [] ) {
 				const sObj = ( sets as any[] )[ item.index ];
-				const sView = getView( sObj );
-				const hasColLoc = sView?.location === 'left' || sView?.location === 'right' || sView?.track !== undefined;
-				let left = 0;
-				let width = 100;
-				if ( hasColLoc && !isFullWidthClassic( sObj ) ) {
-					const col = getTraitSetColumn( sObj );
-					if ( col === 'left' ) {
-						left = 0;
-						width = 50;
-					} else {
-						left = 50;
-						width = 50;
-					}
-				}
-				out.push( { kind: 'band', index: item.index, name: labelOf( item.index ), left, width, top: cursor, height: 1, base: -1, set: sObj } );
+				out.push( { kind: 'band', index: item.index, name: labelOf( item.index ), left: 0, width: 100, top: cursor, height: 1, base: -1, set: sObj } );
 				cursor += 1;
 			}
 			continue;

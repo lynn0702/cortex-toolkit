@@ -113,7 +113,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 							if (!view.style) view.style = {};
 							view.style.body = 'default';
 							view.style.header = 'default';
-							view.location = 'right';
+							delete (view as Record<string, unknown>).location;
 							view.ringTrait = false;
 						}
 					}
@@ -124,7 +124,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				if (!view.style) view.style = {};
 				view.style.body = 'portrait-ring';
 				view.style.header = 'portrait-ring';
-				view.location = 'attributes';
+				delete (view as Record<string, unknown>).location;
 				view.ringTrait = true;
 			} else {
 				const view = ensureView(traitSet.value);
@@ -140,9 +140,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				if (value !== 'subtrait-columns') {
 					delete (view as Record<string, unknown>).branch;
 				}
-				if (view.location === 'attributes') {
-					view.location = 'right';
-				}
+				delete (view as Record<string, unknown>).location;
 				view.ringTrait = false;
 			}
 			updateCharacter(props.character);

@@ -29,7 +29,6 @@ export const VANGUARD_FRAME_SHOWCASE = {
 		tags: [],
 		view: {
 			pageCount: 2,
-			columns: 2,
 			labels: {
 				pillars: {
 					identity: 'Bio',

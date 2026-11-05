@@ -327,7 +327,6 @@ export function resolveSetPillar(traitSet: unknown): string {
 	if (
 		body === 'portrait-ring' ||
 		body === 'attributes' ||
-		v?.location === 'attributes' ||
 		v?.ringTrait === true ||
 		body === 'sfx-rows' ||
 		body === 'distinctions'
@@ -493,28 +492,13 @@ export interface CortexToolkitCustom {
 	// trait rows (parts).
 	place?: PlaceRect;
 	parts?: Record<string, PartCell>;
-	/** @deprecated superseded by place; read for legacy migration only. */
-	track?: 1 | 2 | 3;
-	/** @deprecated superseded by place; read for legacy migration only. */
-	span?: 1 | 2 | 3;
-	/** @deprecated superseded by place; read for legacy migration only. */
-	widths?: [number, number, number] | number[];
 	flex?: boolean;
 	cluster?: string;
-	location?: 'left' | 'right' | 'center' | 'attributes' | 'header' | 'col-1' | 'col-2' | 'col-3' | 'col-4' | string;
 	/** Set header placement: vertical sidebar label, or a horizontal top bar. */
 	header?: 'sidebar' | 'top';
 	/** Header text alignment (respected in both orientations). */
 	headerAlign?: 'left' | 'center' | 'right';
 	page?: number;
-	/** @deprecated superseded by place.top; read for legacy migration only. */
-	row?: number | null;
-	colSpan?: number | 'full';
-	columnSpan?: number | 'full';
-	/** @deprecated superseded by explicit row; read for legacy migration only. */
-	rowBreak?: boolean | null;
-	/** @deprecated superseded by place; read for legacy migration only. */
-	colWidth?: number | null;
 	editorDock?: 'left' | 'right';
 	traitColumns?: number;
 	ratingLadder?: number[];
@@ -545,7 +529,6 @@ export interface CortexToolkitCustom {
 
 	// app-only trait-level flags that live under `trait.view`
 	spentDice?: number[];
-	rowSpan?: number;
 	/** @deprecated apart-rolling derives from hitches (0 rolls apart); read never, never write. */
 	isResource?: boolean;
 	/** Trait visibility word: shown | editor-only | hidden. Shown is absence. */
@@ -561,10 +544,6 @@ export interface CortexToolkitCustom {
 	linkTo?: number;
 
 	// character-scope
-	/** @deprecated no column count under nested grids; deleted on load. */
-	columns?: number;
-	/** @deprecated no column count under nested grids; deleted on load. */
-	columnsPage2?: number;
 	pageCount?: number;
 	pageOrientation?: 'portrait' | 'landscape';
 	orientation?: 'portrait' | 'landscape';
@@ -587,8 +566,6 @@ export interface CortexToolkitCustom {
 	customFonts?: Array<{ name?: string; data?: string }>;
 	nickname?: string;
 	hasNickname?: boolean;
-	columnOffsets?: { [k: string]: unknown; left?: number; center?: number; right?: number };
-	columnAlignment?: string;
 	accentColor?: string;
 	primaryColor?: string;
 	secondaryColor?: string;

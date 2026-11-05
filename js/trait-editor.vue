@@ -500,7 +500,7 @@ const tableCol3Text = computed( {
 
 const isRingTrait = computed( () => {
 	const body = getView( traitSet.value )?.style?.body;
-	return getView( traitSet.value )?.location === 'attributes' || body === 'portrait-ring' || body === 'attributes';
+	return cortexFunctions.getRingTrait( traitSet.value ) === true || body === 'portrait-ring' || body === 'attributes';
 } );
 
 const isScaleDie = computed( {

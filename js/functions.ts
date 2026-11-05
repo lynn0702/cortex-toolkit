@@ -1538,7 +1538,12 @@ export const cortexFunctions = {
 						'sfx': true,
 						'subtraits': false
 					},
-					'location': 'left',
+					'place': {
+						'left': '0%',
+						'top': 0,
+						'width': '50%',
+						'height': 2
+					},
 					'reservedSlots': 3,
 					'style': {
 						'header': 'sfx-rows',
@@ -1582,7 +1587,12 @@ export const cortexFunctions = {
 						'sfx': false,
 						'subtraits': false
 					},
-					'location': 'right',
+					'place': {
+						'left': '50%',
+						'top': 0,
+						'width': '50%',
+						'height': 1
+					},
 					'reservedSlots': 3,
 					'style': {
 						'header': 'default',
@@ -1612,7 +1622,12 @@ export const cortexFunctions = {
 						'sfx': false,
 						'subtraits': false
 					},
-					'location': 'right',
+					'place': {
+						'left': '50%',
+						'top': 1,
+						'width': '50%',
+						'height': 1
+					},
 					'reservedSlots': 4,
 					'style': {
 						'header': 'default',
@@ -1633,14 +1648,7 @@ export const cortexFunctions = {
 		'notes': '',
 		'tags': [],
 		'view': {
-			'columns': 2,
-			'pageCount': 1,
-			'columnAlignment': 'top-base',
-			'columnOffsets': {
-				'left': 0,
-				'center': 0,
-				'right': 0
-			}
+			'pageCount': 1
 		}
 	},
 
@@ -1657,7 +1665,6 @@ export const cortexFunctions = {
 				sfx: false,
 				subtraits: false
 			},
-			location: 'left',
 			style: {
 				header: 'default',
 				body: 'default',
@@ -1784,7 +1791,6 @@ export const cortexFunctions = {
 				tags: [],
 				view: {
 					pillar: 'prime',
-					span: 2,
 					header: 'top',
 					frame: {
 						shape: 'ring', span: [0, 360], color: 'primary'
@@ -1889,7 +1895,6 @@ export const cortexFunctions = {
 				traits: [],
 				tags: [],
 				view: {
-					span: 2,
 					frame: {
 						shape: 'line', color: 'accent'
 					}
@@ -1974,7 +1979,7 @@ export const cortexFunctions = {
 		return list;
 	},
 
-	instantiateSetPreset: function (presetOrEntry: any, character: any, page = 1, location?: string): any {
+	instantiateSetPreset: function (presetOrEntry: any, character: any, page = 1): any {
 		const rawSet = (presetOrEntry && typeof presetOrEntry === 'object' && presetOrEntry.preset)
 			? presetOrEntry.preset
 			: presetOrEntry;
@@ -1983,6 +1988,7 @@ export const cortexFunctions = {
 		delete traitSet.id;
 		const v = ensureView(traitSet);
 		delete v.place;
+		delete (v as Record<string, unknown>).location;
 		// Propagate custom pillar labels onto character view if not already set on character
 		if (character && typeof character === 'object' && v.labels?.pillars && typeof v.labels.pillars === 'object') {
 			const charView = ensureView(character);
@@ -2000,7 +2006,6 @@ export const cortexFunctions = {
 			v.style.header = v.style.body || 'default';
 		}
 		v.page = page || 1;
-		v.location = location || 'left';
 		this.ensureTraitSetIds({ traitSets: [...(character?.traitSets || []), traitSet] });
 		this.assignLids({ traitSets: [traitSet] });
 		return traitSet;

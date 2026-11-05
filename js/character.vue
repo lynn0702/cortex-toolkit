@@ -3,14 +3,9 @@ import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, wa
 import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
 import { getView, ensureView, isNameSet, resolveVisibility, isHiddenIn, resolveSetPillar, getPillarLabel, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
-	getTraitSetColumn as gridTraitSetColumn,
-	isFullWidthClassic as gridIsFullWidthClassic,
-	hasClassicFullSets as gridHasClassicFullSets,
 	getSpotlightSections as gridGetSpotlightSections,
 	getSpotlightGridStyle as gridGetSpotlightGridStyle,
-	placeOf as gridPlaceOf,
 	type SpotlightSection,
-	type SpotlightCell,
 } from './spotlight-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
 import PrintToolbar from './print-toolbar.vue';
@@ -46,13 +41,11 @@ const printBlank = ref( false );
 const printBW = ref( false );
 const showInlineAddSet = ref( false );
 const inlineAddPage = ref( 1 );
-const inlineAddLocation = ref( 'left' );
 const inlineBuiltInPresets = Object.values( cortexSetPresets );
 const inlineCustomPresets = ref<SetPresetEntry[]>( [] );
 
-function toggleInlineAdd( page = 1, location = 'left' ) {
+function toggleInlineAdd( page = 1 ) {
 	inlineAddPage.value = page;
-	inlineAddLocation.value = location;
 	inlineCustomPresets.value = cortexFunctions.getCustomSetPresets();
 	showInlineAddSet.value = !showInlineAddSet.value;
 }
@@ -199,11 +192,6 @@ const pageOrientation = computed( () => {
 } );
 const isLandscape = computed( () => pageOrientation.value === 'landscape' );
 
-const columnCount = computed( () => {
-	const c = Number( getView( props.character )?.columns );
-	return ( c === 2 || c === 3 ) ? c : 2;
-} );
-
 const descriptionText = computed( {
 	get() {
 		return props.character?.description ?? '';
@@ -232,8 +220,6 @@ const hasAnyWatermark = computed( () => {
 	return Boolean( wm?.enabled && wm?.url );
 } );
 
-const columnAlignmentMode = computed( () => getView( props.character )?.columnAlignment || 'top-base' );
-
 const characterSheetStyle = computed( () => {
 	const ctk: ViewBag = getView( props.character ) || {};
 	const style: Record<string, string> = {};
@@ -244,17 +230,6 @@ const characterSheetStyle = computed( () => {
 	} else {
 		style[ '--page-width' ] = '210mm';
 		style[ '--page-height' ] = '297.1mm';
-	}
-
-	const offsets = ctk.columnOffsets || {};
-	if ( ctk.columnAlignment === 'custom' ) {
-		style[ '--column-left-offset' ] = ( Number( offsets.left ) || 0 ) + 'px';
-		style[ '--column-center-offset' ] = ( Number( offsets.center ) || 0 ) + 'px';
-		style[ '--column-right-offset' ] = ( Number( offsets.right ) || 0 ) + 'px';
-	} else {
-		style[ '--column-left-offset' ] = '0px';
-		style[ '--column-center-offset' ] = '0px';
-		style[ '--column-right-offset' ] = '0px';
 	}
 
 	if ( ctk.accentColor ) style[ '--color-interactive' ] = ctk.accentColor;
@@ -301,80 +276,6 @@ function applyFonts() {
 function renderText( text: unknown ) { return cortexFunctions.renderText( text ); }
 function renderDieValue( value: number ) { return cortexFunctions.getDieDisplayValue( value ); }
 
-function getTraitSetColumn( traitSet: TraitSet ) { return gridTraitSetColumn( traitSet ); }
-function isFullWidthClassic( traitSet: TraitSet ) { return gridIsFullWidthClassic( traitSet ); }
-function hasClassicFullSets( pageIndex: number ) { return gridHasClassicFullSets( traitSets.value, ringTraitID.value, pageIndex ); }
-function hasPlace( traitSet: TraitSet ) { return gridPlaceOf( traitSet ) !== null; }
-function hasClassicUnplacedFullSets( pageIndex: number ) {
-	return ( traitSets.value || [] ).some( ( traitSet, s ) =>
-		s !== ringTraitID.value &&
-		( ( getView( traitSet )?.page || 1 ) === pageIndex ) &&
-		isFullWidthClassic( traitSet ) &&
-		!hasPlace( traitSet )
-	);
-}
-function isColumnSet( ts: TraitSet ): boolean {
-	if ( isFullWidthClassic( ts ) || hasPlace( ts ) ) return false;
-	const v = getView( ts );
-	if ( isNameSet( ts ) ) {
-		return v?.location === 'left' || v?.location === 'right' || v?.track !== undefined;
-	}
-	return true;
-}
-function hasColumnContent( pageIndex: number ): boolean {
-	if ( hasRingTrait.value && ringTraitID.value > -1 && pageIndex === 1 ) return true;
-	const sets = traitSets.value || [];
-	return sets.some( ( ts, s ) =>
-		s !== ringTraitID.value &&
-		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
-		isColumnSet( ts )
-	);
-}
-function getClassicGridSections( pageIndex: number ): SpotlightSection[] {
-	const sections = getSpotlightSections( pageIndex );
-	const out: SpotlightSection[] = [];
-	for ( const section of sections ) {
-		const ordered = section.ordered.filter( ( { traitSet, index: s } ) => {
-			if ( s === ringTraitID.value ) return false;
-			if ( section.type === 'full-width' ) {
-				return !isColumnSet( traitSet ) && !isFullWidthClassic( traitSet );
-			}
-			return true;
-		} );
-		if ( ordered.length === 0 ) continue;
-		const cells: Record<number, SpotlightCell> = {};
-		for ( const { index: s } of ordered ) {
-			if ( section.cells[ s ] ) cells[ s ] = section.cells[ s ];
-		}
-		out.push( { ...section, ordered, cells } );
-	}
-	return out;
-}
-function getLeadingGridSections( pageIndex: number ): SpotlightSection[] {
-	const all = getClassicGridSections( pageIndex );
-	if ( !hasColumnContent( pageIndex ) ) return all;
-	const firstColIdx = ( traitSets.value || [] ).findIndex( ( ts, s ) =>
-		s !== ringTraitID.value &&
-		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
-		isColumnSet( ts )
-	);
-	if ( firstColIdx === -1 ) return [];
-	const cut = all.findIndex( ( sec ) => sec.ordered.some( ( item ) => item.index > firstColIdx ) );
-	return cut === -1 ? all : all.slice( 0, cut );
-}
-function getTrailingGridSections( pageIndex: number ): SpotlightSection[] {
-	const all = getClassicGridSections( pageIndex );
-	if ( !hasColumnContent( pageIndex ) ) return [];
-	const firstColIdx = ( traitSets.value || [] ).findIndex( ( ts, s ) =>
-		s !== ringTraitID.value &&
-		( ( getView( ts )?.page || 1 ) === pageIndex ) &&
-		isColumnSet( ts )
-	);
-	if ( firstColIdx === -1 ) return all;
-	const cut = all.findIndex( ( sec ) => sec.ordered.some( ( item ) => item.index > firstColIdx ) );
-	return cut === -1 ? [] : all.slice( cut );
-}
-
 function getSpotlightSections( pageIndex: number ) { return gridGetSpotlightSections( traitSets.value, pageIndex, props.submode ); }
 function getSpotlightGridStyle( section: SpotlightSection ) { return gridGetSpotlightGridStyle( section ); }
 
@@ -397,8 +298,7 @@ function clearSelected() {
 // EDITING
 // New sets carry no place: they stack full-width in document order, which
 // lands them on their own row at the end of the target page (sparse).
-// Classic sheets keep their left/right columns via location.
-function addTraitSet( page = 1, location?: string ) {
+function addTraitSet( page = 1 ) {
 	const character = props.character as Character;
 	if ( !character ) return;
 
@@ -411,7 +311,6 @@ function addTraitSet( page = 1, location?: string ) {
 	const tsView = ensureView( traitSet );
 	tsView.style = { header: styleId, body: styleId };
 
-	tsView.location = location ?? 'left';
 	tsView.page = page ?? 1;
 	cortexFunctions.ensureTraitSetIds( { traitSets: [ ...( character.traitSets || [] ), traitSet ] } );
 	const blank: any = structuredClone( cortexFunctions.defaultTrait );
@@ -444,11 +343,10 @@ function removeTraitSet( traitSetID: number ) {
 	updateCharacter( character );
 }
 
-function addPresetSet( preset: SetPresetEntry, location?: string, page?: number ) {
+function addPresetSet( preset: SetPresetEntry, page?: number ) {
 	const character = props.character as Character;
 	if ( !character || !preset ) return;
-	const loc = location ?? 'left';
-	const traitSet = cortexFunctions.instantiateSetPreset( preset, character, page ?? 1, loc );
+	const traitSet = cortexFunctions.instantiateSetPreset( preset, character, page ?? 1 );
 	character.traitSets.push( traitSet );
 	updateCharacter( character );
 	showInlineAddSet.value = false;
@@ -962,212 +860,94 @@ watch( () => props.submode, () => {
 						</div>
 					</header>
 
-					<!-- LEADING PLACED / FULL-WIDTH SECTIONS (BEFORE COLUMNS) -->
-					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay && getLeadingGridSections(pageIndex).length">
-						<template v-for="(section, secIdx) in getLeadingGridSections(pageIndex)" :key="'leading-grid-' + secIdx">
+					<!-- PLACED & FULL-WIDTH PAGE SECTIONS -->
+					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay">
+						<template v-for="(section, secIdx) in getSpotlightSections(pageIndex)" :key="'classic-grid-' + secIdx">
 							<div
 								:class="['columns', 'spotlight-columns', section.type === 'grid' ? 'spotlight-grid' : 'cols-1']"
 								:style="section.type === 'grid' ? getSpotlightGridStyle(section) : undefined"
 							>
-								<TraitSetBlock
-									v-for="{ traitSet, index: s } in section.ordered"
-									:key="s"
-									:character="character"
-									:traitSetID="s"
-									:submode="submode"
-									:editing="editing"
-									:viewY="viewY"
-									:printBlank="effectivePrintBlank"
-									:style="section.cells[s] && section.cells[s].style"
-									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
-									@selectElement="selectElement"
-									@updateCharacter="updateCharacter"
-									@removeTrait="removeTrait"
-									@removeTraitSet="removeTraitSet"
-									@addTrait="addTrait"
-									@addDieToRoller="emit('addDieToRoller', $event)"
-								></TraitSetBlock>
+								<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
+									<div
+										v-if="s === ringTraitID"
+										class="portrait-ring-cell"
+										:style="section.cells[s] && section.cells[s].style"
+									>
+										<div :class="{ 'portrait': true }">
+											<div
+												:class="{ 'portrait-inner': true, 'selected': isSelected(['traitSet', ringTraitID]) }"
+												@click.stop="selectElement([ 'traitSet', ringTraitID ])"
+											>
+												<div :class="'portrait-circle portrait-alignment-' + (getView(ringTraitSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
+													<img class="portrait-placeholder" v-if="!effectivePortraitUrl" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
+												</div>
+											</div>
+											<PortraitRing
+												v-if="hasRingTrait && ringTraitID > -1"
+												ref="ringRef"
+												:character="character"
+												:editing="editing"
+												:submode="submode"
+												:viewY="viewY"
+												:ringTraitID="ringTraitID"
+												@selectElement="selectElement"
+												@updateCharacter="updateCharacter"
+												@addDieToRoller="emit('addDieToRoller', $event)"
+												@removeTrait="removeTrait"
+											/>
+										</div>
+										<div :class="{ 'attributes': true, 'vertical': ringTraits.length > 5 }">
+											<transition appear>
+												<div class="preview-button-container">
+													<div class="preview-button-container-inner" v-if="submode === 'edit'">
+														<div class="preview-button" @click.stop="addTrait( ringTraitID )">
+															<span><i class="fas fa-plus"></i> {{ ringNoun }}</span>
+														</div>
+														<div
+															class="preview-button"
+															v-if="!scaleDieValue"
+															@click.stop="ringRef?.setScaleDieValue(8); selectElement(['scaleDie'])"
+														>
+															<span><i class="fas fa-plus"></i> Scale Die</span>
+														</div>
+														<div class="preview-button" @click.stop="selectElement(['traitSet', ringTraitID])">
+															<span><i class="fas fa-cog"></i> Settings</span>
+														</div>
+													</div>
+													<div class="preview-button-container-inner" v-if="submode === 'play' && isRingPool && ringTraits.length > 0">
+														<div
+															class="preview-button"
+															@click.stop="ringRef?.handleTraitClick( ringTraitID, 0, ringTraits[0] )"
+															title="Add all pool dice to roller"
+														>
+															<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ ringTraits.length }} dice)</span>
+														</div>
+													</div>
+												</div>
+											</transition>
+										</div>
+									</div>
+									<TraitSetBlock
+										v-else
+										:character="character"
+										:traitSetID="s"
+										:submode="submode"
+										:editing="editing"
+										:viewY="viewY"
+										:printBlank="effectivePrintBlank"
+										:style="section.cells[s] && section.cells[s].style"
+										:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
+										@selectElement="selectElement"
+										@updateCharacter="updateCharacter"
+										@removeTrait="removeTrait"
+										@removeTraitSet="removeTraitSet"
+										@addTrait="addTrait"
+										@addDieToRoller="emit('addDieToRoller', $event)"
+									></TraitSetBlock>
+								</template>
 							</div>
 						</template>
-					</div>
-
-					<!-- COLUMNS: CLASSIC MODE -->
-					<div class="columns" v-if="!isPillarPlay && (hasColumnContent(pageIndex) || !getClassicGridSections(pageIndex).length)">
-
-						<div v-for="pageLocation in ['left', 'right']" :class="'column-' + pageLocation">
-
-							<!-- PORTRAIT RING (PAGE 1 RIGHT ONLY) -->
-							<div :class="{ 'portrait': true }" v-if="pageIndex === 1 && pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
-
-								<div :class="{ 'portrait-inner': true, 'selected': isSelected(['traitSet', ringTraitID]) }"
-									@click.stop="selectElement([ 'traitSet', ringTraitID ])"
-								>
-									<div :class="'portrait-circle portrait-alignment-' + (getView(ringTraitSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')" width="100%" height="100%" :style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'">
-										<img class="portrait-placeholder" v-if="!effectivePortraitUrl" src="images/cortex_prime_logo_light_transparent.png" alt="Portrait placeholder" />
-									</div>
-								</div>
-
-								<!-- ATTRIBUTES GRID (RING OVERLAY) -->
-								<PortraitRing
-									v-if="hasRingTrait && ringTraitID > -1"
-									ref="ringRef"
-									:character="character"
-									:editing="editing"
-									:submode="submode"
-									:viewY="viewY"
-									:ringTraitID="ringTraitID"
-									@selectElement="selectElement"
-									@updateCharacter="updateCharacter"
-									@addDieToRoller="emit('addDieToRoller', $event)"
-									@removeTrait="removeTrait"
-								/>
-
-							</div>
-
-							<!-- ATTRIBUTES -->
-							<div :class="{ 'attributes': true, 'vertical': ringTraits.length > 5 }" v-if="pageLocation === 'right' && hasRingTrait && ringTraitID > -1">
-
-								<!-- BUTTON: ADD ATTRIBUTE / SCALE DIE (EDIT) OR POOL (PLAY) -->
-								<transition appear>
-							<div class="preview-button-container"
-								v-if="pageLocation === 'right'"
-							>
-									<div class="preview-button-container-inner" v-if="submode === 'edit'">
-										<div class="preview-button"
-											@click.stop="addTrait( ringTraitID )"
-										>
-											<span><i class="fas fa-plus"></i> {{ ringNoun }}</span>
-										</div>
-										<div class="preview-button"
-											v-if="!scaleDieValue"
-											@click.stop="ringRef?.setScaleDieValue(8); selectElement(['scaleDie'])"
-										>
-											<span><i class="fas fa-plus"></i> Scale Die</span>
-										</div>
-										<div class="preview-button"
-											@click.stop="selectElement(['traitSet', ringTraitID])"
-										>
-											<span><i class="fas fa-cog"></i> Settings</span>
-										</div>
-									</div>
-									<div class="preview-button-container-inner" v-if="submode === 'play' && isRingPool && ringTraits.length > 0">
-										<div class="preview-button"
-											@click.stop="ringRef?.handleTraitClick( ringTraitID, 0, ringTraits[0] )"
-											title="Add all pool dice to roller"
-										>
-											<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ ringTraits.length }} dice)</span>
-										</div>
-									</div>
-								</div>
-								</transition>
-							</div>
-								
-
-							<template v-for="(traitSet, s) in traitSets" :key="s">
-								<TraitSetBlock
-									v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && isColumnSet(traitSet)"
-									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
-								></TraitSetBlock>
-							</template>
-
-							<!-- BUTTON: ADD TRAIT SET -->
-							<transition appear>
-							<div class="preview-button-container"
-								v-if="submode === 'edit'"
-							>
-								<div class="preview-button-container-inner">
-									<div class="preview-button"
-										@click.stop="addTraitSet( pageIndex, pageLocation )"
-									>
-										<span><i class="fas fa-plus"></i> Trait Set{{ pageCount > 1 ? ' (P' + pageIndex + ')' : '' }}</span>
-									</div>
-									<div class="preview-button preview-button-secondary"
-										@click.stop="toggleInlineAdd( pageIndex, pageLocation )"
-									>
-										<span><i class="fas fa-layer-group"></i> Presets</span>
-									</div>
-								</div>
-
-								<!-- INLINE NON-MODAL ADD AREA (CLASSIC) -->
-								<div
-									class="inline-add-set-area classic-inline-add"
-									v-if="showInlineAddSet && inlineAddPage === pageIndex && inlineAddLocation === pageLocation"
-								>
-									<div class="inline-add-header">
-										<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
-										<div class="inline-add-quick-actions">
-											<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex, pageLocation)">
-												<i class="fas fa-plus"></i> Blank
-											</button>
-											<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
-												<i class="fas fa-th-large"></i> Mini
-											</button>
-											<button type="button" class="btn-inline-close" title="Close" @click.stop="showInlineAddSet = false">
-												<i class="fas fa-times"></i>
-											</button>
-										</div>
-									</div>
-									<div class="inline-presets-list">
-										<div class="inline-preset-card" v-for="preset in inlineBuiltInPresets" :key="'classic-builtin-' + preset.id">
-											<div class="inline-preset-main">
-												<div class="inline-preset-name">{{ preset.label }}</div>
-												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-											</div>
-											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageLocation, pageIndex)">
-												<i class="fas fa-plus"></i> Add
-											</button>
-										</div>
-										<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'classic-custom-' + preset.id">
-											<div class="inline-preset-main">
-												<div class="inline-preset-name">{{ preset.label }}</div>
-												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-											</div>
-											<div class="inline-preset-actions">
-												<button type="button" class="btn-inline-delete" title="Delete custom preset" @click.stop="removeInlineCustomPreset(preset.id)">
-													<i class="fas fa-trash-alt"></i>
-												</button>
-												<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageLocation, pageIndex)">
-													<i class="fas fa-plus"></i> Add
-												</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							</transition>
-							
-						</div>
-
-					</div> <!-- .columns -->
-
-					<!-- TRAILING PLACED (GRID) SETS -->
-					<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay && (getTrailingGridSections(pageIndex).length || !hasColumnContent(pageIndex))">
-						<template v-for="(section, secIdx) in getTrailingGridSections(pageIndex)" :key="'classic-grid-' + secIdx">
-							<div
-								:class="['columns', 'spotlight-columns', section.type === 'grid' ? 'spotlight-grid' : 'cols-1']"
-								:style="section.type === 'grid' ? getSpotlightGridStyle(section) : undefined"
-							>
-								<TraitSetBlock
-									v-for="{ traitSet, index: s } in section.ordered"
-									:key="s"
-									:character="character"
-									:traitSetID="s"
-									:submode="submode"
-									:editing="editing"
-									:viewY="viewY"
-									:printBlank="effectivePrintBlank"
-									:style="section.cells[s] && section.cells[s].style"
-									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
-									@selectElement="selectElement"
-									@updateCharacter="updateCharacter"
-									@removeTrait="removeTrait"
-									@removeTraitSet="removeTraitSet"
-									@addTrait="addTrait"
-									@addDieToRoller="emit('addDieToRoller', $event)"
-								></TraitSetBlock>
-							</div>
-						</template>
-<!-- BUTTON: ADD TRAIT SET IN SPOTLIGHT MODE -->
+						<!-- BUTTON: ADD TRAIT SET -->
 						<div
 							class="spotlight-add-set-bar"
 							v-if="submode === 'edit'"
@@ -1184,7 +964,7 @@ watch( () => props.submode, () => {
 							<!-- INLINE NON-MODAL ADD AREA -->
 							<div
 								class="inline-add-set-area"
-								v-if="showInlineAddSet"
+								v-if="showInlineAddSet && inlineAddPage === pageIndex"
 							>
 								<div class="inline-add-header">
 									<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
@@ -1206,7 +986,7 @@ watch( () => props.submode, () => {
 											<div class="inline-preset-name">{{ preset.label }}</div>
 											<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 										</div>
-										<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
+										<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageIndex)">
 											<i class="fas fa-plus"></i> Add Preset
 										</button>
 									</div>
@@ -1219,7 +999,7 @@ watch( () => props.submode, () => {
 											<button type="button" class="btn-inline-delete" title="Delete custom preset" @click.stop="removeInlineCustomPreset(preset.id)">
 												<i class="fas fa-trash-alt"></i>
 											</button>
-											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, undefined, pageIndex)">
+											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageIndex)">
 												<i class="fas fa-plus"></i> Add Preset
 											</button>
 										</div>
@@ -1227,17 +1007,7 @@ watch( () => props.submode, () => {
 								</div>
 							</div>
 						</div>
-										</div>
-
-					<!-- CLASSIC FULL-WIDTH SETS -->
-<div class="classic-full-band" v-if="!isPillarPlay && hasClassicUnplacedFullSets(pageIndex)">
-		<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
-			<TraitSetBlock
-				v-if="s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
-								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
-							></TraitSetBlock>
-						</template>
-					</div> <!-- .classic-full-band -->
+					</div>
 
 					</div> <!-- .mobile-carousel-track -->
 

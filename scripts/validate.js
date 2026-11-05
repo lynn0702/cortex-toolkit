@@ -272,6 +272,9 @@ function checkViewRetired(bag, where) {
   for (const k of ['statement', 'hasQuestionedPip', 'hasCounterColumn']) {
     if (bag[k] !== undefined) err(`${where}: view-home flag ${k} belongs on the set`);
   }
+  for (const k of ['location', 'track', 'span', 'colSpan', 'columnSpan', 'widths', 'rowBreak', 'colWidth', 'rowSpan', 'row']) {
+    if (bag[k] !== undefined) err(`${where}: retired column/band key ${k} (place supersedes it)`);
+  }
 }
 
 function checkRetiredTraitKeys(node, where) {
