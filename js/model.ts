@@ -371,11 +371,9 @@ export function getPillarLabel(character: unknown, pillarKey: string): string {
 
 // ---------- custom.cortexToolkit sub-shapes (set + character scope) ----------
 
-/** Character `view.style`: the single sheet-style object (`sheet`). */
 export interface SetStyle {
 	header?: string;
 	body?: string;
-	sheet?: 'classic' | 'spotlight';
 }
 
 export interface PipsConfig {
@@ -609,31 +607,6 @@ export type ViewConfig = CortexToolkitCustom;
 export function isNameSet(set: unknown): boolean {
 	const v = getView(set);
 	return Boolean(set && typeof set === 'object' && v && typeof v === 'object' && v.style?.body === 'name');
-}
-
-/**
- * Resolve the sheet style for a character holder. `view.style.sheet` is
- * the only stored key; a sheet template link resolves spotlight, and
- * anything else defaults classic. No reader hard-codes set-type checks.
- */
-export function resolveSheetStyle(holder: unknown): 'classic' | 'spotlight' {
-	const h = (holder && typeof holder === 'object') ? holder as any : undefined;
-	const v = getView(h);
-	const s = v && typeof v === 'object' ? v : undefined;
-	const sheet = s?.style && typeof s.style === 'object' ? (s.style as any).sheet : undefined;
-	if (sheet === 'spotlight' || sheet === 'classic') return sheet;
-	if (h?.sheet && typeof h.sheet === 'object' && (h.sheet as any).template) return 'spotlight';
-	return 'classic';
-}
-
-/**
- * Name-block traits with no sheet zone in spotlight styles (game, plot
- * points, notes) default to hidden there; everything else defaults to
- * shown. A stored `hidden` boolean always wins — this only fills the gap
- * so the editor never shows an open eye for something no layout renders.
- */
-export function defaultNameHidden(_key?: string, _holder?: unknown): boolean {
-	return false;
 }
 
 /**

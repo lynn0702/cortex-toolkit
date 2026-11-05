@@ -18,7 +18,6 @@ export interface TraitSetProps {
 	editing?: unknown[] | null;
 	viewY?: number | null;
 	printBlank?: boolean;
-	printStyle?: string | null;
 }
 
 export const TRAIT_SET_KEY: InjectionKey<TraitSetApi> = Symbol('traitSetApi');
@@ -35,23 +34,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	const submode = computed(() => props.submode);
 	const editing = computed(() => props.editing);
 	const printBlank = computed(() => props.printBlank);
-	const printStyle = computed(() => props.printStyle);
 	const viewY = computed(() => props.viewY);
 	const columnCount = computed(() => {
 		const c = Number(getView(props.character)?.columns);
 		return (c >= 2 && c <= 4) ? c : 2;
 	});
 
-	const sheetStyle = computed(() => {
-		if (props.submode === 'print' && props.printStyle) {
-			return props.printStyle;
-		}
-		const pLoc = getView(props.character?.portrait)?.location;
-		return pLoc === 'header' ? 'spotlight' : 'classic';
-	});
-
-	const isSpotlightStyle = computed(() => false);
-	const isSpotlightPrintStyle = computed(() => false);
 
 	// Phase 3c: SVG Frames & Dynamic Positional Anchors
 	const resolvedFrame = computed(() => resolveFrame(traitSet.value));
@@ -1298,9 +1286,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	const api = {
-		traitSet, s, traitSets, character, submode, editing, printBlank, printStyle, viewY,
-		columnCount, sheetStyle, isSpotlightPrintStyle, getView, ensureView,
-		getTraitSetLabel, isSpotlightStyle, isSelected, renderText, renderNotesText, getTraitSetClasses,
+		traitSet, s, traitSets, character, submode, editing, printBlank, viewY,
+		columnCount, getView, ensureView,
+		getTraitSetLabel, isSelected, renderText, renderNotesText, getTraitSetClasses,
 		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
 		getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
 		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,

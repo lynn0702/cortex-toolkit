@@ -1,6 +1,5 @@
 <script setup lang="ts">
 defineProps<{
-	printStyle: string | null;
 	printBlank: boolean;
 	printBW: boolean;
 	printPageView: any;
@@ -10,7 +9,6 @@ defineProps<{
 const emit = defineEmits<{
 	( e: 'print' ): void;
 	( e: 'export' ): void;
-	( e: 'update:printStyle', value: string ): void;
 	( e: 'update:printBlank', value: boolean ): void;
 	( e: 'update:printBW', value: boolean ): void;
 	( e: 'update:printPageView', value: any ): void;

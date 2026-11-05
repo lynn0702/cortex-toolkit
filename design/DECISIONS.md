@@ -484,3 +484,51 @@ DOM, browser find works across pages today) and must earn its UX cost with
 measurement. This brief's before/after node counts (Vanguard + kitchen-sink,
 Edit/Play/pillar) are the evidence that decides whether windowing is still
 needed. Print renders all pages regardless and is untouched.
+
+
+## 2026-11-04 — Dissolve phase 1: Frame extension (box + arc frames, stroke as width, CSS-variable color/width/dash)
+
+Decided: extend `view.frame` as the single carrier for borders and positional
+frames (no `view.border` key).
+(1) `box?: boolean` on `FrameConfig`: when `box: true` on a radial frame (`arc`,
+`ring`, `ellipse`), the renderer draws both the rectangular box perimeter and
+the shape path under one width and one color. Ignored on `block` and `line`.
+(2) `stroke` is stroke width (`'1px' | '2px' | '3px'`, default `'2px'`); color
+moves to `color` (`'primary' | 'accent' | 'muted' | 'strong' | 'black'`, default
+`'primary'`); `dash?: string` sets `stroke-dasharray` (`none` when absent).
+Pre-phase-1 files that stored a color token in `stroke` resolve cleanly: if
+`raw.stroke` is a color token and `raw.color` is absent, `resolveFrame` maps it
+to `color` and defaults `stroke` to `'2px'`.
+(3) Styling flows through CSS custom properties (`--frame-stroke-color`,
+`--frame-stroke-width`, `--frame-stroke-dash`) on `.frame-color-*` classes.
+The `black` token resolves to `#000000` in light mode and print, and `#f1f5f9`
+(`--dark-text-main`) under `html.dark-theme` on screen so black frames stay
+visible on dark cards.
+
+
+## 2026-11-04 — Dissolve phase 2: Retire `view.style.sheet` as a behavior switch
+
+Decided: retire `view.style.sheet` (`'classic' | 'spotlight'`) across the corpus,
+validator, runtime, and editors. Supersedes the 2026-10-12 `view.style.sheet`
+and `NAME_HIDDEN_IN_SPOTLIGHT` entries above.
+(1) Sheet assembly is unified in `character.vue`: every page renders unplaced
+column sets (`.columns`), placed grid sets (`view.place` via
+`.spotlight-layout.classic-grid-sections`), and unplaced full-width sets
+(`.classic-full-band`) from the same template path without branching on sheet
+style.
+(2) Corpus rewrite: all 28 spotlight templates in `js/templates.js` and
+`data/templates/*.template.layered.json` (plus `js/dogfood-templates.ts` and
+`defaultCharacter`) drop `view.style.sheet` and state their presentation
+explicitly on each element: header portraits carry `portrait.view.location:
+'header'`, hidden name-set traits (`game`, `plotPoints`, `notes`) carry explicit
+`view: { visibility: 'hidden' }`, and framed sets carry explicit `view.frame`
+configs (`shape: 'block', span: 'box', corner: 'square', stroke: '2px', color:
+'black'`, with `header: 'sidebar'` where applicable).
+(3) Ungated features: header vs column portrait renders from
+`portrait.view.location === 'header'`; ring traits render whenever a set has
+`ringTrait: true` or `body === 'portrait-ring'`; nickname renders from
+`hasNickname`; name-set traits default to `'shown'` (`NAME_HIDDEN_IN_SPOTLIGHT`,
+`defaultNameHidden`, and `resolveSheetStyle` are deleted); set editor layout and
+frame controls are available on all sheets; and the style toggle is removed from
+both the Sheet editor and the Print toolbar. `scripts/validate.js` rejects
+`view.style.sheet`.

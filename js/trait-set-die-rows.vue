@@ -5,7 +5,7 @@ import { injectTraitSet } from './use-trait-set.ts';
 const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, isSpotlightStyle, renderDieValueForPrint,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, renderDieValueForPrint,
 	handleSingleDieClick, hasCounterColumn, getTraitCounter, firstDie, isDieActive, isPlayMutableSet
 } = injectTraitSet();
 </script>

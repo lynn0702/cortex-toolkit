@@ -23,7 +23,6 @@ const props = defineProps<{
 	editing?: any;
 	viewY?: number | null;
 	printBlank?: boolean;
-	printStyle?: string | null;
 }>();
 
 const emit = defineEmits<{

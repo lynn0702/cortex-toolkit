@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { getView, ensureView, isNameSet, defaultNameHidden, getRating, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
+import { getView, ensureView, isNameSet, getRating, nextVisibility, resolveSetPillar, getPillarLabel, type Character, type Visibility } from './model.ts';
 import VisibilityEye from './visibility-eye.vue';
 import PageLayoutMini from './page-layout-mini.vue';
 
@@ -218,7 +218,7 @@ function nameTraitVisibility( key: string ) {
 	const v = getView( t ) as Record<string, unknown> | undefined;
 	const word = v?.visibility;
 	if ( word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown' ) return word;
-	return defaultNameHidden( key, props.character ) ? 'hidden' : 'shown';
+	return 'shown';
 }
 
 function setNameTraitVisibility( key: string, vis: string ) {
@@ -226,7 +226,7 @@ function setNameTraitVisibility( key: string, vis: string ) {
 	if ( !t ) return;
 	const v = ensureView( t ) as Record<string, unknown>;
 	// Sparse with the default: only a stored word that disagrees survives.
-	const def = defaultNameHidden( key, props.character ) ? 'hidden' : 'shown';
+	const def = 'shown';
 	if ( vis === def ) {
 		delete v.visibility;
 	} else if ( vis === 'hidden' || vis === 'editor-only' || vis === 'play-only' || vis === 'shown' ) {

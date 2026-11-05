@@ -3,7 +3,7 @@ import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts'
 import { cloneDeep } from './clone-deep.ts';
 import {
 		VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel,
-		defaultNameHidden, getRating, ratingDice, setRatingDice, resolveSetPillar, getPillarLabel,
+		getRating, ratingDice, setRatingDice, resolveSetPillar, getPillarLabel,
 		resolveVisibility, nextVisibility, isHiddenIn
 	} from './model.ts';
 import { buildParts } from './spotlight-grid.ts';
@@ -472,7 +472,6 @@ export const cortexFunctions = {
 		let trait = set.traits.find((t: any) => t && typeof t === 'object' && t.name === key);
 		if (!trait) {
 			trait = { name: key, description: '', traits: [], tags: [] };
-			if (defaultNameHidden(key, character)) trait.view = { visibility: 'hidden' };
 			set.traits.push(trait);
 		}
 		return trait;

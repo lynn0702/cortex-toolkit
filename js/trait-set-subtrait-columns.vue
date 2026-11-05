@@ -7,7 +7,7 @@ import { resolveBranchShares } from './use-trait-set-editor.ts';
 const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings, isSpotlightStyle,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings,
 	renderDieValueForPrint, handleSingleDieClick, getTraitSetLabel, getSetRatingDie, firstDie, isDieActive, isTraitRated,
 	getBranchGroups, branchSubs, hasBranchSplit, hasBranchFlank, getFlankColumns, handleBranchFlatClick
 } = injectTraitSet();

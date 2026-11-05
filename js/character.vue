@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
-import { getView, ensureView, isNameSet, defaultNameHidden, resolveVisibility, isHiddenIn, resolveSetPillar, getPillarLabel, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
+import { getView, ensureView, isNameSet, resolveVisibility, isHiddenIn, resolveSetPillar, getPillarLabel, type Character, type TraitSet, type Trait, type ViewBag, type CortexToolkitCustom } from './model.ts';
 import {
 	getTraitSetColumn as gridTraitSetColumn,
 	isFullWidthClassic as gridIsFullWidthClassic,
@@ -42,7 +42,6 @@ const rootEl = ref<HTMLElement | null>( null );
 const ringRef = ref<any>( null );
 
 const printPageView = ref<any>( 'all' );
-const printStyle = ref<string | null>( null );
 const printBlank = ref( false );
 const printBW = ref( false );
 const showInlineAddSet = ref( false );
@@ -146,12 +145,12 @@ function nameWord( key: string, fallback: string ) {
 }
 function nameShown( key: string ) {
 	const t = nameTrait( key );
-	if ( !t ) return defaultNameHidden( key, props.character ) !== true;
+	if ( !t ) return true;
 	const vis = resolveVisibility( t );
 	if ( vis === 'hidden' ) return false;
 	if ( vis === 'play-only' ) return props.submode !== 'print';
 	if ( vis === 'editor-only' ) return props.submode === 'edit';
-	return defaultNameHidden( key, props.character ) !== true;
+	return true;
 }
 const nicknameLabel = computed( () => nameLabel( 'nickname', 'NICKNAME' ) );
 const pronounsLabel = computed( () => nameLabel( 'pronouns', 'PRONOUNS' ) );
@@ -237,7 +236,6 @@ const pageCount = computed( () => {
 } );
 
 const isSpotlightStyle = computed( () => hasHeaderPortrait.value );
-const sheetStyle = computed( () => hasHeaderPortrait.value ? 'spotlight' : 'classic' );
 const isPrintSubmode = computed( () => props.submode === 'print' );
 const isSpotlightPrintStyle = computed( () => isPrintSubmode.value && isSpotlightStyle.value );
 const effectivePrintBW = computed( () => isPrintSubmode.value && printBW.value );
@@ -904,14 +902,12 @@ watch( () => props.submode, () => {
 		<!-- PRINT TOOLBAR -->
 		<PrintToolbar
 			v-if="submode === 'print'"
-			:printStyle="printStyle"
 			:printBlank="printBlank"
 			:printBW="printBW"
 			:printPageView="printPageView"
 			:pageCount="pageCount"
 			@print="print"
 			@export="exportCharacter"
-			@update:printStyle="printStyle = $event"
 			@update:printBlank="printBlank = $event"
 			@update:printBW="printBW = $event"
 			@update:printPageView="printPageView = $event"
@@ -1121,7 +1117,6 @@ watch( () => props.submode, () => {
 								:editing="editing"
 								:viewY="viewY"
 								:printBlank="effectivePrintBlank"
-								:printStyle="printStyle"
 								@selectElement="selectElement"
 								@updateCharacter="updateCharacter"
 								@removeTrait="removeTrait"
@@ -1419,7 +1414,7 @@ watch( () => props.submode, () => {
 							<template v-for="(traitSet, s) in traitSets" :key="s">
 								<TraitSetBlock
 									v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && getTraitSetColumn(traitSet) === pageLocation && !isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
-									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+									:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 								></TraitSetBlock>
 							</template>
 
@@ -1509,7 +1504,6 @@ watch( () => props.submode, () => {
 									:editing="editing"
 									:viewY="viewY"
 									:printBlank="effectivePrintBlank"
-									:printStyle="printStyle"
 									:style="section.cells[s] && section.cells[s].style"
 									:class="{ 'trait-set-content': getView(traitSet)?.flex === false }"
 									@selectElement="selectElement"
@@ -1588,7 +1582,7 @@ watch( () => props.submode, () => {
 		<template v-for="(traitSet, s) in traitSets" :key="'full-' + s">
 			<TraitSetBlock
 				v-if="!isNameSet(traitSet) && s !== ringTraitID && ((getView(traitSet)?.page || 1) === pageIndex) && isFullWidthClassic(traitSet) && !hasPlace(traitSet)"
-								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" :printStyle="printStyle" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
+								:character="character" :traitSetID="s" :submode="submode" :editing="editing" :viewY="viewY" :printBlank="effectivePrintBlank" @selectElement="selectElement" @updateCharacter="updateCharacter" @removeTrait="removeTrait" @removeTraitSet="removeTraitSet" @addTrait="addTrait" @addDieToRoller="emit('addDieToRoller', $event)"
 							></TraitSetBlock>
 						</template>
 					</div> <!-- .classic-full-band -->

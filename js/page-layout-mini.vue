@@ -44,7 +44,6 @@ interface Block {
 
 function layoutFor( page: number, setsInput?: any[] ): { blocks: Block[]; rows: number } {
 	const sets = setsInput ?? props.character?.traitSets ?? [];
-	const isClassic = getView( props.character )?.style?.sheet === 'classic';
 	const sections = getSpotlightSections( sets as any, page );
 	const out: Block[] = [];
 	let cursor = 0;
@@ -56,19 +55,18 @@ function layoutFor( page: number, setsInput?: any[] ): { blocks: Block[]; rows: 
 		if ( section.type !== 'grid' ) {
 			for ( const item of section.ordered || [] ) {
 				const sObj = ( sets as any[] )[ item.index ];
+				const sView = getView( sObj );
+				const hasColLoc = sView?.location === 'left' || sView?.location === 'right' || sView?.track !== undefined;
 				let left = 0;
 				let width = 100;
-				if ( isClassic ) {
-					const isFull = isFullWidthClassic( sObj );
-					if ( !isFull ) {
-						const col = getTraitSetColumn( sObj );
-						if ( col === 'left' ) {
-							left = 0;
-							width = 50;
-						} else {
-							left = 50;
-							width = 50;
-						}
+				if ( hasColLoc && !isFullWidthClassic( sObj ) ) {
+					const col = getTraitSetColumn( sObj );
+					if ( col === 'left' ) {
+						left = 0;
+						width = 50;
+					} else {
+						left = 50;
+						width = 50;
 					}
 				}
 				out.push( { kind: 'band', index: item.index, name: labelOf( item.index ), left, width, top: cursor, height: 1, base: -1, set: sObj } );

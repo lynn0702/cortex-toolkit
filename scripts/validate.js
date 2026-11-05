@@ -146,11 +146,10 @@ templates.forEach((tpl, ti) => {
   checkListing(where, tpl);
   const hasNameSet = ch.traitSets.some((ts) => ts && ts.view && ts.view.style && ts.view.style.body === 'name');
   if (!hasNameSet) err(`${where}: template needs a Name set first (the name block is a trait set)`);
-  // Sheet style lives in exactly one place (view.style.sheet); the retired
-  // top-level sheetStyle and the hasAttributes set-type flag are gone.
+  // Retired character-level style flags (sheetStyle, style.hasAttributes, style.sheet) must not appear in corpus templates.
   {
     const cv = (ch.view && typeof ch.view === 'object') ? ch.view : {};
-    if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key (use view.style.sheet)`);
+    if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key`);
     const cs = (cv.style && typeof cv.style === 'object') ? cv.style : {};
     if (cs.hasAttributes !== undefined) err(`${where}: retired view.style.hasAttributes key`);
     if (cs.sheet !== undefined) err(`${where}: retired view.style.sheet key`);
@@ -686,7 +685,7 @@ if (fs.existsSync(dataDir)) {
     checkOverlaps(where, placed);
     {
       const cv = (ch.view && typeof ch.view === 'object') ? ch.view : {};
-      if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key (use view.style.sheet)`);
+      if (cv.sheetStyle !== undefined) err(`${where}: retired view.sheetStyle key`);
       const cs = (cv.style && typeof cv.style === 'object') ? cv.style : {};
       if (cs.hasAttributes !== undefined) err(`${where}: retired view.style.hasAttributes key`);
       if (cs.sheet !== undefined) err(`${where}: retired view.style.sheet key`);

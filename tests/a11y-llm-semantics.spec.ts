@@ -265,8 +265,9 @@ describe( 'WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		// 1. Verify DiceRoller has no inline background: white on quick scale/separate die buttons
 		const roller = mount( DiceRoller, {
 			props: {
-				dicePool: new cortexPal.DicePool()
-			} as any
+				open: true,
+				pool: new cortexPal.DicePool()
+			}
 		} );
 		const scaleBtn = roller.find( '.roller-btn-scale-quick' );
 		expect( scaleBtn.exists() ).toBe( true );

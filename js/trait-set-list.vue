@@ -8,7 +8,6 @@ const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
 	getRenderedTraits, getTraitClasses, getTraitSetRatings, getSubtraitRatings,
-	isSpotlightStyle, isSpotlightPrintStyle,
 	renderDieValueForPrint, getRatingPosition, getTraitStatement, renderText, isStatementSet, isFixedSystemTrait,
 	hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned, handleSingleDieClick, handleDieClick,
 	handleSteppedDieClick, handleOutClick, shouldShowOut, isTraitOut, getTraitDice, getRating,
@@ -71,12 +70,6 @@ const {
 						<!-- NAME (above: the asset box; the dice live in the rating cell) -->
 						<div v-if="partsGridFor(traitSet)?.cells.name" class="trait-part trait-part-name" :class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }" :style="[partCellStyle(partsGridFor(traitSet), 'name'), isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined]">
 							<div :class="{ 'trait-title': getRatingPosition(traitSet) !== 'above', 'trait-title-statement': isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above', 'trait-title-stacked': getRatingPosition(traitSet) === 'below', 'trait-asset-box': getRatingPosition(traitSet) === 'above' }">
-								<span
-									class="distinction-die"
-									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
-									aria-hidden="true"
-									v-html="renderDieValueForPrint(firstDie(item.trait) || 8, !printBlank && !item.isPlaceholder && isTraitRated(item.trait))"
-								></span>
 								<template v-if="isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above'">
 									<button
 										type="button"
@@ -197,7 +190,6 @@ const {
 								>+<i class="fas fa-dice" aria-hidden="true"></i></button>
 							</div>
 							<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
-							<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1"></div>
 							<div class="trait-value pip-value" v-else-if="getRating(item.trait)?.type === 'Pip'">
 								<span
 									v-for="(filled, pIdx) in getTraitPipBubbles(item.trait)"
@@ -488,11 +480,6 @@ const {
 						<template v-else>
 							<div class="trait-title" :class="{ 'trait-title-statement': isStatementSet(traitSet), 'trait-title-stacked': getRatingPosition(traitSet) === 'below' }" :style="isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined">
 								<span class="list-bullet" v-if="getView(traitSet)?.style?.body === 'list'">•</span>
-								<span
-									class="distinction-die"
-									v-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1 && getRatingPosition(traitSet) !== 'none'"
-									v-html="renderDieValueForPrint(firstDie(item.trait) || 8, !printBlank && !item.isPlaceholder && isTraitRated(item.trait))"
-								></span>
 
 								<!-- STATEMENT MODE (e.g. Values) -->
 								<template v-if="isStatementSet(traitSet)">
@@ -603,9 +590,6 @@ const {
 
 								<!-- LIST STYLE: NO VALUE -->
 								<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
-
-								<!-- DISTINCTIONS STYLE IN SPOTLIGHT: VALUE IS IN TITLE ONLY IF SINGLE FIXED RATING (EXCEPT ON BLANK PRINT SHEET WHERE FILLABLE DICE ARRAY IS EXPECTED) -->
-								<div class="trait-value" v-else-if="isSpotlightPrintStyle && getView(traitSet)?.style?.body === 'sfx-rows' && getTraitSetRatings(traitSet).length <= 1"></div>
 
 								<!-- NONE RATING POSITION: NO VALUE -->
 								<div class="trait-value" v-else-if="!printBlank && getRatingPosition(traitSet) === 'none'"></div>
