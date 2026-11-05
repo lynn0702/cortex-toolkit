@@ -161,6 +161,7 @@ templates.forEach((tpl, ti) => {
     checkNodeOptions(ts, `${where}.traitSets[${si}]`);
     const tbody = bag.style && typeof bag.style === 'object' ? bag.style.body : undefined;
     if (tbody === 'session-record' || tbody === 'angled-lines') err(`${where}.traitSets[${si}]: retired ${tbody} body (unified into pips+labels)`);
+    if (tbody === 'dice-ladder') err(`${where}.traitSets[${si}]: retired dice-ladder body (consolidated into die-rows)`);
     if (tbody === 'distinctions' || tbody === 'assets' || tbody === 'resources' || tbody === 'stress' || tbody === 'attributes') err(`${where}.traitSets[${si}]: retired game-named style.body '${tbody}'`);
     const branch = bag.branch;
     if (branch !== undefined) {
@@ -514,6 +515,7 @@ function checkTemplateFile(where, data) {
     if (set.dice !== undefined) err(`${where}/${name}: retired dice key (rating supersedes it)`);
     const setBody = setBag.style && typeof setBag.style === 'object' ? setBag.style.body : undefined;
     if (setBody === 'session-record' || setBody === 'angled-lines') err(`${where}/${name}: retired ${setBody} body (unified into pips+labels)`);
+    if (setBody === 'dice-ladder') err(`${where}/${name}: retired dice-ladder body (consolidated into die-rows)`);
     // Branch column shares (subtrait-columns split rows): three finite
     // non-negative fr numbers around the fixed link column.
     const branch = setBag.branch;

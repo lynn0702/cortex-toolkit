@@ -16052,7 +16052,7 @@ module.exports = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "dice-ladder"
+              "body": "die-rows"
             },
             "ratingLadder": [
               4,
@@ -16622,7 +16622,7 @@ module.exports = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "dice-ladder"
+              "body": "die-rows"
             },
             "ratingLadder": [
               4,
@@ -16658,7 +16658,7 @@ module.exports = [
             "page": 1,
             "style": {
               "header": "default",
-              "body": "dice-ladder"
+              "body": "die-rows"
             },
             "ratingLadder": [
               4,
@@ -19897,13 +19897,13 @@ module.exports = [
           ]
         },
         {
-          "id": "ks-dice-ladder",
+          "id": "ks-growth-ladder",
           "name": "Growth Ladder",
           "view": {
             "page": 2,
             "style": {
               "header": "default",
-              "body": "dice-ladder"
+              "body": "die-rows"
             },
             "features": {
               "description": false,

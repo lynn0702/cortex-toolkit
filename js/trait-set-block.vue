@@ -6,7 +6,6 @@ import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 import TraitSetNotes from './trait-set-notes.vue';
 import TraitSetPips from './trait-set-pips.vue';
-import TraitSetDiceLadder from './trait-set-dice-ladder.vue';
 import TraitSetLabeledFields from './trait-set-labeled-fields.vue';
 import TraitSetSubtraitColumns from './trait-set-subtrait-columns.vue';
 import TraitSetThreeColumnTable from './trait-set-three-column-table.vue';
@@ -61,7 +60,6 @@ const BODY_COMPONENTS: Record<string, any> = {
 	'image': TraitSetImage,
 	'notes': TraitSetNotes,
 	'pips': TraitSetPips,
-	'dice-ladder': TraitSetDiceLadder,
 	'labeled-fields': TraitSetLabeledFields,
 	'subtrait-columns': TraitSetSubtraitColumns,
 	'three-column-table': TraitSetThreeColumnTable,

@@ -386,7 +386,7 @@ function applyFromMini( updatedSet: any ) {
 					</div>
 
 					<!-- LABEL POSITION (ladder rung names, horizontal or rotated vertical) -->
-					<div class="editor-field" v-if="styleBody === 'dice-ladder'">
+					<div class="editor-field" v-if="styleBody === 'die-rows'">
 						<div class="editor-label">Label Position</div>
 						<div class="editor-button-group">
 							<button type="button" class="editor-group-btn" :class="{ active: labelPosition === 'horizontal' }" @click.stop="labelPosition = 'horizontal'">Horizontal</button>

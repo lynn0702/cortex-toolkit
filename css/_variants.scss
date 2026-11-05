@@ -1519,6 +1519,37 @@
 		white-space: nowrap;
 		.c:not(.active) { color: var(--color-separator); }
 	}
+
+	.trait-die-rows.rating-vertical {
+		.die-row {
+			flex-direction: row;
+			align-items: center;
+			column-gap: .5rem;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		.die-row-name {
+			flex: 0 0 auto;
+		}
+
+		.trait-value {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			row-gap: .15rem;
+			white-space: normal;
+		}
+	}
+
+	.trait-die-rows.label-vertical {
+		.die-row-name {
+			writing-mode: vertical-lr;
+			transform: rotate(180deg);
+			line-height: 1;
+			overflow-wrap: break-word;
+		}
+	}
 }
 
 // RESOURCES WITH DICE COUNT (RATING + DICE 1-5)
@@ -1595,92 +1626,6 @@
 		&.filled {
 			background: var(--color-primary);
 			color: white;
-		}
-	}
-}
-
-// GROWTH LADDER (VERTICAL DICE TRACK)
-.trait-set-style-dice-ladder {
-	@extend .trait-set-style-default;
-
-
-	.trait-dice-ladder {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		position: relative;
-		&::before {
-			content: '';
-			position: absolute;
-			top: 1rem;
-			bottom: 1rem;
-			width: 2px;
-			background: var(--color-primary);
-		}
-	}
-
-	.ladder-rung {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		row-gap: .15rem;
-		padding: .35rem 1rem;
-		background: white;
-		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-		border-radius: .25rem;
-	}
-
-	.ladder-name {
-		font-family: var(--font-secondary);
-		font-size: var(--text-meta);
-		font-weight: 800;
-		letter-spacing: .06em;
-		text-transform: uppercase;
-		color: black;
-	}
-
-	.trait-value {
-		position: relative;
-		top: -.1em;
-		white-space: nowrap;
-		.c {
-			font-size: var(--diecon-size);
-			&:not(.active) { color: var(--color-separator); }
-		}
-	}
-
-	// Vertical rating array: one die per rung with its d4–d12 options
-	// stacked (e.g. Initiative tracks, Hero Dice) for narrow columns.
-	.trait-dice-ladder.rating-vertical {
-		.ladder-rung {
-			flex-direction: row;
-			align-items: center;
-			column-gap: .5rem;
-			width: 100%;
-			box-sizing: border-box;
-		}
-
-		.ladder-name {
-			flex: 0 0 auto;
-		}
-
-		.trait-value {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			row-gap: .15rem;
-			white-space: normal;
-		}
-	}
-
-	// Rotated rung labels (sidebar-style) for narrow vertical tracks.
-	.trait-dice-ladder.label-vertical {
-		.ladder-name {
-			writing-mode: vertical-lr;
-			transform: rotate(180deg);
-			line-height: 1;
-			overflow-wrap: break-word;
 		}
 	}
 }

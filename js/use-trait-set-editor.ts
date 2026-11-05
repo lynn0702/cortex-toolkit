@@ -56,7 +56,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		{ id: 'paired-slots', label: 'Paired Slots' },
 		{ id: 'die-rows', label: 'Die Rows' },
 		{ id: 'three-column-table', label: 'Three Column Table' },
-		{ id: 'dice-ladder', label: 'Dice Ladder' },
 		{ id: 'labeled-fields', label: 'Labeled Fields' },
 		{ id: 'die-track', label: 'Die Track' },
 		{ id: 'list', label: 'List' },
@@ -230,7 +229,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// never takes over a bespoke body: arranging one writes only what
 	// that body can render (branch shares for subtrait-columns).
 	// Ladders keep the legacy flag (no parts form).
-	const FLEX_BODIES = ['image', 'notes', 'pips', 'dice-ladder', 'labeled-fields', 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'portrait-ring'];
+	const FLEX_BODIES = ['image', 'notes', 'pips', 'labeled-fields', 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'portrait-ring'];
 	const NON_ROW_BODIES = ['image', 'notes', 'pips', 'portrait-ring'];
 	function isPartsDriven() {
 		const body = getView(traitSet.value)?.style?.body;
@@ -1014,7 +1013,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const needsDiceUI = computed(() => styleBody.value !== 'three-column-table' && styleBody.value !== 'labeled-fields' && styleBody.value !== 'name');
 
 	// Fixed-layout styles manage their own internal columns.
-	const allowsTraitColumns = computed(() => !['subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'dice-ladder', 'labeled-fields', 'name'].includes(styleBody.value));
+	const allowsTraitColumns = computed(() => !['subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'labeled-fields', 'name'].includes(styleBody.value));
 
 	const editorDock = computed({
 		get: () => getView(traitSet.value)?.editorDock === 'right' ? 'right' : 'left',

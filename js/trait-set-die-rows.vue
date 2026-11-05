@@ -5,28 +5,35 @@ import { injectTraitSet } from './use-trait-set.ts';
 const {
 	traitSet, s, submode, printBlank, viewY, character,
 	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, renderDieValueForPrint,
+	getRenderedTraits, getTraitClasses, getTraitSetRatings, getRatingPosition, renderDieValueForPrint,
 	handleSingleDieClick, hasCounterColumn, getTraitCounter, firstDie, isDieActive, isPlayMutableSet
 } = injectTraitSet();
 </script>
 
 <template>
-	<div class="trait-die-rows" v-if="getView(traitSet)?.style?.body === 'die-rows'">
+	<div
+		class="trait-die-rows"
+		:class="{
+			'rating-vertical': getRatingPosition(traitSet) === 'vertical',
+			'label-vertical': getView(traitSet)?.labelPosition === 'vertical'
+		}"
+		v-if="getView(traitSet)?.style?.body === 'die-rows'"
+	>
 		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
 			<div
 				:class="getTraitClasses(item.trait)"
 				:data-trait-name="item.trait.name || undefined"
 				:data-trait-rating="firstDie(item.trait) ? ('d' + firstDie(item.trait)) : undefined"
 			>
-				<div :class="{ 'trait-inner': true, 'die-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }">
+				<div :class="{ 'trait-inner': true, 'die-row': true, 'ladder-rung': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }">
 					<button
 						type="button"
-						class="trait-title-btn die-row-btn"
+						class="trait-title-btn die-row-btn ladder-rung-btn"
 						:aria-label="(!item.isPlaceholder && item.trait.name) ? (item.trait.name + (submode === 'play' ? ' options' : ' edit')) : ((traitSet.noun || 'Name') + ' edit')"
 						@click.stop="openTraitAt(s, item)"
 					>
-						<span class="die-row-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
-						<span class="die-row-name die-row-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
+						<span class="die-row-name ladder-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+						<span class="die-row-name ladder-name die-row-blank ladder-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
 							<template v-if="submode === 'edit' && !printBlank && !item.trait.name">
 								<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 							</template>
@@ -34,7 +41,7 @@ const {
 								<span class="trait-blank-line"></span>
 							</template>
 						</span>
-						<span class="die-row-name" v-else>{{ item.trait.name || '' }}</span>
+						<span class="die-row-name ladder-name" v-else>{{ item.trait.name || '' }}</span>
 					</button>
 					<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null">
 						<span

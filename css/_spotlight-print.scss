@@ -2764,20 +2764,6 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	.trait-set-style-dice-ladder {
-		.trait-dice-ladder::before {
-			background: #000000;
-		}
-		.ladder-rung {
-			border: 1.5px solid #000000;
-			padding: 0.2rem 0.6rem;
-		}
-		.trait {
-			padding-bottom: 0.15rem;
-			margin-bottom: 0.15rem;
-		}
-	}
-
 	.trait-set-style-labeled-fields {
 		.field-block {
 			border: 1.5px solid #000000;
@@ -3091,15 +3077,6 @@ body:has(.character-sheet.submode-print) .main {
                 background: #000000;
                 color: #ffffff;
             }
-        }
-    }
-
-    .trait-set-style-dice-ladder {
-        .trait-dice-ladder::before {
-            background: #000000;
-        }
-        .ladder-rung {
-            border: 1.5px solid #000000;
         }
     }
 
@@ -4144,9 +4121,7 @@ body:has(.character-sheet.submode-print) .main {
 			.ladder-name,
 			.subtrait-name,
 			.die-row-name,
-			.branch-slot-name,
-			.dice-ladder-col-header,
-			.dice-ladder-step-name {
+			.branch-slot-name {
 				color: var(--text-main) !important;
 
 				.trait-name-hint {

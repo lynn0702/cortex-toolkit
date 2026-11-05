@@ -430,7 +430,7 @@
           "page": 1,
           "style": {
             "header": "default",
-            "body": "dice-ladder"
+            "body": "die-rows"
           },
           "ratingLadder": [
             4,

@@ -897,12 +897,12 @@
         }
       },
       "Growth Ladder": {
-        "id": "ks-dice-ladder",
+        "id": "ks-growth-ladder",
         "view": {
           "page": 2,
           "style": {
             "header": "default",
-            "body": "dice-ladder"
+            "body": "die-rows"
           },
           "features": {
             "description": false,
