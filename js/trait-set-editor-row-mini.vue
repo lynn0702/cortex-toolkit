@@ -11,7 +11,7 @@ const PART_TITLES: Record<string, string> = {
 	subtraits: 'Subtraits', trackLabel: 'Track Label', track: 'Track'
 };
 
-const NON_ROW = [ 'image', 'notes', 'pips', 'portrait-ring' ];
+const NON_ROW = [ 'image', 'pips', 'portrait-ring' ];
 
 const bodyOf = computed( () => getView( traitSet.value )?.style?.body );
 const isBranchBody = computed( () => bodyOf.value === 'subtrait-columns' );

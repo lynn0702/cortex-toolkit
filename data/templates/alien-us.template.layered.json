@@ -118,10 +118,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "multiDie": false,
           "ratingLadder": [
             8
@@ -134,6 +130,13 @@
         "plural": "Distinctions",
         "traits": {
           "Alien Background:": {
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -150,17 +153,17 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
           "Alien Role/Job:": {
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -177,17 +180,17 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
           "Personality/Quirk:": {
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -204,13 +207,6 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -429,10 +425,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "default",
-            "body": "three-column-table"
-          },
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
@@ -447,7 +439,27 @@
             "col2": "ACTIVATION",
             "col3": "EFFECT"
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "description": {
+              "left": "28%",
+              "top": 0,
+              "width": "33%",
+              "height": 1
+            },
+            "child:SFX": {
+              "left": "61%",
+              "top": 0,
+              "width": "39%",
+              "height": 1
+            }
+          }
         },
         "noun": "Talent",
         "plural": "Talents",

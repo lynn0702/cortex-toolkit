@@ -208,8 +208,9 @@ export const cortexFunctions = {
 	// the sheet keying off position and the editor name-sniffing BONUS.
 	getSubtraitSlotRatings: function (traitSet: TraitSet, slot: number) {
 		const ratings = this.getSubtraitRatings(traitSet);
-		const body = getView(traitSet)?.style?.body;
-		if (body === 'paired-slots' && slot >= 1 && ratings.length === 5 && ratings[0] === 4) {
+		const v = getView(traitSet);
+		const isPaired = v?.style?.body === 'paired-slots' || Boolean(v?.parts && (v.parts['child:Statement'] || (v.parts as any)['child_statement']));
+		if (isPaired && slot >= 1 && ratings.length === 5 && ratings[0] === 4) {
 			return ratings.filter((size: number) => size >= 6);
 		}
 		return ratings;
@@ -1544,11 +1545,7 @@ export const cortexFunctions = {
 						'width': '50%',
 						'height': 2
 					},
-					'reservedSlots': 3,
-					'style': {
-						'header': 'sfx-rows',
-						'body': 'sfx-rows',
-					}
+					'reservedSlots': 3
 				},
 			},
 			{

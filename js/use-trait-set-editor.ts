@@ -48,18 +48,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		{ id: 'portrait-ring', label: 'Portrait Ring' },
 		{ id: 'two-columns-compact', label: 'Compact Columns' },
 		{ id: 'two-columns-detailed', label: 'Detailed Columns' },
-		{ id: 'sfx-rows', label: 'SFX Rows' },
-		{ id: 'boxed-rows', label: 'Boxed Rows' },
 		{ id: 'pool-rows', label: 'Pool Rows' },
 		{ id: 'dice-count', label: 'Dice Count' },
 		{ id: 'subtrait-columns', label: 'Subtrait Columns' },
-		{ id: 'paired-slots', label: 'Paired Slots' },
 		{ id: 'die-rows', label: 'Die Rows' },
-		{ id: 'three-column-table', label: 'Three Column Table' },
-		{ id: 'labeled-fields', label: 'Labeled Fields' },
 		{ id: 'die-track', label: 'Die Track' },
 		{ id: 'list', label: 'List' },
-		{ id: 'notes', label: 'Notes' },
 		{ id: 'image', label: 'Image' },
 		{ id: 'pips', label: 'Pips' },
 	];
@@ -227,8 +221,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// never takes over a bespoke body: arranging one writes only what
 	// that body can render (branch shares for subtrait-columns).
 	// Ladders keep the legacy flag (no parts form).
-	const FLEX_BODIES = ['image', 'notes', 'pips', 'labeled-fields', 'subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'portrait-ring'];
-	const NON_ROW_BODIES = ['image', 'notes', 'pips', 'portrait-ring'];
+	const FLEX_BODIES = ['image', 'pips', 'subtrait-columns', 'die-rows', 'dice-count', 'portrait-ring'];
+	const NON_ROW_BODIES = ['image', 'pips', 'portrait-ring'];
 	function isPartsDriven() {
 		const body = getView(traitSet.value)?.style?.body;
 		if (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body)) return false;
@@ -592,10 +586,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 	});
 
-	const notesContent = computed({
-		get: () => getView(traitSet.value)?.notes ?? (traitSet.value?.description ?? ''),
-		set: (value: string) => { setCustomProperty('notes', value); }
-	});
 
 	const reservedSlots = computed({
 		get: () => {
@@ -1008,10 +998,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	// Styles sampled from the official Spotlight character sheet PDFs.
 	// Talents rows and dossier fields carry no dice.
-	const needsDiceUI = computed(() => styleBody.value !== 'three-column-table' && styleBody.value !== 'labeled-fields' && styleBody.value !== 'name');
+	const needsDiceUI = computed(() => styleBody.value !== 'name');
 
 	// Fixed-layout styles manage their own internal columns.
-	const allowsTraitColumns = computed(() => !['subtrait-columns', 'three-column-table', 'paired-slots', 'die-rows', 'dice-count', 'labeled-fields', 'name'].includes(styleBody.value));
+	const allowsTraitColumns = computed(() => !['subtrait-columns', 'die-rows', 'dice-count', 'name'].includes(styleBody.value));
 
 	const editorDock = computed({
 		get: () => getView(traitSet.value)?.editorDock === 'right' ? 'right' : 'left',
@@ -1179,10 +1169,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// editor section can render empty.
 	const hasLabelContent = computed(() => {
 		const body = styleBody.value;
-		if (body === 'subtrait-columns' || body === 'three-column-table' || body === 'dice-count') return true;
-		if (body === 'sfx-rows') return true;
+		if (body === 'subtrait-columns' || body === 'dice-count') return true;
 		if (hasTrackPart.value) return true;
-		return body !== 'notes' && body !== 'image' && body !== 'pips' && body !== 'name';
+		return body !== 'image' && body !== 'pips' && body !== 'name';
 	});
 
 	function setImageConfig(key: keyof ImageConfig, value: any) {
@@ -1392,7 +1381,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
 		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption, namePortraitVisibility, toggleNamePortraitVisibility,
 		includeOut, ratingLadder, subtraitRatingLadder,
-		isPool, setRating, setSpendable, setHitches, notesContent, reservedSlots, traitColumns,
+		isPool, setRating, setSpendable, setHitches, reservedSlots, traitColumns,
 		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
 		showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
 		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,

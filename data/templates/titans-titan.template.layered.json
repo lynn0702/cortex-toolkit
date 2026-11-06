@@ -232,10 +232,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "ratingLadder": [
             8
           ],
@@ -282,6 +278,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -292,13 +295,6 @@
                     "description": "Step up one stress and reroll one or all of your dice pool when taking an action or reaction that draws on your titan's history."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },

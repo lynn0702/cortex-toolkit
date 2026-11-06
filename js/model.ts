@@ -318,18 +318,14 @@ export function resolveSetPillar(traitSet: unknown): string {
 	}
 	if (
 		v?.visibility === 'play-only' ||
-		v?.playMutable === true ||
-		v?.style?.body === 'notes'
+		v?.playMutable === true
 	) {
 		return 'play';
 	}
 	const body = v?.style?.body;
 	if (
 		body === 'portrait-ring' ||
-		body === 'attributes' ||
-		v?.ringTrait === true ||
-		body === 'sfx-rows' ||
-		body === 'distinctions'
+		v?.ringTrait === true
 	) {
 		return 'prime';
 	}
@@ -491,6 +487,7 @@ export interface CortexToolkitCustom {
 	// for full-width document-order stacking (place) and legacy flex
 	// trait rows (parts).
 	place?: PlaceRect;
+	ladder?: boolean;
 	parts?: Record<string, PartCell>;
 	flex?: boolean;
 	cluster?: string;

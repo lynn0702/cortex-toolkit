@@ -64,7 +64,8 @@ const name = computed( {
 
 const isListStyle = computed( () => {
 	const b = getView( traitSet.value )?.style?.body;
-	return b === 'list' || b === 'notes' || b === 'three-column-table' || b === 'labeled-fields';
+	const parts = getView( traitSet.value )?.parts;
+	return b === 'list' || Boolean( parts && !parts.rating );
 } );
 
 const isStatementSet = computed( () => Boolean( traitSet.value?.statement ) );
@@ -102,7 +103,10 @@ const counterValue = computed( {
 	},
 } );
 
-const isPairedSlotsStyle = computed( () => getView( traitSet.value )?.style?.body === 'paired-slots' );
+const isPairedSlotsStyle = computed( () => {
+	const parts = getView( traitSet.value )?.parts;
+	return Boolean( parts && (parts['child:Statement'] || (parts as any)['child_statement']) );
+} );
 
 const isLabeledPipsSet = computed( () => {
 	const v = getView( traitSet.value );
@@ -451,7 +455,10 @@ const scrollable = computed( () => Boolean(
 	( subtraits.value.length > 0 )
 ) );
 
-const isThreeColumnTable = computed( () => getView( traitSet.value )?.style?.body === 'three-column-table' );
+const isThreeColumnTable = computed( () => {
+	const parts = getView( traitSet.value )?.parts;
+	return Boolean( parts && (parts['child:SFX'] || (parts as any)['child_sfx']) );
+} );
 
 const tableCol1Label = computed( () => {
 	const labels = getView( traitSet.value )?.labels;

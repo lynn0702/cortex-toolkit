@@ -233,10 +233,6 @@
             "subtraits": true
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "multiDie": false,
           "ratingLadder": [
             8
@@ -271,6 +267,13 @@
                 10,
                 12
               ]
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             },
             "traits": {
               "Power 1": {
@@ -336,13 +339,6 @@
                     "description": "Shut down this endarch distinction to summon your Eidolon on your next turn."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -505,10 +501,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "multiDie": false,
           "ratingLadder": [
             8
@@ -540,6 +532,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -556,13 +555,6 @@
                     "description": "Gain a PP when you switch out this distinction's d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -580,6 +572,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -596,13 +595,6 @@
                     "description": "Gain a PP when you switch out this distinction's d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }

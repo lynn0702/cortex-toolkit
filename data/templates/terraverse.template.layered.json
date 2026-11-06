@@ -179,10 +179,6 @@
             8
           ],
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "multiDie": false,
           "reservedSlots": 6,
           "place": {
@@ -211,6 +207,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -227,13 +230,6 @@
                     "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -251,6 +247,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -267,13 +270,6 @@
                     "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -291,6 +287,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -307,13 +310,6 @@
                     "description": "Gain a PP when you switch out your distinction's rating of d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -420,6 +416,7 @@
         "id": "initiative",
         "ratingPosition": "vertical",
         "view": {
+          "ladder": true,
           "features": {
             "description": false,
             "sfx": false,
@@ -455,6 +452,7 @@
         "id": "hero-dice",
         "ratingPosition": "vertical",
         "view": {
+          "ladder": true,
           "features": {
             "description": false,
             "sfx": false,
@@ -579,6 +577,13 @@
         "traits": {},
         "slots": {
           "0": {
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -586,13 +591,6 @@
                   "SFX 2": {},
                   "Limit": {}
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -636,6 +634,13 @@
         "traits": {},
         "slots": {
           "0": {
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -643,13 +648,6 @@
                   "SFX 2": {},
                   "Limit": {}
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -693,6 +691,13 @@
         "traits": {},
         "slots": {
           "0": {
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -700,13 +705,6 @@
                   "SFX 2": {},
                   "Limit": {}
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -722,10 +720,6 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "default",
-            "body": "three-column-table"
-          },
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
@@ -740,7 +734,27 @@
             "col2": "ACTIVATION",
             "col3": "EFFECT"
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "description": {
+              "left": "28%",
+              "top": 0,
+              "width": "33%",
+              "height": 1
+            },
+            "child:SFX": {
+              "left": "61%",
+              "top": 0,
+              "width": "39%",
+              "height": 1
+            }
+          }
         },
         "noun": "Talent",
         "plural": "Talents",
@@ -804,22 +818,30 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "default",
-            "body": "notes"
-          },
-          "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
           "place": {
             "left": "66.66%",
             "top": 2,
             "width": "33.334%",
             "height": 1
           },
-          "pillar": "play"
+          "pillar": "play",
+          "parts": {
+            "description": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Option",
         "plural": "Options",
-        "traits": {}
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another"
+          }
+        }
       }
     }
   }

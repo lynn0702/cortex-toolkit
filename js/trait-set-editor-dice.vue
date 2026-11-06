@@ -101,7 +101,7 @@ function toggleSetRating( size: number | null ) {
 			</div>
 
 
-			<div v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'" class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.35rem;">
+			<div v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'" class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.35rem;">
 				<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-track'" v-model="hasTrackPart">
 				<label :for="'trait-set-' + traitSetID + '-attached-track'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Attached track</label>
 			</div>

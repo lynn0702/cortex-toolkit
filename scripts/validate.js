@@ -162,6 +162,12 @@ templates.forEach((tpl, ti) => {
     const tbody = bag.style && typeof bag.style === 'object' ? bag.style.body : undefined;
     if (tbody === 'session-record' || tbody === 'angled-lines') err(`${where}.traitSets[${si}]: retired ${tbody} body (unified into pips+labels)`);
     if (tbody === 'dice-ladder') err(`${where}.traitSets[${si}]: retired dice-ladder body (consolidated into die-rows)`);
+    if (tbody === 'sfx-rows') err(`${where}.traitSets[${si}]: retired sfx-rows body`);
+    if (tbody === 'boxed-rows') err(`${where}.traitSets[${si}]: retired boxed-rows body`);
+    if (tbody === 'notes') err(`${where}.traitSets[${si}]: retired notes body`);
+    if (tbody === 'paired-slots') err(`${where}.traitSets[${si}]: retired paired-slots body`);
+    if (tbody === 'three-column-table') err(`${where}.traitSets[${si}]: retired three-column-table body`);
+    if (tbody === 'labeled-fields') err(`${where}.traitSets[${si}]: retired labeled-fields body`);
     if (tbody === 'distinctions' || tbody === 'assets' || tbody === 'resources' || tbody === 'stress' || tbody === 'attributes') err(`${where}.traitSets[${si}]: retired game-named style.body '${tbody}'`);
     const branch = bag.branch;
     if (branch !== undefined) {
@@ -519,6 +525,12 @@ function checkTemplateFile(where, data) {
     const setBody = setBag.style && typeof setBag.style === 'object' ? setBag.style.body : undefined;
     if (setBody === 'session-record' || setBody === 'angled-lines') err(`${where}/${name}: retired ${setBody} body (unified into pips+labels)`);
     if (setBody === 'dice-ladder') err(`${where}/${name}: retired dice-ladder body (consolidated into die-rows)`);
+    if (setBody === 'sfx-rows') err(`${where}/${name}: retired sfx-rows body`);
+    if (setBody === 'boxed-rows') err(`${where}/${name}: retired boxed-rows body`);
+    if (setBody === 'notes') err(`${where}/${name}: retired notes body`);
+    if (setBody === 'paired-slots') err(`${where}/${name}: retired paired-slots body`);
+    if (setBody === 'three-column-table') err(`${where}/${name}: retired three-column-table body`);
+    if (setBody === 'labeled-fields') err(`${where}/${name}: retired labeled-fields body`);
     // Branch column shares (subtrait-columns split rows): three finite
     // non-negative fr numbers around the fixed link column.
     const branch = setBag.branch;

@@ -120,11 +120,21 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",

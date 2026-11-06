@@ -118,10 +118,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
@@ -182,6 +178,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -189,13 +192,6 @@
                     "description": "Spend a PP to step up an attribute when you connect to your heritage."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -213,6 +209,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -220,13 +223,6 @@
                     "description": "Spend a PP to reroll your dice when you embrace your destiny."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -244,6 +240,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -251,13 +254,6 @@
                     "description": "Spend a PP to create a d8 asset linked to the thing you're known for."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -428,7 +424,6 @@
         "id": "paired-slots",
         "description": "Camp social standing with complication and bonus dice",
         "statement": true,
-        "ratingPosition": "inline",
         "view": {
           "features": {
             "description": true,
@@ -436,11 +431,6 @@
             "subtraits": true
           },
           "page": 1,
-          "style": {
-            "header": "default",
-            "body": "paired-slots"
-          },
-          "ratingPosition": "inline",
           "ratingLadder": [
             4,
             6,
@@ -468,7 +458,21 @@
             "slot0": "COMPLICATION",
             "slot1": "BONUS"
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            },
+            "child:Statement": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
+          }
         },
         "noun": "Standing",
         "plural": "Standings",
@@ -561,10 +565,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "default",
-            "body": "three-column-table"
-          },
           "multiDie": false,
           "notes": "",
           "reservedSlots": 2,
@@ -573,7 +573,27 @@
             "col2": "ACTIVATION",
             "col3": "EFFECT"
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "description": {
+              "left": "28%",
+              "top": 0,
+              "width": "33%",
+              "height": 1
+            },
+            "child:SFX": {
+              "left": "61%",
+              "top": 0,
+              "width": "39%",
+              "height": 1
+            }
+          }
         },
         "noun": "Talent",
         "plural": "Talents",

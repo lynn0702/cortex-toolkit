@@ -1463,11 +1463,6 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "default",
-            "body": "notes"
-          },
-          "notes": "",
           "pillar": "play"
         },
         "noun": "Note",

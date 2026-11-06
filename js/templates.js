@@ -1,4 +1,7 @@
-module.exports = [
+/**
+ * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)
+ */
+const cortexSpotlightTemplates = [
   {
     "id": "spotlight-alien-us",
     "version": 1,
@@ -147,10 +150,6 @@ module.exports = [
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "ratingLadder": [
               8
@@ -526,10 +525,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
@@ -544,7 +539,27 @@ module.exports = [
               "col2": "ACTIVATION",
               "col3": "EFFECT"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -860,10 +875,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "multiDie": false,
@@ -1505,10 +1516,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "sharedHinder": true,
             "sharedHinderText": "Hinder: Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "multiDie": false,
@@ -1857,7 +1864,6 @@ module.exports = [
           "name": "Standing",
           "description": "Camp social standing with complication and bonus dice",
           "statement": true,
-          "ratingPosition": "inline",
           "view": {
             "features": {
               "description": true,
@@ -1865,11 +1871,6 @@ module.exports = [
               "subtraits": true
             },
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "paired-slots"
-            },
-            "ratingPosition": "inline",
             "ratingLadder": [
               4,
               6,
@@ -1897,7 +1898,21 @@ module.exports = [
               "slot0": "COMPLICATION",
               "slot1": "BONUS"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "50%",
+                "height": 1
+              },
+              "child:Statement": {
+                "left": "50%",
+                "top": 0,
+                "width": "50%",
+                "height": 1
+              }
+            }
           },
           "noun": "Standing",
           "plural": "Standings",
@@ -2033,10 +2048,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 2,
@@ -2045,7 +2056,27 @@ module.exports = [
               "col2": "ACTIVATION",
               "col3": "EFFECT"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -2202,10 +2233,6 @@ module.exports = [
             },
             "traitColumns": 3,
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "ratingLadder": [
               8,
               10,
@@ -2875,10 +2902,6 @@ module.exports = [
               "subtraits": true
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "ratingLadder": [
               8
@@ -3174,10 +3197,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "ratingLadder": [
               8
@@ -3675,10 +3694,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "ratingLadder": [
               8
             ],
@@ -4514,10 +4529,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "ratingLadder": [
               8
             ],
@@ -5031,10 +5042,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "ratingLadder": [
@@ -5759,11 +5766,21 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5806,17 +5823,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 1,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5859,17 +5886,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 1,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5912,17 +5949,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 2,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -5965,17 +6012,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 2,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6018,11 +6075,21 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6065,17 +6132,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 4,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6118,17 +6195,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 4,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6171,17 +6258,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 5,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6224,17 +6321,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 5,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6277,17 +6384,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 0,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6338,17 +6455,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 0,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6399,17 +6526,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 1,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6460,17 +6597,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 1,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6521,17 +6668,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "0%",
               "top": 2,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6582,17 +6739,27 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "place": {
               "left": "50%",
               "top": 2,
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -6784,10 +6951,6 @@ module.exports = [
             "sharedHinder": true,
             "sharedHinderText": "Gain a PP when you trade out your distinction's d8 rating for a d4.",
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "ratingLadder": [
               8
             ],
@@ -7305,14 +7468,24 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Power Set",
           "plural": "Power Sets",
@@ -7340,11 +7513,21 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Power",
           "plural": "Powers",
@@ -7372,11 +7555,21 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Power",
           "plural": "Powers",
@@ -7542,11 +7735,21 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "labeled-fields",
-              "body": "labeled-fields"
-            },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Detail",
           "plural": "Details",
@@ -7764,10 +7967,6 @@ module.exports = [
               12
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -8369,10 +8568,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -9102,10 +9297,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -9877,10 +10068,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 2,
@@ -10431,10 +10618,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -10863,10 +11046,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -10881,7 +11060,27 @@ module.exports = [
               "col2": "ACTIVATION",
               "col3": "EFFECT"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -12645,11 +12844,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "",
             "pillar": "play"
           },
           "noun": "Note",
@@ -12810,10 +13004,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -13352,10 +13542,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "three-column-table",
-              "body": "three-column-table"
-            },
             "reservedSlots": 3,
             "place": {
               "left": "35%",
@@ -13368,7 +13554,27 @@ module.exports = [
               "col2": "ACTIVATION",
               "col3": "EFFECT"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -13886,10 +14092,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -14429,10 +14631,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -15031,10 +15229,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -15770,10 +15964,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "reservedSlots": 3,
             "place": {
@@ -16044,6 +16234,7 @@ module.exports = [
           "id": "strange-die",
           "name": "Strange Die",
           "view": {
+            "ladder": true,
             "features": {
               "description": false,
               "sfx": false,
@@ -16305,10 +16496,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "reservedSlots": 6,
             "place": {
@@ -16614,6 +16801,7 @@ module.exports = [
           "name": "Initiative",
           "ratingPosition": "vertical",
           "view": {
+            "ladder": true,
             "features": {
               "description": false,
               "sfx": false,
@@ -16650,6 +16838,7 @@ module.exports = [
           "name": "Hero Dice",
           "ratingPosition": "vertical",
           "view": {
+            "ladder": true,
             "features": {
               "description": false,
               "sfx": false,
@@ -16952,10 +17141,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 4,
@@ -16970,7 +17155,27 @@ module.exports = [
               "col2": "ACTIVATION",
               "col3": "EFFECT"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -17036,22 +17241,31 @@ module.exports = [
               "subtraits": false
             },
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
             "place": {
               "left": "66.66%",
               "top": 2,
               "width": "33.334%",
               "height": 1
             },
-            "pillar": "play"
+            "pillar": "play",
+            "parts": {
+              "description": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Option",
           "plural": "Options",
-          "traits": []
+          "traits": [
+            {
+              "name": "",
+              "description": "**1 Session:** Turn an asset from a session into a signature asset at d6 • Switch out a distinction for a new one\n**2 Sessions:** Step up a signature asset • Add a new specialty to a skill • Add a new SFX to a power set\n**3 Sessions:** Step up a skill from d4 to d6, or add a power at d6 • Add a new talent from your archetype list or general list • Add a second power set (with one d8 power, one SFX, one limit)\n**4 Sessions:** Step up one attribute and step down another",
+              "traits": []
+            }
+          ]
         }
       ]
     }
@@ -17337,10 +17551,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "ratingLadder": [
               8
             ],
@@ -17864,10 +18074,6 @@ module.exports = [
               "subtraits": false
             },
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "ratingLadder": [
               8
             ],
@@ -18488,10 +18694,6 @@ module.exports = [
               8
             ],
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "multiDie": false,
             "notes": "",
             "reservedSlots": 3,
@@ -18954,7 +19156,7 @@ module.exports = [
           "left": 0,
           "center": 0,
           "right": 0
-        },
+        }
       },
       "traitSets": [
         {
@@ -19042,10 +19244,6 @@ module.exports = [
           "name": "Distinctions",
           "view": {
             "page": 1,
-            "style": {
-              "header": "sfx-rows",
-              "body": "sfx-rows"
-            },
             "features": {
               "description": true,
               "sfx": true,
@@ -19512,10 +19710,6 @@ module.exports = [
           "statement": true,
           "view": {
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "paired-slots"
-            },
             "features": {
               "description": true,
               "sfx": false,
@@ -19544,7 +19738,21 @@ module.exports = [
               "height": 1
             },
             "reservedSlots": 2,
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "50%",
+                "height": 1
+              },
+              "child:Statement": {
+                "left": "50%",
+                "top": 0,
+                "width": "50%",
+                "height": 1
+              }
+            }
           },
           "noun": "Standing",
           "plural": "Standings",
@@ -19699,10 +19907,6 @@ module.exports = [
           "name": "Talents",
           "view": {
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
             "features": {
               "description": true,
               "sfx": true,
@@ -19720,7 +19924,27 @@ module.exports = [
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Talent",
           "plural": "Talents",
@@ -19897,9 +20121,10 @@ module.exports = [
           ]
         },
         {
-          "id": "ks-growth-ladder",
+          "id": "ks-dice-ladder",
           "name": "Growth Ladder",
           "view": {
+            "ladder": true,
             "page": 2,
             "style": {
               "header": "default",
@@ -19979,10 +20204,6 @@ module.exports = [
           "name": "Dossier",
           "view": {
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "labeled-fields"
-            },
             "features": {
               "description": true,
               "sfx": false,
@@ -19994,7 +20215,21 @@ module.exports = [
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Field",
           "plural": "Fields",
@@ -20211,22 +20446,31 @@ module.exports = [
           "name": "Notes",
           "view": {
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
             "place": {
               "left": "50%",
               "top": 2,
               "width": "50%",
               "height": 1
             },
-            "pillar": "play"
+            "pillar": "play",
+            "parts": {
+              "description": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Note",
           "plural": "Notes",
-          "traits": []
+          "traits": [
+            {
+              "name": "",
+              "description": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ks-detailed-columns",
@@ -20434,10 +20678,6 @@ module.exports = [
           "name": "Signature Assets",
           "view": {
             "page": 3,
-            "style": {
-              "header": "boxed-rows",
-              "body": "boxed-rows"
-            },
             "features": {
               "description": false,
               "sfx": false,
@@ -20449,7 +20689,10 @@ module.exports = [
               "width": "50%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "frame": {
+              "box": true
+            }
           },
           "noun": "Asset",
           "plural": "Assets",
@@ -20661,7 +20904,7 @@ module.exports = [
           "left": 0,
           "center": 0,
           "right": 0
-        },
+        }
       },
       "traitSets": [
         {
@@ -21068,10 +21311,6 @@ module.exports = [
           "name": "Standing",
           "view": {
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "paired-slots"
-            },
             "features": {
               "description": true,
               "sfx": false,
@@ -21087,7 +21326,21 @@ module.exports = [
               "slot0": "COMPLICATION",
               "slot1": "BONUS"
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "50%",
+                "height": 1
+              },
+              "child:Statement": {
+                "left": "50%",
+                "top": 0,
+                "width": "50%",
+                "height": 1
+              }
+            }
           },
           "noun": "Standing",
           "plural": "Standings",
@@ -21233,10 +21486,6 @@ module.exports = [
           "name": "Values",
           "view": {
             "page": 1,
-            "style": {
-              "header": "default",
-              "body": "three-column-table"
-            },
             "features": {
               "description": true,
               "sfx": false,
@@ -21253,7 +21502,27 @@ module.exports = [
               "col2": "ACTIVATION",
               "col3": "EFFECT"
             },
-            "pillar": "prime"
+            "pillar": "prime",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "28%",
+                "height": 1
+              },
+              "description": {
+                "left": "28%",
+                "top": 0,
+                "width": "33%",
+                "height": 1
+              },
+              "child:SFX": {
+                "left": "61%",
+                "top": 0,
+                "width": "39%",
+                "height": 1
+              }
+            }
           },
           "noun": "Value",
           "plural": "Values",
@@ -21786,10 +22055,6 @@ module.exports = [
           "name": "Personnel Dossier",
           "view": {
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "labeled-fields"
-            },
             "features": {
               "description": true,
               "sfx": false,
@@ -21801,7 +22066,21 @@ module.exports = [
               "width": "66.666%",
               "height": 1
             },
-            "pillar": "plus"
+            "pillar": "plus",
+            "parts": {
+              "name": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              },
+              "description": {
+                "left": "0%",
+                "top": 1,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Field",
           "plural": "Fields",
@@ -21916,22 +22195,31 @@ module.exports = [
           "name": "Field Notes",
           "view": {
             "page": 2,
-            "style": {
-              "header": "default",
-              "body": "notes"
-            },
-            "notes": "### Equipment\n- **Jump Drive Matrix** (d8)\n- **Thermal Scanner**: Spend 1 PP to detect cloaked ships.",
             "place": {
               "left": "66.66%",
               "top": 2,
               "width": "33.334%",
               "height": 1
             },
-            "pillar": "play"
+            "pillar": "play",
+            "parts": {
+              "description": {
+                "left": "0%",
+                "top": 0,
+                "width": "100%",
+                "height": 1
+              }
+            }
           },
           "noun": "Note",
           "plural": "Notes",
-          "traits": []
+          "traits": [
+            {
+              "name": "",
+              "description": "### Equipment\n- **Jump Drive Matrix** (d8)\n- **Thermal Scanner**: Spend 1 PP to detect cloaked ships.",
+              "traits": []
+            }
+          ]
         },
         {
           "id": "ls-session-record",
@@ -22007,3 +22295,7 @@ module.exports = [
     }
   }
 ];
+
+if (typeof module !== "undefined" && module.exports) {
+	module.exports = cortexSpotlightTemplates;
+}

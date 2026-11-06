@@ -225,8 +225,7 @@ export const cortexStorage: CortexStorage = {
 			if ( c.isTemplate && c.name ) {
 				c.name = String( c.name ).replace( /\s*\([^)]*\)/g, '' ).trim();
 			}
-			// D5: load must not materialize defaults (columnAlignment /
-			// offsets resolve via renderer fallbacks). Only legacy
+			// D5: load must not materialize defaults. Only legacy
 			// migrations below may rewrite.
 			if ( c.portrait?.url ) {
 				const pUrl = c.portrait.url;
@@ -238,12 +237,6 @@ export const cortexStorage: CortexStorage = {
 			if ( Array.isArray( c.traitSets ) ) {
 				c.traitSets.forEach( ( ts: any ) => {
 					const ctk = ts?.view || ts?.custom?.cortexToolkit;
-					// Normalize Distinctions with 'none' ratingPosition to 'inline'
-					if ( ( ctk?.style?.body === 'sfx-rows' || ctk?.style?.body === 'distinctions' || ts.name?.toLowerCase() === 'distinctions' ) &&
-						( ts.ratingPosition === 'none' || ctk?.ratingPosition === 'none' ) ) {
-						ts.ratingPosition = 'inline';
-						if ( ctk ) ctk.ratingPosition = 'inline';
-					}
 
 					if ( !ctk || typeof ctk !== 'object' ) return;
 					// Fold legacy per-style label maps into the unified labels store.

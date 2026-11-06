@@ -174,10 +174,6 @@
             8
           ],
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "multiDie": false,
           "reservedSlots": 3,
           "place": {
@@ -422,6 +418,7 @@
       "Strange Die": {
         "id": "strange-die",
         "view": {
+          "ladder": true,
           "features": {
             "description": false,
             "sfx": false,

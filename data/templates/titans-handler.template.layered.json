@@ -227,10 +227,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "ratingLadder": [
             8
           ],
@@ -262,6 +258,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -285,13 +288,6 @@
                   }
                 }
               }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
             }
           },
           "Persona:": {
@@ -307,6 +303,13 @@
                 10,
                 12
               ]
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             },
             "traits": {
               "SFX": {
@@ -331,13 +334,6 @@
                   }
                 }
               }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
             }
           },
           "Aspiration:": {
@@ -353,6 +349,13 @@
                 10,
                 12
               ]
+            },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
             },
             "traits": {
               "SFX": {
@@ -376,13 +379,6 @@
                     "description": "Step up a complication to step down one of your titan's stress die ratings when you're pursuing your aspiration."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }

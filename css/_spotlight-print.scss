@@ -2764,6 +2764,22 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
+	.trait-die-rows.ladder {
+		border: none;
+		background: transparent;
+		&::before {
+			background: #000000;
+		}
+		.ladder-rung {
+			border: 1.5px solid #000000;
+			padding: 0.2rem 0.6rem;
+		}
+		.trait {
+			padding-bottom: 0.15rem;
+			margin-bottom: 0.15rem;
+		}
+	}
+
 	.trait-set-style-labeled-fields {
 		.field-block {
 			border: 1.5px solid #000000;
@@ -3077,6 +3093,17 @@ body:has(.character-sheet.submode-print) .main {
                 background: #000000;
                 color: #ffffff;
             }
+        }
+    }
+
+    .trait-die-rows.ladder {
+        border: none;
+        background: transparent;
+        &::before {
+            background: #000000;
+        }
+        .ladder-rung {
+            border: 1.5px solid #000000;
         }
     }
 
@@ -4247,4 +4274,10 @@ body:has(.character-sheet.submode-print) .main {
 
 .classic-grid-sections .columns.spotlight-columns + .columns.spotlight-columns {
 	margin-top: -2px;
+}
+
+// TRAIT BADGES (FORCE BACKGROUNDS IN PRINT)
+.badge {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
 }

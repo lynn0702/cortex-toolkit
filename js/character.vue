@@ -492,7 +492,6 @@ function getMobileJumpPillLabel( traitSet: any, orderIdx: number ): string {
 	if ( traitSet?.noun && String( traitSet.noun ).trim().length ) return String( traitSet.noun ).trim();
 	const body = getView( traitSet )?.style?.body;
 	if ( body === 'image' ) return 'Portrait';
-	if ( body === 'notes' ) return 'Notes';
 	return `Set ${ orderIdx + 1 }`;
 }
 

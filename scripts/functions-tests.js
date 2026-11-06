@@ -87,8 +87,8 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
   ok(F.resolveSetPillar({ view: { pillar: 'cyberware' } }) === 'cyberware', 'explicit custom pillar wins');
   ok(F.resolveSetPillar({ view: { visibility: 'play-only' } }) === 'play', 'play-only defaults to play pillar');
   ok(F.resolveSetPillar({ view: { playMutable: true } }) === 'play', 'playMutable defaults to play pillar');
-  ok(F.resolveSetPillar({ view: { style: { body: 'notes' } } }) === 'play', 'notes style defaults to play pillar');
-  ok(F.resolveSetPillar({ view: { style: { body: 'sfx-rows' } } }) === 'prime', 'sfx-rows defaults to prime pillar');
+  ok(F.resolveSetPillar({ view: { pillar: 'play' } }) === 'play', 'explicit play pillar works');
+  ok(F.resolveSetPillar({ view: { ringTrait: true } }) === 'prime', 'ringTrait defaults to prime pillar');
   ok(F.resolveSetPillar({ view: { style: { body: 'portrait-ring' } } }) === 'prime', 'portrait-ring defaults to prime pillar');
   ok(F.resolveSetPillar({ view: { style: { body: 'default' } } }) === 'plus', 'default style defaults to plus pillar');
 

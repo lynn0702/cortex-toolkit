@@ -119,11 +119,21 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -147,17 +157,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 1,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -181,17 +201,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 1,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -216,17 +246,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 2,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -250,17 +290,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 2,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -285,11 +335,21 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -313,17 +373,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 4,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -348,17 +418,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 4,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -383,17 +463,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 5,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -418,17 +508,27 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 5,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -453,17 +553,27 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 0,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -489,17 +599,27 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 0,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -526,17 +646,27 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 1,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -563,17 +693,27 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 1,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -600,17 +740,27 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "0%",
             "top": 2,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",
@@ -637,17 +787,27 @@
             "subtraits": false
           },
           "page": 2,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "place": {
             "left": "50%",
             "top": 2,
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Detail",
         "plural": "Details",

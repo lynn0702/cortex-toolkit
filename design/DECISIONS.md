@@ -532,3 +532,53 @@ configs (`shape: 'block', span: 'box', corner: 'square', stroke: '2px', color:
 frame controls are available on all sheets; and the style toggle is removed from
 both the Sheet editor and the Print toolbar. `scripts/validate.js` rejects
 `view.style.sheet`.
+
+
+## 2026-11-05 — Name block as a set (`96cb5f4`)
+
+Decided: the name block is an ordinary set. It can render anywhere on the page
+via `view.place`, can be placed or unplaced, and can be hidden via `view.visibility`.
+The only limitation is that the name block cannot be deleted, because runtime
+and shell hooks depend on its presence (e.g., document title, roster identification).
+Portrait presentation unifies through the existing `image` style rather than
+treating portrait as a bespoke hard-coded region.
+
+
+## 2026-11-05 — Place wins: Retire location, track, and span (`ca713e4`)
+
+Decided: place wins. A set's position on the page is expressed solely through
+`view.place` (`{ left, top, width, height }`). The classic column language retires:
+`location`, `track`, `span`, `colSpan`, and `columnSpan` are removed from the
+runtime layout path. Unplaced sets render full-width across page columns in
+document order.
+
+
+## 2026-11-05 — Mechanical consolidation (957dbda & follow-up)
+
+Decided: consolidate redundant and single-use trait-set bodies into general
+mechanisms (`die-rows`, `parts`, `frame`):
+(1) `dice-ladder` merges into `die-rows`: vertical rungs and ladder track styling
+are preserved via `view.ladder: true` (`.trait-die-rows.ladder`), with `ks-growth-ladder`
+reverted to canonical ID `ks-dice-ladder`.
+(2) `sfx-rows` dissolves: all 25 distinction sets resolve directly to prime
+pillar (`view.pillar: 'prime'`) and render via standard flex list rows with
+existing SFX badge and child rendering.
+(3) `boxed-rows` dissolves: "Signature Assets" expresses its boxed appearance via
+`view.frame: { box: true }`.
+(4) `notes` dissolves: sets with unstructured notes convert to single description-only
+rows using `view.parts: { description: { left: '0%', top: 0, width: '100%', height: 1 } }`
+under the play pillar.
+(5) `paired-slots`, `three-column-table`, and `labeled-fields` dissolve to `view.parts`:
+  - `labeled-fields` (22 sets) → stacked name above description (`name` row 0, `description` row 1).
+  - `paired-slots` (3 sets) → side-by-side name and statement (`name` left 0%, `child:Statement` left 50%).
+  - `three-column-table` (7 sets) → 3-column parts grid (`name` 28%, `description` 33%, `child:SFX` 39%).
+  The three bespoke components (`trait-set-paired-slots.vue`, `trait-set-three-column-table.vue`,
+  `trait-set-labeled-fields.vue`) are deleted.
+(6) SFX editor dissolves into the group editor: `trait-set-editor-sfx.vue` is deleted;
+SFX children remain fully editable via `SubtraitEditor` in `trait-editor.vue`.
+(7) Retired bodies (`distinctions`, `attributes`, `sfx-rows`, `boxed-rows`, `notes`,
+`paired-slots`, `three-column-table`, `labeled-fields`) are dead and validated as errors
+by `scripts/validate.js`.
+(8) Badge printing: `.badge` rules in `css/_spotlight-print.scss` enforce `print-color-adjust: exact`
+so that background colors (black, primary, interactive, secondary, muted) and white text
+remain fully legible in print and economy print modes.

@@ -106,10 +106,6 @@
         "id": "ks-distinctions",
         "view": {
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "features": {
             "description": true,
             "sfx": true,
@@ -177,6 +173,13 @@
               ]
             },
             "description": "Every layout edge case deserves a test.",
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -197,13 +200,6 @@
                   }
                 }
               }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
-              }
             }
           }
         },
@@ -222,6 +218,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -238,13 +241,6 @@
                     "description": "Gain a PP when you switch out this distinction's d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -262,6 +258,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -278,13 +281,6 @@
                     "description": "Gain a PP when you switch out this distinction's d8 for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -543,10 +539,6 @@
         "statement": true,
         "view": {
           "page": 1,
-          "style": {
-            "header": "default",
-            "body": "paired-slots"
-          },
           "features": {
             "description": true,
             "sfx": false,
@@ -575,7 +567,21 @@
             "height": 1
           },
           "reservedSlots": 2,
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            },
+            "child:Statement": {
+              "left": "50%",
+              "top": 0,
+              "width": "50%",
+              "height": 1
+            }
+          }
         },
         "noun": "Standing",
         "plural": "Standings",
@@ -716,10 +722,6 @@
         "id": "ks-three-col-table",
         "view": {
           "page": 1,
-          "style": {
-            "header": "default",
-            "body": "three-column-table"
-          },
           "features": {
             "description": true,
             "sfx": true,
@@ -737,13 +739,40 @@
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "28%",
+              "height": 1
+            },
+            "description": {
+              "left": "28%",
+              "top": 0,
+              "width": "33%",
+              "height": 1
+            },
+            "child:SFX": {
+              "left": "61%",
+              "top": 0,
+              "width": "39%",
+              "height": 1
+            }
+          }
         },
         "noun": "Talent",
         "plural": "Talents",
         "traits": {
           "Overclock": {
             "description": "Spend 1 PP when rolling Engineering.",
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -751,13 +780,6 @@
                     "description": "Step up your Effect die by one step for the scene."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -897,8 +919,9 @@
         }
       },
       "Growth Ladder": {
-        "id": "ks-growth-ladder",
+        "id": "ks-dice-ladder",
         "view": {
+          "ladder": true,
           "page": 2,
           "style": {
             "header": "default",
@@ -971,10 +994,6 @@
         "id": "ks-labeled-fields",
         "view": {
           "page": 2,
-          "style": {
-            "header": "default",
-            "body": "labeled-fields"
-          },
           "features": {
             "description": true,
             "sfx": false,
@@ -986,7 +1005,21 @@
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Field",
         "plural": "Fields",
@@ -1179,22 +1212,30 @@
         "id": "ks-notes",
         "view": {
           "page": 2,
-          "style": {
-            "header": "default",
-            "body": "notes"
-          },
-          "notes": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*",
           "place": {
             "left": "50%",
             "top": 2,
             "width": "50%",
             "height": 1
           },
-          "pillar": "play"
+          "pillar": "play",
+          "parts": {
+            "description": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Note",
         "plural": "Notes",
-        "traits": {}
+        "traits": {},
+        "slots": {
+          "0": {
+            "description": "### Gear & Inventory\n- **Chrono-Compass** (d8): Points toward temporal anomalies.\n- **Reserve Cells**: Spend 1 PP to recharge.\n> *\"Never fly without a backup spanner.\"*"
+          }
+        }
       },
       "Detailed Columns": {
         "id": "ks-detailed-columns",
@@ -1384,10 +1425,6 @@
         "id": "ks-assets",
         "view": {
           "page": 3,
-          "style": {
-            "header": "boxed-rows",
-            "body": "boxed-rows"
-          },
           "features": {
             "description": false,
             "sfx": false,
@@ -1399,7 +1436,10 @@
             "width": "50%",
             "height": 1
           },
-          "pillar": "plus"
+          "pillar": "plus",
+          "frame": {
+            "box": true
+          }
         },
         "noun": "Asset",
         "plural": "Assets",

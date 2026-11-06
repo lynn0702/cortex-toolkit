@@ -120,10 +120,6 @@
           },
           "traitColumns": 3,
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "ratingLadder": [
             8,
             10,

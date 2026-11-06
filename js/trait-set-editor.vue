@@ -5,7 +5,6 @@ import TraitSetEditorRing from './trait-set-editor-ring.vue';
 import TraitSetEditorLayout from './trait-set-editor-layout.vue';
 import TraitSetEditorDice from './trait-set-editor-dice.vue';
 import TraitSetEditorImage from './trait-set-editor-image.vue';
-import TraitSetEditorSfx from './trait-set-editor-sfx.vue';
 import TraitSetEditorConfirm from './trait-set-editor-confirm.vue';
 import VisibilityEye from './visibility-eye.vue';
 import TraitSetMini from './trait-set-mini.vue';
@@ -29,7 +28,7 @@ const {
 	rootEl, inputName, cssClass, checkScrollPosition,
 	name, traitSetID, isRing, isName, styleBody, styleOptions, branchArrows, headerMode, headerAlign,
 	styleLabel, setStyleLabel, hasLabelContent, description, includeOut,
-	notesContent, allowsTraitColumns, traitColumns, needsDiceUI,
+	allowsTraitColumns, traitColumns, needsDiceUI,
 	hasTrackPart, trackLabel,
 	pipCount, pipsPerRow, pipsFilled, pipsConnected, pipLabels,
 	noun, plural, reservedSlots,
@@ -135,11 +134,6 @@ function applyFromMini( updatedSet: any ) {
 
 					<TraitSetEditorImage />
 
-					<!-- NOTES CONTENT -->
-					<div class="editor-field" v-if="styleBody === 'notes'">
-						<label :for="'trait-set-notes-' + traitSetID">Notes Content</label>
-						<textarea :id="'trait-set-notes-' + traitSetID" name="notesContent" v-model="notesContent" placeholder="Enter notes or text here..." rows="6"></textarea>
-					</div>
 
 					<!-- PIPS TRACK SETTINGS -->
 					<div class="editor-field" v-if="styleBody === 'pips'">
@@ -181,7 +175,7 @@ function applyFromMini( updatedSet: any ) {
 						<textarea :id="'trait-set-desc-' + traitSetID" name="traitSetDescription" v-model="description"></textarea>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && !isName">
+					<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
 						<label :for="'trait-set-reserved-slots-' + traitSetID"><i class="fas fa-pencil-alt"></i> Reserved Slots for Print</label>
 						<div class="num-stepper">
 							<button type="button" class="btn-step" @click.stop="reservedSlots = Math.max(0, (reservedSlots === '' || reservedSlots === null ? 1 : reservedSlots) - 1)" :disabled="reservedSlots === '' || reservedSlots === null || reservedSlots <= 0" title="Fewer reserved slots" aria-label="Fewer reserved slots">-</button>
@@ -192,7 +186,7 @@ function applyFromMini( updatedSet: any ) {
 
 
 					<!-- STATEMENT MODE -->
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'three-column-table' && styleBody !== 'paired-slots' && !isName">
+					<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
 						<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
 							<input type="checkbox" :id="'trait-set-' + traitSetID + '-statement-mode'" name="statementMode" v-model="isStatementSet">
 							<label :for="'trait-set-' + traitSetID + '-statement-mode'" style="margin: 0; font-size: 0.8rem; cursor: pointer;">Statement field</label>
@@ -216,7 +210,6 @@ function applyFromMini( updatedSet: any ) {
 						</div>
 					</div>
 
-					<TraitSetEditorSfx />
 
 					<!-- RESTORE TEMPLATE TRAITS (D19) -->
 					<div class="editor-field" v-if="restorableTraitNames.length">
@@ -259,24 +252,7 @@ function applyFromMini( updatedSet: any ) {
 							</div>
 						</div>
 					</div>
-					<div class="editor-field" v-if="styleBody === 'three-column-table'">
-						<div class="editor-label">Table Headings</div>
-						<div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
-							<div style="flex: 1;">
-								<label :for="'trait-set-' + traitSetID + '-col1'" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 1</label>
-								<input type="text" :id="'trait-set-' + traitSetID + '-col1'" name="tableCol1" :value="styleLabel('col1')" @change="setStyleLabel('col1', targetValue($event))" :placeholder="styleLabel('col1')">
-							</div>
-							<div style="flex: 1;">
-								<label :for="'trait-set-' + traitSetID + '-col2'" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 2</label>
-								<input type="text" :id="'trait-set-' + traitSetID + '-col2'" name="tableCol2" :value="styleLabel('col2')" @change="setStyleLabel('col2', targetValue($event))" :placeholder="styleLabel('col2')">
-							</div>
-							<div style="flex: 1;">
-								<label :for="'trait-set-' + traitSetID + '-col3'" style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Column 3</label>
-								<input type="text" :id="'trait-set-' + traitSetID + '-col3'" name="tableCol3" :value="styleLabel('col3')" @change="setStyleLabel('col3', targetValue($event))" :placeholder="styleLabel('col3')">
-							</div>
-						</div>
-					</div>
-					<div class="editor-field" v-if="styleBody === 'dice-count'">
+										<div class="editor-field" v-if="styleBody === 'dice-count'">
 						<div class="editor-label">Count Headings</div>
 						<div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
 							<div style="flex: 1;">
@@ -290,7 +266,7 @@ function applyFromMini( updatedSet: any ) {
 						</div>
 					</div>
 
-					<div class="editor-field" v-if="styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
+					<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips'">
 						<div class="editor-label">Nouns</div>
 						<div style="display: flex; gap: 0.5rem;">
 							<div style="flex: 1;">
@@ -364,7 +340,7 @@ function applyFromMini( updatedSet: any ) {
 					</div>
 
 					<!-- COLUMNS WITHIN SET -->
-					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
+					<div class="editor-field" v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips'">
 						<label :for="'trait-set-' + traitSetID + '-columns'">Columns Within Set</label>
 						<select :id="'trait-set-' + traitSetID + '-columns'" name="traitColumns" v-model.number="traitColumns">
 							<option :value="1">1 Column</option>
@@ -374,7 +350,7 @@ function applyFromMini( updatedSet: any ) {
 					</div>
 
 					<!-- RATING POSITION -->
-					<div class="editor-field" v-if="needsDiceUI && styleBody !== 'notes' && styleBody !== 'image' && styleBody !== 'pips'">
+					<div class="editor-field" v-if="needsDiceUI && styleBody !== 'image' && styleBody !== 'pips'">
 						<label :for="'trait-set-' + traitSetID + '-rating-position'">Rating Position</label>
 						<select :id="'trait-set-' + traitSetID + '-rating-position'" name="ratingPosition" v-model="ratingPosition">
 							<option value="inline">Inline</option>

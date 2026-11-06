@@ -121,7 +121,6 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					page: 1,
 					place: { left: '0%', top: 2, width: '100%', height: 2 },
 					header: 'top',
-					style: { body: 'sfx-rows' },
 					features: { sfx: true },
 					frame: {
 						shape: 'arc',

@@ -965,8 +965,20 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getChildTraitByNoun(trait: Trait | undefined, noun: string): Trait | undefined {
-		if (!trait || !Array.isArray(trait.traits)) return undefined;
-		return trait.traits.find((t) => (t?.name || '').trim().toLowerCase() === noun.trim().toLowerCase());
+		if (!trait) return undefined;
+		const n = noun.trim().toLowerCase();
+		if (n === 'sfx') {
+			const entries = cortexFunctions.sfxChildren(trait);
+			return entries.find((e: any) => String(e?.name || '').trim().toLowerCase() !== 'hinder') as Trait | undefined;
+		}
+		if (n === 'statement') {
+			const child = cortexFunctions.statementChild(trait);
+			if (child) return child as Trait;
+			if (trait.description) return { name: trait.description, description: trait.description, traits: [] } as any;
+			return undefined;
+		}
+		if (!Array.isArray(trait.traits)) return undefined;
+		return trait.traits.find((t) => (t?.name || '').trim().toLowerCase() === n);
 	}
 
 	function blankPipTrait(): any {
@@ -1261,7 +1273,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function getTraitSetSlotCount(traitSetArg: TraitSet) {
 		const custom = getView(traitSetArg);
 		const bodyStyle = custom?.style?.body;
-		if (bodyStyle === 'notes' || bodyStyle === 'image') return 0;
+		if (bodyStyle === 'image') return 0;
 
 		const configured = custom?.reservedSlots;
 		if (configured !== undefined && configured !== null && String(configured) !== '') {

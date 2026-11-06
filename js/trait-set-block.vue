@@ -4,12 +4,8 @@ import { cortexFunctions } from './functions.ts';
 import { computed, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
-import TraitSetNotes from './trait-set-notes.vue';
 import TraitSetPips from './trait-set-pips.vue';
-import TraitSetLabeledFields from './trait-set-labeled-fields.vue';
 import TraitSetSubtraitColumns from './trait-set-subtrait-columns.vue';
-import TraitSetThreeColumnTable from './trait-set-three-column-table.vue';
-import TraitSetPairedSlots from './trait-set-paired-slots.vue';
 import TraitSetDieRows from './trait-set-die-rows.vue';
 import TraitSetDiceCount from './trait-set-dice-count.vue';
 import TraitSetList from './trait-set-list.vue';
@@ -58,12 +54,8 @@ const setSfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.valu
 const BODY_COMPONENTS: Record<string, any> = {
 	'name': TraitSetName,
 	'image': TraitSetImage,
-	'notes': TraitSetNotes,
 	'pips': TraitSetPips,
-	'labeled-fields': TraitSetLabeledFields,
 	'subtrait-columns': TraitSetSubtraitColumns,
-	'three-column-table': TraitSetThreeColumnTable,
-	'paired-slots': TraitSetPairedSlots,
 	'die-rows': TraitSetDieRows,
 	'dice-count': TraitSetDiceCount
 };

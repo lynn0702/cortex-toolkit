@@ -120,10 +120,6 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "sfx-rows",
-            "body": "sfx-rows"
-          },
           "ratingLadder": [
             8
           ],
@@ -155,6 +151,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -171,13 +174,6 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -195,6 +191,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -211,13 +214,6 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           },
@@ -235,6 +231,13 @@
                 12
               ]
             },
+            "view": {
+              "badge": {
+                "text": "SFX",
+                "shape": "vertical-bar",
+                "color": "black"
+              }
+            },
             "traits": {
               "SFX": {
                 "traits": {
@@ -251,13 +254,6 @@
                     "description": "Gain a PP when you trade out your distinction's d8 rating for a d4."
                   }
                 }
-              }
-            },
-            "view": {
-              "badge": {
-                "text": "SFX",
-                "shape": "vertical-bar",
-                "color": "black"
               }
             }
           }
@@ -598,14 +594,24 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
           "multiDie": false,
           "notes": "",
           "reservedSlots": 3,
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Power Set",
         "plural": "Power Sets",
@@ -626,11 +632,21 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Power",
         "plural": "Powers",
@@ -651,11 +667,21 @@
             "subtraits": false
           },
           "page": 1,
-          "style": {
-            "header": "labeled-fields",
-            "body": "labeled-fields"
-          },
-          "pillar": "plus"
+          "pillar": "plus",
+          "parts": {
+            "name": {
+              "left": "0%",
+              "top": 0,
+              "width": "100%",
+              "height": 1
+            },
+            "description": {
+              "left": "0%",
+              "top": 1,
+              "width": "100%",
+              "height": 1
+            }
+          }
         },
         "noun": "Power",
         "plural": "Powers",

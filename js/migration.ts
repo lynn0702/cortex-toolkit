@@ -22,8 +22,8 @@ export const cortexMigration = {
 	// Set bodies whose trait rows are the list-family structure (name /
 	// rating / description / sfx / subtraits / attached stress) that
 	// view.parts can express. Bespoke bodies keep the legacy flags.
-	LIST_FAMILY_BODIES: ['default', 'sfx-rows', 'die-track', 'list',
-		'two-columns-compact', 'two-columns-detailed', 'boxed-rows', 'pool-rows',
+	LIST_FAMILY_BODIES: ['default', 'die-track', 'list',
+		'two-columns-compact', 'two-columns-detailed', 'pool-rows',
 		'distinctions', 'stress', 'assets', 'resources'] as string[],
 
 	LEGACY_STYLE_BODIES: {

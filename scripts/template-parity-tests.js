@@ -121,7 +121,7 @@ const readLayered = (id) => JSON.parse(fs.readFileSync(path.join(root, 'data/tem
   ok(sap && sap.rating.top === 0 && sap.name.top === 1, 'above pushes name to row 1', sap);
   const atp = sets.Attributes.view.parts;
   ok(atp && atp.name.top === 0 && atp.rating.top === 1, 'below adds a row', atp);
-  ok(sets.Standing.view.parts === undefined, 'bespoke bodies keep legacy flex (no parts)');
+  ok(sets.Standing.view.parts && sets.Standing.view.parts['child:Statement'], 'standing carries parts with child:Statement');
   ok(sets.Attributes.view.ringTrait === false, 'ring flag kept');
   ok(L.character.view.columns === undefined &&
     L.character.view.watermark.opacity === 0.08, 'columns removed from sheet custom, watermark kept');

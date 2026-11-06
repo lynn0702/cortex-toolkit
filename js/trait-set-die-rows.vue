@@ -14,6 +14,7 @@ const {
 	<div
 		class="trait-die-rows"
 		:class="{
+			'ladder': getView(traitSet)?.ladder === true,
 			'rating-vertical': getRatingPosition(traitSet) === 'vertical',
 			'label-vertical': getView(traitSet)?.labelPosition === 'vertical'
 		}"
