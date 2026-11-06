@@ -157,29 +157,6 @@ export function setRatingDie(node: Record<string, any>, size: number | null, ran
 	}
 }
 
-/**
- * Build a rating from legacy encodings (legacy read path).
- * pool/spendable/hitches ride alongside; range defaults to the die ladder.
- */
-export function ratingFromLegacy(
-	value: unknown,
-	dice: unknown,
-	opts?: { range?: number[]; type?: RatingType },
-): Rating | undefined {
-	const list = Array.isArray(dice) ? dice.filter((d): d is number => typeof d === 'number' && d > 0) : [];
-	if (list.length > 0) {
-		return {
-			type: list.length > 1 ? 'Dice' : 'Die',
-			value: list,
-			range: opts?.range ? [...opts.range] : [...DIE_LADDER],
-		};
-	}
-	if (typeof value === 'number' && value > 0) {
-		return { type: opts?.type ?? 'Die', value: [value], range: opts?.range ? [...opts.range] : [...DIE_LADDER] };
-	}
-	return undefined;
-}
-
 /** Spent indices live beside the rating (view.spentDice), never in it. */
 export function getSpentIndices(node: unknown): number[] {
 	const v = getView(node);

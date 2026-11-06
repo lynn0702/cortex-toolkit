@@ -131,7 +131,8 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-12: Fidelity fixes: badge rows are a 3-column grid with centred dice; sections fill their bands; paired-slot dice share the main row; trait names centred; unrated rows keep full tracks (blank sheets stay pencil-usable).
 
 ### Files
-- 2026-11-06: Only current-format files import. Old-format and Kaelri files are rejected; a separate converter project produces current-format files. Layered templates keep set `id` for join continuity; template layers are complete, not sparse; `$schema`/`version` markers drop in layered form.
+- 2026-11-06: Only current-format files import, superseding the "One migration path" rule. Old-format and Kaelri files are rejected; a separate converter project produces current-format files. Layered templates keep set `id` for join continuity; template layers are complete, not sparse; `$schema`/`version` markers drop in layered form.
+- 2026-11-06: `normalizeLayeredTraits` was import-only (its `slots` → traits conversion is a no-op on current-format data) and was deleted with the migration machinery, not relocated.
 
 ### Persistence
 - 2026-10-26 (multi-tab data loss): saves are granular by character — the app upserts and deletes whole character entries by id, and the storage layer merges them into the store (read-modify-write) instead of replacing the whole record, so a stale tab can no longer clobber another tab's characters. A stale save is flagged and surfaced as a toast, never a quiet drop.
@@ -159,7 +160,6 @@ https://github.com/kaelri/cortex-toolkit.
 ### Agent working style
 - 2026-10-11: Terse UI: short labels, no parentheticals, no "e.g." A label that needs explaining gets renamed.
 - 2026-10-11: Agents may build beyond the ask when genuinely helpful. Test: surface something real (stored elements get UI; no hidden state) versus inventing the speculative (presets for undefined taxonomies).
-- 2026-10-11: Files import only in the current format; a separate converter project handles old formats. The app never carries a legacy reader.
 - 2026-10-11: The model (`trait-layers.md`, `trait-usage.md`) is the UI spec.
 - 2026-10-10: Keep the `$noun` / default `"pronoun"` joke — load-bearing morale.
 - 2026-10-11: Shell discipline: content edits to generated files go through the edit tool with read-verified context; byte-level verification via git diff hunks.

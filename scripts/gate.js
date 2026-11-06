@@ -28,7 +28,7 @@ run('2. Type Check (vue-tsc)', 'npm run check');
 run('3. Production Build (vite + asset versioning)', 'npm run build');
 
 // 4. Test Suites
-run('4. Test Suites (vitest + 10 legacy suites)', 'npm test');
+run('4. Test Suites (vitest + 8 legacy suites)', 'npm test');
 
 // 5. Schema & Data Validation
 run('5. Schema & Corpus Validation', 'npm run validate');

@@ -1,4 +1,4 @@
-﻿// Export emit tests: canonical scaffolding stays out of every emit path,
+// Export emit tests: canonical scaffolding stays out of every emit path,
 // internal ids never leak, explicit nulls survive.
 // Usage: node scripts/export-tests.js  (exit 1 on failure)
 const F = require('../js/functions.ts').cortexFunctions;
@@ -86,7 +86,7 @@ function walk(node, fn) {
 	ok(emptyTags === 0, 'layered emit: no empty tags', emptyTags);
 	// description "" survives in deltas: it is an explicit clear of an
 	// inherited description (templates, which are the base layer, never
-	// carry it â€” layered emit strips it there).
+	// carry it — layered emit strips it there).
 	ok(e.sets.Distinctions.traits.Brawn.description === '', 'layered emit: cleared description kept');
 	ok(
 		JSON.stringify(e.sets.Distinctions.traits.Brawn.rating) ===

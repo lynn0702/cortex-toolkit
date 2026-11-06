@@ -49,7 +49,7 @@ Offline-capable, client-side, and zero-backend. Runs in any modern browser.
 ### Data Architecture & Backward Compatibility
 - **JSON Schema Validation**: Strict schema enforcement against `schema/0.1/character.schema.json` and `schema/0.1/sheet-template.schema.json`.
 - **Generated Model Types**: TypeScript interfaces generated directly from JSON Schema specifications.
-- **One Migration Path**: Unbroken backward compatibility with legacy formats from the original toolkit and Kaelri fork.
+
 
 ---
 
@@ -116,7 +116,7 @@ Every change committed to `main` must pass the repository definition of done:
    - `cortex-pal-tests`: Dice pool notation, rolling, and syntax export.
    - `spotlight-grid-tests`: Grid engine column tracks, spans, and row breaks.
    - `merge-tests`: 3-state layered entity inheritance and null-clearing.
-   - `migration-tests`: Legacy format import normalization and schema migration.
+
    - `materialize-tests`: Template snapshot pinning and layered materialization.
    - `template-parity-tests`: Round-trip parity between `templates.js` and layered JSON fixtures.
 4. `npm run validate`: JSON schema validation with 0 errors and 0 warnings.

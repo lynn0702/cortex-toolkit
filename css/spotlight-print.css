@@ -4044,7 +4044,7 @@ body:has(.character-sheet.submode-print) .main {
 	width: auto;
 }
 /* Rating dice hug the name side: any residual spill goes right, away
-   from the trait name, matching legacy row order. */
+   from the trait name. */
 .character-sheet .trait-parts-inline > .trait-part-rating {
 	display: flex;
 	justify-content: flex-start;
