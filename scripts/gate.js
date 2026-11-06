@@ -62,17 +62,17 @@ function checkVHtml(dir) {
 			!entry.name.endsWith('.bundle.js')
 		) {
 			const content = fs.readFileSync(full, 'utf8');
-			const lines = content.split('\n');
-			lines.forEach((line, idx) => {
-				if (/v-html\s*=\s*["']/.test(line)) {
-					const isSafe = allowedPatterns.some((p) => line.includes(p));
-					if (!isSafe) {
-						console.error(`[FAIL] Unsafe or unvetted v-html found in ${path.relative(root, full)}:${idx + 1}`);
-						console.error(`Line: ${line.trim()}`);
-						process.exit(1);
-					}
+			const regex = /v-html\s*=\s*(["'])([\s\S]*?)\1/g;
+			let match;
+			while ((match = regex.exec(content)) !== null) {
+				const expr = match[2];
+				const isSafe = allowedPatterns.some((p) => expr.includes(p));
+				if (!isSafe) {
+					console.error(`[FAIL] Unsafe or unvetted v-html found in ${path.relative(root, full)}`);
+					console.error(`Expr: ${expr.trim()}`);
+					process.exit(1);
 				}
-			});
+			}
 		}
 	}
 }
