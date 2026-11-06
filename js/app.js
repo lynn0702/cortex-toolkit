@@ -5,8 +5,9 @@ import { cloneDeep } from './clone-deep.ts';
 import { DOGFOOD_TEMPLATES } from './dogfood-templates.ts';
 import TraitSetFrame from './trait-set-frame.vue';
 import App from './app.vue';
+import '../css/app.css';
 
-document.addEventListener('DOMContentLoaded', () => {
+function mount() {
 	// The mounted proxy is the documented handle for browser-driven tests and
 	// debugging (see legacy.md environment gotchas). Components are imported by
 	// their consumers (`<script setup>` SFCs), so no global registration is needed.
@@ -21,4 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.cortexCloneDeep = cloneDeep;
 	window.cortexDogfoodTemplates = DOGFOOD_TEMPLATES;
 	window.cortexTraitSetFrame = TraitSetFrame;
-});
+}
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', mount);
+} else {
+	mount();
+}

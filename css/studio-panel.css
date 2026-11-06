@@ -1,12 +1,11 @@
-// STUDIO SIDE PANEL & DOCKED INSPECTOR STYLES
+/* STUDIO SIDE PANEL & DOCKED INSPECTOR STYLES */
 
 :root {
 	--studio-panel-width: 23rem;
 }
 
-// Side Panel container: pinned to the side
+/* Side Panel container: pinned to the side */
 .studio-panel {
-	@extend %no-print;
 	position: fixed;
 	top: var(--header-size);
 	bottom: var(--header-size);
@@ -45,7 +44,7 @@
 	}
 }
 
-// Push sheet column when space allows (>= 1400px)
+/* Push sheet column when space allows (>= 1400px) */
 @media screen and (min-width: 1400px) {
 	.play-shell.panel-open.panel-right .sheet-column {
 		margin-right: var(--studio-panel-width);
@@ -58,7 +57,7 @@
 	}
 }
 
-// Below 1400px: Overlay drawer, sheet stays centered without margin shift
+/* Below 1400px: Overlay drawer, sheet stays centered without margin shift */
 @media screen and (max-width: 1399px) {
 	.play-shell .sheet-column {
 		margin-left: 0 !important;
@@ -70,15 +69,15 @@
 	}
 }
 
-// Not-wide viewports: panel header buttons are icons only (labels hide;
-// titles carry the names). Matches the JS narrow-viewport line in app.vue.
+/* Not-wide viewports: panel header buttons are icons only (labels hide; */
+/* titles carry the names). Matches the JS narrow-viewport line in app.vue. */
 @media screen and (max-width: 1399px) {
 	.studio-panel-actions .studio-tab-label {
 		display: none;
 	}
 }
 
-// Mobile (< 768px): Full width drawer / Play mode bottom sheet
+/* Mobile (< 768px): Full width drawer / Play mode bottom sheet */
 @media screen and (max-width: 768px) {
 	html,
 	body,
@@ -131,15 +130,15 @@
 		}
 	}
 
-	// No side-to-side docking on a full-width drawer: the toggle hides.
+	/* No side-to-side docking on a full-width drawer: the toggle hides. */
 	.studio-panel .studio-action-dock {
 		display: none;
 	}
 }
 
-// Editor flex rows (multi-column label/number inputs) must shrink with the
-// panel: flex items and inputs keep an auto minimum by default, which forced
-// a ~421px floor and sideways scroll on mobile.
+/* Editor flex rows (multi-column label/number inputs) must shrink with the */
+/* panel: flex items and inputs keep an auto minimum by default, which forced */
+/* a ~421px floor and sideways scroll on mobile. */
 .studio-panel .editor-fields div[style*='flex: 1'] {
 	min-width: 0;
 }
@@ -151,8 +150,8 @@
 	min-width: 0;
 }
 
-// One toolbar row: sheet tabs or crumbs on the left, actions on the right.
-// The row never wraps: the left side truncates, the actions never shrink.
+/* One toolbar row: sheet tabs or crumbs on the left, actions on the right. */
+/* The row never wraps: the left side truncates, the actions never shrink. */
 .studio-panel-header {
 	display: flex;
 	flex-wrap: nowrap;
@@ -217,7 +216,7 @@
 	}
 }
 
-// Sheet tabs: compact so all three labels fit the 23rem panel and 360px.
+/* Sheet tabs: compact so all three labels fit the 23rem panel and 360px. */
 .studio-sheet-tabs {
 	gap: 0.15rem;
 
@@ -284,7 +283,7 @@
 		color: #94a3b8;
 		cursor: pointer;
 
-		// The root link stays whole; set and trait names take the truncation.
+		/* The root link stays whole; set and trait names take the truncation. */
 		&:first-child {
 			flex-shrink: 0;
 		}
@@ -327,7 +326,7 @@
 		flex-direction: column;
 	}
 
-	// Docked editor adaptation inside studio panel
+	/* Docked editor adaptation inside studio panel */
 	.editor {
 		position: static !important;
 		width: 100% !important;
@@ -357,7 +356,7 @@
 			padding-bottom: 0.4rem !important;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 
-			// The 'X' close button is redundant with the Sheet crumb link
+			/* The 'X' close button is redundant with the Sheet crumb link */
 			button:first-child:not(.editor-copy):not(.editor-delete):not(.editor-delete-confirm):not(.editor-revert) {
 				display: none !important;
 			}
@@ -380,18 +379,18 @@
 			padding: 0 !important;
 		}
 
-		// The floating editor's scroll-position chevrons describe an inner
-		// scroll region that never scrolls while docked (the panel body
-		// owns scrolling) — without this they float mid-content, looking
-		// like a broken expander.
+		/* The floating editor's scroll-position chevrons describe an inner */
+		/* scroll region that never scrolls while docked (the panel body */
+		/* owns scrolling) — without this they float mid-content, looking */
+		/* like a broken expander. */
 		.editor-inner::before,
 		.editor-inner::after {
 			display: none !important;
 		}
 
-		// The floating editor's scroll region (absolute stretch +2rem with
-		// hidden scrollbars) must not leak into the docked panel: there it
-		// is a normal static block and the panel body owns scrolling.
+		/* The floating editor's scroll region (absolute stretch +2rem with */
+		/* hidden scrollbars) must not leak into the docked panel: there it */
+		/* is a normal static block and the panel body owns scrolling. */
 		&.scrollable > .editor-inner > div {
 			position: static !important;
 			padding: 0 !important;
@@ -418,7 +417,7 @@
 	}
 }
 
-// Active trait selection focus highlight on sheet
+/* Active trait selection focus highlight on sheet */
 .trait.is-selected,
 .trait.selected {
 	outline: 2px solid var(--color-interactive, #0284c7) !important;

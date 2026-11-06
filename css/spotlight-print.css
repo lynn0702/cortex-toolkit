@@ -1,7 +1,6 @@
-// SPOTLIGHT PRINTABLE LAYOUT & PRINT TAB STYLES
+/* SPOTLIGHT PRINTABLE LAYOUT & PRINT TAB STYLES */
 
 .print-toolbar {
-	@extend %no-print;
 	position: sticky;
 	top: 0;
 	z-index: 950;
@@ -112,8 +111,8 @@
 	}
 }
 
-// Print View mirrors the printed page: no on-sheet edit buttons
-// (+ Trait, + Attribute, Scale Die, etc.) â€” you can't click paper.
+/* Print View mirrors the printed page: no on-sheet edit buttons */
+/* (+ Trait, + Attribute, Scale Die, etc.) â€” you can't click paper. */
 .character-sheet.submode-print {
 	.preview-button-container,
 	.spotlight-add-set-bar,
@@ -124,7 +123,7 @@
 	}
 }
 
-// MULTI-PAGE & PRINT LAYOUT
+/* MULTI-PAGE & PRINT LAYOUT */
 .character-sheet.submode-print {
 	background: #f1f5f9;
 	min-height: 100vh;
@@ -160,8 +159,8 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		// Physical page-break cut lines (screen preview only): a red rule
-		// every page-height so spillover past one sheet is visible.
+		/* Physical page-break cut lines (screen preview only): a red rule */
+		/* every page-height so spillover past one sheet is visible. */
 		background-image: repeating-linear-gradient(
 			to bottom,
 			transparent 0,
@@ -192,31 +191,31 @@
 		}
 	}
 
-	// PRINT: trait names never collapse into vertical letter stacks. The
-	// dice row wraps below the name on narrow columns instead, and print
-	// trait dice run smaller so more rows fit inline like the source sheets.
-	// (Same DOM renders real print output, so this covers paper too.)
+	/* PRINT: trait names never collapse into vertical letter stacks. The */
+	/* dice row wraps below the name on narrow columns instead, and print */
+	/* trait dice run smaller so more rows fit inline like the source sheets. */
+	/* (Same DOM renders real print output, so this covers paper too.) */
 	.trait-title {
 		flex-wrap: wrap;
 		row-gap: 0.15rem;
 
-		> .trait-name {
+		& > .trait-name {
 			flex: 1 1 auto;
 			min-width: 0;
 			overflow-wrap: normal;
 			word-break: normal;
 		}
 
-		> .trait-value {
+		& > .trait-value {
 			flex: 0 0 auto;
 			min-width: 0;
 		}
 	}
 
-	// Beats the 1.25rem trait-value diecon rule elsewhere in this file for
-	// print trait rows only (higher specificity wins regardless of order).
-	// Parts cells join it at a hair smaller so narrow fixed tracks (e.g.
-	// a 4-die scale at 24%) clear without wrapping.
+	/* Beats the 1.25rem trait-value diecon rule elsewhere in this file for */
+	/* print trait rows only (higher specificity wins regardless of order). */
+	/* Parts cells join it at a hair smaller so narrow fixed tracks (e.g. */
+	/* a 4-die scale at 24%) clear without wrapping. */
 	&.spotlight-print-style .trait-title .diecon {
 		width: 0.9rem;
 		height: 0.9rem;
@@ -227,14 +226,14 @@
 	}
 }
 
-// SPOTLIGHT STYLES
+/* SPOTLIGHT STYLES */
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	// TOP HEADER BOXES â€” flush into the first band (sectioned grid, no gutter).
+	/* TOP HEADER BOXES â€” flush into the first band (sectioned grid, no gutter). */
 	.page-header {
 		margin-bottom: 0;
 
-		+ .spotlight-layout > .columns.spotlight-columns:first-child {
+		& + .spotlight-layout > .columns.spotlight-columns:first-child {
 			margin-top: -2px;
 		}
 
@@ -582,7 +581,7 @@
 		}
 	}
 
-	// PAGE 2 HEADER
+	/* PAGE 2 HEADER */
 	.page-2-header {
 		margin-bottom: 1.25rem;
 
@@ -614,13 +613,13 @@
 		}
 	}
 
-	// COLUMNS IN SPOTLIGHT (GRID BANDS)
-	// BLOCK BUILDING: sets tile edge-to-edge like the source sheets â€” no
-	// gutters. Each band section is a grid: sets carry explicit placement
-	// (grid-row/column from the renderer) with per-band track shares, so a
-	// 66% set leaves ~33% for its mate. Shared 2px trait-set borders
-	// collapse into a single line via inline -2px overlaps on non-leading
-	// items; consecutive band sections collapse the same way.
+	/* COLUMNS IN SPOTLIGHT (GRID BANDS) */
+	/* BLOCK BUILDING: sets tile edge-to-edge like the source sheets â€” no */
+	/* gutters. Each band section is a grid: sets carry explicit placement */
+	/* (grid-row/column from the renderer) with per-band track shares, so a */
+	/* 66% set leaves ~33% for its mate. Shared 2px trait-set borders */
+	/* collapse into a single line via inline -2px overlaps on non-leading */
+	/* items; consecutive band sections collapse the same way. */
 	.columns.spotlight-columns {
 		display: flex;
 		flex-direction: row;
@@ -641,7 +640,7 @@
 			align-items: stretch;
 			align-content: start;
 
-			> .trait-set {
+			& > .trait-set {
 				min-width: 0;
 				width: auto;
 				margin-bottom: 0;
@@ -682,10 +681,10 @@
 				margin-top: 0 !important;
 			}
 
-			// NOTE: no z-index here. The open .editor carries z-index
-			// var(--z-editor) itself so it paints above the sticky
-			// edit/print toolbars. Raising the column/trait-set would
-			// create a stacking context that traps the editor below them.
+			/* NOTE: no z-index here. The open .editor carries z-index */
+			/* var(--z-editor) itself so it paints above the sticky */
+			/* edit/print toolbars. Raising the column/trait-set would */
+			/* create a stacking context that traps the editor below them. */
 		}
 
 		.spotlight-column > .trait-set:first-child {
@@ -825,7 +824,7 @@
 		}
 	}
 
-	// TRAIT SET BOXES
+	/* TRAIT SET BOXES */
 	.trait-set {
 		border: 2px solid #111;
 		border-radius: 4px;
@@ -894,8 +893,8 @@
 			}
 		}
 
-		// NOTE: no z-index here (see above) so an open .editor paints
-		// above the sticky edit/print toolbars instead of sliding under them.
+		/* NOTE: no z-index here (see above) so an open .editor paints */
+		/* above the sticky edit/print toolbars instead of sliding under them. */
 
 		.trait-set-header {
 			width: 1.9rem;
@@ -950,7 +949,7 @@
 		}
 	}
 
-	// TRAITS LISTING
+	/* TRAITS LISTING */
 	.trait {
 		padding-bottom: 0.35rem;
 		margin-bottom: 0.35rem;
@@ -1159,7 +1158,7 @@
 		}
 	}
 
-	// DIE STEPPERS & RATINGS
+	/* DIE STEPPERS & RATINGS */
 	.distinction-die {
 		display: inline-flex;
 		align-items: center;
@@ -1200,7 +1199,7 @@
 		}
 	}
 
-	// SMALL PORTRAIT IN COLUMN
+	/* SMALL PORTRAIT IN COLUMN */
 	.portrait-small-card {
 		border: 2px solid #000000;
 		border-radius: 4px;
@@ -1236,7 +1235,7 @@
 		}
 	}
 
-	// IMAGE TRAIT SET BODY
+	/* IMAGE TRAIT SET BODY */
 	.trait-image-body {
 		flex: 1 1 auto;
 		cursor: pointer;
@@ -1285,7 +1284,7 @@
 		}
 	}
 
-	// SFX & HINDER CHIPS
+	/* SFX & HINDER CHIPS */
 	.trait-sfx {
 		margin-top: 0.35rem;
 		padding-left: 0;
@@ -1310,7 +1309,7 @@
 		}
 	}
 
-	// DISTINCTIONS BORDERED TITLE
+	/* DISTINCTIONS BORDERED TITLE */
 	.trait-set-style-sfx-rows {
 		.trait {
 			border-bottom: none;
@@ -1336,7 +1335,7 @@
 		}
 	}
 
-	// STANDING (CAMP BEWILDERWOOD)
+	/* STANDING (CAMP BEWILDERWOOD) */
 	.trait-paired-slots {
 		display: flex;
 		flex-direction: column;
@@ -1484,7 +1483,7 @@
 		}
 	}
 
-	// BADGES / CHECKLIST TABLE (CAMP BEWILDERWOOD)
+	/* BADGES / CHECKLIST TABLE (CAMP BEWILDERWOOD) */
 	.trait-die-rows {
 		border: 1.5px solid #000000;
 		border-radius: 2px;
@@ -1550,7 +1549,7 @@
 		}
 	}
 
-	// ATTACHED STRESS / TRACK
+	/* ATTACHED STRESS / TRACK */
 	.attached-stress-block {
 		margin-top: 0.45rem;
 		padding-top: 0.15rem;
@@ -1614,14 +1613,14 @@
 		}
 	}
 
-	// TRAIT COLUMNS WITHIN TRAIT SET (BALANCED COLUMN-FLOW FILL)
+	/* TRAIT COLUMNS WITHIN TRAIT SET (BALANCED COLUMN-FLOW FILL) */
 	.trait-list-cols-2 {
 		display: grid !important;
 		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
 		column-gap: 0.75rem !important;
 		row-gap: 0.25rem !important;
 
-		> .trait {
+		& > .trait {
 			break-inside: avoid !important;
 			page-break-inside: avoid !important;
 			border-bottom: none;
@@ -1640,7 +1639,7 @@
 		column-gap: 0.75rem !important;
 		row-gap: 0.25rem !important;
 
-		> .trait {
+		& > .trait {
 			break-inside: avoid !important;
 			page-break-inside: avoid !important;
 			border-bottom: none;
@@ -1678,7 +1677,7 @@
 		}
 	}
 
-	// PIPS STYLE (XP / TRACK)
+	/* PIPS STYLE (XP / TRACK) */
 	.trait-pips-body {
 		padding: 0.35rem 0.25rem;
 
@@ -1834,7 +1833,7 @@
 		}
 	}
 
-	// FOOTER FOR PENCIL NOTE
+	/* FOOTER FOR PENCIL NOTE */
 	.spotlight-page-footer {
 		display: flex;
 		justify-content: space-between;
@@ -1856,7 +1855,7 @@
 		}
 	}
 
-	// BLANK WRITE-IN FOR PENCIL
+	/* BLANK WRITE-IN FOR PENCIL */
 	&.print-blank-mode {
 		.trait-value .c.active {
 			background: #ffffff !important;
@@ -1928,7 +1927,7 @@
 	}
 }
 
-// REAL MEDIA PRINT RULES
+/* REAL MEDIA PRINT RULES */
 @media print {
 	.print-toolbar,
 	.edit-toolbar,
@@ -2042,8 +2041,8 @@
 			border-radius: 0 !important;
 			overflow: visible !important;
 			position: relative !important;
-			// Tall sheets flow across physical pages (cut lines are a screen
-			// preview aid only and must never print).
+			/* Tall sheets flow across physical pages (cut lines are a screen */
+			/* preview aid only and must never print). */
 			background-image: none !important;
 			page-break-inside: auto !important;
 			break-inside: auto !important;
@@ -2070,7 +2069,7 @@
 	}
 }
 
-// SPOTLIGHT LIBRARY MODAL
+/* SPOTLIGHT LIBRARY MODAL */
 .modal-spotlight-library {
 	max-width: 1040px !important;
 	width: 95vw !important;
@@ -2231,9 +2230,9 @@
 			}
 		}
 
-		// Library card hero: the listing cover as the portrait with the
-		// ratings set on the ring — the sheet's own portrait + ring code
-		// paths at card scale. The ring is display-only here.
+		/* Library card hero: the listing cover as the portrait with the */
+		/* ratings set on the ring — the sheet's own portrait + ring code */
+		/* paths at card scale. The ring is display-only here. */
 		.spotlight-card-hero {
 			width: 220px;
 			margin: 0.25rem 0 0.85rem 0;
@@ -2324,7 +2323,7 @@
 	}
 }
 
-// DARK MODE FOR SPOTLIGHT LIBRARY MODAL (screen only)
+/* DARK MODE FOR SPOTLIGHT LIBRARY MODAL (screen only) */
 @media screen {
 	[data-theme='dark'],
 	.theme-dark {
@@ -2413,13 +2412,13 @@
 	}
 }
 
-// session spine renderer retired; pip rows print through shared rules
+/* session spine renderer retired; pip rows print through shared rules */
 
-// MOBILE (â‰¤768px): the A4 sheet goes fluid and every band stacks to a
-// single column â€” no horizontal overflow or clipped content. Inline grid
-// placement is neutralized (!important beats inline styles); the -2px seam
-// between stacked bands is preserved. Print/designer-preview paper layout
-// is untouched (this block is screen-only).
+/* MOBILE (â‰¤768px): the A4 sheet goes fluid and every band stacks to a */
+/* single column â€” no horizontal overflow or clipped content. Inline grid */
+/* placement is neutralized (!important beats inline styles); the -2px seam */
+/* between stacked bands is preserved. Print/designer-preview paper layout */
+/* is untouched (this block is screen-only). */
 @media screen and (max-width: 768px) {
 	.character-sheet .page-inner,
 	.character-sheet .pages,
@@ -2478,9 +2477,9 @@
 	}
 }
 
-// ============================================================
-// GENERIC SET HEADER (print) â€” placement + alignment overrides.
-// ============================================================
+/* ============================================================ */
+/* GENERIC SET HEADER (print) â€” placement + alignment overrides. */
+/* ============================================================ */
 .character-sheet.spotlight-style .trait-set.trait-set-header-top,
 .character-sheet.spotlight-print-style .trait-set.trait-set-header-top {
 	flex-direction: column;
@@ -2525,33 +2524,45 @@
 }
 .character-sheet.spotlight-style
 	.trait-set.trait-set-header-top.trait-set-header-align-center
+	&
 	> .trait-set-header
+	&
 	> .trait-set-header-inner,
 .character-sheet.spotlight-print-style
 	.trait-set.trait-set-header-top.trait-set-header-align-center
+	&
 	> .trait-set-header
+	&
 	> .trait-set-header-inner {
 	justify-content: center;
 	text-align: center;
 }
 .character-sheet.spotlight-style
 	.trait-set.trait-set-header-top.trait-set-header-align-left
+	&
 	> .trait-set-header
+	&
 	> .trait-set-header-inner,
 .character-sheet.spotlight-print-style
 	.trait-set.trait-set-header-top.trait-set-header-align-left
+	&
 	> .trait-set-header
+	&
 	> .trait-set-header-inner {
 	justify-content: flex-start;
 	text-align: left;
 }
 .character-sheet.spotlight-style
 	.trait-set.trait-set-header-top.trait-set-header-align-right
+	&
 	> .trait-set-header
+	&
 	> .trait-set-header-inner,
 .character-sheet.spotlight-print-style
 	.trait-set.trait-set-header-top.trait-set-header-align-right
+	&
 	> .trait-set-header
+	&
 	> .trait-set-header-inner {
 	justify-content: flex-end;
 	text-align: right;
@@ -2559,22 +2570,24 @@
 .character-sheet.spotlight-style .trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header,
 .character-sheet.spotlight-print-style
 	.trait-set.trait-set-header-align-left:not(.trait-set-header-top)
+	&
 	> .trait-set-header {
 	align-items: flex-start;
 }
 .character-sheet.spotlight-style .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header,
 .character-sheet.spotlight-print-style
 	.trait-set.trait-set-header-align-right:not(.trait-set-header-top)
+	&
 	> .trait-set-header {
 	align-items: flex-end;
 }
 
-// ============================================================
-// PRINT FIDELITY â€” table bodies.
-// The shared `.trait` row adds padding/margin/border-bottom; inside the
-// table-style bodies that doubles the row divider (a "gutter"). Flush them;
-// the table's own borders/dividers provide the structure.
-// ============================================================
+/* ============================================================ */
+/* PRINT FIDELITY â€” table bodies. */
+/* The shared `.trait` row adds padding/margin/border-bottom; inside the */
+/* table-style bodies that doubles the row divider (a "gutter"). Flush them; */
+/* the table's own borders/dividers provide the structure. */
+/* ============================================================ */
 .character-sheet.spotlight-print-style {
 	.trait-set-style-die-rows .trait,
 	.trait-set-style-three-column-table .trait,
@@ -2585,14 +2598,14 @@
 	}
 }
 
-// ============================================================
-// PRINT-TAB WYSIWYG: the compressed (11px-equivalent) print layout must show
-// on the print tab too, WITHOUT shrinking the app chrome. The sheet is rem-
-// based, so we `zoom` ONLY the pages container (the toolbar/header are
-// outside it) and inverse-scale the page box so the rendered page - and its
-// spill line - match the paper page break exactly. @media print uses the real
-// 11px root and no zoom, producing the identical result.
-// ============================================================
+/* ============================================================ */
+/* PRINT-TAB WYSIWYG: the compressed (11px-equivalent) print layout must show */
+/* on the print tab too, WITHOUT shrinking the app chrome. The sheet is rem- */
+/* based, so we `zoom` ONLY the pages container (the toolbar/header are */
+/* outside it) and inverse-scale the page box so the rendered page - and its */
+/* spill line - match the paper page break exactly. @media print uses the real */
+/* 11px root and no zoom, producing the identical result. */
+/* ============================================================ */
 .character-sheet.orientation-landscape,
 .pages.orientation-landscape {
 	--page-width: 297.1mm;
@@ -2626,12 +2639,12 @@
 	}
 }
 
-// ============================================================
-// PRINT FIDELITY (round 2)
-// ============================================================
+/* ============================================================ */
+/* PRINT FIDELITY (round 2) */
+/* ============================================================ */
 .character-sheet.spotlight-print-style {
-	// Sections fill their band (no empty block, no dead gap): the list
-	// distributes its rows to fill; table bodies centre vertically.
+	/* Sections fill their band (no empty block, no dead gap): the list */
+	/* distributes its rows to fill; table bodies centre vertically. */
 	.trait-set {
 		align-self: stretch;
 	}
@@ -2644,7 +2657,7 @@
 		justify-content: space-evenly;
 	}
 
-	// Badges: center the rating die between the name (left) and counter (right).
+	/* Badges: center the rating die between the name (left) and counter (right). */
 	.die-row {
 		display: grid !important;
 		grid-template-columns: 1fr auto 1fr;
@@ -2661,23 +2674,23 @@
 		justify-self: end;
 	}
 
-	// Paired-slot fields are already bordered boxes - drop the duplicate inner rule.
+	/* Paired-slot fields are already bordered boxes - drop the duplicate inner rule. */
 	.paired-slot-name-box .paired-slot-blank-line,
 	.paired-slot-statement-box .paired-slot-blank-line {
 		border-bottom: none !important;
 	}
 
-	// Header description: match the name/pronoun ruling (solid, not light gray).
+	/* Header description: match the name/pronoun ruling (solid, not light gray). */
 	.desc-blank-area .desc-blank-line {
 		border-bottom-color: #000000 !important;
 	}
 }
 
-// ============================================================
-// BLACK & WHITE PRINT: the "Black & White" print-toolbar option adds
-// `.print-bw` to the sheet; grayscale de-saturates every accent (and any
-// coloured glyph) for a true mono print, on screen and on paper.
-// ============================================================
+/* ============================================================ */
+/* BLACK & WHITE PRINT: the "Black & White" print-toolbar option adds */
+/* `.print-bw` to the sheet; grayscale de-saturates every accent (and any */
+/* coloured glyph) for a true mono print, on screen and on paper. */
+/* ============================================================ */
 .character-sheet.submode-print.print-bw {
 	filter: grayscale(1) contrast(1.05);
 }
@@ -2687,10 +2700,10 @@
 	}
 }
 
-// ============================================================
-// PRINT-TAB LAYOUT LOCK + readability
-// ============================================================
-// Proportional die icons for print.
+/* ============================================================ */
+/* PRINT-TAB LAYOUT LOCK + readability */
+/* ============================================================ */
+/* Proportional die icons for print. */
 .character-sheet.spotlight-print-style .diecon {
 	width: var(--diecon-scale-size) !important;
 	height: var(--diecon-scale-size) !important;
@@ -2701,9 +2714,9 @@
 	height: var(--diecon-size) !important;
 }
 
-// The print tab must keep the desktop sheet layout at any zoom (browser zoom
-// shrinks the CSS viewport, which was tripping the <=768px mobile collapse).
-// Lock the sheet to the page width and let the page scroll left/right instead.
+/* The print tab must keep the desktop sheet layout at any zoom (browser zoom */
+/* shrinks the CSS viewport, which was tripping the <=768px mobile collapse). */
+/* Lock the sheet to the page width and let the page scroll left/right instead. */
 @media screen {
 	.character-sheet.submode-print {
 		min-width: var(--page-width);
@@ -2733,46 +2746,46 @@
 	}
 }
 
-// A top header sits flush on its table (no dead band under the header bar),
-// except framed sets which require vertical breathing room for anchored traits.
+/* A top header sits flush on its table (no dead band under the header bar), */
+/* except framed sets which require vertical breathing room for anchored traits. */
 .character-sheet.spotlight-style .trait-set-header-top .trait-set-body:not(.trait-set-body-framed),
 .character-sheet.spotlight-print-style .trait-set-header-top .trait-set-body:not(.trait-set-body-framed) {
 	padding-top: 0 !important;
 }
 
-// Top header flush to its body (remove the `.trait-set` row-gap "margin block").
+/* Top header flush to its body (remove the `.trait-set` row-gap "margin block"). */
 .character-sheet.spotlight-style .trait-set.trait-set-header-top,
 .character-sheet.spotlight-print-style .trait-set.trait-set-header-top {
 	row-gap: 0 !important;
 	column-gap: 0 !important;
 }
 
-// Print tab: never clip the sheet - scroll horizontally when it is wider.
+/* Print tab: never clip the sheet - scroll horizontally when it is wider. */
 body:has(.character-sheet.submode-print) {
 	overflow-x: auto;
 }
 
-// Individual badge trait names: centre the label text.
+/* Individual badge trait names: centre the label text. */
 .character-sheet.spotlight-print-style .die-row .die-row-name {
 	text-align: center;
 }
 
-// Print tab: horizontal scroll lives on the main area (usable scrollbar).
+/* Print tab: horizontal scroll lives on the main area (usable scrollbar). */
 body:has(.character-sheet.submode-print) .main {
 	overflow-x: auto;
 }
 
-// No separating line between a top header label and its traits (source sheets
-// have none); reclaim that space into a larger header label.
+/* No separating line between a top header label and its traits (source sheets */
+/* have none); reclaim that space into a larger header label. */
 .character-sheet.spotlight-style .trait-set-header-top > .trait-set-header > .trait-set-header-inner,
 .character-sheet.spotlight-print-style .trait-set-header-top > .trait-set-header > .trait-set-header-inner {
 	font-size: var(--text-header) !important;
 }
 
-// Print Visual Parity & Mobile WYSIWYG Zoom
+/* Print Visual Parity & Mobile WYSIWYG Zoom */
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	// Restore table row dividers stripped by .trait reset
+	/* Restore table row dividers stripped by .trait reset */
 	.trait-set-style-die-rows .die-row:not(:last-child) {
 		border-bottom: 1px solid #000000 !important;
 	}
@@ -2780,7 +2793,7 @@ body:has(.character-sheet.submode-print) .main {
 		border-top: 1px solid #000000 !important;
 	}
 
-	// Center-align stacked trait titles (e.g. Eidolon Alpha Roles & Attributes)
+	/* Center-align stacked trait titles (e.g. Eidolon Alpha Roles & Attributes) */
 	.trait-title.trait-title-stacked:not(.trait-title-statement) {
 		align-items: center;
 		text-align: center;
@@ -2795,7 +2808,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// Compact inline U-bracket for Attached Stress (Eidolon Alpha Attributes)
+	/* Compact inline U-bracket for Attached Stress (Eidolon Alpha Attributes) */
 	.attached-stress-block {
 		display: flex;
 		align-items: center;
@@ -2815,7 +2828,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// High-contrast black borders for specialty styles in print
+	/* High-contrast black borders for specialty styles in print */
 	.trait-set-style-subtrait-columns {
 		.branch-head {
 			color: #000000;
@@ -2877,7 +2890,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// Blank-mode override: hollow out filled SVG diecons and pips for pencil write-in
+	/* Blank-mode override: hollow out filled SVG diecons and pips for pencil write-in */
 	&.print-blank-mode {
 		.diecon-filled {
 			polygon,
@@ -2896,7 +2909,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// Mobile print preview: scale the A4 zoom so the full page fits narrow screens
+/* Mobile print preview: scale the A4 zoom so the full page fits narrow screens */
 @media screen and (max-width: 768px) {
 	.character-sheet.submode-print .pages {
 		zoom: 0.62;
@@ -2908,12 +2921,12 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// ============================================================
-// GENERIC PRINT GEOMETRY & MOBILE ZOOM
-// ============================================================
+/* ============================================================ */
+/* GENERIC PRINT GEOMETRY & MOBILE ZOOM */
+/* ============================================================ */
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	// 1. Restore table row dividers stripped by the shared .trait reset
+	/* 1. Restore table row dividers stripped by the shared .trait reset */
 	.trait-set-style-die-rows .die-row:not(:last-child) {
 		border-bottom: 1px solid #000000 !important;
 	}
@@ -2921,60 +2934,60 @@ body:has(.character-sheet.submode-print) .main {
 		border-top: 1px solid #000000 !important;
 	}
 
-	// 2. STACKED TRAITS (ratingPosition: 'below', no statement):
-	// Center name and die row (reusable across Roles, Attributes, etc.)
+	/* 2. STACKED TRAITS (ratingPosition: 'below', no statement): */
+	/* Center name and die row (reusable across Roles, Attributes, etc.) */
 	.trait-title.trait-title-stacked:not(.trait-title-statement) {
 		align-items: center;
 		text-align: center;
 
-		> .trait-name,
-		> .trait-title-btn {
+		& > .trait-name,
+		& > .trait-title-btn {
 			justify-content: center;
 			text-align: center;
 			width: 100%;
 		}
-		> .trait-value {
+		& > .trait-value {
 			justify-content: center;
 			width: 100%;
 		}
 	}
 
-	// 3. INLINE STATEMENTS (statement: true + ratingPosition: 'inline'):
-	// Center-align all elements on the row midline (Name, Pip, Statement box, Dice scale).
-	// Uses a consistent 6.5rem name column so statement boxes and right-aligned dice stay flush.
+	/* 3. INLINE STATEMENTS (statement: true + ratingPosition: 'inline'): */
+	/* Center-align all elements on the row midline (Name, Pip, Statement box, Dice scale). */
+	/* Uses a consistent 6.5rem name column so statement boxes and right-aligned dice stay flush. */
 	.trait-title.trait-title-statement:not(.trait-title-stacked) {
 		display: flex !important;
 		align-items: center !important;
 		gap: 0.45rem;
 		width: 100%;
 
-		> .trait-name:not(.trait-name-blank),
-		> .trait-title-btn {
+		& > .trait-name:not(.trait-name-blank),
+		& > .trait-title-btn {
 			flex: 0 0 6.5rem;
 			min-width: 6.5rem;
 			max-width: 6.5rem;
 			align-self: center;
 			margin: 0;
 			line-height: 1;
-			> .trait-name:not(.trait-name-blank) {
+			& > .trait-name:not(.trait-name-blank) {
 				width: 100%;
 			}
 		}
 
-		> .statement-pip {
+		& > .statement-pip {
 			align-self: center;
 			margin: 0 0.15rem;
 			flex-shrink: 0;
 		}
 
-		> .trait-statement-box {
+		& > .trait-statement-box {
 			flex: 1 1 auto;
 			min-width: 0;
 			align-self: center;
 			margin: 0;
 		}
 
-		> .trait-value {
+		& > .trait-value {
 			flex: 0 0 auto;
 			margin-left: auto;
 			top: 0 !important;
@@ -2983,9 +2996,9 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 4. STACKED STATEMENTS (statement: true + ratingPosition: 'below'):
-	// Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the
-	// full-height Statement box. Works for both named traits and blank slots.
+	/* 4. STACKED STATEMENTS (statement: true + ratingPosition: 'below'): */
+	/* Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the */
+	/* full-height Statement box. Works for both named traits and blank slots. */
 	.trait-title.trait-title-statement.trait-title-stacked {
 		display: grid !important;
 		grid-template-columns: 38% 1fr;
@@ -2995,8 +3008,8 @@ body:has(.character-sheet.submode-print) .main {
 		align-items: stretch;
 		text-align: left;
 
-		> .trait-name,
-		> .trait-title-btn {
+		& > .trait-name,
+		& > .trait-title-btn {
 			grid-column: 1;
 			grid-row: 1;
 			text-align: left;
@@ -3010,21 +3023,21 @@ body:has(.character-sheet.submode-print) .main {
 			box-sizing: border-box;
 
 			&.trait-name-blank,
-			> .trait-name.trait-name-blank {
+			& > .trait-name.trait-name-blank {
 				.trait-blank-line {
 					border-bottom: none !important;
 				}
 			}
 		}
 
-		> .trait-value {
+		& > .trait-value {
 			grid-column: 1;
 			grid-row: 2;
 			justify-content: space-between;
 			width: 100%;
 		}
 
-		> .trait-statement-box {
+		& > .trait-statement-box {
 			grid-column: 2;
 			grid-row: 1 / span 2;
 			min-height: 100%;
@@ -3032,7 +3045,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 4b. RATING POSITION NONE (e.g. Milestones):
+	/* 4b. RATING POSITION NONE (e.g. Milestones): */
 	.trait-set.rating-pos-none .trait {
 		.trait-title {
 			display: inline-flex;
@@ -3051,9 +3064,9 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'):
-	// Row 1: Trait Name (left) + Die Scale (right)
-	// Row 2: Full-width Statement Box underneath.
+	/* 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'): */
+	/* Row 1: Trait Name (left) + Die Scale (right) */
+	/* Row 2: Full-width Statement Box underneath. */
 	.trait-set-rating-above .trait-title.trait-title-statement,
 	.trait-title.trait-title-statement.trait-title-above {
 		display: flex !important;
@@ -3063,17 +3076,17 @@ body:has(.character-sheet.submode-print) .main {
 		justify-content: space-between;
 		row-gap: 0.2rem;
 
-		> .trait-name,
-		> .trait-title-btn {
+		& > .trait-name,
+		& > .trait-title-btn {
 			order: 1;
 			flex: 1 1 auto;
 		}
-		> .trait-value {
+		& > .trait-value {
 			order: 2;
 			flex: 0 0 auto;
 			margin-left: auto;
 		}
-		> .trait-statement-box {
+		& > .trait-statement-box {
 			order: 3;
 			flex: 1 0 100%;
 			width: 100%;
@@ -3081,12 +3094,12 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes):
-	// When a default-style set has features.description enabled and inline blank
-	// slots, render the blank slot as a full-width bordered write-in box beside the dice.
+	/* 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes): */
+	/* When a default-style set has features.description enabled and inline blank */
+	/* slots, render the blank slot as a full-width bordered write-in box beside the dice. */
 	.trait-set-style-default.trait-set-has-feature-description {
 		.trait-title:not(.trait-title-statement):not(.trait-title-stacked) {
-			> .trait-name.trait-name-blank {
+			& > .trait-name.trait-name-blank {
 				border: 1.5px solid #000000;
 				border-radius: 2px;
 				min-height: 1.35rem;
@@ -3099,15 +3112,15 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 7. ASSET CARDS (ratingPosition: 'above'): right-align die scale over the box
-	// when inside multi-column grids, and remove double bottom borders.
+	/* 7. ASSET CARDS (ratingPosition: 'above'): right-align die scale over the box */
+	/* when inside multi-column grids, and remove double bottom borders. */
 	.trait-list-cols-2,
 	.trait-list-cols-3 {
 		column-gap: 0.85rem !important;
 		row-gap: 0.35rem !important;
 
-		// Only put the vertical dotted divider on non-trailing columns
-		> .trait {
+		/* Only put the vertical dotted divider on non-trailing columns */
+		& > .trait {
 			border-right: none !important;
 			padding-right: 0 !important;
 		}
@@ -3118,17 +3131,17 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches):
-	// the branch bar IS the section header (single magenta header on
-	// screen; see _variants). The redundant outer header hides wherever
-	// the split bar renders, and the bar opens the set editor.
+	/* 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches): */
+	/* the branch bar IS the section header (single magenta header on */
+	/* screen; see _variants). The redundant outer header hides wherever */
+	/* the split bar renders, and the bar opens the set editor. */
 	.trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
-		> .trait-set-header {
+		& > .trait-set-header {
 			display: none !important;
 		}
 	}
 
-	// 5. ATTACHED STRESS: Compact inline U-bracket row under parent trait
+	/* 5. ATTACHED STRESS: Compact inline U-bracket row under parent trait */
 	.attached-stress-block {
 		display: flex;
 		align-items: center;
@@ -3148,9 +3161,9 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT
-	// (the branch head keeps the theme magenta on screen; its black
-	// twin lives in the print-only block above)
+	/* 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT */
+	/* (the branch head keeps the theme magenta on screen; its black */
+	/* twin lives in the print-only block above) */
 	.trait-set-style-subtrait-columns {
 		.branch-main,
 		.branch-slot {
@@ -3203,7 +3216,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 7. PIP TRACKS: Opt-in vertical connectors (.pips-lattice or connected single-column .pips-connected.pips-per-row-1)
+	/* 7. PIP TRACKS: Opt-in vertical connectors (.pips-lattice or connected single-column .pips-connected.pips-per-row-1) */
 	.trait-pips-body .pips-track-container.pips-lattice,
 	.trait-pips-body .pips-track-container.pips-connected.pips-per-row-1,
 	.trait-pips-body .pips-track-container.connected.pips-per-row-1 {
@@ -3220,7 +3233,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in
+	/* 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in */
 	&.print-blank-mode {
 		.diecon-filled {
 			polygon,
@@ -3239,7 +3252,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports
+/* 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports */
 @media screen and (max-width: 768px) {
 	.character-sheet.submode-print .pages {
 		zoom: 0.58;
@@ -3251,17 +3264,17 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// ============================================================
-// GENERIC PREFILLED STATEMENT & LABELED-FIELDS GEOMETRY
-// ============================================================
+/* ============================================================ */
+/* GENERIC PREFILLED STATEMENT & LABELED-FIELDS GEOMETRY */
+/* ============================================================ */
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	// 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships):
-	// When a slot has a blank write-in trait name AND a pre-filled statement prompt,
-	// fuse the blank name box and statement box into a single continuous bordered
-	// field with open write-in space on the left and the prompt flush-right.
+	/* 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships): */
+	/* When a slot has a blank write-in trait name AND a pre-filled statement prompt, */
+	/* fuse the blank name box and statement box into a single continuous bordered */
+	/* field with open write-in space on the left and the prompt flush-right. */
 	.trait-title.trait-title-statement:not(.trait-title-stacked):has(> .trait-name-blank) {
-		> .trait-name.trait-name-blank {
+		& > .trait-name.trait-name-blank {
 			flex: 1 1 45%;
 			border: 1.5px solid #000000;
 			border-right: none;
@@ -3273,7 +3286,7 @@ body:has(.character-sheet.submode-print) .main {
 				border-bottom: none !important;
 			}
 		}
-		> .trait-statement-box {
+		& > .trait-statement-box {
 			flex: 0 1 auto;
 			border-left: none;
 			border-radius: 0 2px 2px 0;
@@ -3283,8 +3296,8 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 2. MULTI-COLUMN LABELED FIELDS (when traitColumns: 2 is set on a labeled-fields set,
-	// e.g. KitBash Power Sets where Powers + Limits sit side-by-side above full-width SFX):
+	/* 2. MULTI-COLUMN LABELED FIELDS (when traitColumns: 2 is set on a labeled-fields set, */
+	/* e.g. KitBash Power Sets where Powers + Limits sit side-by-side above full-width SFX): */
 	.trait-set-style-labeled-fields {
 		.trait-list-cols-2 .trait-labeled-fields,
 		&.trait-set-cols-2 .trait-labeled-fields {
@@ -3292,44 +3305,44 @@ body:has(.character-sheet.submode-print) .main {
 			grid-template-columns: repeat(2, 1fr);
 			gap: 0.35rem;
 
-			> .field-block:nth-child(3):last-child {
+			& > .field-block:nth-child(3):last-child {
 				grid-column: 1 / -1;
 			}
 		}
 	}
 }
 
-// ============================================================
-// GENERIC LEFT-RATED & STACKED-BOX GEOMETRY
-// ============================================================
+/* ============================================================ */
+/* GENERIC LEFT-RATED & STACKED-BOX GEOMETRY */
+/* ============================================================ */
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	// 1. INLINE BLANK WRITE-IN BOX WITH DICE ON THE LEFT (ratingPosition: 'left'):
-	// Places the die scale on the left and the bordered write-in box on the right
-	// (e.g. Misty Cove Relationships).
+	/* 1. INLINE BLANK WRITE-IN BOX WITH DICE ON THE LEFT (ratingPosition: 'left'): */
+	/* Places the die scale on the left and the bordered write-in box on the right */
+	/* (e.g. Misty Cove Relationships). */
 	.trait-set-rating-left {
 		.trait-title:not(.trait-title-stacked) {
 			flex-direction: row;
-			> .trait-value {
+			& > .trait-value {
 				order: -1;
 				margin-left: 0;
 				margin-right: 0.45rem;
 			}
-			> .trait-name {
+			& > .trait-name {
 				order: 1;
 				flex: 1 1 auto;
 			}
 		}
 	}
 
-	// 2. STACKED BLANK WRITE-IN BOX ABOVE DICE (ratingPosition: 'below' + features.description):
-	// When a blank write-in slot has ratingPosition: 'below' and description enabled
-	// (e.g. Retired No More Resources, Signature Assets, Aging Complications),
-	// render the blank name as a rectangular write-in box with the die scale centered below it.
+	/* 2. STACKED BLANK WRITE-IN BOX ABOVE DICE (ratingPosition: 'below' + features.description): */
+	/* When a blank write-in slot has ratingPosition: 'below' and description enabled */
+	/* (e.g. Retired No More Resources, Signature Assets, Aging Complications), */
+	/* render the blank name as a rectangular write-in box with the die scale centered below it. */
 	.trait-set-style-default.trait-set-has-feature-description {
 		.trait-title.trait-title-stacked:not(.trait-title-statement) {
 			align-items: stretch;
-			> .trait-name.trait-name-blank {
+			& > .trait-name.trait-name-blank {
 				border: 1.5px solid #000000;
 				border-radius: 2px;
 				min-height: 1.45rem;
@@ -3340,7 +3353,7 @@ body:has(.character-sheet.submode-print) .main {
 					border-bottom: none !important;
 				}
 			}
-			> .trait-value {
+			& > .trait-value {
 				justify-content: center;
 				width: 100%;
 				margin-top: -0.35rem;
@@ -3350,13 +3363,13 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// ============================================================
-// UI POLISH, ATTACHED STRESS FIX, EMPTY SFX SLOTS & MOBILE REFLOW
-// ============================================================
+/* ============================================================ */
+/* UI POLISH, ATTACHED STRESS FIX, EMPTY SFX SLOTS & MOBILE REFLOW */
+/* ============================================================ */
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	// 1. STACKED ATTACHED STRESS (when parent trait is stacked, e.g. Eidolon Alpha,
-	// Hammerheads, Titans): always show the STRESS label and stack below the trait!
+	/* 1. STACKED ATTACHED STRESS (when parent trait is stacked, e.g. Eidolon Alpha, */
+	/* Hammerheads, Titans): always show the STRESS label and stack below the trait! */
 	.trait-inner:has(> .trait-title.trait-title-stacked) > .attached-stress-block {
 		display: flex !important;
 		flex-direction: row !important;
@@ -3379,8 +3392,8 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 2. INLINE ATTACHED STRESS (ONLY when parent trait is NOT stacked,
-	// e.g. Snowfall Initiative Attributes & Stress):
+	/* 2. INLINE ATTACHED STRESS (ONLY when parent trait is NOT stacked, */
+	/* e.g. Snowfall Initiative Attributes & Stress): */
 	.trait-inner:has(> .trait-title:not(.trait-title-stacked)):has(> .attached-stress-block) {
 		display: flex;
 		flex-direction: row;
@@ -3388,10 +3401,10 @@ body:has(.character-sheet.submode-print) .main {
 		justify-content: space-between;
 		gap: 0.5rem;
 
-		> .trait-title {
+		& > .trait-title {
 			flex: 1 1 auto;
 		}
-		> .attached-stress-block {
+		& > .attached-stress-block {
 			flex: 0 0 auto;
 			border: none !important;
 			padding: 0 !important;
@@ -3402,8 +3415,8 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 3. EMPTY SFX WRITE-IN SLOTS:
-	// Prevent blank SFX names from rendering as solid black pills ("• █")
+	/* 3. EMPTY SFX WRITE-IN SLOTS: */
+	/* Prevent blank SFX names from rendering as solid black pills ("• █") */
 	.sfx-item,
 	.trait-sfx-item,
 	.distinction-sfx-row {
@@ -3411,7 +3424,7 @@ body:has(.character-sheet.submode-print) .main {
 		.sfx-label:empty {
 			display: none !important;
 		}
-		// When both name and description are empty, draw a clean dotted write-in line
+		/* When both name and description are empty, draw a clean dotted write-in line */
 		&:has(.sfx-name:empty) .sfx-description:empty,
 		&:has(.sfx-label:empty) .sfx-text:empty {
 			display: inline-block;
@@ -3421,7 +3434,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 4. TWO-COLUMN NOTES (e.g. Snowfall Initiative Milestones):
+	/* 4. TWO-COLUMN NOTES (e.g. Snowfall Initiative Milestones): */
 	.trait-set-style-notes.trait-set-cols-2 .trait-notes-body {
 		column-count: 2;
 		column-gap: 1rem;
@@ -3429,7 +3442,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// 5. PLAY & CREATE MODE BREATHING ROOM (non-print submodes)
+/* 5. PLAY & CREATE MODE BREATHING ROOM (non-print submodes) */
 .character-sheet:not(.submode-print) {
 	.trait-set {
 		padding-bottom: 0.5rem;
@@ -3441,14 +3454,14 @@ body:has(.character-sheet.submode-print) .main {
 	.trait-name {
 		font-size: var(--text-trait-title);
 	}
-	// Hide empty black SFX pills in Create/Play mode too
+	/* Hide empty black SFX pills in Create/Play mode too */
 	.sfx-name:empty,
 	.sfx-label:empty {
 		display: none !important;
 	}
 }
 
-// Default guard outside mobile:
+/* Default guard outside mobile: */
 .mobile-set-jump-strip,
 .mobile-pillar-track {
 	display: none;
@@ -3457,10 +3470,10 @@ body:has(.character-sheet.submode-print) .main {
 	display: contents;
 }
 
-// Desktop Pillars Deck View (> 768px in Play mode)
+/* Desktop Pillars Deck View (> 768px in Play mode) */
 @media screen and (min-width: 769px) {
 	.character-sheet.pillar-deck-view {
-		// Break out of the 210mm A4 paper container
+		/* Break out of the 210mm A4 paper container */
 		.pages {
 			display: block !important;
 			width: 100% !important;
@@ -3626,9 +3639,9 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// 6. MOBILE VIEW REFLOW FOR CREATE & PLAY MODES (<= 768px)
+/* 6. MOBILE VIEW REFLOW FOR CREATE & PLAY MODES (<= 768px) */
 @media screen and (max-width: 768px) {
-	// Edit Mode: vertical flex stack
+	/* Edit Mode: vertical flex stack */
 	.character-sheet:not(.submode-print):not(.submode-play) {
 		.page,
 		.spotlight-grid,
@@ -3649,7 +3662,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 1. Horizontally Scrolling Jump-Pill Strip (Play Mode Only)
+	/* 1. Horizontally Scrolling Jump-Pill Strip (Play Mode Only) */
 	.mobile-set-jump-strip {
 		display: flex;
 		flex-direction: row;
@@ -3728,7 +3741,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	// 2. 2D Horizontal Pillar Track + Vertical Stack Columns (Play Mode Only)
+	/* 2. 2D Horizontal Pillar Track + Vertical Stack Columns (Play Mode Only) */
 	.character-sheet.submode-play,
 	.play-shell .character-sheet:not(.submode-print):not(.submode-edit) {
 		.mobile-pillar-track {
@@ -3844,7 +3857,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// 7. SLEEK HEADER TOOLBAR & ACTION BUTTON BAR
+/* 7. SLEEK HEADER TOOLBAR & ACTION BUTTON BAR */
 .sheet-toolbar,
 .spotlight-toolbar,
 .character-toolbar,
@@ -4195,13 +4208,13 @@ body:has(.character-sheet.submode-print) .main {
 	min-width: 0;
 }
 
-// LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only)
+/* LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only) */
 @media screen {
 	[data-theme='dark'],
 	.theme-dark {
 		.character-sheet.spotlight-style:not(.submode-print),
 		.character-sheet:not(.submode-print) {
-			// Name & Header Block
+			/* Name & Header Block */
 			.page-header-inner.spotlight-header-card {
 				background: var(--bg-surface-card) !important;
 				border-color: var(--border-strong) !important;
@@ -4254,7 +4267,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// Trait Sets & Inner Boxes
+			/* Trait Sets & Inner Boxes */
 			.trait-set {
 				background: var(--bg-surface-card) !important;
 				border-color: var(--border-strong) !important;
@@ -4285,7 +4298,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// Trait Names, Titles, and Labels across all Set Styles
+			/* Trait Names, Titles, and Labels across all Set Styles */
 			.trait-title {
 				color: var(--text-main) !important;
 			}
@@ -4303,7 +4316,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// Distinctions Bordered Title (Heritage, Destiny, Camp Reputation)
+			/* Distinctions Bordered Title (Heritage, Destiny, Camp Reputation) */
 			.trait-set-style-sfx-rows {
 				.trait .trait-title {
 					background: var(--bg-surface-elevated) !important;
@@ -4317,7 +4330,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// General SFX lists
+			/* General SFX lists */
 			.trait-sfx {
 				li {
 					color: var(--text-secondary) !important;
@@ -4330,7 +4343,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// Trait Descriptions & Body Text
+			/* Trait Descriptions & Body Text */
 			.trait-description {
 				color: var(--text-secondary) !important;
 
@@ -4350,7 +4363,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// Paired Slots (Standing, Relationships)
+			/* Paired Slots (Standing, Relationships) */
 			.trait-paired-slots {
 				.paired-slot-name-box {
 					background: var(--bg-surface-elevated) !important;
@@ -4377,7 +4390,7 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-			// Write-in blank lines & dividers
+			/* Write-in blank lines & dividers */
 			.die-blank-line,
 			.trait-blank-line,
 			.desc-blank-line {
@@ -4387,7 +4400,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// Phase 3c: SVG Frames in Print
+/* Phase 3c: SVG Frames in Print */
 .trait-list-framed {
 	min-height: 240px;
 	overflow: visible;
@@ -4397,11 +4410,11 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-// CLASSIC PLACED (GRID) SETS - companion rule
-// Classic sheets do not carry spotlight-style, so the nested spotlight
-// grid rules do not apply to them. Give the classic grid region (rendered
-// with the same .columns.spotlight-columns.spotlight-grid classes) the
-// same grid display, via a top-level (non-spotlight-scoped) rule.
+/* CLASSIC PLACED (GRID) SETS - companion rule */
+/* Classic sheets do not carry spotlight-style, so the nested spotlight */
+/* grid rules do not apply to them. Give the classic grid region (rendered */
+/* with the same .columns.spotlight-columns.spotlight-grid classes) the */
+/* same grid display, via a top-level (non-spotlight-scoped) rule. */
 .classic-grid-sections .columns.spotlight-columns,
 .classic-grid-sections .columns.spotlight-columns.spotlight-grid {
 	display: grid;
@@ -4409,7 +4422,7 @@ body:has(.character-sheet.submode-print) .main {
 	align-items: stretch;
 	align-content: start;
 
-	> .trait-set {
+	& > .trait-set {
 		min-width: 0;
 		width: auto;
 		margin-bottom: 0;
@@ -4421,7 +4434,7 @@ body:has(.character-sheet.submode-print) .main {
 	margin-top: -2px;
 }
 
-// TRAIT BADGES (FORCE BACKGROUNDS IN PRINT)
+/* TRAIT BADGES (FORCE BACKGROUNDS IN PRINT) */
 .badge {
 	-webkit-print-color-adjust: exact;
 	print-color-adjust: exact;

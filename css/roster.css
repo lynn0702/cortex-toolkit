@@ -14,11 +14,10 @@
 	}
 }
 
-// BUTTONS
+/* BUTTONS */
 
 .roster-button-container {
-	@extend %button-container;
-	> div {
+	& > div {
 		justify-content: center;
 		flex-wrap: wrap;
 		height: auto;
@@ -29,7 +28,6 @@
 }
 
 .roster-button {
-	@extend %button;
 	padding: 0.5em 1.25em;
 	height: auto;
 	line-height: 1.2;
@@ -91,7 +89,7 @@
 	margin-top: 0.5rem;
 }
 
-// SEARCH
+/* SEARCH */
 
 .roster-search {
 	display: flex;
@@ -142,7 +140,7 @@
 	margin-block: 2rem;
 }
 
-// FILTER TABS
+/* FILTER TABS */
 
 .roster-filter-tabs {
 	display: flex;
@@ -181,7 +179,7 @@
 	}
 }
 
-// LIST
+/* LIST */
 
 .roster-list {
 	list-style: none;
@@ -209,11 +207,11 @@
 		transform: scale(0.8);
 	}
 
-	> div:nth-child(1) {
+	& > div:nth-child(1) {
 		flex: 0 0 10rem;
 	}
 
-	> div:nth-child(2) {
+	& > div:nth-child(2) {
 		flex: 1;
 	}
 }
@@ -315,10 +313,9 @@
 }
 
 .roster-item-button-container {
-	@extend %button-container;
 	--button-font-size: 0.66rem;
 	margin-block-start: 0.5rem;
-	> div {
+	& > div {
 		justify-content: flex-start;
 		flex-wrap: wrap;
 		height: auto;
@@ -329,7 +326,6 @@
 }
 
 .roster-item-button {
-	@extend %button;
 	display: inline-flex;
 	align-items: center;
 	padding: 0.45em 1.1em;
@@ -360,14 +356,14 @@
 	display: none;
 }
 
-// IMPORT FEEDBACK
+/* IMPORT FEEDBACK */
 
 .modal-import-details {
 	display: flex;
 	column-gap: 2rem;
 	align-items: flex-start;
 	justify-content: center;
-	> * {
+	& > * {
 		text-align: left;
 	}
 }
@@ -393,7 +389,7 @@
 		column-gap: 1rem;
 		align-items: flex-start;
 
-		> div:nth-child(1) {
+		& > div:nth-child(1) {
 			flex: 0 0 4.75rem;
 		}
 	}
@@ -404,15 +400,15 @@
 	}
 }
 
-// ============================================================
-// MOBILE ROSTER REFLOW (<=600px)
-// ============================================================
+/* ============================================================ */
+/* MOBILE ROSTER REFLOW (<=600px) */
+/* ============================================================ */
 @media screen and (max-width: 600px) {
 	.roster-item {
 		column-gap: 1rem;
 		align-items: flex-start;
 
-		> div:nth-child(1) {
+		& > div:nth-child(1) {
 			flex: 0 0 4.75rem;
 		}
 	}

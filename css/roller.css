@@ -1,4 +1,4 @@
-// DICE ROLLER & PLAY MODE STYLES
+/* DICE ROLLER & PLAY MODE STYLES */
 
 :root {
 	--roller-width: 22rem;
@@ -7,12 +7,12 @@
 	--color-effect: hsl(152, 60%, 42%);
 }
 
-// PLAY SHELL: ROLLER CO-PANEL + SHEET VIEWPORT
-// The roller is a co-panel (collapse / open left / open right), never a
-// drawer sliding over the sheet on desktop. It is viewport-pinned between
-// the fixed header and footer (top/bottom offsets, never sticky), while the
-// sheet viewport (session bar + character sheet) is the flex sibling that
-// yields room via margin on the roller's side. No overlap at any width.
+/* PLAY SHELL: ROLLER CO-PANEL + SHEET VIEWPORT */
+/* The roller is a co-panel (collapse / open left / open right), never a */
+/* drawer sliding over the sheet on desktop. It is viewport-pinned between */
+/* the fixed header and footer (top/bottom offsets, never sticky), while the */
+/* sheet viewport (session bar + character sheet) is the flex sibling that */
+/* yields room via margin on the roller's side. No overlap at any width. */
 .play-shell {
 	display: flex;
 	align-items: stretch;
@@ -42,10 +42,9 @@
 }
 
 .sidebar {
-	@extend %no-print;
-	// Viewport-pinned co-panel: top edge under the fixed site header, bottom
-	// edge above the fixed footer. Fixed (not sticky) so both edges hold on
-	// first paint and at any scroll position.
+	/* Viewport-pinned co-panel: top edge under the fixed site header, bottom */
+	/* edge above the fixed footer. Fixed (not sticky) so both edges hold on */
+	/* first paint and at any scroll position. */
 	position: fixed;
 	top: var(--header-size);
 	bottom: var(--header-size);
@@ -227,7 +226,7 @@
 	font-style: italic;
 }
 
-// AD-HOC QUICK ADD
+/* AD-HOC QUICK ADD */
 .roller-adhoc-grid {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
@@ -272,7 +271,7 @@
 	}
 }
 
-// SCALE / RESOURCE QUICK ADD (glyphs centered, never baseline-aligned)
+/* SCALE / RESOURCE QUICK ADD (glyphs centered, never baseline-aligned) */
 .roller-scale-row {
 	margin-top: 0.5rem;
 	display: flex;
@@ -344,7 +343,7 @@
 	}
 }
 
-// POOL CHIPS
+/* POOL CHIPS */
 .roller-pool-chips {
 	display: flex;
 	flex-wrap: wrap;
@@ -494,7 +493,7 @@
 	}
 }
 
-// ROLLER CONTROLS
+/* ROLLER CONTROLS */
 .roller-controls {
 	display: flex;
 	flex-direction: column;
@@ -596,7 +595,7 @@
 	}
 }
 
-// RESULTS
+/* RESULTS */
 .roller-results {
 	display: flex;
 	flex-direction: column;
@@ -648,7 +647,7 @@
 	column-gap: 0.5rem;
 }
 
-// GROUPED SECTIONS
+/* GROUPED SECTIONS */
 .roller-group-section {
 	display: flex;
 	flex-direction: column;
@@ -712,7 +711,7 @@
 	}
 }
 
-// ROLLED DICE GRID
+/* ROLLED DICE GRID */
 .roller-dice-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
@@ -851,7 +850,7 @@
 	column-gap: 0.4rem;
 }
 
-// CALCULATION BOX
+/* CALCULATION BOX */
 .roller-calc-box {
 	background: #f8f9fa;
 	border: 1px solid var(--color-separator);
@@ -881,7 +880,7 @@
 	}
 }
 
-// PRESETS
+/* PRESETS */
 .roller-presets {
 	display: flex;
 	flex-direction: column;
@@ -928,7 +927,7 @@
 	}
 }
 
-// RAW LOG VIEW
+/* RAW LOG VIEW */
 .roller-raw-log {
 	background: #1e1e1e;
 	color: #f0f0f0;
@@ -963,9 +962,8 @@
 	}
 }
 
-// TOAST NOTIFICATION
+/* TOAST NOTIFICATION */
 .toast-notification {
-	@extend %no-print;
 	position: fixed;
 	bottom: calc(var(--header-size) + 1.25rem);
 	left: 50%;
@@ -1003,7 +1001,7 @@
 	}
 }
 
-// Docked Mobile Roller Pill Bar (Play Mode <= 768px)
+/* Docked Mobile Roller Pill Bar (Play Mode <= 768px) */
 .mobile-roller-pill-bar {
 	display: none;
 

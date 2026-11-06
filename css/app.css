@@ -1,8 +1,19 @@
-// FONTS
+@import './frame.css';
+@import './modal.css';
+@import './roster.css';
+@import './character.css';
+@import './variants.css';
+@import './editor.css';
+@import './roller.css';
+@import './studio-panel.css';
+@import './spotlight-print.css';
+@import './multi-character.css';
 
-// Google Fonts
+/* FONTS */
 
-// Cortex Icons
+/* Google Fonts */
+
+/* Cortex Icons */
 @font-face {
 	font-family: 'cortex-icons';
 	src:
@@ -14,46 +25,46 @@
 	font-display: block;
 }
 
-// Font Awesome Free loaded via CDN in index.html
-// $fa-font-path: '../fonts/fontawesome-free/webfonts';
-// @import '../node_modules/@fortawesome/fontawesome-free/scss/fontawesome';
-// @import '../node_modules/@fortawesome/fontawesome-free/scss/brands';
-// @import '../node_modules/@fortawesome/fontawesome-free/scss/solid';
-// @import '../node_modules/@fortawesome/fontawesome-free/scss/regular';
+/* Font Awesome Free loaded via CDN in index.html */
+/* $fa-font-path: '../fonts/fontawesome-free/webfonts'; */
+/* @import '../node_modules/@fortawesome/fontawesome-free/scss/fontawesome'; */
+/* @import '../node_modules/@fortawesome/fontawesome-free/scss/brands'; */
+/* @import '../node_modules/@fortawesome/fontawesome-free/scss/solid'; */
+/* @import '../node_modules/@fortawesome/fontawesome-free/scss/regular'; */
 
-// VARIABLES
+/* VARIABLES */
 
 :root {
 	--page-width: 210mm;
 	--page-height: 297.1mm;
 	--page-margin: 10mm;
 	--header-size: 3rem;
-	// --sidebar-size:  6rem;
+	/* --sidebar-size:  6rem; */
 	--sidebar-size: 0px;
 
 	--font-primary: 'Open Sans', sans-serif;
 	--font-secondary: 'Alegreya Sans SC', sans-serif;
 	--font-heading: 'Josefin Sans', sans-serif;
 
-	--color-primary: hsl(337, 92%, 40%); // Fuschia
-	--color-secondary: hsl(137, 36%, 88%); // Green
-	--color-interactive: hsl(204, 71%, 47%); // Blue
-	--color-separator: hsl(0, 0%, 83%); //
-	--color-label: hsl(0, 0%, 60%); //
-	--color-inactive: hsl(0, 0%, 40%); //
-	--color-input: hsl(0, 0%, 15%); //
+	--color-primary: hsl(337, 92%, 40%); /* Fuschia */
+	--color-secondary: hsl(137, 36%, 88%); /* Green */
+	--color-interactive: hsl(204, 71%, 47%); /* Blue */
+	--color-separator: hsl(0, 0%, 83%); /* */
+	--color-label: hsl(0, 0%, 60%); /* */
+	--color-inactive: hsl(0, 0%, 40%); /* */
+	--color-input: hsl(0, 0%, 15%); /* */
 
 	--highlight-radius: 0.5em;
 
-	// TYPOGRAPHIC & ICON TOKENS (REM-based, auto-scales down in print)
-	--text-header: 1.2rem; // Trait set headers (sidebar & top)
-	--text-trait-title: 1rem; // Trait names / titles
-	--text-card-title: 0.95rem; // Asset box names / card headers
-	--text-body: 0.9rem; // SFX text, notes, descriptions, milestone lists
-	--text-meta: 0.82rem; // Sublabels, pips, statement placeholder text, counters
+	/* TYPOGRAPHIC & ICON TOKENS (REM-based, auto-scales down in print) */
+	--text-header: 1.2rem; /* Trait set headers (sidebar & top) */
+	--text-trait-title: 1rem; /* Trait names / titles */
+	--text-card-title: 0.95rem; /* Asset box names / card headers */
+	--text-body: 0.9rem; /* SFX text, notes, descriptions, milestone lists */
+	--text-meta: 0.82rem; /* Sublabels, pips, statement placeholder text, counters */
 
-	--diecon-size: 1.45rem; // Standalone die icons
-	--diecon-scale-size: 1.35rem; // Rating scale die buttons ([4] [6] [8] [10] [12])
+	--diecon-size: 1.45rem; /* Standalone die icons */
+	--diecon-scale-size: 1.35rem; /* Rating scale die buttons ([4] [6] [8] [10] [12]) */
 
 	--z-main: 100;
 	--z-page: 200;
@@ -70,10 +81,32 @@
 	--z-modal-close: 10200;
 }
 
-// PRINT
+/* PRINT */
 
-%no-print {
-	@media print {
+@media print {
+	.no-print,
+	.preview-button-container,
+	.editor-button-container,
+	.modal-button-container,
+	.roster-button-container,
+	.roster-item-button-container,
+	.edit-toolbar,
+	.editor,
+	.header,
+	.footer,
+	.session-nav,
+	.modal-session-add,
+	.sidebar,
+	.toast-notification,
+	.print-toolbar,
+	.studio-panel,
+	.submode-edit .page-header-inner::before,
+	.submode-edit .trait-set-header-inner::before,
+	.submode-edit .trait-inner::before,
+	.submode-edit .portrait-inner::before,
+	.submode-edit .attribute-inner::before,
+	.submode-edit .scale-die-inner::before,
+	.submode-edit .scale-die .scale-die-inner::before {
 		display: none !important;
 	}
 }
@@ -96,7 +129,7 @@
 	}
 }
 
-// GLOBAL
+/* GLOBAL */
 
 body,
 html {
@@ -132,7 +165,7 @@ textarea:focus-visible {
 	outline-offset: 2px;
 }
 
-// DIE VALUES
+/* DIE VALUES */
 
 .c {
 	display: inline;
@@ -143,65 +176,7 @@ textarea:focus-visible {
 	color: var(--color-primary);
 }
 
-// DIE FACE BACKING
-//
-// The cortex-icons die glyphs are a solid shape with the numerals cut out, so
-// sitting on top of a portrait / ring the numerals would show whatever is
-// behind them. A white :before backing fills those cut-outs.
-//
-// The backing must NEVER be visible outside the die outline. Previously it was
-// sized in mm and nudged to "top: 52%", which ignored where the font actually
-// draws the glyph (â‰ˆ0.15em below the line-box centre), so white slivers poked
-// out around every die and clipped the ring.
-//
-// Instead, the backing covers only the bounding box of the numeral cut-outs,
-// in em (so it scales with any font-size), positioned from the real glyph
-// geometry. That box sits fully inside the solid die outline, so it can only
-// ever show through the numerals themselves.
-//
-// Geometry measured from fonts/cortex-icons.woff (unitsPerEm 1024,
-// ascent 960 / descent 64). Values: die, dx, dy, width, height — offsets are
-// from the centre of the glyph's line box (line-height: 1). If the icon font
-// is ever regenerated, re-measure these.
-//
-// The boxes carry +0.025em of extra height below centre: subpixel rounding
-// at 1x could otherwise leave a 1px sliver of the numeral cut-out
-// uncovered, and on a dark background that sliver reads as a clipped
-// numeral. The pad stays inside every die outline.
-$die-backings:
-	4 -0.0161em 0.0872em 0.2607em 0.3814em,
-	6 0.001em 0.1805em 0.2891em 0.4547em,
-	8 -0.0078em 0.1629em 0.2852em 0.4586em,
-	10 -0.0313em 0.1688em 0.5293em 0.4586em,
-	12 -0.0181em 0.1629em 0.5322em 0.4664em;
-
-// Apply to a `.c` element whose box is centred on its glyph's line box
-// (e.g. display:block + line-height:1, or a flex box centring the text).
-@mixin die-backing {
-	&:before {
-		position: absolute;
-		content: ' ';
-		background: white;
-		z-index: -1;
-		pointer-events: none;
-		// Default (no die-N class) matches the d8 glyph
-		left: calc(50% + -0.0078em);
-		top: calc(50% + 0.1629em);
-		width: 0.2852em;
-		height: 0.4586em;
-		transform: translate(-50%, -50%);
-	}
-	@each $die, $dx, $dy, $w, $h in $die-backings {
-		&.die-#{$die}:before {
-			left: calc(50% + #{$dx});
-			top: calc(50% + #{$dy});
-			width: $w;
-			height: $h;
-		}
-	}
-}
-
-// PLOT POINTS
+/* PLOT POINTS */
 
 .pp {
 	display: inline-block;
@@ -218,12 +193,16 @@ $die-backings:
 	text-indent: 0;
 }
 
-// INTERFACE
+/* INTERFACE */
 
-%button-container {
+.button-container,
+.preview-button-container,
+.editor-button-container,
+.modal-button-container,
+.roster-button-container,
+.roster-item-button-container {
 	--button-font-size: 0.75rem;
 	--button-container-height: 2.4em;
-	@extend %no-print;
 	font-size: var(--button-font-size);
 	&.v-enter-active,
 	&.v-leave-active {
@@ -231,7 +210,7 @@ $die-backings:
 			opacity 0.2s ease,
 			transform 0.2s ease,
 			height 0.2s ease;
-		> div {
+		& > div {
 			transition: height 0.2s ease;
 		}
 	}
@@ -239,12 +218,12 @@ $die-backings:
 	&.v-leave-to {
 		opacity: 0;
 		transform: translateY(-1em);
-		> div {
+		& > div {
 			height: 0;
 		}
 	}
 
-	> div {
+	& > div {
 		display: flex;
 		align-items: stretch;
 		justify-content: center;
@@ -255,7 +234,12 @@ $die-backings:
 	}
 }
 
-%button {
+.button,
+.preview-button,
+.editor-button,
+.modal-button,
+.roster-button,
+.roster-item-button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -276,7 +260,7 @@ $die-backings:
 	opacity: 0.85;
 	transition: opacity 0.2s;
 
-	> span {
+	& > span {
 		display: inline-block;
 		line-height: inherit;
 		transform: translateY(-1.5px);
@@ -287,26 +271,14 @@ $die-backings:
 	}
 }
 
-%button-secondary {
+.button-secondary,
+.editor-button-secondary {
 	background: transparent;
 	color: var(--button-color);
 }
 
-// COMPONENTS
-
-@import 'frame';
-@import 'modal';
-@import 'roster';
-@import 'character';
-@import 'variants';
-@import 'editor';
-@import 'roller';
-@import 'studio-panel';
-@import 'spotlight-print';
-@import 'multi-character';
-
-// COARSE POINTERS (touch): icon-only controls get full finger-sized hit
-// areas without changing their visual size.
+/* COARSE POINTERS (touch): icon-only controls get full finger-sized hit
+   areas without changing their visual size. */
 @media (pointer: coarse) {
 	.editor-controls button {
 		min-width: 2.75rem;
@@ -327,19 +299,19 @@ $die-backings:
 	}
 }
 
-// ============================================================
-// PRINT DENSITY (actual print only). Scaling the root rem/em base shrinks the
-// sheet for paper; the on-screen UI (incl. the print tab) is untouched.
-// ============================================================
+/* ============================================================
+   PRINT DENSITY (actual print only). Scaling the root rem/em base shrinks the
+   sheet for paper; the on-screen UI (incl. the print tab) is untouched.
+   ============================================================ */
 @media print {
 	html {
 		font-size: 13px;
 	}
 }
 
-// ============================================================
-// A11Y FOCUS VISIBLE & UTILITIES
-// ============================================================
+/* ============================================================
+   A11Y FOCUS VISIBLE & UTILITIES
+   ============================================================ */
 button:focus-visible,
 [role='button']:focus-visible,
 [role='checkbox']:focus-visible,

@@ -1,4 +1,14 @@
-.trait-set-style-default {
+.trait-set-style-default,
+.trait-set-style-portrait-ring,
+.trait-set-style-attributes,
+.trait-set-style-sfx-rows,
+.trait-set-style-two-columns-detailed,
+.trait-set-style-subtrait-columns,
+.trait-set-style-three-column-table,
+.trait-set-style-paired-slots,
+.trait-set-style-die-rows,
+.trait-set-style-dice-count,
+.trait-set-style-labeled-fields {
 	display: flex;
 
 	.trait-set-header {
@@ -11,7 +21,7 @@
 		display: inline;
 		transform: rotate(180deg);
 		overflow-wrap: break-word;
-		> div {
+		& > div {
 			color: var(--color-primary);
 			font-weight: 800;
 			text-align: center;
@@ -37,7 +47,7 @@
 		position: relative;
 	}
 
-	// TRAIT
+	/* TRAIT */
 
 	.trait {
 		margin-left: 0 !important;
@@ -129,7 +139,7 @@
 				background: #ffffff;
 			}
 
-			> .trait-value {
+			& > .trait-value {
 				position: relative;
 				top: 0 !important;
 				align-self: center;
@@ -275,16 +285,13 @@
 	}
 }
 
-// PORTRAIT RING (FALLBACK LIST RENDERING -- USED WHENEVER THE RING
-// ITSELF DOES NOT ENGAGE, E.G. SPOTLIGHT MODE OR A MISSING PORTRAIT)
+/* PORTRAIT RING (FALLBACK LIST RENDERING -- USED WHENEVER THE RING */
+/* ITSELF DOES NOT ENGAGE, E.G. SPOTLIGHT MODE OR A MISSING PORTRAIT) */
 .trait-set-style-portrait-ring,
 .trait-set-style-attributes {
-	@extend .trait-set-style-default;
 }
 
 .trait-set-style-sfx-rows {
-	@extend .trait-set-style-default;
-
 	.trait-title {
 		font-family: var(--font-secondary);
 		color: black;
@@ -295,7 +302,7 @@
 
 	.trait-value {
 		top: -0.1em;
-		> span:not(.active),
+		& > span:not(.active),
 		.c:not(.active) {
 			color: var(--color-separator);
 		}
@@ -303,8 +310,6 @@
 }
 
 .trait-set-style-two-columns-detailed {
-	@extend .trait-set-style-default;
-
 	.trait-title {
 		font-family: var(--font-secondary);
 		color: black;
@@ -334,7 +339,7 @@
 	}
 
 	.trait-value {
-		> span:not(.active),
+		& > span:not(.active),
 		.c:not(.active) {
 			color: var(--color-separator);
 		}
@@ -417,7 +422,7 @@
 			background: white;
 			z-index: -1;
 		}
-		> span:not(.active),
+		& > span:not(.active),
 		.c:not(.active) {
 			display: none;
 		}
@@ -529,8 +534,8 @@
 			position: absolute;
 			left: 0;
 			top: 0.333em;
-			// top: 50%;
-			// transform: translateY(-50%);
+			/* top: 50%; */
+			/* transform: translateY(-50%); */
 			background-color: var(--color-primary);
 			border-radius: 50%;
 		}
@@ -539,7 +544,7 @@
 	.trait-value {
 		position: relative;
 		transform: translateY(-0.15em);
-		> span:not(.active),
+		& > span:not(.active),
 		.c:not(.active) {
 			display: none;
 		}
@@ -548,7 +553,7 @@
 	.trait-description {
 		flex: 1;
 		overflow: hidden;
-		// white-space: nowrap;
+		/* white-space: nowrap; */
 		text-overflow: ellipsis;
 	}
 
@@ -575,15 +580,15 @@
 			position: absolute;
 			left: -1.5rem;
 			top: 0.333em;
-			// top: 50%;
-			// transform: translateY(-50%);
+			/* top: 50%; */
+			/* transform: translateY(-50%); */
 			border: 2px solid var(--color-primary);
 			border-radius: 50%;
 		}
 	}
 
 	.subtrait-name {
-		// font-family: var(--font-secondary);
+		/* font-family: var(--font-secondary); */
 		color: black;
 		text-transform: none;
 		font-weight: 400;
@@ -618,7 +623,7 @@
 	}
 
 	.trait-set-header-inner {
-		> div {
+		& > div {
 			color: var(--color-primary);
 			font-weight: 800;
 			text-align: center;
@@ -724,7 +729,7 @@
 	}
 }
 
-// LIST STYLE
+/* LIST STYLE */
 .trait-set-style-list {
 	.trait-list {
 		display: flex;
@@ -768,7 +773,7 @@
 	}
 }
 
-// NOTES STYLE
+/* NOTES STYLE */
 .trait-set-style-notes {
 	.trait-set-header-inner > div {
 		color: var(--color-primary);
@@ -849,7 +854,7 @@
 	}
 }
 
-// MULTI-DIE TRAITS
+/* MULTI-DIE TRAITS */
 .multidie-value {
 	display: inline-flex !important;
 	align-items: center;
@@ -937,10 +942,8 @@
 	}
 }
 
-// SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk)
+/* SKILLS & SPECIALTIES (BRANCHED SKILL GRID, e.g. Alien Us / Safe Zone / SolarPunk) */
 .trait-set-style-subtrait-columns {
-	@extend .trait-set-style-default;
-
 	.branch-head {
 		display: grid;
 		grid-template-columns: 1fr 2rem 1.4fr;
@@ -1080,9 +1083,9 @@
 		color: var(--color-label);
 	}
 
-	// SPLIT BRANCH (specialties both sides of the skill, e.g. Alien Us).
-	// Only applied when a set carries left-side specialties; all other
-	// branch sets keep the skill-left layout above untouched.
+	/* SPLIT BRANCH (specialties both sides of the skill, e.g. Alien Us). */
+	/* Only applied when a set carries left-side specialties; all other */
+	/* branch sets keep the skill-left layout above untouched. */
 	.branch-split-head {
 		grid-template-columns: 1.4fr 1fr 2rem 1.4fr;
 		.branch-head-center {
@@ -1093,13 +1096,13 @@
 		}
 	}
 
-	// SPLIT HEAD AS THE SECTION HEADER: in split top-bar mode the outer
-	// header hides (see print file) and this bar is the section identity —
-	// same magenta header voice, vertically centered, clickable into the
-	// set editor. The 0,5,0 specificity beats the print file's black twin
-	// (which lives in a dual screen+print block); print keeps its black.
-	// @at-root because this sits nested inside the subtrait block.
-	@at-root .character-sheet.spotlight-style .trait-set.trait-set-style-subtrait-columns .branch-head {
+	/* SPLIT HEAD AS THE SECTION HEADER: in split top-bar mode the outer */
+	/* header hides (see print file) and this bar is the section identity — */
+	/* same magenta header voice, vertically centered, clickable into the */
+	/* set editor. The 0,5,0 specificity beats the print file's black twin */
+	/* (which lives in a dual screen+print block); print keeps its black. */
+	/* @at-root because this sits nested inside the subtrait block. */
+	.character-sheet.spotlight-style .trait-set.trait-set-style-subtrait-columns .branch-head {
 		color: var(--color-primary);
 		border-bottom-color: var(--color-primary);
 	}
@@ -1123,8 +1126,8 @@
 		}
 	}
 
-	// Set die on unrated grid rows: the die an unrated trait rolls, shown
-	// where it acts (the branch center carries it for split rows).
+	/* Set die on unrated grid rows: the die an unrated trait rolls, shown */
+	/* where it acts (the branch center carries it for split rows). */
 	.trait-value.single-die-value > .set-rating-die {
 		margin-left: 0.35em;
 	}
@@ -1148,9 +1151,9 @@
 		}
 	}
 
-	// FLANK LAYOUT (skills in the outer columns, specialties down the
-	// middle, e.g. Solarpunk). Engaged by traitColumns 2; explicit
-	// left-side specialties (split above) take precedence.
+	/* FLANK LAYOUT (skills in the outer columns, specialties down the */
+	/* middle, e.g. Solarpunk). Engaged by traitColumns 2; explicit */
+	/* left-side specialties (split above) take precedence. */
 	.branch-flank-head {
 		grid-template-columns: 1fr 1.4fr 1fr;
 		span:nth-child(2) {
@@ -1188,10 +1191,8 @@
 	}
 }
 
-// TALENTS TABLE (TALENT / ACTIVATION / EFFECT)
+/* TALENTS TABLE (TALENT / ACTIVATION / EFFECT) */
 .trait-set-style-three-column-table {
-	@extend .trait-set-style-default;
-
 	.trait-three-column-table {
 		border: 1px solid var(--color-primary);
 		border-radius: 0.25rem;
@@ -1244,10 +1245,8 @@
 	}
 }
 
-// STANDING (STANDING DIE + COMPLICATION & BONUS DICE)
+/* STANDING (STANDING DIE + COMPLICATION & BONUS DICE) */
 .trait-set-style-paired-slots {
-	@extend .trait-set-style-default;
-
 	.paired-slot-row-wrap {
 		display: flex;
 		flex-direction: column;
@@ -1424,10 +1423,8 @@
 	}
 }
 
-// BADGES / CHECKLIST TABLE
+/* BADGES / CHECKLIST TABLE */
 .trait-set-style-die-rows {
-	@extend .trait-set-style-default;
-
 	.trait-die-rows {
 		border: 1px solid var(--color-primary);
 		border-radius: 0.25rem;
@@ -1603,10 +1600,8 @@
 	}
 }
 
-// RESOURCES WITH DICE COUNT (RATING + DICE 1-5)
+/* RESOURCES WITH DICE COUNT (RATING + DICE 1-5) */
 .trait-set-style-dice-count {
-	@extend .trait-set-style-default;
-
 	.dice-count-row {
 		display: flex;
 		align-items: center;
@@ -1682,10 +1677,8 @@
 	}
 }
 
-// DOSSIER FIELDS (STACKED LABELED BLOCKS)
+/* DOSSIER FIELDS (STACKED LABELED BLOCKS) */
 .trait-set-style-labeled-fields {
-	@extend .trait-set-style-default;
-
 	.trait-labeled-fields {
 		display: flex;
 		flex-direction: column;
@@ -1724,7 +1717,7 @@
 	}
 }
 
-// PLAY MODE INTERACTIONS
+/* PLAY MODE INTERACTIONS */
 .submode-play {
 	.trait-set-style-die-track .c,
 	.trait-set-style-die-track .out-badge,
@@ -1748,15 +1741,15 @@
 	}
 }
 
-// ============================================================
-// GENERIC SET HEADER (placement + alignment) — appended overrides.
-// `header: 'top'` turns the vertical sidebar label into a horizontal top bar;
-// `headerAlign` positions the text in both orientations.
-// ============================================================
+/* ============================================================ */
+/* GENERIC SET HEADER (placement + alignment) — appended overrides. */
+/* `header: 'top'` turns the vertical sidebar label into a horizontal top bar; */
+/* `headerAlign` positions the text in both orientations. */
+/* ============================================================ */
 .trait-set.trait-set-header-top {
 	flex-direction: column;
 
-	> .trait-set-header {
+	& > .trait-set-header {
 		width: 100%;
 		min-width: 0;
 		height: auto;
@@ -1769,7 +1762,7 @@
 		box-sizing: border-box;
 	}
 
-	> .trait-set-header > .trait-set-header-inner {
+	& > .trait-set-header > .trait-set-header-inner {
 		writing-mode: horizontal-tb;
 		transform: translateY(1px);
 		display: inline-flex;
@@ -1809,13 +1802,13 @@
 	align-items: flex-end;
 }
 
-// UNRATED TRACKS STAY VISIBLE (sheet, print, pencil). Rated rows print only
-// the circled die; rows with no rating yet keep the full track so one can be
-// circled. Without this, unrated rows (and blank pencil sheets) render bare.
+/* UNRATED TRACKS STAY VISIBLE (sheet, print, pencil). Rated rows print only */
+/* the circled die; rows with no rating yet keep the full track so one can be */
+/* circled. Without this, unrated rows (and blank pencil sheets) render bare. */
 .trait-set .trait-value:not(:has(> .c.active)),
 .trait-set .subtrait-value:not(:has(> .c.active)) {
-	> .c:not(.active),
-	> span:not(.active) {
+	& > .c:not(.active),
+	& > span:not(.active) {
 		display: initial;
 	}
 }

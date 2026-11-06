@@ -1,7 +1,6 @@
-// MULTI-CHARACTER SESSION AND WORKSPACE STYLES
+/* MULTI-CHARACTER SESSION AND WORKSPACE STYLES */
 
 .session-nav {
-	@extend %no-print;
 	@media print {
 		display: none !important;
 		height: 0 !important;
@@ -197,7 +196,7 @@
 		gap: 0.5rem;
 	}
 
-	// Not-wide viewports: sheet-bar panel handles are icons only.
+	/* Not-wide viewports: sheet-bar panel handles are icons only. */
 	@media screen and (max-width: 1399px) {
 		.sheet-bar-btn .sheet-bar-btn-label {
 			display: none;
@@ -270,7 +269,7 @@
 	}
 }
 
-// MULTI-CHARACTER PLAY WORKSPACE
+/* MULTI-CHARACTER PLAY WORKSPACE */
 .multi-character-workspace {
 	display: flex;
 	flex-direction: row;
@@ -377,7 +376,7 @@
 			}
 		}
 
-		// Inner character sheet styling adjustment within column
+		/* Inner character sheet styling adjustment within column */
 		.character-sheet {
 			padding: 1.25rem 1rem;
 			border: none;
@@ -398,9 +397,8 @@
 	}
 }
 
-// ADD CHARACTER TO SESSION MODAL
+/* ADD CHARACTER TO SESSION MODAL */
 .modal-session-add {
-	@extend %no-print;
 	max-width: 580px !important;
 	width: 90vw !important;
 	background: #ffffff !important;
@@ -586,7 +584,7 @@
 	}
 }
 
-// ROSTER BUTTONS FOR MULTI-CHARACTER
+/* ROSTER BUTTONS FOR MULTI-CHARACTER */
 .roster-button-resume {
 	background: #0284c7 !important;
 	color: #ffffff !important;

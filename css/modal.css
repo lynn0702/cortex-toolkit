@@ -1,4 +1,4 @@
-// MODALS
+/* MODALS */
 
 .modal-veil {
 	position: fixed;
@@ -54,10 +54,10 @@
 .modal-inner {
 	padding: 3rem 1rem 2rem;
 	text-align: center;
-	> *:first-child {
+	& > *:first-child {
 		margin-block-start: 0;
 	}
-	> *:last-child {
+	& > *:last-child {
 		margin-block-end: 0;
 	}
 }
@@ -74,12 +74,10 @@
 }
 
 .modal-button-container {
-	@extend %button-container;
 	margin-block-start: 1em;
 }
 
 .modal-button {
-	@extend %button;
 	&.modal-button-no {
 		--button-color: var(--color-primary);
 	}
@@ -114,7 +112,7 @@
 	}
 }
 
-// STYLE GALLERY (ADD TRAIT SET SIDE PANEL)
+/* STYLE GALLERY (ADD TRAIT SET SIDE PANEL) */
 
 .modal-style-gallery {
 	max-width: clamp(0px, 100vw - 2rem, 64rem);
@@ -193,7 +191,7 @@
 	}
 }
 
-// Dark theme overrides for modals (Item D)
+/* Dark theme overrides for modals (Item D) */
 [data-theme='dark'],
 .theme-dark {
 	.modal-backdrop,

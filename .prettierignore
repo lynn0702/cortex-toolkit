@@ -4,7 +4,6 @@ js/app.min.js
 js/app.min.js.*
 js/templates.bundle.js
 css/app.min.css
-mix-manifest.json
 js/model.generated.ts
 data/
 schema/

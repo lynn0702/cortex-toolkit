@@ -25,7 +25,7 @@ run('1. Code Style (prettier)', 'npx prettier --check .');
 run('2. Type Check (vue-tsc)', 'npm run check');
 
 // 3. Production Build
-run('3. Production Build (webpack + asset versioning)', 'npm run build');
+run('3. Production Build (vite + asset versioning)', 'npm run build');
 
 // 4. Test Suites
 run('4. Test Suites (vitest + 10 legacy suites)', 'npm test');
