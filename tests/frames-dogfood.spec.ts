@@ -60,14 +60,14 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		// Values set
 		const valuesSet = char.traitSets[4];
 		expect(valuesSet.name).toBe('Values');
-		for (const t of (valuesSet.traits as any[])) {
+		for (const t of valuesSet.traits as any[]) {
 			expect((t as any).statement, 'trait-level statement must be stripped').toBeUndefined();
 			expect((t as any).questioned, 'trait-level questioned must be stripped').toBeUndefined();
 			expect(t.traits?.length).toBe(1);
 			expect(t.traits?.[0].name).toBeTruthy();
 		}
 		// Glory questioned pip
-		const glory = (valuesSet.traits as any[]).find(t => t.name === 'Glory');
+		const glory = (valuesSet.traits as any[]).find((t) => t.name === 'Glory');
 		expect(glory?.traits?.[0]?.rating?.value).toEqual([true]);
 
 		// Session notes does not reference JSON tab
@@ -77,16 +77,16 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 	});
 
 	it('F6: verifies stroke tokens (strong, dashed) and unrecognized fallback to primary with warning', () => {
-		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
 		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 		// Test unrecognized color fallback
 		character.traitSets[0].view.frame = {
 			shape: 'ring',
-			color: 'unknown-neon'
+			color: 'unknown-neon',
 		};
 		const wrapper = mount(TraitSetBlock, {
-			props: { character, traitSetID: 0, submode: 'play', editing: [] }
+			props: { character, traitSetID: 0, submode: 'play', editing: [] },
 		});
 
 		expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('unknown-neon'));
@@ -103,7 +103,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		expect(lineSet.view.frame.shape).toBe('line');
 
 		const wrapper = mount(TraitSetBlock, {
-			props: { character, traitSetID: 1, submode: 'edit', editing: [] }
+			props: { character, traitSetID: 1, submode: 'edit', editing: [] },
 		});
 
 		// Section carries trait-set-frame-line
@@ -125,8 +125,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character,
 				traitSetID: 0, // Attributes
 				submode: 'edit',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 
 		// Radial SVG frame is rendered in the trait list
@@ -188,8 +188,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character,
 				traitSetID: 0, // Attributes (ring frame)
 				submode: 'edit',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 
 		const btn = wrapper.find('.preview-button');
@@ -214,12 +214,12 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character,
 				traitSetID: 0,
 				submode: 'play',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 
 		expect(wrapper.find('.trait-list-framed').exists()).toBe(true);
-		const getTraitNames = () => wrapper.findAll('.trait').map(el => el.attributes('data-trait-name'));
+		const getTraitNames = () => wrapper.findAll('.trait').map((el) => el.attributes('data-trait-name'));
 		expect(getTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
 
 		// 2. Morph to ellipse
@@ -241,7 +241,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 			shape: 'block',
 			corner: 'cut',
 			stroke: '2px',
-			color: 'primary'
+			color: 'primary',
 		};
 		await wrapper.setProps({ character: characterBlock });
 		await nextTick();
@@ -277,14 +277,14 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		expect(anchors7.length).toBe(7);
 
 		// Verify distinct positions around the circle
-		const angles7 = anchors7.map(a => Math.round(a.angle));
+		const angles7 = anchors7.map((a) => Math.round(a.angle));
 		expect(new Set(angles7).size).toBe(7);
 
 		// Mount with 7 traits
 		const character7 = structuredClone(character);
 		(character7.traitSets[0].traits as any[]).push({
 			name: 'Resolve',
-			rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }
+			rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 		});
 
 		const wrapper = mount(TraitSetBlock, {
@@ -292,8 +292,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character: character7,
 				traitSetID: 0,
 				submode: 'edit',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 
 		const traitEls = wrapper.findAll('.trait-list-framed .trait');
@@ -324,8 +324,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character,
 				traitSetID: 6,
 				submode: 'print',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 		expect(wrapperPrint.find('section').exists(), 'Play-only set must be omitted from print DOM').toBe(false);
 		wrapperPrint.unmount();
@@ -336,8 +336,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character,
 				traitSetID: 6,
 				submode: 'play',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 		expect(wrapperPlay.classes()).toContain('trait-set-play-only');
 		wrapperPlay.unmount();
@@ -348,8 +348,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 				character,
 				traitSetID: 0,
 				submode: 'print',
-				editing: []
-			}
+				editing: [],
+			},
 		});
 		expect(wrapperAttributesPrint.classes()).not.toContain('trait-set-play-only');
 		expect(wrapperAttributesPrint.find('.frame-radial-svg').exists()).toBe(true);
@@ -358,7 +358,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 
 	it('regression guard: Vanguard Attributes set normalizes without legacyRing and distributes 360° across all quadrants', () => {
 		const clone = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-				cortexMigration.normalizeView(clone);
+		cortexMigration.normalizeView(clone);
 		const attrSet = (clone.traitSets as any[]).find((s: any) => s.name === 'Attributes');
 		expect(attrSet).toBeDefined();
 		expect(attrSet.view.ringTrait, 'Attributes with explicit frame must not gain ringTrait').toBeUndefined();
@@ -369,7 +369,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 
 		const anchors = computeFrameAnchors(attrSet.traits.length, resolved!);
 		expect(anchors.length).toBe(6);
-		const docks = new Set(anchors.map(a => a.dock));
+		const docks = new Set(anchors.map((a) => a.dock));
 		expect(docks.size, 'Anchors must span multiple quadrants (not stacked on one side)').toBe(4);
 		expect(docks.has('top')).toBe(true);
 		expect(docks.has('right')).toBe(true);

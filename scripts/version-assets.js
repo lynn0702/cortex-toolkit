@@ -15,16 +15,16 @@ const crypto = require('crypto');
 
 const root = path.resolve(__dirname, '..');
 
-function hashOf( relPath ) {
+function hashOf(relPath) {
 	const abs = path.join(root, relPath);
-	return crypto.createHash('sha1').update( fs.readFileSync(abs) ).digest('hex').slice(0, 10);
+	return crypto.createHash('sha1').update(fs.readFileSync(abs)).digest('hex').slice(0, 10);
 }
 
-function rewrite( relPath, replacements ) {
+function rewrite(relPath, replacements) {
 	const abs = path.join(root, relPath);
 	let text = fs.readFileSync(abs, 'utf8');
-	for ( const [ pattern, replacement ] of replacements ) {
-		if ( !pattern.test(text) ) {
+	for (const [pattern, replacement] of replacements) {
+		if (!pattern.test(text)) {
 			throw new Error(`version-assets: pattern ${pattern} not found in ${relPath}`);
 		}
 		text = text.replace(pattern, replacement);
@@ -36,9 +36,7 @@ function rewrite( relPath, replacements ) {
 // then the bundle (final bytes) is hashed for index.html.
 const tplHash = hashOf('js/templates.bundle.js');
 
-rewrite('js/app.min.js', [
-	[/js\/templates\.bundle\.js\?v=[\w-]+/g, `js/templates.bundle.js?v=${tplHash}`],
-]);
+rewrite('js/app.min.js', [[/js\/templates\.bundle\.js\?v=[\w-]+/g, `js/templates.bundle.js?v=${tplHash}`]]);
 
 const appHash = hashOf('js/app.min.js');
 const cssHash = hashOf('css/app.min.css');

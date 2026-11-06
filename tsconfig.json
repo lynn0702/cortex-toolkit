@@ -13,15 +13,9 @@
 			{
 				"name": "@vue/typescript-plugin",
 				"location": "@vue/language-core",
-				"languages": [
-					"vue"
-				]
+				"languages": ["vue"]
 			}
 		]
 	},
-	"include": [
-		"js/**/*.ts",
-		"js/**/*.vue",
-		"tests/**/*.ts"
-	]
+	"include": ["js/**/*.ts", "js/**/*.vue", "tests/**/*.ts"]
 }

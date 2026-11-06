@@ -34,7 +34,9 @@
 		font-weight: 700;
 		font-size: 0.825rem;
 		cursor: pointer;
-		transition: background-color 0.15s ease, transform 0.1s ease;
+		transition:
+			background-color 0.15s ease,
+			transform 0.1s ease;
 
 		&:hover {
 			background: #0369a1;
@@ -101,7 +103,7 @@
 		cursor: pointer;
 		user-select: none;
 
-		input[type="checkbox"] {
+		input[type='checkbox'] {
 			cursor: pointer;
 			accent-color: #0284c7;
 			width: 15px;
@@ -148,7 +150,9 @@
 		background: #ffffff;
 		padding: var(--page-margin);
 		margin-inline: auto;
-		box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+		box-shadow:
+			0 10px 25px -5px rgba(0, 0, 0, 0.15),
+			0 8px 10px -6px rgba(0, 0, 0, 0.1);
 		border-radius: 4px;
 		border: 1px solid #cbd5e1;
 		box-sizing: border-box;
@@ -158,11 +162,13 @@
 		justify-content: space-between;
 		// Physical page-break cut lines (screen preview only): a red rule
 		// every page-height so spillover past one sheet is visible.
-		background-image: repeating-linear-gradient(to bottom,
+		background-image: repeating-linear-gradient(
+			to bottom,
 			transparent 0,
 			transparent calc(var(--page-height) - 1px),
 			rgba(239, 68, 68, 0.6) calc(var(--page-height) - 1px),
-			rgba(239, 68, 68, 0.6) var(--page-height));
+			rgba(239, 68, 68, 0.6) var(--page-height)
+		);
 
 		.page-watermark {
 			position: absolute;
@@ -224,7 +230,6 @@
 // SPOTLIGHT STYLES
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-
 	// TOP HEADER BOXES â€” flush into the first band (sectioned grid, no gutter).
 	.page-header {
 		margin-bottom: 0;
@@ -575,12 +580,7 @@
 				max-width: 100%;
 			}
 		}
-
-
-
 	}
-
-
 
 	// PAGE 2 HEADER
 	.page-2-header {
@@ -795,7 +795,11 @@
 			flex-direction: column !important;
 			gap: 0.5rem !important;
 
-			.slot-col-1, .slot-center, .slot-col-2, .slot-col-3, .slot-col-last {
+			.slot-col-1,
+			.slot-center,
+			.slot-col-2,
+			.slot-col-3,
+			.slot-col-last {
 				grid-column: auto !important;
 				grid-row: auto !important;
 				width: 100% !important;
@@ -1017,7 +1021,9 @@
 					box-sizing: border-box;
 					flex-shrink: 0;
 					margin: 0 0.15rem;
-					transition: background-color 0.12s ease, transform 0.1s ease;
+					transition:
+						background-color 0.12s ease,
+						transform 0.1s ease;
 					print-color-adjust: exact;
 					-webkit-print-color-adjust: exact;
 
@@ -1303,7 +1309,6 @@
 			}
 		}
 	}
-
 
 	// DISTINCTIONS BORDERED TITLE
 	.trait-set-style-sfx-rows {
@@ -1812,7 +1817,9 @@
 						border: 1.5px solid #000000;
 						background: #ffffff;
 						box-sizing: border-box;
-						transition: transform 0.1s ease, background-color 0.15s ease;
+						transition:
+							transform 0.1s ease,
+							background-color 0.15s ease;
 
 						&.filled {
 							background: #000000;
@@ -1952,7 +1959,8 @@
 		top: -9999px !important;
 	}
 
-	body, html {
+	body,
+	html {
 		background: #ffffff !important;
 		margin: 0 !important;
 		padding: 0 !important;
@@ -2072,11 +2080,15 @@
 	background: #ffffff;
 	color: #0f172a;
 	border: 1px solid #cbd5e1;
-	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+	box-shadow:
+		0 20px 25px -5px rgba(0, 0, 0, 0.3),
+		0 8px 10px -6px rgba(0, 0, 0, 0.2);
 
 	.modal-close {
 		color: #64748b;
-		&:hover { color: #0f172a; }
+		&:hover {
+			color: #0f172a;
+		}
 	}
 
 	.modal-inner {
@@ -2286,20 +2298,26 @@
 				&.primary {
 					background: #0284c7;
 					color: #ffffff;
-					&:hover { background: #0369a1; }
+					&:hover {
+						background: #0369a1;
+					}
 				}
 
 				&.secondary {
 					background: #f1f5f9;
 					color: #334155;
 					border: 1px solid #cbd5e1;
-					&:hover { background: #e2e8f0; }
+					&:hover {
+						background: #e2e8f0;
+					}
 				}
 
 				&.print {
 					background: #059669;
 					color: #ffffff;
-					&:hover { background: #047857; }
+					&:hover {
+						background: #047857;
+					}
 				}
 			}
 		}
@@ -2308,7 +2326,7 @@
 
 // DARK MODE FOR SPOTLIGHT LIBRARY MODAL (screen only)
 @media screen {
-	[data-theme="dark"],
+	[data-theme='dark'],
 	.theme-dark {
 		.modal-spotlight-library {
 			background: #1e293b;
@@ -2317,13 +2335,19 @@
 
 			.modal-close {
 				color: #94a3b8;
-				&:hover { color: #f8fafc; }
+				&:hover {
+					color: #f8fafc;
+				}
 			}
 
 			.spotlight-library-header {
 				border-bottom-color: #334155;
-				h2 { color: #f8fafc; }
-				p { color: #94a3b8; }
+				h2 {
+					color: #f8fafc;
+				}
+				p {
+					color: #94a3b8;
+				}
 			}
 
 			.spotlight-search-input {
@@ -2331,21 +2355,33 @@
 					background: #0f172a;
 					color: #f1f5f9;
 					border-color: #334155;
-					&::placeholder { color: #94a3b8; }
+					&::placeholder {
+						color: #94a3b8;
+					}
 				}
-				i { color: #94a3b8; }
+				i {
+					color: #94a3b8;
+				}
 			}
 
-			.spotlight-loading { color: #94a3b8; }
+			.spotlight-loading {
+				color: #94a3b8;
+			}
 
 			.spotlight-card {
 				background: #0f172a;
 				border-color: #334155;
 			}
 
-			.spotlight-card-title { color: #f8fafc; }
-			.spotlight-card-subtitle { color: #94a3b8; }
-			.spotlight-card-title a { color: #0284c7; }
+			.spotlight-card-title {
+				color: #f8fafc;
+			}
+			.spotlight-card-subtitle {
+				color: #94a3b8;
+			}
+			.spotlight-card-title a {
+				color: #0284c7;
+			}
 
 			.badge-genre {
 				background: #1e293b;
@@ -2353,9 +2389,13 @@
 				border-color: #334155;
 			}
 
-			.spotlight-card-hero .attribute-name { color: #f1f5f9; }
+			.spotlight-card-hero .attribute-name {
+				color: #f1f5f9;
+			}
 
-			.spotlight-card-desc { color: #e2e8f0; }
+			.spotlight-card-desc {
+				color: #e2e8f0;
+			}
 
 			.trait-tag {
 				background: #1e293b;
@@ -2438,7 +2478,6 @@
 	}
 }
 
-
 // ============================================================
 // GENERIC SET HEADER (print) â€” placement + alignment overrides.
 // ============================================================
@@ -2480,17 +2519,55 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 .character-sheet.spotlight-style .trait-set.trait-set-header-top .trait-set-header-counter,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-top .trait-set-header-counter { margin-left: auto; font-weight: 900; }
-.character-sheet.spotlight-style .trait-set.trait-set-header-top.trait-set-header-align-center > .trait-set-header > .trait-set-header-inner,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-top.trait-set-header-align-center > .trait-set-header > .trait-set-header-inner { justify-content: center; text-align: center; }
-.character-sheet.spotlight-style .trait-set.trait-set-header-top.trait-set-header-align-left > .trait-set-header > .trait-set-header-inner,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-top.trait-set-header-align-left > .trait-set-header > .trait-set-header-inner { justify-content: flex-start; text-align: left; }
-.character-sheet.spotlight-style .trait-set.trait-set-header-top.trait-set-header-align-right > .trait-set-header > .trait-set-header-inner,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-top.trait-set-header-align-right > .trait-set-header > .trait-set-header-inner { justify-content: flex-end; text-align: right; }
+.character-sheet.spotlight-print-style .trait-set.trait-set-header-top .trait-set-header-counter {
+	margin-left: auto;
+	font-weight: 900;
+}
+.character-sheet.spotlight-style
+	.trait-set.trait-set-header-top.trait-set-header-align-center
+	> .trait-set-header
+	> .trait-set-header-inner,
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-top.trait-set-header-align-center
+	> .trait-set-header
+	> .trait-set-header-inner {
+	justify-content: center;
+	text-align: center;
+}
+.character-sheet.spotlight-style
+	.trait-set.trait-set-header-top.trait-set-header-align-left
+	> .trait-set-header
+	> .trait-set-header-inner,
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-top.trait-set-header-align-left
+	> .trait-set-header
+	> .trait-set-header-inner {
+	justify-content: flex-start;
+	text-align: left;
+}
+.character-sheet.spotlight-style
+	.trait-set.trait-set-header-top.trait-set-header-align-right
+	> .trait-set-header
+	> .trait-set-header-inner,
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-top.trait-set-header-align-right
+	> .trait-set-header
+	> .trait-set-header-inner {
+	justify-content: flex-end;
+	text-align: right;
+}
 .character-sheet.spotlight-style .trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header { align-items: flex-start; }
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-align-left:not(.trait-set-header-top)
+	> .trait-set-header {
+	align-items: flex-start;
+}
 .character-sheet.spotlight-style .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header { align-items: flex-end; }
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-align-right:not(.trait-set-header-top)
+	> .trait-set-header {
+	align-items: flex-end;
+}
 
 // ============================================================
 // PRINT FIDELITY â€” table bodies.
@@ -2553,14 +2630,19 @@
 // PRINT FIDELITY (round 2)
 // ============================================================
 .character-sheet.spotlight-print-style {
-
 	// Sections fill their band (no empty block, no dead gap): the list
 	// distributes its rows to fill; table bodies centre vertically.
 	.trait-set {
 		align-self: stretch;
 	}
-	.trait-set-body { display: flex; flex-direction: column; }
-	.trait-list { row-gap: 0; justify-content: space-evenly; }
+	.trait-set-body {
+		display: flex;
+		flex-direction: column;
+	}
+	.trait-list {
+		row-gap: 0;
+		justify-content: space-evenly;
+	}
 
 	// Badges: center the rating die between the name (left) and counter (right).
 	.die-row {
@@ -2569,9 +2651,15 @@
 		align-items: center;
 		column-gap: 0.4rem;
 	}
-	.die-row-name { justify-self: start; }
-	.die-row .trait-value { justify-self: center; }
-	.die-row-counter { justify-self: end; }
+	.die-row-name {
+		justify-self: start;
+	}
+	.die-row .trait-value {
+		justify-self: center;
+	}
+	.die-row-counter {
+		justify-self: end;
+	}
 
 	// Paired-slot fields are already bordered boxes - drop the duplicate inner rule.
 	.paired-slot-name-box .paired-slot-blank-line,
@@ -2825,343 +2913,342 @@ body:has(.character-sheet.submode-print) .main {
 // ============================================================
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
+	// 1. Restore table row dividers stripped by the shared .trait reset
+	.trait-set-style-die-rows .die-row:not(:last-child) {
+		border-bottom: 1px solid #000000 !important;
+	}
+	.trait-set-style-three-column-table .three-col-row {
+		border-top: 1px solid #000000 !important;
+	}
 
-    // 1. Restore table row dividers stripped by the shared .trait reset
-    .trait-set-style-die-rows .die-row:not(:last-child) {
-        border-bottom: 1px solid #000000 !important;
-    }
-    .trait-set-style-three-column-table .three-col-row {
-        border-top: 1px solid #000000 !important;
-    }
+	// 2. STACKED TRAITS (ratingPosition: 'below', no statement):
+	// Center name and die row (reusable across Roles, Attributes, etc.)
+	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+		align-items: center;
+		text-align: center;
 
-    // 2. STACKED TRAITS (ratingPosition: 'below', no statement):
-    // Center name and die row (reusable across Roles, Attributes, etc.)
-    .trait-title.trait-title-stacked:not(.trait-title-statement) {
-        align-items: center;
-        text-align: center;
+		> .trait-name,
+		> .trait-title-btn {
+			justify-content: center;
+			text-align: center;
+			width: 100%;
+		}
+		> .trait-value {
+			justify-content: center;
+			width: 100%;
+		}
+	}
 
-        > .trait-name,
-        > .trait-title-btn {
-            justify-content: center;
-            text-align: center;
-            width: 100%;
-        }
-        > .trait-value {
-            justify-content: center;
-            width: 100%;
-        }
-    }
+	// 3. INLINE STATEMENTS (statement: true + ratingPosition: 'inline'):
+	// Center-align all elements on the row midline (Name, Pip, Statement box, Dice scale).
+	// Uses a consistent 6.5rem name column so statement boxes and right-aligned dice stay flush.
+	.trait-title.trait-title-statement:not(.trait-title-stacked) {
+		display: flex !important;
+		align-items: center !important;
+		gap: 0.45rem;
+		width: 100%;
 
-    // 3. INLINE STATEMENTS (statement: true + ratingPosition: 'inline'):
-    // Center-align all elements on the row midline (Name, Pip, Statement box, Dice scale).
-    // Uses a consistent 6.5rem name column so statement boxes and right-aligned dice stay flush.
-    .trait-title.trait-title-statement:not(.trait-title-stacked) {
-        display: flex !important;
-        align-items: center !important;
-        gap: 0.45rem;
-        width: 100%;
+		> .trait-name:not(.trait-name-blank),
+		> .trait-title-btn {
+			flex: 0 0 6.5rem;
+			min-width: 6.5rem;
+			max-width: 6.5rem;
+			align-self: center;
+			margin: 0;
+			line-height: 1;
+			> .trait-name:not(.trait-name-blank) {
+				width: 100%;
+			}
+		}
 
-        > .trait-name:not(.trait-name-blank),
-        > .trait-title-btn {
-            flex: 0 0 6.5rem;
-            min-width: 6.5rem;
-            max-width: 6.5rem;
-            align-self: center;
-            margin: 0;
-            line-height: 1;
-            > .trait-name:not(.trait-name-blank) {
-                width: 100%;
-            }
-        }
+		> .statement-pip {
+			align-self: center;
+			margin: 0 0.15rem;
+			flex-shrink: 0;
+		}
 
-        > .statement-pip {
-            align-self: center;
-            margin: 0 0.15rem;
-            flex-shrink: 0;
-        }
+		> .trait-statement-box {
+			flex: 1 1 auto;
+			min-width: 0;
+			align-self: center;
+			margin: 0;
+		}
 
-        > .trait-statement-box {
-            flex: 1 1 auto;
-            min-width: 0;
-            align-self: center;
-            margin: 0;
-        }
+		> .trait-value {
+			flex: 0 0 auto;
+			margin-left: auto;
+			top: 0 !important;
+			align-self: center;
+			position: relative;
+		}
+	}
 
-        > .trait-value {
-            flex: 0 0 auto;
-            margin-left: auto;
-            top: 0 !important;
-            align-self: center;
-            position: relative;
-        }
-    }
+	// 4. STACKED STATEMENTS (statement: true + ratingPosition: 'below'):
+	// Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the
+	// full-height Statement box. Works for both named traits and blank slots.
+	.trait-title.trait-title-statement.trait-title-stacked {
+		display: grid !important;
+		grid-template-columns: 38% 1fr;
+		grid-template-rows: auto auto;
+		column-gap: 0.45rem;
+		row-gap: 0.2rem;
+		align-items: stretch;
+		text-align: left;
 
-    // 4. STACKED STATEMENTS (statement: true + ratingPosition: 'below'):
-    // Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the
-    // full-height Statement box. Works for both named traits and blank slots.
-    .trait-title.trait-title-statement.trait-title-stacked {
-        display: grid !important;
-        grid-template-columns: 38% 1fr;
-        grid-template-rows: auto auto;
-        column-gap: 0.45rem;
-        row-gap: 0.2rem;
-        align-items: stretch;
-        text-align: left;
+		> .trait-name,
+		> .trait-title-btn {
+			grid-column: 1;
+			grid-row: 1;
+			text-align: left;
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			min-height: 1.25rem;
+			padding: 0.15rem 0.35rem;
+			background: #ffffff;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
 
-        > .trait-name,
-        > .trait-title-btn {
-            grid-column: 1;
-            grid-row: 1;
-            text-align: left;
-            border: 1.5px solid #000000;
-            border-radius: 2px;
-            min-height: 1.25rem;
-            padding: 0.15rem 0.35rem;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            box-sizing: border-box;
+			&.trait-name-blank,
+			> .trait-name.trait-name-blank {
+				.trait-blank-line {
+					border-bottom: none !important;
+				}
+			}
+		}
 
-            &.trait-name-blank,
-            > .trait-name.trait-name-blank {
-                .trait-blank-line {
-                    border-bottom: none !important;
-                }
-            }
-        }
+		> .trait-value {
+			grid-column: 1;
+			grid-row: 2;
+			justify-content: space-between;
+			width: 100%;
+		}
 
-        > .trait-value {
-            grid-column: 1;
-            grid-row: 2;
-            justify-content: space-between;
-            width: 100%;
-        }
+		> .trait-statement-box {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+			min-height: 100%;
+			height: 100%;
+		}
+	}
 
-        > .trait-statement-box {
-            grid-column: 2;
-            grid-row: 1 / span 2;
-            min-height: 100%;
-            height: 100%;
-        }
-    }
+	// 4b. RATING POSITION NONE (e.g. Milestones):
+	.trait-set.rating-pos-none .trait {
+		.trait-title {
+			display: inline-flex;
+			width: auto;
+			margin-right: 0.35rem;
+			&::before {
+				content: '●';
+				font-size: 0.75em;
+				margin-right: 0.35rem;
+				vertical-align: middle;
+			}
+		}
+		.trait-description {
+			display: inline;
+			margin-top: 0;
+		}
+	}
 
-    // 4b. RATING POSITION NONE (e.g. Milestones):
-    .trait-set.rating-pos-none .trait {
-        .trait-title {
-            display: inline-flex;
-            width: auto;
-            margin-right: 0.35rem;
-            &::before {
-                content: "●";
-                font-size: 0.75em;
-                margin-right: 0.35rem;
-                vertical-align: middle;
-            }
-        }
-        .trait-description {
-            display: inline;
-            margin-top: 0;
-        }
-    }
+	// 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'):
+	// Row 1: Trait Name (left) + Die Scale (right)
+	// Row 2: Full-width Statement Box underneath.
+	.trait-set-rating-above .trait-title.trait-title-statement,
+	.trait-title.trait-title-statement.trait-title-above {
+		display: flex !important;
+		flex-direction: row !important;
+		flex-wrap: wrap !important;
+		align-items: center;
+		justify-content: space-between;
+		row-gap: 0.2rem;
 
-    // 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'):
-    // Row 1: Trait Name (left) + Die Scale (right)
-    // Row 2: Full-width Statement Box underneath.
-    .trait-set-rating-above .trait-title.trait-title-statement,
-    .trait-title.trait-title-statement.trait-title-above {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        align-items: center;
-        justify-content: space-between;
-        row-gap: 0.2rem;
+		> .trait-name,
+		> .trait-title-btn {
+			order: 1;
+			flex: 1 1 auto;
+		}
+		> .trait-value {
+			order: 2;
+			flex: 0 0 auto;
+			margin-left: auto;
+		}
+		> .trait-statement-box {
+			order: 3;
+			flex: 1 0 100%;
+			width: 100%;
+			min-height: 1.45rem;
+		}
+	}
 
-        > .trait-name,
-        > .trait-title-btn {
-            order: 1;
-            flex: 1 1 auto;
-        }
-        > .trait-value {
-            order: 2;
-            flex: 0 0 auto;
-            margin-left: auto;
-        }
-        > .trait-statement-box {
-            order: 3;
-            flex: 1 0 100%;
-            width: 100%;
-            min-height: 1.45rem;
-        }
-    }
+	// 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes):
+	// When a default-style set has features.description enabled and inline blank
+	// slots, render the blank slot as a full-width bordered write-in box beside the dice.
+	.trait-set-style-default.trait-set-has-feature-description {
+		.trait-title:not(.trait-title-statement):not(.trait-title-stacked) {
+			> .trait-name.trait-name-blank {
+				border: 1.5px solid #000000;
+				border-radius: 2px;
+				min-height: 1.35rem;
+				padding: 0.15rem 0.4rem;
+				background: #ffffff;
+				.trait-blank-line {
+					border-bottom: none !important;
+				}
+			}
+		}
+	}
 
-    // 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes):
-    // When a default-style set has features.description enabled and inline blank
-    // slots, render the blank slot as a full-width bordered write-in box beside the dice.
-    .trait-set-style-default.trait-set-has-feature-description {
-        .trait-title:not(.trait-title-statement):not(.trait-title-stacked) {
-            > .trait-name.trait-name-blank {
-                border: 1.5px solid #000000;
-                border-radius: 2px;
-                min-height: 1.35rem;
-                padding: 0.15rem 0.4rem;
-                background: #ffffff;
-                .trait-blank-line {
-                    border-bottom: none !important;
-                }
-            }
-        }
-    }
+	// 7. ASSET CARDS (ratingPosition: 'above'): right-align die scale over the box
+	// when inside multi-column grids, and remove double bottom borders.
+	.trait-list-cols-2,
+	.trait-list-cols-3 {
+		column-gap: 0.85rem !important;
+		row-gap: 0.35rem !important;
 
-    // 7. ASSET CARDS (ratingPosition: 'above'): right-align die scale over the box
-    // when inside multi-column grids, and remove double bottom borders.
-    .trait-list-cols-2,
-    .trait-list-cols-3 {
-        column-gap: 0.85rem !important;
-        row-gap: 0.35rem !important;
+		// Only put the vertical dotted divider on non-trailing columns
+		> .trait {
+			border-right: none !important;
+			padding-right: 0 !important;
+		}
 
-        // Only put the vertical dotted divider on non-trailing columns
-        > .trait {
-            border-right: none !important;
-            padding-right: 0 !important;
-        }
+		.trait-asset-card .trait-value {
+			justify-content: flex-end;
+			width: 100%;
+		}
+	}
 
-        .trait-asset-card .trait-value {
-            justify-content: flex-end;
-            width: 100%;
-        }
-    }
+	// 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches):
+	// the branch bar IS the section header (single magenta header on
+	// screen; see _variants). The redundant outer header hides wherever
+	// the split bar renders, and the bar opens the set editor.
+	.trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
+		> .trait-set-header {
+			display: none !important;
+		}
+	}
 
-    // 8. SPLIT-BRANCH SKILLS (subtrait-columns with left & right branches):
-    // the branch bar IS the section header (single magenta header on
-    // screen; see _variants). The redundant outer header hides wherever
-    // the split bar renders, and the bar opens the set editor.
-    .trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
-        > .trait-set-header {
-            display: none !important;
-        }
-    }
+	// 5. ATTACHED STRESS: Compact inline U-bracket row under parent trait
+	.attached-stress-block {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.4rem;
+		border: 1.5px solid #000000;
+		border-top: none;
+		border-radius: 0 0 2px 2px;
+		padding: 0.15rem 0.4rem;
+		margin-top: 0.15rem;
 
-    // 5. ATTACHED STRESS: Compact inline U-bracket row under parent trait
-    .attached-stress-block {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.4rem;
-        border: 1.5px solid #000000;
-        border-top: none;
-        border-radius: 0 0 2px 2px;
-        padding: 0.15rem 0.4rem;
-        margin-top: 0.15rem;
+		.attached-stress-divider {
+			display: none;
+		}
+		.attached-stress-header {
+			margin-bottom: 0;
+		}
+	}
 
-        .attached-stress-divider {
-            display: none;
-        }
-        .attached-stress-header {
-            margin-bottom: 0;
-        }
-    }
+	// 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT
+	// (the branch head keeps the theme magenta on screen; its black
+	// twin lives in the print-only block above)
+	.trait-set-style-subtrait-columns {
+		.branch-main,
+		.branch-slot {
+			border: 1.5px solid #000000;
+		}
+		.branch-link::before,
+		.branch-slot::before {
+			background: #000000;
+		}
+		.branch-slot::after {
+			border-left-color: #000000;
+		}
+		.branch-side.branch-left .branch-slot::after {
+			border-right-color: #000000;
+		}
+	}
 
-    // 6. HIGH-CONTRAST BLACK BORDERS FOR SPECIALTY STYLES IN PRINT
-    // (the branch head keeps the theme magenta on screen; its black
-    // twin lives in the print-only block above)
-    .trait-set-style-subtrait-columns {
-        .branch-main,
-        .branch-slot {
-            border: 1.5px solid #000000;
-        }
-        .branch-link::before,
-        .branch-slot::before {
-            background: #000000;
-        }
-        .branch-slot::after {
-            border-left-color: #000000;
-        }
-        .branch-side.branch-left .branch-slot::after {
-            border-right-color: #000000;
-        }
-    }
+	.trait-set-style-dice-count {
+		.dice-count-rating-label,
+		.dice-count-count-label {
+			color: #000000;
+		}
+		.dice-count-pip {
+			border-color: #000000;
+			color: #000000;
+			&.filled {
+				background: #000000;
+				color: #ffffff;
+			}
+		}
+	}
 
-    .trait-set-style-dice-count {
-        .dice-count-rating-label,
-        .dice-count-count-label {
-            color: #000000;
-        }
-        .dice-count-pip {
-            border-color: #000000;
-            color: #000000;
-            &.filled {
-                background: #000000;
-                color: #ffffff;
-            }
-        }
-    }
+	.trait-die-rows.ladder {
+		border: none;
+		background: transparent;
+		&::before {
+			background: #000000;
+		}
+		.ladder-rung {
+			border: 1.5px solid #000000;
+		}
+	}
 
-    .trait-die-rows.ladder {
-        border: none;
-        background: transparent;
-        &::before {
-            background: #000000;
-        }
-        .ladder-rung {
-            border: 1.5px solid #000000;
-        }
-    }
+	.trait-set-style-labeled-fields {
+		.field-block {
+			border: 1.5px solid #000000;
+		}
+		.field-label {
+			color: #000000;
+		}
+	}
 
-    .trait-set-style-labeled-fields {
-        .field-block {
-            border: 1.5px solid #000000;
-        }
-        .field-label {
-            color: #000000;
-        }
-    }
+	// 7. PIP TRACKS: Opt-in vertical connectors (.pips-lattice or connected single-column .pips-connected.pips-per-row-1)
+	.trait-pips-body .pips-track-container.pips-lattice,
+	.trait-pips-body .pips-track-container.pips-connected.pips-per-row-1,
+	.trait-pips-body .pips-track-container.connected.pips-per-row-1 {
+		.pip-row:not(:last-child) .pip-bubble-wrap::after {
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: 100%;
+			width: 1px;
+			height: 0.55rem;
+			background: #000000;
+			transform: translateX(-50%);
+			z-index: 0;
+		}
+	}
 
-    // 7. PIP TRACKS: Opt-in vertical connectors (.pips-lattice or connected single-column .pips-connected.pips-per-row-1)
-    .trait-pips-body .pips-track-container.pips-lattice,
-    .trait-pips-body .pips-track-container.pips-connected.pips-per-row-1,
-    .trait-pips-body .pips-track-container.connected.pips-per-row-1 {
-        .pip-row:not(:last-child) .pip-bubble-wrap::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 100%;
-            width: 1px;
-            height: 0.55rem;
-            background: #000000;
-            transform: translateX(-50%);
-            z-index: 0;
-        }
-    }
-
-    // 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in
-    &.print-blank-mode {
-        .diecon-filled {
-            polygon,
-            rect {
-                fill: none !important;
-                stroke: #000000 !important;
-            }
-            text {
-                fill: #000000 !important;
-            }
-        }
-        .dice-count-pip.filled {
-            background: #ffffff !important;
-            color: #000000 !important;
-        }
-    }
+	// 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in
+	&.print-blank-mode {
+		.diecon-filled {
+			polygon,
+			rect {
+				fill: none !important;
+				stroke: #000000 !important;
+			}
+			text {
+				fill: #000000 !important;
+			}
+		}
+		.dice-count-pip.filled {
+			background: #ffffff !important;
+			color: #000000 !important;
+		}
+	}
 }
 
 // 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports
 @media screen and (max-width: 768px) {
-    .character-sheet.submode-print .pages {
-        zoom: 0.58;
-    }
+	.character-sheet.submode-print .pages {
+		zoom: 0.58;
+	}
 }
 @media screen and (max-width: 520px) {
-    .character-sheet.submode-print .pages {
-        zoom: 0.44;
-    }
+	.character-sheet.submode-print .pages {
+		zoom: 0.44;
+	}
 }
 
 // ============================================================
@@ -3169,7 +3256,6 @@ body:has(.character-sheet.submode-print) .main {
 // ============================================================
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-
 	// 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships):
 	// When a slot has a blank write-in trait name AND a pre-filled statement prompt,
 	// fuse the blank name box and statement box into a single continuous bordered
@@ -3218,7 +3304,6 @@ body:has(.character-sheet.submode-print) .main {
 // ============================================================
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-
 	// 1. INLINE BLANK WRITE-IN BOX WITH DICE ON THE LEFT (ratingPosition: 'left'):
 	// Places the die scale on the left and the bordered write-in box on the right
 	// (e.g. Misty Cove Relationships).
@@ -3270,7 +3355,6 @@ body:has(.character-sheet.submode-print) .main {
 // ============================================================
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-
 	// 1. STACKED ATTACHED STRESS (when parent trait is stacked, e.g. Eidolon Alpha,
 	// Hammerheads, Titans): always show the STRESS label and stack below the trait!
 	.trait-inner:has(> .trait-title.trait-title-stacked) > .attached-stress-block {
@@ -3607,7 +3691,11 @@ body:has(.character-sheet.submode-print) .main {
 			text-transform: uppercase;
 			letter-spacing: 0.03em;
 			cursor: pointer;
-			transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+			transition:
+				background-color 0.15s ease,
+				color 0.15s ease,
+				border-color 0.15s ease,
+				transform 0.1s ease;
 
 			&.active {
 				background: var(--color-primary, #0f172a);
@@ -3785,7 +3873,9 @@ body:has(.character-sheet.submode-print) .main {
 		font-weight: 600 !important;
 		letter-spacing: 0.02em;
 		box-shadow: none !important;
-		transition: background 0.15s ease, border-color 0.15s ease;
+		transition:
+			background 0.15s ease,
+			border-color 0.15s ease;
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.16) !important;
@@ -3969,48 +4059,105 @@ body:has(.character-sheet.submode-print) .main {
    it wins the tie by order. */
 .character-sheet.spotlight-print-style {
 	--text-header: 1rem;
-	.trait-set .trait-set-body { padding-top: 0; padding-bottom: 0; }
-	.trait:not(:last-child) { margin-bottom: 0.02rem; }
-	.trait-set { margin-bottom: 0.05rem; }
-	.trait-set.trait-set-header-top > .trait-set-header { padding-top: 0; padding-bottom: 0; }
-	.trait .trait-asset-card .trait-asset-box { min-height: 1.4rem; }
-	.attached-stress-block { margin-top: 0.2rem; padding-top: 0.1rem; }
-	.attached-stress-block .attached-stress-divider { margin-top: 0.15rem; margin-bottom: 0.15rem; }
-	.attached-stress-block .attached-stress-header { margin-bottom: 0.1rem; }
-	.spotlight-header-meta-box, .spotlight-header-desc-box { padding-top: 0.1rem; padding-bottom: 0.1rem; }
+	.trait-set .trait-set-body {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	.trait:not(:last-child) {
+		margin-bottom: 0.02rem;
+	}
+	.trait-set {
+		margin-bottom: 0.05rem;
+	}
+	.trait-set.trait-set-header-top > .trait-set-header {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+	.trait .trait-asset-card .trait-asset-box {
+		min-height: 1.4rem;
+	}
+	.attached-stress-block {
+		margin-top: 0.2rem;
+		padding-top: 0.1rem;
+	}
+	.attached-stress-block .attached-stress-divider {
+		margin-top: 0.15rem;
+		margin-bottom: 0.15rem;
+	}
+	.attached-stress-block .attached-stress-header {
+		margin-bottom: 0.1rem;
+	}
+	.spotlight-header-meta-box,
+	.spotlight-header-desc-box {
+		padding-top: 0.1rem;
+		padding-bottom: 0.1rem;
+	}
 	/* Header boxes stretch to the portrait circle (aspect-locked); cap it
 	   in print so the header does not eat the page. */
-	.page-header-inner.spotlight-header-card { min-height: 80px; padding: 0.35rem; }
-	.page-header-inner.spotlight-header-card .spotlight-header-portrait-box { max-width: 60px; }
+	.page-header-inner.spotlight-header-card {
+		min-height: 80px;
+		padding: 0.35rem;
+	}
+	.page-header-inner.spotlight-header-card .spotlight-header-portrait-box {
+		max-width: 60px;
+	}
 	/* Stacked (below) titles: tighter name-to-dice gap; centered look kept. */
-	.trait-title.trait-title-stacked:not(.trait-title-statement) { row-gap: 0.05rem; }
+	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+		row-gap: 0.05rem;
+	}
 	/* SFX/description leading trims a hair; glyph sizes untouched. */
-	.trait .trait-description { line-height: 1.15; }
-	.trait .trait-sfx li { line-height: 1.15; margin-bottom: 0.05rem; }
-	.trait:not(:last-child) { margin-bottom: 0.03rem; }
+	.trait .trait-description {
+		line-height: 1.15;
+	}
+	.trait .trait-sfx li {
+		line-height: 1.15;
+		margin-bottom: 0.05rem;
+	}
+	.trait:not(:last-child) {
+		margin-bottom: 0.03rem;
+	}
 	/* Blank table rows keep a writable floor, but 3.5rem is generous:
 	   filled rows (taller than the floor) render unchanged. */
-	.trait-set-style-three-column-table .three-col-row { min-height: 2rem; }
+	.trait-set-style-three-column-table .three-col-row {
+		min-height: 2rem;
+	}
 }
 
 /* Empty-description and sfx-list spacing (nested-grid repairs): element-
    empty descriptions (whitespace-only nodes do not count for :has) take
    no space; populated ones, hints, and blank write-in areas keep element
    children and render unchanged. SFX lists sit tighter under titles. */
-.character-sheet.spotlight-print-style .trait .trait-sfx { margin-top: 0.05rem; }
-.character-sheet.spotlight-print-style ul.subtraits { margin-top: 0.15rem; margin-bottom: 0; }
-.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait .trait-title { padding-top: 0.1rem; padding-bottom: 0.1rem; }
-.character-sheet.spotlight-print-style .trait .trait-description:not(:has(*)) { display: none; }
+.character-sheet.spotlight-print-style .trait .trait-sfx {
+	margin-top: 0.05rem;
+}
+.character-sheet.spotlight-print-style ul.subtraits {
+	margin-top: 0.15rem;
+	margin-bottom: 0;
+}
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait .trait-title {
+	padding-top: 0.1rem;
+	padding-bottom: 0.1rem;
+}
+.character-sheet.spotlight-print-style .trait .trait-description:not(:has(*)) {
+	display: none;
+}
 /* Distinctions bordered titles keep their box, with tighter padding. */
-.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait .trait-title { padding-top: 0.15rem; padding-bottom: 0.15rem; }
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait .trait-title {
+	padding-top: 0.15rem;
+	padding-bottom: 0.15rem;
+}
 /* Empty sfx description placeholders are bare struts (no ruling, unlike
    the dotted write-in treatment for nameless sfx, which is kept): they
    take vertical space without showing anything to write on. */
-.character-sheet.spotlight-print-style:not(.print-blank-mode) .sfx-blank-line:empty { display: none; }
+.character-sheet.spotlight-print-style:not(.print-blank-mode) .sfx-blank-line:empty {
+	display: none;
+}
 /* Distinctions sfx/descriptions are short phrases; tighter leading fits
    long sfx blocks (Eidolon) without touching glyph sizes. */
 .character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait-sfx li,
-.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait-description { line-height: 1.05; }
+.character-sheet.spotlight-print-style .trait-set-style-sfx-rows .trait-description {
+	line-height: 1.05;
+}
 
 /* Long names must not overspill (2026-10-23): on lines where a name
    renders inline with a right-aligned rating scale, the name wraps
@@ -4050,7 +4197,7 @@ body:has(.character-sheet.submode-print) .main {
 
 // LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only)
 @media screen {
-	[data-theme="dark"],
+	[data-theme='dark'],
 	.theme-dark {
 		.character-sheet.spotlight-style:not(.submode-print),
 		.character-sheet:not(.submode-print) {
@@ -4170,7 +4317,6 @@ body:has(.character-sheet.submode-print) .main {
 				}
 			}
 
-
 			// General SFX lists
 			.trait-sfx {
 				li {
@@ -4250,7 +4396,6 @@ body:has(.character-sheet.submode-print) .main {
 		stroke: #000000 !important;
 	}
 }
-
 
 // CLASSIC PLACED (GRID) SETS - companion rule
 // Classic sheets do not carry spotlight-style, so the nested spotlight

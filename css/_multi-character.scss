@@ -298,7 +298,9 @@
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 		border: 2px solid #e2e8f0;
 		overflow: hidden;
-		transition: border-color 0.2s, box-shadow 0.2s;
+		transition:
+			border-color 0.2s,
+			box-shadow 0.2s;
 
 		&.is-active-column {
 			border-color: #0284c7;
@@ -607,7 +609,7 @@
 }
 
 @media screen {
-	[data-theme="dark"],
+	[data-theme='dark'],
 	.theme-dark {
 		.modal-session-add {
 			background: var(--bg-surface-card) !important;

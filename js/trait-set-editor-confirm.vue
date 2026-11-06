@@ -14,7 +14,11 @@ const { showDeleteConfirm, cancelDeleteTraitSet, confirmDeleteTraitSet, traitSet
 			<aside class="modal modal-confirm" v-if="showDeleteConfirm">
 				<div class="modal-close" @click.prevent="cancelDeleteTraitSet"><i class="fas fa-times"></i></div>
 				<div class="modal-inner">
-					<p>Are you sure you want to delete the trait set <strong>{{ traitSet.name && traitSet.name.length ? traitSet.name : 'this trait set' }}</strong> and all its traits?</p>
+					<p>
+						Are you sure you want to delete the trait set
+						<strong>{{ traitSet.name && traitSet.name.length ? traitSet.name : 'this trait set' }}</strong> and all its
+						traits?
+					</p>
 					<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
 					<div class="modal-button-container">
 						<div class="modal-button-container-inner">

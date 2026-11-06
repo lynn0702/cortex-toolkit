@@ -7,19 +7,19 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	( e: 'print' ): void;
-	( e: 'export' ): void;
-	( e: 'update:printBlank', value: boolean ): void;
-	( e: 'update:printBW', value: boolean ): void;
-	( e: 'update:printPageView', value: any ): void;
+	(e: 'print'): void;
+	(e: 'export'): void;
+	(e: 'update:printBlank', value: boolean): void;
+	(e: 'update:printBW', value: boolean): void;
+	(e: 'update:printPageView', value: any): void;
 }>();
 
-function toggleBlank( e: Event ) {
-	emit( 'update:printBlank', ( e.target as HTMLInputElement ).checked );
+function toggleBlank(e: Event) {
+	emit('update:printBlank', (e.target as HTMLInputElement).checked);
 }
 
-function toggleBW( e: Event ) {
-	emit( 'update:printBW', ( e.target as HTMLInputElement ).checked );
+function toggleBW(e: Event) {
+	emit('update:printBW', (e.target as HTMLInputElement).checked);
 }
 </script>
 
@@ -35,21 +35,24 @@ function toggleBW( e: Event ) {
 		</div>
 
 		<div class="toolbar-group">
-			
 			<label class="toolbar-checkbox">
-				<input type="checkbox" id="print-blank-sheet" name="printBlank" :checked="printBlank" @change="toggleBlank">
-								<span><i class="fas fa-pencil-alt"></i> Blank Sheet</span>
+				<input type="checkbox" id="print-blank-sheet" name="printBlank" :checked="printBlank" @change="toggleBlank" />
+				<span><i class="fas fa-pencil-alt"></i> Blank Sheet</span>
 			</label>
 
 			<label class="toolbar-checkbox">
-				<input type="checkbox" id="print-black-white" name="printBW" :checked="printBW" @change="toggleBW">
-								<span><i class="fas fa-circle-half-stroke"></i> Black &amp; White</span>
+				<input type="checkbox" id="print-black-white" name="printBW" :checked="printBW" @change="toggleBW" />
+				<span><i class="fas fa-circle-half-stroke"></i> Black &amp; White</span>
 			</label>
 		</div>
 
 		<div class="toolbar-group" v-if="pageCount > 1">
 			<div class="toolbar-segmented">
-				<button type="button" :class="{ active: printPageView === 'all' }" @click.stop="emit('update:printPageView', 'all')">
+				<button
+					type="button"
+					:class="{ active: printPageView === 'all' }"
+					@click.stop="emit('update:printPageView', 'all')"
+				>
 					All Pages ({{ pageCount }})
 				</button>
 				<button type="button" :class="{ active: printPageView === 1 }" @click.stop="emit('update:printPageView', 1)">

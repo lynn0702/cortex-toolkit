@@ -1,9 +1,40 @@
-import { ref, computed, onMounted, onUnmounted, onUpdated, watch, nextTick, provide, inject, getCurrentInstance, toRaw, type InjectionKey } from 'vue';
+import {
+	ref,
+	computed,
+	onMounted,
+	onUnmounted,
+	onUpdated,
+	watch,
+	nextTick,
+	provide,
+	inject,
+	getCurrentInstance,
+	toRaw,
+	type InjectionKey,
+} from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
-import { getView, ensureView, isNameSet, getRating, ratingDice, setRatingDie, resolveVisibility, nextVisibility, resolveSetPillar } from './model.ts';
+import {
+	getView,
+	ensureView,
+	isNameSet,
+	getRating,
+	ratingDice,
+	setRatingDie,
+	resolveVisibility,
+	nextVisibility,
+	resolveSetPillar,
+} from './model.ts';
 import { resolveFrame, type FrameConfig } from './frame-geometry.ts';
-import type { Character, TraitSet, CortexToolkitCustom, RingConfig, ImageConfig, PipsConfig, Visibility } from './model.ts';
+import type {
+	Character,
+	TraitSet,
+	CortexToolkitCustom,
+	RingConfig,
+	ImageConfig,
+	PipsConfig,
+	Visibility,
+} from './model.ts';
 
 export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
 
@@ -11,7 +42,7 @@ export type TraitSetEditorApi = ReturnType<typeof useTraitSetEditor>;
 // subtrait-columns renderer: finite numbers >= 0 win, else the CSS
 // defaults (1.4 / 1 / 1.4). Null when no branch object is stored.
 export function resolveBranchShares(branch: unknown): { left: number; center: number; right: number } | null {
-	const num = (v: unknown, fallback: number) => (typeof v === 'number' && Number.isFinite(v) && v >= 0) ? v : fallback;
+	const num = (v: unknown, fallback: number) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : fallback);
 	if (!branch || typeof branch !== 'object' || Array.isArray(branch)) return null;
 	const r = branch as Record<string, unknown>;
 	return { left: num(r.left, 1.4), center: num(r.center, 1), right: num(r.right, 1.4) };
@@ -64,17 +95,17 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const name = computed({
 		get: () => traitSet.value?.name ?? '',
-		set: (v: string) => setProperty('name', v)
+		set: (v: string) => setProperty('name', v),
 	});
 
 	const description = computed({
 		get: () => traitSet.value?.description ?? '',
-		set: (v: string) => setProperty('description', v)
+		set: (v: string) => setProperty('description', v),
 	});
 
 	const noun = computed({
 		get: () => traitSet.value?.noun ?? '',
-		set: (v: string) => setProperty('noun', v)
+		set: (v: string) => setProperty('noun', v),
 	});
 
 	const plural = computed({
@@ -82,9 +113,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const stored = traitSet.value?.plural;
 			if (stored !== undefined && stored !== null && stored !== '') return stored;
 			const singular = traitSet.value?.noun;
-			return (singular && singular.length) ? singular + 's' : '';
+			return singular && singular.length ? singular + 's' : '';
 		},
-		set: (v: string) => setProperty('plural', v)
+		set: (v: string) => setProperty('plural', v),
 	});
 
 	const styleBody = computed({
@@ -138,16 +169,17 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				view.ringTrait = false;
 			}
 			updateCharacter(props.character);
-		}
+		},
 	});
 
 	const isRing = computed(() => styleBody.value === 'portrait-ring');
 	const isName = computed(() => isNameSet(traitSet.value));
 
-
 	const ringTrait = computed({
 		get: () => isRing.value,
-		set: (value: boolean) => { styleBody.value = value ? 'portrait-ring' : 'default'; }
+		set: (value: boolean) => {
+			styleBody.value = value ? 'portrait-ring' : 'default';
+		},
 	});
 
 	const isFullWidthSpan = computed(() => {
@@ -162,17 +194,32 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// changes and Reset restores exactly what the generator would emit.
 	function partsSpec() {
 		const view = getView(traitSet.value) || {};
-		const scale = Array.isArray((view as any).ratingLadder) && (view as any).ratingLadder.length
-			? (view as any).ratingLadder : [4, 6, 8, 10, 12];
+		const scale =
+			Array.isArray((view as any).ratingLadder) && (view as any).ratingLadder.length
+				? (view as any).ratingLadder
+				: [4, 6, 8, 10, 12];
 		const trackOn = partsHaveTrack();
 		const tScale = cortexFunctions.getTrackScale(traitSet.value);
-		const rating = currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none';
+		const rating =
+			currentRatingPosition() === 'vertical'
+				? 'inline'
+				: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none');
 		const statement = Boolean((traitSet.value as any)?.statement);
-		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : (traitSet.value?.traits ? Object.values(traitSet.value.traits) : []);
+		const traits = Array.isArray(traitSet.value?.traits)
+			? traitSet.value.traits
+			: traitSet.value?.traits
+				? Object.values(traitSet.value.traits)
+				: [];
 		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
-		const hasSfx = traits.some((t: any) => Array.isArray(cortexFunctions.sfxChildren(t)) && cortexFunctions.sfxChildren(t).length > 0);
+		const hasSfx = traits.some(
+			(t: any) => Array.isArray(cortexFunctions.sfxChildren(t)) && cortexFunctions.sfxChildren(t).length > 0,
+		);
 		const hasSub = traits.some((t: any) => {
-			const subs = Array.isArray(t?.traits) ? t.traits : (t?.traits && typeof t.traits === 'object' ? Object.values(t.traits) : []);
+			const subs = Array.isArray(t?.traits)
+				? t.traits
+				: t?.traits && typeof t.traits === 'object'
+					? Object.values(t.traits)
+					: [];
 			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && !cortexFunctions.isStatementContainer(s));
 		});
 		return {
@@ -271,7 +318,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (!parts || typeof parts !== 'object' || !Object.keys(parts).length) return false;
 		const canon = (o: Record<string, unknown>) => {
 			const out: Record<string, unknown> = {};
-			Object.keys(o).sort().forEach((k) => { out[k] = o[k]; });
+			Object.keys(o)
+				.sort()
+				.forEach((k) => {
+					out[k] = o[k];
+				});
 			return JSON.stringify(out);
 		};
 		return canon(parts as Record<string, unknown>) !== canon(buildParts(partsSpec()) as Record<string, unknown>);
@@ -349,7 +400,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			return;
 		}
-		rebuildParts(currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none');
+		rebuildParts(
+			currentRatingPosition() === 'vertical'
+				? 'inline'
+				: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
+		);
 	}
 
 	const templateEntry = computed(() => {
@@ -358,16 +413,22 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	// Template traits by name not currently on this sheet (D19 restore menu).
-	const restorableTraitNames = computed(() => cortexFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID));
+	const restorableTraitNames = computed(() =>
+		cortexFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID),
+	);
 
 	const ringSpread = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.arcSpread ?? 100,
-		set: (val: number) => { setRingConfig('arcSpread', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('arcSpread', Number(val));
+		},
 	});
 
 	const ringDistance = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.arcDistance ?? 0,
-		set: (val: number) => { setRingConfig('arcDistance', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('arcDistance', Number(val));
+		},
 	});
 
 	const ringAngle = computed({
@@ -375,7 +436,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const cfg = getView(traitSet.value)?.ringConfig;
 			return cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
 		},
-		set: (val: number) => { setRingConfig('arcAngle', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('arcAngle', Number(val));
+		},
 	});
 
 	const ringAngleLabel = computed(() => {
@@ -389,7 +452,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const scaleAngle = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.scaleAngle ?? 0,
-		set: (val: number) => { setRingConfig('scaleAngle', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('scaleAngle', Number(val));
+		},
 	});
 
 	const scaleAngleLabel = computed(() => {
@@ -403,17 +468,23 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const scaleDistance = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.scaleDistance ?? 0,
-		set: (val: number) => { setRingConfig('scaleDistance', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('scaleDistance', Number(val));
+		},
 	});
 
 	const ringScaleY = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.scaleDieY ?? 0,
-		set: (val: number) => { setRingConfig('scaleDieY', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('scaleDieY', Number(val));
+		},
 	});
 
 	const ringScaleX = computed({
 		get: () => getView(traitSet.value)?.ringConfig?.scaleDieX ?? 0,
-		set: (val: number) => { setRingConfig('scaleDieX', Number(val)); }
+		set: (val: number) => {
+			setRingConfig('scaleDieX', Number(val));
+		},
 	});
 
 	const scaleDieValue = computed({
@@ -422,7 +493,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			ensureView(traitSet.value).scaleDie = val;
 			ensureView(props.character).scale = val;
 			updateCharacter(props.character);
-		}
+		},
 	});
 
 	const imageURL = computed({
@@ -432,7 +503,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (isName.value || isRing.value) return props.character?.portrait?.url ?? '';
 			return '';
 		},
-		set: (val: string) => { setImageConfig('url', val); }
+		set: (val: string) => {
+			setImageConfig('url', val);
+		},
 	});
 
 	const imageAlignment = computed({
@@ -442,12 +515,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (isName.value || isRing.value) return getView(props.character?.portrait)?.alignment ?? 'center';
 			return 'center';
 		},
-		set: (val: string) => { setImageConfig('alignment', val); }
+		set: (val: string) => {
+			setImageConfig('alignment', val);
+		},
 	});
 
 	const imageHeight = computed({
 		get: () => getView(traitSet.value)?.imageConfig?.height ?? 'auto',
-		set: (val: string) => { setImageConfig('height', val); }
+		set: (val: string) => {
+			setImageConfig('height', val);
+		},
 	});
 
 	const imageCaption = computed({
@@ -460,7 +537,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			return '';
 		},
-		set: (val: string) => { setImageConfig('caption', val); }
+		set: (val: string) => {
+			setImageConfig('caption', val);
+		},
 	});
 
 	const namePortraitVisibility = computed<Visibility>(() => {
@@ -485,7 +564,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-
 	// Generic Out indicator (default off).
 	const includeOut = computed({
 		get: () => {
@@ -493,7 +571,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (view && typeof view.outIndicator === 'boolean') return view.outIndicator;
 			return false;
 		},
-		set: (value: boolean) => { setCustomProperty('outIndicator', Boolean(value)); }
+		set: (value: boolean) => {
+			setCustomProperty('outIndicator', Boolean(value));
+		},
 	});
 
 	const ratingLadder = computed({
@@ -502,7 +582,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			let s = props.traitSetID;
 			ctkFor(s).ratingLadder = scale;
 			updateCharacter(structuredClone(toRaw(props.character)));
-		}
+		},
 	});
 
 	const subtraitRatingLadder = computed({
@@ -511,7 +591,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			let s = props.traitSetID;
 			ctkFor(s).subtraitRatingLadder = scale;
 			updateCharacter(structuredClone(toRaw(props.character)));
-		}
+		},
 	});
 
 	// Pool sets add a whole trait pool to the roller on click, and their
@@ -527,7 +607,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (!ts) return;
 			ts.pool = Boolean(value);
 			updateCharacter(structuredClone(toRaw(props.character)));
-		}
+		},
 	});
 
 	// The set-level die is the set node's own Rating; unrated traits fall
@@ -547,7 +627,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				delete ts.rating;
 			}
 			updateCharacter(structuredClone(toRaw(props.character)));
-		}
+		},
 	});
 
 	// Spendable on the set node drives spend controls for its traits
@@ -564,7 +644,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (!ts) return;
 			ts.spendable = Boolean(value);
 			updateCharacter(structuredClone(toRaw(props.character)));
-		}
+		},
 	});
 
 	// Hitches on the set node: the top of the inheritance chain.
@@ -576,32 +656,32 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (value: number | null) => {
 			const ts = traitSet.value as unknown as Record<string, any>;
 			if (!ts) return;
-			if (value === null || value === undefined || value === '' as unknown as number) {
+			if (value === null || value === undefined || value === ('' as unknown as number)) {
 				delete ts.hitches;
 			} else {
 				const n = Math.floor(Number(value));
 				if (Number.isFinite(n) && n >= 0) ts.hitches = n;
 			}
 			updateCharacter(structuredClone(toRaw(props.character)));
-		}
+		},
 	});
-
 
 	const reservedSlots = computed({
 		get: () => {
 			const val = getView(traitSet.value)?.reservedSlots;
-			return (val !== undefined && val !== null && String(val) !== '') ? Number(val) : '';
+			return val !== undefined && val !== null && String(val) !== '' ? Number(val) : '';
 		},
 		set: (val: number | '') => {
-			const num = (val === '' || val === null || isNaN(val)) ? null : Math.max(0, parseInt(String(val), 10));
+			const num = val === '' || val === null || isNaN(val) ? null : Math.max(0, parseInt(String(val), 10));
 			setCustomProperty('reservedSlots', num);
-		}
+		},
 	});
-
 
 	const traitColumns = computed({
 		get: () => getView(traitSet.value)?.traitColumns ?? 1,
-		set: (val: number) => { setCustomProperty('traitColumns', parseInt(String(val), 10) || 1); }
+		set: (val: number) => {
+			setCustomProperty('traitColumns', parseInt(String(val), 10) || 1);
+		},
 	});
 
 	const setVisibility = computed<Visibility>({
@@ -615,7 +695,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				v.visibility = val;
 			}
 			updateCharacter(props.character);
-		}
+		},
 	});
 
 	function cycleSetVisibility() {
@@ -634,7 +714,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				delete v.pillar;
 			}
 			updateCharacter(props.character);
-		}
+		},
 	});
 
 	const resolvedPillar = computed<string>(() => resolveSetPillar(traitSet.value));
@@ -644,17 +724,23 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (!traitSet.value) return;
 		cortexFunctions.saveCustomSetPreset(toRaw(traitSet.value));
 		presetSaved.value = true;
-		setTimeout(() => { presetSaved.value = false; }, 1600);
+		setTimeout(() => {
+			presetSaved.value = false;
+		}, 1600);
 	}
 
 	const showBlockMini = ref(false);
-	function openBlockMini() { showBlockMini.value = true; }
-	function closeBlockMini() { showBlockMini.value = false; }
+	function openBlockMini() {
+		showBlockMini.value = true;
+	}
+	function closeBlockMini() {
+		showBlockMini.value = false;
+	}
 
 	const characterCustomPillars = computed<string[]>(() => {
 		const list: string[] = [];
 		const std = ['prime', 'plus', 'play', 'identity'];
-		for (const ts of (props.character?.traitSets || [])) {
+		for (const ts of props.character?.traitSets || []) {
 			const p = getView(ts)?.pillar;
 			if (typeof p === 'string' && p.trim()) {
 				const low = p.trim().toLowerCase();
@@ -693,7 +779,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const cells = parts as Record<string, { top?: unknown }>;
 			if (!cells.rating) return 'none';
 			const rTop = Number(cells.rating.top) || 0;
-			const nTop = cells.name ? (Number(cells.name.top) || 0) : 0;
+			const nTop = cells.name ? Number(cells.name.top) || 0 : 0;
 			if (rTop === 0 && nTop === 0) return 'inline';
 			if (rTop === 0) return 'above';
 			return 'below';
@@ -715,8 +801,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				updateCharacter(props.character);
 				return;
 			}
-			rebuildParts(currentRatingPosition() === 'vertical' ? 'inline' : currentRatingPosition() as 'inline' | 'above' | 'below' | 'none', true);
-		}
+			rebuildParts(
+				currentRatingPosition() === 'vertical'
+					? 'inline'
+					: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
+				true,
+			);
+		},
 	});
 
 	const trackLabel = computed({
@@ -734,7 +825,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			delete (view.labels as any).stress;
 			// Keep track companions (subtraits named for the label) glued
 			// to the label: rename matches, never clobbering an occupant.
-			const next = (typeof val === 'string' && val.length) ? val : 'Stress';
+			const next = typeof val === 'string' && val.length ? val : 'Stress';
 			if (next !== prev && Array.isArray((traitSet.value as any)?.traits)) {
 				(traitSet.value as any).traits.forEach((tr: any) => {
 					if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
@@ -745,7 +836,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				});
 			}
 			updateCharacter(props.character);
-		}
+		},
 	});
 
 	const ratingPosition = computed({
@@ -760,35 +851,37 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				return;
 			}
 			rebuildParts(val);
-		}
+		},
 	});
 
 	// Ladder rung label direction: horizontal text or rotated vertical
 	// (sidebar-style) for narrow tracks such as Initiative and Hero Dice.
 	const labelPosition = computed({
-		get: () => getView(traitSet.value)?.labelPosition === 'vertical' ? 'vertical' : 'horizontal',
-		set: (val: 'horizontal' | 'vertical') => { setCustomProperty('labelPosition', val === 'vertical' ? 'vertical' : null); }
+		get: () => (getView(traitSet.value)?.labelPosition === 'vertical' ? 'vertical' : 'horizontal'),
+		set: (val: 'horizontal' | 'vertical') => {
+			setCustomProperty('labelPosition', val === 'vertical' ? 'vertical' : null);
+		},
 	});
 
 	const isStatementSet = computed({
 		get: () => Boolean(traitSet.value?.statement),
 		set: (val: boolean) => {
 			setProperty('statement', Boolean(val));
-		}
+		},
 	});
 
 	const hasQuestionedPip = computed({
 		get: () => Boolean(traitSet.value?.hasQuestionedPip),
 		set: (val: boolean) => {
 			setProperty('hasQuestionedPip', Boolean(val));
-		}
+		},
 	});
 
 	const hasCounterColumn = computed({
 		get: () => Boolean(traitSet.value?.hasCounterColumn),
 		set: (val: boolean) => {
 			setProperty('hasCounterColumn', Boolean(val));
-		}
+		},
 	});
 
 	const counterLabel = computed({
@@ -796,7 +889,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (val: string) => {
 			setProperty('counterLabel', val);
 			setCustomProperty('counterLabel', val);
-		}
+		},
 	});
 
 	const pipCount = computed({
@@ -807,22 +900,30 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			return 25;
 		},
-		set: (val: number) => { setPipTrack(Math.max(1, parseInt(String(val), 10) || 25), pipsFilled.value); }
+		set: (val: number) => {
+			setPipTrack(Math.max(1, parseInt(String(val), 10) || 25), pipsFilled.value);
+		},
 	});
 
 	const pipsPerRow = computed({
 		get: () => getView(traitSet.value)?.pips?.perRow ?? 5,
-		set: (val: number) => { setPipProperty('perRow', Math.max(1, parseInt(String(val), 10) || 5)); }
+		set: (val: number) => {
+			setPipProperty('perRow', Math.max(1, parseInt(String(val), 10) || 5));
+		},
 	});
 
 	const pipsConnected = computed({
 		get: () => getView(traitSet.value)?.pips?.connected !== false,
-		set: (val: any) => { setPipProperty('connected', Boolean(val)); }
+		set: (val: any) => {
+			setPipProperty('connected', Boolean(val));
+		},
 	});
 
 	const pipLabels = computed({
 		get: () => getView(traitSet.value)?.pips?.labels === true,
-		set: (val: any) => { setPipProperty('labels', Boolean(val)); }
+		set: (val: any) => {
+			setPipProperty('labels', Boolean(val));
+		},
 	});
 
 	const frameOptions = [
@@ -841,7 +942,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (shape: string) => {
 			setFrameShape(shape);
-		}
+		},
 	});
 
 	function setFrameShape(shape: string) {
@@ -854,7 +955,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (existing) {
 				ctk.frame = {
 					...existing,
-					shape: shape as any
+					shape: shape as any,
 				};
 			} else {
 				ctk.frame = {
@@ -863,7 +964,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 					corner: 8,
 					color: 'primary',
 					stroke: '2px',
-					path: null
+					path: null,
 				};
 			}
 		}
@@ -876,7 +977,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		corner: 8,
 		color: 'primary',
 		stroke: '2px',
-		box: false
+		box: false,
 	};
 
 	const frameWidth = computed({
@@ -886,7 +987,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (stroke: string) => {
 			setFrameWidth(stroke);
-		}
+		},
 	});
 
 	function setFrameWidth(stroke: string) {
@@ -894,7 +995,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ctk = ctkFor(s);
 		const existing = resolveFrame(props.character.traitSets[s]);
 		const f: any = {
-			...(existing || defaultEditorFrame)
+			...(existing || defaultEditorFrame),
 		};
 		if (stroke && stroke.trim() && stroke.trim() !== '2px') {
 			f.stroke = stroke.trim();
@@ -912,7 +1013,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (color: string) => {
 			setFrameColor(color);
-		}
+		},
 	});
 
 	function setFrameColor(color: string) {
@@ -920,7 +1021,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ctk = ctkFor(s);
 		const existing = resolveFrame(props.character.traitSets[s]);
 		const f: any = {
-			...(existing || defaultEditorFrame)
+			...(existing || defaultEditorFrame),
 		};
 		if (color && color !== 'primary') {
 			f.color = color as any;
@@ -938,7 +1039,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (dash: string) => {
 			setFrameDash(dash);
-		}
+		},
 	});
 
 	function setFrameDash(dash: string) {
@@ -946,7 +1047,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ctk = ctkFor(s);
 		const existing = resolveFrame(props.character.traitSets[s]);
 		const f: any = {
-			...(existing || defaultEditorFrame)
+			...(existing || defaultEditorFrame),
 		};
 		if (dash && dash.trim()) {
 			f.dash = dash.trim();
@@ -964,7 +1065,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (box: boolean) => {
 			setFrameBox(box);
-		}
+		},
 	});
 
 	function setFrameBox(box: boolean) {
@@ -972,7 +1073,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ctk = ctkFor(s);
 		const existing = resolveFrame(props.character.traitSets[s]);
 		const f: any = {
-			...(existing || { ...defaultEditorFrame, shape: 'ring' })
+			...(existing || { ...defaultEditorFrame, shape: 'ring' }),
 		};
 		if (box) {
 			f.box = true;
@@ -991,7 +1092,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			return 0;
 		},
-		set: (val: number) => { setPipTrack(pipCount.value, Math.max(0, parseInt(String(val), 10) || 0)); }
+		set: (val: number) => {
+			setPipTrack(pipCount.value, Math.max(0, parseInt(String(val), 10) || 0));
+		},
 	});
 
 	const scrollable = computed(() => true);
@@ -1001,17 +1104,23 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const needsDiceUI = computed(() => styleBody.value !== 'name');
 
 	// Fixed-layout styles manage their own internal columns.
-	const allowsTraitColumns = computed(() => !['subtrait-columns', 'die-rows', 'dice-count', 'name'].includes(styleBody.value));
+	const allowsTraitColumns = computed(
+		() => !['subtrait-columns', 'die-rows', 'dice-count', 'name'].includes(styleBody.value),
+	);
 
 	const editorDock = computed({
-		get: () => getView(traitSet.value)?.editorDock === 'right' ? 'right' : 'left',
-		set: (val: 'left' | 'right') => { setCustomProperty('editorDock', val === 'right' ? 'right' : 'left'); }
+		get: () => (getView(traitSet.value)?.editorDock === 'right' ? 'right' : 'left'),
+		set: (val: 'left' | 'right') => {
+			setCustomProperty('editorDock', val === 'right' ? 'right' : 'left');
+		},
 	});
 
 	// Set header placement + alignment (generic; applies to every style).
 	const headerMode = computed<'sidebar' | 'top'>({
 		get: () => (getView(traitSet.value)?.header === 'top' ? 'top' : 'sidebar'),
-		set: (val: 'sidebar' | 'top') => { setCustomProperty('header', val === 'top' ? 'top' : 'sidebar'); }
+		set: (val: 'sidebar' | 'top') => {
+			setCustomProperty('header', val === 'top' ? 'top' : 'sidebar');
+		},
 	});
 
 	const headerAlign = computed<'left' | 'center' | 'right'>({
@@ -1019,7 +1128,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const a = getView(traitSet.value)?.headerAlign;
 			return a === 'center' || a === 'right' ? a : 'left';
 		},
-		set: (val: 'left' | 'center' | 'right') => { setCustomProperty('headerAlign', val === 'center' || val === 'right' ? val : 'left'); }
+		set: (val: 'left' | 'center' | 'right') => {
+			setCustomProperty('headerAlign', val === 'center' || val === 'right' ? val : 'left');
+		},
 	});
 
 	// Branched Skills connectors (per-specialty arrows) are optional.
@@ -1028,14 +1139,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const v = getView(traitSet.value)?.branchArrows;
 			return v !== false;
 		},
-		set: (val: boolean) => { setCustomProperty('branchArrows', Boolean(val)); }
+		set: (val: boolean) => {
+			setCustomProperty('branchArrows', Boolean(val));
+		},
 	});
 
 	const cssClass = computed(() => {
 		let css: Record<string, boolean> = {
-			'editor': true,
-			'open': props.open === true,
-			'scrollable': scrollable.value,
+			editor: true,
+			open: props.open === true,
+			scrollable: scrollable.value,
 		};
 
 		css['anchor-position-' + anchorPosition.value] = true;
@@ -1112,7 +1225,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			scaleDistance: 0,
 			scaleDieX: 0,
 			scaleDieY: 0,
-			arcSlide: 0
+			arcSlide: 0,
 		};
 		ctk.ringConfig[key] = value;
 		updateCharacter(structuredClone(toRaw(props.character)));
@@ -1128,11 +1241,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			scaleDistance: 0,
 			scaleDieX: 0,
 			scaleDieY: 0,
-			arcSlide: 0
+			arcSlide: 0,
 		};
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
-
 
 	function setCustomProperty(key: string, value: any) {
 		let s = props.traitSetID;
@@ -1215,7 +1327,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			(error: any) => {
 				uploadError.value = error?.message || 'Could not process that image.';
 				event.target.value = null;
-			}
+			},
 		);
 	}
 
@@ -1269,7 +1381,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const ctk = ctkFor(props.traitSetID);
 		ctk.pips ??= {
 			perRow: 5,
-			connected: true
+			connected: true,
 		};
 		const ts = traitSet.value as unknown as Record<string, any>;
 		if (ts && (!ts.rating || typeof ts.rating !== 'object' || (ts.rating as any).type !== 'Pip')) {
@@ -1298,11 +1410,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function checkAnchorPosition() {
 		if (!rootEl.value || !rootEl.value.parentElement) return;
 
-		let windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+		let windowHeight = window.innerHeight || document.documentElement.clientHeight;
 		let parentRect = rootEl.value.parentElement.getBoundingClientRect();
-		let traitMidpoint = parentRect.top + (parentRect.height / 2);
+		let traitMidpoint = parentRect.top + parentRect.height / 2;
 
-		if (traitMidpoint < (windowHeight / 2)) {
+		if (traitMidpoint < windowHeight / 2) {
 			anchorPosition.value = 'top';
 		} else {
 			anchorPosition.value = 'bottom';
@@ -1321,12 +1433,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (rect.top < pad) {
 				shiftY = pad - rect.top;
 			} else if (rect.bottom > windowHeight - pad) {
-				shiftY = (windowHeight - pad) - rect.bottom;
+				shiftY = windowHeight - pad - rect.bottom;
 			}
 
 			if (Math.abs(shiftY) > 0.5) {
 				rootEl.value.style.setProperty('--editor-shift-y', `${shiftY}px`);
-				let arrowNaturalY = (anchorPosition.value === 'bottom') ? (rect.height - 16) : 16;
+				let arrowNaturalY = anchorPosition.value === 'bottom' ? rect.height - 16 : 16;
 				let targetArrowY = arrowNaturalY - shiftY;
 				let clampedArrowY = Math.max(16, Math.min(rect.height - 16, targetArrowY));
 				let arrowShift = clampedArrowY - arrowNaturalY;
@@ -1363,32 +1475,135 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	const api = {
-		rootEl, inputName, imageFileInput, scrollPosition, anchorPosition, showDeleteConfirm, uploadError, styleOptions,
-		traitSet, character, traitSetID, name, description, noun, plural, styleBody, isRing, isName,
-		ringTrait, isFullWidthSpan,
+		rootEl,
+		inputName,
+		imageFileInput,
+		scrollPosition,
+		anchorPosition,
+		showDeleteConfirm,
+		uploadError,
+		styleOptions,
+		traitSet,
+		character,
+		traitSetID,
+		name,
+		description,
+		noun,
+		plural,
+		styleBody,
+		isRing,
+		isName,
+		ringTrait,
+		isFullWidthSpan,
 		partPreview,
-		partCells, effectivePartCells, isPartsPreview, isRowBody, hasParts, hasCustomParts, setPartCell, resetParts,
-		branchShares, setBranchShare, hasCustomBranch,
-		templateEntry, restorableTraitNames,
-		ringSpread, ringDistance, ringAngle, ringAngleLabel, scaleAngle, scaleAngleLabel, scaleDistance,
-		ringScaleY, ringScaleX, scaleDieValue, imageURL, imageAlignment, imageHeight, imageCaption, namePortraitVisibility, toggleNamePortraitVisibility,
-		includeOut, ratingLadder, subtraitRatingLadder,
-		isPool, setRating, setSpendable, setHitches, reservedSlots, traitColumns,
-		setVisibility, cycleSetVisibility, setPillar, resolvedPillar, presetSaved, saveSetAsPreset,
-		showBlockMini, openBlockMini, closeBlockMini, characterCustomPillars,
-		hasTrackPart, trackLabel, ratingPosition, labelPosition, isStatementSet,
-		hasQuestionedPip, hasCounterColumn, counterLabel, pipCount, pipsPerRow, pipsConnected, pipsFilled, pipLabels,
-		frameOptions, frameShape, setFrameShape,
-		frameWidth, setFrameWidth, frameColor, setFrameColor, frameDash, setFrameDash, frameBox, setFrameBox,
-		scrollable, needsDiceUI, allowsTraitColumns,
-		editorDock, branchArrows, headerMode, headerAlign, cssClass,
-		selectElement, focusFirstInput, targetValue, setProperty, promptDeleteTraitSet, cancelDeleteTraitSet, confirmDeleteTraitSet,
+		partCells,
+		effectivePartCells,
+		isPartsPreview,
+		isRowBody,
+		hasParts,
+		hasCustomParts,
+		setPartCell,
+		resetParts,
+		branchShares,
+		setBranchShare,
+		hasCustomBranch,
+		templateEntry,
+		restorableTraitNames,
+		ringSpread,
+		ringDistance,
+		ringAngle,
+		ringAngleLabel,
+		scaleAngle,
+		scaleAngleLabel,
+		scaleDistance,
+		ringScaleY,
+		ringScaleX,
+		scaleDieValue,
+		imageURL,
+		imageAlignment,
+		imageHeight,
+		imageCaption,
+		namePortraitVisibility,
+		toggleNamePortraitVisibility,
+		includeOut,
+		ratingLadder,
+		subtraitRatingLadder,
+		isPool,
+		setRating,
+		setSpendable,
+		setHitches,
+		reservedSlots,
+		traitColumns,
+		setVisibility,
+		cycleSetVisibility,
+		setPillar,
+		resolvedPillar,
+		presetSaved,
+		saveSetAsPreset,
+		showBlockMini,
+		openBlockMini,
+		closeBlockMini,
+		characterCustomPillars,
+		hasTrackPart,
+		trackLabel,
+		ratingPosition,
+		labelPosition,
+		isStatementSet,
+		hasQuestionedPip,
+		hasCounterColumn,
+		counterLabel,
+		pipCount,
+		pipsPerRow,
+		pipsConnected,
+		pipsFilled,
+		pipLabels,
+		frameOptions,
+		frameShape,
+		setFrameShape,
+		frameWidth,
+		setFrameWidth,
+		frameColor,
+		setFrameColor,
+		frameDash,
+		setFrameDash,
+		frameBox,
+		setFrameBox,
+		scrollable,
+		needsDiceUI,
+		allowsTraitColumns,
+		editorDock,
+		branchArrows,
+		headerMode,
+		headerAlign,
+		cssClass,
+		selectElement,
+		focusFirstInput,
+		targetValue,
+		setProperty,
+		promptDeleteTraitSet,
+		cancelDeleteTraitSet,
+		confirmDeleteTraitSet,
 		restoreTrait,
-		setRingConfig, resetRingPlacement,
-		setCustomProperty, styleLabel, setStyleLabel, hasLabelContent, setImageConfig, uploadImageStart, uploadImageProcess, removeImage, isRatingIncluded, toggleRatingOption,
-		isSubtraitRatingIncluded, toggleSubtraitRatingOption, getDieDisplayValue,
-		updateCharacter, ensurePipStruct, setPipProperty,
-		checkAnchorPosition, checkScrollPosition,
+		setRingConfig,
+		resetRingPlacement,
+		setCustomProperty,
+		styleLabel,
+		setStyleLabel,
+		hasLabelContent,
+		setImageConfig,
+		uploadImageStart,
+		uploadImageProcess,
+		removeImage,
+		isRatingIncluded,
+		toggleRatingOption,
+		isSubtraitRatingIncluded,
+		toggleSubtraitRatingOption,
+		getDieDisplayValue,
+		updateCharacter,
+		ensurePipStruct,
+		setPipProperty,
+		checkAnchorPosition,
+		checkScrollPosition,
 	};
 
 	onMounted(() => {
@@ -1406,26 +1621,45 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}
 	});
 
-	watch(() => props.traitSetID, () => { showDeleteConfirm.value = false; partPreview.value = null; });
-	watch(() => props.character, () => { checkAnchorPosition(); });
-	watch(() => props.viewY, () => { checkAnchorPosition(); });
-	watch(() => props.open, (isOpen: boolean | undefined, wasOpen: boolean | undefined) => {
-		showDeleteConfirm.value = false;
-		if (isOpen && !wasOpen) {
-			focusFirstInput();
-			nextTick(() => {
-				checkAnchorPosition();
-				setTimeout(() => {
+	watch(
+		() => props.traitSetID,
+		() => {
+			showDeleteConfirm.value = false;
+			partPreview.value = null;
+		},
+	);
+	watch(
+		() => props.character,
+		() => {
+			checkAnchorPosition();
+		},
+	);
+	watch(
+		() => props.viewY,
+		() => {
+			checkAnchorPosition();
+		},
+	);
+	watch(
+		() => props.open,
+		(isOpen: boolean | undefined, wasOpen: boolean | undefined) => {
+			showDeleteConfirm.value = false;
+			if (isOpen && !wasOpen) {
+				focusFirstInput();
+				nextTick(() => {
 					checkAnchorPosition();
-				}, 220);
-			});
-		} else if (!isOpen) {
-			if (rootEl.value) {
-				rootEl.value.style.setProperty('--editor-shift-y', '0px');
-				rootEl.value.style.setProperty('--arrow-shift-y', '0px');
+					setTimeout(() => {
+						checkAnchorPosition();
+					}, 220);
+				});
+			} else if (!isOpen) {
+				if (rootEl.value) {
+					rootEl.value.style.setProperty('--editor-shift-y', '0px');
+					rootEl.value.style.setProperty('--arrow-shift-y', '0px');
+				}
 			}
-		}
-	});
+		},
+	);
 
 	provide(TRAIT_SET_EDITOR_KEY, api);
 	return api;

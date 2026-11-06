@@ -3,31 +3,67 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, printBlank, viewY, character,
-	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, getTraitSetLabel,
-	renderDieValueForPrint, handleSingleDieClick, getDiceCount, setDiceCount,
-	getDiceCountPool, getPrintTallyPips, isDieSpent, toggleDieSpentInPlay, handleDieClick, isSpendable,
-	firstDie, isDieActive, isPlayMutableSet
+	traitSet,
+	s,
+	submode,
+	printBlank,
+	viewY,
+	character,
+	isSelected,
+	selectElement,
+	openTraitAt,
+	updateCharacter,
+	removeTrait,
+	addTrait,
+	getRenderedTraits,
+	getTraitClasses,
+	getTraitSetRatings,
+	getTraitSetLabel,
+	renderDieValueForPrint,
+	handleSingleDieClick,
+	getDiceCount,
+	setDiceCount,
+	getDiceCountPool,
+	getPrintTallyPips,
+	isDieSpent,
+	toggleDieSpentInPlay,
+	handleDieClick,
+	isSpendable,
+	firstDie,
+	isDieActive,
+	isPlayMutableSet,
 } = injectTraitSet();
 </script>
 
 <template>
 	<div class="trait-dice-count" v-if="getView(traitSet)?.style?.body === 'dice-count'">
-		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
+		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || 't' + t">
 			<div
 				:class="getTraitClasses(item.trait)"
 				:data-trait-name="item.trait.name || undefined"
-				:data-trait-rating="firstDie(item.trait) ? ('d' + firstDie(item.trait)) : undefined"
+				:data-trait-rating="firstDie(item.trait) ? 'd' + firstDie(item.trait) : undefined"
 			>
-				<div :class="{ 'trait-inner': true, 'dice-count-row': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }">
+				<div
+					:class="{
+						'trait-inner': true,
+						'dice-count-row': true,
+						selected: !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]),
+						'trait-placeholder-slot': item.isPlaceholder,
+					}"
+				>
 					<button
 						type="button"
 						class="trait-title-btn"
-						:aria-label="(!item.isPlaceholder && item.trait.name) ? (item.trait.name + (submode === 'play' ? ' options' : ' edit')) : ((traitSet.noun || 'Name') + ' edit')"
+						:aria-label="
+							!item.isPlaceholder && item.trait.name
+								? item.trait.name + (submode === 'play' ? ' options' : ' edit')
+								: (traitSet.noun || 'Name') + ' edit'
+						"
 						@click.stop="openTraitAt(s, item)"
 					>
-						<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
+						<span class="trait-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{
+							item.trait.name
+						}}</span>
 						<span class="trait-name trait-name-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
 							<template v-if="submode === 'edit' && !printBlank && !item.trait.name">
 								<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
@@ -42,32 +78,54 @@ const {
 					<!-- ONLINE (EDIT / PLAY): DYNAMICALLY RENDER THE POOL -->
 					<div class="trait-value multidie-value" v-if="submode !== 'print'">
 						<div
-							v-for="(dieSize, dIdx) in (item.isPlaceholder ? [6] : getDiceCountPool(item.trait, traitSet))"
+							v-for="(dieSize, dIdx) in item.isPlaceholder ? [6] : getDiceCountPool(item.trait, traitSet)"
 							:key="dIdx"
 							class="multidie-badge-wrap"
-							:class="{ 'spent': !item.isPlaceholder && isDieSpent(item.trait, dIdx) }"
+							:class="{ spent: !item.isPlaceholder && isDieSpent(item.trait, dIdx) }"
 						>
 							<span
-								:class="{ 'c active': !item.isPlaceholder, 'c': item.isPlaceholder }"
+								:class="{ 'c active': !item.isPlaceholder, c: item.isPlaceholder }"
 								role="button"
 								tabindex="0"
 								:aria-label="`Stage d${dieSize} from ${item.trait.name || 'trait'}`"
 								:aria-pressed="!isDieSpent(item.trait, dIdx) ? 'true' : 'false'"
-								@click.stop="!item.isPlaceholder ? handleDieClick(item.trait, dieSize, dIdx, traitSet, s, item.originalIndex) : null"
-								@keydown.enter.prevent="!item.isPlaceholder ? handleDieClick(item.trait, dieSize, dIdx, traitSet, s, item.originalIndex) : null"
-								@keydown.space.prevent="!item.isPlaceholder ? handleDieClick(item.trait, dieSize, dIdx, traitSet, s, item.originalIndex) : null"
+								@click.stop="
+									!item.isPlaceholder
+										? handleDieClick(item.trait, dieSize, dIdx, traitSet, s, item.originalIndex)
+										: null
+								"
+								@keydown.enter.prevent="
+									!item.isPlaceholder
+										? handleDieClick(item.trait, dieSize, dIdx, traitSet, s, item.originalIndex)
+										: null
+								"
+								@keydown.space.prevent="
+									!item.isPlaceholder
+										? handleDieClick(item.trait, dieSize, dIdx, traitSet, s, item.originalIndex)
+										: null
+								"
 								:title="submode === 'play' && !item.isPlaceholder ? 'Click to add d' + dieSize + ' to roller pool' : ''"
 								v-html="renderDieValueForPrint(dieSize, !item.isPlaceholder)"
 							></span>
-							<div class="die-play-controls" v-if="submode === 'play' && !item.isPlaceholder && isSpendable(item.trait, traitSet)">
+							<div
+								class="die-play-controls"
+								v-if="submode === 'play' && !item.isPlaceholder && isSpendable(item.trait, traitSet)"
+							>
 								<button
 									type="button"
 									class="btn-play-spend"
 									@click.stop="toggleDieSpentInPlay(s, item.originalIndex, dIdx)"
 									:title="isDieSpent(item.trait, dIdx) ? 'Restore die' : 'Spend die'"
-									:aria-label="isDieSpent(item.trait, dIdx) ? (`Restore d${dieSize} on ${item.trait.name || 'trait'}`) : (`Spend d${dieSize} on ${item.trait.name || 'trait'}`)"
+									:aria-label="
+										isDieSpent(item.trait, dIdx)
+											? `Restore d${dieSize} on ${item.trait.name || 'trait'}`
+											: `Spend d${dieSize} on ${item.trait.name || 'trait'}`
+									"
 								>
-									<i :class="isDieSpent(item.trait, dIdx) ? 'fas fa-rotate-left' : 'fas fa-xmark'" aria-hidden="true"></i>
+									<i
+										:class="isDieSpent(item.trait, dIdx) ? 'fas fa-rotate-left' : 'fas fa-xmark'"
+										aria-hidden="true"
+									></i>
 								</button>
 							</div>
 						</div>
@@ -76,25 +134,47 @@ const {
 					<!-- PRINT TAB / PRINT PREVIEW: RATING LADDER + DICE COUNT TRACK -->
 					<template v-else>
 						<span class="dice-count-rating-label">{{ getTraitSetLabel(traitSet, 'rating') }}</span>
-						<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null">
-							<span v-for="size in getTraitSetRatings(traitSet)" :key="size"
-								:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
-								v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"></span>
+						<div
+							class="trait-value single-die-value"
+							@click.stop="
+								!printBlank && !item.isPlaceholder
+									? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex)
+									: null
+							"
+						>
+							<span
+								v-for="size in getTraitSetRatings(traitSet)"
+								:key="size"
+								:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+								v-html="
+									renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))
+								"
+							></span>
 						</div>
 						<span class="dice-count-count-label">{{ getTraitSetLabel(traitSet, 'dice') }}</span>
 						<div class="dice-count-track">
-							<span v-for="n in getPrintTallyPips(item.trait)" :key="n" class="dice-count-pip"
-								:class="{ 'filled': !printBlank && !item.isPlaceholder && getDiceCount(item.trait) >= n }">{{ n }}</span>
+							<span
+								v-for="n in getPrintTallyPips(item.trait)"
+								:key="n"
+								class="dice-count-pip"
+								:class="{ filled: !printBlank && !item.isPlaceholder && getDiceCount(item.trait) >= n }"
+								>{{ n }}</span
+							>
 						</div>
 					</template>
 				</div>
 			</div>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-if="submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet))">
+			<div
+				class="preview-button-container"
+				v-if="submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet))"
+			>
 				<div class="preview-button-container-inner">
-					<div class="preview-button" @click.stop="addTrait( s )">
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
+					<div class="preview-button" @click.stop="addTrait(s)">
+						<span
+							><i class="fas fa-plus"></i> {{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait' }}</span
+						>
 					</div>
 				</div>
 			</div>

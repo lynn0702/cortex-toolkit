@@ -51,17 +51,28 @@ export const DIE_LADDER = [4, 6, 8, 10, 12] as number[];
 export const DEFAULT_HITCHES = 1;
 
 /** Loose node access for rating helpers (array-model and layered nodes alike). */
-type RatedNode = { rating?: unknown; value?: unknown; dice?: unknown; hitches?: unknown; pool?: unknown; spendable?: unknown; keepsExtra?: unknown } | null | undefined;
+type RatedNode =
+	| {
+			rating?: unknown;
+			value?: unknown;
+			dice?: unknown;
+			hitches?: unknown;
+			pool?: unknown;
+			spendable?: unknown;
+			keepsExtra?: unknown;
+	  }
+	| null
+	| undefined;
 
 function asNumberList(v: unknown): number[] {
-	return Array.isArray(v)
-		? v.filter((x): x is number => typeof x === 'number' && Number.isFinite(x))
-		: [];
+	return Array.isArray(v) ? v.filter((x): x is number => typeof x === 'number' && Number.isFinite(x)) : [];
 }
 
 function asRatingValue(v: unknown): Array<number | boolean> {
 	if (!Array.isArray(v)) return [];
-	return v.filter((x): x is number | boolean => (typeof x === 'number' && Number.isFinite(x)) || typeof x === 'boolean');
+	return v.filter(
+		(x): x is number | boolean => (typeof x === 'number' && Number.isFinite(x)) || typeof x === 'boolean',
+	);
 }
 
 /** Read the rating off any node; undefined when unrated (containers of subtraits/SFX only). */
@@ -74,8 +85,10 @@ export function getRating(node: unknown): Rating | undefined {
 		const type = rec.type;
 		if (type === 'Counter' || type === 'Die' || type === 'Dice' || type === 'Pip') {
 			return {
-				type, value: asRatingValue(rec.value), range: asNumberList(rec.range),
-				...(typeof rec.out === 'boolean' ? { out: rec.out } : {})
+				type,
+				value: asRatingValue(rec.value),
+				range: asNumberList(rec.range),
+				...(typeof rec.out === 'boolean' ? { out: rec.out } : {}),
 			};
 		}
 		return undefined;
@@ -110,24 +123,34 @@ export function setRatingDice(node: Record<string, any>, dice: number[], range?:
 		delete node.rating;
 		return;
 	}
-	const prev = (node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating)) ? node.rating : {};
+	const prev = node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating) ? node.rating : {};
 	node.rating = {
 		...prev,
 		type: clean.length > 1 ? 'Dice' : 'Die',
 		value: clean,
-		range: Array.isArray(range) && range.length ? [...range] : (Array.isArray(prev.range) && prev.range.length ? [...prev.range] : [...DIE_LADDER]),
+		range:
+			Array.isArray(range) && range.length
+				? [...range]
+				: Array.isArray(prev.range) && prev.range.length
+					? [...prev.range]
+					: [...DIE_LADDER],
 	};
 }
 
 /** Step a single-die rating to a size (or clear when size is null/0). Never touches siblings. Range options (out) survive the rewrite. */
 export function setRatingDie(node: Record<string, any>, size: number | null, range?: number[]): void {
 	if (typeof size === 'number' && size > 0) {
-		const prev = (node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating)) ? node.rating : {};
+		const prev = node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating) ? node.rating : {};
 		node.rating = {
 			...prev,
 			type: 'Die',
 			value: [size],
-			range: Array.isArray(range) && range.length ? [...range] : (Array.isArray(prev.range) && prev.range.length ? [...prev.range] : [...DIE_LADDER]),
+			range:
+				Array.isArray(range) && range.length
+					? [...range]
+					: Array.isArray(prev.range) && prev.range.length
+						? [...prev.range]
+						: [...DIE_LADDER],
 		};
 	} else {
 		delete node.rating;
@@ -138,10 +161,18 @@ export function setRatingDie(node: Record<string, any>, size: number | null, ran
  * Build a rating from legacy encodings (migration/import read path).
  * pool/spendable/hitches ride alongside; range defaults to the die ladder.
  */
-export function ratingFromLegacy(value: unknown, dice: unknown, opts?: { range?: number[]; type?: RatingType }): Rating | undefined {
+export function ratingFromLegacy(
+	value: unknown,
+	dice: unknown,
+	opts?: { range?: number[]; type?: RatingType },
+): Rating | undefined {
 	const list = Array.isArray(dice) ? dice.filter((d): d is number => typeof d === 'number' && d > 0) : [];
 	if (list.length > 0) {
-		return { type: list.length > 1 ? 'Dice' : 'Die', value: list, range: opts?.range ? [...opts.range] : [...DIE_LADDER] };
+		return {
+			type: list.length > 1 ? 'Dice' : 'Die',
+			value: list,
+			range: opts?.range ? [...opts.range] : [...DIE_LADDER],
+		};
 	}
 	if (typeof value === 'number' && value > 0) {
 		return { type: opts?.type ?? 'Die', value: [value], range: opts?.range ? [...opts.range] : [...DIE_LADDER] };
@@ -216,9 +247,10 @@ export function hasOutRange(node: unknown, fallbacks?: Array<unknown>): boolean 
 /** Top of a die ladder: max range step, default d12. Out sits one step past it. */
 export function rangeTop(node: unknown): number {
 	const r = getRating(node);
-	const steps = r && Array.isArray((r as RatedNode & { range?: unknown }).range)
-		? ((r as RatedNode & { range?: unknown }).range as unknown[]).filter((x): x is number => typeof x === 'number')
-		: [];
+	const steps =
+		r && Array.isArray((r as RatedNode & { range?: unknown }).range)
+			? ((r as RatedNode & { range?: unknown }).range as unknown[]).filter((x): x is number => typeof x === 'number')
+			: [];
 	return steps.length ? Math.max(...steps) : 12;
 }
 
@@ -243,7 +275,9 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 	const sourceType = sourceRating.type;
 	const sourceRange = Array.isArray(sourceRating.range)
 		? [...sourceRating.range]
-		: (sourceType === 'Counter' ? [0, 20] : [4, 6, 8, 10, 12]);
+		: sourceType === 'Counter'
+			? [0, 20]
+			: [4, 6, 8, 10, 12];
 
 	function walk(targetTrait: any) {
 		if (!targetTrait || typeof targetTrait !== 'object') return;
@@ -253,7 +287,7 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 				type: targetRating.type,
 				value: Array.isArray(targetRating.value) ? [...targetRating.value] : targetRating.value,
 				range: [...sourceRange],
-				...((targetRating as any).out !== undefined ? { out: (targetRating as any).out } : {})
+				...((targetRating as any).out !== undefined ? { out: (targetRating as any).out } : {}),
 			};
 		}
 		if (Array.isArray(targetTrait.traits)) {
@@ -316,17 +350,11 @@ export function resolveSetPillar(traitSet: unknown): string {
 	if (isNameSet(traitSet)) {
 		return 'identity';
 	}
-	if (
-		v?.visibility === 'play-only' ||
-		v?.playMutable === true
-	) {
+	if (v?.visibility === 'play-only' || v?.playMutable === true) {
 		return 'play';
 	}
 	const body = v?.style?.body;
-	if (
-		body === 'portrait-ring' ||
-		v?.ringTrait === true
-	) {
+	if (body === 'portrait-ring' || v?.ringTrait === true) {
 		return 'prime';
 	}
 	return 'plus';
@@ -350,8 +378,10 @@ export function getPillarLabel(character: unknown, pillarKey: string): string {
 		const flat = labels['pillar_' + key];
 		if (typeof flat === 'string' && flat.trim().length > 0) return flat.trim();
 	}
-	const sets = (character && typeof character === 'object' && Array.isArray((character as any).traitSets))
-		? (character as any).traitSets : [];
+	const sets =
+		character && typeof character === 'object' && Array.isArray((character as any).traitSets)
+			? (character as any).traitSets
+			: [];
 	for (const ts of sets) {
 		const tsLabels = getView(ts)?.labels as Record<string, any> | undefined;
 		if (tsLabels && typeof tsLabels === 'object') {
@@ -475,7 +505,7 @@ export interface CortexToolkitCustom {
 	imageConfig?: ImageConfig;
 	/** Generic Out indicator for any stepped track; default off. */
 	outIndicator?: boolean;
-	labels?: { [k: string]: any; pillars?: Record<string, string>; };
+	labels?: { [k: string]: any; pillars?: Record<string, string> };
 	/** Open permissive pillar key for the 2D mobile Play carousel. */
 	pillar?: string;
 	notes?: string;
@@ -516,7 +546,11 @@ export interface CortexToolkitCustom {
 	/** Whether this set permits adding and removing traits during Play mode. */
 	playMutable?: boolean;
 	/** SVG Frame & Border layout configuration (Phase 3c). */
-	frame?: import('./frame-geometry.ts').FrameConfig | Partial<import('./frame-geometry.ts').FrameConfig> | import('./frame-geometry.ts').FrameShape | string;
+	frame?:
+		| import('./frame-geometry.ts').FrameConfig
+		| Partial<import('./frame-geometry.ts').FrameConfig>
+		| import('./frame-geometry.ts').FrameShape
+		| string;
 
 	// ring / portrait ring
 	/** Whether this set owns the portrait ring. */

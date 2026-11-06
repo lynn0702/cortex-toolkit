@@ -22,56 +22,73 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-	( e: 'selectElement', selector: any[] ): void;
-	( e: 'updateCharacter', character: any ): void;
-	( e: 'removeTrait', traitSetID: number, traitID: number ): void;
-	( e: 'removeTraitSet', traitSetID: number ): void;
-	( e: 'addTrait', traitSetID: number ): void;
-	( e: 'addDieToRoller', die: any ): void;
+	(e: 'selectElement', selector: any[]): void;
+	(e: 'updateCharacter', character: any): void;
+	(e: 'removeTrait', traitSetID: number, traitID: number): void;
+	(e: 'removeTraitSet', traitSetID: number): void;
+	(e: 'addTrait', traitSetID: number): void;
+	(e: 'addDieToRoller', die: any): void;
 }>();
 
-const ts = useTraitSet( props, emit );
+const ts = useTraitSet(props, emit);
 
 const {
-	traitSet, s, submode, viewY, character,
-	getTraitSetClasses, isSelected, renderText, selectElement, updateCharacter, removeTraitSet,
-	hasCounterColumn, getCounterLabel, isHiddenIn,
-	resolvedFrame, isFrameActive, isFrameForcedOff, frameToggledOff, frameSvgPath, frameStrokeClass, frameStrokeStyle
+	traitSet,
+	s,
+	submode,
+	viewY,
+	character,
+	getTraitSetClasses,
+	isSelected,
+	renderText,
+	selectElement,
+	updateCharacter,
+	removeTraitSet,
+	hasCounterColumn,
+	getCounterLabel,
+	isHiddenIn,
+	resolvedFrame,
+	isFrameActive,
+	isFrameForcedOff,
+	frameToggledOff,
+	frameSvgPath,
+	frameStrokeClass,
+	frameStrokeStyle,
 } = ts;
 
-const isName = computed( () => isNameSet( traitSet.value ) );
+const isName = computed(() => isNameSet(traitSet.value));
 
-const canRemoveSetInPlay = computed( () => {
-	if ( isName.value ) return false;
-	const v = getView( traitSet.value );
-	return Boolean( v?.playMutable || v?.visibility === 'play-only' );
-} );
+const canRemoveSetInPlay = computed(() => {
+	if (isName.value) return false;
+	const v = getView(traitSet.value);
+	return Boolean(v?.playMutable || v?.visibility === 'play-only');
+});
 
-const headerTop = computed( () => getView(traitSet.value)?.header === 'top' );
+const headerTop = computed(() => getView(traitSet.value)?.header === 'top');
 
-const setSfxEntries = computed( () => cortexFunctions.sfxChildren( traitSet.value ) );
+const setSfxEntries = computed(() => cortexFunctions.sfxChildren(traitSet.value));
 
 const BODY_COMPONENTS: Record<string, any> = {
-	'name': TraitSetName,
-	'image': TraitSetImage,
-	'pips': TraitSetPips,
+	name: TraitSetName,
+	image: TraitSetImage,
+	pips: TraitSetPips,
 	'subtrait-columns': TraitSetSubtraitColumns,
 	'die-rows': TraitSetDieRows,
-	'dice-count': TraitSetDiceCount
+	'dice-count': TraitSetDiceCount,
 };
 
-const bodyComponent = computed( () => {
+const bodyComponent = computed(() => {
 	const style = getView(traitSet.value)?.style?.body;
-	return ( style && BODY_COMPONENTS[ style ] ) || TraitSetList;
-} );
+	return (style && BODY_COMPONENTS[style]) || TraitSetList;
+});
 
-const rootEl = ref<HTMLElement | null>( null );
-onMounted( () => {
-	ts.observeContainer( rootEl.value );
-} );
-watch( rootEl, ( el ) => {
-	ts.observeContainer( el );
-} );
+const rootEl = ref<HTMLElement | null>(null);
+onMounted(() => {
+	ts.observeContainer(rootEl.value);
+});
+watch(rootEl, (el) => {
+	ts.observeContainer(el);
+});
 </script>
 
 <template>
@@ -94,16 +111,18 @@ watch( rootEl, ( el ) => {
 		<div class="trait-set-header" v-if="!isName && resolvedFrame?.shape !== 'line' && traitSet.name">
 			<transition appear>
 				<div
-					:class="{'trait-set-header-inner': true, 'selected': isSelected(['traitSet', s])}"
+					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
 					:role="submode === 'edit' ? 'button' : undefined"
 					:tabindex="submode === 'edit' ? 0 : undefined"
-					:aria-label="submode === 'edit' ? ('Edit ' + (traitSet.name || 'trait set')) : undefined"
-					@keydown.enter.prevent="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
-					@keydown.space.prevent="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
-					@click.stop="submode === 'edit' ? selectElement([ 'traitSet', s ]) : null"
+					:aria-label="submode === 'edit' ? 'Edit ' + (traitSet.name || 'trait set') : undefined"
+					@keydown.enter.prevent="submode === 'edit' ? selectElement(['traitSet', s]) : null"
+					@keydown.space.prevent="submode === 'edit' ? selectElement(['traitSet', s]) : null"
+					@click.stop="submode === 'edit' ? selectElement(['traitSet', s]) : null"
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
-					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">{{ getCounterLabel(traitSet) }}</div>
+					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">
+						{{ getCounterLabel(traitSet) }}
+					</div>
 					<button
 						v-if="submode === 'play' && canRemoveSetInPlay"
 						type="button"
@@ -120,16 +139,17 @@ watch( rootEl, ( el ) => {
 
 		<div class="trait-set-body" :class="{ 'trait-set-body-framed': isFrameActive }">
 			<!-- Bare-path divider if line -->
-			<TraitSetFrame
-				v-if="resolvedFrame?.shape === 'line'"
-				:trait-set="traitSet"
+			<TraitSetFrame v-if="resolvedFrame?.shape === 'line'" :trait-set="traitSet" />
+
+			<component
+				:is="bodyComponent"
+				v-if="isName || !(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))"
 			/>
 
-			<component :is="bodyComponent" v-if="isName || !(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))" />
-
 			<ul class="sfx" v-if="!isName && resolvedFrame?.shape !== 'line' && setSfxEntries.length">
-				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || ('sfx' + sfId)">
-					<span class="sfx-name">{{ sfx.name }}</span>:
+				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || 'sfx' + sfId">
+					<span class="sfx-name">{{ sfx.name }}</span
+					>:
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>
 				</li>
 			</ul>

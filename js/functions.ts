@@ -2,17 +2,25 @@ import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
 import {
-		VIEW_KEY, getView, ensureView, isNameSet as isNameSetModel,
-		getRating, ratingDice, setRatingDice, resolveSetPillar, getPillarLabel,
-		resolveVisibility, nextVisibility, isHiddenIn
-	} from './model.ts';
+	VIEW_KEY,
+	getView,
+	ensureView,
+	isNameSet as isNameSetModel,
+	getRating,
+	ratingDice,
+	setRatingDice,
+	resolveSetPillar,
+	getPillarLabel,
+	resolveVisibility,
+	nextVisibility,
+	isHiddenIn,
+} from './model.ts';
 import { buildParts } from './spotlight-grid.ts';
 import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
 declare const cortexSpotlightTemplates: any;
 
 export const cortexFunctions = {
-
 	cloneDeep: cloneDeep,
 	VIEW_KEY: VIEW_KEY,
 	getView: getView,
@@ -45,20 +53,26 @@ export const cortexFunctions = {
 			return crypto.randomUUID();
 		}
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c: string) {
-			const r = Math.random() * 16 | 0;
-			const v = c === 'x' ? r : (r & 0x3 | 0x8);
+			const r = (Math.random() * 16) | 0;
+			const v = c === 'x' ? r : (r & 0x3) | 0x8;
 			return v.toString(16);
 		});
 	},
 
 	getDieDisplayValue: function (dieValue: number) {
 		switch (dieValue) {
-			case 4: return '4';
-			case 6: return '6';
-			case 8: return '8';
-			case 10: return '0';
-			case 12: return '2';
-			default: return '';
+			case 4:
+				return '4';
+			case 6:
+				return '6';
+			case 8:
+				return '8';
+			case 10:
+				return '0';
+			case 12:
+				return '2';
+			default:
+				return '';
 		}
 	},
 
@@ -85,7 +99,12 @@ export const cortexFunctions = {
 		style.textContent = `@font-face { font-family: '${fontName}'; src: url('${base64Data}') format('woff2'), url('${base64Data}') format('woff'), url('${base64Data}') format('truetype'); font-weight: normal; font-style: normal; }`;
 	},
 
-	renderDieconSVG: function (dieValue: number, isFilled = false, extraClass = '', diceConfig: DiceConfig | null = null) {
+	renderDieconSVG: function (
+		dieValue: number,
+		isFilled = false,
+		extraClass = '',
+		diceConfig: DiceConfig | null = null,
+	) {
 		const s = Number(dieValue) || 8;
 		const filledClass = isFilled ? 'diecon-filled' : 'diecon-unfilled';
 		const cls = `diecon diecon-d${s} ${filledClass} ${extraClass}`.trim();
@@ -106,7 +125,7 @@ export const cortexFunctions = {
 					const gradKey = `${s}-${cfg.backgroundColor1}-${cfg.backgroundColor2}-${cfg.gradientAngle || 135}`;
 					let hash = 0;
 					for (let i = 0; i < gradKey.length; i++) {
-						hash = ((hash << 5) - hash) + gradKey.charCodeAt(i);
+						hash = (hash << 5) - hash + gradKey.charCodeAt(i);
 						hash |= 0;
 					}
 					const gradSlug = Math.abs(hash).toString(36);
@@ -125,7 +144,8 @@ export const cortexFunctions = {
 			} else {
 				// Unset / unfilled dice: must remain unfilled (transparent) and only show border outline + numeral
 				fill = 'none';
-				stroke = (cfg.unfilledBorder && cfg.unfilledBorder !== 'none') ? cfg.unfilledBorder : (cfg.borderColor || '#000000');
+				stroke =
+					cfg.unfilledBorder && cfg.unfilledBorder !== 'none' ? cfg.unfilledBorder : cfg.borderColor || '#000000';
 				if (stroke.toLowerCase() === '#ffffff' || stroke.toLowerCase() === '#fff') {
 					stroke = '#334155';
 				}
@@ -209,7 +229,9 @@ export const cortexFunctions = {
 	getSubtraitSlotRatings: function (traitSet: TraitSet, slot: number) {
 		const ratings = this.getSubtraitRatings(traitSet);
 		const v = getView(traitSet);
-		const isPaired = v?.style?.body === 'paired-slots' || Boolean(v?.parts && (v.parts['child:Statement'] || (v.parts as any)['child_statement']));
+		const isPaired =
+			v?.style?.body === 'paired-slots' ||
+			Boolean(v?.parts && (v.parts['child:Statement'] || (v.parts as any)['child_statement']));
 		if (isPaired && slot >= 1 && ratings.length === 5 && ratings[0] === 4) {
 			return ratings.filter((size: number) => size >= 6);
 		}
@@ -218,7 +240,18 @@ export const cortexFunctions = {
 
 	// Set names whose trait names are system labels: they print on blank
 	// sheets. Central list so the check is data, not inline sniffing.
-	fixedNameSetKeys: ['attribute', 'value', 'drive', 'role', 'affiliation', 'branch', 'eidolon', 'power', 'system', 'chassis'],
+	fixedNameSetKeys: [
+		'attribute',
+		'value',
+		'drive',
+		'role',
+		'affiliation',
+		'branch',
+		'eidolon',
+		'power',
+		'system',
+		'chassis',
+	],
 	isFixedNameSet: function (setName: unknown) {
 		const n = typeof setName === 'string' ? setName.toLowerCase() : '';
 		if (!n.length) return false;
@@ -265,7 +298,9 @@ export const cortexFunctions = {
 		const rawTraits = traitSetArg?.traits;
 		const traits = Array.isArray(rawTraits)
 			? rawTraits
-			: (rawTraits && typeof rawTraits === 'object' ? Object.values(rawTraits) : []);
+			: rawTraits && typeof rawTraits === 'object'
+				? Object.values(rawTraits)
+				: [];
 		let firstAnyRange: number[] | null = null;
 		for (const tr of traits) {
 			if (!tr || typeof tr !== 'object') continue;
@@ -285,7 +320,7 @@ export const cortexFunctions = {
 			} else if (rawSubs && typeof rawSubs === 'object') {
 				for (const [key, st] of Object.entries(rawSubs)) {
 					if (!st || typeof st !== 'object') continue;
-					const name = ((st as any).name || key);
+					const name = (st as any).name || key;
 					if (name === 'SFX' || name === 'Statement') continue;
 					const r = (st as any).rating;
 					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
@@ -304,13 +339,15 @@ export const cortexFunctions = {
 	// rating of its own; its children are the SFX entries. Shape + name,
 	// never a field — this is the dissolve of the old `sfx` array.
 	isSfxContainer: function (t: unknown) {
-		return Boolean(t && typeof t === 'object' && !Array.isArray(t) && (t as any).name === 'SFX' && getRating(t) === undefined);
+		return Boolean(
+			t && typeof t === 'object' && !Array.isArray(t) && (t as any).name === 'SFX' && getRating(t) === undefined,
+		);
 	},
 	sfxChildren: function (node: unknown) {
 		const subs = node && typeof node === 'object' ? (node as any).traits : undefined;
 		if (!Array.isArray(subs)) return [];
 		const container = subs.find((st: any) => this.isSfxContainer(st));
-		return (container && Array.isArray(container.traits)) ? container.traits : [];
+		return container && Array.isArray(container.traits) ? container.traits : [];
 	},
 
 	// The SFX container child, created on demand (sparse: absent until an
@@ -341,13 +378,14 @@ export const cortexFunctions = {
 		}
 	},
 
-
 	// The statement container is a child trait literally named "Statement"
 	// with no rating of its own; its single child is the sentence, carrying
 	// the questioned state as a Pip rating. Shape + name, never a field —
 	// this is the dissolve of the old `statement`/`questioned` pair.
 	isStatementContainer: function (t: unknown) {
-		return Boolean(t && typeof t === 'object' && !Array.isArray(t) && (t as any).name === 'Statement' && getRating(t) === undefined);
+		return Boolean(
+			t && typeof t === 'object' && !Array.isArray(t) && (t as any).name === 'Statement' && getRating(t) === undefined,
+		);
 	},
 	statementContainer: function (node: unknown) {
 		const subs = node && typeof node === 'object' ? (node as any).traits : undefined;
@@ -356,11 +394,11 @@ export const cortexFunctions = {
 	},
 	statementChild: function (node: unknown) {
 		const container = this.statementContainer(node);
-		return (container && Array.isArray(container.traits)) ? (container.traits[0] || undefined) : undefined;
+		return container && Array.isArray(container.traits) ? container.traits[0] || undefined : undefined;
 	},
 	statementText: function (node: unknown) {
 		const child = this.statementChild(node);
-		return (child && typeof child.name === 'string') ? child.name : '';
+		return child && typeof child.name === 'string' ? child.name : '';
 	},
 	isStatementFilled: function (node: unknown) {
 		const child = this.statementChild(node);
@@ -522,7 +560,8 @@ export const cortexFunctions = {
 		if (!scheme) return true;
 		const s = scheme[1].toLowerCase();
 		if (s === 'http' || s === 'https' || s === 'mailto') return true;
-		if (allowDataImage && s === 'data' && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp|avif);base64,/i.test(clean)) return true;
+		if (allowDataImage && s === 'data' && /^data:image\/(png|jpe?g|gif|webp|svg\+xml|bmp|avif);base64,/i.test(clean))
+			return true;
 		if (allowDataImage && s === 'blob') return true;
 		return false;
 	},
@@ -541,7 +580,7 @@ export const cortexFunctions = {
 	// Downscales an uploaded image to a data URL (caps localStorage/IDB bloat).
 	processImageFile: function (file: File, maxDimension: number, quality: number): Promise<string> {
 		maxDimension = maxDimension || 1024;
-		quality = (quality === undefined || quality === null) ? 0.85 : quality;
+		quality = quality === undefined || quality === null ? 0.85 : quality;
 		return new Promise((resolve, reject) => {
 			if (!file) return reject(new Error('No file provided.'));
 			if (file.type && file.type.indexOf('image/') !== 0) {
@@ -586,11 +625,16 @@ export const cortexFunctions = {
 		if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
 		let inner = data;
 		let unwrapped = false;
-		if ((typeof inner.id !== 'string' || !inner.id.length) && inner.data && typeof inner.data === 'object' && !Array.isArray(inner.data)) {
+		if (
+			(typeof inner.id !== 'string' || !inner.id.length) &&
+			inner.data &&
+			typeof inner.data === 'object' &&
+			!Array.isArray(inner.data)
+		) {
 			inner = inner.data;
 			unwrapped = true;
 		}
-		if ((typeof inner.id !== 'string' || !inner.id.length)) {
+		if (typeof inner.id !== 'string' || !inner.id.length) {
 			if (!unwrapped) return null;
 			inner = Object.assign({}, inner);
 			inner.id = this.generateUUID();
@@ -614,7 +658,7 @@ export const cortexFunctions = {
 			}
 			return false;
 		};
-		for (const ts of (Array.isArray(clean.traitSets) ? clean.traitSets : [])) {
+		for (const ts of Array.isArray(clean.traitSets) ? clean.traitSets : []) {
 			if (ts && dupes(ts.traits)) return null;
 		}
 		this.ensureTraitSetIds(clean);
@@ -641,7 +685,8 @@ export const cortexFunctions = {
 		if (typeof a !== typeof b || a === null || b === null || a === undefined || b === undefined) return false;
 		if (Array.isArray(a) !== Array.isArray(b)) return false;
 		if (Array.isArray(a)) {
-			const arrA = a, arrB = b as unknown[];
+			const arrA = a,
+				arrB = b as unknown[];
 			if (arrA.length !== arrB.length) return false;
 			for (let i = 0; i < arrA.length; i++) {
 				if (!this.deepEqual(arrA[i], arrB[i])) return false;
@@ -649,8 +694,10 @@ export const cortexFunctions = {
 			return true;
 		}
 		if (typeof a === 'object') {
-			const recA = a as Record<string, unknown>, recB = b as Record<string, unknown>;
-			const ka = Object.keys(recA), kb = Object.keys(recB);
+			const recA = a as Record<string, unknown>,
+				recB = b as Record<string, unknown>;
+			const ka = Object.keys(recA),
+				kb = Object.keys(recB);
 			if (ka.length !== kb.length) return false;
 			for (const k of ka) {
 				if (!Object.prototype.hasOwnProperty.call(recB, k) || !this.deepEqual(recA[k], recB[k])) return false;
@@ -661,9 +708,15 @@ export const cortexFunctions = {
 	},
 
 	slugifySetId: function (name: string, taken: Set<string>) {
-		let base = String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'set';
-		let id = base, i = 2;
-		while (taken.has(id)) id = base + '-' + (i++);
+		let base =
+			String(name || '')
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-+|-+$/g, '')
+				.slice(0, 40) || 'set';
+		let id = base,
+			i = 2;
+		while (taken.has(id)) id = base + '-' + i++;
 		taken.add(id);
 		return id;
 	},
@@ -676,9 +729,10 @@ export const cortexFunctions = {
 	// templates): params stay `any` on purpose — the shape is not yet a Character.
 	assignLids: function (character: any) {
 		if (!character || !Array.isArray(character.traitSets)) return character;
-		const lid = () => (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-			? crypto.randomUUID()
-			: ('lid-' + Math.random().toString(36).slice(2) + Date.now().toString(36));
+		const lid = () =>
+			typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+				? crypto.randomUUID()
+				: 'lid-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 		const walk = (traits: Trait[] | undefined) => {
 			if (!Array.isArray(traits)) return;
 			traits.forEach((tr) => {
@@ -687,7 +741,9 @@ export const cortexFunctions = {
 				walk(tr.traits);
 			});
 		};
-		character.traitSets.forEach((ts: any) => { if (ts) walk(ts.traits); });
+		character.traitSets.forEach((ts: any) => {
+			if (ts) walk(ts.traits);
+		});
 		return character;
 	},
 
@@ -709,7 +765,9 @@ export const cortexFunctions = {
 		};
 		if (!node || typeof node !== 'object') return;
 		if (Array.isArray(node.traitSets)) {
-			node.traitSets.forEach((ts) => { if (ts) walkTraits(ts.traits); });
+			node.traitSets.forEach((ts) => {
+				if (ts) walkTraits(ts.traits);
+			});
 		}
 		if (Array.isArray(node.traits)) walkTraits(node.traits);
 	},
@@ -745,13 +803,13 @@ export const cortexFunctions = {
 		if (!id) return null;
 		const ver = (t && typeof t === 'object' && t.version) || null;
 		if (Array.isArray(storeTemplates)) {
-			const pool = storeTemplates.filter(x => x && x.id === id);
+			const pool = storeTemplates.filter((x) => x && x.id === id);
 			if (pool.length) {
 				if (ver) {
-					const exact = pool.find(x => (x.version || 1) === ver);
+					const exact = pool.find((x) => (x.version || 1) === ver);
 					if (exact) return exact;
 				}
-				pool.sort((a, b) => (Number(b.version || 1) - Number(a.version || 1)));
+				pool.sort((a, b) => Number(b.version || 1) - Number(a.version || 1));
 				return pool[0];
 			}
 		}
@@ -768,15 +826,19 @@ export const cortexFunctions = {
 	// name on the parent set's removedTraits (no confirmation — explicit and
 	// reversible via restore). Returns true when a template-inherited trait
 	// was removed (plain deletes return false and splice only).
-	removeTraitFromSheet: function (character: Character, templateEntry: SheetTemplate | null, s: number, t: number): boolean {
+	removeTraitFromSheet: function (
+		character: Character,
+		templateEntry: SheetTemplate | null,
+		s: number,
+		t: number,
+	): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		const tr = ts && Array.isArray(ts.traits) ? ts.traits[t] : null;
 		if (!tr) return false;
 		let inherited = false;
 		if (tr.name && templateEntry && ts && ts.id) {
 			const base = this.templateSetById(templateEntry, ts.id);
-			inherited = Boolean(base && Array.isArray(base.traits) &&
-				base.traits.some((b) => b && b.name === tr.name));
+			inherited = Boolean(base && Array.isArray(base.traits) && base.traits.some((b) => b && b.name === tr.name));
 			if (inherited) {
 				if (!Array.isArray(ts.removedTraits)) ts.removedTraits = [];
 				if (!ts.removedTraits.includes(tr.name)) ts.removedTraits.push(tr.name);
@@ -787,7 +849,13 @@ export const cortexFunctions = {
 	},
 
 	// Subtrait removal: same, against the parent trait's removedTraits.
-	removeSubtraitFromSheet: function (character: Character, templateEntry: SheetTemplate | null, s: number, t: number, u: number): boolean {
+	removeSubtraitFromSheet: function (
+		character: Character,
+		templateEntry: SheetTemplate | null,
+		s: number,
+		t: number,
+		u: number,
+	): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		const tr = ts && Array.isArray(ts.traits) ? ts.traits[t] : null;
 		const st = tr && Array.isArray(tr.traits) ? tr.traits[u] : null;
@@ -795,10 +863,8 @@ export const cortexFunctions = {
 		let inherited = false;
 		if (st.name && templateEntry && ts && ts.id && tr && tr.name) {
 			const base = this.templateSetById(templateEntry, ts.id);
-			const btr = base && Array.isArray(base.traits)
-				? base.traits.find((b) => b && b.name === tr.name) : null;
-			inherited = Boolean(btr && Array.isArray(btr.traits) &&
-				btr.traits.some((b) => b && b.name === st.name));
+			const btr = base && Array.isArray(base.traits) ? base.traits.find((b) => b && b.name === tr.name) : null;
+			inherited = Boolean(btr && Array.isArray(btr.traits) && btr.traits.some((b) => b && b.name === st.name));
 			if (inherited) {
 				if (!Array.isArray(tr.removedTraits)) tr.removedTraits = [];
 				if (!tr.removedTraits.includes(st.name)) tr.removedTraits.push(st.name);
@@ -814,19 +880,24 @@ export const cortexFunctions = {
 	restorableTraits: function (character: Character, templateEntry: SheetTemplate | null, s: number): string[] {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		if (!ts) return [];
-		const base = (ts.id && templateEntry) ? this.templateSetById(templateEntry, ts.id) : null;
+		const base = ts.id && templateEntry ? this.templateSetById(templateEntry, ts.id) : null;
 		if (!base || !Array.isArray(base.traits)) return [];
 		const live = new Set(
 			(Array.isArray(ts.traits) ? ts.traits : [])
 				.filter((x) => x && typeof x.name === 'string' && x.name.length)
-				.map((x) => x.name)
+				.map((x) => x.name),
 		);
 		return base.traits
 			.filter((b) => b && typeof b.name === 'string' && b.name.length && !live.has(b.name))
 			.map((b) => b.name);
 	},
 
-	restoreTraitOnSheet: function (character: Character, templateEntry: SheetTemplate | null, s: number, name: string): boolean {
+	restoreTraitOnSheet: function (
+		character: Character,
+		templateEntry: SheetTemplate | null,
+		s: number,
+		name: string,
+	): boolean {
 		const ts = character && character.traitSets ? character.traitSets[s] : null;
 		if (!ts || !name) return false;
 		if (Array.isArray(ts.removedTraits)) {
@@ -834,7 +905,7 @@ export const cortexFunctions = {
 		}
 		if (!Array.isArray(ts.traits)) ts.traits = [];
 		if (ts.traits.some((x) => x && x.name === name)) return true;
-		const base = (ts.id && templateEntry) ? this.templateSetById(templateEntry, ts.id) : null;
+		const base = ts.id && templateEntry ? this.templateSetById(templateEntry, ts.id) : null;
 		const btrait = base && Array.isArray(base.traits) ? base.traits.find((b) => b && b.name === name) : null;
 		if (btrait) {
 			const clone = cloneDeep(btrait);
@@ -868,10 +939,16 @@ export const cortexFunctions = {
 	// library ({ id (static), title, ..., character: {...} }).
 	isSheetTemplateFile: function (data: unknown): boolean {
 		const d = data as Record<string, unknown> | null;
-		return Boolean(d && typeof d === 'object' && !Array.isArray(d) &&
-			typeof d.id === 'string' && (d.id as string).length &&
-			d.character && typeof d.character === 'object' &&
-			Array.isArray((d.character as Record<string, unknown>).traitSets));
+		return Boolean(
+			d &&
+			typeof d === 'object' &&
+			!Array.isArray(d) &&
+			typeof d.id === 'string' &&
+			(d.id as string).length &&
+			d.character &&
+			typeof d.character === 'object' &&
+			Array.isArray((d.character as Record<string, unknown>).traitSets),
+		);
 	},
 
 	findTemplateCharacter: function (templateEntry: SheetTemplate | null): Character | null {
@@ -984,7 +1061,7 @@ export const cortexFunctions = {
 		if (!Array.isArray(overArr) || !overArr.length) return [];
 		const out: unknown[] = [];
 		const push = (v: unknown) => {
-			if (!out.some(e => this.deepEqualClean(e, v))) out.push(cloneDeep(v));
+			if (!out.some((e) => this.deepEqualClean(e, v))) out.push(cloneDeep(v));
 		};
 		(Array.isArray(baseArr) ? baseArr : []).forEach(push);
 		overArr.forEach(push);
@@ -1024,14 +1101,20 @@ export const cortexFunctions = {
 		// positionally — documented; the pruner never emits that shape.
 		for (let i = 0; i < base.length; i++) {
 			const b = base[i];
-			if (!b || typeof b !== 'object') { result.push(cloneDeep(b)); continue; }
+			if (!b || typeof b !== 'object') {
+				result.push(cloneDeep(b));
+				continue;
+			}
 			if (!this.isBlankName(b.name) && rem.has(b.name)) continue; // D6 removal wins.
 			let m = -1;
 			if (!this.isBlankName(b.name)) {
 				for (let j = 0; j < over.length; j++) {
 					if (consumed.has(j)) continue;
 					const o = over[j];
-					if (o && typeof o === 'object' && o.name === b.name) { m = j; break; }
+					if (o && typeof o === 'object' && o.name === b.name) {
+						m = j;
+						break;
+					}
 				}
 			} else if (i < over.length && !consumed.has(i)) {
 				const o = over[i];
@@ -1040,13 +1123,18 @@ export const cortexFunctions = {
 					else if (this.findTraitByName(base, o.name) === -1) m = i; // positional slot fill
 				}
 			}
-			if (m >= 0) { consumed.add(m); result.push(mergeOne(b, over[m])); }
-			else result.push(cloneDeep(b));
+			if (m >= 0) {
+				consumed.add(m);
+				result.push(mergeOne(b, over[m]));
+			} else result.push(cloneDeep(b));
 		}
 		for (let j = 0; j < over.length; j++) {
 			if (consumed.has(j)) continue;
 			const o = over[j];
-			if (!o || typeof o !== 'object') { result.push(cloneDeep(o)); continue; }
+			if (!o || typeof o !== 'object') {
+				result.push(cloneDeep(o));
+				continue;
+			}
 			if (!this.isBlankName(o.name)) {
 				if (this.findTraitByName(base, o.name) === -1) result.push(cloneDeep(o));
 			} else if (j >= base.length) {
@@ -1071,9 +1159,12 @@ export const cortexFunctions = {
 		const consumed = new Set();
 		const result: any[] = [];
 		for (const b of base) {
-			if (!b || typeof b !== 'object') { result.push(cloneDeep(b)); continue; }
+			if (!b || typeof b !== 'object') {
+				result.push(cloneDeep(b));
+				continue;
+			}
 			if (typeof b.id === 'string' && b.id.length && rem.has(b.id)) continue;
-			const j = (typeof b.id === 'string' && b.id.length && byId.has(b.id)) ? byId.get(b.id) : -1;
+			const j = typeof b.id === 'string' && b.id.length && byId.has(b.id) ? byId.get(b.id) : -1;
 			if (j >= 0) {
 				consumed.add(j);
 				const c = cloneDeep(b);
@@ -1101,16 +1192,29 @@ export const cortexFunctions = {
 		// Removals apply even when the array itself is absent from the
 		// overlay (fully pruned): a missing array with a removal list means
 		// "everything except these", not "everything".
-		if (!Array.isArray(over.traitSets) && Array.isArray(over.removedSets) && over.removedSets.length && Array.isArray(base.traitSets)) {
+		if (
+			!Array.isArray(over.traitSets) &&
+			Array.isArray(over.removedSets) &&
+			over.removedSets.length &&
+			Array.isArray(base.traitSets)
+		) {
 			base.traitSets = base.traitSets.filter((ts: any) => !(ts && ts.id && over.removedSets.includes(ts.id)));
 		}
-		if (!Array.isArray(over.traits) && Array.isArray(over.removedTraits) && over.removedTraits.length && Array.isArray(base.traits)) {
+		if (
+			!Array.isArray(over.traits) &&
+			Array.isArray(over.removedTraits) &&
+			over.removedTraits.length &&
+			Array.isArray(base.traits)
+		) {
 			base.traits = base.traits.filter((tr: any) => !(tr && tr.name && over.removedTraits.includes(tr.name)));
 		}
 		for (const key of Object.keys(over)) {
 			if (key === 'sheet' && isRoot !== false) continue;
 			const val = over[key];
-			if (val === null) { base[key] = null; continue; }
+			if (val === null) {
+				base[key] = null;
+				continue;
+			}
 			if (key === 'removedTraits' || key === 'removedSets') {
 				base[key] = cloneDeep(val);
 				continue;
@@ -1122,7 +1226,14 @@ export const cortexFunctions = {
 				base[key] = this.mergeTraitArrays(bval, val, over.removedTraits || []);
 			} else if ((key === 'sfx' || key === 'tags') && Array.isArray(val) && Array.isArray(bval)) {
 				base[key] = val.length ? this.unionArrays(bval, val) : [];
-			} else if (val && typeof val === 'object' && !Array.isArray(val) && bval && typeof bval === 'object' && !Array.isArray(bval)) {
+			} else if (
+				val &&
+				typeof val === 'object' &&
+				!Array.isArray(val) &&
+				bval &&
+				typeof bval === 'object' &&
+				!Array.isArray(bval)
+			) {
 				this.applyOverrides(bval, val, false);
 			} else {
 				base[key] = cloneDeep(val);
@@ -1150,7 +1261,7 @@ export const cortexFunctions = {
 	// spotlight library so all tooling applies unchanged.
 	extractSheetTemplate: function (character: any, meta: any) {
 		this.ensureTraitSetIds(character);
-		const id = meta && meta.id ? String(meta.id) : ('custom-' + this.generateUUID().slice(0, 8));
+		const id = meta && meta.id ? String(meta.id) : 'custom-' + this.generateUUID().slice(0, 8);
 		const snapshot = cloneDeep(character);
 		delete snapshot.sheet;
 		snapshot.isTemplate = true;
@@ -1166,7 +1277,10 @@ export const cortexFunctions = {
 		// _lid is app-local bookkeeping. Blank slots (reserved print rows)
 		// are structural and are always kept.
 		const cleanNode = (node: any) => {
-			if (Array.isArray(node)) { node.forEach(cleanNode); return; }
+			if (Array.isArray(node)) {
+				node.forEach(cleanNode);
+				return;
+			}
 			if (!node || typeof node !== 'object') return;
 			delete node.removedTraits;
 			delete node.removedSets;
@@ -1176,12 +1290,12 @@ export const cortexFunctions = {
 		};
 		cleanNode(snapshot);
 		return {
-			'$schema': this.TEMPLATE_SCHEMA_URL,
+			$schema: this.TEMPLATE_SCHEMA_URL,
 			id: id,
 			title: (meta && meta.title) || character?.game || 'Custom Layout',
-			version: (meta && typeof meta.version === 'number') ? meta.version : this.TEMPLATE_FORMAT_VERSION,
+			version: meta && typeof meta.version === 'number' ? meta.version : this.TEMPLATE_FORMAT_VERSION,
 			updatedAt: new Date().toISOString(),
-			character: snapshot
+			character: snapshot,
 		};
 	},
 
@@ -1195,10 +1309,16 @@ export const cortexFunctions = {
 	pruneValue: function (bval: any, oval: any, removed: any) {
 		if (this.deepEqualClean(bval, oval)) return { drop: true };
 		if (oval === null || oval === undefined) {
-			return (bval === null || bval === undefined) ? { drop: true } : { keep: null };
+			return bval === null || bval === undefined ? { drop: true } : { keep: null };
 		}
-		if (oval && typeof oval === 'object' && !Array.isArray(oval) &&
-			bval && typeof bval === 'object' && !Array.isArray(bval)) {
+		if (
+			oval &&
+			typeof oval === 'object' &&
+			!Array.isArray(oval) &&
+			bval &&
+			typeof bval === 'object' &&
+			!Array.isArray(bval)
+		) {
 			let out: any = {};
 			for (const k of Object.keys(oval)) {
 				if (k === 'sheet' || k === 'removedTraits' || k === 'removedSets' || k === 'id' || k === 'name') {
@@ -1228,10 +1348,10 @@ export const cortexFunctions = {
 				if (!r.drop) out[k] = r.keep;
 			}
 			if (!Object.keys(out).length) return { drop: true };
-			if (Object.keys(out).every(kk => kk === 'id' || kk === 'name')) {
+			if (Object.keys(out).every((kk) => kk === 'id' || kk === 'name')) {
 				// Join keys + name alone still drop — unless the name moved. A
 				// rename is display truth, not inheritance, and must survive.
-				const bName = (bval && typeof bval === 'object' && !Array.isArray(bval)) ? (bval as any).name : undefined;
+				const bName = bval && typeof bval === 'object' && !Array.isArray(bval) ? (bval as any).name : undefined;
 				if (out.name !== undefined && bName !== undefined && out.name !== bName) return { keep: out };
 				return { drop: true };
 			}
@@ -1250,10 +1370,16 @@ export const cortexFunctions = {
 			if (b && typeof b === 'object' && !this.isBlankName(b.name) && !baseByName.has(b.name)) baseByName.set(b.name, b);
 		});
 		over.forEach((o: any, i: number) => {
-			if (!o || typeof o !== 'object') { sparse.push(cloneDeep(o)); return; }
+			if (!o || typeof o !== 'object') {
+				sparse.push(cloneDeep(o));
+				return;
+			}
 			if (!this.isBlankName(o.name)) {
 				const b = baseByName.get(o.name);
-				if (!b) { sparse.push(cloneDeep(o)); return; } // char-only
+				if (!b) {
+					sparse.push(cloneDeep(o));
+					return;
+				} // char-only
 				// Shape-preserving: fully-inherited named traits stay as
 				// {name} stubs so live indices survive the round-trip.
 				const r = this.pruneValue(b, o, null);
@@ -1264,10 +1390,14 @@ export const cortexFunctions = {
 				// Blank traits are positional print slots: always kept so
 				// index alignment (and reserved print rows) survives the
 				// round-trip. Fully-inherited ones prune to a bare stub.
-				const b = (i < base.length && base[i] && typeof base[i] === 'object' && this.isBlankName(base[i].name)) ? base[i] : null;
-				if (!b) { sparse.push(cloneDeep(o)); return; } // extra blank slot
+				const b =
+					i < base.length && base[i] && typeof base[i] === 'object' && this.isBlankName(base[i].name) ? base[i] : null;
+				if (!b) {
+					sparse.push(cloneDeep(o));
+					return;
+				} // extra blank slot
 				const r = this.pruneValue(b, o, null);
-				sparse.push(r.drop ? { name: (typeof o.name === 'string' ? o.name : '') } : r.keep);
+				sparse.push(r.drop ? { name: typeof o.name === 'string' ? o.name : '' } : r.keep);
 			}
 		});
 		return sparse;
@@ -1278,7 +1408,8 @@ export const cortexFunctions = {
 		const over = Array.isArray(oSets) ? oSets : [];
 		const baseById = new Map();
 		base.forEach((b: any) => {
-			if (b && typeof b === 'object' && typeof b.id === 'string' && b.id.length && !baseById.has(b.id)) baseById.set(b.id, b);
+			if (b && typeof b === 'object' && typeof b.id === 'string' && b.id.length && !baseById.has(b.id))
+				baseById.set(b.id, b);
 		});
 		const sparse: any[] = [];
 		// Recursively bare = join keys + name-only stubs all the way down.
@@ -1286,7 +1417,7 @@ export const cortexFunctions = {
 		const bare = (t: any): boolean => {
 			if (!t || typeof t !== 'object') return true;
 			if (Array.isArray(t)) return t.every(bare);
-			return Object.keys(t).every(k => {
+			return Object.keys(t).every((k) => {
 				if (k === 'id' || k === 'name') return true;
 				if (k === 'traits' && Array.isArray(t[k])) return t[k].every(bare);
 				return false;
@@ -1294,9 +1425,15 @@ export const cortexFunctions = {
 		};
 		const stubOnly = (p: any) => bare(p);
 		over.forEach((o: any) => {
-			if (!o || typeof o !== 'object') { sparse.push(cloneDeep(o)); return; }
-			const b = (typeof o.id === 'string' && o.id.length) ? baseById.get(o.id) : null;
-			if (!b) { sparse.push(cloneDeep(o)); return; } // custom set: whole
+			if (!o || typeof o !== 'object') {
+				sparse.push(cloneDeep(o));
+				return;
+			}
+			const b = typeof o.id === 'string' && o.id.length ? baseById.get(o.id) : null;
+			if (!b) {
+				sparse.push(cloneDeep(o));
+				return;
+			} // custom set: whole
 			const r = this.pruneValue(b, o, null);
 			const pruned = r.drop ? { id: o.id } : r.keep;
 			pruned.id = o.id;
@@ -1329,8 +1466,12 @@ export const cortexFunctions = {
 			node.forEach((el: any) => this.pruneEmptyScaffolding(el));
 			return node;
 		}
-		if (node.custom && typeof node.custom === 'object' && !Array.isArray(node.custom) &&
-			!Object.keys(node.custom).length) {
+		if (
+			node.custom &&
+			typeof node.custom === 'object' &&
+			!Array.isArray(node.custom) &&
+			!Object.keys(node.custom).length
+		) {
 			delete node.custom;
 		}
 		if (Array.isArray(node.tags) && !node.tags.length) delete node.tags;
@@ -1405,7 +1546,10 @@ export const cortexFunctions = {
 			}
 			const label = str.slice(open + 1, closeLabel);
 			const url = str.slice(closeLabel + 2, j - 1);
-			const clean = String(url).trim().replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+			const clean = String(url)
+				.trim()
+				.replace(/&quot;/g, '"')
+				.replace(/&#39;/g, "'");
 			out += str.slice(i, open);
 			out += this.isSafeUrl(clean, false)
 				? '<a href="' + this.escapeHtml(clean) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>'
@@ -1476,177 +1620,177 @@ export const cortexFunctions = {
 	},
 
 	defaultCharacter: {
-		'$schema': 'https://cortex.engard.me/schema/0.1/character.schema.json',
-		'version': '0.1',
-		'id': '',
-		'isTemplate': false,
-		'dateCreated': '',
-		'dateModified': '',
-		'dateTouched': '',
-		'name': '',
-		'player': '',
-		'game': '',
-		'description': '',
-		'pronouns': '',
-		'traitSets': [
+		$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+		version: '0.1',
+		id: '',
+		isTemplate: false,
+		dateCreated: '',
+		dateModified: '',
+		dateTouched: '',
+		name: '',
+		player: '',
+		game: '',
+		description: '',
+		pronouns: '',
+		traitSets: [
 			{
-				'id': 'name',
-				'name': 'Name',
-				'traits': [],
-				'view': {
-					'style': {
-						'header': 'default',
-						'body': 'name',
-					}
-				}
-			},
-			{
-				'name': 'Distinctions',
-				'description': '',
-				'noun': 'Distinction',
-				'plural': 'Distinctions',
-				'traits': [
-					{
-						'name': '',
-						'description': '',
-						'traits': [],
-						'sfx': ['hinder'],
-						'tags': [],
-						'custom': {},
+				id: 'name',
+				name: 'Name',
+				traits: [],
+				view: {
+					style: {
+						header: 'default',
+						body: 'name',
 					},
-					{
-						'name': '',
-						'description': '',
-						'traits': [],
-						'sfx': ['hinder'],
-						'tags': [],
-						'custom': {},
-					},
-					{
-						'name': '',
-						'description': '',
-						'traits': [],
-						'sfx': ['hinder'],
-						'tags': [],
-						'custom': {},
-					}
-				],
-				'sfx': [],
-				'tags': [],
-				'view': {
-					'features': {
-						'description': true,
-						'sfx': true,
-						'subtraits': false
-					},
-					'place': {
-						'left': '0%',
-						'top': 0,
-						'width': '50%',
-						'height': 2
-					},
-					'reservedSlots': 3
 				},
 			},
 			{
-				'name': 'Attributes',
-				'description': '',
-				'noun': 'Attribute',
-				'plural': 'Attributes',
-				'traits': [
+				name: 'Distinctions',
+				description: '',
+				noun: 'Distinction',
+				plural: 'Distinctions',
+				traits: [
 					{
-						'name': 'Physical',
-						'description': '',
-						'traits': [],
-						'sfx': [],
-						'tags': [],
+						name: '',
+						description: '',
+						traits: [],
+						sfx: ['hinder'],
+						tags: [],
+						custom: {},
 					},
 					{
-						'name': 'Mental',
-						'description': '',
-						'traits': [],
-						'sfx': [],
-						'tags': [],
+						name: '',
+						description: '',
+						traits: [],
+						sfx: ['hinder'],
+						tags: [],
+						custom: {},
 					},
 					{
-						'name': 'Social',
-						'description': '',
-						'traits': [],
-						'sfx': [],
-						'tags': [],
-					}
+						name: '',
+						description: '',
+						traits: [],
+						sfx: ['hinder'],
+						tags: [],
+						custom: {},
+					},
 				],
-				'sfx': [],
-				'tags': [],
-				'view': {
-					'features': {
-						'description': false,
-						'sfx': false,
-						'subtraits': false
+				sfx: [],
+				tags: [],
+				view: {
+					features: {
+						description: true,
+						sfx: true,
+						subtraits: false,
 					},
-					'place': {
-						'left': '50%',
-						'top': 0,
-						'width': '50%',
-						'height': 1
+					place: {
+						left: '0%',
+						top: 0,
+						width: '50%',
+						height: 2,
 					},
-					'reservedSlots': 3,
-					'style': {
-						'header': 'default',
-						'body': 'default',
-					}
+					reservedSlots: 3,
 				},
 			},
 			{
-				'name': 'Skills',
-				'description': '',
-				'noun': 'Skill',
-				'plural': 'Skills',
-				'traits': [
+				name: 'Attributes',
+				description: '',
+				noun: 'Attribute',
+				plural: 'Attributes',
+				traits: [
 					{
-						'name': '',
-						'description': '',
-						'traits': [],
-						'sfx': [],
-						'tags': [],
-					}
+						name: 'Physical',
+						description: '',
+						traits: [],
+						sfx: [],
+						tags: [],
+					},
+					{
+						name: 'Mental',
+						description: '',
+						traits: [],
+						sfx: [],
+						tags: [],
+					},
+					{
+						name: 'Social',
+						description: '',
+						traits: [],
+						sfx: [],
+						tags: [],
+					},
 				],
-				'sfx': [],
-				'tags': [],
-				'view': {
-					'features': {
-						'description': false,
-						'sfx': false,
-						'subtraits': false
+				sfx: [],
+				tags: [],
+				view: {
+					features: {
+						description: false,
+						sfx: false,
+						subtraits: false,
 					},
-					'place': {
-						'left': '50%',
-						'top': 1,
-						'width': '50%',
-						'height': 1
+					place: {
+						left: '50%',
+						top: 0,
+						width: '50%',
+						height: 1,
 					},
-					'reservedSlots': 4,
-					'style': {
-						'header': 'default',
-						'body': 'default',
-					}
+					reservedSlots: 3,
+					style: {
+						header: 'default',
+						body: 'default',
+					},
 				},
-			}
+			},
+			{
+				name: 'Skills',
+				description: '',
+				noun: 'Skill',
+				plural: 'Skills',
+				traits: [
+					{
+						name: '',
+						description: '',
+						traits: [],
+						sfx: [],
+						tags: [],
+					},
+				],
+				sfx: [],
+				tags: [],
+				view: {
+					features: {
+						description: false,
+						sfx: false,
+						subtraits: false,
+					},
+					place: {
+						left: '50%',
+						top: 1,
+						width: '50%',
+						height: 1,
+					},
+					reservedSlots: 4,
+					style: {
+						header: 'default',
+						body: 'default',
+					},
+				},
+			},
 		],
-		'portrait': {
-			'url': '',
-			'alt': '',
-			'tags': [],
-			'view': {
-				'alignment': 'top-center'
-			}
+		portrait: {
+			url: '',
+			alt: '',
+			tags: [],
+			view: {
+				alignment: 'top-center',
+			},
 		},
-		'plotPoints': 1,
-		'notes': '',
-		'tags': [],
-		'view': {
-			'pageCount': 1
-		}
+		plotPoints: 1,
+		notes: '',
+		tags: [],
+		view: {
+			pageCount: 1,
+		},
 	},
 
 	defaultTraitSet: {
@@ -1660,15 +1804,15 @@ export const cortexFunctions = {
 			features: {
 				description: false,
 				sfx: false,
-				subtraits: false
+				subtraits: false,
 			},
 			style: {
 				header: 'default',
 				body: 'default',
 			},
 			outIndicator: true,
-			notes: ''
-		}
+			notes: '',
+		},
 	},
 
 	defaultTrait: {
@@ -1677,14 +1821,14 @@ export const cortexFunctions = {
 		description: 'Trait description',
 		traits: [],
 		tags: [],
-		custom: {}
+		custom: {},
 	},
 
 	defaultSFX: {
 		name: 'New SFX',
 		description: 'SFX description',
 		tags: [],
-		custom: {}
+		custom: {},
 	},
 
 	// Built-in Set Presets (dogfooded TraitSet templates for Play & Edit)
@@ -1706,9 +1850,9 @@ export const cortexFunctions = {
 					playMutable: true,
 					outIndicator: true,
 					reservedSlots: 3,
-					style: { header: 'default', body: 'default' }
-				}
-			}
+					style: { header: 'default', body: 'default' },
+				},
+			},
 		},
 		'session-notes': {
 			id: 'session-notes',
@@ -1725,9 +1869,9 @@ export const cortexFunctions = {
 					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
-					style: { header: 'notes', body: 'notes' }
-				}
-			}
+					style: { header: 'notes', body: 'notes' },
+				},
+			},
 		},
 		'crisis-pool': {
 			id: 'crisis-pool',
@@ -1741,16 +1885,22 @@ export const cortexFunctions = {
 				pool: true,
 				spendable: true,
 				traits: [
-					{ name: 'Trouble', description: '', traits: [], tags: [], rating: { type: 'Dice', value: [6, 6], range: [4, 6, 8, 10, 12] } }
+					{
+						name: 'Trouble',
+						description: '',
+						traits: [],
+						tags: [],
+						rating: { type: 'Dice', value: [6, 6], range: [4, 6, 8, 10, 12] },
+					},
 				],
 				tags: [],
 				view: {
 					pillar: 'play',
 					visibility: 'play-only',
 					playMutable: true,
-					style: { header: 'default', body: 'default' }
-				}
-			}
+					style: { header: 'default', body: 'default' },
+				},
+			},
 		},
 		'micro-gmc': {
 			id: 'micro-gmc',
@@ -1762,8 +1912,20 @@ export const cortexFunctions = {
 				plural: 'Traits',
 				description: '',
 				traits: [
-					{ name: 'Primary Role', description: '', traits: [], tags: [], rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
-					{ name: 'Specialty / Gear', description: '', traits: [], tags: [], rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }
+					{
+						name: 'Primary Role',
+						description: '',
+						traits: [],
+						tags: [],
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+					},
+					{
+						name: 'Specialty / Gear',
+						description: '',
+						traits: [],
+						tags: [],
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
+					},
 				],
 				tags: [],
 				view: {
@@ -1771,10 +1933,17 @@ export const cortexFunctions = {
 					visibility: 'play-only',
 					playMutable: true,
 					outIndicator: true,
-					parts: buildParts({ rating: 'inline', ratingDice: 5, trackDice: 5, description: false, block: false, subtraits: false }),
-					style: { header: 'default', body: 'default' }
-				}
-			}
+					parts: buildParts({
+						rating: 'inline',
+						ratingDice: 5,
+						trackDice: 5,
+						description: false,
+						block: false,
+						subtraits: false,
+					}),
+					style: { header: 'default', body: 'default' },
+				},
+			},
 		},
 		'framed-ring-attributes': {
 			id: 'framed-ring-attributes',
@@ -1790,56 +1959,54 @@ export const cortexFunctions = {
 					pillar: 'prime',
 					header: 'top',
 					frame: {
-						shape: 'ring', span: [0, 360], color: 'primary'
+						shape: 'ring',
+						span: [0, 360],
+						color: 'primary',
 					},
 					labels: {
 						track: 'Stress',
-						out: 'OUT'
+						out: 'OUT',
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'L' },
 						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
 						trackLabel: { left: '0%', top: 1, width: '30%', height: 1, marker: 'L' },
-						track: { left: '30%', top: 1, width: '70%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] }
-					}
+						track: { left: '30%', top: 1, width: '70%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+					},
 				},
 				traits: [
 					{
 						name: 'Agility',
 						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: [
-							{ name: 'Stress', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }
-						]
+						traits: [{ name: 'Stress', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }],
 					},
 					{
 						name: 'Awareness',
 						rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] },
-						traits: []
+						traits: [],
 					},
 					{
 						name: 'Brawn',
 						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-						traits: []
+						traits: [],
 					},
 					{
 						name: 'Coordination',
 						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: []
+						traits: [],
 					},
 					{
 						name: 'Intellect',
 						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: [
-							{ name: 'Stress', rating: { type: 'Die', value: [4], range: [4, 6, 8, 10, 12] } }
-						]
+						traits: [{ name: 'Stress', rating: { type: 'Die', value: [4], range: [4, 6, 8, 10, 12] } }],
 					},
 					{
 						name: 'Will',
 						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
-						traits: []
-					}
-				]
-			}
+						traits: [],
+					},
+				],
+			},
 		},
 		'framed-chamfer-block': {
 			id: 'framed-chamfer-block',
@@ -1861,24 +2028,24 @@ export const cortexFunctions = {
 					frame: {
 						shape: 'block',
 						corner: 'cut',
-						color: 'accent'
+						color: 'accent',
 					},
 					parts: {
 						name: { left: '0%', top: 0, width: '60%', height: 1, marker: 'T' },
-						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] }
-					}
+						rating: { left: '60%', top: 0, width: '40%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+					},
 				},
 				traits: [
 					{
 						name: 'Sensor Lock',
-						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }
+						rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
 					},
 					{
 						name: 'Hull Breach',
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12], out: true }
-					}
-				]
-			}
+						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12], out: true },
+					},
+				],
+			},
 		},
 		'framed-section-line': {
 			id: 'framed-section-line',
@@ -1893,11 +2060,12 @@ export const cortexFunctions = {
 				tags: [],
 				view: {
 					frame: {
-						shape: 'line', color: 'accent'
-					}
-				}
-			}
-		}
+						shape: 'line',
+						color: 'accent',
+					},
+				},
+			},
+		},
 	} as Record<string, { id: string; label: string; blurb?: string; preset: any }>,
 
 	derivePresetId: function (label: string): string {
@@ -1933,7 +2101,10 @@ export const cortexFunctions = {
 		}
 	},
 
-	saveCustomSetPreset: function (traitSet: any, options?: { label?: string; blurb?: string }): { id: string; label: string; blurb?: string; preset: any } | null {
+	saveCustomSetPreset: function (
+		traitSet: any,
+		options?: { label?: string; blurb?: string },
+	): { id: string; label: string; blurb?: string; preset: any } | null {
 		if (!traitSet || typeof traitSet !== 'object') return null;
 		const cloned = cloneDeep(traitSet);
 		this.stripInternalIds(cloned);
@@ -1943,9 +2114,12 @@ export const cortexFunctions = {
 		if (!v.pillar || typeof v.pillar !== 'string' || !v.pillar.trim().length) {
 			v.pillar = 'play';
 		}
-		const rawLabel = options?.label !== undefined
-			? String(options.label).trim()
-			: (typeof cloned.name === 'string' ? cloned.name.trim() : '');
+		const rawLabel =
+			options?.label !== undefined
+				? String(options.label).trim()
+				: typeof cloned.name === 'string'
+					? cloned.name.trim()
+					: '';
 		if (!rawLabel.length) return null;
 		const id = this.derivePresetId(rawLabel);
 		if (!id || this.hasPresetCollision(id)) return null;
@@ -1954,14 +2128,16 @@ export const cortexFunctions = {
 			id,
 			label: rawLabel,
 			...(rawBlurb.length ? { blurb: rawBlurb } : {}),
-			preset: cloned
+			preset: cloned,
 		};
 		const list = this.getCustomSetPresets();
 		list.push(entry);
 		if (typeof localStorage !== 'undefined') {
 			try {
 				localStorage.setItem('cortexCustomSetPresets', JSON.stringify(list));
-			} catch (_e) { /* ignore storage quota in headless environments */ }
+			} catch (_e) {
+				/* ignore storage quota in headless environments */
+			}
 		}
 		return entry;
 	},
@@ -1971,15 +2147,16 @@ export const cortexFunctions = {
 		if (typeof localStorage !== 'undefined') {
 			try {
 				localStorage.setItem('cortexCustomSetPresets', JSON.stringify(list));
-			} catch (_e) { /* ignore */ }
+			} catch (_e) {
+				/* ignore */
+			}
 		}
 		return list;
 	},
 
 	instantiateSetPreset: function (presetOrEntry: any, character: any, page = 1): any {
-		const rawSet = (presetOrEntry && typeof presetOrEntry === 'object' && presetOrEntry.preset)
-			? presetOrEntry.preset
-			: presetOrEntry;
+		const rawSet =
+			presetOrEntry && typeof presetOrEntry === 'object' && presetOrEntry.preset ? presetOrEntry.preset : presetOrEntry;
 		const traitSet = cloneDeep(rawSet);
 		this.stripInternalIds(traitSet);
 		delete traitSet.id;
@@ -2007,7 +2184,6 @@ export const cortexFunctions = {
 		this.assignLids({ traitSets: [traitSet] });
 		return traitSet;
 	},
-
 };
 
 export interface SetPresetEntry {

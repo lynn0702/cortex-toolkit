@@ -2,12 +2,13 @@
 
 // Google Fonts
 
-
 // Cortex Icons
 @font-face {
 	font-family: 'cortex-icons';
-	src: url('data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAikAAsAAAAACFgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAABCAAAAGAAAABgDxENEGNtYXAAAAFoAAAAdAAAAHQAoQGMZ2FzcAAAAdwAAAAIAAAACAAAABBnbHlmAAAB5AAABCgAAAQoDkCuPGhlYWQAAAYMAAAANgAAADYeR5tcaGhlYQAABkQAAAAkAAAAJAfWBGRobXR4AAAGaAAAACQAAAAkGhYBwGxvY2EAAAaMAAAAFAAAABQCjAO8bWF4cAAABqAAAAAgAAAAIAAOAGhuYW1lAAAGwAAAAcIAAAHCX0nGynBvc3QAAAiEAAAAIAAAACAAAwAAAAMDrgGQAAUAAAKZAswAAACPApkCzAAAAesAMwEJAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAQAAAADgDwP/AAEADwABAAAAAAQAAAAAAAAAAAAAAIAAAAAAAAwAAAAMAAAAcAAEAAwAAABwAAwABAAAAHAAEAFgAAAASABAAAwACAAEAIAAwADIANAA2ADj//f//AAAAAAAgADAAMgA0ADYAOP/9//8AAf/j/9T/0//S/9H/0AADAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAB//8ADwABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAAAQAAAAAAAAAAAAIAADc5AQAAAAAEAEH/aQN2AtwABQAgACcAQgAACQERCQERJTIWFx4BFxUUBgcOASMiJicuASc1NDY3PgEzBzMRIxEHNSUiBgcOAQcVFBYXHgEzMjY3PgE9ATQmJy4BIwHc/mUBmwGa/sQkNhMSEwETEhM2JCM3EhMTARMTEzYj1wlWZwGLDxYHCAcBBwgHFxAQFgcHCAcIBxcQAtz+1/7f/tcBKQEhSxcXF0MsTy1FGBgXFxcYQytQLUUXGBcI/k8BSyBGAwwLDCUYahonDQ0NDA0MJhlnGycMDQwAAAMAT/93A4ICygAJADgAPwAAAQ8BER8BPwERJwcyFhceARUUBgcOAQ8BMxUhNTc+ATc+ATU0JicuASMiBgcOARUjNDY3PgE3PgEzBzMRIxEHNQHp/pyc/v2cnJ4iNhMTEwkJCB0VZsD+z5APFgcHBwgHCBUODxgICQhZCgkKGxISKBfKCllpAspR1/7501FR0wEH13EREBEvHhAiEREoF2tHPZkQHQwMFwsPFwgJCAoKCxsRFSURERoKCQoG/kIBVSFIAAADAIf/gwQUApUAAgANABEAABMJAQUzFTMVIxUjNSMnNw8BM4cBxAHJ/jtKKSlJlgOZBUxRApX87gMSa+Q6T08ujQh5AAMAjv+uA28CjwADAC8ASQAAExEhEQUzFSMiBgcOAQc+ATMyFhceARUUBgcOAQcOASMiJicuAT0BNDY3PgE3PgEzByIGBw4BBxUUFhceATMyNjc+ATU0JicuASOOAuH+1w4IHS8REhUEEisaHC0QERAJCQkaEBEmFCI3FRUVDQ0OJhgZOSFFChMJCAwECAgJFxANFwgJCAgJCRcOAo/9HwLhn0YPDw8oGhESFBUUNSAVJhERGwkKCRgXGD8nHyM+GxspDw4P1wUGBQ4JGhYhDAwMCwsKHBIRHQsKCwAEABv/SQPOAvwAAwA0AEwAZQAACQMlMhYXHgEVFAYHDgEHHgEXHgEVFAYHDgEjIiYnLgE1NDY3PgE3LgEnLgE1NDY3PgEzFSIGBw4BFRQWFx4BMzI2Nz4BNTQmJy4BByIGBw4BFRQWFx4BMzI2Nz4BNTQmJy4BIwH1/iYB2gHZ/iEgMhITEggIBxYOEBkJCQkTFBM2ISI1FBQUCgkJGQ8NFggIBxISEzIfDBIHBwYGBwcTDAwTBgcGBgcHEg0OFQkICAgICBYPDhYHCAgICAgWDgL8/if+JgHa4RAQESwcDxwMDRMHCBUNDSARHS4QERERERAuHREgDQ0VCAcTDQwcDxwsEBEQRQcIBxUNDRQICAgICAgUDQ0UCAcItgkICBcODhYJCAkICQgWDw4WCQgJAAAAAAEAAAABAAC+G61TXw889QALBAAAAAAA3YosDQAAAADdiiwNAAD/SQQUAvwAAAAIAAIAAAAAAAAAAQAAA8D/wAAABJoAAAAABBQAAQAAAAAAAAAAAAAAAAAAAAkEAAAAAAAAAAAAAAACAAAAA7wAQQPSAE8EmgCHBAAAjgPuABsAAAAAAAoAFAAeAIgA6gEMAXoCFAABAAAACQBmAAQAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAADgCuAAEAAAAAAAEADAAAAAEAAAAAAAIABwCNAAEAAAAAAAMADABFAAEAAAAAAAQADACiAAEAAAAAAAUACwAkAAEAAAAAAAYADABpAAEAAAAAAAoAGgDGAAMAAQQJAAEAGAAMAAMAAQQJAAIADgCUAAMAAQQJAAMAGABRAAMAAQQJAAQAGACuAAMAAQQJAAUAFgAvAAMAAQQJAAYAGAB1AAMAAQQJAAoANADgY29ydGV4LWljb25zAGMAbwByAHQAZQB4AC0AaQBjAG8AbgBzVmVyc2lvbiAxLjAAVgBlAHIAcwBpAG8AbgAgADEALgAwY29ydGV4LWljb25zAGMAbwByAHQAZQB4AC0AaQBjAG8AbgBzY29ydGV4LWljb25zAGMAbwByAHQAZQB4AC0AaQBjAG8AbgBzUmVndWxhcgBSAGUAZwB1AGwAYQByY29ydGV4LWljb25zAGMAbwByAHQAZQB4AC0AaQBjAG8AbgBzRm9udCBnZW5lcmF0ZWQgYnkgSWNvTW9vbi4ARgBvAG4AdAAgAGcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAuAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==') format('woff'),
-	     url('../fonts/cortex-icons.woff') format('woff');
+	src:
+		url('data:font/woff;charset=utf-8;base64,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')
+			format('woff'),
+		url('../fonts/cortex-icons.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 	font-display: block;
@@ -23,52 +24,50 @@
 // VARIABLES
 
 :root {
-	
-	--page-width:    210mm;
-	--page-height:   297.1mm;
-	--page-margin:   10mm;
-	--header-size:   3rem;
+	--page-width: 210mm;
+	--page-height: 297.1mm;
+	--page-margin: 10mm;
+	--header-size: 3rem;
 	// --sidebar-size:  6rem;
-	--sidebar-size:  0px;
+	--sidebar-size: 0px;
 
-	--font-primary:   'Open Sans', sans-serif;
+	--font-primary: 'Open Sans', sans-serif;
 	--font-secondary: 'Alegreya Sans SC', sans-serif;
-	--font-heading:   'Josefin Sans', sans-serif;
+	--font-heading: 'Josefin Sans', sans-serif;
 
-	--color-primary:     hsl(337, 92%, 40%); // Fuschia
-	--color-secondary:   hsl(137, 36%, 88%); // Green
+	--color-primary: hsl(337, 92%, 40%); // Fuschia
+	--color-secondary: hsl(137, 36%, 88%); // Green
 	--color-interactive: hsl(204, 71%, 47%); // Blue
-	--color-separator:   hsl(  0,  0%, 83%); //
-	--color-label:       hsl(  0,  0%, 60%); //
-	--color-inactive: 	 hsl(  0,  0%, 40%); //
-	--color-input: 	     hsl(  0,  0%, 15%); //
+	--color-separator: hsl(0, 0%, 83%); //
+	--color-label: hsl(0, 0%, 60%); //
+	--color-inactive: hsl(0, 0%, 40%); //
+	--color-input: hsl(0, 0%, 15%); //
 
-	--highlight-radius: .5em;
+	--highlight-radius: 0.5em;
 
 	// TYPOGRAPHIC & ICON TOKENS (REM-based, auto-scales down in print)
-	--text-header:       1.2rem;   // Trait set headers (sidebar & top)
-	--text-trait-title:  1.0rem;   // Trait names / titles
-	--text-card-title:   0.95rem;  // Asset box names / card headers
-	--text-body:         0.90rem;  // SFX text, notes, descriptions, milestone lists
-	--text-meta:         0.82rem;  // Sublabels, pips, statement placeholder text, counters
+	--text-header: 1.2rem; // Trait set headers (sidebar & top)
+	--text-trait-title: 1rem; // Trait names / titles
+	--text-card-title: 0.95rem; // Asset box names / card headers
+	--text-body: 0.9rem; // SFX text, notes, descriptions, milestone lists
+	--text-meta: 0.82rem; // Sublabels, pips, statement placeholder text, counters
 
-	--diecon-size:       1.45rem;  // Standalone die icons
-	--diecon-scale-size: 1.35rem;  // Rating scale die buttons ([4] [6] [8] [10] [12])
+	--diecon-size: 1.45rem; // Standalone die icons
+	--diecon-scale-size: 1.35rem; // Rating scale die buttons ([4] [6] [8] [10] [12])
 
-	--z-main:                      100;
-	--z-page:                      200;
-	--z-ring-items:                500;
-	--z-portrait:                  600;
-	--z-editable-highlight:        700;
-	--z-editable-content:          800;
-	--z-frame:                     900;
-	--z-editor:                   2000;
-	--z-editor-scroll-indicator:  2100;
-	--z-editor-controls:          2200;
-	--z-modal-veil:              10000;
-	--z-modal:                   10100;
-	--z-modal-close:             10200;
-
+	--z-main: 100;
+	--z-page: 200;
+	--z-ring-items: 500;
+	--z-portrait: 600;
+	--z-editable-highlight: 700;
+	--z-editable-content: 800;
+	--z-frame: 900;
+	--z-editor: 2000;
+	--z-editor-scroll-indicator: 2100;
+	--z-editor-controls: 2200;
+	--z-modal-veil: 10000;
+	--z-modal: 10100;
+	--z-modal-close: 10200;
 }
 
 // PRINT
@@ -119,13 +118,13 @@ body {
 
 * {
 	box-sizing: border-box;
-	break-inside: avoid-column;	
+	break-inside: avoid-column;
 	break-before: avoid-column;
 	break-after: avoid-column;
 }
 
 button:focus-visible,
-[role="button"]:focus-visible,
+[role='button']:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
@@ -170,18 +169,18 @@ textarea:focus-visible {
 // uncovered, and on a dark background that sliver reads as a clipped
 // numeral. The pad stays inside every die outline.
 $die-backings:
-	4   -0.0161em  0.0872em  0.2607em  0.3814em,
-	6    0.0010em  0.1805em  0.2891em  0.4547em,
-	8   -0.0078em  0.1629em  0.2852em  0.4586em,
-	10  -0.0313em  0.1688em  0.5293em  0.4586em,
-	12  -0.0181em  0.1629em  0.5322em  0.4664em;
+	4 -0.0161em 0.0872em 0.2607em 0.3814em,
+	6 0.001em 0.1805em 0.2891em 0.4547em,
+	8 -0.0078em 0.1629em 0.2852em 0.4586em,
+	10 -0.0313em 0.1688em 0.5293em 0.4586em,
+	12 -0.0181em 0.1629em 0.5322em 0.4664em;
 
 // Apply to a `.c` element whose box is centred on its glyph's line box
 // (e.g. display:block + line-height:1, or a flex box centring the text).
 @mixin die-backing {
 	&:before {
 		position: absolute;
-		content: " ";
+		content: ' ';
 		background: white;
 		z-index: -1;
 		pointer-events: none;
@@ -222,15 +221,18 @@ $die-backings:
 // INTERFACE
 
 %button-container {
-	--button-font-size: .75rem;
+	--button-font-size: 0.75rem;
 	--button-container-height: 2.4em;
 	@extend %no-print;
 	font-size: var(--button-font-size);
 	&.v-enter-active,
 	&.v-leave-active {
-		transition: opacity .2s ease, transform .2s ease, height .2s ease;
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease,
+			height 0.2s ease;
 		> div {
-			transition: height .2s ease;
+			transition: height 0.2s ease;
 		}
 	}
 	&.v-enter-from,
@@ -261,7 +263,7 @@ $die-backings:
 	outline: none;
 	background: var(--button-color);
 	--button-color: var(--color-interactive);
-	border-radius: calc( var(--button-container-height) / 2 );
+	border-radius: calc(var(--button-container-height) / 2);
 	color: white;
 	font-family: var(--font-heading);
 	font-weight: bold;
@@ -271,8 +273,8 @@ $die-backings:
 	padding-inline: 2em;
 	padding-block: 0;
 	cursor: pointer;
-	opacity: .85;
-	transition: opacity .2s;
+	opacity: 0.85;
+	transition: opacity 0.2s;
 
 	> span {
 		display: inline-block;
@@ -339,26 +341,24 @@ $die-backings:
 // A11Y FOCUS VISIBLE & UTILITIES
 // ============================================================
 button:focus-visible,
-[role="button"]:focus-visible,
-[role="checkbox"]:focus-visible,
-[role="spinbutton"]:focus-visible,
+[role='button']:focus-visible,
+[role='checkbox']:focus-visible,
+[role='spinbutton']:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--color-interactive);
-    outline-offset: 2px;
+	outline: 2px solid var(--color-interactive);
+	outline-offset: 2px;
 }
 
 .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
-
-

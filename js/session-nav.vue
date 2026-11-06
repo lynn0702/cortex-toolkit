@@ -13,17 +13,17 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-	( e: 'focus', id: string ): void;
-	( e: 'close', id: string ): void;
-	( e: 'add' ): void;
-	( e: 'setPlayView', mode: string ): void;
-	( e: 'toggleStudio', tab: 'properties' | 'roller' | 'json' ): void;
-	( e: 'saveSession' ): void;
-	( e: 'togglePillars' ): void;
+	(e: 'focus', id: string): void;
+	(e: 'close', id: string): void;
+	(e: 'add'): void;
+	(e: 'setPlayView', mode: string): void;
+	(e: 'toggleStudio', tab: 'properties' | 'roller' | 'json'): void;
+	(e: 'saveSession'): void;
+	(e: 'togglePillars'): void;
 }>();
 
-function safeImageUrl( url: any ) {
-	return cortexFunctions.safeImageUrl( url );
+function safeImageUrl(url: any) {
+	return cortexFunctions.safeImageUrl(url);
 }
 </script>
 
@@ -51,7 +51,11 @@ function safeImageUrl( url: any ) {
 					@click.stop="emit('focus', c.id)"
 					:title="'Switch to ' + (c.name || 'Character')"
 				>
-					<div class="session-tab-avatar" v-if="c.portrait && c.portrait.url" :style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"></div>
+					<div
+						class="session-tab-avatar"
+						v-if="c.portrait && c.portrait.url"
+						:style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"
+					></div>
 					<div class="session-tab-icon" v-else><i class="fas fa-shield-alt"></i></div>
 					<span class="session-tab-name">{{ c.name || 'Unnamed' }}</span>
 					<button
@@ -60,7 +64,9 @@ function safeImageUrl( url: any ) {
 						@click.stop="emit('close', c.id)"
 						v-if="openCharacters.length > 1"
 						title="Close from session"
-					><i class="fas fa-times"></i></button>
+					>
+						<i class="fas fa-times"></i>
+					</button>
 				</div>
 
 				<button

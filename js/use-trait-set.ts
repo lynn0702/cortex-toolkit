@@ -2,10 +2,25 @@ import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } fr
 import { cortexFunctions } from './functions.ts';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-geometry.ts';
 import {
-		getView, ensureView, getRating, ratingDice, setRatingDice, setRatingDie,
-		resolveHitches, rollSeparate, keepsExtraDice, availableDice, getSpentIndices, isRated, resolveVisibility, isHiddenIn,
-		hasOutRange, rangeTop, isOutDie, isNameSet
-	} from './model.ts';
+	getView,
+	ensureView,
+	getRating,
+	ratingDice,
+	setRatingDice,
+	setRatingDie,
+	resolveHitches,
+	rollSeparate,
+	keepsExtraDice,
+	availableDice,
+	getSpentIndices,
+	isRated,
+	resolveVisibility,
+	isHiddenIn,
+	hasOutRange,
+	rangeTop,
+	isOutDie,
+	isNameSet,
+} from './model.ts';
 import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
@@ -76,8 +91,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return containerWidth.value > 0 && containerWidth.value < minWidth;
 	});
 
-	const isFrameActive = computed(() =>
-		Boolean(resolvedFrame.value) && !frameToggledOff.value && !isFrameForcedOff.value
+	const isFrameActive = computed(
+		() => Boolean(resolvedFrame.value) && !frameToggledOff.value && !isFrameForcedOff.value,
 	);
 
 	const isPositionalFrameActive = computed(() => {
@@ -133,7 +148,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			top,
 			'--anchor-x': `${a.x}%`,
 			'--anchor-y': `${a.y}%`,
-			'--anchor-angle': `${a.angle}deg`
+			'--anchor-angle': `${a.angle}deg`,
 		};
 	}
 
@@ -192,7 +207,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			classes['trait-set-has-counter'] = true;
 		}
 
-		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : (traitSetArg?.traits ? Object.values(traitSetArg.traits) : []);
+		const traits = Array.isArray(traitSetArg?.traits)
+			? traitSetArg.traits
+			: traitSetArg?.traits
+				? Object.values(traitSetArg.traits)
+				: [];
 		if (traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0)) {
 			classes['trait-set-has-feature-description'] = true;
 		}
@@ -225,7 +244,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const parts = getParts(traitSetArg);
 		if (parts && parts.rating) {
 			const rTop = Number(parts.rating.top) || 0;
-			const nTop = parts.name ? (Number(parts.name.top) || 0) : 0;
+			const nTop = parts.name ? Number(parts.name.top) || 0 : 0;
 			if (rTop === 0 && nTop === 0) return 'inline';
 			if (rTop === 0) return 'above';
 			return 'below';
@@ -323,7 +342,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getTraitClasses(trait: Trait) {
-		const classes: Record<string, boolean> = { 'trait': true };
+		const classes: Record<string, boolean> = { trait: true };
 		if (trait?.description?.length) classes['trait-has-description'] = true;
 		if (cortexFunctions.sfxChildren(trait).length) classes['trait-has-sfx'] = true;
 		if (nonSfxSubtraits(trait).length) classes['trait-has-subtraits'] = true;
@@ -397,9 +416,17 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function createBlankSlotTrait(traitSetArg: TraitSet): any {
-		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : (traitSetArg?.traits && typeof traitSetArg.traits === 'object' ? Object.values(traitSetArg.traits) : []);
+		const traits = Array.isArray(traitSetArg?.traits)
+			? traitSetArg.traits
+			: traitSetArg?.traits && typeof traitSetArg.traits === 'object'
+				? Object.values(traitSetArg.traits)
+				: [];
 		const hasSubtraits = traits.some((t: any) => {
-			const subs = Array.isArray(t?.traits) ? t.traits : (t?.traits && typeof t.traits === 'object' ? Object.values(t.traits) : []);
+			const subs = Array.isArray(t?.traits)
+				? t.traits
+				: t?.traits && typeof t.traits === 'object'
+					? Object.values(t.traits)
+					: [];
 			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && !cortexFunctions.isStatementContainer(s));
 		});
 		return {
@@ -407,7 +434,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			description: '',
 			traits: hasSubtraits ? [{ name: '' }] : [],
 			tags: [],
-			custom: {}
+			custom: {},
 		};
 	}
 
@@ -417,17 +444,22 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (name.endsWith(':')) return false;
 		const tsBody = getView(traitSetArg)?.style?.body;
 		const tsName = (traitSetArg?.name || '').toLowerCase();
-		if (tsBody === 'portrait-ring' || tsBody === 'die-track' ||
+		if (
+			tsBody === 'portrait-ring' ||
+			tsBody === 'die-track' ||
 			cortexFunctions.isFixedNameSet(tsName) ||
 			(getView(traitSetArg)?.traitColumns ?? 0) > 1 ||
-			cortexFunctions.hasTrackPart(traitSetArg)) {
+			cortexFunctions.hasTrackPart(traitSetArg)
+		) {
 			return true;
 		}
 		const spotlightId = getView(props.character)?.spotlight;
 		if (spotlightId && typeof (window as any)?.cortexSpotlightTemplates !== 'undefined') {
 			const tpls = (window as any).cortexSpotlightTemplates;
 			if (Array.isArray(tpls)) {
-				const tpl = tpls.find((t: any) => t.id === spotlightId || t.title === spotlightId || t.spotlight === spotlightId);
+				const tpl = tpls.find(
+					(t: any) => t.id === spotlightId || t.title === spotlightId || t.spotlight === spotlightId,
+				);
 				if (tpl?.sets) {
 					for (const sKey of Object.keys(tpl.sets)) {
 						const setDef = tpl.sets[sKey];
@@ -462,8 +494,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// reads past it.
 	function nonSfxSubtraits(trait: Trait) {
 		const subs = (trait as any)?.traits;
-		return (Array.isArray(subs) ? subs : [])
-			.filter((st: any) => !cortexFunctions.isSfxContainer(st) && !cortexFunctions.isStatementContainer(st));
+		return (Array.isArray(subs) ? subs : []).filter(
+			(st: any) => !cortexFunctions.isSfxContainer(st) && !cortexFunctions.isStatementContainer(st),
+		);
 	}
 
 	function getSubtraitAt(trait: Trait, index: number) {
@@ -528,7 +561,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			qty: 1,
 			source: trait.name,
 			hitches: hitches,
-			keepsExtra: keep
+			keepsExtra: keep,
 		}));
 	}
 
@@ -550,14 +583,20 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				size: dieSize,
 				qty: 1,
 				source: trait.name,
-				hitches: resolveHitches(trait, [traitSetArg])
+				hitches: resolveHitches(trait, [traitSetArg]),
 			});
 		} else {
 			selectElement(['trait', sArg, t]);
 		}
 	}
 
-	function handleSingleDieClick(trait: Trait, value: number | null | undefined, traitSetArg: TraitSet, sArg: any, t: any) {
+	function handleSingleDieClick(
+		trait: Trait,
+		value: number | null | undefined,
+		traitSetArg: TraitSet,
+		sArg: any,
+		t: any,
+	) {
 		if (props.submode === 'play') {
 			const first = ratingDice(getRating(trait))[0];
 			const targetVal = value || first;
@@ -579,7 +618,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 					qty: 1,
 					source: trait.name,
 					hitches: resolveHitches(trait, [traitSetArg]),
-					ppDelta: 0
+					ppDelta: 0,
 				});
 			}
 		} else {
@@ -610,7 +649,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				source: trait.name ? `${trait.name} (Hinder)` : 'Hinder',
 				hitches: resolveHitches(trait, [traitSetArg]),
 				ppDelta: 1,
-				ppCommitted: false
+				ppCommitted: false,
 			});
 		}
 	}
@@ -622,7 +661,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				qty: 1,
 				source: label || trait.name || traitSetArg?.noun || 'Trait',
 				hitches: resolveHitches(trait, [traitSetArg]),
-				ppDelta: 0
+				ppDelta: 0,
 			});
 		}
 	}
@@ -681,7 +720,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				return {
 					name: 'Hinder',
 					isHinder: true,
-					description: sfx.description || ''
+					description: sfx.description || '',
 				};
 			}
 			return sfx;
@@ -722,14 +761,21 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!Array.isArray(subs)) return undefined;
 		const fallbackName = getTrackLabel(traitSetArg).toLowerCase();
 		// 1. Direct match by set's track label
-		const direct = subs.find((st: any) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === fallbackName);
+		const direct = subs.find(
+			(st: any) =>
+				st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === fallbackName,
+		);
 		if (direct) return direct;
 		// 2. Trait-specific companion track (e.g. Physical's companion is named "Injured", Mental is "Worried")
 		if (hasTrackPart(traitSetArg)) {
-			return subs.find((st: any) =>
-				st && typeof st === 'object' && st.rating &&
-				st.rating.type !== 'SFX' && st.rating.type !== 'Statement' &&
-				Array.isArray(st.rating.range)
+			return subs.find(
+				(st: any) =>
+					st &&
+					typeof st === 'object' &&
+					st.rating &&
+					st.rating.type !== 'SFX' &&
+					st.rating.type !== 'Statement' &&
+					Array.isArray(st.rating.range),
 			);
 		}
 		return undefined;
@@ -752,9 +798,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const subs = nonSfxSubtraits(trait);
 		if (!subs.length) return [];
 		const comp = hasTrackPart(traitSetArg) ? getTrackCompanion(traitSetArg, trait) : null;
-		const list = comp
-			? subs.filter((st: any) => st !== comp)
-			: subs;
+		const list = comp ? subs.filter((st: any) => st !== comp) : subs;
 		return list.filter((st: any) => isTraitShown(st));
 	}
 
@@ -823,7 +867,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return {
 			perRow: Math.max(1, perRow),
 			connected,
-			labels: (p as any)?.labels === true
+			labels: (p as any)?.labels === true,
 		};
 	}
 
@@ -882,7 +926,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!ts) return;
 		const track = getPipTrack(ts);
 		const curFilled = track.filled;
-		const next = (curFilled === pipIdx + 1) ? pipIdx : pipIdx + 1;
+		const next = curFilled === pipIdx + 1 ? pipIdx : pipIdx + 1;
 		setPipTrack(traitSetIndex, track.count, next);
 	}
 
@@ -913,7 +957,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		for (let i = 0; i < n; i++) {
 			const t = traits[i];
 			const named = t && typeof t === 'object' && typeof t.name === 'string' && t.name.length ? t : null;
-			rows.push({ index: i, trait: named, filled: pipRowFilled(t, i, track.filled), name: named ? (named as any).name : '' });
+			rows.push({
+				index: i,
+				trait: named,
+				filled: pipRowFilled(t, i, track.filled),
+				name: named ? (named as any).name : '',
+			});
 		}
 		return rows;
 	}
@@ -921,7 +970,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function getTraitPipBubbles(trait: Trait | undefined): boolean[] {
 		const r = getRating(trait);
 		if (r && r.type === 'Pip' && Array.isArray(r.value)) {
-			const count = Array.isArray(r.range) && r.range[0] ? r.range[0] : (r.value.length || 5);
+			const count = Array.isArray(r.range) && r.range[0] ? r.range[0] : r.value.length || 5;
 			const bubbles: boolean[] = [];
 			for (let i = 0; i < count; i++) bubbles.push(Boolean(r.value[i] === true));
 			return bubbles;
@@ -949,7 +998,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function parseChildPartKey(partKey: string): { noun: string; kind: 'label' | 'rating' } {
 		if (partKey.startsWith('child:')) {
 			const segs = partKey.slice(6).split(':');
-			return { noun: segs[0] || 'Child', kind: (segs[1] === 'rating' ? 'rating' : 'label') };
+			return { noun: segs[0] || 'Child', kind: segs[1] === 'rating' ? 'rating' : 'label' };
 		}
 		if (partKey.startsWith('child_')) {
 			const rest = partKey.slice(6);
@@ -969,7 +1018,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const n = noun.trim().toLowerCase();
 		if (n === 'sfx') {
 			const entries = cortexFunctions.sfxChildren(trait);
-			return entries.find((e: any) => String(e?.name || '').trim().toLowerCase() !== 'hinder') as Trait | undefined;
+			return entries.find(
+				(e: any) =>
+					String(e?.name || '')
+						.trim()
+						.toLowerCase() !== 'hinder',
+			) as Trait | undefined;
 		}
 		if (n === 'statement') {
 			const child = cortexFunctions.statementChild(trait);
@@ -1050,13 +1104,14 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getImageSetGraphicStyle(traitSetArg: TraitSet) {
-		const rawUrl = getView(traitSetArg)?.imageConfig?.url || (isNameSet(traitSetArg) ? props.character?.portrait?.url : '');
+		const rawUrl =
+			getView(traitSetArg)?.imageConfig?.url || (isNameSet(traitSetArg) ? props.character?.portrait?.url : '');
 		const url = cortexFunctions.safeImageUrl(rawUrl);
 		if (!url) return {};
 		return {
 			backgroundImage: `url("${url}")`,
 			backgroundSize: 'cover',
-			backgroundRepeat: 'no-repeat'
+			backgroundRepeat: 'no-repeat',
 		};
 	}
 
@@ -1064,7 +1119,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const list = items || [];
 		const parents = list.filter((it: any) => getBranchRole(it.trait) !== 'specialty');
 		const flats = list.filter((it: any) => !it.isPlaceholder && getBranchRole(it.trait) === 'specialty');
-		const parentIdx = new Set(parents.filter((p: any) => p.originalIndex !== null && p.originalIndex !== undefined).map((p: any) => p.originalIndex));
+		const parentIdx = new Set(
+			parents
+				.filter((p: any) => p.originalIndex !== null && p.originalIndex !== undefined)
+				.map((p: any) => p.originalIndex),
+		);
 		const groups: any[] = parents.map((traitItem: any) => {
 			const tIdx = traitItem.originalIndex;
 			const nested = (traitItem.trait?.traits || [])
@@ -1075,18 +1134,24 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				.map((f: any) => ({ kind: 'flat', item: f }));
 			return { traitItem, subs: [...nested, ...linked] };
 		});
-		const orphans = flats.filter((f: any) => {
-			const lt = getView(f.trait)?.linkTo;
-			return !(typeof lt === 'number' && parentIdx.has(lt));
-		}).map((f: any) => ({ kind: 'flat', item: f }));
+		const orphans = flats
+			.filter((f: any) => {
+				const lt = getView(f.trait)?.linkTo;
+				return !(typeof lt === 'number' && parentIdx.has(lt));
+			})
+			.map((f: any) => ({ kind: 'flat', item: f }));
 		if (orphans.length) {
 			groups.push({ traitItem: null, subs: orphans });
 		}
-		const split = groups.some((g: any) => (g.subs || []).some((e: any) => {
-			const t = e.kind === 'sub' ? e.sub : (e.item ? e.item.trait : null);
-			return getBranchSide(t) === 'left';
-		}));
-		groups.forEach((g: any) => { g.split = split; });
+		const split = groups.some((g: any) =>
+			(g.subs || []).some((e: any) => {
+				const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
+				return getBranchSide(t) === 'left';
+			}),
+		);
+		groups.forEach((g: any) => {
+			g.split = split;
+		});
 		return groups;
 	}
 
@@ -1136,7 +1201,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function branchSubs(subs: any[], side: string) {
 		return (subs || []).filter((e: any) => {
-			const t = e.kind === 'sub' ? e.sub : (e.item ? e.item.trait : null);
+			const t = e.kind === 'sub' ? e.sub : e.item ? e.item.trait : null;
 			const sd = getBranchSide(t);
 			return side === 'left' ? sd === 'left' : sd !== 'left';
 		});
@@ -1215,7 +1280,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!trait) return;
 		const clamped = Math.max(1, Math.min(5, Number(count) || 1));
 		const ratings = getTraitSetRatings(traitSetArg);
-		const size = ratingDice(getRating(trait))[0] || (ratings[0] || 6);
+		const size = ratingDice(getRating(trait))[0] || ratings[0] || 6;
 		const dice = [];
 		for (let i = 0; i < clamped; i++) dice.push(size);
 		cortexFunctions.setTraitDice(trait, dice);
@@ -1227,7 +1292,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (!traitSetArg) return;
 		const diceToAdd: any[] = [];
 		const poolName = traitSetArg.name || props.character.name || 'Challenge Pool';
-		for (const tr of (traitSetArg.traits || [])) {
+		for (const tr of traitSetArg.traits || []) {
 			const dice = availableDice(tr);
 			const hitches = resolveHitches(tr, [traitSetArg]);
 			const keep = keepsExtraDice(tr);
@@ -1284,36 +1349,152 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	const api = {
-		traitSet, s, traitSets, character, submode, editing, printBlank, viewY,
-		getView, ensureView,
-		getTraitSetLabel, isSelected, renderText, renderNotesText, getTraitSetClasses,
-		getRatingPosition, isStatementSet, hasQuestionedPip, isTraitQuestioned, toggleTraitQuestioned,
-		getParts, partsGridFor, partCellStyle, partsGridStyle, isPartsInline,
-		hasCounterColumn, getCounterLabel, getTraitCounter, getTraitStatement, renderDieValue,
-		selectElement, updateCharacter, addTrait, removeTrait, removeTraitSet, getTraitClasses,
-		getRenderedTraits, createBlankSlotTrait, isFixedSystemTrait, renderDieValueForPrint, openTraitAt, fillPlaceholder, isTraitShown,
-		getTraitSetRatings, getSubtraitRatings, getTraitDice,
-		isDieSpent, toggleDieSpentInPlay, handleDieClick, handleSingleDieClick, handleSteppedDieClick,
-		handleOutClick, shouldShowOut, isTraitOut, getDisplayTraitSfx,
-		hasTrackPart, getTrackLabel, getTraitTrackLabel, getTrackScale, getTrackValue,
-		getTrackCompanion, isTrackCompanion, visibleSubtraits,
-		shouldShowTrackOut, isTrackOut, handleTrackClick, handleTrackOutClick,
-		getPipConfig, getPipRowCount, getPipRowCols, getPipIndex, isPipFilled, handlePipClick,
-		getPipTrack, setPipTrack, pipRowFilled,
-		isPipLabels, pipRows, ensurePipTrait, togglePipRow, openPipRow, addPipRow, setPipRowName,
-		getImageSetContainerStyle, getImageSetGraphicStyle,
-		getBranchGroups, hasBranchSplit, hasBranchFlank, getFlankColumns, getBranchRole, getSetRatingDie, getBranchSide, branchSubs, handleBranchFlatClick,
-		getSubtraitAt, getSubtraitSlotRatings, getSubtraitNameOr,
-		getThreeColEffect, getDiceCount, setDiceCount, getDiceCountPool, getPrintTallyPips, isPoolSet, addTraitSetDiceToRoller,
-		nodePool, stagesWholePool, stageTraitDice, nodeSpendable, isSpendable,
-		firstDie, isDieActive, isTraitRated,
-		getRating, ratingDice, isRated, availableDice, resolveHitches, rollSeparate, keepsExtraDice, isHiddenIn,
+		traitSet,
+		s,
+		traitSets,
+		character,
+		submode,
+		editing,
+		printBlank,
+		viewY,
+		getView,
+		ensureView,
+		getTraitSetLabel,
+		isSelected,
+		renderText,
+		renderNotesText,
+		getTraitSetClasses,
+		getRatingPosition,
+		isStatementSet,
+		hasQuestionedPip,
+		isTraitQuestioned,
+		toggleTraitQuestioned,
+		getParts,
+		partsGridFor,
+		partCellStyle,
+		partsGridStyle,
+		isPartsInline,
+		hasCounterColumn,
+		getCounterLabel,
+		getTraitCounter,
+		getTraitStatement,
+		renderDieValue,
+		selectElement,
+		updateCharacter,
+		addTrait,
+		removeTrait,
+		removeTraitSet,
+		getTraitClasses,
+		getRenderedTraits,
+		createBlankSlotTrait,
+		isFixedSystemTrait,
+		renderDieValueForPrint,
+		openTraitAt,
+		fillPlaceholder,
+		isTraitShown,
+		getTraitSetRatings,
+		getSubtraitRatings,
+		getTraitDice,
+		isDieSpent,
+		toggleDieSpentInPlay,
+		handleDieClick,
+		handleSingleDieClick,
+		handleSteppedDieClick,
+		handleOutClick,
+		shouldShowOut,
+		isTraitOut,
+		getDisplayTraitSfx,
+		hasTrackPart,
+		getTrackLabel,
+		getTraitTrackLabel,
+		getTrackScale,
+		getTrackValue,
+		getTrackCompanion,
+		isTrackCompanion,
+		visibleSubtraits,
+		shouldShowTrackOut,
+		isTrackOut,
+		handleTrackClick,
+		handleTrackOutClick,
+		getPipConfig,
+		getPipRowCount,
+		getPipRowCols,
+		getPipIndex,
+		isPipFilled,
+		handlePipClick,
+		getPipTrack,
+		setPipTrack,
+		pipRowFilled,
+		isPipLabels,
+		pipRows,
+		ensurePipTrait,
+		togglePipRow,
+		openPipRow,
+		addPipRow,
+		setPipRowName,
+		getImageSetContainerStyle,
+		getImageSetGraphicStyle,
+		getBranchGroups,
+		hasBranchSplit,
+		hasBranchFlank,
+		getFlankColumns,
+		getBranchRole,
+		getSetRatingDie,
+		getBranchSide,
+		branchSubs,
+		handleBranchFlatClick,
+		getSubtraitAt,
+		getSubtraitSlotRatings,
+		getSubtraitNameOr,
+		getThreeColEffect,
+		getDiceCount,
+		setDiceCount,
+		getDiceCountPool,
+		getPrintTallyPips,
+		isPoolSet,
+		addTraitSetDiceToRoller,
+		nodePool,
+		stagesWholePool,
+		stageTraitDice,
+		nodeSpendable,
+		isSpendable,
+		firstDie,
+		isDieActive,
+		isTraitRated,
+		getRating,
+		ratingDice,
+		isRated,
+		availableDice,
+		resolveHitches,
+		rollSeparate,
+		keepsExtraDice,
+		isHiddenIn,
 		getTraitSetSlotCount,
-		isPlayMutableSet, traitHasHinder, hinderDie, handleHinderDieClick, stageTrackDie,
-		getTraitPipBubbles, toggleTraitPipBubble, getDynamicChildParts, parseChildPartKey, getChildTraitByNoun,
-		resolvedFrame, isFrameForcedOff, frameToggledOff, isFrameActive, isPositionalFrameActive,
-		frameSvgPath, frameColorClass, frameStrokeClass, frameStrokeStyle, frameAnchors, getTraitAnchorStyle, getTraitAnchorDock, getTraitNameAnchorStyle,
-		containerWidth, observeContainer
+		isPlayMutableSet,
+		traitHasHinder,
+		hinderDie,
+		handleHinderDieClick,
+		stageTrackDie,
+		getTraitPipBubbles,
+		toggleTraitPipBubble,
+		getDynamicChildParts,
+		parseChildPartKey,
+		getChildTraitByNoun,
+		resolvedFrame,
+		isFrameForcedOff,
+		frameToggledOff,
+		isFrameActive,
+		isPositionalFrameActive,
+		frameSvgPath,
+		frameColorClass,
+		frameStrokeClass,
+		frameStrokeStyle,
+		frameAnchors,
+		getTraitAnchorStyle,
+		getTraitAnchorDock,
+		getTraitNameAnchorStyle,
+		containerWidth,
+		observeContainer,
 	};
 
 	provide(TRAIT_SET_KEY, api);

@@ -17,9 +17,9 @@
 // per-entity override that survives the round trip. Presentation the entity
 // does not carry is inherited from the template character.
 
-import { asTrait } from "./cortex-toolkit-trait-helpers.ts";
-import type { TraitRaw, TraitObject, SetObject } from "./cortex-toolkit-trait-helpers.ts";
-import { cloneDeep } from "./clone-deep.ts";
+import { asTrait } from './cortex-toolkit-trait-helpers.ts';
+import type { TraitRaw, TraitObject, SetObject } from './cortex-toolkit-trait-helpers.ts';
+import { cloneDeep } from './clone-deep.ts';
 
 // ---------- legacy (render) shapes ----------
 
@@ -58,23 +58,23 @@ const clone = cloneDeep;
 // render trait -> dice ints (rating-first; day-1 numeric keys read through)
 const traitDice = (t: LegacyTrait): number[] => {
 	const r = (t as Record<string, unknown>).rating;
-	if (r && typeof r === "object" && !Array.isArray(r)) {
+	if (r && typeof r === 'object' && !Array.isArray(r)) {
 		const v = (r as Record<string, unknown>).value;
 		if (Array.isArray(v)) {
-			const nums = v.filter((x) => typeof x === "number" && x > 0);
+			const nums = v.filter((x) => typeof x === 'number' && x > 0);
 			if (nums.length) return nums;
 		}
 	}
 	return Array.isArray(t.dice) && t.dice.length
-		? t.dice.filter((x) => typeof x === "number" && x > 0)
-		: typeof t.value === "number" && t.value > 0
+		? t.dice.filter((x) => typeof x === 'number' && x > 0)
+		: typeof t.value === 'number' && t.value > 0
 			? [t.value]
 			: [];
 };
 
 // rating object for ints (canonical layered emit)
 const ratingForDice = (dice: number[]): Record<string, unknown> => ({
-	type: dice.length > 1 ? "Dice" : "Die",
+	type: dice.length > 1 ? 'Dice' : 'Die',
 	value: dice.slice().sort((a, b) => b - a),
 	range: [4, 6, 8, 10, 12],
 });
@@ -85,11 +85,11 @@ const ratingForDice = (dice: number[]): Record<string, unknown> => ({
 function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitRaw> | undefined): LegacyTrait[] {
 	const out: LegacyTrait[] = [];
 	const used = new Set<string>();
-	const entityTraits = map && typeof map === "object" && !Array.isArray(map) ? map : {};
+	const entityTraits = map && typeof map === 'object' && !Array.isArray(map) ? map : {};
 
 	if (Array.isArray(pres)) {
 		for (const pt of pres) {
-			const name = typeof pt.name === "string" ? pt.name : "";
+			const name = typeof pt.name === 'string' ? pt.name : '';
 			if (!name.length) {
 				out.push(clone(pt));
 				continue;
@@ -113,21 +113,21 @@ function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitR
 }
 
 function mergeCustom(base: unknown, override: unknown): Record<string, unknown> {
-	if (!base || typeof base !== "object" || Array.isArray(base)) {
-		return (override && typeof override === "object" && !Array.isArray(override))
+	if (!base || typeof base !== 'object' || Array.isArray(base)) {
+		return override && typeof override === 'object' && !Array.isArray(override)
 			? (clone(override) as Record<string, unknown>)
 			: {};
 	}
-	if (!override || typeof override !== "object" || Array.isArray(override)) {
+	if (!override || typeof override !== 'object' || Array.isArray(override)) {
 		return clone(base) as Record<string, unknown>;
 	}
 	const result = clone(base) as Record<string, unknown>;
 	for (const [k, v] of Object.entries(override as Record<string, unknown>)) {
 		if (
 			v &&
-			typeof v === "object" &&
+			typeof v === 'object' &&
 			!Array.isArray(v) &&
-			typeof result[k] === "object" &&
+			typeof result[k] === 'object' &&
 			result[k] &&
 			!Array.isArray(result[k])
 		) {
@@ -145,12 +145,12 @@ function mergeCustom(base: unknown, override: unknown): Record<string, unknown> 
 // override (e.g. span/track written by the layout editor) must never shadow
 // the full presentation (e.g. the set's style) sitting in the legacy bag.
 function legacyBag(node: unknown): Record<string, unknown> {
-	if (!node || typeof node !== "object") return {};
+	if (!node || typeof node !== 'object') return {};
 	const record = node as Record<string, unknown>;
 	const bag = record.custom;
-	if (!bag || typeof bag !== "object" || Array.isArray(bag)) return {};
+	if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return {};
 	const inner = (bag as Record<string, unknown>).cortexToolkit;
-	if (!inner || typeof inner !== "object" || Array.isArray(inner)) return {};
+	if (!inner || typeof inner !== 'object' || Array.isArray(inner)) return {};
 	return inner as Record<string, unknown>;
 }
 
@@ -158,7 +158,7 @@ function legacyBag(node: unknown): Record<string, unknown> {
 // the render object carries a single presentation bag (getView prefers `view`).
 function dropLegacyBag(node: Record<string, unknown>): void {
 	const bag = node.custom;
-	if (!bag || typeof bag !== "object" || Array.isArray(bag)) return;
+	if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return;
 	const inner = bag as Record<string, unknown>;
 	if (inner.cortexToolkit !== undefined) {
 		delete inner.cortexToolkit;
@@ -186,29 +186,29 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 	const t: LegacyTrait = pres ? clone(pres) : { name };
 	if (!pres) t.name = name;
 	for (const [k, v] of Object.entries(et)) {
-		if (k === "traits") continue;
-		if (k === "custom") {
+		if (k === 'traits') continue;
+		if (k === 'custom') {
 			t.custom = mergeCustom(pres?.custom, v);
 			continue;
 		}
-		if (k === "view") {
+		if (k === 'view') {
 			t.view = mergeCustom(pres?.view, v);
 			continue;
 		}
-		if (k === "value") {
+		if (k === 'value') {
 			if (v === null) {
 				// layered "explicitly unrated" clears any inherited rating.
-				( t as Record<string, unknown> ).rating = null;
+				(t as Record<string, unknown>).rating = null;
 			}
 			continue;
 		}
-		if (k === "dice") continue; // retired encoding; rating carries it.
+		if (k === 'dice') continue; // retired encoding; rating carries it.
 		(t as Record<string, unknown>)[k] = clone(v);
 	}
 	// Canonical wins: a rating drops any legacy value/dice the
 	// presentation base carried.
 	const tr = t as Record<string, unknown>;
-	if (tr.rating && typeof tr.rating === "object") {
+	if (tr.rating && typeof tr.rating === 'object') {
 		delete tr.value;
 		delete tr.dice;
 	}
@@ -224,12 +224,12 @@ function buildSet(pres: LegacySet | null, eset: SetObject, name: string): Legacy
 	const set: LegacySet = pres ? clone(pres) : { name };
 	if (!pres) set.name = name;
 	for (const [k, v] of Object.entries(eset)) {
-		if (k === "traits") continue;
-		if (k === "custom") {
+		if (k === 'traits') continue;
+		if (k === 'custom') {
 			set.custom = mergeCustom(pres?.custom, v);
 			continue;
 		}
-		if (k === "view") {
+		if (k === 'view') {
 			set.view = mergeCustom(pres?.view, v);
 			continue;
 		}
@@ -253,35 +253,34 @@ export function materializeCharacter(
 	file: Record<string, unknown>,
 	presentation?: LegacyCharacter | null,
 ): LegacyCharacter {
-	const sets = (file.sets && typeof file.sets === "object" && !Array.isArray(file.sets))
-		? (file.sets as Record<string, SetObject | null>)
-		: {};
+	const sets =
+		file.sets && typeof file.sets === 'object' && !Array.isArray(file.sets)
+			? (file.sets as Record<string, SetObject | null>)
+			: {};
 
-	const base: LegacyCharacter = presentation && typeof presentation === "object"
-		? clone(presentation)
-		: {};
+	const base: LegacyCharacter = presentation && typeof presentation === 'object' ? clone(presentation) : {};
 	const out: LegacyCharacter = base;
 	// entity character-level keys win over the presentation base
 	for (const [k, v] of Object.entries(file)) {
-		if (k === "sets" || k === "template") continue;
-		if (k === "custom") {
+		if (k === 'sets' || k === 'template') continue;
+		if (k === 'custom') {
 			out.custom = mergeCustom(base.custom, v);
 			continue;
 		}
-		if (k === "view") {
+		if (k === 'view') {
 			out.view = mergeCustom(base.view, v);
 			continue;
 		}
 		out[k] = clone(v);
 	}
 	healSplitView(out as { view?: unknown; custom?: unknown });
-	if (file.portrait && typeof file.portrait === "object") {
+	if (file.portrait && typeof file.portrait === 'object') {
 		const fp = file.portrait as Record<string, unknown>;
-		const bp = (base.portrait && typeof base.portrait === "object") ? (base.portrait as Record<string, unknown>) : {};
+		const bp = base.portrait && typeof base.portrait === 'object' ? (base.portrait as Record<string, unknown>) : {};
 		const p: Record<string, unknown> = clone(bp);
 		for (const [pk, pv] of Object.entries(fp)) {
-			if (pk === "view") p.view = mergeCustom(bp.view, pv);
-			else if (pk === "custom") p.custom = mergeCustom(bp.custom, pv);
+			if (pk === 'view') p.view = mergeCustom(bp.view, pv);
+			else if (pk === 'custom') p.custom = mergeCustom(bp.custom, pv);
 			else p[pk] = clone(pv);
 		}
 		healSplitView(p as { view?: unknown; custom?: unknown });
@@ -293,8 +292,10 @@ export function materializeCharacter(
 	if (file.template !== undefined) out.sheet = { template: clone(file.template) };
 
 	const presentationSets: LegacySet[] = Array.isArray(presentation?.traitSets)
-		? ( presentation!.traitSets as LegacySet[] )
-		: ( Array.isArray(file.traitSets) ? ( file.traitSets as LegacySet[] ) : [] );
+		? (presentation!.traitSets as LegacySet[])
+		: Array.isArray(file.traitSets)
+			? (file.traitSets as LegacySet[])
+			: [];
 	const used = new Set<string>();
 	const traitSets: LegacySet[] = [];
 	// Stable identity: when both sides carry a set id, the ids must agree
@@ -303,7 +304,7 @@ export function materializeCharacter(
 	// Missing ids on either side stay name-matched (legacy-tolerant).
 	const idOf = (s: unknown) => {
 		const id = (s as Record<string, unknown> | null)?.id;
-		return typeof id === "string" && id.length ? id : "";
+		return typeof id === 'string' && id.length ? id : '';
 	};
 	const presById = new Map<string, LegacySet>();
 	for (const pset of presentationSets) {
@@ -312,7 +313,7 @@ export function materializeCharacter(
 	}
 	const orphans: LegacySet[] = [];
 	for (const pset of presentationSets) {
-		const name = typeof pset.name === "string" ? pset.name : "";
+		const name = typeof pset.name === 'string' ? pset.name : '';
 		if (!name.length) {
 			traitSets.push(clone(pset));
 			continue;
@@ -333,11 +334,14 @@ export function materializeCharacter(
 	}
 	for (const pset of orphans) {
 		const pid = idOf(pset);
-		let healed = "";
+		let healed = '';
 		if (pid) {
 			for (const [ename, eset] of Object.entries(sets)) {
 				if (used.has(ename) || eset === null) continue;
-				if (idOf(eset) === pid) { healed = ename; break; }
+				if (idOf(eset) === pid) {
+					healed = ename;
+					break;
+				}
 			}
 		}
 		if (healed) {
@@ -367,7 +371,7 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 	const raw = (t as Record<string, unknown>).rating;
 	if (raw === null) {
 		node.rating = null; // explicitly unrated (clears inheritance)
-	} else if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+	} else if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
 		node.rating = clone(raw);
 	} else {
 		const dice = traitDice(t);
@@ -375,20 +379,29 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 		else if (t.dice !== undefined || t.value !== undefined) node.rating = null; // explicitly unrated
 	}
 	for (const [k, v] of Object.entries(t)) {
-		if (k === "name" || k === "traits" || k === "dice" || k === "value" || k === "rating" ||
-			k === "_lid" || k === "id" || k === "removedTraits") continue;
+		if (
+			k === 'name' ||
+			k === 'traits' ||
+			k === 'dice' ||
+			k === 'value' ||
+			k === 'rating' ||
+			k === '_lid' ||
+			k === 'id' ||
+			k === 'removedTraits'
+		)
+			continue;
 		// Retired trait-level statement/questioned pair: the sentence lives
 		// as a child trait now. Drop the old keys plus their app-side homes.
-		if (k === "statement" || k === "questioned") continue;
+		if (k === 'statement' || k === 'questioned') continue;
 		// Canonical emit: empty custom/tags stay out (absence carries the
 		// same meaning). description "" is KEPT: in a delta it is an
 		// explicit clear of an inherited description. Explicit nulls
 		// (removals, unrated) are kept.
-		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v)) {
+		if (k === 'custom' && v && typeof v === 'object' && !Array.isArray(v)) {
 			const bag = clone(v) as Record<string, unknown>;
 			delete bag.questioned;
 			const ctk = bag.cortexToolkit;
-			if (ctk && typeof ctk === "object" && !Array.isArray(ctk)) {
+			if (ctk && typeof ctk === 'object' && !Array.isArray(ctk)) {
 				delete (ctk as Record<string, unknown>).questioned;
 				if (!Object.keys(ctk as Record<string, unknown>).length) delete bag.cortexToolkit;
 			}
@@ -396,19 +409,19 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 			(node as Record<string, unknown>).custom = bag;
 			continue;
 		}
-		if (k === "view" && v && typeof v === "object" && !Array.isArray(v)) {
+		if (k === 'view' && v && typeof v === 'object' && !Array.isArray(v)) {
 			const bag = clone(v) as Record<string, unknown>;
 			delete bag.questioned;
 			if (!Object.keys(bag).length) continue;
 			(node as Record<string, unknown>).view = bag;
 			continue;
 		}
-		if (k === "tags" && Array.isArray(v) && !v.length) continue;
+		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
 		(node as Record<string, unknown>)[k] = clone(v);
 	}
 	const subs: Record<string, TraitRaw> = {};
 	for (const st of Array.isArray(t.traits) ? t.traits : []) {
-		if (!st || typeof st.name !== "string" || !st.name.length) continue;
+		if (!st || typeof st.name !== 'string' || !st.name.length) continue;
 		subs[st.name] = layeredTraitFrom(st);
 	}
 	if (Object.keys(subs).length) node.traits = subs;
@@ -419,15 +432,21 @@ function layeredSetFrom(set: LegacySet): SetObject {
 	const s: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(set)) {
 		// Set id is the stable join key (kept); trait-level ids stay out.
-		if (k === "name" || k === "traits" ||
-			k === "removedTraits" || k === "removedSets") continue;
-		if (k === "custom" && v && typeof v === "object" && !Array.isArray(v) && !Object.keys(v as Record<string, unknown>).length) continue;
-		if (k === "tags" && Array.isArray(v) && !v.length) continue;
+		if (k === 'name' || k === 'traits' || k === 'removedTraits' || k === 'removedSets') continue;
+		if (
+			k === 'custom' &&
+			v &&
+			typeof v === 'object' &&
+			!Array.isArray(v) &&
+			!Object.keys(v as Record<string, unknown>).length
+		)
+			continue;
+		if (k === 'tags' && Array.isArray(v) && !v.length) continue;
 		s[k] = clone(v);
 	}
 	const traits: Record<string, TraitRaw> = {};
 	for (const tr of Array.isArray(set.traits) ? set.traits : []) {
-		if (!tr || typeof tr.name !== "string" || !tr.name.length) continue;
+		if (!tr || typeof tr.name !== 'string' || !tr.name.length) continue;
 		traits[tr.name] = layeredTraitFrom(tr);
 	}
 	s.traits = traits;
@@ -444,18 +463,18 @@ function layeredSetFrom(set: LegacySet): SetObject {
 export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unknown> {
 	const entity: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(ch)) {
-		if (k === "traitSets" || k === "sheet" || k === "removedSets") continue;
+		if (k === 'traitSets' || k === 'sheet' || k === 'removedSets') continue;
 		entity[k] = clone(v);
 	}
 	const sets: Record<string, SetObject> = {};
 	const seen: Record<string, number> = {};
 	for (const set of Array.isArray(ch.traitSets) ? (ch.traitSets as LegacySet[]) : []) {
-		if (!set || typeof set.name !== "string" || !set.name.length) continue;
+		if (!set || typeof set.name !== 'string' || !set.name.length) continue;
 		// Duplicate display names (GMC x6) take suffixed keys in document
 		// order, mirroring the template convention — otherwise all but one
 		// would collide on the same key and be lost.
 		seen[set.name] = (seen[set.name] || 0) + 1;
-		const key = seen[set.name] === 1 ? set.name : set.name + "~" + seen[set.name];
+		const key = seen[set.name] === 1 ? set.name : set.name + '~' + seen[set.name];
 		sets[key] = layeredSetFrom(set);
 	}
 	entity.sets = sets;

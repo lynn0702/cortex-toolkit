@@ -5,7 +5,7 @@
 		position: relative;
 		display: flex;
 	}
-	
+
 	.trait-set-header-inner {
 		writing-mode: vertical-lr;
 		display: inline;
@@ -23,12 +23,12 @@
 			-moz-osx-font-smoothing: grayscale;
 		}
 	}
-	
+
 	.trait-set-body {
 		flex: 1;
 		margin-left: 1.1rem;
 	}
-	
+
 	.trait-list {
 		flex: 1 1 0;
 		display: flex;
@@ -36,18 +36,18 @@
 		row-gap: 1rem;
 		position: relative;
 	}
-	
+
 	// TRAIT
-	
+
 	.trait {
 		margin-left: 0 !important;
 		width: 100%;
 		position: relative;
 	}
-	
+
 	.trait-title {
 		display: flex;
-		column-gap: .333rem;
+		column-gap: 0.333rem;
 		font-family: var(--font-heading);
 		color: var(--color-primary);
 		text-transform: uppercase;
@@ -56,7 +56,8 @@
 		font-size: var(--text-trait-title);
 		line-height: 1.1;
 		margin: 0;
-		b, strong {
+		b,
+		strong {
 			font-weight: 800;
 		}
 
@@ -86,7 +87,9 @@
 				box-sizing: border-box;
 				flex-shrink: 0;
 				margin: 0 0.1rem;
-				transition: background-color 0.12s ease, transform 0.1s ease;
+				transition:
+					background-color 0.12s ease,
+					transform 0.1s ease;
 				print-color-adjust: exact;
 				-webkit-print-color-adjust: exact;
 
@@ -179,19 +182,21 @@
 
 	.trait-value {
 		position: relative;
-		top: -.5em;
+		top: -0.5em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 		}
-	}	
+	}
 	.trait-description {
 		font-style: italic;
 		font-size: var(--text-body);
 		margin-left: 0 !important;
-		margin-top: .333rem !important;
+		margin-top: 0.333rem !important;
 	}
-	
+
 	.trait-sfx {
 		list-style: none;
 		margin-left: 0;
@@ -200,52 +205,50 @@
 		display: flex;
 		flex-direction: column;
 		row-gap: 1rem;
-	
+
 		li {
 			padding-left: 1.6em;
 			text-indent: -1.6em;
-			margin-top: -.125rem;
+			margin-top: -0.125rem;
 			font-style: normal;
 			margin-right: 0;
 			font-size: var(--text-body);
 			&::before {
 				font-family: var(--font-heading);
-				content: "\25cf";
+				content: '\25cf';
 				font-size: var(--text-body);
 				color: var(--color-primary);
 				padding-right: 0.3em;
 				position: relative;
-				top: .083rem;
-				left: -.083rem;
+				top: 0.083rem;
+				left: -0.083rem;
 			}
-	
+
 			& + & {
-				padding-top: .083rem;
+				padding-top: 0.083rem;
 			}
-	
 		}
-		
 	}
-		
+
 	.trait-sfx-name {
 		font-style: italic;
 	}
 
 	.subtraits {
 		list-style: none;
-		margin: .5rem 0 0;
+		margin: 0.5rem 0 0;
 		padding: 0 0 0 1rem;
 		display: flex;
 		flex-direction: column;
-		row-gap: .333rem;
+		row-gap: 0.333rem;
 	}
 
 	.subtrait {
 		display: flex;
 		align-items: center;
-		column-gap: .333rem;
+		column-gap: 0.333rem;
 	}
-	
+
 	.subtrait-name {
 		font-family: var(--font-secondary);
 		color: black;
@@ -254,20 +257,22 @@
 		font-style: normal;
 		font-size: var(--text-meta);
 		line-height: 1.1;
-		b, strong {
+		b,
+		strong {
 			font-weight: 800;
 		}
 	}
 
 	.subtrait-value {
 		position: relative;
-		top: -.25em;
+		top: -0.25em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
-
 }
 
 // PORTRAIT RING (FALLBACK LIST RENDERING -- USED WHENEVER THE RING
@@ -289,11 +294,12 @@
 	}
 
 	.trait-value {
-		top: -.1em;
+		top: -0.1em;
 		> span:not(.active),
-		.c:not(.active) { color: var(--color-separator); }
+		.c:not(.active) {
+			color: var(--color-separator);
+		}
 	}
-
 }
 
 .trait-set-style-two-columns-detailed {
@@ -311,16 +317,16 @@
 		flex: 1 1 0;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: .5rem;
+		gap: 0.5rem;
 		position: relative;
 	}
 
 	.trait {
 		flex: 0 0 50%;
 	}
-	
+
 	.trait-value {
-		top: -.1em;
+		top: -0.1em;
 	}
 
 	.trait-sfx {
@@ -329,13 +335,13 @@
 
 	.trait-value {
 		> span:not(.active),
-		.c:not(.active) { color: var(--color-separator); }
+		.c:not(.active) {
+			color: var(--color-separator);
+		}
 	}
-
 }
 
 .trait-set-style-two-columns-compact {
-
 	.trait-set-header {
 		margin: 0;
 		padding-bottom: 1rem;
@@ -347,7 +353,7 @@
 		flex: 1;
 		background: black;
 		line-height: 1.5em;
-		padding: .25rem 1rem;
+		padding: 0.25rem 1rem;
 		color: white;
 		border-radius: 1rem;
 		text-align: center;
@@ -355,12 +361,12 @@
 		font-weight: 800;
 		font-size: var(--text-header);
 	}
-	
+
 	.trait-set-body {
 		margin-top: 0;
 		flex: 1;
 	}
-	
+
 	.trait-list {
 		flex: 1 1 0;
 		display: grid;
@@ -369,7 +375,6 @@
 		position: relative;
 	}
 
-	
 	.trait-title {
 		position: relative;
 		display: inline-block;
@@ -389,26 +394,26 @@
 		border-top-right-radius: 1rem;
 		border-bottom-right-radius: 1rem;
 		margin: 0;
-		padding: .25rem .5rem .25rem 1.35rem;
+		padding: 0.25rem 0.5rem 0.25rem 1.35rem;
 		text-align: left;
 	}
 
 	.trait-value {
 		position: absolute;
 		left: 0;
-		top: calc( 50% - .1em );
+		top: calc(50% - 0.1em);
 		transform: translateY(-50%);
 		font-size: 2.2rem;
 		&::before {
 			display: block;
 			position: absolute;
-			top: calc( 50% - .05em );
+			top: calc(50% - 0.05em);
 			left: 50%;
-			transform: translate( -50%, -50% );
+			transform: translate(-50%, -50%);
 			font-size: 1.666rem;
 			content: '';
-			width: .6em;
-			height: .6em;
+			width: 0.6em;
+			height: 0.6em;
 			background: white;
 			z-index: -1;
 		}
@@ -427,19 +432,19 @@
 
 	.subtraits {
 		list-style: none;
-		margin: .5rem 0 0;
+		margin: 0.5rem 0 0;
 		padding: 0 0 0 1rem;
 		display: flex;
 		flex-direction: column;
-		row-gap: .333rem;
+		row-gap: 0.333rem;
 	}
 
 	.subtrait {
 		display: flex;
 		align-items: center;
-		column-gap: .333rem;
+		column-gap: 0.333rem;
 	}
-	
+
 	.subtrait-name {
 		font-family: var(--font-secondary);
 		color: black;
@@ -449,17 +454,20 @@
 		font-size: var(--text-meta);
 		line-height: 1.1;
 		margin: 0;
-		b, strong {
+		b,
+		strong {
 			font-weight: 800;
 		}
 	}
 
 	.subtrait-value {
 		position: relative;
-		top: -.1em;
+		top: -0.1em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
 
@@ -468,12 +476,10 @@
 	}
 }
 
-
 .trait-set-style-pool-rows {
-
 	.trait-set-header {
-		padding-bottom: .33rem;
-		margin: 0 0 .33rem;
+		padding-bottom: 0.33rem;
+		margin: 0 0 0.33rem;
 		border-bottom: 2px solid var(--color-primary);
 	}
 
@@ -489,7 +495,7 @@
 		display: flex;
 		width: 100%;
 		flex-direction: column;
-		row-gap: .25rem;
+		row-gap: 0.25rem;
 		position: relative;
 	}
 
@@ -499,7 +505,7 @@
 
 	.trait-inner {
 		display: flex;
-		column-gap: .5rem;
+		column-gap: 0.5rem;
 		align-items: center;
 		flex-wrap: wrap;
 	}
@@ -507,7 +513,7 @@
 	.trait-title {
 		margin: 0;
 		display: flex;
-		column-gap: .5rem;
+		column-gap: 0.5rem;
 		align-items: center;
 		font-family: var(--font-primary);
 		font-size: var(--text-trait-title);
@@ -518,11 +524,11 @@
 		&::before {
 			display: block;
 			content: '';
-			width: .666em;
-			height: .666em;
+			width: 0.666em;
+			height: 0.666em;
 			position: absolute;
 			left: 0;
-			top: .333em;
+			top: 0.333em;
 			// top: 50%;
 			// transform: translateY(-50%);
 			background-color: var(--color-primary);
@@ -532,7 +538,7 @@
 
 	.trait-value {
 		position: relative;
-		transform: translateY(-.15em);
+		transform: translateY(-0.15em);
 		> span:not(.active),
 		.c:not(.active) {
 			display: none;
@@ -549,33 +555,33 @@
 	.subtraits {
 		flex: 1 1 100%;
 		list-style: none;
-		margin: .25rem 0 0;
+		margin: 0.25rem 0 0;
 		padding: 0 0 0 2.5rem;
 		display: flex;
 		flex-direction: column;
-		row-gap: .333rem;
+		row-gap: 0.333rem;
 	}
 
 	.subtrait {
 		display: flex;
 		align-items: center;
-		column-gap: .333rem;
+		column-gap: 0.333rem;
 		position: relative;
 		&::before {
 			display: block;
 			content: '';
-			width: .666em;
-			height: .666em;
+			width: 0.666em;
+			height: 0.666em;
 			position: absolute;
 			left: -1.5rem;
-			top: .333em;
+			top: 0.333em;
 			// top: 50%;
 			// transform: translateY(-50%);
 			border: 2px solid var(--color-primary);
 			border-radius: 50%;
 		}
 	}
-	
+
 	.subtrait-name {
 		// font-family: var(--font-secondary);
 		color: black;
@@ -584,32 +590,33 @@
 		font-style: normal;
 		font-size: var(--text-trait-title);
 		line-height: 1.1;
-		b, strong {
+		b,
+		strong {
 			font-weight: 800;
 		}
 	}
 
 	.subtrait-value {
 		position: relative;
-		top: -.1em;
+		top: -0.1em;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
 
 	.trait-sfx {
 		display: none;
 	}
-
 }
 
 .trait-set-style-die-track {
-
 	.trait-set-header {
-		padding-bottom: .5rem;
+		padding-bottom: 0.5rem;
 	}
-	
+
 	.trait-set-header-inner {
 		> div {
 			color: var(--color-primary);
@@ -620,12 +627,12 @@
 			font-size: var(--text-header);
 		}
 	}
-	
+
 	.trait-set-body {
 		flex: 1;
 		margin-top: 0;
 	}
-	
+
 	.trait-list {
 		flex: 1 1 0;
 		display: flex;
@@ -634,12 +641,12 @@
 		row-gap: 1rem;
 		position: relative;
 	}
-	
+
 	.trait-title {
 		flex: 1;
 		margin: 0;
 		display: flex;
-		column-gap: .5rem;
+		column-gap: 0.5rem;
 		align-items: center;
 		font-family: var(--font-secondary);
 		font-size: var(--text-trait-title);
@@ -669,11 +676,13 @@
 
 		.c {
 			position: relative;
-			top: -.12em;
+			top: -0.12em;
 			font-size: var(--diecon-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 			background-color: white;
-			padding: .1em;
+			padding: 0.1em;
 		}
 
 		.out-badge {
@@ -713,12 +722,10 @@
 	.trait-sfx {
 		display: none;
 	}
-
 }
 
 // LIST STYLE
 .trait-set-style-list {
-
 	.trait-list {
 		display: flex;
 		flex-direction: column;
@@ -759,12 +766,10 @@
 	.trait-sfx {
 		display: none;
 	}
-
 }
 
 // NOTES STYLE
 .trait-set-style-notes {
-
 	.trait-set-header-inner > div {
 		color: var(--color-primary);
 	}
@@ -786,22 +791,34 @@
 
 		p {
 			margin: 0 0 0.35rem;
-			&:last-child { margin-bottom: 0; }
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 
-		h1, h2, h3 {
+		h1,
+		h2,
+		h3 {
 			margin: 0.35rem 0 0.2rem;
 			font-family: var(--font-heading);
 			color: var(--color-primary);
 		}
-		h1 { font-size: var(--text-header); }
-		h2 { font-size: var(--text-trait-title); }
-		h3 { font-size: var(--text-card-title); }
+		h1 {
+			font-size: var(--text-header);
+		}
+		h2 {
+			font-size: var(--text-trait-title);
+		}
+		h3 {
+			font-size: var(--text-card-title);
+		}
 
 		ul {
 			margin: 0.2rem 0 0.35rem 1.1rem;
 			padding: 0;
-			li { margin-bottom: 0.15rem; }
+			li {
+				margin-bottom: 0.15rem;
+			}
 		}
 
 		blockquote {
@@ -830,7 +847,6 @@
 	.preview-button-container {
 		display: none;
 	}
-
 }
 
 // MULTI-DIE TRAITS
@@ -870,7 +886,11 @@
 				line-height: 1;
 				cursor: pointer;
 				padding: 2px 4px;
-				transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s;
+				transition:
+					color 0.15s,
+					border-color 0.15s,
+					background 0.15s,
+					transform 0.1s;
 				opacity: 1 !important;
 				filter: none !important;
 
@@ -921,20 +941,21 @@
 .trait-set-style-subtrait-columns {
 	@extend .trait-set-style-default;
 
-
 	.branch-head {
 		display: grid;
 		grid-template-columns: 1fr 2rem 1.4fr;
 		font-family: var(--font-secondary);
 		font-size: var(--text-meta);
 		font-weight: 800;
-		letter-spacing: .08em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--color-primary);
-		margin-bottom: .35rem;
-		padding-bottom: .3rem;
+		margin-bottom: 0.35rem;
+		padding-bottom: 0.3rem;
 		border-bottom: 2px solid var(--color-primary);
-		span:last-child { text-align: left; }
+		span:last-child {
+			text-align: left;
+		}
 	}
 
 	.branch-row {
@@ -942,14 +963,14 @@
 		grid-template-columns: 1fr 2rem 1.4fr;
 		align-items: stretch;
 		column-gap: 0;
-		padding: .4rem 0;
+		padding: 0.4rem 0;
 		border-bottom: 1px solid var(--color-separator);
 	}
 
 	.branch-main {
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-		border-radius: .25rem;
-		padding: .3rem .45rem;
+		border-radius: 0.25rem;
+		padding: 0.3rem 0.45rem;
 		background: white;
 		.trait-name {
 			display: block;
@@ -958,12 +979,14 @@
 			font-size: var(--text-trait-title);
 			text-transform: uppercase;
 			color: black;
-			margin-bottom: .2rem;
+			margin-bottom: 0.2rem;
 		}
 		.trait-value {
 			position: relative;
-			top: -.1em;
-			.c:not(.active) { color: var(--color-separator); }
+			top: -0.1em;
+			.c:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
 
@@ -973,8 +996,8 @@
 			content: '';
 			position: absolute;
 			left: 50%;
-			top: .5rem;
-			bottom: .5rem;
+			top: 0.5rem;
+			bottom: 0.5rem;
 			width: 2px;
 			background: var(--color-primary);
 			transform: translateX(-50%);
@@ -984,27 +1007,27 @@
 	.branch-side {
 		display: flex;
 		flex-direction: column;
-		row-gap: .3rem;
-		padding-left: .6rem;
+		row-gap: 0.3rem;
+		padding-left: 0.6rem;
 		border-left: none;
 	}
 
 	.branch-slot {
 		display: flex;
 		align-items: center;
-		column-gap: .4rem;
+		column-gap: 0.4rem;
 		cursor: pointer;
 		position: relative;
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-		border-radius: .25rem;
-		padding: .25rem .45rem;
+		border-radius: 0.25rem;
+		padding: 0.25rem 0.45rem;
 		background: white;
 		&::before {
 			content: '';
 			position: absolute;
-			left: -.6rem;
+			left: -0.6rem;
 			top: 50%;
-			width: .42rem;
+			width: 0.42rem;
 			height: 2px;
 			background: var(--color-primary);
 			transform: translateY(-50%);
@@ -1012,12 +1035,12 @@
 		&::after {
 			content: '';
 			position: absolute;
-			left: -.18rem;
+			left: -0.18rem;
 			top: 50%;
 			transform: translateY(-50%);
-			border-left: .3rem solid var(--color-primary);
-			border-top: .22rem solid transparent;
-			border-bottom: .22rem solid transparent;
+			border-left: 0.3rem solid var(--color-primary);
+			border-top: 0.22rem solid transparent;
+			border-bottom: 0.22rem solid transparent;
 		}
 	}
 
@@ -1041,11 +1064,13 @@
 	.subtrait-value {
 		margin-left: auto;
 		position: relative;
-		top: -.1em;
+		top: -0.1em;
 		white-space: nowrap;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
 
@@ -1063,7 +1088,7 @@
 		.branch-head-center {
 			text-align: center;
 			.set-rating-die {
-				margin-left: .4em;
+				margin-left: 0.4em;
 			}
 		}
 	}
@@ -1101,7 +1126,7 @@
 	// Set die on unrated grid rows: the die an unrated trait rolls, shown
 	// where it acts (the branch center carries it for split rows).
 	.trait-value.single-die-value > .set-rating-die {
-		margin-left: .35em;
+		margin-left: 0.35em;
 	}
 
 	.branch-split-row {
@@ -1110,16 +1135,16 @@
 
 	.branch-side.branch-left {
 		padding-left: 0;
-		padding-right: .6rem;
+		padding-right: 0.6rem;
 		.branch-slot::before {
 			left: auto;
-			right: -.6rem;
+			right: -0.6rem;
 		}
 		.branch-slot::after {
 			left: auto;
-			right: -.18rem;
+			right: -0.18rem;
 			border-left: none;
-			border-right: .3rem solid var(--color-primary);
+			border-right: 0.3rem solid var(--color-primary);
 		}
 	}
 
@@ -1128,33 +1153,37 @@
 	// left-side specialties (split above) take precedence.
 	.branch-flank-head {
 		grid-template-columns: 1fr 1.4fr 1fr;
-		span:nth-child(2) { text-align: center; }
-		span:last-child { text-align: right; }
+		span:nth-child(2) {
+			text-align: center;
+		}
+		span:last-child {
+			text-align: right;
+		}
 	}
 
 	.branch-flank-grid {
 		display: grid;
 		grid-template-columns: 1fr 1.4fr 1fr;
-		column-gap: .6rem;
+		column-gap: 0.6rem;
 		align-items: start;
 	}
 
 	.branch-flank-col {
 		display: flex;
 		flex-direction: column;
-		row-gap: .4rem;
+		row-gap: 0.4rem;
 	}
 
 	.branch-flank-center {
 		display: flex;
 		flex-direction: column;
-		row-gap: .3rem;
+		row-gap: 0.3rem;
 		.branch-slot::before,
 		.branch-slot::after {
 			display: none;
 		}
 		.branch-slot {
-			padding-left: .45rem;
+			padding-left: 0.45rem;
 		}
 	}
 }
@@ -1165,7 +1194,7 @@
 
 	.trait-three-column-table {
 		border: 1px solid var(--color-primary);
-		border-radius: .25rem;
+		border-radius: 0.25rem;
 	}
 
 	.three-col-head {
@@ -1176,9 +1205,11 @@
 		font-family: var(--font-secondary);
 		font-size: var(--text-trait-title);
 		font-weight: 800;
-		letter-spacing: .08em;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		span { padding: .3rem .5rem; }
+		span {
+			padding: 0.3rem 0.5rem;
+		}
 	}
 
 	.three-col-row {
@@ -1190,10 +1221,12 @@
 		border-top: 1px solid var(--color-separator);
 		background: white;
 		span {
-			padding: .3rem .5rem;
+			padding: 0.3rem 0.5rem;
 			box-sizing: border-box;
 		}
-		span + span { border-left: 1px solid var(--color-separator); }
+		span + span {
+			border-left: 1px solid var(--color-separator);
+		}
 	}
 
 	.three-col-name {
@@ -1265,9 +1298,11 @@
 
 		.paired-slot-main-dice {
 			position: relative;
-			top: -.1em;
+			top: -0.1em;
 			white-space: nowrap;
-			.c:not(.active) { color: var(--color-separator); }
+			.c:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 
 		.paired-slot-sub-group {
@@ -1308,11 +1343,13 @@
 				gap: 0.15rem;
 				margin-left: auto;
 				position: relative;
-				top: -.1em;
+				top: -0.1em;
 				flex-shrink: 0;
 				.c {
 					display: inline-flex;
-					&:not(.active) { color: var(--color-separator); }
+					&:not(.active) {
+						color: var(--color-separator);
+					}
 				}
 			}
 		}
@@ -1321,10 +1358,10 @@
 	.paired-slot-main {
 		display: flex;
 		align-items: center;
-		column-gap: .5rem;
+		column-gap: 0.5rem;
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-		border-radius: .25rem;
-		padding: .3rem .5rem;
+		border-radius: 0.25rem;
+		padding: 0.3rem 0.5rem;
 		background: white;
 		.trait-name {
 			font-family: var(--font-secondary);
@@ -1336,9 +1373,11 @@
 		.trait-value {
 			margin-left: auto;
 			position: relative;
-			top: -.1em;
+			top: -0.1em;
 			white-space: nowrap;
-			.c:not(.active) { color: var(--color-separator); }
+			.c:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
 
@@ -1346,12 +1385,12 @@
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
 		align-items: center;
-		column-gap: .45rem;
-		row-gap: .3rem;
-		margin-top: .3rem;
-		padding: .3rem .5rem;
+		column-gap: 0.45rem;
+		row-gap: 0.3rem;
+		margin-top: 0.3rem;
+		padding: 0.3rem 0.5rem;
 		background: color-mix(in srgb, var(--color-secondary), transparent 55%);
-		border-radius: .25rem;
+		border-radius: 0.25rem;
 		min-width: 0;
 	}
 
@@ -1359,25 +1398,27 @@
 		font-family: var(--font-secondary);
 		font-size: var(--text-meta);
 		font-weight: 800;
-		letter-spacing: .06em;
+		letter-spacing: 0.06em;
 		color: var(--color-primary);
 		white-space: nowrap;
 	}
 
 	.subtrait-value {
 		position: relative;
-		top: -.1em;
+		top: -0.1em;
 		white-space: nowrap;
 		.c {
 			font-size: var(--diecon-scale-size);
-			&:not(.active) { color: var(--color-separator); }
+			&:not(.active) {
+				color: var(--color-separator);
+			}
 		}
 	}
 
 	.paired-slot-sub .subtrait-value {
 		display: flex;
 		flex-wrap: wrap;
-		gap: .15rem;
+		gap: 0.15rem;
 		min-width: 0;
 		white-space: normal;
 	}
@@ -1389,7 +1430,7 @@
 
 	.trait-die-rows {
 		border: 1px solid var(--color-primary);
-		border-radius: .25rem;
+		border-radius: 0.25rem;
 		background: white;
 	}
 
@@ -1410,10 +1451,12 @@
 	.die-row {
 		display: flex;
 		align-items: center;
-		column-gap: .5rem;
-		padding: .3rem .5rem;
+		column-gap: 0.5rem;
+		padding: 0.3rem 0.5rem;
 		border-top: 1px solid var(--color-separator);
-		&:first-child { border-top: none; }
+		&:first-child {
+			border-top: none;
+		}
 	}
 
 	.die-row-name {
@@ -1440,16 +1483,18 @@
 
 	.trait-value {
 		position: relative;
-		top: -.1em;
+		top: -0.1em;
 		white-space: nowrap;
-		.c:not(.active) { color: var(--color-separator); }
+		.c:not(.active) {
+			color: var(--color-separator);
+		}
 	}
 
 	.trait-die-rows.rating-vertical {
 		.die-row {
 			flex-direction: row;
 			align-items: center;
-			column-gap: .5rem;
+			column-gap: 0.5rem;
 			width: 100%;
 			box-sizing: border-box;
 		}
@@ -1462,7 +1507,7 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			row-gap: .15rem;
+			row-gap: 0.15rem;
 			white-space: normal;
 		}
 	}
@@ -1497,29 +1542,31 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			row-gap: .15rem;
-			padding: .35rem 1rem;
+			row-gap: 0.15rem;
+			padding: 0.35rem 1rem;
 			background: white;
 			border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-			border-radius: .25rem;
+			border-radius: 0.25rem;
 		}
 
 		.ladder-name {
 			font-family: var(--font-secondary);
 			font-size: var(--text-meta);
 			font-weight: 800;
-			letter-spacing: .06em;
+			letter-spacing: 0.06em;
 			text-transform: uppercase;
 			color: black;
 		}
 
 		.trait-value {
 			position: relative;
-			top: -.1em;
+			top: -0.1em;
 			white-space: nowrap;
 			.c {
 				font-size: var(--diecon-size);
-				&:not(.active) { color: var(--color-separator); }
+				&:not(.active) {
+					color: var(--color-separator);
+				}
 			}
 		}
 
@@ -1527,7 +1574,7 @@
 			.ladder-rung {
 				flex-direction: row;
 				align-items: center;
-				column-gap: .5rem;
+				column-gap: 0.5rem;
 				width: 100%;
 				box-sizing: border-box;
 			}
@@ -1540,7 +1587,7 @@
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				row-gap: .15rem;
+				row-gap: 0.15rem;
 				white-space: normal;
 			}
 		}
@@ -1560,14 +1607,13 @@
 .trait-set-style-dice-count {
 	@extend .trait-set-style-default;
 
-
 	.dice-count-row {
 		display: flex;
 		align-items: center;
-		column-gap: .45rem;
+		column-gap: 0.45rem;
 		flex-wrap: wrap;
-		row-gap: .3rem;
-		padding: .35rem 0;
+		row-gap: 0.3rem;
+		padding: 0.35rem 0;
 		border-bottom: 1px dashed var(--color-separator);
 	}
 
@@ -1583,22 +1629,24 @@
 		font-family: var(--font-secondary);
 		font-size: var(--text-meta);
 		font-weight: 800;
-		letter-spacing: .06em;
+		letter-spacing: 0.06em;
 		color: var(--color-primary);
 		white-space: nowrap;
 	}
 
 	.trait-value {
 		position: relative;
-		top: -.1em;
+		top: -0.1em;
 		white-space: nowrap;
-		.c:not(.active) { color: var(--color-separator); }
+		.c:not(.active) {
+			color: var(--color-separator);
+		}
 		&.multidie-value {
 			display: flex !important;
 			flex: 1 1 10rem;
 			min-width: 0;
 			flex-wrap: wrap;
-			row-gap: .3rem;
+			row-gap: 0.3rem;
 			margin-left: 0;
 			white-space: normal;
 		}
@@ -1607,7 +1655,7 @@
 	.dice-count-track {
 		display: inline-flex;
 		align-items: center;
-		column-gap: .25rem;
+		column-gap: 0.25rem;
 	}
 
 	.dice-count-pip {
@@ -1638,17 +1686,16 @@
 .trait-set-style-labeled-fields {
 	@extend .trait-set-style-default;
 
-
 	.trait-labeled-fields {
 		display: flex;
 		flex-direction: column;
 	}
 
 	.field-block {
-		padding: .35rem .5rem;
+		padding: 0.35rem 0.5rem;
 		border: 1px solid color-mix(in srgb, var(--color-primary), transparent 55%);
-		border-radius: .25rem;
-		margin-bottom: .35rem;
+		border-radius: 0.25rem;
+		margin-bottom: 0.35rem;
 		background: white;
 	}
 
@@ -1657,10 +1704,10 @@
 		font-family: var(--font-secondary);
 		font-size: var(--text-trait-title);
 		font-weight: 800;
-		letter-spacing: .06em;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--color-primary);
-		margin-bottom: .15rem;
+		margin-bottom: 0.15rem;
 	}
 
 	.field-text {
@@ -1685,7 +1732,9 @@
 	.attribute-inner .c,
 	.subtrait-value .c {
 		cursor: pointer;
-		transition: transform 0.12s, color 0.15s;
+		transition:
+			transform 0.12s,
+			color 0.15s;
 		&:hover {
 			transform: scale(1.15);
 		}
@@ -1726,7 +1775,7 @@
 		display: inline-flex;
 		align-items: center;
 		flex-wrap: wrap;
-		row-gap: .15rem;
+		row-gap: 0.15rem;
 		width: 100%;
 		line-height: 1.2;
 		overflow-wrap: break-word;
@@ -1740,12 +1789,25 @@
 	}
 }
 
-.trait-set.trait-set-header-top.trait-set-header-align-center > .trait-set-header > .trait-set-header-inner { justify-content: center; text-align: center; }
-.trait-set.trait-set-header-top.trait-set-header-align-left > .trait-set-header > .trait-set-header-inner { justify-content: flex-start; text-align: left; }
-.trait-set.trait-set-header-top.trait-set-header-align-right > .trait-set-header > .trait-set-header-inner { justify-content: flex-end; text-align: right; }
+.trait-set.trait-set-header-top.trait-set-header-align-center > .trait-set-header > .trait-set-header-inner {
+	justify-content: center;
+	text-align: center;
+}
+.trait-set.trait-set-header-top.trait-set-header-align-left > .trait-set-header > .trait-set-header-inner {
+	justify-content: flex-start;
+	text-align: left;
+}
+.trait-set.trait-set-header-top.trait-set-header-align-right > .trait-set-header > .trait-set-header-inner {
+	justify-content: flex-end;
+	text-align: right;
+}
 
-.trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header { align-items: flex-start; }
-.trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header { align-items: flex-end; }
+.trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header {
+	align-items: flex-start;
+}
+.trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header {
+	align-items: flex-end;
+}
 
 // UNRATED TRACKS STAY VISIBLE (sheet, print, pencil). Rated rows print only
 // the circled die; rows with no rating yet keep the full track so one can be
@@ -1757,7 +1819,6 @@
 		display: initial;
 	}
 }
-
 
 /* Nested-grid trait parts (view.parts, 2026-10-19): the trait row is a
    grid whose tracks come from the part edges; each cell carries its exact

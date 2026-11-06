@@ -1,4 +1,3 @@
-
 // MODALS
 
 .modal-veil {
@@ -9,12 +8,12 @@
 	bottom: 0;
 	right: 0;
 	background: black;
-	opacity: .75;
-	transition: opacity .2s;
+	opacity: 0.75;
+	transition: opacity 0.2s;
 	cursor: pointer;
 	&.v-enter-active,
 	&.v-leave-active {
-		transition: opacity .25s ease;
+		transition: opacity 0.25s ease;
 	}
 	&.v-enter-from,
 	&.v-leave-to {
@@ -24,29 +23,31 @@
 
 .modal {
 	position: fixed;
-	top: calc( var(--header-size) + 2rem );
+	top: calc(var(--header-size) + 2rem);
 	left: 50%;
 	transform: translateX(-50%) scale(1);
 	width: 100%;
-	max-width: clamp( 0px, 100vw - 2rem, 36rem );
-	max-height: calc( 100vh - var(--header-size) - 4rem );
+	max-width: clamp(0px, 100vw - 2rem, 36rem);
+	max-height: calc(100vh - var(--header-size) - 4rem);
 	overflow-y: auto;
 	z-index: var(--z-modal);
 	background: hsla(0, 0%, 0%, 0.95);
-	backdrop-filter: blur(.75rem);
+	backdrop-filter: blur(0.75rem);
 	border: 1px solid rgba(255, 255, 255, 0.15);
-	border-radius: .5rem;
+	border-radius: 0.5rem;
 	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 	font-size: 1rem;
 	color: white;
 	&.v-enter-active,
 	&.v-leave-active {
-		transition: opacity .2s ease, transform .2s ease;
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
 	}
 	&.v-enter-from,
 	&.v-leave-to {
 		opacity: 0;
-		transform: translateX(-50%) scale(.95);
+		transform: translateX(-50%) scale(0.95);
 	}
 }
 
@@ -127,7 +128,9 @@
 
 	.modal-close {
 		color: #64748b;
-		&:hover { color: #0f172a; }
+		&:hover {
+			color: #0f172a;
+		}
 	}
 
 	h2 {
@@ -184,12 +187,14 @@
 		font-weight: 700;
 		font-size: 0.8rem;
 		cursor: pointer;
-		&:hover { background: #0369a1; }
+		&:hover {
+			background: #0369a1;
+		}
 	}
 }
 
 // Dark theme overrides for modals (Item D)
-[data-theme="dark"],
+[data-theme='dark'],
 .theme-dark {
 	.modal-backdrop,
 	.modal-veil {
@@ -202,7 +207,9 @@
 
 		.modal-close {
 			color: #94a3b8;
-			&:hover { color: #f8fafc; }
+			&:hover {
+				color: #f8fafc;
+			}
 		}
 
 		h2 {
@@ -230,8 +237,10 @@
 			background: transparent;
 			border: 1px solid #475569;
 			color: #94a3b8;
-			&:hover { color: #ef4444; border-color: #ef4444; }
+			&:hover {
+				color: #ef4444;
+				border-color: #ef4444;
+			}
 		}
 	}
 }
-

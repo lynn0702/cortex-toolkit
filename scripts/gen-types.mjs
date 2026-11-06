@@ -13,28 +13,28 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-const root = path.resolve( path.dirname( fileURLToPath( import.meta.url ) ), '..' );
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 const BASE_OPTIONS = {
 	bannerComment: '',
 	additionalProperties: false,
 	declareExternallyReferenced: true,
-	cwd: path.join( root, 'schema/0.1' ),
+	cwd: path.join(root, 'schema/0.1'),
 };
 
-async function generate( relPath, typeName ) {
-	const schema = JSON.parse( readFileSync( path.join( root, relPath ), 'utf8' ) );
+async function generate(relPath, typeName) {
+	const schema = JSON.parse(readFileSync(path.join(root, relPath), 'utf8'));
 	// Use a stable root type name regardless of the schema's human-readable title.
 	schema.title = typeName;
-	return compile( schema, typeName, BASE_OPTIONS );
+	return compile(schema, typeName, BASE_OPTIONS);
 }
 
-const character = await generate( 'schema/0.1/character.schema.json', 'Character' );
-const sheetTemplate = await generate( 'schema/0.1/sheet-template.schema.json', 'SheetTemplate' );
+const character = await generate('schema/0.1/character.schema.json', 'Character');
+const sheetTemplate = await generate('schema/0.1/sheet-template.schema.json', 'SheetTemplate');
 
 const banner =
 	'/* eslint-disable */\n' +
 	'/* AUTO-GENERATED from schema/0.1/*.schema.json by scripts/gen-types.mjs. Do not edit — run `npm run types`. */\n\n';
 
-writeFileSync( path.join( root, 'js/model.generated.ts' ), banner + character + '\n' + sheetTemplate + '\n' );
-console.log( 'gen-types: wrote js/model.generated.ts' );
+writeFileSync(path.join(root, 'js/model.generated.ts'), banner + character + '\n' + sheetTemplate + '\n');
+console.log('gen-types: wrote js/model.generated.ts');

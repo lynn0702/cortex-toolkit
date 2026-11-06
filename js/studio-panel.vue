@@ -6,81 +6,84 @@ import NameEditor from './name-editor.vue';
 import DiceRoller from './dice-roller.vue';
 import JsonEditor from './json-editor.vue';
 
-const props = withDefaults( defineProps<{
-	character?: any;
-	editing?: any[];
-	submode?: string | null;
-	mode?: string;
-	isOpen?: boolean;
-	position?: 'left' | 'right';
-	panelTab?: 'properties' | 'roller' | 'json';
-	dicePool?: any;
-	viewY?: number | null;
-}>(), {
-	editing: () => [],
-	isOpen: true,
-	position: 'right',
-	panelTab: 'properties',
-	submode: 'edit',
-	mode: 'character',
-} );
+const props = withDefaults(
+	defineProps<{
+		character?: any;
+		editing?: any[];
+		submode?: string | null;
+		mode?: string;
+		isOpen?: boolean;
+		position?: 'left' | 'right';
+		panelTab?: 'properties' | 'roller' | 'json';
+		dicePool?: any;
+		viewY?: number | null;
+	}>(),
+	{
+		editing: () => [],
+		isOpen: true,
+		position: 'right',
+		panelTab: 'properties',
+		submode: 'edit',
+		mode: 'character',
+	},
+);
 
 const emit = defineEmits<{
-	( e: 'update:panelTab', tab: 'properties' | 'roller' | 'json' ): void;
-	( e: 'update:isOpen', open: boolean ): void;
-	( e: 'togglePosition' ): void;
-	( e: 'selectElement', selector: any[] ): void;
-	( e: 'updateCharacter', character: any ): void;
-	( e: 'applyJson', parsed: any ): void;
-	( e: 'removeTrait', traitSetID: number, traitID: number ): void;
-	( e: 'removeTraitSet', traitSetID: number ): void;
-	( e: 'saveSheetTemplate' ): void;
-	( e: 'exportSheetTemplate' ): void;
-	( e: 'addDie', die: any ): void;
-	( e: 'removeDie', index: number ): void;
-	( e: 'clearPool' ): void;
-	( e: 'settlePP', delta: number ): void;
+	(e: 'update:panelTab', tab: 'properties' | 'roller' | 'json'): void;
+	(e: 'update:isOpen', open: boolean): void;
+	(e: 'togglePosition'): void;
+	(e: 'selectElement', selector: any[]): void;
+	(e: 'updateCharacter', character: any): void;
+	(e: 'applyJson', parsed: any): void;
+	(e: 'removeTrait', traitSetID: number, traitID: number): void;
+	(e: 'removeTraitSet', traitSetID: number): void;
+	(e: 'saveSheetTemplate'): void;
+	(e: 'exportSheetTemplate'): void;
+	(e: 'addDie', die: any): void;
+	(e: 'removeDie', index: number): void;
+	(e: 'clearPool'): void;
+	(e: 'settlePP', delta: number): void;
 }>();
 
-const editingType = computed( () => {
+const editingType = computed(() => {
 	const sel = props.editing;
-	if ( !Array.isArray( sel ) || !sel.length ) return 'sheet';
-	const type = sel[ 0 ];
-	if ( type === 'trait' && sel[ 1 ] !== undefined && sel[ 2 ] !== undefined ) return 'trait';
-	if ( type === 'traitSet' && sel[ 1 ] !== undefined ) return 'traitSet';
+	if (!Array.isArray(sel) || !sel.length) return 'sheet';
+	const type = sel[0];
+	if (type === 'trait' && sel[1] !== undefined && sel[2] !== undefined) return 'trait';
+	if (type === 'traitSet' && sel[1] !== undefined) return 'traitSet';
 	return 'sheet';
-} );
+});
 
-const traitSetID = computed( () => {
-	if ( editingType.value === 'trait' || editingType.value === 'traitSet' ) {
-		return Number( props.editing?.[ 1 ] );
+const traitSetID = computed(() => {
+	if (editingType.value === 'trait' || editingType.value === 'traitSet') {
+		return Number(props.editing?.[1]);
 	}
 	return -1;
-} );
+});
 
-const traitID = computed( () => {
-	if ( editingType.value === 'trait' ) {
-		return Number( props.editing?.[ 2 ] );
+const traitID = computed(() => {
+	if (editingType.value === 'trait') {
+		return Number(props.editing?.[2]);
 	}
 	return -1;
-} );
+});
 
-const traitSet = computed( () => {
-	if ( traitSetID.value >= 0 && props.character?.traitSets ) {
-		return props.character.traitSets[ traitSetID.value ];
+const traitSet = computed(() => {
+	if (traitSetID.value >= 0 && props.character?.traitSets) {
+		return props.character.traitSets[traitSetID.value];
 	}
 	return null;
-} );
+});
 
-const trait = computed( () => {
-	if ( traitSet.value && traitID.value >= 0 && traitSet.value.traits ) {
-		return traitSet.value.traits[ traitID.value ];
+const trait = computed(() => {
+	if (traitSet.value && traitID.value >= 0 && traitSet.value.traits) {
+		return traitSet.value.traits[traitID.value];
 	}
 	return null;
-} );
+});
 
-const traitSetName = computed( () => traitSet.value?.name || 'Trait Set' );
-const traitName = computed( () => trait.value?.name || ( traitSet.value?.noun ? `New ${traitSet.value.noun}` : 'Trait' ) );
+const traitSetName = computed(() => traitSet.value?.name || 'Trait Set');
+const traitName = computed(() => trait.value?.name || (traitSet.value?.noun ? `New ${traitSet.value.noun}` : 'Trait'));
 
 type SheetTab = 'sheet' | 'page' | 'theme';
 
@@ -90,88 +93,84 @@ const SHEET_TABS: { key: SheetTab; icon: string; label: string }[] = [
 	{ key: 'theme', icon: 'fa-palette', label: 'Theme & Dice' },
 ];
 
-const panelEl = ref<HTMLElement | null>( null );
-const sheetTab = ref<SheetTab>( 'sheet' );
+const panelEl = ref<HTMLElement | null>(null);
+const sheetTab = ref<SheetTab>('sheet');
 
-function pickSheetTab( tab: SheetTab ) {
+function pickSheetTab(tab: SheetTab) {
 	sheetTab.value = tab;
-	if ( props.panelTab !== 'properties' ) emit( 'update:panelTab', 'properties' );
+	if (props.panelTab !== 'properties') emit('update:panelTab', 'properties');
 }
 
 function toggleJson() {
-	emit( 'update:panelTab', props.panelTab === 'json' ? 'properties' : 'json' );
+	emit('update:panelTab', props.panelTab === 'json' ? 'properties' : 'json');
 }
 
-function goCrumb( selector: any[] ) {
-	if ( props.panelTab !== 'properties' ) emit( 'update:panelTab', 'properties' );
-	emit( 'selectElement', selector );
+function goCrumb(selector: any[]) {
+	if (props.panelTab !== 'properties') emit('update:panelTab', 'properties');
+	emit('selectElement', selector);
 }
 
 // Sheet-root selections that open a tab directly: page, theme, dice.
 // theme lands at the tab top; dice lands on the same tab with the
 // Die Style & Geometry section scrolled into view.
-function enterSheetTab( sel: any ) {
-	const primary = Array.isArray( sel ) ? sel[ 0 ] : undefined;
-	if ( primary === 'page' ) {
+function enterSheetTab(sel: any) {
+	const primary = Array.isArray(sel) ? sel[0] : undefined;
+	if (primary === 'page') {
 		sheetTab.value = 'page';
-	} else if ( primary === 'theme' || primary === 'dice' ) {
+	} else if (primary === 'theme' || primary === 'dice') {
 		sheetTab.value = 'theme';
-		nextTick( () => {
-			const body = panelEl.value?.querySelector<HTMLElement>( '.studio-panel-body' );
-			if ( !body ) return;
-			if ( primary === 'dice' ) {
-				const anchor = panelEl.value?.querySelector<HTMLElement>( '#die-style-anchor' );
-				if ( anchor ) {
+		nextTick(() => {
+			const body = panelEl.value?.querySelector<HTMLElement>('.studio-panel-body');
+			if (!body) return;
+			if (primary === 'dice') {
+				const anchor = panelEl.value?.querySelector<HTMLElement>('#die-style-anchor');
+				if (anchor) {
 					const top = anchor.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
-					body.scrollTo( { top, behavior: 'auto' } );
+					body.scrollTo({ top, behavior: 'auto' });
 					return;
 				}
 			}
-			body.scrollTo( { top: 0, behavior: 'auto' } );
-		} );
+			body.scrollTo({ top: 0, behavior: 'auto' });
+		});
 	}
 }
 
-watch( () => props.editing, enterSheetTab, { immediate: true } );
+watch(() => props.editing, enterSheetTab, { immediate: true });
 
-interface Crumb { label: string; selector: any[] | null }
+interface Crumb {
+	label: string;
+	selector: any[] | null;
+}
 
 // Crumb links only navigate in Edit; the current item is never a link.
-const canNavigate = computed( () => props.submode !== 'play' );
+const canNavigate = computed(() => props.submode !== 'play');
 
-const crumbs = computed<Crumb[]>( () => {
+const crumbs = computed<Crumb[]>(() => {
 	const list: Crumb[] = [];
 	const sheet: Crumb = { label: 'Sheet', selector: [] };
-	if ( editingType.value === 'trait' ) {
-		if ( canNavigate.value ) list.push( sheet );
-		list.push( { label: traitSetName.value, selector: [ 'traitSet', traitSetID.value ] } );
-		list.push( { label: traitName.value, selector: null } );
-	} else if ( editingType.value === 'traitSet' ) {
-		list.push( sheet, { label: traitSetName.value, selector: null } );
+	if (editingType.value === 'trait') {
+		if (canNavigate.value) list.push(sheet);
+		list.push({ label: traitSetName.value, selector: ['traitSet', traitSetID.value] });
+		list.push({ label: traitName.value, selector: null });
+	} else if (editingType.value === 'traitSet') {
+		list.push(sheet, { label: traitSetName.value, selector: null });
 	}
 	return list;
-} );
+});
 
-const diceCount = computed( () => props.dicePool?.items?.length || 0 );
+const diceCount = computed(() => props.dicePool?.items?.length || 0);
 
-const diceRollerRef = ref<any>( null );
-defineExpose( {
+const diceRollerRef = ref<any>(null);
+defineExpose({
 	diceRoller: diceRollerRef,
 	roll: () => diceRollerRef.value?.roll(),
-	clearPool: () => diceRollerRef.value?.clearPool()
-} );
+	clearPool: () => diceRollerRef.value?.clearPool(),
+});
 </script>
 
 <template>
 	<!-- DOCKED STUDIO SIDE PANEL -->
-	<aside
-		ref="panelEl"
-		class="studio-panel"
-		:class="[
-			'position-' + position,
-			{ 'panel-collapsed': !isOpen }
-		]"
-	>
+	<aside ref="panelEl" class="studio-panel" :class="['position-' + position, { 'panel-collapsed': !isOpen }]">
 		<!-- TOOLBAR: SHEET TABS OR CRUMBS ON THE LEFT, ACTIONS ON THE RIGHT -->
 		<div class="studio-panel-header">
 			<div class="studio-toolbar-left">
@@ -195,7 +194,9 @@ defineExpose( {
 				<div v-else-if="submode !== 'play' || panelTab === 'properties'" class="studio-breadcrumb">
 					<template v-for="(c, i) in crumbs" :key="i">
 						<span v-if="i > 0" class="crumb-sep">›</span>
-						<button v-if="c.selector && canNavigate" type="button" class="crumb-link" @click="goCrumb(c.selector)">{{ c.label }}</button>
+						<button v-if="c.selector && canNavigate" type="button" class="crumb-link" @click="goCrumb(c.selector)">
+							{{ c.label }}
+						</button>
 						<span v-else class="crumb-current">{{ c.label }}</span>
 					</template>
 				</div>
@@ -245,12 +246,7 @@ defineExpose( {
 				>
 					<i class="fas fa-arrows-left-right"></i>
 				</button>
-				<button
-					type="button"
-					class="studio-action-btn"
-					@click="emit('update:isOpen', false)"
-					title="Collapse panel"
-				>
+				<button type="button" class="studio-action-btn" @click="emit('update:isOpen', false)" title="Collapse panel">
 					<i :class="position === 'right' ? 'fas fa-angles-right' : 'fas fa-angles-left'"></i>
 				</button>
 			</div>

@@ -13,201 +13,208 @@ const props = defineProps<{
 	entryLabel?: string;
 }>();
 
-const isPlay = computed( () => props.submode === 'play' );
+const isPlay = computed(() => props.submode === 'play');
 
 const emit = defineEmits<{
-	( e: 'updateCharacter', character: Character ): void;
-	( e: 'removeSubtrait', subtraitID: number ): void;
+	(e: 'updateCharacter', character: Character): void;
+	(e: 'removeSubtrait', subtraitID: number): void;
 }>();
 
 const instance = getCurrentInstance();
-const rootTemplates = () => ( instance?.proxy as any )?.$root?.sheetTemplates ?? null;
+const rootTemplates = () => (instance?.proxy as any)?.$root?.sheetTemplates ?? null;
 
-const confirmDelete = ref( false );
+const confirmDelete = ref(false);
 
-watch( () => props.subtraitID, () => { confirmDelete.value = false; } );
+watch(
+	() => props.subtraitID,
+	() => {
+		confirmDelete.value = false;
+	},
+);
 
-const parent = computed<any>( () => {
-	const traitSet = props.character.traitSets[ props.traitSetID ];
-	return props.traitID === null ? traitSet : traitSet?.traits?.[ props.traitID ];
-} );
+const parent = computed<any>(() => {
+	const traitSet = props.character.traitSets[props.traitSetID];
+	return props.traitID === null ? traitSet : traitSet?.traits?.[props.traitID];
+});
 
-const subtrait = computed<Trait>( () => {
-	if ( props.entries ) return props.entries[ props.subtraitID ];
-	return parent.value.traits![ props.subtraitID ];
-} );
+const subtrait = computed<Trait>(() => {
+	if (props.entries) return props.entries[props.subtraitID];
+	return parent.value.traits![props.subtraitID];
+});
 
-const entryLabel = computed( () => props.entryLabel || 'Subtrait' );
+const entryLabel = computed(() => props.entryLabel || 'Subtrait');
 
-const name = computed( {
+const name = computed({
 	get() {
 		return subtrait.value.name;
 	},
-	set( value: string ) {
-		setSubtraitProperty( 'name', value );
+	set(value: string) {
+		setSubtraitProperty('name', value);
 	},
-} );
+});
 
-const description = computed( {
+const description = computed({
 	get() {
 		return subtrait.value.description || '';
 	},
-	set( value: string ) {
-		setSubtraitProperty( 'description', value );
+	set(value: string) {
+		setSubtraitProperty('description', value);
 	},
-} );
+});
 
-const value = computed( {
+const value = computed({
 	get() {
-		return ratingDice( getRating( subtrait.value ) )[0] || 0;
+		return ratingDice(getRating(subtrait.value))[0] || 0;
 	},
-	set( value: any ) {
+	set(value: any) {
 		const st = subtrait.value as unknown as Record<string, any>;
-		if ( typeof value === 'number' && value > 0 ) {
-			setRatingDie( st, value );
+		if (typeof value === 'number' && value > 0) {
+			setRatingDie(st, value);
 		} else {
 			delete st.rating;
 		}
-		updateCharacter( props.character );
+		updateCharacter(props.character);
 	},
-} );
+});
 
-const availableValues = computed( () => {
+const availableValues = computed(() => {
 	const s = props.traitSetID;
-	const traitSet = props.character.traitSets[ s ];
-	return cortexFunctions.getSubtraitSlotRatings( traitSet, props.subtraitID );
-} );
+	const traitSet = props.character.traitSets[s];
+	return cortexFunctions.getSubtraitSlotRatings(traitSet, props.subtraitID);
+});
 
-const parentIsBranch = computed( () => {
+const parentIsBranch = computed(() => {
 	const s = props.traitSetID;
-	const traitSet = props.character?.traitSets?.[ s ];
-	return getView( traitSet )?.style?.body === 'subtrait-columns';
-} );
+	const traitSet = props.character?.traitSets?.[s];
+	return getView(traitSet)?.style?.body === 'subtrait-columns';
+});
 
-const branchSide = computed( {
+const branchSide = computed({
 	get() {
-		return getView( subtrait.value )?.branchSide === 'left' ? 'left' : 'right';
+		return getView(subtrait.value)?.branchSide === 'left' ? 'left' : 'right';
 	},
-	set( val: string ) {
-		ensureView( subtrait.value ).branchSide = ( val === 'left' ) ? 'left' : 'right';
-		updateCharacter( props.character );
+	set(val: string) {
+		ensureView(subtrait.value).branchSide = val === 'left' ? 'left' : 'right';
+		updateCharacter(props.character);
 	},
-} );
+});
 
-const templateSubtraitMatched = computed( () => {
-	const s = props.traitSetID, t = props.traitID;
-	if ( props.entries || t === null ) return false;
-	const ts = props.character?.traitSets?.[ s ];
-	const tr = ts?.traits?.[ t ];
-	if ( !tr || !subtrait.value || !subtrait.value.name || !ts || !ts.id || !tr.name ) return false;
-	const entry = cortexFunctions.resolveTemplateFor( props.character, rootTemplates() );
-	const base = cortexFunctions.templateSetById( entry, ts.id );
-	const btr = base && Array.isArray( base.traits )
-		? base.traits.find( ( b: any ) => b && b.name === tr.name ) : null;
-	return Boolean( btr && Array.isArray( btr.traits ) &&
-		btr.traits.some( ( b: any ) => b && b.name === subtrait.value.name ) );
-} );
+const templateSubtraitMatched = computed(() => {
+	const s = props.traitSetID,
+		t = props.traitID;
+	if (props.entries || t === null) return false;
+	const ts = props.character?.traitSets?.[s];
+	const tr = ts?.traits?.[t];
+	if (!tr || !subtrait.value || !subtrait.value.name || !ts || !ts.id || !tr.name) return false;
+	const entry = cortexFunctions.resolveTemplateFor(props.character, rootTemplates());
+	const base = cortexFunctions.templateSetById(entry, ts.id);
+	const btr = base && Array.isArray(base.traits) ? base.traits.find((b: any) => b && b.name === tr.name) : null;
+	return Boolean(btr && Array.isArray(btr.traits) && btr.traits.some((b: any) => b && b.name === subtrait.value.name));
+});
 
-function setSubtraitProperty( key: string, value: any ) {
+function setSubtraitProperty(key: string, value: any) {
 	const character = props.character;
-	( subtrait.value as Record<string, any> )[ key ] = value;
+	(subtrait.value as Record<string, any>)[key] = value;
 
-	updateCharacter( character );
+	updateCharacter(character);
 }
 
-function toggleSubtraitValue( val: any ) {
+function toggleSubtraitValue(val: any) {
 	const st = subtrait.value as unknown as Record<string, any>;
-	const cur = ratingDice( getRating( st ) )[0] || 0;
-	if ( val === cur ) {
+	const cur = ratingDice(getRating(st))[0] || 0;
+	if (val === cur) {
 		delete st.rating;
 	} else {
-		setRatingDie( st, val );
+		setRatingDie(st, val);
 	}
-	updateCharacter( props.character );
+	updateCharacter(props.character);
 }
 
-function updateCharacter( character: any ) {
-	emit( 'updateCharacter', character );
+function updateCharacter(character: any) {
+	emit('updateCharacter', character);
 }
 
 function removeSubtrait() {
 	confirmDelete.value = false;
-	emit( 'removeSubtrait', props.subtraitID );
+	emit('removeSubtrait', props.subtraitID);
 }
 
 function removeFromSheet() {
-	if ( props.traitID === null ) return;
-	const entry = cortexFunctions.resolveTemplateFor( props.character, rootTemplates() );
-	cortexFunctions.removeSubtraitFromSheet(
-		props.character, entry, props.traitSetID, props.traitID, props.subtraitID );
+	if (props.traitID === null) return;
+	const entry = cortexFunctions.resolveTemplateFor(props.character, rootTemplates());
+	cortexFunctions.removeSubtraitFromSheet(props.character, entry, props.traitSetID, props.traitID, props.subtraitID);
 	confirmDelete.value = false;
-	updateCharacter( props.character );
+	updateCharacter(props.character);
 }
 
-function getDieDisplayValue( value: any ) {
-	return cortexFunctions.getDieDisplayValue( value );
+function getDieDisplayValue(value: any) {
+	return cortexFunctions.getDieDisplayValue(value);
 }
 
 function subFirstDie() {
-	return ratingDice( getRating( subtrait.value ) )[0] || 0;
+	return ratingDice(getRating(subtrait.value))[0] || 0;
 }
 
-function getSubtraitStepPrev( currentSize: number, range: number[] = availableValues.value ): number | null {
-	if ( !range.length ) return null;
-	const idx = range.indexOf( currentSize );
-	if ( idx !== -1 ) return idx > 0 ? range[ idx - 1 ] : null;
-	const smaller = range.filter( s => s < currentSize );
-	return smaller.at( -1 ) ?? null;
+function getSubtraitStepPrev(currentSize: number, range: number[] = availableValues.value): number | null {
+	if (!range.length) return null;
+	const idx = range.indexOf(currentSize);
+	if (idx !== -1) return idx > 0 ? range[idx - 1] : null;
+	const smaller = range.filter((s) => s < currentSize);
+	return smaller.at(-1) ?? null;
 }
 
-function getSubtraitStepNext( currentSize: number, range: number[] = availableValues.value ): number | null {
-	if ( !range.length ) return null;
-	const idx = range.indexOf( currentSize );
-	if ( idx !== -1 ) return idx < range.length - 1 ? range[ idx + 1 ] : null;
-	const larger = range.filter( s => s > currentSize );
-	return larger.length ? larger[ 0 ] : null;
+function getSubtraitStepNext(currentSize: number, range: number[] = availableValues.value): number | null {
+	if (!range.length) return null;
+	const idx = range.indexOf(currentSize);
+	if (idx !== -1) return idx < range.length - 1 ? range[idx + 1] : null;
+	const larger = range.filter((s) => s > currentSize);
+	return larger.length ? larger[0] : null;
 }
 
-const subtraitStepPrev = computed( () => getSubtraitStepPrev( subFirstDie() ) );
-const subtraitStepNext = computed( () => getSubtraitStepNext( subFirstDie() ) );
+const subtraitStepPrev = computed(() => getSubtraitStepPrev(subFirstDie()));
+const subtraitStepNext = computed(() => getSubtraitStepNext(subFirstDie()));
 
 function stepSubtraitDown() {
 	const prev = subtraitStepPrev.value;
-	if ( prev !== null && subtrait.value ) {
-		setRatingDie( subtrait.value as unknown as Record<string, any>, prev, availableValues.value );
-		updateCharacter( props.character );
+	if (prev !== null && subtrait.value) {
+		setRatingDie(subtrait.value as unknown as Record<string, any>, prev, availableValues.value);
+		updateCharacter(props.character);
 	}
 }
 
 function stepSubtraitUp() {
 	const next = subtraitStepNext.value;
-	if ( next !== null && subtrait.value ) {
-		setRatingDie( subtrait.value as unknown as Record<string, any>, next, availableValues.value );
-		updateCharacter( props.character );
+	if (next !== null && subtrait.value) {
+		setRatingDie(subtrait.value as unknown as Record<string, any>, next, availableValues.value);
+		updateCharacter(props.character);
 	}
 }
 </script>
 
 <template>
 	<section class="editor-subgroup">
-
 		<div class="editor-fields">
-
 			<div class="editor-field">
 				<label :for="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID">{{ entryLabel }} Name</label>
 				<div class="editor-readonly-title" v-if="isPlay">{{ name }}</div>
-				<input v-else type="text" :id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitName" v-model="name">
+				<input
+					v-else
+					type="text"
+					:id="'subtrait-name-' + traitSetID + '-' + traitID + '-' + subtraitID"
+					name="subtraitName"
+					v-model="name"
+				/>
 			</div>
 
 			<ul class="editor-values" v-if="!isPlay">
 				<li
 					v-for="size in availableValues"
-					:class="{ 'active': size === subFirstDie() }"
+					:class="{ active: size === subFirstDie() }"
 					tabindex="0"
 					role="button"
-					@keydown.enter.prevent="toggleSubtraitValue( size )"
-					@keydown.space.prevent="toggleSubtraitValue( size )"
-					@click.stop="toggleSubtraitValue( size )"
+					@keydown.enter.prevent="toggleSubtraitValue(size)"
+					@keydown.space.prevent="toggleSubtraitValue(size)"
+					@click.stop="toggleSubtraitValue(size)"
 				>
 					<span class="c" v-html="getDieDisplayValue(size)"></span>
 				</li>
@@ -221,7 +228,9 @@ function stepSubtraitUp() {
 					@click.stop="stepSubtraitDown()"
 					title="Step down"
 					aria-label="Step down"
-				>-</button>
+				>
+					-
+				</button>
 				<div class="die-rating-current">
 					<span class="c" v-html="getDieDisplayValue(subFirstDie())"></span>
 					<span class="die-rating-text">d{{ subFirstDie() }}</span>
@@ -233,29 +242,52 @@ function stepSubtraitUp() {
 					@click.stop="stepSubtraitUp()"
 					title="Step up"
 					aria-label="Step up"
-				>+</button>
+				>
+					+
+				</button>
 				<button
 					type="button"
 					class="btn-unset-rating"
 					v-if="subFirstDie() > 0"
-					@click.stop="setRatingDie(subtrait as unknown as Record<string, any>, null); updateCharacter(props.character)"
+					@click.stop="
+						setRatingDie(subtrait as unknown as Record<string, any>, null);
+						updateCharacter(props.character);
+					"
 					title="Clear rating"
 					aria-label="Clear rating"
-				><i class="fas fa-xmark" aria-hidden="true"></i></button>
+				>
+					<i class="fas fa-xmark" aria-hidden="true"></i>
+				</button>
 			</div>
 
 			<div class="editor-field" v-if="!isPlay">
-				<label :for="'subtrait-desc-' + traitSetID + '-' + traitID + '-' + subtraitID">{{ entryLabel }} Description</label>
-				<textarea :id="'subtrait-desc-' + traitSetID + '-' + traitID + '-' + subtraitID" name="subtraitDescription" v-model="description"></textarea>
+				<label :for="'subtrait-desc-' + traitSetID + '-' + traitID + '-' + subtraitID"
+					>{{ entryLabel }} Description</label
+				>
+				<textarea
+					:id="'subtrait-desc-' + traitSetID + '-' + traitID + '-' + subtraitID"
+					name="subtraitDescription"
+					v-model="description"
+				></textarea>
 			</div>
 
 			<div class="editor-field" v-if="parentIsBranch && !isPlay && !entries">
 				<div class="editor-label">Side</div>
 				<div class="editor-button-group">
-					<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'left' }" @click.stop="branchSide = 'left'">
+					<button
+						type="button"
+						class="editor-group-btn"
+						:class="{ active: branchSide === 'left' }"
+						@click.stop="branchSide = 'left'"
+					>
 						<i class="fas fa-arrow-left"></i> Left
 					</button>
-					<button type="button" class="editor-group-btn" :class="{ active: branchSide === 'right' }" @click.stop="branchSide = 'right'">
+					<button
+						type="button"
+						class="editor-group-btn"
+						:class="{ active: branchSide === 'right' }"
+						@click.stop="branchSide = 'right'"
+					>
 						Right <i class="fas fa-arrow-right"></i>
 					</button>
 				</div>
@@ -263,19 +295,30 @@ function stepSubtraitUp() {
 
 			<div class="editor-button-container" v-if="!isPlay">
 				<div class="editor-button-container-inner">
-					<div v-if="!confirmDelete" class="editor-button editor-button-remove editor-button-secondary" @click.prevent="confirmDelete = true">
+					<div
+						v-if="!confirmDelete"
+						class="editor-button editor-button-remove editor-button-secondary"
+						@click.prevent="confirmDelete = true"
+					>
 						<span><i class="fas fa-trash"></i> Remove {{ entryLabel }}</span>
 					</div>
-					<div v-else class="editor-button editor-button-remove editor-button-delete-confirm" @click.prevent="removeSubtrait">
+					<div
+						v-else
+						class="editor-button editor-button-remove editor-button-delete-confirm"
+						@click.prevent="removeSubtrait"
+					>
 						<span><i class="fas fa-exclamation-triangle"></i> Confirm Remove?</span>
 					</div>
-					<div v-if="templateSubtraitMatched" class="editor-button editor-button-remove" @click.prevent="removeFromSheet" title="Remove from sheet — reversible via restore, no confirmation needed">
+					<div
+						v-if="templateSubtraitMatched"
+						class="editor-button editor-button-remove"
+						@click.prevent="removeFromSheet"
+						title="Remove from sheet — reversible via restore, no confirmation needed"
+					>
 						<span><i class="fas fa-eraser"></i> Remove from sheet</span>
 					</div>
 				</div>
 			</div>
-
 		</div>
-
 	</section>
 </template>

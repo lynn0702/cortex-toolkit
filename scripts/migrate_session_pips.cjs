@@ -14,17 +14,26 @@ const templates = require(templatesPath);
 
 let converted = 0;
 templates.forEach((entry) => {
-  const before = JSON.stringify(
-    ((entry && entry.character && entry.character.traitSets) || []).map((s) => (s && s.view && s.view.style && s.view.style.body) || null)
-  );
-  M.normalizeView(entry);
-  const after = JSON.stringify(
-    ((entry && entry.character && entry.character.traitSets) || []).map((s) => (s && s.view && s.view.style && s.view.style.body) || null)
-  );
-  if (before !== after) converted++;
+	const before = JSON.stringify(
+		((entry && entry.character && entry.character.traitSets) || []).map(
+			(s) => (s && s.view && s.view.style && s.view.style.body) || null,
+		),
+	);
+	M.normalizeView(entry);
+	const after = JSON.stringify(
+		((entry && entry.character && entry.character.traitSets) || []).map(
+			(s) => (s && s.view && s.view.style && s.view.style.body) || null,
+		),
+	);
+	if (before !== after) converted++;
 });
 
 const header = '/**\n * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)\n */\n';
-const footer = '\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexSpotlightTemplates;\n}\n';
-fs.writeFileSync(templatesPath, header + 'const cortexSpotlightTemplates = ' + JSON.stringify(templates, null, 2) + ';' + footer, 'utf8');
+const footer =
+	'\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexSpotlightTemplates;\n}\n';
+fs.writeFileSync(
+	templatesPath,
+	header + 'const cortexSpotlightTemplates = ' + JSON.stringify(templates, null, 2) + ';' + footer,
+	'utf8',
+);
 console.log('session bodies unified in ' + converted + ' templates');

@@ -13,7 +13,6 @@ import { cloneDeep } from './clone-deep.ts';
 import { buildParts, formatPct } from './spotlight-grid.ts';
 
 export const cortexMigration = {
-
 	DIE_SIZES: [4, 6, 8, 10, 12] as number[],
 
 	// Default rating track when no scale is authored (matches getTraitSetRatings).
@@ -22,9 +21,18 @@ export const cortexMigration = {
 	// Set bodies whose trait rows are the list-family structure (name /
 	// rating / description / sfx / subtraits / attached stress) that
 	// view.parts can express. Bespoke bodies keep the legacy flags.
-	LIST_FAMILY_BODIES: ['default', 'die-track', 'list',
-		'two-columns-compact', 'two-columns-detailed', 'pool-rows',
-		'distinctions', 'stress', 'assets', 'resources'] as string[],
+	LIST_FAMILY_BODIES: [
+		'default',
+		'die-track',
+		'list',
+		'two-columns-compact',
+		'two-columns-detailed',
+		'pool-rows',
+		'distinctions',
+		'stress',
+		'assets',
+		'resources',
+	] as string[],
 
 	LEGACY_STYLE_BODIES: {
 		distinctions: 'sfx-rows',
@@ -41,119 +49,157 @@ export const cortexMigration = {
 
 	// Presentation keys resolve via the type layer (Phase-1 item 5) and never
 	// enter entity JSON. Dropped with a per-set warning.
-	PRESENTATION_KEYS: ['noun', 'plural', 'ratingPosition', 'statement',
-		'hasQuestionedPip', 'hasCounterColumn', 'counterLabel'] as string[],
+	PRESENTATION_KEYS: [
+		'noun',
+		'plural',
+		'ratingPosition',
+		'statement',
+		'hasQuestionedPip',
+		'hasCounterColumn',
+		'counterLabel',
+	] as string[],
 
-	isBlankName: function( name: unknown ) {
-		return !( typeof name === 'string' && name.length );
+	isBlankName: function (name: unknown) {
+		return !(typeof name === 'string' && name.length);
 	},
 
 	// Attached stress lives as an ordinary companion subtrait named for the
 	// set's stress label (default "Stress"); absent means no stress.
-	stressCompanionLabel: function( set: any ) {
-		const bag = ( set && ( set.view || ( set.custom && set.custom.cortexToolkit ) ) ) || {};
+	stressCompanionLabel: function (set: any) {
+		const bag = (set && (set.view || (set.custom && set.custom.cortexToolkit))) || {};
 		const labels = bag.labels;
-		if ( labels && typeof labels.track === 'string' && labels.track.length ) return labels.track;
-		if ( labels && typeof ( labels as any ).stress === 'string' ) {
-			const s = ( labels as any ).stress;
-			delete ( labels as any ).stress;
+		if (labels && typeof labels.track === 'string' && labels.track.length) return labels.track;
+		if (labels && typeof (labels as any).stress === 'string') {
+			const s = (labels as any).stress;
+			delete (labels as any).stress;
 			labels.track = s;
 			return s;
 		}
 		return 'Stress';
 	},
 
-	isFillerDescription: function( text: unknown ) {
-		return typeof text === 'string' && this.FILLER_DESCRIPTIONS.indexOf( text ) !== -1;
+	isFillerDescription: function (text: unknown) {
+		return typeof text === 'string' && this.FILLER_DESCRIPTIONS.indexOf(text) !== -1;
 	},
 
 	// A set is a statement context when the sheet renders a statement box
 	// for every trait. Old trait-level statement fields dissolve into a
 	// child trait; description is the alternative sentence home there.
-	statementContext: function( set: any ) {
-		if ( !set || typeof set !== 'object' ) return false;
-		const bag = ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) )
-			? set.view
-			: ( set.custom && set.custom.cortexToolkit && typeof set.custom.cortexToolkit === 'object' ? set.custom.cortexToolkit : null );
-		const flag = ( set.statement !== undefined && set.statement !== null ) ? set.statement : undefined;
-		if ( flag ) return true;
-		return Boolean( bag && bag.style && typeof bag.style === 'object' && bag.style.body === 'paired-slots' );
+	statementContext: function (set: any) {
+		if (!set || typeof set !== 'object') return false;
+		const bag =
+			set.view && typeof set.view === 'object' && !Array.isArray(set.view)
+				? set.view
+				: set.custom && set.custom.cortexToolkit && typeof set.custom.cortexToolkit === 'object'
+					? set.custom.cortexToolkit
+					: null;
+		const flag = set.statement !== undefined && set.statement !== null ? set.statement : undefined;
+		if (flag) return true;
+		return Boolean(bag && bag.style && typeof bag.style === 'object' && bag.style.body === 'paired-slots');
 	},
 
 	// Statement flags live on the set. Older data sometimes wrote them into
 	// the view bag; copy each one home only when the set has no value, then
 	// strip the view copy. A view value never overwrites a set value.
-	migrateStatementFlags: function( set: any, warnings?: string[] ) {
-		if ( !set || typeof set !== 'object' ) return;
+	migrateStatementFlags: function (set: any, warnings?: string[]) {
+		if (!set || typeof set !== 'object') return;
 		const bags: any[] = [];
-		if ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ) bags.push( set.view );
-		if ( set.custom && set.custom.cortexToolkit && typeof set.custom.cortexToolkit === 'object' && !Array.isArray( set.custom.cortexToolkit ) ) {
-			bags.push( set.custom.cortexToolkit );
+		if (set.view && typeof set.view === 'object' && !Array.isArray(set.view)) bags.push(set.view);
+		if (
+			set.custom &&
+			set.custom.cortexToolkit &&
+			typeof set.custom.cortexToolkit === 'object' &&
+			!Array.isArray(set.custom.cortexToolkit)
+		) {
+			bags.push(set.custom.cortexToolkit);
 		}
-		[ 'statement', 'hasQuestionedPip', 'hasCounterColumn' ].forEach( ( key: string ) => {
-			const seen = bags.filter( ( bag: any ) => Object.prototype.hasOwnProperty.call( bag, key ) ).map( ( bag: any ) => bag[key] );
-			if ( seen.length ) {
-				if ( set[key] === undefined ) {
+		['statement', 'hasQuestionedPip', 'hasCounterColumn'].forEach((key: string) => {
+			const seen = bags
+				.filter((bag: any) => Object.prototype.hasOwnProperty.call(bag, key))
+				.map((bag: any) => bag[key]);
+			if (seen.length) {
+				if (set[key] === undefined) {
 					set[key] = seen[0];
-				} else if ( seen.some( ( val: any ) => val !== set[key] ) ) {
-					this.warn( warnings, 'set/' + ( set.name || '?' ) + ': dropped view ' + key + ' that disagreed with set home' );
+				} else if (seen.some((val: any) => val !== set[key])) {
+					this.warn(warnings, 'set/' + (set.name || '?') + ': dropped view ' + key + ' that disagreed with set home');
 				}
 			}
-			bags.forEach( ( bag: any ) => { delete bag[key]; } );
-		} );
+			bags.forEach((bag: any) => {
+				delete bag[key];
+			});
+		});
 	},
 
-	isStatementContainerNode: function( node: any ) {
-		return Boolean( node && typeof node === 'object' && !Array.isArray( node ) && node.name === 'Statement' && node.rating === undefined );
+	isStatementContainerNode: function (node: any) {
+		return Boolean(
+			node &&
+			typeof node === 'object' &&
+			!Array.isArray(node) &&
+			node.name === 'Statement' &&
+			node.rating === undefined,
+		);
 	},
 
 	// Create/rename the single sentence child inside the parent trait. Works
 	// in both render (array) and layered (map) trait shapes. `filled` null
 	// preserves an existing pip state; a new child starts unfilled.
-	addStatementChild: function( node: any, sentence: string, filled: boolean | null, warnings?: string[], path?: string ) {
-		if ( !node || typeof node !== 'object' || !sentence ) return;
-		if ( Array.isArray( node.traits ) ) {
-			let container = node.traits.find( ( st: any ) => this.isStatementContainerNode( st ) );
-			if ( !container ) {
+	addStatementChild: function (
+		node: any,
+		sentence: string,
+		filled: boolean | null,
+		warnings?: string[],
+		path?: string,
+	) {
+		if (!node || typeof node !== 'object' || !sentence) return;
+		if (Array.isArray(node.traits)) {
+			let container = node.traits.find((st: any) => this.isStatementContainerNode(st));
+			if (!container) {
 				container = { name: 'Statement', traits: [] };
-				node.traits.push( container );
+				node.traits.push(container);
 			}
-			if ( !Array.isArray( container.traits ) ) container.traits = [];
-			let child = container.traits[ 0 ];
-			const hadChild = Boolean( child && typeof child === 'object' );
-			if ( !hadChild ) {
+			if (!Array.isArray(container.traits)) container.traits = [];
+			let child = container.traits[0];
+			const hadChild = Boolean(child && typeof child === 'object');
+			if (!hadChild) {
 				child = { name: sentence };
-				container.traits.push( child );
+				container.traits.push(child);
 			} else {
 				child.name = sentence;
 			}
-			if ( filled !== null || !hadChild ) {
-				child.rating = { type: 'Pip', value: [ filled === true ] };
+			if (filled !== null || !hadChild) {
+				child.rating = { type: 'Pip', value: [filled === true] };
 			}
 			return;
 		}
-		if ( !node.traits || typeof node.traits !== 'object' ) node.traits = {};
+		if (!node.traits || typeof node.traits !== 'object') node.traits = {};
 		let container = node.traits.Statement;
-		if ( container !== undefined && !( container && typeof container === 'object' && !Array.isArray( container ) && container.rating === undefined ) ) {
-			this.warn( warnings, ( path || 'trait' ) + ': trait "Statement" collides with the statement container, statement dropped' );
+		if (
+			container !== undefined &&
+			!(container && typeof container === 'object' && !Array.isArray(container) && container.rating === undefined)
+		) {
+			this.warn(
+				warnings,
+				(path || 'trait') + ': trait "Statement" collides with the statement container, statement dropped',
+			);
 			return;
 		}
-		if ( container === undefined ) {
+		if (container === undefined) {
 			container = { traits: {} };
 			node.traits.Statement = container;
 		}
-		if ( !container.traits || typeof container.traits !== 'object' || Array.isArray( container.traits ) ) container.traits = {};
-		const keys = Object.keys( container.traits );
+		if (!container.traits || typeof container.traits !== 'object' || Array.isArray(container.traits))
+			container.traits = {};
+		const keys = Object.keys(container.traits);
 		let child: any = null;
-		if ( keys.length ) {
-			child = container.traits[ keys[ 0 ] ];
-			delete container.traits[ keys[ 0 ] ];
+		if (keys.length) {
+			child = container.traits[keys[0]];
+			delete container.traits[keys[0]];
 		}
-		const hadChild = Boolean( child && typeof child === 'object' && !Array.isArray( child ) );
-		if ( !hadChild ) child = {};
-		container.traits[ sentence ] = child;
-		if ( filled !== null || !hadChild ) {
-			child.rating = { type: 'Pip', value: [ filled === true ] };
+		const hadChild = Boolean(child && typeof child === 'object' && !Array.isArray(child));
+		if (!hadChild) child = {};
+		container.traits[sentence] = child;
+		if (filled !== null || !hadChild) {
+			child.rating = { type: 'Pip', value: [filled === true] };
 		}
 	},
 
@@ -161,193 +207,209 @@ export const cortexMigration = {
 	// becomes a child trait's name (description is the alternative home in
 	// a statement context); the questioned flag becomes that child's Pip.
 	// Idempotent: absent fields return untouched.
-	dissolveStatement: function( node: any, set: any, warnings?: string[], path?: string ) {
-		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) return node;
-		const bag = ( node.view && typeof node.view === 'object' && !Array.isArray( node.view ) )
-			? node.view
-			: ( node.custom && node.custom.cortexToolkit && typeof node.custom.cortexToolkit === 'object' ? node.custom.cortexToolkit : null );
-		const ownQuestioned = node.custom && typeof node.custom === 'object'
-			&& Object.prototype.hasOwnProperty.call( node.custom, 'questioned' );
-		const hasStatement = Object.prototype.hasOwnProperty.call( node, 'statement' );
-		const hasQuestioned = Object.prototype.hasOwnProperty.call( node, 'questioned' )
-			|| ownQuestioned
-			|| Boolean( bag && Object.prototype.hasOwnProperty.call( bag, 'questioned' ) );
+	dissolveStatement: function (node: any, set: any, warnings?: string[], path?: string) {
+		if (!node || typeof node !== 'object' || Array.isArray(node)) return node;
+		const bag =
+			node.view && typeof node.view === 'object' && !Array.isArray(node.view)
+				? node.view
+				: node.custom && node.custom.cortexToolkit && typeof node.custom.cortexToolkit === 'object'
+					? node.custom.cortexToolkit
+					: null;
+		const ownQuestioned =
+			node.custom && typeof node.custom === 'object' && Object.prototype.hasOwnProperty.call(node.custom, 'questioned');
+		const hasStatement = Object.prototype.hasOwnProperty.call(node, 'statement');
+		const hasQuestioned =
+			Object.prototype.hasOwnProperty.call(node, 'questioned') ||
+			ownQuestioned ||
+			Boolean(bag && Object.prototype.hasOwnProperty.call(bag, 'questioned'));
 
 		const direct = typeof node.statement === 'string' ? node.statement.trim() : '';
 		const description = typeof node.description === 'string' ? node.description.trim() : '';
-		const questioned = node.questioned === true
-			|| ( ownQuestioned && node.custom.questioned === true )
-			|| ( bag && bag.questioned === true );
+		const questioned =
+			node.questioned === true ||
+			(ownQuestioned && node.custom.questioned === true) ||
+			(bag && bag.questioned === true);
 		const filled = hasQuestioned ? questioned : null;
 		// The statement box already read description as its fallback in a
 		// statement context, so a description-only trait moves its sentence
 		// home too. Outside that context (and without a questioned flag)
 		// description stays a description.
-		const fallback = !direct && description && ( questioned || this.statementContext( set ) );
-		if ( !hasStatement && !hasQuestioned && !fallback ) return node;
+		const fallback = !direct && description && (questioned || this.statementContext(set));
+		if (!hasStatement && !hasQuestioned && !fallback) return node;
 
 		let sentence = direct;
-		if ( !sentence && fallback ) sentence = description;
-		if ( sentence ) {
-			this.addStatementChild( node, sentence, filled, warnings, path );
-		} else if ( questioned ) {
-			this.warn( warnings, ( path || 'trait' ) + ': questioned statement had no text, cannot represent' );
+		if (!sentence && fallback) sentence = description;
+		if (sentence) {
+			this.addStatementChild(node, sentence, filled, warnings, path);
+		} else if (questioned) {
+			this.warn(warnings, (path || 'trait') + ': questioned statement had no text, cannot represent');
 		}
 
 		delete node.statement;
 		delete node.questioned;
-		if ( node.custom && typeof node.custom === 'object' ) {
-			if ( node.custom.cortexToolkit && typeof node.custom.cortexToolkit === 'object' ) delete node.custom.cortexToolkit.questioned;
+		if (node.custom && typeof node.custom === 'object') {
+			if (node.custom.cortexToolkit && typeof node.custom.cortexToolkit === 'object')
+				delete node.custom.cortexToolkit.questioned;
 			delete node.custom.questioned;
-			if ( !Object.keys( node.custom ).length ) delete node.custom;
+			if (!Object.keys(node.custom).length) delete node.custom;
 		}
-		if ( node.view && typeof node.view === 'object' ) {
+		if (node.view && typeof node.view === 'object') {
 			delete node.view.questioned;
-			if ( !Object.keys( node.view ).length ) delete node.view;
+			if (!Object.keys(node.view).length) delete node.view;
 		}
 		return node;
 	},
 
-	normalizeView: function( obj: any, warnings?: string[] ) {
-		if ( !obj || typeof obj !== 'object' ) return obj;
+	normalizeView: function (obj: any, warnings?: string[]) {
+		if (!obj || typeof obj !== 'object') return obj;
 
-		if ( Array.isArray( obj ) ) {
-			obj.forEach( ( item: any ) => this.normalizeView( item, warnings ) );
+		if (Array.isArray(obj)) {
+			obj.forEach((item: any) => this.normalizeView(item, warnings));
 			return obj;
 		}
-		if ( Array.isArray( obj.characters ) ) {
-			obj.characters.forEach( ( c: any ) => this.normalizeView( c, warnings ) );
+		if (Array.isArray(obj.characters)) {
+			obj.characters.forEach((c: any) => this.normalizeView(c, warnings));
 		}
 
-		const normalizeNode = ( node: any ) => {
-			if ( !node || typeof node !== 'object' ) return;
+		const normalizeNode = (node: any) => {
+			if (!node || typeof node !== 'object') return;
 			delete node.features;
-			if ( node.portrait && typeof node.portrait === 'object' ) {
-				normalizeNode( node.portrait );
+			if (node.portrait && typeof node.portrait === 'object') {
+				normalizeNode(node.portrait);
 			}
-			if ( Array.isArray( node.traitSets ) ) {
-				node.traitSets.forEach( ( ts: any ) => normalizeSet( ts ) );
+			if (Array.isArray(node.traitSets)) {
+				node.traitSets.forEach((ts: any) => normalizeSet(ts));
 			}
-			if ( node.sets && typeof node.sets === 'object' && !Array.isArray( node.sets ) ) {
-				Object.values( node.sets ).forEach( ( s: any ) => normalizeLayeredSet( s ) );
+			if (node.sets && typeof node.sets === 'object' && !Array.isArray(node.sets)) {
+				Object.values(node.sets).forEach((s: any) => normalizeLayeredSet(s));
 			}
 		};
 
-		const normalizeTraitsArray = ( traits: any, set: any ) => {
-			if ( !Array.isArray( traits ) ) return;
-			traits.forEach( ( tr: any ) => {
-				if ( !tr || typeof tr !== 'object' ) return;
-				normalizeNode( tr );
-				this.dissolveStatement( tr, set, warnings, 'trait' );
-				this.migrateNodeRating( tr, false );
-				if ( Array.isArray( tr.traits ) ) normalizeTraitsArray( tr.traits, set );
-			} );
+		const normalizeTraitsArray = (traits: any, set: any) => {
+			if (!Array.isArray(traits)) return;
+			traits.forEach((tr: any) => {
+				if (!tr || typeof tr !== 'object') return;
+				normalizeNode(tr);
+				this.dissolveStatement(tr, set, warnings, 'trait');
+				this.migrateNodeRating(tr, false);
+				if (Array.isArray(tr.traits)) normalizeTraitsArray(tr.traits, set);
+			});
 		};
 
-		const normalizeSet = ( set: any ) => {
-			if ( !set || typeof set !== 'object' ) return;
-			normalizeNode( set );
-			this.migrateStatementFlags( set, warnings );
-			this.migrateStyleBody( set );
-			this.migrateSetVocabulary( set );
-			this.migrateRingTrait( set );
-			this.migrateNodeRating( set, true );
-			this.migrateHinderBackfill( set, false );
-			normalizeTraitsArray( set.traits, set );
-			this.migrateResourceSet( set );
+		const normalizeSet = (set: any) => {
+			if (!set || typeof set !== 'object') return;
+			normalizeNode(set);
+			this.migrateStatementFlags(set, warnings);
+			this.migrateStyleBody(set);
+			this.migrateSetVocabulary(set);
+			this.migrateRingTrait(set);
+			this.migrateNodeRating(set, true);
+			this.migrateHinderBackfill(set, false);
+			normalizeTraitsArray(set.traits, set);
+			this.migrateResourceSet(set);
 		};
 
-		const normalizeLayeredTraits = ( traits: any, set: any ) => {
-			if ( !traits || typeof traits !== 'object' || Array.isArray( traits ) ) return;
-			Object.values( traits ).forEach( ( tr: any ) => {
-				if ( !tr || typeof tr !== 'object' ) return;
-				normalizeNode( tr );
-				this.dissolveStatement( tr, set, warnings, 'trait' );
-				this.migrateNodeRating( tr, false );
-				if ( tr.traits ) normalizeLayeredTraits( tr.traits, set );
-			} );
+		const normalizeLayeredTraits = (traits: any, set: any) => {
+			if (!traits || typeof traits !== 'object' || Array.isArray(traits)) return;
+			Object.values(traits).forEach((tr: any) => {
+				if (!tr || typeof tr !== 'object') return;
+				normalizeNode(tr);
+				this.dissolveStatement(tr, set, warnings, 'trait');
+				this.migrateNodeRating(tr, false);
+				if (tr.traits) normalizeLayeredTraits(tr.traits, set);
+			});
 		};
 
-		const normalizeLayeredSet = ( set: any ) => {
-			if ( !set || typeof set !== 'object' ) return;
-			normalizeNode( set );
-			this.migrateStatementFlags( set, warnings );
-			this.migrateStyleBody( set );
-			this.migrateSetVocabulary( set );
-			this.migrateRingTrait( set );
-			this.migrateNodeRating( set, true );
-			this.migrateHinderBackfill( set, true );
-			if ( set.traits ) normalizeLayeredTraits( set.traits, set );
-			if ( set.slots ) normalizeLayeredTraits( set.slots, set );
-			this.migrateResourceSet( set );
+		const normalizeLayeredSet = (set: any) => {
+			if (!set || typeof set !== 'object') return;
+			normalizeNode(set);
+			this.migrateStatementFlags(set, warnings);
+			this.migrateStyleBody(set);
+			this.migrateSetVocabulary(set);
+			this.migrateRingTrait(set);
+			this.migrateNodeRating(set, true);
+			this.migrateHinderBackfill(set, true);
+			if (set.traits) normalizeLayeredTraits(set.traits, set);
+			if (set.slots) normalizeLayeredTraits(set.slots, set);
+			this.migrateResourceSet(set);
 		};
 
 		// The name block is the first trait set (view.style.body "name").
 		// Files predating it gain a synthesized one here so every later
 		// stage (merge, materialize, render, edit) sees the same shape.
-		const isNameSetNode = ( set: any ) => {
-			if ( !set || typeof set !== 'object' ) return false;
+		const isNameSetNode = (set: any) => {
+			if (!set || typeof set !== 'object') return false;
 			const bag = set.view;
-			if ( bag && typeof bag === 'object' && !Array.isArray( bag ) &&
-				bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) &&
-				( bag.style as any ).body === 'name' ) return true;
+			if (
+				bag &&
+				typeof bag === 'object' &&
+				!Array.isArray(bag) &&
+				bag.style &&
+				typeof bag.style === 'object' &&
+				!Array.isArray(bag.style) &&
+				(bag.style as any).body === 'name'
+			)
+				return true;
 			// Pruned stored sets lose their view bag but keep the stable id.
 			// ('name' is reserved: ensureTraitSetIds never assigns it.)
 			return typeof set.id === 'string' && set.id === 'name';
 		};
-		const ensureNameSet = ( holder: any ) => {
-			if ( !holder || typeof holder !== 'object' ) return;
-			if ( Array.isArray( holder.traitSets ) ) {
-				let set = holder.traitSets.find( ( s: any ) => isNameSetNode( s ) );
-				if ( !set ) {
+		const ensureNameSet = (holder: any) => {
+			if (!holder || typeof holder !== 'object') return;
+			if (Array.isArray(holder.traitSets)) {
+				let set = holder.traitSets.find((s: any) => isNameSetNode(s));
+				if (!set) {
 					set = { id: 'name', name: 'Name', traits: [], view: { style: { header: 'default', body: 'name' } } };
-					holder.traitSets.unshift( set );
+					holder.traitSets.unshift(set);
 				}
 				// Array form only: a layered set object riding in an array
 				// wrapper (placement pass) keeps its map form untouched.
-				if ( !set.traits ) set.traits = [];
-			} else if ( holder.sets && typeof holder.sets === 'object' && !Array.isArray( holder.sets ) ) {
-				let key = Object.keys( holder.sets ).find( ( k: string ) => isNameSetNode( holder.sets[ k ] ) );
-				if ( !key ) {
+				if (!set.traits) set.traits = [];
+			} else if (holder.sets && typeof holder.sets === 'object' && !Array.isArray(holder.sets)) {
+				let key = Object.keys(holder.sets).find((k: string) => isNameSetNode(holder.sets[k]));
+				if (!key) {
 					key = 'Name';
-					holder.sets[ key ] = { id: 'name', traits: {}, view: { style: { header: 'default', body: 'name' } } };
+					holder.sets[key] = { id: 'name', traits: {}, view: { style: { header: 'default', body: 'name' } } };
 				}
-				const set = holder.sets[ key ];
-				if ( !set.traits ) set.traits = {};
+				const set = holder.sets[key];
+				if (!set.traits) set.traits = {};
 			} else {
 				return;
 			}
 		};
 
-		normalizeNode( obj );
-		if ( obj.character && typeof obj.character === 'object' ) {
-			normalizeNode( obj.character );
+		normalizeNode(obj);
+		if (obj.character && typeof obj.character === 'object') {
+			normalizeNode(obj.character);
 		}
-		ensureNameSet( obj );
-		if ( obj.character && typeof obj.character === 'object' ) {
-			ensureNameSet( obj.character );
+		ensureNameSet(obj);
+		if (obj.character && typeof obj.character === 'object') {
+			ensureNameSet(obj.character);
 		}
-		this.migratePlotPoints( obj );
-		if ( obj.character && typeof obj.character === 'object' ) {
-			this.migratePlotPoints( obj.character );
+		this.migratePlotPoints(obj);
+		if (obj.character && typeof obj.character === 'object') {
+			this.migratePlotPoints(obj.character);
 		}
-		if ( Array.isArray( obj.characters ) ) {
-			obj.characters.forEach( ( c: any ) => { ensureNameSet( c ); this.migratePlotPoints( c ); } );
+		if (Array.isArray(obj.characters)) {
+			obj.characters.forEach((c: any) => {
+				ensureNameSet(c);
+				this.migratePlotPoints(c);
+			});
 		}
 		return obj;
 	},
 
-	warn: function( warnings: string[] | undefined, message: string ) {
-		if ( Array.isArray( warnings ) ) warnings.push( message );
+	warn: function (warnings: string[] | undefined, message: string) {
+		if (Array.isArray(warnings)) warnings.push(message);
 	},
 
-	generateUUID: function(): string {
-		if ( typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ) {
+	generateUUID: function (): string {
+		if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
 			return crypto.randomUUID();
 		}
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c: string) {
-			const r = Math.random() * 16 | 0;
-			const v = c === 'x' ? r : (r & 0x3 | 0x8);
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c: string) {
+			const r = (Math.random() * 16) | 0;
+			const v = c === 'x' ? r : (r & 0x3) | 0x8;
 			return v.toString(16);
 		});
 	},
@@ -355,83 +417,97 @@ export const cortexMigration = {
 	// Integer dice from the old model. Uses the same read rule as
 	// getTraitDice: a non-empty dice array wins, otherwise the single value.
 	// Unknown sizes pass through with a warning (surfaced, not invented).
-	diceIntsFor: function( trait: any, warnings: string[], path: string ): number[] {
+	diceIntsFor: function (trait: any, warnings: string[], path: string): number[] {
 		let nums: number[] = [];
-		if ( trait && Array.isArray( trait.dice ) && trait.dice.length ) {
-			nums = trait.dice.filter( ( d: unknown ) => typeof d === 'number' && d > 0 );
-		} else if ( trait && typeof trait.value === 'number' && trait.value > 0 ) {
-			nums = [ trait.value ];
+		if (trait && Array.isArray(trait.dice) && trait.dice.length) {
+			nums = trait.dice.filter((d: unknown) => typeof d === 'number' && d > 0);
+		} else if (trait && typeof trait.value === 'number' && trait.value > 0) {
+			nums = [trait.value];
 		}
-		nums.forEach( n => {
-			if ( this.DIE_SIZES.indexOf( n ) === -1 ) {
-				this.warn( warnings, path + ': unknown die size ' + n + ', kept as d' + n );
+		nums.forEach((n) => {
+			if (this.DIE_SIZES.indexOf(n) === -1) {
+				this.warn(warnings, path + ': unknown die size ' + n + ', kept as d' + n);
 			}
-		} );
+		});
 		return nums;
 	},
 
 	// Old sfx arrays (objects or the "hinder" literal) to named map + slots
 	// object keyed by 0-based position. Nameless sfx objects are blank SFX
 	// placeholder rows; the "hinder" literal becomes the "Hinder" trait.
-	migrateSfxArray: function( arr: any, warnings: string[], path: string ) {
-		const map: any = {}, slots: any = {};
-		( Array.isArray( arr ) ? arr : [] ).forEach( ( sfx: any, i: number ) => {
-			if ( typeof sfx === 'string' ) {
-				if ( !sfx.length ) return;
-				const key = /^hinder$/i.test( sfx ) ? 'Hinder' : sfx;
-				if ( map[key] === undefined ) map[key] = {};
+	migrateSfxArray: function (arr: any, warnings: string[], path: string) {
+		const map: any = {},
+			slots: any = {};
+		(Array.isArray(arr) ? arr : []).forEach((sfx: any, i: number) => {
+			if (typeof sfx === 'string') {
+				if (!sfx.length) return;
+				const key = /^hinder$/i.test(sfx) ? 'Hinder' : sfx;
+				if (map[key] === undefined) map[key] = {};
 				return;
 			}
-			if ( sfx && typeof sfx === 'object' && !Array.isArray( sfx ) ) {
+			if (sfx && typeof sfx === 'object' && !Array.isArray(sfx)) {
 				const key = sfx.name;
-			if ( typeof key !== 'string' || !key.length ) {
+				if (typeof key !== 'string' || !key.length) {
+					const node: any = {};
+					if (typeof sfx.description === 'string' && sfx.description.length) node.description = sfx.description;
+					if (Array.isArray(sfx.tags) && sfx.tags.length) node.tags = sfx.tags.slice();
+					if (
+						sfx.custom !== undefined &&
+						!(typeof sfx.custom === 'object' && !Array.isArray(sfx.custom) && !Object.keys(sfx.custom).length)
+					)
+						node.custom = cloneDeep(sfx.custom);
+					slots[String(i)] = node;
+					return;
+				}
 				const node: any = {};
-				if ( typeof sfx.description === 'string' && sfx.description.length ) node.description = sfx.description;
-				if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
-				if ( sfx.custom !== undefined && !( typeof sfx.custom === 'object' && !Array.isArray( sfx.custom ) && !Object.keys( sfx.custom ).length ) ) node.custom = cloneDeep( sfx.custom );
-				slots[String( i )] = node;
-				return;
-			}
-			const node: any = {};
-			if ( typeof sfx.description === 'string' && sfx.description.length && !this.isFillerDescription( sfx.description ) ) {
-				node.description = sfx.description;
-			}
-			if ( Array.isArray( sfx.tags ) && sfx.tags.length ) node.tags = sfx.tags.slice();
-			if ( sfx.custom !== undefined && !( typeof sfx.custom === 'object' && !Array.isArray( sfx.custom ) && !Object.keys( sfx.custom ).length ) ) node.custom = cloneDeep( sfx.custom );
-				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate sfx ' + JSON.stringify( key ) + ', last wins' );
+				if (
+					typeof sfx.description === 'string' &&
+					sfx.description.length &&
+					!this.isFillerDescription(sfx.description)
+				) {
+					node.description = sfx.description;
+				}
+				if (Array.isArray(sfx.tags) && sfx.tags.length) node.tags = sfx.tags.slice();
+				if (
+					sfx.custom !== undefined &&
+					!(typeof sfx.custom === 'object' && !Array.isArray(sfx.custom) && !Object.keys(sfx.custom).length)
+				)
+					node.custom = cloneDeep(sfx.custom);
+				if (map[key] !== undefined)
+					this.warn(warnings, path + ': duplicate sfx ' + JSON.stringify(key) + ', last wins');
 				map[key] = node;
 				return;
 			}
-			this.warn( warnings, path + ': dropped non-object sfx entry' );
-		} );
+			this.warn(warnings, path + ': dropped non-object sfx entry');
+		});
 		return { map: map, slots: slots };
 	},
 
-	mergeSfxIntoTraits: function( traits: any, sfx: any, warnings: string[], path: string ) {
+	mergeSfxIntoTraits: function (traits: any, sfx: any, warnings: string[], path: string) {
 		const sfxMap = sfx && sfx.map ? sfx.map : sfx;
 		const sfxSlots = sfx && sfx.slots ? sfx.slots : {};
-		if ( !Object.keys( sfxMap ).length && !Object.keys( sfxSlots ).length ) return;
-		if ( !traits.SFX || typeof traits.SFX !== 'object' || Array.isArray( traits.SFX ) ) {
+		if (!Object.keys(sfxMap).length && !Object.keys(sfxSlots).length) return;
+		if (!traits.SFX || typeof traits.SFX !== 'object' || Array.isArray(traits.SFX)) {
 			traits.SFX = { traits: {} };
-		} else if ( typeof traits.SFX === 'string' ) {
+		} else if (typeof traits.SFX === 'string') {
 			traits.SFX = { value: traits.SFX, traits: {} };
-		} else if ( !traits.SFX.traits || typeof traits.SFX.traits !== 'object' ) {
+		} else if (!traits.SFX.traits || typeof traits.SFX.traits !== 'object') {
 			traits.SFX.traits = {};
 		}
-		Object.keys( sfxMap ).forEach( k => {
-			if ( traits.SFX.traits[k] !== undefined ) {
-				this.warn( warnings, path + ': trait "SFX"/"' + k + '" collides with set sfx, set sfx wins' );
+		Object.keys(sfxMap).forEach((k) => {
+			if (traits.SFX.traits[k] !== undefined) {
+				this.warn(warnings, path + ': trait "SFX"/"' + k + '" collides with set sfx, set sfx wins');
 			}
 			traits.SFX.traits[k] = sfxMap[k];
-		} );
-		Object.keys( sfxSlots ).forEach( k => {
-			if ( !traits.SFX.slots || typeof traits.SFX.slots !== 'object' ) traits.SFX.slots = {};
-			if ( traits.SFX.slots[k] !== undefined ) {
-				this.warn( warnings, path + ': SFX slot ' + k + ' collides, incoming wins' );
+		});
+		Object.keys(sfxSlots).forEach((k) => {
+			if (!traits.SFX.slots || typeof traits.SFX.slots !== 'object') traits.SFX.slots = {};
+			if (traits.SFX.slots[k] !== undefined) {
+				this.warn(warnings, path + ': SFX slot ' + k + ' collides, incoming wins');
 			}
 			traits.SFX.slots[k] = sfxSlots[k];
-		} );
-		if ( traits.SFX.slots && !Object.keys( traits.SFX.slots ).length ) delete traits.SFX.slots;
+		});
+		if (traits.SFX.slots && !Object.keys(traits.SFX.slots).length) delete traits.SFX.slots;
 	},
 
 	// Old trait object to [key, raw]. Returns null when the trait is dropped
@@ -441,72 +517,75 @@ export const cortexMigration = {
 	// numeric value/dice arrays become Die/Dice ratings, set nouns map
 	// onto noun/plural, Dice ratings gain spendable. Post-day-1 keys are
 	// not converted — they never shipped, so no file carries them.
-	normalizeRatingObject: function( r: any ): any | null {
-		if ( !r || typeof r !== 'object' || Array.isArray( r ) ) return null;
-		if ( r.type !== 'Counter' && r.type !== 'Die' && r.type !== 'Dice' && r.type !== 'Pip' ) return null;
-		const value = Array.isArray( r.value )
-			? r.value.filter( ( x: unknown ) => ( typeof x === 'number' && Number.isFinite( x ) ) || typeof x === 'boolean' )
+	normalizeRatingObject: function (r: any): any | null {
+		if (!r || typeof r !== 'object' || Array.isArray(r)) return null;
+		if (r.type !== 'Counter' && r.type !== 'Die' && r.type !== 'Dice' && r.type !== 'Pip') return null;
+		const value = Array.isArray(r.value)
+			? r.value.filter((x: unknown) => (typeof x === 'number' && Number.isFinite(x)) || typeof x === 'boolean')
 			: [];
-		if ( r.type === 'Pip' ) {
-			const targetCount = Array.isArray( r.range ) && typeof r.range[ 0 ] === 'number' ? r.range[ 0 ] : 0;
-			while ( value.length < targetCount ) {
-				value.push( false );
+		if (r.type === 'Pip') {
+			const targetCount = Array.isArray(r.range) && typeof r.range[0] === 'number' ? r.range[0] : 0;
+			while (value.length < targetCount) {
+				value.push(false);
 			}
 			return { type: 'Pip', value: value };
 		}
-		const range = Array.isArray( r.range ) ? r.range.filter( ( x: unknown ) => typeof x === 'number' && Number.isFinite( x ) ) : [];
-		return { type: r.type, value: value, range: range.length ? range : [ 4, 6, 8, 10, 12 ] };
+		const range = Array.isArray(r.range)
+			? r.range.filter((x: unknown) => typeof x === 'number' && Number.isFinite(x))
+			: [];
+		return { type: r.type, value: value, range: range.length ? range : [4, 6, 8, 10, 12] };
 	},
 
-	migrateNodeRating: function( node: any, isSet: boolean ) {
-		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) return node;
+	migrateNodeRating: function (node: any, isSet: boolean) {
+		if (!node || typeof node !== 'object' || Array.isArray(node)) return node;
 		// Day-1 set nouns map onto the §1 words (noun, plural).
-		if ( isSet ) {
-			if ( typeof node.noun !== 'string' && typeof node.nounSingular === 'string' ) node.noun = node.nounSingular;
-			if ( typeof node.plural !== 'string' && typeof node.nounPlural === 'string' ) node.plural = node.nounPlural;
+		if (isSet) {
+			if (typeof node.noun !== 'string' && typeof node.nounSingular === 'string') node.noun = node.nounSingular;
+			if (typeof node.plural !== 'string' && typeof node.nounPlural === 'string') node.plural = node.nounPlural;
 			delete node.nounSingular;
 			delete node.nounPlural;
 		}
-		const LADDER = [ 4, 6, 8, 10, 12 ];
-		const legacyDiceArray = Array.isArray( node.dice ) ? node.dice.filter( ( d: unknown ) => typeof d === 'number' && ( d as number ) > 0 ) : [];
-		const legacySingle = typeof node.value === 'number' && node.value > 0 ? [ node.value ] : [];
+		const LADDER = [4, 6, 8, 10, 12];
+		const legacyDiceArray = Array.isArray(node.dice)
+			? node.dice.filter((d: unknown) => typeof d === 'number' && (d as number) > 0)
+			: [];
+		const legacySingle = typeof node.value === 'number' && node.value > 0 ? [node.value] : [];
 		// Canonical rating wins; legacy keys go once read.
-		let rating = node.rating === null ? null : this.normalizeRatingObject( node.rating );
-		if ( rating === null && node.rating !== null ) {
-			if ( legacyDiceArray.length > 1 ) {
-				const dice = legacyDiceArray.slice().sort( ( a: number, b: number ) => b - a );
+		let rating = node.rating === null ? null : this.normalizeRatingObject(node.rating);
+		if (rating === null && node.rating !== null) {
+			if (legacyDiceArray.length > 1) {
+				const dice = legacyDiceArray.slice().sort((a: number, b: number) => b - a);
 				rating = { type: 'Dice', value: dice, range: LADDER.slice() };
-			} else if ( legacyDiceArray.length === 1 || legacySingle.length === 1 ) {
+			} else if (legacyDiceArray.length === 1 || legacySingle.length === 1) {
 				const dice = legacyDiceArray.length ? legacyDiceArray : legacySingle;
 				rating = { type: 'Die', value: dice.slice(), range: LADDER.slice() };
 			}
 		}
-		if ( rating ) node.rating = rating;
-		else if ( node.rating !== null ) delete node.rating;
+		if (rating) node.rating = rating;
+		else if (node.rating !== null) delete node.rating;
 		delete node.value;
 		delete node.dice;
 		// Dice ratings are spendable unless stated otherwise (preserves the
 		// spend control wherever multi-die dice exist).
-		if ( rating && rating.type === 'Dice' && node.spendable === undefined ) {
+		if (rating && rating.type === 'Dice' && node.spendable === undefined) {
 			node.spendable = true;
 		}
 		return node;
 	},
-
 
 	// Converts legacy attributesRing to ringTrait and infers ringTrait for
 	// unflagged classic sets. Runs after migrateStyleBody so body 'attributes'
 	// is already 'portrait-ring'.
 	// Note: noun-triggered inference applies to layered files in practice because
 	// old-format files drop set nouns at migrateSet before reaching normalizeView.
-	migrateRingTrait: function( set: any ) {
-		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
-		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );
+	migrateRingTrait: function (set: any) {
+		if (!set || typeof set !== 'object' || Array.isArray(set)) return;
+		const bags = [set.view, set.custom?.cortexToolkit].filter((b) => b && typeof b === 'object' && !Array.isArray(b));
 
 		// 1. Per-bag conversion: if bag.attributesRing is not undefined
-		for ( const bag of bags ) {
-			if ( bag.attributesRing !== undefined ) {
-				if ( bag.ringTrait === undefined ) {
+		for (const bag of bags) {
+			if (bag.attributesRing !== undefined) {
+				if (bag.ringTrait === undefined) {
 					bag.ringTrait = bag.attributesRing;
 				}
 				delete bag.attributesRing;
@@ -515,35 +594,39 @@ export const cortexMigration = {
 
 		// 2. Inference (writes to set.view only, only when effective ringTrait is undefined after step 1,
 		// where effective means view over custom).
-		const effectiveRingTrait = set.view?.ringTrait !== undefined
-			? set.view.ringTrait
-			: set.custom?.cortexToolkit?.ringTrait;
+		const effectiveRingTrait =
+			set.view?.ringTrait !== undefined ? set.view.ringTrait : set.custom?.cortexToolkit?.ringTrait;
 
 		const hasExplicitFrame = set.view?.frame !== undefined || set.frame !== undefined;
-		if ( hasExplicitFrame ) {
-			const isExplicitLegacy = Boolean( set.view?.frame?.legacyRing || set.frame?.legacyRing );
-			if ( !isExplicitLegacy ) {
-				for ( const bag of bags ) {
+		if (hasExplicitFrame) {
+			const isExplicitLegacy = Boolean(set.view?.frame?.legacyRing || set.frame?.legacyRing);
+			if (!isExplicitLegacy) {
+				for (const bag of bags) {
 					delete bag.ringTrait;
 				}
 			}
-		} else if ( effectiveRingTrait === undefined ) {
-			const effectiveBag = ( set.view && typeof set.view === 'object' && !Array.isArray( set.view ) )
-				? set.view
-				: ( set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object' && !Array.isArray( set.custom.cortexToolkit ) )
-					? set.custom.cortexToolkit
-					: null;
-			const postBody = effectiveBag?.style && typeof effectiveBag.style === 'object' ? effectiveBag.style.body : undefined;
+		} else if (effectiveRingTrait === undefined) {
+			const effectiveBag =
+				set.view && typeof set.view === 'object' && !Array.isArray(set.view)
+					? set.view
+					: set.custom?.cortexToolkit &&
+						  typeof set.custom.cortexToolkit === 'object' &&
+						  !Array.isArray(set.custom.cortexToolkit)
+						? set.custom.cortexToolkit
+						: null;
+			const postBody =
+				effectiveBag?.style && typeof effectiveBag.style === 'object' ? effectiveBag.style.body : undefined;
 			const isAbsentOrDefaultBody = !postBody || postBody === 'default';
 
-			if ( isAbsentOrDefaultBody ) {
+			if (isAbsentOrDefaultBody) {
 				const nameMatch = typeof set.name === 'string' && set.name.trim().toLowerCase() === 'attributes';
 				const nounMatch = typeof set.noun === 'string' && set.noun.trim().toLowerCase() === 'attribute';
 				const isAttrFlag = set.view?.isAttributes === true || set.custom?.cortexToolkit?.isAttributes === true;
-				const locationMatch = set.view?.location === 'attributes' || set.custom?.cortexToolkit?.location === 'attributes';
+				const locationMatch =
+					set.view?.location === 'attributes' || set.custom?.cortexToolkit?.location === 'attributes';
 
-				if ( nameMatch || nounMatch || isAttrFlag || locationMatch ) {
-					if ( !set.view || typeof set.view !== 'object' || Array.isArray( set.view ) ) {
+				if (nameMatch || nounMatch || isAttrFlag || locationMatch) {
+					if (!set.view || typeof set.view !== 'object' || Array.isArray(set.view)) {
 						set.view = {};
 					}
 					set.view.ringTrait = true;
@@ -552,130 +635,159 @@ export const cortexMigration = {
 		}
 
 		// 3. Strip view.isAttributes (and the custom-bag copy) unconditionally
-		for ( const bag of bags ) {
+		for (const bag of bags) {
 			delete bag.isAttributes;
 		}
 	},
 
-	migrateHinderBackfill: function( set: any, isLayered: boolean ) {
-		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
-		const sharedText = ( typeof set.view?.sharedHinderText === 'string' && set.view.sharedHinderText.trim().length > 0 )
-			? set.view.sharedHinderText.trim()
-			: ( typeof set.sharedHinderText === 'string' && set.sharedHinderText.trim().length > 0 )
-				? set.sharedHinderText.trim()
-				: ( typeof set.custom?.cortexToolkit?.sharedHinderText === 'string' && set.custom.cortexToolkit.sharedHinderText.trim().length > 0 )
-					? set.custom.cortexToolkit.sharedHinderText.trim()
-					: null;
+	migrateHinderBackfill: function (set: any, isLayered: boolean) {
+		if (!set || typeof set !== 'object' || Array.isArray(set)) return;
+		const sharedText =
+			typeof set.view?.sharedHinderText === 'string' && set.view.sharedHinderText.trim().length > 0
+				? set.view.sharedHinderText.trim()
+				: typeof set.sharedHinderText === 'string' && set.sharedHinderText.trim().length > 0
+					? set.sharedHinderText.trim()
+					: typeof set.custom?.cortexToolkit?.sharedHinderText === 'string' &&
+						  set.custom.cortexToolkit.sharedHinderText.trim().length > 0
+						? set.custom.cortexToolkit.sharedHinderText.trim()
+						: null;
 
-		const processTrait = ( tr: any ) => {
-			if ( !tr || typeof tr !== 'object' ) return;
-			const noun = ( typeof set.noun === 'string' && set.noun.length ) ? set.noun.toLowerCase() : 'trait';
+		const processTrait = (tr: any) => {
+			if (!tr || typeof tr !== 'object') return;
+			const noun = typeof set.noun === 'string' && set.noun.length ? set.noun.toLowerCase() : 'trait';
 			let die = 8;
-			if ( tr.rating && typeof tr.rating === 'object' && Array.isArray( tr.rating.value ) && tr.rating.value.length ) {
-				die = tr.rating.value[ 0 ];
-			} else if ( typeof tr.rating === 'number' ) {
+			if (tr.rating && typeof tr.rating === 'object' && Array.isArray(tr.rating.value) && tr.rating.value.length) {
+				die = tr.rating.value[0];
+			} else if (typeof tr.rating === 'number') {
 				die = tr.rating;
-			} else if ( typeof tr.value === 'number' ) {
+			} else if (typeof tr.value === 'number') {
 				die = tr.value;
 			}
-			const defaultSentence = 'Gain a PP when you switch out this ' + noun + '\'s d' + die + ' for a d4.';
+			const defaultSentence = 'Gain a PP when you switch out this ' + noun + "'s d" + die + ' for a d4.';
 
-			if ( Array.isArray( tr.traits ) ) {
-				for ( const child of tr.traits ) {
-					if ( !child || typeof child !== 'object' ) continue;
-					if ( child.name === 'SFX' && Array.isArray( child.traits ) ) {
-						for ( const sfx of child.traits ) {
-							if ( sfx && typeof sfx === 'object' && String( sfx.name || '' ).toLowerCase() === 'hinder' ) {
-								if ( typeof sfx.description !== 'string' || !sfx.description.trim().length ) {
+			if (Array.isArray(tr.traits)) {
+				for (const child of tr.traits) {
+					if (!child || typeof child !== 'object') continue;
+					if (child.name === 'SFX' && Array.isArray(child.traits)) {
+						for (const sfx of child.traits) {
+							if (sfx && typeof sfx === 'object' && String(sfx.name || '').toLowerCase() === 'hinder') {
+								if (typeof sfx.description !== 'string' || !sfx.description.trim().length) {
 									sfx.description = sharedText || defaultSentence;
 								}
-								if ( !sfx.rating || typeof sfx.rating !== 'object' ) {
-									sfx.rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+								if (!sfx.rating || typeof sfx.rating !== 'object') {
+									sfx.rating = { type: 'Die', value: [4], range: [4] };
 								}
 							}
 						}
-					} else if ( String( child.name || '' ).toLowerCase() === 'hinder' ) {
-						if ( typeof child.description !== 'string' || !child.description.trim().length ) {
+					} else if (String(child.name || '').toLowerCase() === 'hinder') {
+						if (typeof child.description !== 'string' || !child.description.trim().length) {
 							child.description = sharedText || defaultSentence;
 						}
-						if ( !child.rating || typeof child.rating !== 'object' ) {
-							child.rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+						if (!child.rating || typeof child.rating !== 'object') {
+							child.rating = { type: 'Die', value: [4], range: [4] };
 						}
 					}
 				}
-			} else if ( tr.traits && typeof tr.traits === 'object' ) {
-				for ( const [ cKey, child ] of Object.entries( tr.traits ) ) {
-					if ( !child || typeof child !== 'object' ) continue;
-					if ( cKey === 'SFX' && ( child as any ).traits && typeof ( child as any ).traits === 'object' && !Array.isArray( ( child as any ).traits ) ) {
-						for ( const [ sfxKey, sfx ] of Object.entries( ( child as any ).traits ) ) {
-							if ( sfxKey.toLowerCase() === 'hinder' ) {
-								const s = ( sfx && typeof sfx === 'object' ) ? sfx : {};
-								if ( typeof ( s as any ).description !== 'string' || !( s as any ).description.trim().length ) {
-									( s as any ).description = sharedText || defaultSentence;
+			} else if (tr.traits && typeof tr.traits === 'object') {
+				for (const [cKey, child] of Object.entries(tr.traits)) {
+					if (!child || typeof child !== 'object') continue;
+					if (
+						cKey === 'SFX' &&
+						(child as any).traits &&
+						typeof (child as any).traits === 'object' &&
+						!Array.isArray((child as any).traits)
+					) {
+						for (const [sfxKey, sfx] of Object.entries((child as any).traits)) {
+							if (sfxKey.toLowerCase() === 'hinder') {
+								const s = sfx && typeof sfx === 'object' ? sfx : {};
+								if (typeof (s as any).description !== 'string' || !(s as any).description.trim().length) {
+									(s as any).description = sharedText || defaultSentence;
 								}
-								if ( !( s as any ).rating || typeof ( s as any ).rating !== 'object' ) {
-									( s as any ).rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
+								if (!(s as any).rating || typeof (s as any).rating !== 'object') {
+									(s as any).rating = { type: 'Die', value: [4], range: [4] };
 								}
-								( child as any ).traits[ sfxKey ] = s;
+								(child as any).traits[sfxKey] = s;
 							}
 						}
-				} else if ( cKey.toLowerCase() === 'hinder' ) {
-					if ( typeof ( child as any ).description !== 'string' || !( child as any ).description.trim().length ) {
-						( child as any ).description = sharedText || defaultSentence;
+					} else if (cKey.toLowerCase() === 'hinder') {
+						if (typeof (child as any).description !== 'string' || !(child as any).description.trim().length) {
+							(child as any).description = sharedText || defaultSentence;
+						}
+						if (!(child as any).rating || typeof (child as any).rating !== 'object') {
+							(child as any).rating = { type: 'Die', value: [4], range: [4] };
+						}
 					}
-					if ( !( child as any ).rating || typeof ( child as any ).rating !== 'object' ) {
-						( child as any ).rating = { type: 'Die', value: [ 4 ], range: [ 4 ] };
-					}
-				}
 				}
 			}
 		};
 
-		if ( Array.isArray( set.traits ) ) {
-			set.traits.forEach( processTrait );
-		} else if ( set.traits && typeof set.traits === 'object' ) {
-			Object.values( set.traits ).forEach( processTrait );
+		if (Array.isArray(set.traits)) {
+			set.traits.forEach(processTrait);
+		} else if (set.traits && typeof set.traits === 'object') {
+			Object.values(set.traits).forEach(processTrait);
 		}
-		if ( set.slots && typeof set.slots === 'object' && !Array.isArray( set.slots ) ) {
-			Object.values( set.slots ).forEach( processTrait );
+		if (set.slots && typeof set.slots === 'object' && !Array.isArray(set.slots)) {
+			Object.values(set.slots).forEach(processTrait);
 		}
 
 		// Badge migration: labels.sfxBadge / labels.sfxPrefix -> per-trait view.badge / view.prefix
-		const badgeBags = [ set.view, set.custom?.cortexToolkit ].filter( ( b: any ) => b && typeof b === 'object' && !Array.isArray( b ) );
+		const badgeBags = [set.view, set.custom?.cortexToolkit].filter(
+			(b: any) => b && typeof b === 'object' && !Array.isArray(b),
+		);
 		let badgeWord: string | null = null;
 		let prefixWord: string | null = null;
-		for ( const b of badgeBags ) {
+		for (const b of badgeBags) {
 			const labels = b?.labels;
-			if ( labels && typeof labels === 'object' ) {
-				if ( !badgeWord && typeof labels.sfxBadge === 'string' && labels.sfxBadge.trim().length ) badgeWord = labels.sfxBadge.trim();
-				if ( !prefixWord && typeof labels.sfxPrefix === 'string' && labels.sfxPrefix.trim().length ) prefixWord = labels.sfxPrefix.trim();
+			if (labels && typeof labels === 'object') {
+				if (!badgeWord && typeof labels.sfxBadge === 'string' && labels.sfxBadge.trim().length)
+					badgeWord = labels.sfxBadge.trim();
+				if (!prefixWord && typeof labels.sfxPrefix === 'string' && labels.sfxPrefix.trim().length)
+					prefixWord = labels.sfxPrefix.trim();
 			}
 		}
 		// also top-level labels
-		if ( set.labels && typeof set.labels === 'object' ) {
-			if ( !badgeWord && typeof set.labels.sfxBadge === 'string' && set.labels.sfxBadge.trim().length ) badgeWord = set.labels.sfxBadge.trim();
-			if ( !prefixWord && typeof set.labels.sfxPrefix === 'string' && set.labels.sfxPrefix.trim().length ) prefixWord = set.labels.sfxPrefix.trim();
+		if (set.labels && typeof set.labels === 'object') {
+			if (!badgeWord && typeof set.labels.sfxBadge === 'string' && set.labels.sfxBadge.trim().length)
+				badgeWord = set.labels.sfxBadge.trim();
+			if (!prefixWord && typeof set.labels.sfxPrefix === 'string' && set.labels.sfxPrefix.trim().length)
+				prefixWord = set.labels.sfxPrefix.trim();
 		}
-		const migTraits = Array.isArray( set.traits ) ? set.traits : ( set.traits && typeof set.traits === 'object' ? Object.values( set.traits ) : [] );
-		for ( const tr of migTraits ) {
-			if ( !tr || typeof tr !== 'object' ) continue;
-			const subs = Array.isArray( tr.traits ) ? tr.traits : ( tr.traits && typeof tr.traits === 'object' ? Object.values( tr.traits ) : [] );
-			const container = subs.find( ( st: any ) => st && typeof st === 'object' && !Array.isArray( st ) && st.name === 'SFX' && ( st.rating === undefined ) );
-			const hasSfx = container && ( Array.isArray( container.traits ) ? container.traits.length > 0 : ( container.traits && typeof container.traits === 'object' ? Object.keys( container.traits ).length > 0 : false ) );
-			if ( !hasSfx ) continue;
-			if ( !tr.view || typeof tr.view !== 'object' ) tr.view = {};
-			if ( badgeWord && !tr.view.badge ) {
+		const migTraits = Array.isArray(set.traits)
+			? set.traits
+			: set.traits && typeof set.traits === 'object'
+				? Object.values(set.traits)
+				: [];
+		for (const tr of migTraits) {
+			if (!tr || typeof tr !== 'object') continue;
+			const subs = Array.isArray(tr.traits)
+				? tr.traits
+				: tr.traits && typeof tr.traits === 'object'
+					? Object.values(tr.traits)
+					: [];
+			const container = subs.find(
+				(st: any) => st && typeof st === 'object' && !Array.isArray(st) && st.name === 'SFX' && st.rating === undefined,
+			);
+			const hasSfx =
+				container &&
+				(Array.isArray(container.traits)
+					? container.traits.length > 0
+					: container.traits && typeof container.traits === 'object'
+						? Object.keys(container.traits).length > 0
+						: false);
+			if (!hasSfx) continue;
+			if (!tr.view || typeof tr.view !== 'object') tr.view = {};
+			if (badgeWord && !tr.view.badge) {
 				tr.view.badge = { text: badgeWord, shape: 'vertical-bar', color: 'black' };
 			}
-			if ( prefixWord && !tr.view.prefix ) {
+			if (prefixWord && !tr.view.prefix) {
 				tr.view.prefix = { text: prefixWord };
 			}
 		}
 
-		if ( set.view && typeof set.view === 'object' ) {
+		if (set.view && typeof set.view === 'object') {
 			delete set.view.sharedHinder;
 			delete set.view.sharedHinderText;
-			if ( set.view.labels && typeof set.view.labels === 'object' ) {
+			if (set.view.labels && typeof set.view.labels === 'object') {
 				delete set.view.labels.hinderSentence;
 				delete set.view.labels.sfxBadge;
 				delete set.view.labels.sfxPrefix;
@@ -683,55 +795,55 @@ export const cortexMigration = {
 		}
 		delete set.sharedHinder;
 		delete set.sharedHinderText;
-		if ( set.labels && typeof set.labels === 'object' ) {
+		if (set.labels && typeof set.labels === 'object') {
 			delete set.labels.hinderSentence;
 			delete set.labels.sfxBadge;
 			delete set.labels.sfxPrefix;
 		}
-		if ( set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object' ) {
+		if (set.custom?.cortexToolkit && typeof set.custom.cortexToolkit === 'object') {
 			delete set.custom.cortexToolkit.sharedHinder;
 			delete set.custom.cortexToolkit.sharedHinderText;
-			if ( set.custom.cortexToolkit.labels && typeof set.custom.cortexToolkit.labels === 'object' ) {
+			if (set.custom.cortexToolkit.labels && typeof set.custom.cortexToolkit.labels === 'object') {
 				delete set.custom.cortexToolkit.labels.hinderSentence;
 				delete set.custom.cortexToolkit.labels.sfxBadge;
 				delete set.custom.cortexToolkit.labels.sfxPrefix;
 			}
 		}
 	},
-	migrateStyleBody: function( set: any ) {
-		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
-		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );
-		for ( const bag of bags ) {
-			if ( bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) ) {
-				const mappedBody = this.LEGACY_STYLE_BODIES[ bag.style.body ];
-				if ( mappedBody ) bag.style.body = mappedBody;
-				const mappedHeader = this.LEGACY_STYLE_BODIES[ bag.style.header ];
-				if ( mappedHeader ) bag.style.header = mappedHeader;
+	migrateStyleBody: function (set: any) {
+		if (!set || typeof set !== 'object' || Array.isArray(set)) return;
+		const bags = [set.view, set.custom?.cortexToolkit].filter((b) => b && typeof b === 'object' && !Array.isArray(b));
+		for (const bag of bags) {
+			if (bag.style && typeof bag.style === 'object' && !Array.isArray(bag.style)) {
+				const mappedBody = this.LEGACY_STYLE_BODIES[bag.style.body];
+				if (mappedBody) bag.style.body = mappedBody;
+				const mappedHeader = this.LEGACY_STYLE_BODIES[bag.style.header];
+				if (mappedHeader) bag.style.header = mappedHeader;
 			}
 		}
 	},
 
 	// Renamed view keys keep one vocabulary. The current key wins when
 	// both are present; the legacy key is read once and stripped.
-	migrateSetVocabulary: function( set: any ) {
-		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
-		const bags = [ set.view, set.custom?.cortexToolkit ].filter( ( b ) => b && typeof b === 'object' && !Array.isArray( b ) );
-		for ( const bag of bags ) {
-			if ( bag.ratingScale !== undefined ) {
-				if ( bag.ratingLadder === undefined ) bag.ratingLadder = bag.ratingScale;
+	migrateSetVocabulary: function (set: any) {
+		if (!set || typeof set !== 'object' || Array.isArray(set)) return;
+		const bags = [set.view, set.custom?.cortexToolkit].filter((b) => b && typeof b === 'object' && !Array.isArray(b));
+		for (const bag of bags) {
+			if (bag.ratingScale !== undefined) {
+				if (bag.ratingLadder === undefined) bag.ratingLadder = bag.ratingScale;
 				delete bag.ratingScale;
 			}
-			if ( bag.subtraitRatingScale !== undefined ) {
-				if ( bag.subtraitRatingLadder === undefined ) bag.subtraitRatingLadder = bag.subtraitRatingScale;
+			if (bag.subtraitRatingScale !== undefined) {
+				if (bag.subtraitRatingLadder === undefined) bag.subtraitRatingLadder = bag.subtraitRatingScale;
 				delete bag.subtraitRatingScale;
 			}
-			if ( bag.blankSlots !== undefined ) {
-				if ( bag.reservedSlots === undefined ) bag.reservedSlots = bag.blankSlots;
+			if (bag.blankSlots !== undefined) {
+				if (bag.reservedSlots === undefined) bag.reservedSlots = bag.blankSlots;
 				delete bag.blankSlots;
 			}
 			const parts = bag.parts;
-			if ( parts && typeof parts === 'object' && !Array.isArray( parts ) && parts.stressDice !== undefined ) {
-				if ( parts.trackDice === undefined ) parts.trackDice = parts.stressDice;
+			if (parts && typeof parts === 'object' && !Array.isArray(parts) && parts.stressDice !== undefined) {
+				if (parts.trackDice === undefined) parts.trackDice = parts.stressDice;
 				delete parts.stressDice;
 			}
 		}
@@ -739,51 +851,65 @@ export const cortexMigration = {
 
 	// Resources stage whole and never hitch: rated traits gain spendable
 	// (unless stated) and the hitches exemption (unless stated).
-	migrateResourceSet: function( set: any ) {
-		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) return;
-		const bag = set.view && typeof set.view === 'object' && !Array.isArray( set.view ) ? set.view : {};
-		const body = bag.style && typeof bag.style === 'object' && !Array.isArray( bag.style ) ? bag.style.body : undefined;
-		const hay = ( ( set.name || '' ) + ' ' + ( set.noun || '' ) + ' ' + ( set.plural || '' ) ).toLowerCase();
-		if ( body !== 'pool-rows' && body !== 'resources' && body !== 'dice-count' && hay.indexOf( 'resource' ) === -1 ) return;
-		const each = ( tr: any ) => {
-			if ( !tr || typeof tr !== 'object' || Array.isArray( tr ) ) return;
-			const r = this.normalizeRatingObject( tr.rating );
-			if ( !r || ( r.type !== 'Die' && r.type !== 'Dice' ) ) return;
-			if ( tr.spendable === undefined ) tr.spendable = true;
-			if ( tr.hitches === undefined ) tr.hitches = 0;
+	migrateResourceSet: function (set: any) {
+		if (!set || typeof set !== 'object' || Array.isArray(set)) return;
+		const bag = set.view && typeof set.view === 'object' && !Array.isArray(set.view) ? set.view : {};
+		const body = bag.style && typeof bag.style === 'object' && !Array.isArray(bag.style) ? bag.style.body : undefined;
+		const hay = ((set.name || '') + ' ' + (set.noun || '') + ' ' + (set.plural || '')).toLowerCase();
+		if (body !== 'pool-rows' && body !== 'resources' && body !== 'dice-count' && hay.indexOf('resource') === -1) return;
+		const each = (tr: any) => {
+			if (!tr || typeof tr !== 'object' || Array.isArray(tr)) return;
+			const r = this.normalizeRatingObject(tr.rating);
+			if (!r || (r.type !== 'Die' && r.type !== 'Dice')) return;
+			if (tr.spendable === undefined) tr.spendable = true;
+			if (tr.hitches === undefined) tr.hitches = 0;
 		};
-		if ( Array.isArray( set.traits ) ) set.traits.forEach( each );
-		else if ( set.traits && typeof set.traits === 'object' ) Object.values( set.traits ).forEach( each );
+		if (Array.isArray(set.traits)) set.traits.forEach(each);
+		else if (set.traits && typeof set.traits === 'object') Object.values(set.traits).forEach(each);
 	},
 
 	// Plot Points is a Counter on a name-set trait (spendable, [0, 20]).
 	// The character field stays the interchange value; the trait is canonical.
-	migratePlotPoints: function( holder: any ) {
-		if ( !holder || typeof holder !== 'object' || Array.isArray( holder ) ) return;
-		if ( typeof holder.plotPoints !== 'number' || !Number.isFinite( holder.plotPoints ) ) return;
-		const sets = Array.isArray( holder.traitSets ) ? holder.traitSets : [];
-		const nset = sets.find( ( s: any ) => s && typeof s === 'object' &&
-			( ( s.view && typeof s.view === 'object' && s.view.style && typeof s.view.style === 'object' && s.view.style.body === 'name' ) || s.id === 'name' ) );
-		if ( !nset ) return;
-		if ( !Array.isArray( nset.traits ) ) nset.traits = [];
-		let tr = nset.traits.find( ( t: any ) => t && typeof t === 'object' && t.name === 'plotPoints' );
-		if ( !tr ) {
+	migratePlotPoints: function (holder: any) {
+		if (!holder || typeof holder !== 'object' || Array.isArray(holder)) return;
+		if (typeof holder.plotPoints !== 'number' || !Number.isFinite(holder.plotPoints)) return;
+		const sets = Array.isArray(holder.traitSets) ? holder.traitSets : [];
+		const nset = sets.find(
+			(s: any) =>
+				s &&
+				typeof s === 'object' &&
+				((s.view &&
+					typeof s.view === 'object' &&
+					s.view.style &&
+					typeof s.view.style === 'object' &&
+					s.view.style.body === 'name') ||
+					s.id === 'name'),
+		);
+		if (!nset) return;
+		if (!Array.isArray(nset.traits)) nset.traits = [];
+		let tr = nset.traits.find((t: any) => t && typeof t === 'object' && t.name === 'plotPoints');
+		if (!tr) {
 			tr = { name: 'plotPoints', description: '', traits: [], tags: [] };
-			nset.traits.push( tr );
+			nset.traits.push(tr);
 		}
-		const n = Math.max( 0, Math.floor( holder.plotPoints ) );
-		tr.rating = { type: 'Counter', value: [ n ], range: [ 0, 20 ] };
-		if ( tr.spendable === undefined ) tr.spendable = true;
+		const n = Math.max(0, Math.floor(holder.plotPoints));
+		tr.rating = { type: 'Counter', value: [n], range: [0, 20] };
+		if (tr.spendable === undefined) tr.spendable = true;
 	},
 
-	migrateTrait: function( old: any, warnings: string[], path: string, statementSet?: boolean ): { key: string; raw: any } | null {
-		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
-			this.warn( warnings, path + ': dropped non-object trait' );
+	migrateTrait: function (
+		old: any,
+		warnings: string[],
+		path: string,
+		statementSet?: boolean,
+	): { key: string; raw: any } | null {
+		if (!old || typeof old !== 'object' || Array.isArray(old)) {
+			this.warn(warnings, path + ': dropped non-object trait');
 			return null;
 		}
 		const key = old.name;
-		if ( typeof key !== 'string' || !key.length ) {
-			this.warn( warnings, path + ': dropped blank-name trait slot' );
+		if (typeof key !== 'string' || !key.length) {
+			this.warn(warnings, path + ': dropped blank-name trait slot');
 			return null;
 		}
 		const here = path + '/' + key;
@@ -791,138 +917,156 @@ export const cortexMigration = {
 		let single: number | null = null;
 		// Canonical rating wins (a render-model statement pip rides here);
 		// day-1 numeric keys read through only when no object rating exists.
-		const existingRating = old.rating === null ? null : this.normalizeRatingObject( old.rating );
-		if ( existingRating ) {
+		const existingRating = old.rating === null ? null : this.normalizeRatingObject(old.rating);
+		if (existingRating) {
 			node.rating = existingRating;
-		} else if ( old.rating === null ) {
+		} else if (old.rating === null) {
 			node.rating = null;
 		} else {
-			const nums = this.diceIntsFor( old, warnings, here );
-			if ( nums.length > 1 ) {
-				node.rating = { type: 'Dice', value: nums.slice().sort( ( a: number, b: number ) => b - a ), range: [ 4, 6, 8, 10, 12 ] };
+			const nums = this.diceIntsFor(old, warnings, here);
+			if (nums.length > 1) {
+				node.rating = {
+					type: 'Dice',
+					value: nums.slice().sort((a: number, b: number) => b - a),
+					range: [4, 6, 8, 10, 12],
+				};
 				node.spendable = true;
-			} else if ( nums.length === 1 ) {
+			} else if (nums.length === 1) {
 				single = nums[0];
 			}
 		}
-		const desc = ( typeof old.description === 'string' && old.description.length && !this.isFillerDescription( old.description ) )
-			? old.description : null;
-		const stmt = ( typeof old.statement === 'string' && old.statement.length ) ? old.statement.trim() : null;
-		const ownQuestioned = old.custom && typeof old.custom === 'object'
-			&& Object.prototype.hasOwnProperty.call( old.custom, 'questioned' );
-		const hasQuestioned = Object.prototype.hasOwnProperty.call( old, 'questioned' )
-			|| ownQuestioned
-			|| ( old.view && typeof old.view === 'object' && Object.prototype.hasOwnProperty.call( old.view, 'questioned' ) );
-		const questioned = old.questioned === true
-			|| ( ownQuestioned && old.custom.questioned === true )
-			|| ( old.view && typeof old.view === 'object' && old.view.questioned === true );
-		if ( typeof old.description === 'string' && old.description.length && !desc ) {
-			this.warn( warnings, here + ': dropped filler description' );
+		const desc =
+			typeof old.description === 'string' && old.description.length && !this.isFillerDescription(old.description)
+				? old.description
+				: null;
+		const stmt = typeof old.statement === 'string' && old.statement.length ? old.statement.trim() : null;
+		const ownQuestioned =
+			old.custom && typeof old.custom === 'object' && Object.prototype.hasOwnProperty.call(old.custom, 'questioned');
+		const hasQuestioned =
+			Object.prototype.hasOwnProperty.call(old, 'questioned') ||
+			ownQuestioned ||
+			(old.view && typeof old.view === 'object' && Object.prototype.hasOwnProperty.call(old.view, 'questioned'));
+		const questioned =
+			old.questioned === true ||
+			(ownQuestioned && old.custom.questioned === true) ||
+			(old.view && typeof old.view === 'object' && old.view.questioned === true);
+		if (typeof old.description === 'string' && old.description.length && !desc) {
+			this.warn(warnings, here + ': dropped filler description');
 		}
-		if ( desc ) node.description = desc;
-		else if ( stmt ) node.description = stmt;
-		if ( ( typeof old.xp === 'number' && old.xp !== 0 ) || ( typeof old.xp === 'string' && old.xp.length ) ) node.xp = old.xp;
-		if ( ( typeof old.counter === 'number' && old.counter !== 0 ) || ( typeof old.counter === 'string' && old.counter.length ) ) node.counter = old.counter;
-		if ( old.ratingPosition !== undefined && old.ratingPosition !== null ) {
-			this.warn( warnings, here + ': dropped per-trait ratingPosition (type layer)' );
+		if (desc) node.description = desc;
+		else if (stmt) node.description = stmt;
+		if ((typeof old.xp === 'number' && old.xp !== 0) || (typeof old.xp === 'string' && old.xp.length)) node.xp = old.xp;
+		if (
+			(typeof old.counter === 'number' && old.counter !== 0) ||
+			(typeof old.counter === 'string' && old.counter.length)
+		)
+			node.counter = old.counter;
+		if (old.ratingPosition !== undefined && old.ratingPosition !== null) {
+			this.warn(warnings, here + ': dropped per-trait ratingPosition (type layer)');
 		}
-		if ( Array.isArray( old.tags ) && old.tags.length ) node.tags = old.tags.slice();
-		if ( old.custom && typeof old.custom === 'object' && Object.keys( old.custom ).length ) {
-			this.warn( warnings, here + ': dropped app-side custom' );
+		if (Array.isArray(old.tags) && old.tags.length) node.tags = old.tags.slice();
+		if (old.custom && typeof old.custom === 'object' && Object.keys(old.custom).length) {
+			this.warn(warnings, here + ': dropped app-side custom');
 		}
-		if ( Array.isArray( old.traits ) && old.traits.length ) {
+		if (Array.isArray(old.traits) && old.traits.length) {
 			const subs: any = {};
-			old.traits.forEach( ( st: any ) => {
-				const m = this.migrateTrait( st, warnings, here, statementSet );
-				if ( m ) {
-					if ( subs[m.key] !== undefined ) this.warn( warnings, here + ': duplicate subtrait ' + JSON.stringify( m.key ) + ', last wins' );
+			old.traits.forEach((st: any) => {
+				const m = this.migrateTrait(st, warnings, here, statementSet);
+				if (m) {
+					if (subs[m.key] !== undefined)
+						this.warn(warnings, here + ': duplicate subtrait ' + JSON.stringify(m.key) + ', last wins');
 					subs[m.key] = m.raw;
 				}
-			} );
-			if ( Object.keys( subs ).length ) node.traits = subs;
+			});
+			if (Object.keys(subs).length) node.traits = subs;
 		}
-		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
-			if ( !node.traits ) node.traits = {};
-			this.mergeSfxIntoTraits( node.traits, this.migrateSfxArray( old.sfx, warnings, here ), warnings, here );
-			if ( node.traits.SFX && node.traits.SFX.traits && !Object.keys( node.traits.SFX.traits ).length ) delete node.traits.SFX;
-			if ( !Object.keys( node.traits ).length ) delete node.traits;
+		if (Array.isArray(old.sfx) && old.sfx.length) {
+			if (!node.traits) node.traits = {};
+			this.mergeSfxIntoTraits(node.traits, this.migrateSfxArray(old.sfx, warnings, here), warnings, here);
+			if (node.traits.SFX && node.traits.SFX.traits && !Object.keys(node.traits.SFX.traits).length)
+				delete node.traits.SFX;
+			if (!Object.keys(node.traits).length) delete node.traits;
 		}
-		if ( Array.isArray( old.removedTraits ) && old.removedTraits.length ) {
-			if ( !node.traits ) node.traits = {};
-			old.removedTraits.forEach( ( n: any ) => {
-				if ( typeof n !== 'string' || !n.length ) return;
-				if ( node.traits[n] !== undefined ) {
-					this.warn( warnings, here + ': removal of live subtrait ' + JSON.stringify( n ) + ' ignored, live wins' );
+		if (Array.isArray(old.removedTraits) && old.removedTraits.length) {
+			if (!node.traits) node.traits = {};
+			old.removedTraits.forEach((n: any) => {
+				if (typeof n !== 'string' || !n.length) return;
+				if (node.traits[n] !== undefined) {
+					this.warn(warnings, here + ': removal of live subtrait ' + JSON.stringify(n) + ' ignored, live wins');
 					return;
 				}
 				node.traits[n] = null;
-			} );
+			});
 		}
 		// The sentence moves into its own child trait; the questioned flag
 		// becomes that child's Pip. Description is the fallback home in a
 		// statement context (the box already read it there).
 		let sentence = stmt;
-		if ( !sentence && desc && ( questioned || statementSet ) ) sentence = desc;
-		if ( sentence ) {
-			this.addStatementChild( node, sentence, hasQuestioned ? questioned : null, warnings, here );
-		} else if ( questioned ) {
-			this.warn( warnings, here + ': questioned statement had no text, cannot represent' );
+		if (!sentence && desc && (questioned || statementSet)) sentence = desc;
+		if (sentence) {
+			this.addStatementChild(node, sentence, hasQuestioned ? questioned : null, warnings, here);
+		} else if (questioned) {
+			this.warn(warnings, here + ': questioned statement had no text, cannot represent');
 		}
-		const keys = Object.keys( node );
-		if ( keys.length === 0 && single ) return { key: key, raw: { rating: { type: 'Die', value: [ single ], range: [ 4, 6, 8, 10, 12 ] } } };
-		if ( single ) node.rating = { type: 'Die', value: [ single ], range: [ 4, 6, 8, 10, 12 ] };
+		const keys = Object.keys(node);
+		if (keys.length === 0 && single)
+			return { key: key, raw: { rating: { type: 'Die', value: [single], range: [4, 6, 8, 10, 12] } } };
+		if (single) node.rating = { type: 'Die', value: [single], range: [4, 6, 8, 10, 12] };
 		return { key: key, raw: node };
 	},
 
 	// Old trait-set object to [key, raw]. Set-level sfx folds into traits.SFX.
-	migrateSet: function( old: any, warnings: string[] ): { key: string; raw: any } | null {
-		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
-			this.warn( warnings, 'set: dropped non-object set' );
+	migrateSet: function (old: any, warnings: string[]): { key: string; raw: any } | null {
+		if (!old || typeof old !== 'object' || Array.isArray(old)) {
+			this.warn(warnings, 'set: dropped non-object set');
 			return null;
 		}
 		const key = old.name;
-		if ( typeof key !== 'string' || !key.length ) {
-			this.warn( warnings, 'set: dropped nameless set' );
+		if (typeof key !== 'string' || !key.length) {
+			this.warn(warnings, 'set: dropped nameless set');
 			return null;
 		}
 		const here = 'set/' + key;
 		const set: any = { traits: {} };
-		if ( typeof old.description === 'string' && old.description.length && !this.isFillerDescription( old.description ) ) {
+		if (typeof old.description === 'string' && old.description.length && !this.isFillerDescription(old.description)) {
 			set.description = old.description;
-		} else if ( typeof old.description === 'string' && old.description.length ) {
-			this.warn( warnings, here + ': dropped filler description' );
+		} else if (typeof old.description === 'string' && old.description.length) {
+			this.warn(warnings, here + ': dropped filler description');
 		}
 		const droppedPresentation: string[] = [];
-		this.PRESENTATION_KEYS.forEach( ( k: string ) => {
-			if ( old[k] !== undefined && old[k] !== null ) droppedPresentation.push( k );
-		} );
+		this.PRESENTATION_KEYS.forEach((k: string) => {
+			if (old[k] !== undefined && old[k] !== null) droppedPresentation.push(k);
+		});
 		// Day-1 noun words report under their old names.
-		[ 'nounSingular', 'nounPlural' ].forEach( ( k: string ) => {
-			if ( old[k] !== undefined && old[k] !== null ) droppedPresentation.push( k );
-		} );
-		if ( old.custom && typeof old.custom === 'object' && Object.keys( old.custom ).length ) droppedPresentation.push( 'custom' );
-		if ( droppedPresentation.length ) this.warn( warnings, here + ': dropped presentation keys (' + droppedPresentation.join( ', ' ) + ') to type layer' );
-		if ( Array.isArray( old.tags ) && old.tags.length ) set.tags = old.tags.slice();
-		const statementSet = this.statementContext( old );
-		( Array.isArray( old.traits ) ? old.traits : [] ).forEach( ( tr: any ) => {
-			const m = this.migrateTrait( tr, warnings, here, statementSet );
-			if ( m ) {
-				if ( set.traits[m.key] !== undefined ) this.warn( warnings, here + ': duplicate trait ' + JSON.stringify( m.key ) + ', last wins' );
+		['nounSingular', 'nounPlural'].forEach((k: string) => {
+			if (old[k] !== undefined && old[k] !== null) droppedPresentation.push(k);
+		});
+		if (old.custom && typeof old.custom === 'object' && Object.keys(old.custom).length)
+			droppedPresentation.push('custom');
+		if (droppedPresentation.length)
+			this.warn(warnings, here + ': dropped presentation keys (' + droppedPresentation.join(', ') + ') to type layer');
+		if (Array.isArray(old.tags) && old.tags.length) set.tags = old.tags.slice();
+		const statementSet = this.statementContext(old);
+		(Array.isArray(old.traits) ? old.traits : []).forEach((tr: any) => {
+			const m = this.migrateTrait(tr, warnings, here, statementSet);
+			if (m) {
+				if (set.traits[m.key] !== undefined)
+					this.warn(warnings, here + ': duplicate trait ' + JSON.stringify(m.key) + ', last wins');
 				set.traits[m.key] = m.raw;
 			}
-		} );
-		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
-			this.mergeSfxIntoTraits( set.traits, this.migrateSfxArray( old.sfx, warnings, here ), warnings, here );
+		});
+		if (Array.isArray(old.sfx) && old.sfx.length) {
+			this.mergeSfxIntoTraits(set.traits, this.migrateSfxArray(old.sfx, warnings, here), warnings, here);
 		}
-		if ( Array.isArray( old.removedTraits ) && old.removedTraits.length ) {
-			old.removedTraits.forEach( ( n: any ) => {
-				if ( typeof n !== 'string' || !n.length ) return;
-				if ( set.traits[n] !== undefined ) {
-					this.warn( warnings, here + ': removal of live trait ' + JSON.stringify( n ) + ' ignored, live wins' );
+		if (Array.isArray(old.removedTraits) && old.removedTraits.length) {
+			old.removedTraits.forEach((n: any) => {
+				if (typeof n !== 'string' || !n.length) return;
+				if (set.traits[n] !== undefined) {
+					this.warn(warnings, here + ': removal of live trait ' + JSON.stringify(n) + ' ignored, live wins');
 					return;
 				}
 				set.traits[n] = null;
-			} );
+			});
 		}
 		return { key: key, raw: set };
 	},
@@ -931,141 +1075,153 @@ export const cortexMigration = {
 	// envelope fields beside the terse entity core. removedSets resolve
 	// against the template character when supplied; without template context
 	// they cannot be keyed and are reported, not silently kept.
-	migrateCharacter: function( old: any, templateChar?: any ) {
+	migrateCharacter: function (old: any, templateChar?: any) {
 		const warnings: string[] = [];
-		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
+		if (!old || typeof old !== 'object' || Array.isArray(old)) {
 			return { data: null, warnings: ['input: not a character object'] };
 		}
 		let inner = old;
-		if ( !Array.isArray( inner.traitSets ) && inner.data && typeof inner.data === 'object' && !Array.isArray( inner.data ) ) {
+		if (!Array.isArray(inner.traitSets) && inner.data && typeof inner.data === 'object' && !Array.isArray(inner.data)) {
 			inner = inner.data;
-			this.warn( warnings, 'input: unwrapped upstream envelope' );
+			this.warn(warnings, 'input: unwrapped upstream envelope');
 		}
-		if ( !Array.isArray( inner.traitSets ) ) {
-			return { data: null, warnings: warnings.concat( ['input: no traitSets array'] ) };
+		if (!Array.isArray(inner.traitSets)) {
+			return { data: null, warnings: warnings.concat(['input: no traitSets array']) };
 		}
 		const out: any = {};
-		if ( typeof inner.id === 'string' && inner.id.length ) out.id = inner.id;
+		if (typeof inner.id === 'string' && inner.id.length) out.id = inner.id;
 		else {
 			out.id = this.generateUUID();
-			this.warn( warnings, 'input: missing id, assigned fresh ' + out.id );
+			this.warn(warnings, 'input: missing id, assigned fresh ' + out.id);
 		}
-		if ( typeof inner.version === 'string' ) out.version = inner.version;
-		['dateCreated', 'dateModified', 'dateTouched'].forEach( ( k: string ) => {
-			if ( typeof inner[k] === 'string' ) out[k] = inner[k];
-		} );
-		if ( inner.isTemplate === true ) out.isTemplate = true;
-		if ( inner.$schema !== undefined ) this.warn( warnings, 'input: dropped stale $schema pointer' );
+		if (typeof inner.version === 'string') out.version = inner.version;
+		['dateCreated', 'dateModified', 'dateTouched'].forEach((k: string) => {
+			if (typeof inner[k] === 'string') out[k] = inner[k];
+		});
+		if (inner.isTemplate === true) out.isTemplate = true;
+		if (inner.$schema !== undefined) this.warn(warnings, 'input: dropped stale $schema pointer');
 
 		const entity: any = {};
 		entity.name = typeof inner.name === 'string' ? inner.name : '';
-		if ( typeof inner.game === 'string' && inner.game.length ) entity.game = inner.game;
-		if ( typeof inner.type === 'string' && inner.type.length ) entity.type = inner.type;
-		if ( typeof inner.challenge === 'string' && inner.challenge.length ) entity.challenge = inner.challenge;
-		if ( typeof inner.pronouns === 'string' && inner.pronouns.length ) entity.pronouns = inner.pronouns;
-		if ( typeof inner.description === 'string' && inner.description.length ) entity.description = inner.description;
-		if ( inner.portrait && typeof inner.portrait === 'object' && typeof inner.portrait.url === 'string' && inner.portrait.url.length ) {
+		if (typeof inner.game === 'string' && inner.game.length) entity.game = inner.game;
+		if (typeof inner.type === 'string' && inner.type.length) entity.type = inner.type;
+		if (typeof inner.challenge === 'string' && inner.challenge.length) entity.challenge = inner.challenge;
+		if (typeof inner.pronouns === 'string' && inner.pronouns.length) entity.pronouns = inner.pronouns;
+		if (typeof inner.description === 'string' && inner.description.length) entity.description = inner.description;
+		if (
+			inner.portrait &&
+			typeof inner.portrait === 'object' &&
+			typeof inner.portrait.url === 'string' &&
+			inner.portrait.url.length
+		) {
 			entity.portrait = { url: inner.portrait.url };
-			if ( typeof inner.portrait.alt === 'string' && inner.portrait.alt.length ) entity.portrait.alt = inner.portrait.alt;
-			if ( ( Array.isArray( inner.portrait.tags ) && inner.portrait.tags.length ) ||
-				( inner.portrait.custom && typeof inner.portrait.custom === 'object' && Object.keys( inner.portrait.custom ).length ) ) {
-				this.warn( warnings, 'portrait: dropped tags/custom' );
+			if (typeof inner.portrait.alt === 'string' && inner.portrait.alt.length) entity.portrait.alt = inner.portrait.alt;
+			if (
+				(Array.isArray(inner.portrait.tags) && inner.portrait.tags.length) ||
+				(inner.portrait.custom &&
+					typeof inner.portrait.custom === 'object' &&
+					Object.keys(inner.portrait.custom).length)
+			) {
+				this.warn(warnings, 'portrait: dropped tags/custom');
 			}
 		}
-		if ( typeof inner.plotPoints === 'number' && inner.plotPoints !== 0 ) entity.plotPoints = inner.plotPoints;
-		if ( typeof inner.notes === 'string' && inner.notes.length ) entity.notes = inner.notes;
-		if ( Array.isArray( inner.tags ) && inner.tags.length ) entity.tags = inner.tags.slice();
+		if (typeof inner.plotPoints === 'number' && inner.plotPoints !== 0) entity.plotPoints = inner.plotPoints;
+		if (typeof inner.notes === 'string' && inner.notes.length) entity.notes = inner.notes;
+		if (Array.isArray(inner.tags) && inner.tags.length) entity.tags = inner.tags.slice();
 
 		const tpl = inner.sheet && inner.sheet.template;
-		if ( typeof tpl === 'string' && tpl.length ) entity.template = { id: tpl };
-		else if ( tpl && typeof tpl === 'object' && typeof tpl.id === 'string' && tpl.id.length ) {
+		if (typeof tpl === 'string' && tpl.length) entity.template = { id: tpl };
+		else if (tpl && typeof tpl === 'object' && typeof tpl.id === 'string' && tpl.id.length) {
 			entity.template = { id: tpl.id };
-			if ( typeof tpl.version === 'number' ) entity.template.version = tpl.version;
-			if ( tpl.character ) this.warn( warnings, 'sheet: embedded template reduced to reference, migrate the template separately' );
+			if (typeof tpl.version === 'number') entity.template.version = tpl.version;
+			if (tpl.character)
+				this.warn(warnings, 'sheet: embedded template reduced to reference, migrate the template separately');
 		}
 
 		const sets: any = {};
 		const seenSetNames: any = {};
-		inner.traitSets.forEach( ( ts: any ) => {
-			if ( !ts || typeof ts !== 'object' ) {
-				this.warn( warnings, 'set: dropped non-object set' );
+		inner.traitSets.forEach((ts: any) => {
+			if (!ts || typeof ts !== 'object') {
+				this.warn(warnings, 'set: dropped non-object set');
 				return;
 			}
-			if ( this.isBlankName( ts.name ) ) {
-				this.warn( warnings, 'set: dropped nameless set' );
+			if (this.isBlankName(ts.name)) {
+				this.warn(warnings, 'set: dropped nameless set');
 				return;
 			}
-			if ( seenSetNames[ts.name] ) {
-				this.warn( warnings, 'set/' + ts.name + ': duplicate set name, first wins' );
+			if (seenSetNames[ts.name]) {
+				this.warn(warnings, 'set/' + ts.name + ': duplicate set name, first wins');
 				return;
 			}
-			const m = this.migrateSet( ts, warnings );
-			if ( m ) {
+			const m = this.migrateSet(ts, warnings);
+			if (m) {
 				sets[m.key] = m.raw;
 				seenSetNames[m.key] = true;
 			}
-		} );
-		if ( Array.isArray( inner.removedSets ) && inner.removedSets.length ) {
-			const ids = inner.removedSets.filter( ( x: unknown ) => typeof x === 'string' && x.length );
-			if ( ids.length ) {
-				if ( templateChar && Array.isArray( templateChar.traitSets ) ) {
+		});
+		if (Array.isArray(inner.removedSets) && inner.removedSets.length) {
+			const ids = inner.removedSets.filter((x: unknown) => typeof x === 'string' && x.length);
+			if (ids.length) {
+				if (templateChar && Array.isArray(templateChar.traitSets)) {
 					const byId: any = {};
-					templateChar.traitSets.forEach( ( ts: any ) => {
-						if ( ts && typeof ts.id === 'string' && typeof ts.name === 'string' ) byId[ts.id] = ts.name;
-					} );
-					ids.forEach( ( id: string ) => {
+					templateChar.traitSets.forEach((ts: any) => {
+						if (ts && typeof ts.id === 'string' && typeof ts.name === 'string') byId[ts.id] = ts.name;
+					});
+					ids.forEach((id: string) => {
 						const nm = byId[id];
-						if ( !nm ) {
-							this.warn( warnings, 'removedSets: unknown set id ' + JSON.stringify( id ) + ', dropped' );
+						if (!nm) {
+							this.warn(warnings, 'removedSets: unknown set id ' + JSON.stringify(id) + ', dropped');
 							return;
 						}
-						if ( sets[nm] !== undefined ) {
-							this.warn( warnings, 'removedSets: removal of live set ' + JSON.stringify( nm ) + ' ignored, live wins' );
+						if (sets[nm] !== undefined) {
+							this.warn(warnings, 'removedSets: removal of live set ' + JSON.stringify(nm) + ' ignored, live wins');
 							return;
 						}
 						sets[nm] = null;
-					} );
+					});
 				} else {
-					this.warn( warnings, 'removedSets: ' + ids.length + ' entr(ies) need template context, dropped' );
+					this.warn(warnings, 'removedSets: ' + ids.length + ' entr(ies) need template context, dropped');
 				}
 			}
 		}
 		entity.sets = sets;
 
-		if ( inner.prefs && typeof inner.prefs === 'object' && !Array.isArray( inner.prefs ) ) {
+		if (inner.prefs && typeof inner.prefs === 'object' && !Array.isArray(inner.prefs)) {
 			const idToName: any = {};
-			inner.traitSets.forEach( ( ts: any ) => {
-				if ( ts && typeof ts.id === 'string' && typeof ts.name === 'string' ) idToName[ts.id] = ts.name;
-			} );
+			inner.traitSets.forEach((ts: any) => {
+				if (ts && typeof ts.id === 'string' && typeof ts.name === 'string') idToName[ts.id] = ts.name;
+			});
 			const prefs: any = {};
-			if ( Array.isArray( inner.prefs.setOrder ) && inner.prefs.setOrder.length ) {
+			if (Array.isArray(inner.prefs.setOrder) && inner.prefs.setOrder.length) {
 				const order: string[] = [];
-				inner.prefs.setOrder.forEach( ( id: any ) => {
-					if ( typeof id !== 'string' ) return;
-					if ( idToName[id] ) order.push( idToName[id] );
-					else this.warn( warnings, 'prefs: dropped unresolvable set order entry ' + JSON.stringify( id ) );
-				} );
-				if ( order.length ) prefs.setOrder = order;
+				inner.prefs.setOrder.forEach((id: any) => {
+					if (typeof id !== 'string') return;
+					if (idToName[id]) order.push(idToName[id]);
+					else this.warn(warnings, 'prefs: dropped unresolvable set order entry ' + JSON.stringify(id));
+				});
+				if (order.length) prefs.setOrder = order;
 			}
-			if ( inner.prefs.traitOrders && typeof inner.prefs.traitOrders === 'object' ) {
+			if (inner.prefs.traitOrders && typeof inner.prefs.traitOrders === 'object') {
 				const orders: any = {};
-				Object.keys( inner.prefs.traitOrders ).forEach( ( sid: string ) => {
+				Object.keys(inner.prefs.traitOrders).forEach((sid: string) => {
 					const nm = idToName[sid];
-					if ( !nm ) {
-						this.warn( warnings, 'prefs: dropped trait order for unknown set ' + JSON.stringify( sid ) );
+					if (!nm) {
+						this.warn(warnings, 'prefs: dropped trait order for unknown set ' + JSON.stringify(sid));
 						return;
 					}
-					if ( Array.isArray( inner.prefs.traitOrders[sid] ) ) orders[nm] = inner.prefs.traitOrders[sid].slice();
-				} );
-				if ( Object.keys( orders ).length ) prefs.traitOrders = orders;
+					if (Array.isArray(inner.prefs.traitOrders[sid])) orders[nm] = inner.prefs.traitOrders[sid].slice();
+				});
+				if (Object.keys(orders).length) prefs.traitOrders = orders;
 			}
-			if ( inner.prefs.declinedTemplateVersions && typeof inner.prefs.declinedTemplateVersions === 'object' ) {
-				prefs.declinedTemplateVersions = cloneDeep( inner.prefs.declinedTemplateVersions );
+			if (inner.prefs.declinedTemplateVersions && typeof inner.prefs.declinedTemplateVersions === 'object') {
+				prefs.declinedTemplateVersions = cloneDeep(inner.prefs.declinedTemplateVersions);
 			}
-			if ( Object.keys( prefs ).length ) out.prefs = prefs;
+			if (Object.keys(prefs).length) out.prefs = prefs;
 		}
 
-		Object.keys( entity ).forEach( ( k: string ) => { out[k] = entity[k]; } );
+		Object.keys(entity).forEach((k: string) => {
+			out[k] = entity[k];
+		});
 		return { data: out, warnings: warnings };
 	},
 
@@ -1092,51 +1248,69 @@ export const cortexMigration = {
 	//   layers; it is future work.
 
 	// Scalar trait keys carried verbatim (presence preserved) in templates.
-	TEMPLATE_TRAIT_SCALARS: ['label', 'description', 'xp', 'counter', 'ratingPosition', 'tags', 'pool', 'spendable', 'hitches', 'keepsExtra'] as string[],
+	TEMPLATE_TRAIT_SCALARS: [
+		'label',
+		'description',
+		'xp',
+		'counter',
+		'ratingPosition',
+		'tags',
+		'pool',
+		'spendable',
+		'hitches',
+		'keepsExtra',
+	] as string[],
 
-	migrateTemplateTrait: function( old: any, warnings: string[], path: string ): any {
-		if ( !old || typeof old !== 'object' || Array.isArray( old ) ) {
-			this.warn( warnings, path + ': dropped non-object trait' );
+	migrateTemplateTrait: function (old: any, warnings: string[], path: string): any {
+		if (!old || typeof old !== 'object' || Array.isArray(old)) {
+			this.warn(warnings, path + ': dropped non-object trait');
 			return null;
 		}
 		const node: any = {};
 		// normalizeView already converted ratings; read the canonical
 		// object, falling back to day-1 numeric keys for un-normalized input.
-		const existing = this.normalizeRatingObject( old.rating );
-		if ( existing ) {
+		const existing = this.normalizeRatingObject(old.rating);
+		if (existing) {
 			node.rating = existing;
 		} else {
-			const nums = this.diceIntsFor( old, warnings, path );
-			if ( nums.length > 1 ) {
-				node.rating = { type: 'Dice', value: nums.slice().sort( ( a: number, b: number ) => b - a ), range: [ 4, 6, 8, 10, 12 ] };
-				if ( old.spendable === undefined ) node.spendable = true;
-			} else if ( nums.length === 1 ) {
-				node.rating = { type: 'Die', value: nums.slice(), range: [ 4, 6, 8, 10, 12 ] };
+			const nums = this.diceIntsFor(old, warnings, path);
+			if (nums.length > 1) {
+				node.rating = {
+					type: 'Dice',
+					value: nums.slice().sort((a: number, b: number) => b - a),
+					range: [4, 6, 8, 10, 12],
+				};
+				if (old.spendable === undefined) node.spendable = true;
+			} else if (nums.length === 1) {
+				node.rating = { type: 'Die', value: nums.slice(), range: [4, 6, 8, 10, 12] };
 			}
 		}
-		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
-			if ( old[k] === undefined ) return;
+		this.TEMPLATE_TRAIT_SCALARS.forEach((k: string) => {
+			if (old[k] === undefined) return;
 			// Canonical emit: empty scaffolding stays out (absence carries
 			// the same meaning); every other scalar keeps presence.
-			if ( k === 'tags' && Array.isArray( old[k] ) && !old[k].length ) return;
-			if ( k === 'description' && old[k] === '' ) return;
-			node[k] = ( Array.isArray( old[k] ) ) ? old[k].slice() : old[k];
-		} );
-		if ( old.view !== undefined ) node.view = cloneDeep( old.view );
-		if ( old.custom !== undefined && !( typeof old.custom === 'object' && !Array.isArray( old.custom ) && !Object.keys( old.custom ).length ) ) {
-			node.custom = cloneDeep( old.custom );
+			if (k === 'tags' && Array.isArray(old[k]) && !old[k].length) return;
+			if (k === 'description' && old[k] === '') return;
+			node[k] = Array.isArray(old[k]) ? old[k].slice() : old[k];
+		});
+		if (old.view !== undefined) node.view = cloneDeep(old.view);
+		if (
+			old.custom !== undefined &&
+			!(typeof old.custom === 'object' && !Array.isArray(old.custom) && !Object.keys(old.custom).length)
+		) {
+			node.custom = cloneDeep(old.custom);
 		}
-		if ( old.id !== undefined ) {
-			this.warn( warnings, path + ': dropped trait-level id (D1)' );
+		if (old.id !== undefined) {
+			this.warn(warnings, path + ': dropped trait-level id (D1)');
 		}
-		const subs = this.splitTemplateTraits( old.traits, warnings, path );
-		if ( subs && ( Object.keys( subs.map ).length || Object.keys( subs.slots ).length ) ) {
-			if ( Object.keys( subs.map ).length ) node.traits = subs.map;
-			if ( Object.keys( subs.slots ).length ) node.slots = subs.slots;
+		const subs = this.splitTemplateTraits(old.traits, warnings, path);
+		if (subs && (Object.keys(subs.map).length || Object.keys(subs.slots).length)) {
+			if (Object.keys(subs.map).length) node.traits = subs.map;
+			if (Object.keys(subs.slots).length) node.slots = subs.slots;
 		}
-		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
-			if ( !node.traits ) node.traits = {};
-			this.mergeSfxIntoTraits( node.traits, this.migrateSfxArray( old.sfx, warnings, path ), warnings, path );
+		if (Array.isArray(old.sfx) && old.sfx.length) {
+			if (!node.traits) node.traits = {};
+			this.mergeSfxIntoTraits(node.traits, this.migrateSfxArray(old.sfx, warnings, path), warnings, path);
 		}
 		return node;
 	},
@@ -1144,97 +1318,103 @@ export const cortexMigration = {
 	// Split an old traits array into named map (source order) + slots object
 	// keyed by 0-based position in the full trait order. Pure SFX containers
 	// take no position (addressed, not positional).
-	splitTemplateTraits: function( traits: any, warnings: string[], path: string ) {
-		const map: any = {}, slots: any = {};
-		( Array.isArray( traits ) ? traits : [] ).forEach( ( tr: any, i: number ) => {
-			if ( tr && typeof tr === 'object' && !Array.isArray( tr ) && typeof tr.name === 'string' && tr.name.length ) {
+	splitTemplateTraits: function (traits: any, warnings: string[], path: string) {
+		const map: any = {},
+			slots: any = {};
+		(Array.isArray(traits) ? traits : []).forEach((tr: any, i: number) => {
+			if (tr && typeof tr === 'object' && !Array.isArray(tr) && typeof tr.name === 'string' && tr.name.length) {
 				const key = tr.name;
-				if ( map[key] !== undefined ) this.warn( warnings, path + ': duplicate trait ' + JSON.stringify( key ) + ', last wins' );
-				map[key] = this.migrateTemplateTrait( tr, warnings, path + '/' + key );
-			} else if ( tr && typeof tr === 'object' && !Array.isArray( tr ) ) {
-				slots[String( i )] = this.migrateTemplateTrait( tr, warnings, path + '/slot' + i );
+				if (map[key] !== undefined)
+					this.warn(warnings, path + ': duplicate trait ' + JSON.stringify(key) + ', last wins');
+				map[key] = this.migrateTemplateTrait(tr, warnings, path + '/' + key);
+			} else if (tr && typeof tr === 'object' && !Array.isArray(tr)) {
+				slots[String(i)] = this.migrateTemplateTrait(tr, warnings, path + '/slot' + i);
 			} else {
-				this.warn( warnings, path + ': dropped non-object trait entry' );
+				this.warn(warnings, path + ': dropped non-object trait entry');
 			}
-		} );
+		});
 		return { map: map, slots: slots };
 	},
 
 	// Positional keys of a traits map: every child, including the "SFX"
 	// container (SFX is a child trait now, not a separate field).
-	positionalKeys: function( traits: any ): string[] {
-		if ( !traits || typeof traits !== 'object' || Array.isArray( traits ) ) return [];
-		return Object.keys( traits );
+	positionalKeys: function (traits: any): string[] {
+		if (!traits || typeof traits !== 'object' || Array.isArray(traits)) return [];
+		return Object.keys(traits);
 	},
 
 	// Rebuild the source trait order: slots at their indices, named traits
 	// filling the remaining positions in map order.
-	orderedTraits: function( traits: any, slots: any, make: ( e: { slot: boolean; key: string } ) => any ): any[] {
-		const names = this.positionalKeys( traits );
-		const idx = Object.keys( slots || {} ).map( Number ).sort( ( a, b ) => a - b );
+	orderedTraits: function (traits: any, slots: any, make: (e: { slot: boolean; key: string }) => any): any[] {
+		const names = this.positionalKeys(traits);
+		const idx = Object.keys(slots || {})
+			.map(Number)
+			.sort((a, b) => a - b);
 		const size = names.length + idx.length;
-		const arr: any[] = new Array( size );
-		idx.forEach( i => { arr[i] = { slot: true, key: String( i ) }; } );
+		const arr: any[] = new Array(size);
+		idx.forEach((i) => {
+			arr[i] = { slot: true, key: String(i) };
+		});
 		let n = 0;
-		for ( let i = 0; i < size; i++ ) {
-			if ( !arr[i] ) arr[i] = { slot: false, key: names[n++] };
+		for (let i = 0; i < size; i++) {
+			if (!arr[i]) arr[i] = { slot: false, key: names[n++] };
 		}
-		return arr.map( e => make( e ) ).filter( Boolean );
+		return arr.map((e) => make(e)).filter(Boolean);
 	},
 
-	migrateTemplateSet: function( old: any, warnings: string[] ): { key: string; raw: any } | null {
+	migrateTemplateSet: function (old: any, warnings: string[]): { key: string; raw: any } | null {
 		const key = old && old.name;
-		if ( !old || typeof old !== 'object' || typeof key !== 'string' || !key.length ) {
-			this.warn( warnings, 'set: dropped nameless set' );
+		if (!old || typeof old !== 'object' || typeof key !== 'string' || !key.length) {
+			this.warn(warnings, 'set: dropped nameless set');
 			return null;
 		}
 		const here = 'set/' + key;
 		const set: any = {};
-		Object.keys( old ).forEach( ( k: string ) => {
-			if ( k === 'name' || k === 'traits' || k === 'sfx' || k === 'removedTraits' ) return;
+		Object.keys(old).forEach((k: string) => {
+			if (k === 'name' || k === 'traits' || k === 'sfx' || k === 'removedTraits') return;
 			// Canonical emit: empty scaffolding stays out.
-			if ( k === 'tags' && Array.isArray( old[k] ) && !old[k].length ) return;
-			if ( k === 'description' && old[k] === '' ) return;
-			if ( k === 'custom' && old[k] && typeof old[k] === 'object' && !Object.keys( old[k] ).length ) return;
-			set[k] = cloneDeep( old[k] );
-		} );
-		const split = this.splitTemplateTraits( old.traits, warnings, here );
+			if (k === 'tags' && Array.isArray(old[k]) && !old[k].length) return;
+			if (k === 'description' && old[k] === '') return;
+			if (k === 'custom' && old[k] && typeof old[k] === 'object' && !Object.keys(old[k]).length) return;
+			set[k] = cloneDeep(old[k]);
+		});
+		const split = this.splitTemplateTraits(old.traits, warnings, here);
 		set.traits = split.map;
-		if ( Object.keys( split.slots ).length ) set.slots = split.slots;
-		if ( Array.isArray( old.sfx ) && old.sfx.length ) {
-			this.mergeSfxIntoTraits( set.traits, this.migrateSfxArray( old.sfx, warnings, here ), warnings, here );
+		if (Object.keys(split.slots).length) set.slots = split.slots;
+		if (Array.isArray(old.sfx) && old.sfx.length) {
+			this.mergeSfxIntoTraits(set.traits, this.migrateSfxArray(old.sfx, warnings, here), warnings, here);
 		}
-		if ( Array.isArray( old.removedTraits ) && old.removedTraits.length ) {
-			this.warn( warnings, here + ': template carries removedTraits, kept as local nulls' );
-			old.removedTraits.forEach( ( n: any ) => {
-				if ( typeof n === 'string' && n.length && set.traits[n] === undefined ) set.traits[n] = null;
-			} );
+		if (Array.isArray(old.removedTraits) && old.removedTraits.length) {
+			this.warn(warnings, here + ': template carries removedTraits, kept as local nulls');
+			old.removedTraits.forEach((n: any) => {
+				if (typeof n === 'string' && n.length && set.traits[n] === undefined) set.traits[n] = null;
+			});
 		}
 		return { key: key, raw: set };
 	},
 
-	migrateTemplateEntry: function( entry: any ) {
+	migrateTemplateEntry: function (entry: any) {
 		const warnings: string[] = [];
-		if ( !entry || typeof entry !== 'object' || Array.isArray( entry ) ) {
+		if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
 			return { data: null, warnings: ['input: not a template entry'] };
 		}
-		this.normalizeView( entry, warnings );
+		this.normalizeView(entry, warnings);
 		const ch = entry.character;
-		if ( !ch || typeof ch !== 'object' || !Array.isArray( ch.traitSets ) ) {
+		if (!ch || typeof ch !== 'object' || !Array.isArray(ch.traitSets)) {
 			return { data: null, warnings: ['input: entry has no character.traitSets'] };
 		}
 		const out: any = {};
-		Object.keys( entry ).forEach( ( k: string ) => {
-			if ( k === 'character' ) return;
-			out[k] = cloneDeep( entry[k] );
-		} );
+		Object.keys(entry).forEach((k: string) => {
+			if (k === 'character') return;
+			out[k] = cloneDeep(entry[k]);
+		});
 		const c: any = {};
-		Object.keys( ch ).forEach( ( k: string ) => {
-			if ( k === '$schema' || k === 'version' || k === 'traitSets' ) return;
-			c[k] = cloneDeep( ch[k] );
-		} );
-		if ( ch.$schema !== undefined || ch.version !== undefined ) {
-			this.warn( warnings, 'character: dropped old-format $schema/version markers' );
+		Object.keys(ch).forEach((k: string) => {
+			if (k === '$schema' || k === 'version' || k === 'traitSets') return;
+			c[k] = cloneDeep(ch[k]);
+		});
+		if (ch.$schema !== undefined || ch.version !== undefined) {
+			this.warn(warnings, 'character: dropped old-format $schema/version markers');
 		}
 		// Duplicate set names (repeated worksheet blocks) get suffixed keys in
 		// source order — bare name first, then Name~2, Name~3 — with the
@@ -1243,30 +1423,32 @@ export const cortexMigration = {
 		// nicknames elsewhere. Each entry keeps its own id and content.
 		c.sets = {};
 		let dupeCount = 0;
-		ch.traitSets.forEach( ( ts: any ) => {
-			const m = this.migrateTemplateSet( ts, warnings );
-			if ( !m ) return;
-			let key = m.key, n = 2;
-			while ( c.sets[key] !== undefined ) key = m.key + '~' + ( n++ );
-			if ( key !== m.key ) {
+		ch.traitSets.forEach((ts: any) => {
+			const m = this.migrateTemplateSet(ts, warnings);
+			if (!m) return;
+			let key = m.key,
+				n = 2;
+			while (c.sets[key] !== undefined) key = m.key + '~' + n++;
+			if (key !== m.key) {
 				dupeCount++;
 				m.raw.label = m.key;
 			}
 			c.sets[key] = m.raw;
-		} );
-		if ( dupeCount ) this.warn( warnings, 'character: ' + dupeCount + ' duplicate set name(s) suffixed, display names in label' );
-		if ( Array.isArray( ch.removedSets ) && ch.removedSets.length ) {
-			this.warn( warnings, 'character: template carries removedSets, dropped' );
+		});
+		if (dupeCount)
+			this.warn(warnings, 'character: ' + dupeCount + ' duplicate set name(s) suffixed, display names in label');
+		if (Array.isArray(ch.removedSets) && ch.removedSets.length) {
+			this.warn(warnings, 'character: template carries removedSets, dropped');
 		}
 		// Nested-grid placement runs over the built map in document order:
 		// band keys become view.place, legacy flags become view.parts.
 		// The wrapper carries Rule-of-3 track counts (the old engine was
 		// always 3); its view is throwaway.
-		const placeWarnings = this.migratePlacement( {
+		const placeWarnings = this.migratePlacement({
 			view: { columns: 3, columnsPage2: 3 },
-			traitSets: Object.values( c.sets ),
-		} );
-		placeWarnings.forEach( ( w: string ) => this.warn( warnings, w ) );
+			traitSets: Object.values(c.sets),
+		});
+		placeWarnings.forEach((w: string) => this.warn(warnings, w));
 		out.character = c;
 		return { data: out, warnings: warnings };
 	},
@@ -1276,115 +1458,119 @@ export const cortexMigration = {
 
 	// Layered rating objects to the array-model rating. Canonical emit is
 	// always the object; anything else reads as unrated with a warning.
-	unmigrateRating: function( value: any, warnings: string[], path: string ): any | null {
-		if ( value === undefined || value === null ) return null;
-		if ( typeof value === 'object' && !Array.isArray( value ) ) {
-			const r = this.normalizeRatingObject( value );
-			if ( r ) return r;
-			this.warn( warnings, path + ': malformed rating kept as unrated' );
+	unmigrateRating: function (value: any, warnings: string[], path: string): any | null {
+		if (value === undefined || value === null) return null;
+		if (typeof value === 'object' && !Array.isArray(value)) {
+			const r = this.normalizeRatingObject(value);
+			if (r) return r;
+			this.warn(warnings, path + ': malformed rating kept as unrated');
 			return null;
 		}
-		this.warn( warnings, path + ': non-object rating kept as unrated' );
+		this.warn(warnings, path + ': non-object rating kept as unrated');
 		return null;
 	},
 
-	unmigrateTemplateTrait: function( name: string, node: any, warnings: string[], path: string ): any {
-		const here = path + '/' + ( name === '' ? 'slot' : name );
-		if ( node === null ) {
-			this.warn( warnings, here + ': null has no old-form equivalent, dropped' );
+	unmigrateTemplateTrait: function (name: string, node: any, warnings: string[], path: string): any {
+		const here = path + '/' + (name === '' ? 'slot' : name);
+		if (node === null) {
+			this.warn(warnings, here + ': null has no old-form equivalent, dropped');
 			return null;
 		}
-		if ( typeof node === 'string' ) {
+		if (typeof node === 'string') {
 			const tr: any = { name: name, traits: [] };
-			const r = this.unmigrateRating( node, warnings, here );
-			if ( r ) tr.rating = r;
+			const r = this.unmigrateRating(node, warnings, here);
+			if (r) tr.rating = r;
 			return tr;
 		}
-		if ( !node || typeof node !== 'object' || Array.isArray( node ) ) {
-			this.warn( warnings, here + ': malformed trait, dropped' );
+		if (!node || typeof node !== 'object' || Array.isArray(node)) {
+			this.warn(warnings, here + ': malformed trait, dropped');
 			return null;
 		}
 		const tr: any = { name: name };
-		const r = this.unmigrateRating( node.rating !== undefined ? node.rating : node.value, warnings, here );
-		if ( r ) tr.rating = r;
-		this.TEMPLATE_TRAIT_SCALARS.forEach( ( k: string ) => {
-			if ( node[k] !== undefined ) tr[k] = cloneDeep( node[k] );
-		} );
-		if ( node.view !== undefined ) tr.view = cloneDeep( node.view );
-		if ( node.custom !== undefined ) tr.custom = cloneDeep( node.custom );
-		const subs = ( node.traits && typeof node.traits === 'object' && !Array.isArray( node.traits ) ) ? node.traits : {};
-		const subSlots = ( node.slots && typeof node.slots === 'object' && !Array.isArray( node.slots ) ) ? node.slots : {};
+		const r = this.unmigrateRating(node.rating !== undefined ? node.rating : node.value, warnings, here);
+		if (r) tr.rating = r;
+		this.TEMPLATE_TRAIT_SCALARS.forEach((k: string) => {
+			if (node[k] !== undefined) tr[k] = cloneDeep(node[k]);
+		});
+		if (node.view !== undefined) tr.view = cloneDeep(node.view);
+		if (node.custom !== undefined) tr.custom = cloneDeep(node.custom);
+		const subs = node.traits && typeof node.traits === 'object' && !Array.isArray(node.traits) ? node.traits : {};
+		const subSlots = node.slots && typeof node.slots === 'object' && !Array.isArray(node.slots) ? node.slots : {};
 		const self = this;
-		tr.traits = this.orderedTraits( subs, subSlots, ( e: any ) => {
-			if ( e.slot ) return self.unmigrateTemplateTrait( '', subSlots[e.key], warnings, here + '/slot' + e.key );
-			if ( subs[e.key] === null ) {
-				self.warn( warnings, here + ': null ' + JSON.stringify( e.key ) + ' has no old-form equivalent, dropped' );
+		tr.traits = this.orderedTraits(subs, subSlots, (e: any) => {
+			if (e.slot) return self.unmigrateTemplateTrait('', subSlots[e.key], warnings, here + '/slot' + e.key);
+			if (subs[e.key] === null) {
+				self.warn(warnings, here + ': null ' + JSON.stringify(e.key) + ' has no old-form equivalent, dropped');
 				return null;
 			}
-			return self.unmigrateTemplateTrait( e.key, subs[e.key], warnings, here );
-		} );
+			return self.unmigrateTemplateTrait(e.key, subs[e.key], warnings, here);
+		});
 		return tr;
 	},
 
-	unmigrateTemplateSet: function( name: string, set: any, warnings: string[] ): any {
+	unmigrateTemplateSet: function (name: string, set: any, warnings: string[]): any {
 		const here = 'set/' + name;
-		if ( !set || typeof set !== 'object' || Array.isArray( set ) ) {
-			this.warn( warnings, here + ': malformed set, dropped' );
+		if (!set || typeof set !== 'object' || Array.isArray(set)) {
+			this.warn(warnings, here + ': malformed set, dropped');
 			return null;
 		}
 		const ts: any = { id: set.id, name: name };
-		Object.keys( set ).forEach( ( k: string ) => {
-			if ( k === 'id' || k === 'name' || k === 'label' || k === 'traits' || k === 'slots' ) return;
-			ts[k] = cloneDeep( set[k] );
-		} );
-		const subs = ( set.traits && typeof set.traits === 'object' && !Array.isArray( set.traits ) ) ? set.traits : {};
-		const subSlots = ( set.slots && typeof set.slots === 'object' && !Array.isArray( set.slots ) ) ? set.slots : {};
+		Object.keys(set).forEach((k: string) => {
+			if (k === 'id' || k === 'name' || k === 'label' || k === 'traits' || k === 'slots') return;
+			ts[k] = cloneDeep(set[k]);
+		});
+		const subs = set.traits && typeof set.traits === 'object' && !Array.isArray(set.traits) ? set.traits : {};
+		const subSlots = set.slots && typeof set.slots === 'object' && !Array.isArray(set.slots) ? set.slots : {};
 		const self = this;
-		ts.traits = this.orderedTraits( subs, subSlots, ( e: any ) => {
-			if ( e.slot ) return self.unmigrateTemplateTrait( '', subSlots[e.key], warnings, here + '/slot' + e.key );
-			if ( subs[e.key] === null ) {
-				self.warn( warnings, here + ': null ' + JSON.stringify( e.key ) + ' has no old-form equivalent, dropped' );
+		ts.traits = this.orderedTraits(subs, subSlots, (e: any) => {
+			if (e.slot) return self.unmigrateTemplateTrait('', subSlots[e.key], warnings, here + '/slot' + e.key);
+			if (subs[e.key] === null) {
+				self.warn(warnings, here + ': null ' + JSON.stringify(e.key) + ' has no old-form equivalent, dropped');
 				return null;
 			}
-			return self.unmigrateTemplateTrait( e.key, subs[e.key], warnings, here );
-		} );
+			return self.unmigrateTemplateTrait(e.key, subs[e.key], warnings, here);
+		});
 		return ts;
 	},
 
-	unmigrateTemplateEntry: function( layered: any ) {
+	unmigrateTemplateEntry: function (layered: any) {
 		const warnings: string[] = [];
-		if ( !layered || typeof layered !== 'object' || Array.isArray( layered ) ) {
+		if (!layered || typeof layered !== 'object' || Array.isArray(layered)) {
 			return { data: null, warnings: ['input: not a layered template entry'] };
 		}
 		const ch = layered.character;
-		if ( !ch || typeof ch !== 'object' || !ch.sets || typeof ch.sets !== 'object' || Array.isArray( ch.sets ) ) {
+		if (!ch || typeof ch !== 'object' || !ch.sets || typeof ch.sets !== 'object' || Array.isArray(ch.sets)) {
 			return { data: null, warnings: ['input: entry has no character.sets map'] };
 		}
 		const out: any = {};
-		Object.keys( layered ).forEach( ( k: string ) => {
-			if ( k === 'character' ) return;
-			out[k] = cloneDeep( layered[k] );
-		} );
+		Object.keys(layered).forEach((k: string) => {
+			if (k === 'character') return;
+			out[k] = cloneDeep(layered[k]);
+		});
 		const c: any = {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
 		};
-		Object.keys( ch ).forEach( ( k: string ) => {
-			if ( k === 'sets' || k === 'slots' ) return;
-			c[k] = cloneDeep( ch[k] );
-		} );
+		Object.keys(ch).forEach((k: string) => {
+			if (k === 'sets' || k === 'slots') return;
+			c[k] = cloneDeep(ch[k]);
+		});
 		// Display name is the label when present, else the key. Suffixed dupe
 		// keys resolve through their labels; unadorned keys are their names.
-		c.traitSets = Object.keys( ch.sets ).map( ( key: string ) => {
-			const set = ch.sets[key];
-			if ( set === null ) {
-				this.warn( warnings, 'set/' + key + ': null has no old-form equivalent, dropped' );
-				return null;
-			}
-			const name = ( set && typeof set === 'object' && !Array.isArray( set ) && typeof set.label === 'string' && set.label.length )
-				? set.label : key;
-			return this.unmigrateTemplateSet( name, set, warnings );
-		} ).filter( Boolean );
+		c.traitSets = Object.keys(ch.sets)
+			.map((key: string) => {
+				const set = ch.sets[key];
+				if (set === null) {
+					this.warn(warnings, 'set/' + key + ': null has no old-form equivalent, dropped');
+					return null;
+				}
+				const name =
+					set && typeof set === 'object' && !Array.isArray(set) && typeof set.label === 'string' && set.label.length
+						? set.label
+						: key;
+				return this.unmigrateTemplateSet(name, set, warnings);
+			})
+			.filter(Boolean);
 		out.character = c;
 		return { data: out, warnings: warnings };
 	},
@@ -1404,99 +1590,111 @@ export const cortexMigration = {
 	// vertical ladders) becomes parts per the additive composition rules
 	// and is removed. Sets the rules cannot express (vertical rating,
 	// bespoke bodies) keep their legacy flags; the renderer reads both.
-	BAND_KEYS: ['track', 'span', 'widths', 'rowBreak', 'colWidth', 'rowSpan',
-		'colSpan', 'columnSpan', 'row'] as string[],
+	BAND_KEYS: ['track', 'span', 'widths', 'rowBreak', 'colWidth', 'rowSpan', 'colSpan', 'columnSpan', 'row'] as string[],
 
-	hasBandKeys: function( bag: any ): boolean {
-		if ( !bag || typeof bag !== 'object' ) return false;
-		return this.BAND_KEYS.some( ( k: string ) => bag[k] !== undefined );
+	hasBandKeys: function (bag: any): boolean {
+		if (!bag || typeof bag !== 'object') return false;
+		return this.BAND_KEYS.some((k: string) => bag[k] !== undefined);
 	},
 
-	trackOf: function( bag: any, trackCount: number ): 1 | 2 | 3 {
-		if ( bag.track === 1 || bag.track === 2 || bag.track === 3 ) return bag.track;
-		const loc = String( bag.location || '' ).toLowerCase().trim();
-		if ( trackCount === 2 ) return ( loc === 'right' || loc === '2' ) ? 2 : 1;
-		if ( loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2' ) return 2;
-		if ( loc === 'right' || loc === '3' || loc === 'col-3' ) return 3;
+	trackOf: function (bag: any, trackCount: number): 1 | 2 | 3 {
+		if (bag.track === 1 || bag.track === 2 || bag.track === 3) return bag.track;
+		const loc = String(bag.location || '')
+			.toLowerCase()
+			.trim();
+		if (trackCount === 2) return loc === 'right' || loc === '2' ? 2 : 1;
+		if (loc === 'center' || loc === 'middle' || loc === '2' || loc === 'col-2') return 2;
+		if (loc === 'right' || loc === '3' || loc === 'col-3') return 3;
 		return 1;
 	},
 
-	spanOf: function( bag: any, trackCount: number ): 1 | 2 | 3 {
+	spanOf: function (bag: any, trackCount: number): 1 | 2 | 3 {
 		const raw = bag.span ?? bag.colSpan ?? bag.columnSpan;
-		if ( raw === 'full' || Number( raw ) >= Math.max( 3, trackCount ) ) return 3;
-		if ( Number( raw ) === 2 ) return 2;
+		if (raw === 'full' || Number(raw) >= Math.max(3, trackCount)) return 3;
+		if (Number(raw) === 2) return 2;
 		return 1;
 	},
 
 	// Per-track widths from per-set singular colWidth shares (the last band
 	// rule, preserved): declared shares win, undeclared tracks split the
 	// remainder. Triples on sets are no longer read.
-	bandTrackWidths: function( members: { track: number; colWidth: number | null }[] ): [number, number, number] {
-		const declared: ( number | null )[] = [ null, null, null ];
-		for ( const m of members ) {
-			if ( m.colWidth !== null && Number.isFinite( m.colWidth ) && m.colWidth > 0 && m.colWidth <= 100 ) {
-				if ( declared[ m.track - 1 ] === null ) declared[ m.track - 1 ] = m.colWidth;
+	bandTrackWidths: function (members: { track: number; colWidth: number | null }[]): [number, number, number] {
+		const declared: (number | null)[] = [null, null, null];
+		for (const m of members) {
+			if (m.colWidth !== null && Number.isFinite(m.colWidth) && m.colWidth > 0 && m.colWidth <= 100) {
+				if (declared[m.track - 1] === null) declared[m.track - 1] = m.colWidth;
 			}
 		}
-		const hasTrack3 = members.some( m => m.track === 3 );
-		if ( !hasTrack3 && declared[2] === null ) {
-			if ( declared[0] !== null ) return [ declared[0], 100 - declared[0], 0 ];
-			if ( declared[1] !== null ) return [ 100 - declared[1], declared[1], 0 ];
-			return [ 50, 50, 0 ];
+		const hasTrack3 = members.some((m) => m.track === 3);
+		if (!hasTrack3 && declared[2] === null) {
+			if (declared[0] !== null) return [declared[0], 100 - declared[0], 0];
+			if (declared[1] !== null) return [100 - declared[1], declared[1], 0];
+			return [50, 50, 0];
 		}
-		const count = declared.filter( d => d !== null ).length;
-		if ( count > 0 ) {
-			const sum = declared.reduce( ( a: number, b ) => a + ( b || 0 ), 0 );
-			const remaining = Math.max( 0, 100 - sum );
+		const count = declared.filter((d) => d !== null).length;
+		if (count > 0) {
+			const sum = declared.reduce((a: number, b) => a + (b || 0), 0);
+			const remaining = Math.max(0, 100 - sum);
 			const empty = 3 - count;
-			const share = empty > 0 ? Math.round( remaining / empty * 100 ) / 100 : 0;
+			const share = empty > 0 ? Math.round((remaining / empty) * 100) / 100 : 0;
 			return [
 				declared[0] !== null ? declared[0] : share,
 				declared[1] !== null ? declared[1] : share,
 				declared[2] !== null ? declared[2] : share,
 			];
 		}
-		return [ 33.333, 33.333, 33.334 ];
+		return [33.333, 33.333, 33.334];
 	},
 
 	// Effective rating position across the top-level key and the view bag.
-	effectiveRatingPosition: function( set: any, bag: any ): string | undefined {
-		const v = ( set && set.ratingPosition !== undefined && set.ratingPosition !== null )
-			? set.ratingPosition : bag?.ratingPosition;
-		return ( typeof v === 'string' && v.length ) ? v : undefined;
+	effectiveRatingPosition: function (set: any, bag: any): string | undefined {
+		const v =
+			set && set.ratingPosition !== undefined && set.ratingPosition !== null ? set.ratingPosition : bag?.ratingPosition;
+		return typeof v === 'string' && v.length ? v : undefined;
 	},
 
 	// Convert one set's legacy flags to view.parts. Returns 'parts',
 	// 'legacy', or 'none' (no flags to convert).
-	migrateSetParts: function( set: any, bag: any ): string {
+	migrateSetParts: function (set: any, bag: any): string {
 		// Explicit parts are never clobbered: a set carrying both keeps
 		// both and validation surfaces it.
-		if ( bag?.parts && typeof bag.parts === 'object' && Object.keys( bag.parts ).length ) return 'none';
-		const rating = this.effectiveRatingPosition( set, bag );
-		if ( rating === undefined ) return 'none';
+		if (bag?.parts && typeof bag.parts === 'object' && Object.keys(bag.parts).length) return 'none';
+		const rating = this.effectiveRatingPosition(set, bag);
+		if (rating === undefined) return 'none';
 		const body = bag?.style?.body;
-		if ( rating === 'vertical' ) return 'legacy';
-		if ( body !== undefined && this.LIST_FAMILY_BODIES.indexOf( body ) === -1 ) return 'legacy';
-		const scale = Array.isArray( bag?.ratingLadder ) && bag.ratingLadder.length
-			? bag.ratingLadder : this.DEFAULT_SCALE;
+		if (rating === 'vertical') return 'legacy';
+		if (body !== undefined && this.LIST_FAMILY_BODIES.indexOf(body) === -1) return 'legacy';
+		const scale = Array.isArray(bag?.ratingLadder) && bag.ratingLadder.length ? bag.ratingLadder : this.DEFAULT_SCALE;
 		const pos = rating;
-		if ( pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none' ) return 'legacy';
-		const statement = Boolean( set && set.statement );
-		const traits = Array.isArray( set?.traits ) ? set.traits : ( set?.traits && typeof set.traits === 'object' ? Object.values( set.traits ) : [] );
-		const hasDesc = traits.some( ( t: any ) => typeof t?.description === 'string' && t.description.trim().length > 0 );
-		const sfxChildrenOf = ( node: any ) => {
-			const subs = Array.isArray( node?.traits ) ? node.traits : [];
-			const container = subs.find( ( st: any ) => st && typeof st === 'object' && !Array.isArray( st ) && st.name === 'SFX' && ( st.rating === undefined ) );
-			return ( container && Array.isArray( container.traits ) ) ? container.traits : [];
+		if (pos !== 'inline' && pos !== 'above' && pos !== 'below' && pos !== 'none') return 'legacy';
+		const statement = Boolean(set && set.statement);
+		const traits = Array.isArray(set?.traits)
+			? set.traits
+			: set?.traits && typeof set.traits === 'object'
+				? Object.values(set.traits)
+				: [];
+		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
+		const sfxChildrenOf = (node: any) => {
+			const subs = Array.isArray(node?.traits) ? node.traits : [];
+			const container = subs.find(
+				(st: any) => st && typeof st === 'object' && !Array.isArray(st) && st.name === 'SFX' && st.rating === undefined,
+			);
+			return container && Array.isArray(container.traits) ? container.traits : [];
 		};
-		const hasSfx = traits.some( ( t: any ) => sfxChildrenOf( t ).length > 0 );
-		const isSfxContainer = ( t: any ) => t && typeof t === 'object' && !Array.isArray( t ) && t.name === 'SFX' && t.rating === undefined;
-		const isStatementContainer = ( t: any ) => t && typeof t === 'object' && !Array.isArray( t ) && t.name === 'Statement' && t.rating === undefined;
-		const hasSub = traits.some( ( t: any ) => {
-			const subs = Array.isArray( t?.traits ) ? t.traits : ( t?.traits && typeof t.traits === 'object' ? Object.values( t.traits ) : [] );
-			return subs.some( ( s: any ) => !isSfxContainer( s ) && !isStatementContainer( s ) );
-		} );
-		bag.parts = buildParts( {
+		const hasSfx = traits.some((t: any) => sfxChildrenOf(t).length > 0);
+		const isSfxContainer = (t: any) =>
+			t && typeof t === 'object' && !Array.isArray(t) && t.name === 'SFX' && t.rating === undefined;
+		const isStatementContainer = (t: any) =>
+			t && typeof t === 'object' && !Array.isArray(t) && t.name === 'Statement' && t.rating === undefined;
+		const hasSub = traits.some((t: any) => {
+			const subs = Array.isArray(t?.traits)
+				? t.traits
+				: t?.traits && typeof t.traits === 'object'
+					? Object.values(t.traits)
+					: [];
+			return subs.some((s: any) => !isSfxContainer(s) && !isStatementContainer(s));
+		});
+		bag.parts = buildParts({
 			rating: pos as 'inline' | 'above' | 'below' | 'none',
 			ratingDice: scale.length,
 			trackDice: 0,
@@ -1504,68 +1702,68 @@ export const cortexMigration = {
 			badge: hasSfx,
 			block: hasSfx,
 			subtraits: hasSub,
-		} );
-		if ( set && typeof set === 'object' ) delete set.ratingPosition;
+		});
+		if (set && typeof set === 'object') delete set.ratingPosition;
 		delete bag.ratingPosition;
 		return 'parts';
 	},
 
-	migratePlacement: function( charObj: any ): string[] {
+	migratePlacement: function (charObj: any): string[] {
 		const warnings: string[] = [];
-		if ( !charObj || typeof charObj !== 'object' ) return warnings;
-		this.normalizeView( charObj, warnings );
+		if (!charObj || typeof charObj !== 'object') return warnings;
+		this.normalizeView(charObj, warnings);
 		const char = charObj.character || charObj;
 		const ctkChar = char?.view || char?.custom?.cortexToolkit;
 
 		const setsList: any[] = [];
-		if ( Array.isArray( char.traitSets ) ) {
-			char.traitSets.forEach( ( ts: any ) => {
-				if ( ts && typeof ts === 'object' ) setsList.push( ts );
-			} );
-		} else if ( char.sets && typeof char.sets === 'object' && !Array.isArray( char.sets ) ) {
-			Object.keys( char.sets ).forEach( ( k: string ) => {
+		if (Array.isArray(char.traitSets)) {
+			char.traitSets.forEach((ts: any) => {
+				if (ts && typeof ts === 'object') setsList.push(ts);
+			});
+		} else if (char.sets && typeof char.sets === 'object' && !Array.isArray(char.sets)) {
+			Object.keys(char.sets).forEach((k: string) => {
 				const s = char.sets[k];
-				if ( s && typeof s === 'object' && !Array.isArray( s ) ) setsList.push( s );
-			} );
+				if (s && typeof s === 'object' && !Array.isArray(s)) setsList.push(s);
+			});
 		}
 
-		const bagOf = ( set: any ) => set.view || set.custom?.cortexToolkit;
-		const pageOf = ( set: any ) => Number( bagOf( set )?.page ) || 1;
+		const bagOf = (set: any) => set.view || set.custom?.cortexToolkit;
+		const pageOf = (set: any) => Number(bagOf(set)?.page) || 1;
 
 		// Normalize import-time bare numbers to "%" strings everywhere.
-		setsList.forEach( ( set ) => {
-			const bag = bagOf( set );
-			if ( bag && typeof bag === 'object' && bag.place && typeof bag.place === 'object' ) {
-				for ( const k of [ 'left', 'width' ] ) {
-					if ( typeof bag.place[k] === 'number' && Number.isFinite( bag.place[k] ) ) {
-						bag.place[k] = formatPct( bag.place[k] );
+		setsList.forEach((set) => {
+			const bag = bagOf(set);
+			if (bag && typeof bag === 'object' && bag.place && typeof bag.place === 'object') {
+				for (const k of ['left', 'width']) {
+					if (typeof bag.place[k] === 'number' && Number.isFinite(bag.place[k])) {
+						bag.place[k] = formatPct(bag.place[k]);
 					}
 				}
-				if ( bag.parts && typeof bag.parts === 'object' ) {
-					Object.values( bag.parts ).forEach( ( cell: any ) => {
-						if ( cell && typeof cell === 'object' ) {
-							for ( const k of [ 'left', 'width' ] ) {
-								if ( typeof cell[k] === 'number' && Number.isFinite( cell[k] ) ) {
-									cell[k] = formatPct( cell[k] );
+				if (bag.parts && typeof bag.parts === 'object') {
+					Object.values(bag.parts).forEach((cell: any) => {
+						if (cell && typeof cell === 'object') {
+							for (const k of ['left', 'width']) {
+								if (typeof cell[k] === 'number' && Number.isFinite(cell[k])) {
+									cell[k] = formatPct(cell[k]);
 								}
 							}
 						}
-					} );
+					});
 				}
 			}
-		} );
+		});
 
-		const legacyCols1 = Number( ctkChar?.columns ) || 2;
-		const legacyCols2 = Number( ctkChar?.columnsPage2 ) || legacyCols1;
+		const legacyCols1 = Number(ctkChar?.columns) || 2;
+		const legacyCols2 = Number(ctkChar?.columnsPage2) || legacyCols1;
 
 		const byPage: Record<number, any[]> = {};
-		setsList.forEach( set => {
-			const p = pageOf( set );
-			( byPage[p] = byPage[p] || [] ).push( set );
-		} );
+		setsList.forEach((set) => {
+			const p = pageOf(set);
+			(byPage[p] = byPage[p] || []).push(set);
+		});
 
-		Object.keys( byPage ).forEach( pageStr => {
-			const p = Number( pageStr );
+		Object.keys(byPage).forEach((pageStr) => {
+			const p = Number(pageStr);
 			const pageSets = byPage[p];
 			const trackCount = p === 2 ? legacyCols2 : legacyCols1;
 
@@ -1573,131 +1771,142 @@ export const cortexMigration = {
 			// with band keys fall back to rowBreak-delimited bands in
 			// document order (pre-row files).
 			const bands: { row: number | null; members: any[] }[] = [];
-			const explicitRows = pageSets.map( ( set ) => {
-				const r = Number( bagOf( set )?.row );
-				return Number.isFinite( r ) && r >= 1 ? Math.floor( r ) : null;
-			} );
-			const anyExplicit = explicitRows.some( r => r !== null );
-			if ( anyExplicit ) {
-				pageSets.forEach( ( set, i ) => {
+			const explicitRows = pageSets.map((set) => {
+				const r = Number(bagOf(set)?.row);
+				return Number.isFinite(r) && r >= 1 ? Math.floor(r) : null;
+			});
+			const anyExplicit = explicitRows.some((r) => r !== null);
+			if (anyExplicit) {
+				pageSets.forEach((set, i) => {
 					const r = explicitRows[i];
-					if ( r === null ) {
-						bands.push( { row: null, members: [ set ] } );
+					if (r === null) {
+						bands.push({ row: null, members: [set] });
 						return;
 					}
-					const band = bands.find( b => b.row === r );
-					if ( band ) band.members.push( set );
-					else bands.push( { row: r, members: [ set ] } );
-				} );
-			} else if ( pageSets.some( ( set ) => this.hasBandKeys( bagOf( set ) ) ) ) {
+					const band = bands.find((b) => b.row === r);
+					if (band) band.members.push(set);
+					else bands.push({ row: r, members: [set] });
+				});
+			} else if (pageSets.some((set) => this.hasBandKeys(bagOf(set)))) {
 				let current: any[] = [];
-				pageSets.forEach( ( set ) => {
-					const bag = bagOf( set );
+				pageSets.forEach((set) => {
+					const bag = bagOf(set);
 					const rawSpan = bag?.span ?? bag?.colSpan ?? bag?.columnSpan;
-					const isFull = rawSpan === 'full' || ( typeof rawSpan === 'number' && rawSpan >= trackCount );
-					if ( isFull && current.length ) {
-						bands.push( { row: null, members: current } );
+					const isFull = rawSpan === 'full' || (typeof rawSpan === 'number' && rawSpan >= trackCount);
+					if (isFull && current.length) {
+						bands.push({ row: null, members: current });
 						current = [];
 					}
-					if ( bag?.rowBreak === true && current.length ) {
-						bands.push( { row: null, members: current } );
+					if (bag?.rowBreak === true && current.length) {
+						bands.push({ row: null, members: current });
 						current = [];
 					}
-					current.push( set );
-					if ( isFull ) {
-						bands.push( { row: null, members: current } );
+					current.push(set);
+					if (isFull) {
+						bands.push({ row: null, members: current });
 						current = [];
 					}
-				} );
-				if ( current.length ) bands.push( { row: null, members: current } );
+				});
+				if (current.length) bands.push({ row: null, members: current });
 			}
 
-			bands.forEach( ( band, bandIdx ) => {
+			bands.forEach((band, bandIdx) => {
 				// top from the visual row (header-inclusive: content row 2
 				// → top 0); fallback bands stack in document order from 0.
 				// Sets without band keys are never touched here: classic
 				// sets keep their columns, placed sets keep their place.
-				const keyed = band.members.filter( ( set ) => this.hasBandKeys( bagOf( set ) ) );
-				if ( !keyed.length ) return;
-				const top = band.row !== null ? Math.max( 0, band.row - 2 ) : bandIdx;
-				const members = keyed.map( ( set ) => {
-					const bag = bagOf( set ) || {};
-					return { set, track: this.trackOf( bag, trackCount ), span: this.spanOf( bag, trackCount ) };
-				} );
-				members.forEach( ( m ) => {
-					if ( m.track + m.span - 1 > 3 ) m.span = ( 4 - m.track ) as 1 | 2 | 3;
-				} );
-				const widths = this.bandTrackWidths( members.map( ( m ) => {
-					const bag = bagOf( m.set ) || {};
-					const w = Number( bag.colWidth );
-					return { track: m.track, colWidth: Number.isFinite( w ) && w > 0 && w <= 100 ? w : null };
-				} ) );
-				members.forEach( ( m ) => {
-					if ( !bagOf( m.set ) ) m.set.view = {};
-					const bag = bagOf( m.set );
-					if ( m.span >= 3 ) {
+				const keyed = band.members.filter((set) => this.hasBandKeys(bagOf(set)));
+				if (!keyed.length) return;
+				const top = band.row !== null ? Math.max(0, band.row - 2) : bandIdx;
+				const members = keyed.map((set) => {
+					const bag = bagOf(set) || {};
+					return { set, track: this.trackOf(bag, trackCount), span: this.spanOf(bag, trackCount) };
+				});
+				members.forEach((m) => {
+					if (m.track + m.span - 1 > 3) m.span = (4 - m.track) as 1 | 2 | 3;
+				});
+				const widths = this.bandTrackWidths(
+					members.map((m) => {
+						const bag = bagOf(m.set) || {};
+						const w = Number(bag.colWidth);
+						return { track: m.track, colWidth: Number.isFinite(w) && w > 0 && w <= 100 ? w : null };
+					}),
+				);
+				members.forEach((m) => {
+					if (!bagOf(m.set)) m.set.view = {};
+					const bag = bagOf(m.set);
+					if (m.span >= 3) {
 						// Full-width sets stack sparsely in document order.
 						delete bag.place;
 					} else {
-						const left = m.track === 1 ? 0 : m.track === 2 ? widths[0] : Math.round( ( widths[0] + widths[1] ) * 1000 ) / 1000;
-						const width = Math.round( widths.slice( m.track - 1, m.track - 1 + m.span ).reduce( ( a: number, b: number ) => a + b, 0 ) * 1000 ) / 1000;
-						bag.place = { left: formatPct( left ), top, width: formatPct( width ), height: 1 };
+						const left =
+							m.track === 1 ? 0 : m.track === 2 ? widths[0] : Math.round((widths[0] + widths[1]) * 1000) / 1000;
+						const width =
+							Math.round(
+								widths.slice(m.track - 1, m.track - 1 + m.span).reduce((a: number, b: number) => a + b, 0) * 1000,
+							) / 1000;
+						bag.place = { left: formatPct(left), top, width: formatPct(width), height: 1 };
 					}
-					this.BAND_KEYS.forEach( ( k: string ) => delete bag[k] );
-					if ( bag.location !== 'header' && bag.location !== 'attributes' ) delete bag.location;
-				} );
-			} );
+					this.BAND_KEYS.forEach((k: string) => delete bag[k]);
+					if (bag.location !== 'header' && bag.location !== 'attributes') delete bag.location;
+				});
+			});
 
 			// Trait-row internals below the set level are greenfield
 			// authoring per the composition rules — except the flags they
 			// supersede, which convert here.
-			pageSets.forEach( ( set ) => {
-				const bag = bagOf( set );
-				if ( !bag || typeof bag !== 'object' ) return;
-				this.migrateSetParts( set, bag );
-			} );
-		} );
+			pageSets.forEach((set) => {
+				const bag = bagOf(set);
+				if (!bag || typeof bag !== 'object') return;
+				this.migrateSetParts(set, bag);
+			});
+		});
 
 		// Zero horizontal-interval collisions within any (page, top) row.
-		const placedByKey: Record<string, { index: number; rect: { left: number; top: number; width: number; height: number } }[]> = {};
-		setsList.forEach( ( set, i ) => {
-			const pl = bagOf( set )?.place;
-			if ( !pl || typeof pl !== 'object' ) return;
-			const mL = typeof pl.left === 'string' ? pl.left.match( /^(-?\d+(?:\.\d+)?)\s*%$/ ) : null;
-			const mW = typeof pl.width === 'string' ? pl.width.match( /^(-?\d+(?:\.\d+)?)\s*%$/ ) : null;
-			if ( !mL || !mW || !Number.isInteger( pl.top ) || !Number.isInteger( pl.height ) ) return;
-			const key = pageOf( set ) + ':' + pl.top;
-			( placedByKey[key] = placedByKey[key] || [] ).push( {
+		const placedByKey: Record<
+			string,
+			{ index: number; rect: { left: number; top: number; width: number; height: number } }[]
+		> = {};
+		setsList.forEach((set, i) => {
+			const pl = bagOf(set)?.place;
+			if (!pl || typeof pl !== 'object') return;
+			const mL = typeof pl.left === 'string' ? pl.left.match(/^(-?\d+(?:\.\d+)?)\s*%$/) : null;
+			const mW = typeof pl.width === 'string' ? pl.width.match(/^(-?\d+(?:\.\d+)?)\s*%$/) : null;
+			if (!mL || !mW || !Number.isInteger(pl.top) || !Number.isInteger(pl.height)) return;
+			const key = pageOf(set) + ':' + pl.top;
+			(placedByKey[key] = placedByKey[key] || []).push({
 				index: i,
-				rect: { left: Number( mL[1] ), top: pl.top, width: Number( mW[1] ), height: pl.height },
-			} );
-		} );
-		Object.keys( placedByKey ).forEach( ( key ) => {
+				rect: { left: Number(mL[1]), top: pl.top, width: Number(mW[1]), height: pl.height },
+			});
+		});
+		Object.keys(placedByKey).forEach((key) => {
 			const list = placedByKey[key];
-			for ( let a = 0; a < list.length; a++ ) {
-				for ( let b = a + 1; b < list.length; b++ ) {
-					const A = list[a].rect, B = list[b].rect;
-					if ( A.left < B.left + B.width - 1e-6 && B.left < A.left + A.width - 1e-6 ) {
+			for (let a = 0; a < list.length; a++) {
+				for (let b = a + 1; b < list.length; b++) {
+					const A = list[a].rect,
+						B = list[b].rect;
+					if (A.left < B.left + B.width - 1e-6 && B.left < A.left + A.width - 1e-6) {
 						// Heal two sets sharing the same row that were both placed at the identical left edge
-						const setB = setsList[ list[b].index ];
-						const bagB = bagOf( setB );
-						if ( Math.abs( A.left - B.left ) < 1e-6 && A.width + B.width <= 100 + 1e-6 && bagB?.place ) {
-							const newLeft = Math.round( ( A.left + A.width ) * 1000 ) / 1000;
-							bagB.place.left = formatPct( newLeft );
+						const setB = setsList[list[b].index];
+						const bagB = bagOf(setB);
+						if (Math.abs(A.left - B.left) < 1e-6 && A.width + B.width <= 100 + 1e-6 && bagB?.place) {
+							const newLeft = Math.round((A.left + A.width) * 1000) / 1000;
+							bagB.place.left = formatPct(newLeft);
 							B.left = newLeft;
 							continue;
 						}
-						warnings.push( 'page ' + key + ': horizontal collision between sets ' + list[a].index + ' and ' + list[b].index );
+						warnings.push(
+							'page ' + key + ': horizontal collision between sets ' + list[a].index + ' and ' + list[b].index,
+						);
 					}
 				}
 			}
-		} );
+		});
 
-		if ( ctkChar ) {
+		if (ctkChar) {
 			delete ctkChar.columns;
 			delete ctkChar.columnsPage2;
 		}
 		return warnings;
 	},
-
 };

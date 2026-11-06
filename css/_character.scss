@@ -14,7 +14,9 @@
 			left: calc(-1 * var(--highlight-radius));
 			right: calc(-1 * var(--highlight-radius));
 			border-radius: var(--highlight-radius);
-			transition: background-color .2s, border-color .2s;
+			transition:
+				background-color 0.2s,
+				border-color 0.2s;
 			opacity: 0;
 			pointer-events: none;
 			background-color: transparent;
@@ -47,10 +49,11 @@
 }
 
 .character-sheet {
-
 	&.v-enter-active,
 	&.v-leave-active {
-		transition: opacity .25s ease, transform .25s ease;
+		transition:
+			opacity 0.25s ease,
+			transform 0.25s ease;
 	}
 
 	&.v-enter-from,
@@ -63,7 +66,12 @@
 .pages {
 	position: relative;
 	margin-inline: auto;
-	transition: border-color .2s ease, box-shadow .2s ease, width .2s ease, height .2s ease, margin .2s ease;
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		width 0.2s ease,
+		height 0.2s ease,
+		margin 0.2s ease;
 
 	@include print {
 		width: var(--page-width);
@@ -71,10 +79,10 @@
 		margin-top: 2rem;
 		overflow: hidden;
 		border: 1px transparent solid;
-		border-radius: .25rem;
-		box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.0);
+		border-radius: 0.25rem;
+		box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0);
 		border-color: var(--color-separator);
-		box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.1);
+		box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
 	}
 
 	@media print {
@@ -94,7 +102,7 @@
 	font-size: 0.8125rem;
 	line-height: 1.15;
 	font-weight: 400;
-	transition: padding .2s;
+	transition: padding 0.2s;
 	padding-top: 2rem;
 	position: relative;
 
@@ -175,7 +183,7 @@
 	align-items: stretch;
 	column-gap: 1rem;
 
-	>* {
+	> * {
 		flex: 1 1 0;
 		position: relative;
 		display: flex;
@@ -187,29 +195,27 @@
 		flex-direction: column;
 		row-gap: 2rem;
 
-		>* {
+		> * {
 			width: 100%;
 		}
 	}
 }
 
 .page-justification-top-base {
-
-	.columns>*,
+	.columns > *,
 	.spotlight-column {
 		justify-content: flex-start !important;
 	}
 }
 
 .page-justification-distributed {
-
-	.columns>*,
+	.columns > *,
 	.spotlight-column {
 		justify-content: space-between !important;
 	}
 }
 
-.columns>* {
+.columns > * {
 	padding-top: 0 !important;
 	margin-top: 0 !important;
 }
@@ -222,17 +228,17 @@
 	row-gap: 1.5rem;
 	margin-top: 1.5rem;
 
-	>* {
+	> * {
 		min-width: 0;
 	}
 }
 
-.columns>*>.trait-set:first-child,
-.spotlight-column>.trait-set:first-child {
+.columns > * > .trait-set:first-child,
+.spotlight-column > .trait-set:first-child {
 	margin-top: 0 !important;
 }
 
-.columns>.column-left,
+.columns > .column-left,
 .column-left,
 .spotlight-column-left {
 	padding-top: var(--column-left-offset, 0px) !important;
@@ -243,7 +249,7 @@
 	}
 }
 
-.columns>.column-right,
+.columns > .column-right,
 .column-right,
 .spotlight-column-right {
 	padding-top: var(--column-right-offset, 0px) !important;
@@ -254,7 +260,7 @@
 	}
 }
 
-.columns>.column-center,
+.columns > .column-center,
 .column-center,
 .spotlight-column-center {
 	padding-top: var(--column-center-offset, 0px) !important;
@@ -344,8 +350,8 @@
 
 .title-decoration {
 	flex-grow: 1;
-	margin-left: .5417rem;
-	margin-top: .25rem;
+	margin-left: 0.5417rem;
+	margin-top: 0.25rem;
 	width: 100%;
 	display: inline;
 	line-height: normal;
@@ -355,9 +361,9 @@
 		display: block;
 		content: '';
 		position: absolute;
-		width: .4rem;
-		height: .4rem;
-		top: .35rem;
+		width: 0.4rem;
+		height: 0.4rem;
+		top: 0.35rem;
 		left: 0;
 		transform: translateY(-50%);
 		background-color: var(--color-primary);
@@ -368,7 +374,7 @@
 .character-meta {
 	display: flex;
 	align-items: flex-start;
-	column-gap: .5rem;
+	column-gap: 0.5rem;
 	// justify-content: space-between;
 }
 
@@ -418,7 +424,10 @@
 		align-items: center;
 		justify-content: center;
 		line-height: 1;
-		transition: background 0.15s, color 0.15s, border-color 0.15s;
+		transition:
+			background 0.15s,
+			color 0.15s,
+			border-color 0.15s;
 
 		&:hover:not(:disabled) {
 			background: var(--color-primary);
@@ -533,7 +542,7 @@
 	text-transform: uppercase;
 
 	&:not(:last-child) {
-		padding-right: .25rem;
+		padding-right: 0.25rem;
 		border-right: 2px solid var(--color-primary);
 	}
 }
@@ -559,7 +568,7 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	>div,
+	> div,
 	.trait-set-header-name {
 		font-size: inherit;
 		font-weight: inherit;
@@ -572,7 +581,7 @@
 
 	&.v-enter-active,
 	&.v-leave-active {
-		transition: opacity .2s ease;
+		transition: opacity 0.2s ease;
 	}
 
 	&.v-enter-from,
@@ -590,7 +599,9 @@
 
 	&.trait-enter-active,
 	&.trait-leave-active {
-		transition: opacity .2s ease, transform .2s ease;
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
 	}
 
 	&.trait-enter-from,
@@ -603,38 +614,36 @@
 .sfx {
 	list-style: none;
 	margin: 1rem 0 0;
-	padding: .5rem 0 0;
+	padding: 0.5rem 0 0;
 	margin-bottom: 0;
 	border-top: 1px solid var(--color-primary);
 	display: flex;
 	flex-direction: column;
-	row-gap: .5rem;
+	row-gap: 0.5rem;
 
 	li {
 		padding-left: 1.6em;
 		text-indent: -1.6em;
-		margin-top: -.125rem;
+		margin-top: -0.125rem;
 		font-style: normal;
 		margin-right: 0;
 		font-size: var(--text-body);
 
 		&::before {
 			font-family: var(--font-heading);
-			content: "\25cf";
+			content: '\25cf';
 			font-size: var(--text-body);
 			color: var(--color-primary);
 			padding-right: 0.3em;
 			position: relative;
-			top: .083rem;
-			left: -.083rem;
+			top: 0.083rem;
+			left: -0.083rem;
 		}
 
-		&+& {
-			padding-top: .083rem;
+		& + & {
+			padding-top: 0.083rem;
 		}
-
 	}
-
 }
 
 .sfx-name {
@@ -645,7 +654,6 @@
 .sfx-cost {
 	opacity: 0.75;
 }
-
 
 // PORTRAIT
 
@@ -686,7 +694,7 @@
 	background-color: color-mix(in srgb, var(--color-interactive), transparent 90%);
 	background-size: cover;
 	background-position: center;
-	transition: background-position .2s;
+	transition: background-position 0.2s;
 	position: relative;
 
 	&.portrait-alignment-top-left {
@@ -737,7 +745,7 @@
 	display: block;
 	width: 50%;
 	height: auto;
-	margin: .5em auto;
+	margin: 0.5em auto;
 	cursor: pointer;
 }
 
@@ -767,7 +775,6 @@
 }
 
 .submode-edit {
-
 	.attribute,
 	.scale-die {
 		cursor: grab;
@@ -838,7 +845,7 @@
 
 	&:after {
 		position: absolute;
-		content: " ";
+		content: ' ';
 		width: 5.6mm;
 		height: 5.6mm;
 		left: 50%;
@@ -850,7 +857,6 @@
 		box-sizing: border-box;
 	}
 }
-
 
 .attribute-name {
 	font-family: var(--font-secondary);
@@ -869,7 +875,7 @@
 	pointer-events: auto;
 }
 
-.vertical .attribute-inner>div {
+.vertical .attribute-inner > div {
 	writing-mode: vertical-lr;
 	transform: rotate(180deg);
 	padding-bottom: 1mm;
@@ -1019,7 +1025,7 @@
 // In-set add buttons fit narrow set columns instead of clipping: the row
 // grows with wrapped text rather than holding a fixed height.
 .trait-set .preview-button-container {
-	>div {
+	> div {
 		height: auto;
 		min-height: var(--button-container-height);
 		display: flex;
@@ -1041,7 +1047,7 @@
 		align-items: center !important;
 		text-align: center !important;
 
-		>span {
+		> span {
 			display: inline-flex !important;
 			align-items: center !important;
 			justify-content: center !important;
@@ -1062,7 +1068,7 @@
 	}
 }
 
-.trait-set.trait-set-frame-block.trait-set-header-top>.trait-set-header {
+.trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header {
 	margin-inline: 1rem;
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
@@ -1217,7 +1223,9 @@
 		letter-spacing: 0.02em;
 		cursor: pointer;
 		box-shadow: none;
-		transition: background-color 0.15s ease, border-color 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			border-color 0.15s ease;
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.16);
@@ -1319,7 +1327,9 @@
 	line-height: 1;
 	color: #1e293b;
 	font-family: var(--font-heading);
-	transition: background 0.15s, border-color 0.15s;
+	transition:
+		background 0.15s,
+		border-color 0.15s;
 
 	.c {
 		font-size: 0.9rem;
@@ -1359,7 +1369,9 @@
 	margin-left: 0.35rem;
 	line-height: 1;
 	vertical-align: middle;
-	transition: background 0.15s, color 0.15s;
+	transition:
+		background 0.15s,
+		color 0.15s;
 
 	i {
 		font-size: 0.65rem;
@@ -1408,7 +1420,9 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 0.8rem;
-		transition: background 0.15s, color 0.15s;
+		transition:
+			background 0.15s,
+			color 0.15s;
 
 		&:hover:not(:disabled) {
 			background: var(--color-primary);
@@ -1478,13 +1492,13 @@ button.trait-title-btn {
 	}
 }
 
-.trait-title.trait-title-stacked:not(.trait-title-statement)>button.trait-title-btn {
+.trait-title.trait-title-stacked:not(.trait-title-statement) > button.trait-title-btn {
 	width: 100%;
 	justify-content: center;
 	text-align: center;
 }
 
-.trait-title.trait-title-statement>button.trait-title-btn {
+.trait-title.trait-title-statement > button.trait-title-btn {
 	flex: 0 0 auto;
 	text-align: left;
 }
@@ -1492,7 +1506,6 @@ button.trait-title-btn {
 // WCAG 2.2 AA Touch Targets in Mobile Play Mode
 @media screen and (max-width: 768px) {
 	.submode-play {
-
 		.trait-value .c,
 		.subtrait-value .c,
 		.attached-stress-track .c {
@@ -1550,7 +1563,6 @@ button.trait-title-btn {
 }
 
 @media print {
-
 	.trait-set-play-only,
 	.trait-play-only {
 		display: none !important;
@@ -1658,8 +1670,7 @@ button.trait-title-btn {
 	stroke: #111111;
 
 	@media screen {
-
-		[data-theme="dark"] &,
+		[data-theme='dark'] &,
 		.theme-dark & {
 			stroke: var(--border-strong, #64748b);
 		}
@@ -1670,8 +1681,7 @@ button.trait-title-btn {
 	stroke: #000000;
 
 	@media screen {
-
-		[data-theme="dark"] &,
+		[data-theme='dark'] &,
 		.theme-dark & {
 			stroke: var(--border-strong, #64748b);
 		}
@@ -1728,7 +1738,9 @@ button.trait-title-btn {
 		border-bottom: none !important;
 		margin-bottom: 0 !important;
 		padding-bottom: 0 !important;
-		transition: left 0.25s ease, top 0.25s ease;
+		transition:
+			left 0.25s ease,
+			top 0.25s ease;
 
 		.trait-inner {
 			width: max-content !important;
@@ -1774,7 +1786,7 @@ button.trait-title-btn {
 			max-width: none !important;
 		}
 
-		&[data-frame-dock="left"] {
+		&[data-frame-dock='left'] {
 			transform: translate(calc(-100% - 6px), -14px) !important;
 			text-align: right;
 
@@ -1783,7 +1795,7 @@ button.trait-title-btn {
 			}
 		}
 
-		&[data-frame-dock="right"] {
+		&[data-frame-dock='right'] {
 			transform: translate(6px, -14px) !important;
 			text-align: left;
 
@@ -1792,7 +1804,7 @@ button.trait-title-btn {
 			}
 		}
 
-		&[data-frame-dock="top"] {
+		&[data-frame-dock='top'] {
 			transform: translate(-50%, calc(-100% - 6px)) !important;
 			text-align: center;
 
@@ -1801,7 +1813,7 @@ button.trait-title-btn {
 			}
 		}
 
-		&[data-frame-dock="bottom"] {
+		&[data-frame-dock='bottom'] {
 			transform: translate(-50%, 6px) !important;
 			text-align: center;
 
@@ -1856,8 +1868,7 @@ button.trait-title-btn {
 
 // LATE-NIGHT DARK MODE (Print-Immune: screen only, non-print submodes only)
 @media screen {
-
-	[data-theme="dark"],
+	[data-theme='dark'],
 	.theme-dark {
 		.character-sheet:not(.submode-print) {
 			color: var(--text-main);
@@ -1904,7 +1915,6 @@ button.trait-title-btn {
 
 			// Unfilled die range outlines and glyphs remain crisp and legible
 			.c:not(.active) svg {
-
 				polygon,
 				path,
 				rect {
@@ -2028,11 +2038,15 @@ button.trait-title-btn {
 		font-size: 0.78rem;
 		font-weight: 700;
 		cursor: pointer;
-		&:hover { background: #0369a1; }
+		&:hover {
+			background: #0369a1;
+		}
 
 		&.btn-inline-mini {
 			background: #334155;
-			&:hover { background: #1e293b; }
+			&:hover {
+				background: #1e293b;
+			}
 		}
 	}
 
@@ -2044,7 +2058,10 @@ button.trait-title-btn {
 		font-size: 0.9rem;
 		padding: 0.25rem 0.4rem;
 		border-radius: 4px;
-		&:hover { color: #0f172a; background: #e2e8f0; }
+		&:hover {
+			color: #0f172a;
+			background: #e2e8f0;
+		}
 	}
 
 	.inline-presets-list {
@@ -2098,7 +2115,9 @@ button.trait-title-btn {
 			font-weight: 700;
 			cursor: pointer;
 			align-self: flex-start;
-			&:hover { background: #0369a1; }
+			&:hover {
+				background: #0369a1;
+			}
 		}
 
 		.inline-preset-actions {
@@ -2115,7 +2134,10 @@ button.trait-title-btn {
 			padding: 0.25rem 0.45rem;
 			font-size: 0.75rem;
 			cursor: pointer;
-			&:hover { color: #ef4444; border-color: #ef4444; }
+			&:hover {
+				color: #ef4444;
+				border-color: #ef4444;
+			}
 		}
 	}
 }
@@ -2128,7 +2150,7 @@ button.trait-title-btn {
 }
 
 // Dark mode overrides for inline Add area
-[data-theme="dark"],
+[data-theme='dark'],
 .theme-dark {
 	.inline-add-set-area {
 		background: #1e293b;
@@ -2145,7 +2167,10 @@ button.trait-title-btn {
 
 		.btn-inline-close {
 			color: #94a3b8;
-			&:hover { color: #f8fafc; background: #334155; }
+			&:hover {
+				color: #f8fafc;
+				background: #334155;
+			}
 		}
 
 		.inline-preset-card {
@@ -2220,11 +2245,15 @@ button.trait-title-btn {
 		font-size: 0.78rem;
 		font-weight: 700;
 		cursor: pointer;
-		&:hover { background: #0369a1; }
+		&:hover {
+			background: #0369a1;
+		}
 
 		&.btn-inline-mini {
 			background: #334155;
-			&:hover { background: #1e293b; }
+			&:hover {
+				background: #1e293b;
+			}
 		}
 	}
 
@@ -2236,7 +2265,10 @@ button.trait-title-btn {
 		font-size: 0.9rem;
 		padding: 0.25rem 0.4rem;
 		border-radius: 4px;
-		&:hover { color: #0f172a; background: #e2e8f0; }
+		&:hover {
+			color: #0f172a;
+			background: #e2e8f0;
+		}
 	}
 
 	.inline-presets-list {
@@ -2290,7 +2322,9 @@ button.trait-title-btn {
 			font-weight: 700;
 			cursor: pointer;
 			align-self: flex-start;
-			&:hover { background: #0369a1; }
+			&:hover {
+				background: #0369a1;
+			}
 		}
 
 		.inline-preset-actions {
@@ -2307,7 +2341,10 @@ button.trait-title-btn {
 			padding: 0.25rem 0.45rem;
 			font-size: 0.75rem;
 			cursor: pointer;
-			&:hover { color: #ef4444; border-color: #ef4444; }
+			&:hover {
+				color: #ef4444;
+				border-color: #ef4444;
+			}
 		}
 	}
 }
@@ -2320,7 +2357,7 @@ button.trait-title-btn {
 }
 
 // Dark mode overrides for inline Add area
-[data-theme="dark"],
+[data-theme='dark'],
 .theme-dark {
 	.inline-add-set-area {
 		background: #1e293b;
@@ -2337,7 +2374,10 @@ button.trait-title-btn {
 
 		.btn-inline-close {
 			color: #94a3b8;
-			&:hover { color: #f8fafc; background: #334155; }
+			&:hover {
+				color: #f8fafc;
+				background: #334155;
+			}
 		}
 
 		.inline-preset-card {
@@ -2428,7 +2468,7 @@ button.trait-title-btn {
 	margin-right: 0.25rem;
 }
 /* dark mode */
-[data-theme="dark"],
+[data-theme='dark'],
 .theme-dark {
 	.badge--muted {
 		background: #1e293b;

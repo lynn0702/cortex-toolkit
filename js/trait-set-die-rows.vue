@@ -3,10 +3,29 @@ import { getView } from './model.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
-	traitSet, s, submode, printBlank, viewY, character,
-	isSelected, selectElement, openTraitAt, updateCharacter, removeTrait, addTrait,
-	getRenderedTraits, getTraitClasses, getTraitSetRatings, getRatingPosition, renderDieValueForPrint,
-	handleSingleDieClick, hasCounterColumn, getTraitCounter, firstDie, isDieActive, isPlayMutableSet
+	traitSet,
+	s,
+	submode,
+	printBlank,
+	viewY,
+	character,
+	isSelected,
+	selectElement,
+	openTraitAt,
+	updateCharacter,
+	removeTrait,
+	addTrait,
+	getRenderedTraits,
+	getTraitClasses,
+	getTraitSetRatings,
+	getRatingPosition,
+	renderDieValueForPrint,
+	handleSingleDieClick,
+	hasCounterColumn,
+	getTraitCounter,
+	firstDie,
+	isDieActive,
+	isPlayMutableSet,
 } = injectTraitSet();
 </script>
 
@@ -14,27 +33,44 @@ const {
 	<div
 		class="trait-die-rows"
 		:class="{
-			'ladder': getView(traitSet)?.ladder === true,
+			ladder: getView(traitSet)?.ladder === true,
 			'rating-vertical': getRatingPosition(traitSet) === 'vertical',
-			'label-vertical': getView(traitSet)?.labelPosition === 'vertical'
+			'label-vertical': getView(traitSet)?.labelPosition === 'vertical',
 		}"
 		v-if="getView(traitSet)?.style?.body === 'die-rows'"
 	>
-		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || ('t' + t)">
+		<template v-for="(item, t) in getRenderedTraits(traitSet, s)" :key="item.trait._lid || 't' + t">
 			<div
 				:class="getTraitClasses(item.trait)"
 				:data-trait-name="item.trait.name || undefined"
-				:data-trait-rating="firstDie(item.trait) ? ('d' + firstDie(item.trait)) : undefined"
+				:data-trait-rating="firstDie(item.trait) ? 'd' + firstDie(item.trait) : undefined"
 			>
-				<div :class="{ 'trait-inner': true, 'die-row': true, 'ladder-rung': true, 'selected': !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]), 'trait-placeholder-slot': item.isPlaceholder }">
+				<div
+					:class="{
+						'trait-inner': true,
+						'die-row': true,
+						'ladder-rung': true,
+						selected: !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]),
+						'trait-placeholder-slot': item.isPlaceholder,
+					}"
+				>
 					<button
 						type="button"
 						class="trait-title-btn die-row-btn ladder-rung-btn"
-						:aria-label="(!item.isPlaceholder && item.trait.name) ? (item.trait.name + (submode === 'play' ? ' options' : ' edit')) : ((traitSet.noun || 'Name') + ' edit')"
+						:aria-label="
+							!item.isPlaceholder && item.trait.name
+								? item.trait.name + (submode === 'play' ? ' options' : ' edit')
+								: (traitSet.noun || 'Name') + ' edit'
+						"
 						@click.stop="openTraitAt(s, item)"
 					>
-						<span class="die-row-name ladder-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{ item.trait.name }}</span>
-						<span class="die-row-name ladder-name die-row-blank ladder-blank" v-else-if="printBlank || item.isPlaceholder || !item.trait.name">
+						<span class="die-row-name ladder-name" v-if="!printBlank && !item.isPlaceholder && item.trait.name">{{
+							item.trait.name
+						}}</span>
+						<span
+							class="die-row-name ladder-name die-row-blank ladder-blank"
+							v-else-if="printBlank || item.isPlaceholder || !item.trait.name"
+						>
 							<template v-if="submode === 'edit' && !printBlank && !item.trait.name">
 								<span class="trait-name-hint">{{ traitSet.noun || 'Name' }}...</span>
 							</template>
@@ -44,32 +80,56 @@ const {
 						</span>
 						<span class="die-row-name ladder-name" v-else>{{ item.trait.name || '' }}</span>
 					</button>
-					<div class="trait-value single-die-value" @click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex) : null">
+					<div
+						class="trait-value single-die-value"
+						@click.stop="
+							!printBlank && !item.isPlaceholder
+								? handleSingleDieClick(item.trait, firstDie(item.trait), traitSet, s, item.originalIndex)
+								: null
+						"
+					>
 						<span
 							v-for="size in getTraitSetRatings(traitSet)"
 							:key="size"
-							:class="{ 'c': true, 'active': !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+							:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 							role="button"
 							tabindex="0"
 							:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
 							:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
-							@click.stop="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
-							@keydown.enter.prevent="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
-							@keydown.space.prevent="!printBlank && !item.isPlaceholder ? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex) : null"
+							@click.stop="
+								!printBlank && !item.isPlaceholder
+									? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+									: null
+							"
+							@keydown.enter.prevent="
+								!printBlank && !item.isPlaceholder
+									? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+									: null
+							"
+							@keydown.space.prevent="
+								!printBlank && !item.isPlaceholder
+									? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+									: null
+							"
 							v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 						></span>
 					</div>
 					<span class="die-row-counter" v-if="hasCounterColumn(traitSet)">
-						{{ (!printBlank && !item.isPlaceholder) ? getTraitCounter(item.trait) : '' }}
+						{{ !printBlank && !item.isPlaceholder ? getTraitCounter(item.trait) : '' }}
 					</span>
 				</div>
 			</div>
 		</template>
 		<transition appear>
-			<div class="preview-button-container" v-if="submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet))">
+			<div
+				class="preview-button-container"
+				v-if="submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet))"
+			>
 				<div class="preview-button-container-inner">
-					<div class="preview-button" @click.stop="addTrait( s )">
-						<span><i class="fas fa-plus"></i> {{ ( traitSet.noun && traitSet.noun.length ) ? traitSet.noun : 'Trait' }}</span>
+					<div class="preview-button" @click.stop="addTrait(s)">
+						<span
+							><i class="fas fa-plus"></i> {{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait' }}</span
+						>
 					</div>
 				</div>
 			</div>

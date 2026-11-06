@@ -48,26 +48,27 @@ export interface FrameAnchor {
 export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 	if (!traitSetOrFrame) return null;
 	const view = traitSetOrFrame.view !== undefined ? getView(traitSetOrFrame) : traitSetOrFrame;
-	const raw = traitSetOrFrame.view !== undefined
-		? view?.frame
-		: (traitSetOrFrame.frame !== undefined ? traitSetOrFrame.frame : traitSetOrFrame);
+	const raw =
+		traitSetOrFrame.view !== undefined
+			? view?.frame
+			: traitSetOrFrame.frame !== undefined
+				? traitSetOrFrame.frame
+				: traitSetOrFrame;
 
-	const isLegacyRing = Boolean(
-		view?.ringTrait ||
-		(traitSetOrFrame as any)?.ringTrait ||
-		raw?.legacyRing
-	);
+	const isLegacyRing = Boolean(view?.ringTrait || (traitSetOrFrame as any)?.ringTrait || raw?.legacyRing);
 
 	const rawRingCfg = view?.ringConfig || raw?.ringConfig || (traitSetOrFrame as any)?.ringConfig;
-	const ringConfig: RingConfig | null = rawRingCfg ? {
-		arcAngle: rawRingCfg.arcAngle ?? (rawRingCfg.arcSlide !== undefined ? rawRingCfg.arcSlide * 3 : -90),
-		arcSpread: rawRingCfg.arcSpread ?? 100,
-		arcDistance: rawRingCfg.arcDistance ?? 0,
-		scaleAngle: rawRingCfg.scaleAngle ?? 0,
-		scaleDistance: rawRingCfg.scaleDistance ?? 0,
-		scaleDieX: rawRingCfg.scaleDieX ?? 0,
-		scaleDieY: rawRingCfg.scaleDieY ?? 0
-	} : null;
+	const ringConfig: RingConfig | null = rawRingCfg
+		? {
+				arcAngle: rawRingCfg.arcAngle ?? (rawRingCfg.arcSlide !== undefined ? rawRingCfg.arcSlide * 3 : -90),
+				arcSpread: rawRingCfg.arcSpread ?? 100,
+				arcDistance: rawRingCfg.arcDistance ?? 0,
+				scaleAngle: rawRingCfg.scaleAngle ?? 0,
+				scaleDistance: rawRingCfg.scaleDistance ?? 0,
+				scaleDieX: rawRingCfg.scaleDieX ?? 0,
+				scaleDieY: rawRingCfg.scaleDieY ?? 0,
+			}
+		: null;
 
 	if (!raw) {
 		if (isLegacyRing) {
@@ -86,9 +87,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 					scaleAngle: 0,
 					scaleDistance: 0,
 					scaleDieX: 0,
-					scaleDieY: 0
+					scaleDieY: 0,
 				},
-				legacyRing: true
+				legacyRing: true,
 			};
 		}
 		return null;
@@ -106,16 +107,18 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			color: 'primary',
 			box: false,
 			path: null,
-			ringConfig: hasLegacyRing ? (ringConfig || {
-				arcAngle: -90,
-				arcSpread: 100,
-				arcDistance: 0,
-				scaleAngle: 0,
-				scaleDistance: 0,
-				scaleDieX: 0,
-				scaleDieY: 0
-			}) : null,
-			legacyRing: hasLegacyRing
+			ringConfig: hasLegacyRing
+				? ringConfig || {
+						arcAngle: -90,
+						arcSpread: 100,
+						arcDistance: 0,
+						scaleAngle: 0,
+						scaleDistance: 0,
+						scaleDieX: 0,
+						scaleDieY: 0,
+					}
+				: null,
+			legacyRing: hasLegacyRing,
 		};
 	}
 
@@ -127,19 +130,23 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			const n = Number(val);
 			return Number.isFinite(n) ? n : fallback;
 		};
-		const span: [number, number] = (Array.isArray(raw.span) && raw.span.length >= 2)
-			? [parseNum(raw.span[0], defaultSpan[0]), parseNum(raw.span[1], defaultSpan[1])]
-			: defaultSpan;
+		const span: [number, number] =
+			Array.isArray(raw.span) && raw.span.length >= 2
+				? [parseNum(raw.span[0], defaultSpan[0]), parseNum(raw.span[1], defaultSpan[1])]
+				: defaultSpan;
 		const hasLegacyRing = shape === 'ring' && Boolean(raw.legacyRing || raw.ringConfig);
-		const effectiveRingConfig = hasLegacyRing ? (raw.ringConfig || ringConfig || {
-			arcAngle: -90,
-			arcSpread: 100,
-			arcDistance: 0,
-			scaleAngle: 0,
-			scaleDistance: 0,
-			scaleDieX: 0,
-			scaleDieY: 0
-		}) : null;
+		const effectiveRingConfig = hasLegacyRing
+			? raw.ringConfig ||
+				ringConfig || {
+					arcAngle: -90,
+					arcSpread: 100,
+					arcDistance: 0,
+					scaleAngle: 0,
+					scaleDistance: 0,
+					scaleDieX: 0,
+					scaleDieY: 0,
+				}
+			: null;
 
 		let color: FrameColor = 'primary';
 		let stroke = '2px';
@@ -169,14 +176,14 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		return {
 			shape,
 			span,
-			corner: raw.corner === 'cut' ? 'cut' : (Number.isFinite(Number(raw.corner)) ? Number(raw.corner) : 8),
+			corner: raw.corner === 'cut' ? 'cut' : Number.isFinite(Number(raw.corner)) ? Number(raw.corner) : 8,
 			stroke,
 			color,
 			...(dash ? { dash } : {}),
 			box,
 			path: typeof raw.path === 'string' && raw.path.trim() ? raw.path.trim() : null,
 			ringConfig: effectiveRingConfig,
-			legacyRing: hasLegacyRing
+			legacyRing: hasLegacyRing,
 		};
 	}
 	return null;
@@ -227,13 +234,13 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 				x: Math.round(percentX * 10000) / 10000,
 				y: Math.round(percentY * 10000) / 10000,
 				dock,
-				angle: Math.round(angleDeg * 100) / 100
+				angle: Math.round(angleDeg * 100) / 100,
 			};
 
 			if (arcDistance !== 0) {
 				anchor.offsetMm = {
 					x: Math.round(arcDistance * cos * 10000) / 10000,
-					y: Math.round(arcDistance * sin * 10000) / 10000
+					y: Math.round(arcDistance * sin * 10000) / 10000,
 				};
 			}
 
@@ -245,7 +252,7 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 					left: `calc(50% + ${offX.toFixed(2)}mm)`,
 					top: '50%',
 					transform: 'translate(0, -50%)',
-					textAlign: 'left'
+					textAlign: 'left',
 				};
 			} else if (cos < -0.35) {
 				anchor.nameStyle = {
@@ -253,7 +260,7 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 					left: `calc(50% + ${offX.toFixed(2)}mm)`,
 					top: '50%',
 					transform: 'translate(-100%, -50%)',
-					textAlign: 'right'
+					textAlign: 'right',
 				};
 			} else {
 				const offY = sin * distMm;
@@ -262,7 +269,7 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 					left: '50%',
 					top: `calc(50% + ${offY.toFixed(2)}mm)`,
 					transform: 'translate(-50%, 0)',
-					textAlign: 'center'
+					textAlign: 'center',
 				};
 			}
 
@@ -316,7 +323,7 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 			x: Math.round(xi * 100) / 100,
 			y: Math.round(yi * 100) / 100,
 			dock,
-			angle: Math.round(theta_i * 100) / 100
+			angle: Math.round(theta_i * 100) / 100,
 		});
 	}
 
@@ -326,73 +333,72 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 /**
  * Builds the rectangular block perimeter path.
  */
-		export function buildBlockPath(corner: number | 'cut' | undefined, width = 100, height = 100): string {
-			if (corner === 'cut') {
-				return `M 6,1 L ${width - 6},1 L ${width - 1},6 L ${width - 1},${height - 6} L ${width - 6},${height - 1} L 6,${height - 1} L 1,${height - 6} L 1,6 Z`;
-			}
-				let r = 4;
-				if (typeof corner === 'number' && corner !== 8) {
-					r = Math.min(Math.min((width - 2) / 2, (height - 2) / 2), Math.max(0, corner));
-				}
-				if (r <= 0) {
-					return `M 1,1 L ${width - 1},1 L ${width - 1},${height - 1} L 1,${height - 1} Z`;
-				}
-				return `M ${1 + r},1 L ${width - 1 - r},1 Q ${width - 1},1 ${width - 1},${1 + r} L ${width - 1},${height - 1 - r} Q ${width - 1},${height - 1} ${width - 1 - r},${height - 1} L ${1 + r},${height - 1} Q 1,${height - 1} 1,${height - 1 - r} L 1,${1 + r} Q 1,1 ${1 + r},1 Z`;
-			}
+export function buildBlockPath(corner: number | 'cut' | undefined, width = 100, height = 100): string {
+	if (corner === 'cut') {
+		return `M 6,1 L ${width - 6},1 L ${width - 1},6 L ${width - 1},${height - 6} L ${width - 6},${height - 1} L 6,${height - 1} L 1,${height - 6} L 1,6 Z`;
+	}
+	let r = 4;
+	if (typeof corner === 'number' && corner !== 8) {
+		r = Math.min(Math.min((width - 2) / 2, (height - 2) / 2), Math.max(0, corner));
+	}
+	if (r <= 0) {
+		return `M 1,1 L ${width - 1},1 L ${width - 1},${height - 1} L 1,${height - 1} Z`;
+	}
+	return `M ${1 + r},1 L ${width - 1 - r},1 Q ${width - 1},1 ${width - 1},${1 + r} L ${width - 1},${height - 1 - r} Q ${width - 1},${height - 1} ${width - 1 - r},${height - 1} L ${1 + r},${height - 1} Q 1,${height - 1} 1,${height - 1 - r} L 1,${1 + r} Q 1,1 ${1 + r},1 Z`;
+}
 
-			/**
-			 * Builds the radial shape path (ring, ellipse, or arc) in a 100x100 viewBox.
-			 */
-			export function buildRadialShapePath(config: FrameConfig): string {
-				let rx = 26;
-				let ry = 26;
-				if (config.shape === 'ellipse') {
-					rx = 30;
-					ry = 22;
-				} else if (config.shape === 'arc') {
-					rx = 28;
-					ry = 24;
-				}
+/**
+ * Builds the radial shape path (ring, ellipse, or arc) in a 100x100 viewBox.
+ */
+export function buildRadialShapePath(config: FrameConfig): string {
+	let rx = 26;
+	let ry = 26;
+	if (config.shape === 'ellipse') {
+		rx = 30;
+		ry = 22;
+	} else if (config.shape === 'arc') {
+		rx = 28;
+		ry = 24;
+	}
 
-				const delta = config.span[1] - config.span[0];
-				if (Math.abs(delta) >= 360) {
-					return `M 50,${(50 - ry).toFixed(2)} A ${rx} ${ry} 0 1 1 49.99,${(50 - ry).toFixed(2)} Z`;
-				}
+	const delta = config.span[1] - config.span[0];
+	if (Math.abs(delta) >= 360) {
+		return `M 50,${(50 - ry).toFixed(2)} A ${rx} ${ry} 0 1 1 49.99,${(50 - ry).toFixed(2)} Z`;
+	}
 
-				const theta0 = config.span[0];
-				const theta1 = config.span[1];
-				const rad0 = (theta0 - 90) * (Math.PI / 180);
-				const rad1 = (theta1 - 90) * (Math.PI / 180);
-				const x0 = 50 + rx * Math.cos(rad0);
-				const y0 = 50 + ry * Math.sin(rad0);
-				const x1 = 50 + rx * Math.cos(rad1);
-				const y1 = 50 + ry * Math.sin(rad1);
-				const largeArc = Math.abs(delta) > 180 ? 1 : 0;
-				const sweep = delta >= 0 ? 1 : 0;
+	const theta0 = config.span[0];
+	const theta1 = config.span[1];
+	const rad0 = (theta0 - 90) * (Math.PI / 180);
+	const rad1 = (theta1 - 90) * (Math.PI / 180);
+	const x0 = 50 + rx * Math.cos(rad0);
+	const y0 = 50 + ry * Math.sin(rad0);
+	const x1 = 50 + rx * Math.cos(rad1);
+	const y1 = 50 + ry * Math.sin(rad1);
+	const largeArc = Math.abs(delta) > 180 ? 1 : 0;
+	const sweep = delta >= 0 ? 1 : 0;
 
-				return `M ${x0.toFixed(2)},${y0.toFixed(2)} A ${rx} ${ry} 0 ${largeArc} ${sweep} ${x1.toFixed(2)},${y1.toFixed(2)}`;
-			}
+	return `M ${x0.toFixed(2)},${y0.toFixed(2)} A ${rx} ${ry} 0 ${largeArc} ${sweep} ${x1.toFixed(2)},${y1.toFixed(2)}`;
+}
 
-			/**
-			 * Deterministic SVG path generator for frame shapes inside a 100x100 (or 100x12 for line) viewBox.
-			 */
-			export function buildFrameSvgPath(config: FrameConfig): string {
-				if (config.path) return config.path;
+/**
+ * Deterministic SVG path generator for frame shapes inside a 100x100 (or 100x12 for line) viewBox.
+ */
+export function buildFrameSvgPath(config: FrameConfig): string {
+	if (config.path) return config.path;
 
-				if (config.shape === 'line') {
-					return 'M 0,6 L 100,6';
-				}
+	if (config.shape === 'line') {
+		return 'M 0,6 L 100,6';
+	}
 
-				if (config.shape === 'block') {
-					return buildBlockPath(config.corner, 100, 100);
-				}
+	if (config.shape === 'block') {
+		return buildBlockPath(config.corner, 100, 100);
+	}
 
-				const radial = buildRadialShapePath(config);
-				if (config.box && (config.shape === 'ring' || config.shape === 'ellipse' || config.shape === 'arc')) {
-					const box = buildBlockPath(config.corner, 100, 100);
-					return `${box} ${radial}`;
-				}
+	const radial = buildRadialShapePath(config);
+	if (config.box && (config.shape === 'ring' || config.shape === 'ellipse' || config.shape === 'arc')) {
+		const box = buildBlockPath(config.corner, 100, 100);
+		return `${box} ${radial}`;
+	}
 
-				return radial;
-			}
-
+	return radial;
+}
