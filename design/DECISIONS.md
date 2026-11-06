@@ -1,6 +1,6 @@
 # DECISIONS.md — cortex-toolkit
 
-New decisions: add one dated line here under the right topic, and the full entry to `DECISIONS-history.md`. Read this file before proposing anything; read the history only when an entry here points to it or a decision is disputed.
+New decisions: add one dated line here under the right topic. Read this file before proposing anything.
 
 Scope: this repo is the sheet builder. KaelriMonsters
 (https://github.com/lynn0702/KaelriMonsters) is a separate content repo —
@@ -61,29 +61,24 @@ https://github.com/kaelri/cortex-toolkit.
 
 ### SFX
 - 2026-10-11: SFX do not inherit. Placement is presentation, not mechanical. An SFX in one set may reference a trait in another.
-- 2026-10-11: SFX is a traits map: old `sfx` arrays fold into `traits` under an `SFX` node, Hinder among them.
-- 2026-10-26 (SFX dissolve): `trait.sfx` / `set.sfx` die as named model fields. SFX are ordinary child traits grouped under an "SFX" child trait, distinguished by shape and view — no named field, no kind flag, no SFX boolean. Export stops emitting sfx arrays; old-format import still converts them into traits. Hinder shared-text behavior preserved.
+- 2026-10-11: SFX are traits in a traits map under an `SFX` node, Hinder among them.
+- 2026-10-26 (SFX dissolve): `trait.sfx` / `set.sfx` die as named model fields. SFX are ordinary child traits grouped under an "SFX" child trait, distinguished by shape and view — no named field, no kind flag, no SFX boolean. Hinder shared-text behavior preserved.
 
-- 2026-10-30: Badge is a trait part. trait.view.badge carries text, shape, color, and an optional Font Awesome icon; trait.view.prefix carries text. Badge renders by data presence: trait badge data present in a placed badge cell, no visibility flag, no set-level badge, no fallthrough. badge joins KNOWN_PARTS; the mini gains a badge tile (marker L, Edit-only); shape is orientation + corners only, color is a fixed token set, icon renders upright in all shapes, FA only. The old labels.sfxBadge / labels.sfxPrefix migrate per trait to SFX traits; the corpus is seeded with badge data on every SFX trait plus a badge cell above its block (prefix unseeded, blank = no leaders). SFX is not model or render language: no sfx key, kind, class, or view key survives. This supersedes the 2026-10-30 dirty-commit note that left the badge object open.
+- 2026-10-30: Badge is a trait part. trait.view.badge carries text, shape, color, and an optional Font Awesome icon; trait.view.prefix carries text. Badge renders by data presence: trait badge data present in a placed badge cell, no visibility flag, no set-level badge, no fallthrough. badge joins KNOWN_PARTS; the mini gains a badge tile (marker L, Edit-only); shape is orientation + corners only, color is a fixed token set, icon renders upright in all shapes, FA only. The corpus is seeded with badge data on every SFX trait plus a badge cell above its block (prefix unseeded, blank = no leaders). SFX is not model or render language: no sfx key, kind, class, or view key survives. This supersedes the 2026-10-30 dirty-commit note that left the badge object open.
 
 ### Stress & complications
-- 2026-10-22: Stress lives as an ordinary rated companion subtrait (the "stress ring" is display of the companion's value); `custom.stress` / `custom.isStressOut` normalize to it, templates carry stress as real traits.
+- 2026-10-22: Stress lives as an ordinary rated companion subtrait (the "stress ring" is display of the companion's value); templates carry stress as real traits.
 - 2026-10-18 (superseded by 2026-10-27 item 3 below): Attached stress is set-level config (`enabled`, `label`, scale) with an ordinary companion per trait; enabling forces the track on (default five-die scale), disabling deletes the cells.
-- 2026-10-27 (Attached stress declaration dissolve + layout area rename): `view.attachedStress` declaration dies as a set-level configuration. Attached stress is recognized purely by the presence of `parts.track` in the layout grid; its label defaults to 'Stress' or reads `view.labels.stress`. Stress scale lives exclusively on companions (`rating.range`), not at the set or parts level; track scale for empty rows resolves to the range of the first companion found in the set, falling back to default `[4, 6, 8, 10, 12]`. Migration converts legacy non-default scale declarations by seeding one value-less companion per trait (`{ name: <label>, rating: { type: "Die", value: [], range: <scale> } }`), preserves existing companions, migrates `includeOut: true` to `outIndicator: true`, and deletes `attachedStress`. Editor toggle only builds or removes `parts.track` / `parts.trackLabel` cells without writing declarations or seeding companions. Layout areas and parts renamed: `parts.stress` → `parts.track`, `parts.stressLabel` → `parts.trackLabel`, `parts.sfx` → `parts.block`, `stressDice` → `trackDice`, `.trait-part-stress` → `.trait-part-track`, `.trait-part-stress-label` → `.trait-part-track-label`, `.trait-part-sfx` → `.trait-part-block`. CSS sizing wires `--track-faces` dynamically for responsive cell scaling.
+- 2026-10-27 (Attached stress declaration dissolve + layout area rename): `view.attachedStress` declaration dies as a set-level configuration. Attached stress is recognized purely by the presence of `parts.track` in the layout grid; its label defaults to 'Stress' or reads `view.labels.stress`. Stress scale lives exclusively on companions (`rating.range`), not at the set or parts level; track scale for empty rows resolves to the range of the first companion found in the set, falling back to default `[4, 6, 8, 10, 12]`. Editor toggle only builds or removes `parts.track` / `parts.trackLabel` cells without writing declarations or seeding companions. Layout areas and parts renamed: `parts.stress` → `parts.track`, `parts.stressLabel` → `parts.trackLabel`, `parts.sfx` → `parts.block`, `stressDice` → `trackDice`, `.trait-part-stress` → `.trait-part-track`, `.trait-part-stress-label` → `.trait-part-track-label`, `.trait-part-sfx` → `.trait-part-block`. CSS sizing wires `--track-faces` dynamically for responsive cell scaling.
 - 2026-10-18: Stepped tracks get a generic `view.outIndicator` (default off); legacy `stressConfig.includeOut` still wins when set on `stress` bodies.
 - 2026-10-27 (playMutable carve-out): Play add/remove is decided strictly by `view.playMutable === true`. Name-sniffing ('complication' substring) and the unflagged stress fallback are removed. Stress sets never add or remove traits in Play (stress only steps ratings). Complications sets keep full add and remove capability in Play. The 6 complication sets in the spotlight corpus are flagged by meaning: Misty Cove Complications, Necromancer Complications, Retired No More Aging Complications, Snowfall Initiative Complications, Strange Towns Complications, Titans vs Leviathans Handler Complications. Assets and stress sets remain unflagged.
 - 2026-10-29: attachedStress code rip-out: all code
-  references deleted, including migration handling,
-  preset normalization, validator branch, and migration
-  tests. Delete, not deprecate, per the 2026-10-28
-  decision. Safety basis unchanged: no legacy file in
-  existence carries attachedStress; migration is partner
-  import, not legacy support; app not live; dev data
-  wiped. Companions stay (ordinary traits now);
-  DECISIONS history stays. stressConfig removed in the
-  same pass per the 2026-10-29 call: type, reads, editor
-  handling, and default gone; outIndicator is the only
-  Out path.
+  references deleted, including preset normalization,
+  validator branch, and tests. Delete, not deprecate, per
+  the 2026-10-28 decision. Companions stay (ordinary
+  traits now). stressConfig removed in the same pass per
+  the 2026-10-29 call: type, reads, editor handling, and
+  default gone; outIndicator is the only Out path.
 
 ### Visibility & name block
 - 2026-10-28 (Play-only visibility, extends 2026-10-23): Node visibility (`view.visibility` on traits and trait sets) is `shown` | `play-only` | `editor-only` | `hidden` (`shown` is absence); `'play-only'` is visible in `edit` and `play` and hidden in `print` (and `@media print`). One shared 4-state eye toggle (`fa-eye` / `fa-gamepad` / `fa-eye-slash` / `fa-ban`); writes stay sparse against honest defaults.
@@ -98,10 +93,10 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-16: Milestone sets are standard traited sets (`ratingPosition: "none"`, `features: { description: true }`).
 
 ### Statements
-- 2026-10-27 (Statements dissolve): `trait.statement` and `trait.questioned` die as named model data fields. A statement is an ordinary child pip trait grouped under a "Statement" child trait (no named field, no kind flag, no statement boolean), with the sentence as the trait's name (and description as alternative). Its Pip rating value represents questioned state: filled (`value: [true]`) = questioned, unfilled (`value: [false]`) = not questioned. Pip range is degenerate (`[true, false]`) and is not stored. Marking questioned is a Play value edit by construction (no special carve-out needed). Set-level `statement` / `hasQuestionedPip` view flags remain presentation-only. Export stops emitting trait-level statement and questioned fields; old-format import converts them into statement child pip traits.
+- 2026-10-27 (Statements dissolve): `trait.statement` and `trait.questioned` die as named model data fields. A statement is an ordinary child pip trait grouped under a "Statement" child trait (no named field, no kind flag, no statement boolean), with the sentence as the trait's name (and description as alternative). Its Pip rating value represents questioned state: filled (`value: [true]`) = questioned, unfilled (`value: [false]`) = not questioned. Pip range is degenerate (`[true, false]`) and is not stored. Marking questioned is a Play value edit by construction (no special carve-out needed). Set-level `statement` / `hasQuestionedPip` view flags remain presentation-only. Export stops emitting trait-level statement and questioned fields.
 
 ### Portrait ring
-- 2026-10-12: The ring is generic, not attributes-only (`ringTrait` flag, `ring-*` vocabulary); `getRingTrait` still reads legacy `attributesRing`.
+- 2026-10-12: The ring is generic, not attributes-only (`ringTrait` flag, `ring-*` vocabulary).
 - 2026-10-12: Scale die offsets X/Y are sliders; the halo drag already consumed them.
 
 ### Editors
@@ -124,7 +119,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-18: Rows are explicit and visual (`view.row`, header-inclusive); `rowBreak` is retired; bands derive from shared rows.
 - 2026-10-12: Set header option `sidebar` | `top` with `headerAlign` left|center|right (top-bar labels flush left by default).
 - 2026-10-18: Flank branch layout: `traitColumns: 2` spreads skills to outer columns with specialties down the middle; explicit split wins.
-- 2026-10-12: Internal style ids name the layout (`sfx-rows`, `boxed-rows`, `pool-rows`, `die-track`, `subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`); component files, classes, and identifiers follow the same stems. Legacy Kaelri style ids (`distinctions`, `assets`, `resources`, `stress`, `attributes`) migrate on import (2026-10-28).
+- 2026-10-12: Internal style ids name the layout (`sfx-rows`, `boxed-rows`, `pool-rows`, `die-track`, `subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`); component files, classes, and identifiers follow the same stems. Legacy Kaelri style ids (`distinctions`, `assets`, `resources`, `stress`, `attributes`) are not imported; use the converter project.
 - 2026-10-24: Paired slots address subtraits by index (`getSubtraitAt`, slot labels for names); the bonus-slot d6 floor is one slot-indexed rule (`getSubtraitSlotRatings`) shared by sheet and editor — the positional wrappers and the BONUS name-sniff are gone.
 - 2026-10-28 (2D Mobile Pillar Carousel & Set Preset Library, supersedes 2026-10-27 1D carousel): Mobile Play (`submode === 'play'` at `<= 768px`) is a data-driven 2D Pillar & Stack Deck powered by `view.pillar` (an open, permissive string with zero hardcoded whitelists; defaults to `'identity' | 'prime' | 'plus' | 'play'`) and customizable display labels under `view.labels.pillars[key]`. Top jump pills represent Pillar Columns (with staged dice count badges and a `+ Card` preset button); each `88vw` Pillar Column vertically stacks its assigned sets with a sticky `.mobile-substack-bar` when a column holds multiple cards. Session cards (`Scene Traits`, `Session Notes`, `Crisis Pool`, `Micro-GMC`) are dogfooded as standard `TraitSet` presets (`cortexSetPresets` + user-saved `cortexCustomSetPresets`), never bespoke widgets.
 
@@ -135,11 +130,8 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-24: Fixed system names (printed on blank sheets) match a central registry (`fixedNameSetKeys`), not inline name-sniffing; structural checks (columns, attached stress, spotlight membership) stay.
 - 2026-10-12: Fidelity fixes: badge rows are a 3-column grid with centred dice; sections fill their bands; paired-slot dice share the main row; trait names centred; unrated rows keep full tracks (blank sheets stay pencil-usable).
 
-### Migration
-- 2026-10-11: The migration path is porting original toolkit files (kaelri/cortex-toolkit format). Sample files live in the KaelriMonsters repo. Never break old-format import.
-- 2026-10-12: Migration targets originals only; the fork's own data has no users, so there is no stored-data upgrade path. The spotlight library files are the internal exception.
-- 2026-10-11: Bewilderwood (`spotlight-camp-bewilderwood` v3) is the reference migration: round-trip deep-equal with byte-identical sheet DOM.
-- 2026-10-11: Layered templates keep set `id` for join continuity; template layers are complete, not sparse; `$schema`/`version` markers drop in layered form and return on unmigrate.
+### Files
+- 2026-11-06: Only current-format files import. Old-format and Kaelri files are rejected; a separate converter project produces current-format files. Layered templates keep set `id` for join continuity; template layers are complete, not sparse; `$schema`/`version` markers drop in layered form.
 
 ### Persistence
 - 2026-10-26 (multi-tab data loss): saves are granular by character — the app upserts and deletes whole character entries by id, and the storage layer merges them into the store (read-modify-write) instead of replacing the whole record, so a stale tab can no longer clobber another tab's characters. A stale save is flagged and surfaced as a toast, never a quiet drop.
@@ -151,24 +143,23 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-12: Full SFC-first pivot (`<script setup lang="ts">`); `vue-tsc --noEmit` is the type gate; Node tests `require()` ESM sources (Node 24); unreferenced exports tree-shake by design.
 - 2026-10-12: Vue is bundled (offline-capable); Google Fonts + Font Awesome stay remote.
 - 2026-10-12: Build is `npm run types` + mix production + asset versioning; template library ships as a separate chunk with content-hash loader.
-- 2026-10-11: Work order while still 0.x (fork was schema 0.1, site not live yet): spec freeze → TS scaffold → migration shim → UI pass.
+- 2026-10-11: Work order while still 0.x (fork was schema 0.1, site not live yet): spec freeze → TS scaffold → UI pass.
 - 2026-10-12: Model types generate from the schemas (`npm run types` → `model.generated.ts`); `model.ts` adds the app-only layer.
 
 ### Template system (from 2026-10-08, still in force)
 - Template supplies starting content; user owns aesthetics; local user wins every conflict.
 - Template updates never silently change existing characters (snapshot + explicit switch prompt).
 - Existing characters pin an exact template snapshot; switching versions is explicit and preserves local overrides.
-- Original-project imports without templates render unchanged.
 - Removed traits stay removed across export/import.
-- 2026-10-12: Template versions reset to v1 (no release yet; history is the archive); content edits are hand-authored and ship with validate plus round-trip parity green.
+- 2026-10-12: Template versions reset to v1 (no release yet); content edits are hand-authored and ship with validate green.
 - 2026-10-11: Templates carry structure, never sample content.
-- 2026-10-11: All 28 spotlight templates migrated and proven (template parity green, validate clean).
+- 2026-10-11: All 28 spotlight templates are current-format (validate clean).
 - 2026-10-11: The map key is the address, the set id the stable identity; trait renames stay add+remove.
 
 ### Agent working style
 - 2026-10-11: Terse UI: short labels, no parentheticals, no "e.g." A label that needs explaining gets renamed.
 - 2026-10-11: Agents may build beyond the ask when genuinely helpful. Test: surface something real (stored elements get UI; no hidden state) versus inventing the speculative (presets for undefined taxonomies).
-- 2026-10-11: One migration path: users of the original fork (kaelri/cortex-toolkit) bring their files and they work; sample files live in the KaelriMonsters repo. Old-format import never breaks.
+- 2026-10-11: Files import only in the current format; a separate converter project handles old formats. The app never carries a legacy reader.
 - 2026-10-11: The model (`trait-layers.md`, `trait-usage.md`) is the UI spec.
 - 2026-10-10: Keep the `$noun` / default `"pronoun"` joke — load-bearing morale.
 - 2026-10-11: Shell discipline: content edits to generated files go through the edit tool with read-verified context; byte-level verification via git diff hunks.
@@ -176,7 +167,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-30: Rebrief remainder. The a03690d dirty commit landed the skill patches, the gallery death, Hinder as data, label removals, header consolidation, Hinder part 2, and the features plane. What remained - badge as a trait part, statement-flag derivation, SFX editor retirement, the vocabulary remainder, and the JSON textarea dark variant - is this brief. The phone pass, classic-on-place section 4d, and item 5 follow after, as planned, and are not in this brief.
 
 - 2026-11-01: Supersedes the 2026-10-30 "Rebrief remainder" line's "statement-flag derivation" clause: statement flags were ratified and landed on 2026-10-31 and are not part of this brief. The rest of that line stands.
-- 2026-11-01: Rebrief remainder part 2. Completed F1 (badge renders before SFX list), R3 (SFX editor retirement via shared SubtraitEditor), R4 (vocabulary rename/migration: ratingLadder, subtraitRatingLadder, reservedSlots, trackDice, out-badge, ring-grid/ring-items, isPlayMutableSet), and R5 dark badge toggle. Remaining phone pass, classic-on-place section 4d, and item 5 remain out of scope.
+- 2026-11-01: Rebrief remainder part 2. Completed F1 (badge renders before SFX list), R3 (SFX editor retirement via shared SubtraitEditor), R4 (vocabulary rename: ratingLadder, subtraitRatingLadder, reservedSlots, trackDice, out-badge, ring-grid/ring-items, isPlayMutableSet), and R5 dark badge toggle. Remaining phone pass, classic-on-place section 4d, and item 5 remain out of scope.
 
 ## Open (decisions needed)
 
@@ -194,7 +185,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-11: Dice-string ratings as canonical emit — emit is rating objects; strings parse on import only.
 - 2026-10-11: `pool: true` auto-emitted on every multi-die rating — pool is staging intent, authored, not inferred.
 - 2026-10-11: Challenge/boss pools as flags — Dice ratings with pool and spendable.
-- 2026-10-11: Old multi-die ratings migrate with `pool: true` — see above.
+- 2026-10-11: Multi-die ratings carry `pool: true` — see above.
 - 2026-10-22: Trait visibility as a three-state enum, then as a hidden boolean — visibility is a word; booleans map onto it (superseded 2026-10-23).
 - 2026-10-22: `custom.cortexToolkit.setDie` / branch-head set die / "Set Die" wording — the set node's own Rating.
 - 2026-10-11: `nounSingular` / `nounPlural` — renamed `noun` / `plural` (2026-10-23).
@@ -261,24 +252,13 @@ https://github.com/kaelri/cortex-toolkit.
   still pending ratification. No dogfood or new-shape work
   in this slice.
 
-- 2026-10-29: Ring detection goes explicit-only; the legacy key moves to
-  migration only. `attributesRing` is converted at load/import in
-  `cortexMigration.migrateRingTrait` (existing `ringTrait` wins, otherwise the
-  legacy value carries over, then the key is deleted) and is never read at
-  runtime and never stored: `getRingTrait` returns `view.ringTrait` only,
-  `resolveFrame` unifies `ringTrait`/`ringConfig` only, and the pillar
-  `attributesRing` read is deleted. Runtime ring detection is body
-  `'portrait-ring'` OR `view.ringTrait === true` — the set-name, noun,
+- 2026-10-29: Ring detection is explicit-only. `getRingTrait` returns
+  `view.ringTrait` only, `resolveFrame` unifies `ringTrait`/`ringConfig` only,
+  and the pillar `attributesRing` read is deleted. Runtime ring detection is
+  body `'portrait-ring'` OR `view.ringTrait === true` — the set-name, noun,
   location, and `isAttributes` fallbacks are deleted from `character.vue`
-  and the set editor (Kaelri inferred the ring from sheet structure; this
-  codebase will not maintain or document that magic). Old files keep their
-  rings because migration infers once at import (name `'attributes'`, noun
-  `'attribute'`, `isAttributes`, or location `'attributes'` with a default
-  body gains `ringTrait: true`) and writes it explicitly. Supersedes the
-  2026-10-12 `getRingTrait` fallback line in DECISIONS.md. Corpus impact is
-  nil by measurement: the 13 stored `attributesRing: false` values (all
-  spotlight Attributes sets) convert 1:1 to `ringTrait: false`; no corpus set
-  relied on fallback for its ring.
+  and the set editor. The 13 spotlight Attributes sets carry
+  `ringTrait: false` explicitly; no corpus set relies on a fallback.
 
 - 2026-10-29: Range rules (Phase 2 item 4) implemented per the 2026-10-26
   decisions. Range controls render only on rated traits (Die/Dice section
@@ -288,10 +268,8 @@ https://github.com/kaelri/cortex-toolkit.
   same type in the set (Die/Dice ladder subsets, Counter [lo, hi] pairs),
   preserves target values verbatim, writes locally, and does not exist for
   Pip or unrated traits. Pip range is derived, not stored: bubble count is
-  the value-list length everywhere (editor, runtime writers, mini, dogfood);
-  migration pads stored pip values up to a stored range[0] and then strips
-  the range key, so the empty-value fresh-track case (value [] with range
-  [25]) becomes 25 false values. Validator already exempted Pip and is
+  the value-list length everywhere (editor, runtime writers, mini, dogfood).
+  Pip ranges are never stored. Validator already exempted Pip and is
   unchanged. Corpus impact: 3 stored pip ranges stripped (all with range[0]
   equal to value length); 15 corpus pips already carried no range. Note on
   the record: commit 2f2a8f7's message claims an "open range array UX," but
@@ -308,7 +286,7 @@ https://github.com/kaelri/cortex-toolkit.
   the set's traits. Corpus backfill preserved every current
   rendering exactly: Hinder traits without a description gained
   their set's shared text verbatim, else the constructed sentence
-  frozen at migration; shared-block placement moves into the
+  frozen during the backfill; shared-block placement moves into the
   per-entry SFX list by design. Name-based Hinder identification
   (the HINDER badge) is unchanged — it is a name match, not a
   stored prop. Supersedes any earlier reading that Hinder inherits
@@ -346,14 +324,10 @@ https://github.com/kaelri/cortex-toolkit.
   stated.
 
 - 2026-10-30: Regression fix for modern frame ring anchors (Vanguard Showcase).
-  `cortexMigration.migrateRingTrait` inferred `ringTrait: true` on unflagged
-  sets named 'Attributes', which inadvertently flagged Phase 3c sets carrying
-  modern `view.frame` objects. `resolveFrame` then treated the set as a
-  `legacyRing: true` portrait ring, collapsing 360° circular anchors into an
-  85° right-hand arc overspilling the card. Fixed: migration ignores sets
-  carrying explicit frames (`set.view.frame` or `set.frame`), and `resolveFrame`
-  treats explicit frame objects as modern frames unless explicitly configured
-  with `legacyRing: true` or `raw.ringConfig`.
+  Unflagged sets named 'Attributes' no longer infer a ring, so Phase 3c sets
+  carrying modern `view.frame` objects are not treated as portrait rings.
+  `resolveFrame` treats explicit frame objects as modern frames unless
+  explicitly configured with `legacyRing: true` or `raw.ringConfig`.
 
 - 2026-10-30: Studio header consolidation. Edit chrome goes
   from 5 rows at the sheet root (and 4 on inspection) to 3
@@ -387,11 +361,8 @@ https://github.com/kaelri/cortex-toolkit.
   `view.hasQuestionedPip`, and `view.hasCounterColumn` are
   retired. Flags stay as flags; they are not derived from
   Statement containers or pips. The set editor writes the
-  set home only. Migration copies a view value to the set
-  only when the set home is absent, strips the view keys,
-  and reports set-vs-view disagreement without overwriting
-  the set. Corpus gate: effective values identical on all
-  253 sets.
+  set home only. Corpus gate: effective values identical on
+  all 253 sets.
 
 - 2026-11-02: Spotlight Library lazy-load fixed: the bundle
   (`js/templates.bundle.js`, built by Mix
@@ -452,7 +423,7 @@ https://github.com/kaelri/cortex-toolkit.
   columns, then grid sections, then the full
   band; document-order interleaving between
   column sets and grid sets is not preserved.
-  No migration: no existing set gained place,
+  No data change needed: no existing set gained place,
   and the corpus (all spotlight) renders
   identically. Verified in the local build on
   constructed classic cases in Edit, with the

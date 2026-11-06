@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { cortexMigration } from './migration.ts';
 import { cortexStorage } from './storage.ts';
 import { cortexPal } from './cortex-pal.ts';
 import Roster from './roster.vue';
@@ -592,7 +591,6 @@ function recordCharOrder(characterData: any) {
 // internal ids + preferences.
 function resolveStoredCharacter(c: any) {
 	if (!c || typeof c !== 'object') return c;
-	cortexMigration.migratePlacement(c);
 	cortexFunctions.ensureTraitSetIds(c);
 	let ref: any = null;
 	const t = c.sheet && c.sheet.template;
@@ -821,10 +819,6 @@ function createFromTemplate(templateId: string) {
 function createFromSpotlight(spotlightItem: any, asTemplate = false, openPrint = false) {
 	if (!spotlightItem || !spotlightItem.character) return;
 
-	// Old-form templates migrate on the way in (band keys to place,
-	// flags to parts); new-form templates pass through untouched.
-	cortexMigration.migratePlacement(spotlightItem);
-
 	// New character = an empty layered entity folded onto the
 	// template at the seam; nothing is cloned from the array form.
 	const now = new Date().toISOString();
@@ -951,6 +945,10 @@ function loadCharacter(id: string) {
 
 function importSheetTemplate(entry: any) {
 	if (!entry || !entry.id) return;
+	if (cortexFunctions.isLegacyFile(entry)) {
+		showToast(cortexFunctions.LEGACY_FILE_MESSAGE);
+		return;
+	}
 	sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, entry);
 	saveLocalData();
 	showToast(`Saved layout template “${entry.title || entry.id}”`);
@@ -991,12 +989,15 @@ function stayOnTemplateSnapshot() {
 }
 
 function importCharacter(characterData: any) {
+	if (cortexFunctions.isLegacyFile(characterData)) {
+		showToast(cortexFunctions.LEGACY_FILE_MESSAGE);
+		return;
+	}
 	// Embedded template travels with the file: upsert by static
 	// (id, version) — replace, never duplicate — then resolve the
-	// sparse overlay. No template link: legacy path renders the
-	// file exactly as-is (D17 sacred).
+	// sparse overlay. No template link: the file renders exactly
+	// as-is (D17 sacred).
 	let incoming = characterData;
-	cortexMigration.migratePlacement(incoming);
 	const tref = incoming && incoming.sheet && incoming.sheet.template;
 	if (tref && typeof tref === 'object') {
 		let tplEntry = null;

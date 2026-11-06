@@ -1,8 +1,7 @@
-// Export emit tests: canonical scaffolding stays out of every emit path,
+﻿// Export emit tests: canonical scaffolding stays out of every emit path,
 // internal ids never leak, explicit nulls survive.
 // Usage: node scripts/export-tests.js  (exit 1 on failure)
 const F = require('../js/functions.ts').cortexFunctions;
-const M = require('../js/migration.ts').cortexMigration;
 const { toLayeredEntity } = require('../js/layered-materialize.ts');
 
 let pass = 0,
@@ -15,6 +14,8 @@ function ok(cond, name, extra) {
 		console.log('  FAIL ' + name + (extra !== undefined ? ' :: ' + JSON.stringify(extra) : ''));
 	}
 }
+
+const die = (n) => ({ type: 'Die', value: [n], range: [4, 6, 8, 10, 12] });
 
 function walk(node, fn) {
 	if (!node || typeof node !== 'object') return;
@@ -85,7 +86,7 @@ function walk(node, fn) {
 	ok(emptyTags === 0, 'layered emit: no empty tags', emptyTags);
 	// description "" survives in deltas: it is an explicit clear of an
 	// inherited description (templates, which are the base layer, never
-	// carry it — migration strips it there).
+	// carry it â€” layered emit strips it there).
 	ok(e.sets.Distinctions.traits.Brawn.description === '', 'layered emit: cleared description kept');
 	ok(
 		JSON.stringify(e.sets.Distinctions.traits.Brawn.rating) ===
@@ -99,135 +100,6 @@ function walk(node, fn) {
 		'subtrait kept',
 	);
 	ok(e.sets.Distinctions.traits.Gone.rating === null, 'explicit unrated null kept');
-}
-
-// ---- 2. Companion subtraits (attached stress) pass through normalize.
-{
-	const legacy = {
-		traitSets: [
-			{
-				name: 'Distinctions',
-				id: 'distinctions',
-				view: {},
-				traits: [
-					{
-						name: 'Brawn',
-						value: 8,
-						dice: [8],
-						traits: [{ name: 'Stress', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
-						sfx: [],
-					},
-					{ name: 'Lean', value: 6, dice: [6], traits: [], sfx: [] },
-					{ name: 'Mean', value: 10, dice: [10], traits: [{ name: 'Stress', isOut: true }], sfx: [] },
-				],
-			},
-		],
-	};
-	M.normalizeView(legacy);
-	const dset = legacy.traitSets.find((s) => s.name === 'Distinctions');
-	const [brawn, lean, mean] = dset.traits;
-	const bc = brawn.traits.find((t) => t.name === 'Stress');
-	ok(
-		bc && bc.rating && bc.rating.type === 'Die' && JSON.stringify(bc.rating.value) === '[8]',
-		'stress-8: companion rated d8',
-		bc,
-	);
-	ok(lean.traits.length === 0, 'stress-0: nothing emitted');
-	const mc = mean.traits.find((t) => t.name === 'Stress');
-	ok(mc && mc.isOut === true, 'isStressOut: companion flagged', mc);
-}
-
-// ---- 3. Same companions in layered form.
-{
-	const layered = {
-		sets: {
-			Distinctions: {
-				id: 'distinctions',
-				view: {},
-				traits: {
-					Brawn: {
-						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: { Stress: { rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } } },
-					},
-					Lean: { rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
-				},
-			},
-		},
-	};
-	M.normalizeView(layered);
-	const set = layered.sets.Distinctions;
-	ok(
-		set.traits.Brawn.traits &&
-			set.traits.Brawn.traits.Stress &&
-			set.traits.Brawn.traits.Stress.rating &&
-			JSON.stringify(set.traits.Brawn.traits.Stress.rating.value) === '[8]',
-		'layered: companion rating',
-		set.traits.Brawn.traits,
-	);
-	ok(!set.traits.Lean.traits, 'layered: zero emits nothing');
-}
-
-// ---- 4. Template migration: companions pass through, scaffolding stays out.
-{
-	const tpl = {
-		id: 't',
-		title: 'T',
-		version: 1,
-		character: {
-			name: '',
-			traitSets: [
-				{
-					id: 'distinctions',
-					name: 'Distinctions',
-					view: {},
-					traits: [
-						{
-							name: 'Brawn',
-							value: 8,
-							dice: [],
-							description: '',
-							traits: [{ name: 'Fallout', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } }],
-							sfx: [],
-							tags: [],
-						},
-						{ name: 'Lean', value: 0, dice: [], description: '', traits: [], sfx: [], tags: [], custom: {} },
-					],
-					sfx: [],
-				},
-			],
-		},
-	};
-	const r = M.migrateTemplateEntry(JSON.parse(JSON.stringify(tpl)));
-	const set = r.data.character.sets.Distinctions;
-	ok(
-		set.traits.Brawn.traits &&
-			set.traits.Brawn.traits.Fallout &&
-			set.traits.Brawn.traits.Fallout.rating &&
-			JSON.stringify(set.traits.Brawn.traits.Fallout.rating.value) === '[6]',
-		'template: companion under set label',
-		set.traits.Brawn.traits,
-	);
-	ok(
-		set.traits.Lean.custom === undefined && set.traits.Lean.tags === undefined,
-		'template: scaffolding out',
-		set.traits.Lean,
-	);
-	const back = M.unmigrateTemplateEntry(r.data);
-	const backDistinctions = back.data.character.traitSets.find((s) => s.id === 'distinctions');
-	const traits = (backDistinctions && backDistinctions.traits) || [];
-	const bb = traits.find((t) => t.name === 'Brawn');
-	ok(
-		bb &&
-			bb.traits &&
-			bb.traits.find((t) => t.name === 'Fallout' && t.rating && JSON.stringify(t.rating.value) === '[6]'),
-		'round-trip: companion survives',
-		bb && bb.traits,
-	);
-	ok(
-		bb.custom === undefined && bb.tags === undefined && bb.description === undefined,
-		'round-trip: scaffolding stays out',
-	);
-	ok(back.warnings.length === 0, 'round-trip warning-free', back.warnings);
 }
 
 // ---- 5. File export: no _lid, no trait-level id, no scaffolding in deltas.
@@ -245,7 +117,7 @@ function walk(node, fn) {
 					description: '',
 					tags: [],
 					custom: {},
-					traits: [{ name: 'Brawn', value: 8, dice: [8], description: '', traits: [], sfx: [], tags: [], custom: {} }],
+					traits: [{ name: 'Brawn', rating: die(8), description: '', traits: [], sfx: [], tags: [], custom: {} }],
 					sfx: [],
 				},
 			],
@@ -259,8 +131,7 @@ function walk(node, fn) {
 	live.traitSets[0].traits[0].description = 'Edited';
 	live.traitSets[0].traits.push({
 		name: 'Custom Made',
-		value: 6,
-		dice: [6],
+		rating: die(6),
 		description: '',
 		traits: [],
 		sfx: [],
@@ -328,7 +199,7 @@ function walk(node, fn) {
 				id: 'distinctions',
 				name: 'Distinctions',
 				view: { style: { body: 'default' } },
-				traits: [{ name: 'Brawn', value: 8, dice: [] }],
+				traits: [{ name: 'Brawn', rating: die(8) }],
 				sfx: [],
 			},
 			{ id: 'values', name: 'Values', view: { style: { body: 'default' } }, traits: [], sfx: [] },
@@ -336,8 +207,8 @@ function walk(node, fn) {
 	};
 	const entity = {
 		sets: {
-			Distinctions: { id: 'distinctions', traits: { Brawn: { value: 'd8' } } },
-			Virtues: { id: 'values', traits: { Honor: { value: 'd10' } } },
+			Distinctions: { id: 'distinctions', traits: { Brawn: { rating: die(8) } } },
+			Virtues: { id: 'values', traits: { Honor: { rating: die(10) } } },
 		},
 	};
 	const back = F2.materializeCharacter(entity, templateChar);
@@ -358,8 +229,8 @@ function walk(node, fn) {
 		id: 'c7',
 		name: 'Fam',
 		traitSets: [
-			{ id: 'gmc-a', name: 'GMC', traits: [{ name: 'Kin', value: 8, dice: [8] }], sfx: [] },
-			{ id: 'gmc-b', name: 'GMC', traits: [{ name: 'Foe', value: 6, dice: [6] }], sfx: [] },
+			{ id: 'gmc-a', name: 'GMC', traits: [{ name: 'Kin', rating: die(8) }], sfx: [] },
+			{ id: 'gmc-b', name: 'GMC', traits: [{ name: 'Foe', rating: die(6) }], sfx: [] },
 		],
 	};
 	const ent = F2.toLayeredEntity(render);
@@ -383,7 +254,7 @@ function walk(node, fn) {
 				id: 'distinctions',
 				name: 'Distinctions',
 				view: { reservedSlots: 3 },
-				traits: [{ name: 'Brawn', value: 8, dice: [8] }],
+				traits: [{ name: 'Brawn', rating: die(8) }],
 				sfx: [],
 			},
 		],

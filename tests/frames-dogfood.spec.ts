@@ -1,4 +1,3 @@
-import { cortexMigration } from '../js/migration.ts';
 import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
@@ -356,9 +355,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		wrapperAttributesPrint.unmount();
 	});
 
-	it('regression guard: Vanguard Attributes set normalizes without legacyRing and distributes 360° across all quadrants', () => {
+	it('regression guard: Vanguard Attributes set keeps its explicit frame and distributes 360° across all quadrants', () => {
 		const clone = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
-		cortexMigration.normalizeView(clone);
 		const attrSet = (clone.traitSets as any[]).find((s: any) => s.name === 'Attributes');
 		expect(attrSet).toBeDefined();
 		expect(attrSet.view.ringTrait, 'Attributes with explicit frame must not gain ringTrait').toBeUndefined();

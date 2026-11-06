@@ -616,6 +616,50 @@ export const cortexFunctions = {
 		});
 	},
 
+	LEGACY_FILE_MESSAGE:
+		'Old-format and Kaelri files are no longer supported by this app. Convert them with the separate converter project, then import the converted file.',
+
+	// Detect pre-current file shapes. The app imports only current-format
+	// files; legacy ratings (value/dice), legacy bags, style ids, and
+	// statement fields mean the file must go through the converter first.
+	isLegacyFile: function (data: any) {
+		const legacyBodies = new Set(['distinctions', 'assets', 'resources', 'stress', 'attributes']);
+		let legacy = false;
+		const visit = (node: any) => {
+			if (legacy || !node || typeof node !== 'object') return;
+			if (Array.isArray(node)) {
+				node.forEach(visit);
+				return;
+			}
+			const isRating = typeof node.type === 'string' && /^(Counter|Die|Dice|Pip)$/.test(node.type);
+			if (node.custom && typeof node.custom === 'object' && node.custom.cortexToolkit) legacy = true;
+			if (!isRating) {
+				if (typeof node.value === 'number') legacy = true;
+				if (Array.isArray(node.value) && node.rating === undefined) legacy = true;
+				if (Array.isArray(node.dice)) legacy = true;
+			}
+			if (Array.isArray(node.sfx)) legacy = true;
+			if (typeof node.statement === 'string') legacy = true;
+			if (node.questioned !== undefined) legacy = true;
+			if (node.nounSingular !== undefined || node.nounPlural !== undefined) legacy = true;
+			if (node.attributesRing !== undefined) legacy = true;
+			if (node.band !== undefined) legacy = true;
+			const body = node.view && node.view.style && node.view.style.body;
+			if (typeof body === 'string' && legacyBodies.has(body)) legacy = true;
+			if (
+				node.style &&
+				typeof node.style === 'object' &&
+				typeof node.style.body === 'string' &&
+				legacyBodies.has(node.style.body)
+			)
+				legacy = true;
+			if (legacy) return;
+			Object.keys(node).forEach((k) => visit(node[k]));
+		};
+		visit(data);
+		return legacy;
+	},
+
 	// Minimal shape check + normalization for imported characters.
 	// Also unwraps upstream envelopes such as { version: 2, data: {...} }:
 	// the inner payload is imported as a NEW character (fresh UUID when the

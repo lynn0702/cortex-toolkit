@@ -282,7 +282,12 @@ function importGetUploads(event: Event) {
 				}
 				let added = 0;
 				let templatesAdded = 0;
+				let legacySkipped = 0;
 				candidates.forEach((char: any) => {
+					if (cortexFunctions.isLegacyFile(char)) {
+						legacySkipped++;
+						return;
+					}
 					// Standalone layout template files reuse the
 					// spotlight entry shape; they upsert by static id
 					// (replace, never duplicate) instead of importing
@@ -309,6 +314,7 @@ function importGetUploads(event: Event) {
 						file.name +
 						'”.';
 				}
+				if (legacySkipped) importError.value = cortexFunctions.LEGACY_FILE_MESSAGE;
 				importNextQueueItem();
 			} catch (error) {
 				importError.value = 'Could not read “' + file.name + '” as a character file.';

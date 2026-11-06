@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { cortexMigration } from './migration.ts';
 import { cloneDeep } from './clone-deep.ts';
 import { DOGFOOD_TEMPLATES } from './dogfood-templates.ts';
 import TraitSetFrame from './trait-set-frame.vue';
@@ -14,7 +13,6 @@ function mount() {
 	window.app = createApp(App).mount('#cortex-toolkit');
 
 	window.cortexTraitHelpers = cortexFunctions.traitHelpers;
-	window.cortexMigration = cortexMigration;
 	window.cortexMaterialize = cortexFunctions.materializeCharacter;
 	window.cortexToLayered = cortexFunctions.toLayeredEntity;
 	window.cortexFunctions = cortexFunctions;

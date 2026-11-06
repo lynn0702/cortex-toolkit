@@ -7,8 +7,6 @@
  * falls back to localStorage with quota errors surfaced to the caller.
  */
 
-import { cortexMigration } from './migration.ts';
-
 export interface StorageState {
 	characters: unknown[];
 	openCharacterIDs: string[];
@@ -108,9 +106,6 @@ export const cortexStorage: CortexStorage = {
 			const key = this.templateKey(t);
 			if (seen.has(key)) continue;
 			seen.add(key);
-			// Stored snapshots predate the statement dissolve; normalize the
-			// old fields into the child-trait shape on load.
-			cortexMigration.normalizeView(t);
 			t.version ??= 1;
 			out.push(t);
 		}
@@ -219,14 +214,12 @@ export const cortexStorage: CortexStorage = {
 		return structuredClone(characters)
 			.map((c: any) => {
 				if (!c || typeof c !== 'object') return null;
-				cortexMigration.normalizeView(c);
 				if (c.isTemplate && c.name) {
 					c.name = String(c.name)
 						.replace(/\s*\([^)]*\)/g, '')
 						.trim();
 				}
-				// D5: load must not materialize defaults. Only legacy
-				// migrations below may rewrite.
+				// D5: load must not materialize defaults.
 				if (c.portrait?.url) {
 					const pUrl = c.portrait.url;
 					if (
@@ -238,35 +231,6 @@ export const cortexStorage: CortexStorage = {
 					}
 				}
 
-				if (Array.isArray(c.traitSets)) {
-					c.traitSets.forEach((ts: any) => {
-						const ctk = ts?.view || ts?.custom?.cortexToolkit;
-
-						if (!ctk || typeof ctk !== 'object') return;
-						// Fold legacy per-style label maps into the unified labels store.
-						const folded: any = {};
-						if (ctk.branchLabels && typeof ctk.branchLabels === 'object') {
-							if (ctk.branchLabels.left) folded.left = ctk.branchLabels.left;
-							if (ctk.branchLabels.right) folded.right = ctk.branchLabels.right;
-							delete ctk.branchLabels;
-						}
-						if (ctk.talentLabels && typeof ctk.talentLabels === 'object') {
-							if (ctk.talentLabels.talent) folded.col1 = ctk.talentLabels.talent;
-							if (ctk.talentLabels.activation) folded.col2 = ctk.talentLabels.activation;
-							if (ctk.talentLabels.effect) folded.col3 = ctk.talentLabels.effect;
-							delete ctk.talentLabels;
-						}
-						if (ctk.resourceLabels && typeof ctk.resourceLabels === 'object') {
-							if (ctk.resourceLabels.rating) folded.rating = ctk.resourceLabels.rating;
-							if (ctk.resourceLabels.dice) folded.dice = ctk.resourceLabels.dice;
-							delete ctk.resourceLabels;
-						}
-						if (Object.keys(folded).length) {
-							ctk.labels ??= {};
-							Object.assign(ctk.labels, folded);
-						}
-					});
-				}
 				return c;
 			})
 			.filter(Boolean);

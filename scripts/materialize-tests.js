@@ -2,7 +2,6 @@
 // Usage: node scripts/materialize-tests.js  (exit 1 on failure)
 const fs = require('fs');
 const path = require('path');
-const M = require('../js/migration.ts').cortexMigration;
 const { materializeCharacter, toLayeredEntity } = require('../js/layered-materialize.ts');
 
 let pass = 0,
@@ -74,20 +73,14 @@ function compareRender(render, label) {
 	}
 }
 
-// ---- 1. migrate the array source, then materialize with the source as presentation.
-{
-	const { data } = M.migrateCharacter(cortex);
-	compareRender(materializeCharacter(data, cortex), 'migrate->materialize');
-}
-
-// ---- 2. the committed layered reference materializes to the same render.
+// ---- 1. the committed layered reference materializes to the render.
 {
 	compareRender(materializeCharacter(layered, cortex), 'layered-ref');
 }
 
-// ---- 3. specific spot checks (content survived the fold).
+// ---- 2. specific spot checks (content survived the fold).
 {
-	const render = materializeCharacter(M.migrateCharacter(cortex).data, cortex);
+	const render = materializeCharacter(layered);
 	const strength = byName(byName(render.traitSets, 'Attributes').traits, 'Strength');
 	ok(
 		strength &&
@@ -118,11 +111,9 @@ function compareRender(render, label) {
 	);
 }
 
-// ---- 4. render -> layered -> render is an exact, lossless codec (over
-// the normalized shape: legacy value/dice enter canonical ratings once).
+// ---- 3. render -> layered -> render is an exact, lossless codec.
 {
-	const src = JSON.parse(JSON.stringify(cortex));
-	M.normalizeView(src);
+	const src = materializeCharacter(layered);
 	const back = materializeCharacter(toLayeredEntity(src), src);
 	const a = JSON.parse(JSON.stringify(src));
 	const b = JSON.parse(JSON.stringify(back));
@@ -131,14 +122,13 @@ function compareRender(render, label) {
 	ok(JSON.stringify(a) === JSON.stringify(b), 'toLayeredEntity round-trips the normalized source exactly');
 }
 
-// ---- 5. per-entity presentation overrides survive the codec.
+// ---- 4. per-entity presentation overrides survive the codec.
 {
-	const ov = JSON.parse(JSON.stringify(cortex));
-	M.normalizeView(ov);
-	const ovView = ov.traitSets[0].view || (ov.traitSets[0].custom && ov.traitSets[0].custom.cortexToolkit) || {};
+	const ov = materializeCharacter(layered);
+	const ovView = ov.traitSets[0].view || {};
 	ovView.style = ovView.style || {};
 	ovView.style.body = 'zzz-body';
-	if (!ov.traitSets[0].view) ov.traitSets[0].view = ovView;
+	ov.traitSets[0].view = ovView;
 	ov.traitSets[0].noun = 'ZZZ NOUN';
 	const back = materializeCharacter(toLayeredEntity(ov), ov);
 	ok(
@@ -153,11 +143,9 @@ function compareRender(render, label) {
 	);
 }
 
-// ---- 5b. per-entity view presentation overrides survive the codec.
+// ---- 5. per-entity view presentation overrides survive the codec.
 {
-	const ov = JSON.parse(JSON.stringify(cortex));
-	M.normalizeView(ov);
-	delete ov.traitSets[0].custom;
+	const ov = materializeCharacter(layered);
 	ov.traitSets[0].view = { style: { header: 'default', body: 'view-body' } };
 	ov.traitSets[0].noun = 'VIEW NOUN';
 	const back = materializeCharacter(toLayeredEntity(ov), ov);
@@ -171,8 +159,7 @@ function compareRender(render, label) {
 
 // ---- 6. unrated (no rating) round-trips rating-free, not null.
 {
-	const ch = JSON.parse(JSON.stringify(cortex));
-	M.normalizeView(ch);
+	const ch = materializeCharacter(layered);
 	const dis = ch.traitSets.find((s) => s.name === 'Distinctions');
 	const tr = dis.traits[0];
 	delete tr.rating;
@@ -187,8 +174,7 @@ function compareRender(render, label) {
 
 // ---- 7. place and parts round-trip untouched through the codec.
 {
-	const ch = JSON.parse(JSON.stringify(cortex));
-	M.normalizeView(ch);
+	const ch = materializeCharacter(layered);
 	const dis = ch.traitSets.find((s) => s.name === 'Distinctions');
 	dis.view = {
 		...(dis.view || {}),
@@ -198,7 +184,7 @@ function compareRender(render, label) {
 			rating: { left: '70%', top: 0, width: '30%', height: 1 },
 		},
 	};
-	const back = materializeCharacter(toLayeredEntity(ch), cortex);
+	const back = materializeCharacter(toLayeredEntity(ch), ch);
 	const backDis = back.traitSets.find((s) => s.name === 'Distinctions');
 	ok(
 		JSON.stringify(backDis.view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }),

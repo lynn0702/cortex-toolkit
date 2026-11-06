@@ -27,7 +27,7 @@
 		"types": "node scripts/gen-types.mjs",
 		"check": "vue-tsc --noEmit",
 		"validate": "node scripts/validate.js",
-		"test": "vitest run && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/cortex-pal-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/spotlight-grid-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/merge-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/migration-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/materialize-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/template-parity-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/storage-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/export-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/rating-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/functions-tests.js"
+		"test": "vitest run && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/cortex-pal-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/spotlight-grid-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/merge-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/materialize-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/storage-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/export-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/rating-tests.js && node --no-warnings=MODULE_TYPELESS_PACKAGE_JSON scripts/functions-tests.js"
 	},
 	"engines": {
 		"node": ">=24.0.0"

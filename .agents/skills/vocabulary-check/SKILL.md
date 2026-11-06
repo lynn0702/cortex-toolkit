@@ -23,9 +23,9 @@ Layout areas (view language, never Cortex or set language):
 Dissolved — these must NOT appear in new data:
 - `trait.sfx` (SFX are ordinary child traits, found by
   name, never by a field).
-- `attachedStress` as a declaration or in migration
-  handling (attached stress is a companion subtrait; the
-  declaration is deleted, not deprecated).
+- `attachedStress` as a declaration (attached stress is a
+  companion subtrait; the declaration is deleted, not
+  deprecated).
 - Trait-level `statement` / `questioned` (statements are
   pip child traits; filled means questioned).
 
@@ -84,10 +84,9 @@ instead of stalling.
    touches (data, code, tests, docs). A partial rename is
    a defect.
 4. If a key is dissolved, remove it. Do not reintroduce it
-   under a new name, and do not keep a "migration" path
-   for it unless the user explicitly asks — in this repo,
-   migration is partner import, not legacy support, and
-   there is no legacy file carrying the dissolved fields.
+   under a new name. This app imports current-format files
+   only; old formats go through the separate converter
+   project.
 5. If a key's status is unclear (live flag versus dead
    field), check the layered corpus and the renderer, and
    ask one question rather than guessing. Stripping a live

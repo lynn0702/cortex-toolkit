@@ -1,7 +1,6 @@
 // Rating model tests (2026-10-23 brief §1): one shape, canonical
 // readings, spend/restore beside the rating, hitches flood + exemption.
 // Usage: node scripts/rating-tests.js  (exit 1 on failure)
-const M = require('../js/migration.ts').cortexMigration;
 const {
 	getRating,
 	ratingDice,
@@ -136,72 +135,6 @@ function ok(cond, name, extra) {
 {
 	ok(keepsExtraDice({ keepsExtra: 1 }) === 1, 'keepsExtra reads');
 	ok(keepsExtraDice({}) === 0, 'absent keeps nothing');
-}
-
-// ---- 6. Migration lands the readings (day-1 inputs only).
-{
-	// Day-1 nouns map onto noun/plural.
-	const nn = { name: 'C', traitSets: [{ name: 'Doom', nounSingular: 'Die', nounPlural: 'Dice', traits: [] }] };
-	M.normalizeView(nn);
-	const doom = nn.traitSets.find((s) => s.name === 'Doom');
-	ok(doom.noun === 'Die' && doom.plural === 'Dice', 'day-1 nouns map', { noun: doom.noun, plural: doom.plural });
-	ok(doom.nounSingular === undefined && doom.nounPlural === undefined, 'old words gone');
-	// Day-1 numeric ratings become Die/Dice ratings.
-	const sd = { name: 'C', traitSets: [{ name: 'Skills', traits: [{ name: 'Bout', value: 8, dice: [] }] }] };
-	M.normalizeView(sd);
-	const bout = sd.traitSets.find((s) => s.name === 'Skills').traits[0];
-	ok(
-		bout.rating && bout.rating.type === 'Die' && JSON.stringify(bout.rating.value) === '[8]',
-		'numeric value becomes a Die rating',
-		bout.rating,
-	);
-	ok(bout.value === undefined && bout.dice === undefined, 'numeric keys gone');
-	// Resources gain the exemption.
-	const rs = {
-		name: 'C',
-		traitSets: [{ name: 'Gear', plural: 'Resources', traits: [{ name: 'Rope', value: 8, dice: [] }] }],
-	};
-	M.normalizeView(rs);
-	const rope = rs.traitSets.find((s) => s.name === 'Gear').traits[0];
-	ok(rope.spendable === true && rope.hitches === 0, 'resources: spendable + hitches 0', {
-		spendable: rope.spendable,
-		hitches: rope.hitches,
-	});
-	// Plot Points Counter on the name trait.
-	const pp = { name: 'C', plotPoints: 2, traitSets: [] };
-	M.normalizeView(pp);
-	const nset = pp.traitSets.find((s) => s.id === 'name');
-	const ppt = nset && nset.traits.find((t) => t.name === 'plotPoints');
-	ok(
-		ppt &&
-			ppt.rating &&
-			ppt.rating.type === 'Counter' &&
-			JSON.stringify(ppt.rating.value) === '[2]' &&
-			JSON.stringify(ppt.rating.range) === '[0,20]' &&
-			ppt.spendable === true,
-		'plotPoints Counter migrates',
-		ppt && ppt.rating,
-	);
-	// Canonical pool + keepsExtra pass through untouched.
-	const sc = {
-		name: 'C',
-		traitSets: [
-			{
-				name: 'A',
-				pool: true,
-				spendable: true,
-				traits: [{ name: 'Scale', keepsExtra: 1, rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
-			},
-		],
-	};
-	M.normalizeView(sc);
-	const st = sc.traitSets.find((s) => s.name === 'A').traits[0];
-	const sset = sc.traitSets.find((s) => s.name === 'A');
-	ok(st.keepsExtra === 1 && st.name === 'Scale', 'Scale effect is keepsExtra', {
-		keepsExtra: st.keepsExtra,
-		name: st.name,
-	});
-	ok(sset.pool === true && sset.spendable === true, 'pool + spendable pass through');
 }
 
 // ---- Out is a range option for die ratings, defaulted off.

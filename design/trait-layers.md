@@ -339,8 +339,7 @@ as `"3d6"`. Parse with `parseDice`. Canonical form per the dice rules.
 
 ## Presentation-layer content model (from the 26-template corpus, 2026-10-11)
 
-All 26 spotlight templates migrate round-trip-exact
-(`scripts/template-parity-tests.js`, 143 assertions). A presentation layer
+All 26 spotlight templates are current-format. A presentation layer
 carries, verbatim: set `id`, display name (`label` when the map key is a
 suffixed duplicate such as `GMC~2`), description, nouns, rating position,
 statement flags, counter column, and `custom.cortexToolkit` (features,

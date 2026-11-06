@@ -421,7 +421,8 @@ function checkLayeredFile(where, data) {
 		err(`${where}: must be an object`);
 		return;
 	}
-	if (Array.isArray(data.traitSets)) err(`${where}: array-form traitSets is old format, migrate to sets map`);
+	if (Array.isArray(data.traitSets))
+		err(`${where}: array-form traitSets is old format, use the separate converter project`);
 	if (data.removedTraits !== undefined || data.removedSets !== undefined) {
 		err(`${where}: tombstone arrays are gone, use local nulls`);
 	}
@@ -565,7 +566,8 @@ function checkTemplateFile(where, data) {
 		err(`${where}: entry must wrap character`);
 		return;
 	}
-	if (Array.isArray(ch.traitSets)) err(`${where}: array-form traitSets is old format, migrate to sets map`);
+	if (Array.isArray(ch.traitSets))
+		err(`${where}: array-form traitSets is old format, use the separate converter project`);
 	if (ch.removedSets !== undefined) err(`${where}: tombstone removedSets is gone, use local nulls`);
 	if (typeof ch.name !== 'string') err(`${where}: character name must be a string`);
 	if (ch.$schema !== undefined || ch.version !== undefined) {

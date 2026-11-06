@@ -17,9 +17,8 @@ suite earns its keep.
 ## Paired files — change together
 
 - `js/templates.js` and `data/templates/*.template.layered.json`
-  are a paired corpus. Template changes go through
-  `migrateTemplateEntry`, and parity tests enforce the
-  round-trip. Never hand-edit one side and leave the other.
+  are a paired corpus. Template content changes touch both
+  sides. Never hand-edit one side and leave the other.
 - `js/model.generated.ts` is generated. Never hand-edit it;
   regenerate it.
 - Bundles are built, never hand-tweaked. A fix that edits
@@ -55,7 +54,7 @@ Tiers (all three, no skipping):
 - Browser smoke: once per RENDERING item (an item that
   changes what renders on screen or in print), plus one
   final smoke over all affected surfaces before handoff.
-  Non-rendering items (data, model, migration-only) get
+  Non-rendering items (data, model) get
   no browser smoke; their proof is gates plus a data
   census. A smoke pass that skips the affected surface
   is still not a smoke pass — batching WHEN it runs

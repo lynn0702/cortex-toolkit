@@ -93,7 +93,7 @@ export function getRating(node: unknown): Rating | undefined {
 		}
 		return undefined;
 	}
-	// Defensive read of pre-rating encodings (migration owns the write path).
+	// Defensive read of pre-rating encodings.
 	const dice = Array.isArray(n.dice) ? n.dice.filter((d): d is number => typeof d === 'number' && d > 0) : [];
 	if (dice.length > 0) {
 		return { type: dice.length > 1 ? 'Dice' : 'Die', value: dice, range: [...DIE_LADDER] };
@@ -158,7 +158,7 @@ export function setRatingDie(node: Record<string, any>, size: number | null, ran
 }
 
 /**
- * Build a rating from legacy encodings (migration/import read path).
+ * Build a rating from legacy encodings (legacy read path).
  * pool/spendable/hitches ride alongside; range defaults to the die ladder.
  */
 export function ratingFromLegacy(
@@ -533,7 +533,7 @@ export interface CortexToolkitCustom {
 	reservedSlots?: number | null;
 
 	// behavior / labels
-	/** @deprecated superseded by parts; read for legacy migration only (kept for vertical ladders). */
+	/** @deprecated superseded by parts; read for legacy data only (kept for vertical ladders). */
 	ratingPosition?: 'inline' | 'above' | 'below' | 'none' | 'vertical';
 	/** Rung label direction on ladder layouts: horizontal text or rotated vertical. */
 	labelPosition?: 'horizontal' | 'vertical';
@@ -612,7 +612,7 @@ export type ViewConfig = CortexToolkitCustom;
  * fields; the traits are presentation records.
  *
  * Render-time check (views are always present in memory). Serialized
- * forms may prune the view away; migration's detector also accepts the
+ * forms may prune the view away; the name-set detector also accepts the
  * reserved id 'name' (which ensureTraitSetIds never assigns elsewhere).
  */
 export function isNameSet(set: unknown): boolean {
@@ -622,7 +622,7 @@ export function isNameSet(set: unknown): boolean {
 
 /**
  * Accessor for the presentation view bag on any character, set, trait, or portrait.
- * Routes through VIEW_KEY and falls back to legacy custom.cortexToolkit for pre-migration data.
+ * Routes through VIEW_KEY and falls back to legacy custom.cortexToolkit data.
  */
 export function getView<T = ViewBag>(obj: unknown): T | undefined {
 	if (!obj || typeof obj !== 'object') return undefined;
