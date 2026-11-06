@@ -866,7 +866,7 @@
 		border-radius: 2px;
 		background: #38bdf8;
 		pointer-events: none;
-		z-index: 3;
+		z-index: 3; /* small local stacking literal */
 	}
 
 	.place-mini-edge {
@@ -1091,7 +1091,7 @@
 		position: absolute;
 		inset: 0;
 		pointer-events: none;
-		z-index: 4;
+		z-index: 4; /* small local stacking literal */
 	}
 
 	.row-mini-slot-top {
@@ -2609,7 +2609,7 @@
 
 		&.dragging {
 			opacity: 0.7;
-			z-index: 3;
+			z-index: 3; /* small local stacking literal */
 		}
 
 		&.selected,
@@ -2617,7 +2617,7 @@
 			border-color: #38bdf8;
 			box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35);
 			outline: none;
-			z-index: 2;
+			z-index: 2; /* small local stacking literal */
 		}
 
 		.block-mini-part-inner {

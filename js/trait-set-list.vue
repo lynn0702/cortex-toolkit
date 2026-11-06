@@ -1389,6 +1389,7 @@ const {
 	<transition appear>
 		<div
 			class="preview-button-container"
+			:class="{ 'ring-add-button': resolvedFrame?.shape === 'ring' }"
 			v-if="
 				resolvedFrame?.shape !== 'line' && (submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet)))
 			"

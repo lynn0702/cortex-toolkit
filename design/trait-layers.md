@@ -281,7 +281,7 @@ Note the cost vocabulary converging with the dragon conversion:
 ```
 
 
-## Example composition: Kaelri monster
+## Example composition: monster
 
 ```
 merge(defaults, base, Torchlite, challenge, Torchlite Monster, monster)
@@ -304,7 +304,7 @@ A scene composes without the challenge layer — no dice, no mechanics:
 merge(defaults, base, Torchlite, Torchlite Scene, scene)
 ```
 
-**Classification decision (2026-10-10):** all 317 Kaelri monsters are
+**Classification decision (2026-10-10):** all 317 monsters are
 `type: "Torchlite Monster"` with a `challenge` dice string — the type names
 the structural layer, the challenge field pulls the mechanics layer (and
 carries the dice). One classifier, called `type`; no `kind`. The Cortex

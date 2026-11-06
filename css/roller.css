@@ -807,6 +807,10 @@
 		}
 	}
 
+	.card-top .c.exempt {
+		color: var(--color-interactive, #0284c7);
+	}
+
 	&.role-total {
 		border-color: var(--color-total);
 		box-shadow: 0 0 0 1px var(--color-total);

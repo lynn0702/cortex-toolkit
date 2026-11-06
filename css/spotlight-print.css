@@ -176,7 +176,7 @@
 			right: 0;
 			bottom: 0;
 			pointer-events: none;
-			z-index: 0;
+			z-index: 0; /* small local stacking literal */
 			background-repeat: no-repeat;
 			background-position: center 50%;
 			background-size: 75%;
@@ -187,7 +187,7 @@
 			display: flex;
 			flex-direction: column;
 			position: relative;
-			z-index: 1;
+			z-index: 1; /* small local stacking literal */
 		}
 	}
 
@@ -872,12 +872,12 @@
 				.trait-set-header {
 					background: transparent;
 					position: relative;
-					z-index: 1;
+					z-index: 1; /* small local stacking literal */
 				}
 
 				.trait-set-body {
 					position: relative;
-					z-index: 1;
+					z-index: 1; /* small local stacking literal */
 				}
 			}
 		}
@@ -1781,7 +1781,7 @@
 					width: 1px;
 					background: #000000;
 					transform: translateX(-50%);
-					z-index: 0;
+					z-index: 0; /* small local stacking literal */
 				}
 				.pip-row {
 					max-width: none;
@@ -1807,13 +1807,13 @@
 				background: #000000;
 				top: 50%;
 				transform: translateY(-50%);
-				z-index: 0;
+				z-index: 0; /* small local stacking literal */
 			}
 		}
 
 		.pip-bubble-wrap {
 			position: relative;
-			z-index: 1;
+			z-index: 1; /* small local stacking literal */
 			cursor: pointer;
 			user-select: none;
 			padding: 2px;
@@ -3251,7 +3251,7 @@ body:has(.character-sheet.submode-print) .main {
 	height: 0.55rem;
 	background: #000000;
 	transform: translateX(-50%);
-	z-index: 0;
+	z-index: 0; /* small local stacking literal */
 }
 
 /* 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports */
@@ -3352,7 +3352,7 @@ body:has(.character-sheet.submode-print) .main {
 			justify-content: center;
 			width: 100%;
 			margin-top: -0.35rem;
-			z-index: 1;
+			z-index: 1; /* small local stacking literal */
 		}
 	}
 }
@@ -3589,7 +3589,7 @@ body:has(.character-sheet.submode-print) .main {
 		.mobile-substack-bar {
 			position: sticky;
 			top: 0;
-			z-index: 12;
+			z-index: 12; /* small local stacking literal */
 			display: flex;
 			flex-direction: row;
 			flex-wrap: nowrap;
@@ -3796,7 +3796,7 @@ body:has(.character-sheet.submode-print) .main {
 		.mobile-substack-bar {
 			position: sticky;
 			top: 0;
-			z-index: 12;
+			z-index: 12; /* small local stacking literal */
 			display: flex;
 			flex-wrap: nowrap;
 			align-items: center;

@@ -160,7 +160,7 @@
 	right: 0;
 	bottom: 0;
 	pointer-events: none;
-	z-index: 0;
+	z-index: 0; /* small local stacking literal */
 	background-repeat: no-repeat;
 	background-position: center 50%;
 	background-size: 75%;
@@ -822,7 +822,7 @@
 		position: absolute;
 		content: ' ';
 		background: white;
-		z-index: -1;
+		z-index: -1; /* small local stacking literal */
 		pointer-events: none;
 		/* Default (no die-N class) matches the d8 glyph */
 		left: calc(50% + -0.0078em);
@@ -947,7 +947,7 @@
 				position: absolute;
 				content: ' ';
 				background: white;
-				z-index: -1;
+				z-index: -1; /* small local stacking literal */
 				pointer-events: none;
 				/* Default (no die-N class) matches the d8 glyph */
 				left: calc(50% + -0.0078em);
@@ -1097,6 +1097,10 @@
 		justify-content: center;
 		align-items: center;
 	}
+}
+
+.trait-set .preview-button-container.ring-add-button {
+	margin-top: 4rem;
 }
 
 .trait-set .preview-button {
@@ -1675,7 +1679,7 @@ button.trait-title-btn {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 0;
+	z-index: 0; /* small local stacking literal */
 	pointer-events: none;
 
 	path {
@@ -1689,7 +1693,7 @@ button.trait-title-btn {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 0;
+	z-index: 0; /* small local stacking literal */
 	pointer-events: none;
 }
 
@@ -1705,7 +1709,7 @@ button.trait-title-btn {
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	z-index: 0;
+	z-index: 0; /* small local stacking literal */
 
 	.frame-hub-circle {
 		width: 100%;
@@ -1796,7 +1800,7 @@ button.trait-title-btn {
 
 	.trait {
 		position: absolute;
-		z-index: 1;
+		z-index: 1; /* small local stacking literal */
 		width: max-content;
 		max-width: min(320px, 90vw);
 		box-sizing: border-box;
@@ -1917,12 +1921,12 @@ button.trait-title-btn {
 	.trait-set-header {
 		background: transparent;
 		position: relative;
-		z-index: 1;
+		z-index: 1; /* small local stacking literal */
 	}
 
 	.trait-set-body {
 		position: relative;
-		z-index: 1;
+		z-index: 1; /* small local stacking literal */
 	}
 }
 

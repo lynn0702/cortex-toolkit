@@ -420,7 +420,7 @@
 			width: 0.6em;
 			height: 0.6em;
 			background: white;
-			z-index: -1;
+			z-index: -1; /* small local stacking literal */
 		}
 		& > span:not(.active),
 		.c:not(.active) {
@@ -676,7 +676,7 @@
 			top: 50%;
 			transform: translateY(-50%);
 			height: 2px;
-			z-index: -1;
+			z-index: -1; /* small local stacking literal */
 		}
 
 		.c {

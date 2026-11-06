@@ -127,7 +127,7 @@ Every change committed to `main` must pass the repository definition of done:
 ## Credits
 
 - Originally based on the [Cortex Prime character sheet](https://tamas-rabel.github.io/cortex/sheet.html) by [@tamas-rabel](https://github.com/tamas-rabel/tamas-rabel.github.io).
-- Forked and restructured from the original work by [@kaelri](https://github.com/kaelri/cortex-toolkit) (Michael Engard).
+
 - Maintained and modernized by [Lynn Jones](https://github.com/lynn0702) with design and testing contributions from Riley Routh.
 
 ---
