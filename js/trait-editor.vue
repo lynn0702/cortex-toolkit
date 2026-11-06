@@ -894,7 +894,7 @@ function getDieStepPrev( currentSize: number, range: number[] = dieRange.value )
 	const idx = range.indexOf( currentSize );
 	if ( idx !== -1 ) return idx > 0 ? range[ idx - 1 ] : null;
 	const smaller = range.filter( s => s < currentSize );
-	return smaller.length ? smaller[ smaller.length - 1 ] : null;
+	return smaller.at( -1 ) ?? null;
 }
 
 function getDieStepNext( currentSize: number, range: number[] = dieRange.value ): number | null {

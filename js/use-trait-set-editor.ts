@@ -1104,18 +1104,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function setRingConfig(key: keyof RingConfig, value: any) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
-		if (!ctk.ringConfig) {
-			ctk.ringConfig = {
-				arcAngle: -90,
-				arcSpread: 100,
-				arcDistance: 0,
-				scaleAngle: 0,
-				scaleDistance: 0,
-				scaleDieX: 0,
-				scaleDieY: 0,
-				arcSlide: 0
-			};
-		}
+		ctk.ringConfig ??= {
+			arcAngle: -90,
+			arcSpread: 100,
+			arcDistance: 0,
+			scaleAngle: 0,
+			scaleDistance: 0,
+			scaleDieX: 0,
+			scaleDieY: 0,
+			arcSlide: 0
+		};
 		ctk.ringConfig[key] = value;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
@@ -1156,9 +1154,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function setStyleLabel(key: string, value: any) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
-		if (!ctk.labels || typeof ctk.labels !== 'object') {
-			ctk.labels = {};
-		}
+		ctk.labels ??= {};
 		ctk.labels[key] = value;
 
 		updateCharacter(props.character);
@@ -1177,17 +1173,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function setImageConfig(key: keyof ImageConfig, value: any) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
-		if (!ctk.imageConfig) {
-			ctk.imageConfig = {};
-		}
+		ctk.imageConfig ??= {};
 		ctk.imageConfig[key] = value;
 
 		if ((isName.value || isRing.value) && props.character) {
 			if (key === 'url') {
-				if (!props.character.portrait) props.character.portrait = {};
+				props.character.portrait ??= {};
 				props.character.portrait.url = value;
 			} else if (key === 'alignment') {
-				if (!props.character.portrait) props.character.portrait = {};
+				props.character.portrait ??= {};
 				ensureView(props.character.portrait).alignment = value;
 			} else if (key === 'caption' && isName.value) {
 				const t = cortexFunctions.ensureNameTrait(props.character, 'caption');
@@ -1273,12 +1267,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function ensurePipStruct() {
 		const ctk = ctkFor(props.traitSetID);
-		if (!ctk.pips) {
-			ctk.pips = {
-				perRow: 5,
-				connected: true
-			};
-		}
+		ctk.pips ??= {
+			perRow: 5,
+			connected: true
+		};
 		const ts = traitSet.value as unknown as Record<string, any>;
 		if (ts && (!ts.rating || typeof ts.rating !== 'object' || (ts.rating as any).type !== 'Pip')) {
 			ts.rating = { type: 'Pip', value: Array.from({ length: 25 }, () => false) };

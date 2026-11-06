@@ -2,7 +2,21 @@ const mix = require('laravel-mix');
 const webpack = require('webpack');
 
 mix
-.options({ processCssUrls: false })
+.options({
+	processCssUrls: false,
+	terser: {
+		terserOptions: {
+			ecma: 2022,
+			compress: {
+				ecma: 2022,
+				passes: 2
+			},
+			format: {
+				ecma: 2022
+			}
+		}
+	}
+})
 .disableNotifications()
 .ts('js/app.js', 'js/app.min.js', { transpileOnly: true })
 // Single-file components (Vue 3). Vue is bundled (no CDN): `mix.vue()` wires

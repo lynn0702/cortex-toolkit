@@ -254,7 +254,7 @@ function mapDrop( sets: any[], page: number, row: number ): { to: number; top: n
 		to = sets.indexOf( over.set );
 	} else {
 		const samePage = sets.filter( ( s: any ) => ( Number( getView( s )?.page ) || 1 ) === page );
-		to = samePage.length ? sets.indexOf( samePage[ samePage.length - 1 ] ) + 1 : sets.length;
+		to = samePage.length ? sets.indexOf( samePage.at( -1 ) ) + 1 : sets.length;
 	}
 	let top: number;
 	if ( over && over.kind === 'box' ) {

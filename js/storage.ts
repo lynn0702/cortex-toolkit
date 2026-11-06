@@ -115,7 +115,7 @@ export const cortexStorage: CortexStorage = {
 			// Stored snapshots predate the statement dissolve; normalize the
 			// old fields into the child-trait shape on load.
 			cortexMigration.normalizeView( t );
-			if ( t.version === undefined || t.version === null ) t.version = 1;
+			t.version ??= 1;
 			out.push( t );
 		}
 		return out;
@@ -124,7 +124,7 @@ export const cortexStorage: CortexStorage = {
 	upsertTemplate( templates, entry ) {
 		const list = this.normalizeTemplates( templates );
 		if ( !entry || typeof entry.id !== 'string' || !entry.id.length ) return list;
-		if ( entry.version === undefined || entry.version === null ) entry.version = 1;
+		entry.version ??= 1;
 		const key = this.templateKey( entry );
 		const i = list.findIndex( t => this.templateKey( t ) === key );
 		const clean = JSON.parse( JSON.stringify( entry ) );
@@ -206,7 +206,7 @@ export const cortexStorage: CortexStorage = {
 				request.onsuccess = ( event ) => resolve( ( event.target as IDBOpenDBRequest ).result );
 				request.onerror = () => {
 					this._dbPromise = null;
-					reject( request.error || new Error( 'Could not open local database.' ) );
+					reject( new Error( 'Could not open local database.', { cause: request.error } ) );
 				};
 				request.onblocked = () => {
 					this._dbPromise = null;
@@ -258,7 +258,7 @@ export const cortexStorage: CortexStorage = {
 						delete ctk.resourceLabels;
 					}
 					if ( Object.keys( folded ).length ) {
-						if ( !ctk.labels || typeof ctk.labels !== 'object' ) ctk.labels = {};
+						ctk.labels ??= {};
 						Object.assign( ctk.labels, folded );
 					}
 				} );
@@ -367,8 +367,8 @@ export const cortexStorage: CortexStorage = {
 				await new Promise<void>( ( resolve, reject ) => {
 					const tx = db.transaction( this.STORE_NAME, 'readwrite' );
 					tx.oncomplete = () => resolve();
-					tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
-					tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
+					tx.onerror = () => reject( new Error( 'Could not write local database.', { cause: tx.error } ) );
+					tx.onabort = () => reject( new Error( 'Local database write aborted.', { cause: tx.error } ) );
 					tx.objectStore( this.STORE_NAME ).put( record, this.RECORD_KEY );
 				} );
 				try {
@@ -447,10 +447,10 @@ export const cortexStorage: CortexStorage = {
 				const result = modify( getReq.result || null );
 				const putReq = store.put( result.record, this.RECORD_KEY );
 				putReq.onsuccess = () => resolve( result );
-				putReq.onerror = () => reject( putReq.error || new Error( 'Could not write local database.' ) );
+				putReq.onerror = () => reject( new Error( 'Could not write local database.', { cause: putReq.error } ) );
 			};
-			getReq.onerror = () => reject( getReq.error || new Error( 'Could not read local database.' ) );
-			tx.onerror = () => reject( tx.error || new Error( 'Could not write local database.' ) );
+			getReq.onerror = () => reject( new Error( 'Could not read local database.', { cause: getReq.error } ) );
+			tx.onerror = () => reject( new Error( 'Could not write local database.', { cause: tx.error } ) );
 			tx.onabort = () => reject( tx.error || new Error( 'Local database write aborted.' ) );
 		} ) );
 	},
@@ -586,7 +586,7 @@ export const cortexStorage: CortexStorage = {
 				await new Promise<void>( ( resolve, reject ) => {
 					const tx = db.transaction( this.STORE_NAME, 'readwrite' );
 					tx.oncomplete = () => resolve();
-					tx.onerror = () => reject( tx.error || new Error( 'Could not clear local database.' ) );
+					tx.onerror = () => reject( new Error( 'Could not clear local database.', { cause: tx.error } ) );
 					tx.objectStore( this.STORE_NAME ).delete( this.RECORD_KEY );
 				} );
 			} catch ( err ) {

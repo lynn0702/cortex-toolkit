@@ -431,7 +431,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				if (tpl?.sets) {
 					for (const sKey of Object.keys(tpl.sets)) {
 						const setDef = tpl.sets[sKey];
-						if (setDef?.traits && Object.prototype.hasOwnProperty.call(setDef.traits, name)) return true;
+						if (setDef?.traits && Object.hasOwn(setDef.traits, name)) return true;
 					}
 				}
 			}
