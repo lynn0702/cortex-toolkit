@@ -372,26 +372,26 @@
 				}
 			}
 		}
+	}
 
-		.editor-inner {
-			max-height: none !important;
-			overflow: visible !important;
-			padding: 0 !important;
-		}
+	.editor-inner {
+		max-height: none !important;
+		overflow: visible !important;
+		padding: 0 !important;
 
 		/* The floating editor's scroll-position chevrons describe an inner */
 		/* scroll region that never scrolls while docked (the panel body */
 		/* owns scrolling) — without this they float mid-content, looking */
 		/* like a broken expander. */
-		.editor-inner::before,
-		.editor-inner::after {
+		&::before,
+		&::after {
 			display: none !important;
 		}
 
 		/* The floating editor's scroll region (absolute stretch +2rem with */
 		/* hidden scrollbars) must not leak into the docked panel: there it */
 		/* is a normal static block and the panel body owns scrolling. */
-		&.scrollable > .editor-inner > div {
+		> div {
 			position: static !important;
 			padding: 0 !important;
 			overflow: visible !important;

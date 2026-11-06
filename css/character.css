@@ -71,7 +71,6 @@
 		overflow: hidden;
 		border: 1px transparent solid;
 		border-radius: 0.25rem;
-		box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0);
 		border-color: var(--color-separator);
 		box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
 	}
@@ -224,7 +223,7 @@
 	}
 }
 
-.columns > * > .trait-set:first-child,
+.columns .trait-set:first-child,
 .spotlight-column > .trait-set:first-child {
 	margin-top: 0 !important;
 }
@@ -627,7 +626,7 @@
 			left: -0.083rem;
 		}
 
-		& + & {
+		& + li {
 			padding-top: 0.083rem;
 		}
 	}
@@ -1098,39 +1097,39 @@
 		justify-content: center;
 		align-items: center;
 	}
+}
 
-	.preview-button {
-		height: var(--button-container-height);
-		min-height: var(--button-container-height);
-		max-width: 100%;
-		padding-inline: 1.5em;
-		padding-block: 0;
-		white-space: normal;
-		overflow-wrap: anywhere;
-		line-height: 1;
+.trait-set .preview-button {
+	height: var(--button-container-height);
+	min-height: var(--button-container-height);
+	max-width: 100%;
+	padding-inline: 1.5em;
+	padding-block: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+	line-height: 1;
+	display: inline-flex !important;
+	justify-content: center !important;
+	align-items: center !important;
+	text-align: center !important;
+
+	& > span {
 		display: inline-flex !important;
-		justify-content: center !important;
 		align-items: center !important;
+		justify-content: center !important;
 		text-align: center !important;
+		gap: 0.45rem;
+		line-height: 1;
+		transform: none;
+	}
 
-		& > span {
-			display: inline-flex !important;
-			align-items: center !important;
-			justify-content: center !important;
-			text-align: center !important;
-			gap: 0.45rem;
-			line-height: 1;
-			transform: none;
-
-			i {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 0.85em;
-				line-height: 1;
-				transform: translateY(-0.5px);
-			}
-		}
+	i {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.85em;
+		line-height: 1;
+		transform: translateY(-0.5px);
 	}
 }
 
@@ -1977,7 +1976,7 @@ button.trait-title-btn {
 			}
 
 			/* Unfilled die range outlines and glyphs remain crisp and legible */
-			.c:not(.active) svg {
+			.c:not(.active) {
 				polygon,
 				path,
 				rect {

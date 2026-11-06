@@ -91,14 +91,15 @@
 		font-weight: bold;
 		text-transform: uppercase;
 		cursor: pointer;
-		transition: opacity 0.2s;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		border-width: 0 0 2px;
 		border-style: solid;
 		border-color: transparent;
-		transition: border-color 0.2s;
+		transition:
+			opacity 0.2s,
+			border-color 0.2s;
 		&.active {
 			border-color: var(--color-interactive);
 		}

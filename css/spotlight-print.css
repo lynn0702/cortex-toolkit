@@ -233,10 +233,6 @@
 	.page-header {
 		margin-bottom: 0;
 
-		& + .spotlight-layout > .columns.spotlight-columns:first-child {
-			margin-top: -2px;
-		}
-
 		.page-header-inner.spotlight-header-card {
 			display: grid;
 			grid-template-columns: minmax(180px, 32%) 1fr 25%;
@@ -253,331 +249,335 @@
 				grid-template-columns: minmax(200px, 35%) 1fr;
 			}
 		}
+	}
 
-		.spotlight-header-meta-box {
+	.spotlight-layout > .columns.spotlight-columns:first-child {
+		margin-top: -2px;
+	}
+
+	.spotlight-header-meta-box {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		border: 1.5px solid #000000;
+		border-radius: 3px;
+		padding: 0.4rem 0.6rem;
+		background: #ffffff;
+		cursor: pointer;
+
+		.spotlight-meta-name-cell {
 			display: flex;
 			flex-direction: column;
-			justify-content: space-between;
-			border: 1.5px solid #000000;
-			border-radius: 3px;
-			padding: 0.4rem 0.6rem;
-			background: #ffffff;
-			cursor: pointer;
-
-			.spotlight-meta-name-cell {
-				display: flex;
-				flex-direction: column;
-
-				.spotlight-cell-header {
-					display: flex;
-					justify-content: space-between;
-					align-items: baseline;
-					gap: 0.35rem;
-
-					.spotlight-cell-label {
-						font-size: var(--text-meta);
-						font-weight: 900;
-						color: #000000;
-						letter-spacing: 0.08em;
-						text-transform: uppercase;
-					}
-
-					.spotlight-cell-sublabel {
-						font-size: var(--text-meta);
-						font-weight: 700;
-						color: #64748b;
-						text-transform: uppercase;
-					}
-				}
-
-				.name-content {
-					font-size: var(--text-header);
-					font-weight: 800;
-					color: #000000;
-					text-transform: uppercase;
-					line-height: 1.2;
-					margin-top: 0.2rem;
-					white-space: pre-wrap;
-				}
-
-				.spotlight-blank-line {
-					width: 100%;
-					border-bottom: 1.5px solid #000000;
-					height: 1.2rem;
-					margin-top: 0.2rem;
-				}
-			}
-
-			.spotlight-meta-divider {
-				border-top: 1.5px solid #000000;
-				margin: 0.35rem -0.6rem;
-			}
-
-			.spotlight-meta-nickname-cell {
-				display: flex;
-				align-items: baseline;
-				gap: 0.5rem;
-
-				.spotlight-cell-label {
-					font-size: var(--text-meta);
-					font-weight: 900;
-					color: #000000;
-					letter-spacing: 0.08em;
-					text-transform: uppercase;
-				}
-
-				.spotlight-nickname-val {
-					font-size: var(--text-body);
-					font-weight: 700;
-					color: #1e293b;
-				}
-
-				.spotlight-blank-line {
-					flex: 1 1 auto;
-					border-bottom: 1.5px solid #000000;
-					height: 0.8rem;
-				}
-			}
-
-			.spotlight-meta-pronoun-cell {
-				display: flex;
-				align-items: baseline;
-				gap: 0.5rem;
-
-				.spotlight-cell-label {
-					font-size: var(--text-meta);
-					font-weight: 900;
-					color: #000000;
-					letter-spacing: 0.08em;
-					text-transform: uppercase;
-				}
-
-				.spotlight-pronoun-val {
-					font-size: var(--text-body);
-					font-weight: 700;
-					color: #1e293b;
-				}
-
-				.spotlight-blank-line {
-					flex: 1 1 auto;
-					border-bottom: 1.5px solid #000000;
-					height: 0.8rem;
-				}
-			}
-		}
-
-		.spotlight-header-desc-box {
-			display: flex;
-			flex-direction: column;
-			border: 1.5px solid #000000;
-			border-radius: 3px;
-			padding: 0.4rem 0.6rem;
-			background: #ffffff;
-			min-height: 80px;
 
 			.spotlight-cell-header {
 				display: flex;
 				justify-content: space-between;
 				align-items: baseline;
-				margin-bottom: 0.25rem;
-
-				.spotlight-cell-label {
-					font-size: var(--text-meta);
-					font-weight: 900;
-					color: #000000;
-					letter-spacing: 0.08em;
-					text-transform: uppercase;
-				}
-
-				.spotlight-add-portrait-link {
-					background: transparent;
-					border: 1px dashed #94a3b8;
-					border-radius: 3px;
-					color: #0284c7;
-					font-size: var(--text-meta);
-					font-weight: 700;
-					padding: 0.1rem 0.4rem;
-					cursor: pointer;
-					transition: all 0.15s ease;
-
-					&:hover {
-						background: #f0f9ff;
-						border-color: #0284c7;
-					}
-				}
+				gap: 0.35rem;
 			}
 
-			.spotlight-desc-textarea {
+			.spotlight-cell-label {
+				font-size: var(--text-meta);
+				font-weight: 900;
+				color: #000000;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			.spotlight-cell-sublabel {
+				font-size: var(--text-meta);
+				font-weight: 700;
+				color: #64748b;
+				text-transform: uppercase;
+			}
+
+			.name-content {
+				font-size: var(--text-header);
+				font-weight: 800;
+				color: #000000;
+				text-transform: uppercase;
+				line-height: 1.2;
+				margin-top: 0.2rem;
+				white-space: pre-wrap;
+			}
+
+			.spotlight-blank-line {
 				width: 100%;
+				border-bottom: 1.5px solid #000000;
+				height: 1.2rem;
+				margin-top: 0.2rem;
+			}
+		}
+
+		.spotlight-meta-divider {
+			border-top: 1.5px solid #000000;
+			margin: 0.35rem -0.6rem;
+		}
+
+		.spotlight-meta-nickname-cell {
+			display: flex;
+			align-items: baseline;
+			gap: 0.5rem;
+
+			.spotlight-cell-label {
+				font-size: var(--text-meta);
+				font-weight: 900;
+				color: #000000;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			.spotlight-nickname-val {
+				font-size: var(--text-body);
+				font-weight: 700;
+				color: #1e293b;
+			}
+
+			.spotlight-blank-line {
 				flex: 1 1 auto;
-				min-height: 60px;
-				border: none;
-				outline: none;
-				resize: none;
+				border-bottom: 1.5px solid #000000;
+				height: 0.8rem;
+			}
+		}
+
+		.spotlight-meta-pronoun-cell {
+			display: flex;
+			align-items: baseline;
+			gap: 0.5rem;
+
+			.spotlight-cell-label {
+				font-size: var(--text-meta);
+				font-weight: 900;
+				color: #000000;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			.spotlight-pronoun-val {
+				font-size: var(--text-body);
+				font-weight: 700;
+				color: #1e293b;
+			}
+
+			.spotlight-blank-line {
+				flex: 1 1 auto;
+				border-bottom: 1.5px solid #000000;
+				height: 0.8rem;
+			}
+		}
+	}
+
+	.spotlight-header-desc-box {
+		display: flex;
+		flex-direction: column;
+		border: 1.5px solid #000000;
+		border-radius: 3px;
+		padding: 0.4rem 0.6rem;
+		background: #ffffff;
+		min-height: 80px;
+
+		.spotlight-cell-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			margin-bottom: 0.25rem;
+
+			.spotlight-cell-label {
+				font-size: var(--text-meta);
+				font-weight: 900;
+				color: #000000;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+
+			.spotlight-add-portrait-link {
 				background: transparent;
-				font-family: inherit;
-				font-size: var(--text-body);
-				line-height: 1.35;
-				color: #1e293b;
-				padding: 0;
-				box-sizing: border-box;
+				border: 1px dashed #94a3b8;
+				border-radius: 3px;
+				color: #0284c7;
+				font-size: var(--text-meta);
+				font-weight: 700;
+				padding: 0.1rem 0.4rem;
+				cursor: pointer;
+				transition: all 0.15s ease;
 
-				&:focus {
-					background: #f8fafc;
-				}
-			}
-
-			.desc-content {
-				font-size: var(--text-body);
-				line-height: 1.35;
-				color: #1e293b;
-			}
-
-			.desc-blank-area {
-				display: flex;
-				flex-direction: column;
-				gap: 0.65rem;
-				margin-top: 0.35rem;
-
-				.desc-blank-line {
-					width: 100%;
-					border-bottom: 1px solid #94a3b8;
-					height: 0.75rem;
+				&:hover {
+					background: #f0f9ff;
+					border-color: #0284c7;
 				}
 			}
 		}
 
-		.spotlight-header-portrait-box {
-			display: flex;
-			align-items: center;
-			justify-content: center;
+		.spotlight-desc-textarea {
 			width: 100%;
-			max-width: 130px;
-			aspect-ratio: 1 / 1;
-			margin: auto;
-			border: 1.5px solid #000000;
-			border-radius: 50%;
-			background: #ffffff;
-			overflow: hidden;
-			position: relative;
-			cursor: pointer;
+			flex: 1 1 auto;
+			min-height: 60px;
+			border: none;
+			outline: none;
+			resize: none;
+			background: transparent;
+			font-family: inherit;
+			font-size: var(--text-body);
+			line-height: 1.35;
+			color: #1e293b;
+			padding: 0;
 			box-sizing: border-box;
+
+			&:focus {
+				background: #f8fafc;
+			}
+		}
+
+		.desc-content {
+			font-size: var(--text-body);
+			line-height: 1.35;
+			color: #1e293b;
+		}
+
+		.desc-blank-area {
+			display: flex;
+			flex-direction: column;
+			gap: 0.65rem;
+			margin-top: 0.35rem;
+
+			.desc-blank-line {
+				width: 100%;
+				border-bottom: 1px solid #94a3b8;
+				height: 0.75rem;
+			}
+		}
+	}
+
+	.spotlight-header-portrait-box {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		max-width: 130px;
+		aspect-ratio: 1 / 1;
+		margin: auto;
+		border: 1.5px solid #000000;
+		border-radius: 50%;
+		background: #ffffff;
+		overflow: hidden;
+		position: relative;
+		cursor: pointer;
+		box-sizing: border-box;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+
+		&.has-image {
+			background: transparent;
+			border: none;
+		}
+
+		.portrait-small-image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: center;
 			-webkit-print-color-adjust: exact;
 			print-color-adjust: exact;
 
-			&.has-image {
-				background: transparent;
-				border: none;
+			&.portrait-alignment-top-center,
+			&.portrait-alignment-top-left,
+			&.portrait-alignment-top-right {
+				object-position: top center;
 			}
 
-			.portrait-small-image {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				display: block;
-				background-size: cover;
-				background-repeat: no-repeat;
-				background-position: center;
-				-webkit-print-color-adjust: exact;
-				print-color-adjust: exact;
-
-				&.portrait-alignment-top-center,
-				&.portrait-alignment-top-left,
-				&.portrait-alignment-top-right {
-					object-position: top center;
-				}
-
-				&.portrait-alignment-center,
-				&.portrait-alignment-center-left,
-				&.portrait-alignment-center-right {
-					object-position: center center;
-				}
-
-				&.portrait-alignment-bottom-center,
-				&.portrait-alignment-bottom-left,
-				&.portrait-alignment-bottom-right {
-					object-position: bottom center;
-				}
+			&.portrait-alignment-center,
+			&.portrait-alignment-center-left,
+			&.portrait-alignment-center-right {
+				object-position: center center;
 			}
 
-			.portrait-small-placeholder {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				padding: 0.25rem;
-				text-align: center;
-				color: #94a3b8;
-				width: 100%;
-				height: 100%;
-				-webkit-print-color-adjust: exact;
-				print-color-adjust: exact;
-
-				.portrait-placeholder-logo {
-					width: 72%;
-					height: 72%;
-					object-fit: contain;
-					opacity: 0.55;
-					-webkit-print-color-adjust: exact;
-					print-color-adjust: exact;
-				}
-
-				.spotlight-add-hint {
-					font-size: var(--text-meta);
-					font-weight: 600;
-					color: #64748b;
-					margin-top: 0.25rem;
-				}
-			}
-
-			.btn-remove-header-portrait {
-				position: absolute;
-				top: 4px;
-				right: 4px;
-				background: rgba(239, 68, 68, 0.9);
-				color: #ffffff;
-				border: none;
-				border-radius: 3px;
-				width: 22px;
-				height: 22px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 0.65rem;
-				cursor: pointer;
-				opacity: 0.8;
-				transition: opacity 0.15s ease;
-
-				&:hover {
-					opacity: 1;
-					background: #dc2626;
-				}
+			&.portrait-alignment-bottom-center,
+			&.portrait-alignment-bottom-left,
+			&.portrait-alignment-bottom-right {
+				object-position: bottom center;
 			}
 		}
 
-		.spotlight-header-portrait-wrap {
+		.portrait-small-placeholder {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			gap: 0.25rem;
-			min-width: 0;
+			padding: 0.25rem;
+			text-align: center;
+			color: #94a3b8;
+			width: 100%;
+			height: 100%;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
 
-			.trait-image-body {
-				width: 100%;
-				height: 100%;
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
+			.portrait-placeholder-logo {
+				width: 72%;
+				height: 72%;
+				object-fit: contain;
+				opacity: 0.55;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
 			}
 
-			.spotlight-portrait-caption {
+			.spotlight-add-hint {
 				font-size: var(--text-meta);
 				font-weight: 600;
-				color: #000000;
-				text-align: center;
-				max-width: 100%;
+				color: #64748b;
+				margin-top: 0.25rem;
 			}
+		}
+
+		.btn-remove-header-portrait {
+			position: absolute;
+			top: 4px;
+			right: 4px;
+			background: rgba(239, 68, 68, 0.9);
+			color: #ffffff;
+			border: none;
+			border-radius: 3px;
+			width: 22px;
+			height: 22px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.65rem;
+			cursor: pointer;
+			opacity: 0.8;
+			transition: opacity 0.15s ease;
+
+			&:hover {
+				opacity: 1;
+				background: #dc2626;
+			}
+		}
+	}
+
+	.spotlight-header-portrait-wrap {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.25rem;
+		min-width: 0;
+
+		.trait-image-body {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.spotlight-portrait-caption {
+			font-size: var(--text-meta);
+			font-weight: 600;
+			color: #000000;
+			text-align: center;
+			max-width: 100%;
 		}
 	}
 
@@ -651,50 +651,50 @@
 		& + .columns.spotlight-columns {
 			margin-top: -2px;
 		}
+	}
 
-		.spotlight-column {
-			flex: 1 1 0;
-			min-width: 0;
-			display: flex;
-			flex-direction: column;
-			gap: 0;
-			position: relative;
+	.spotlight-column {
+		flex: 1 1 0;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		position: relative;
+		padding-top: 0 !important;
+		margin-top: 0 !important;
+
+		&.spotlight-column-left {
+			padding-top: var(--column-left-offset, 0px) !important;
+		}
+
+		&.spotlight-column-center {
+			padding-top: var(--column-center-offset, 0px) !important;
+		}
+
+		&.spotlight-column-right {
+			padding-top: var(--column-right-offset, 0px) !important;
+		}
+
+		&.spotlight-full-column {
+			width: 100%;
+			flex: none;
 			padding-top: 0 !important;
 			margin-top: 0 !important;
-
-			&.spotlight-column-left {
-				padding-top: var(--column-left-offset, 0px) !important;
-			}
-
-			&.spotlight-column-center {
-				padding-top: var(--column-center-offset, 0px) !important;
-			}
-
-			&.spotlight-column-right {
-				padding-top: var(--column-right-offset, 0px) !important;
-			}
-
-			&.spotlight-full-column {
-				width: 100%;
-				flex: none;
-				padding-top: 0 !important;
-				margin-top: 0 !important;
-			}
-
-			/* NOTE: no z-index here. The open .editor carries z-index */
-			/* var(--z-editor) itself so it paints above the sticky */
-			/* edit/print toolbars. Raising the column/trait-set would */
-			/* create a stacking context that traps the editor below them. */
 		}
 
-		.spotlight-column > .trait-set:first-child {
-			margin-top: 0 !important;
-		}
+		/* NOTE: no z-index here. The open .editor carries z-index */
+		/* var(--z-editor) itself so it paints above the sticky */
+		/* edit/print toolbars. Raising the column/trait-set would */
+		/* create a stacking context that traps the editor below them. */
+	}
 
-		.trait-set {
-			margin-bottom: 0;
-			width: 100%;
-		}
+	.spotlight-column > .trait-set:first-child {
+		margin-top: 0 !important;
+	}
+
+	.trait-set {
+		margin-bottom: 0;
+		width: 100%;
 	}
 
 	.spotlight-add-set-bar {
@@ -962,200 +962,200 @@
 			margin-bottom: 0;
 			padding-bottom: 0;
 		}
+	}
 
-		.trait-title {
-			display: flex;
-			align-items: baseline;
-			justify-content: space-between;
-			gap: 0.4rem;
-			margin: 0;
-			width: 100%;
+	.trait-title {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.4rem;
+		margin: 0;
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+
+		.trait-name {
+			font-size: var(--text-trait-title);
+			font-weight: 800;
+			text-transform: uppercase;
+			color: #0f172a;
 			min-width: 0;
-			box-sizing: border-box;
+
+			&.trait-name-blank {
+				flex: 1 1 auto;
+				min-width: 0;
+				display: inline-flex;
+				align-items: baseline;
+			}
+
+			.trait-name-hint {
+				color: #94a3b8;
+				font-style: italic;
+				font-weight: 500;
+				letter-spacing: normal;
+				text-transform: none;
+			}
+		}
+
+		&.trait-title-statement {
+			align-items: center;
+			gap: 0.35rem;
 
 			.trait-name {
-				font-size: var(--text-trait-title);
+				flex: 0 0 auto;
 				font-weight: 800;
-				text-transform: uppercase;
-				color: #0f172a;
+				letter-spacing: 0.05em;
+			}
+
+			.statement-pip {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				min-width: 10px;
+				min-height: 10px;
+				border-radius: 50%;
+				border: 1.5px solid #000000;
+				background-color: #ffffff;
+				cursor: pointer;
+				user-select: none;
+				box-sizing: border-box;
+				flex-shrink: 0;
+				margin: 0 0.15rem;
+				transition:
+					background-color 0.12s ease,
+					transform 0.1s ease;
+				print-color-adjust: exact;
+				-webkit-print-color-adjust: exact;
+
+				&:hover {
+					transform: scale(1.2);
+				}
+
+				&.questioned {
+					background-color: #000000;
+				}
+			}
+
+			.trait-statement-box {
+				flex: 1 1 auto;
 				min-width: 0;
-
-				&.trait-name-blank {
-					flex: 1 1 auto;
-					min-width: 0;
-					display: inline-flex;
-					align-items: baseline;
-				}
-
-				.trait-name-hint {
-					color: #94a3b8;
-					font-style: italic;
-					font-weight: 500;
-					letter-spacing: normal;
-					text-transform: none;
-				}
-			}
-
-			&.trait-title-statement {
-				align-items: center;
-				gap: 0.35rem;
-
-				.trait-name {
-					flex: 0 0 auto;
-					font-weight: 800;
-					letter-spacing: 0.05em;
-				}
-
-				.statement-pip {
-					display: inline-block;
-					width: 10px;
-					height: 10px;
-					min-width: 10px;
-					min-height: 10px;
-					border-radius: 50%;
-					border: 1.5px solid #000000;
-					background-color: #ffffff;
-					cursor: pointer;
-					user-select: none;
-					box-sizing: border-box;
-					flex-shrink: 0;
-					margin: 0 0.15rem;
-					transition:
-						background-color 0.12s ease,
-						transform 0.1s ease;
-					print-color-adjust: exact;
-					-webkit-print-color-adjust: exact;
-
-					&:hover {
-						transform: scale(1.2);
-					}
-
-					&.questioned {
-						background-color: #000000;
-					}
-				}
-
-				.trait-statement-box {
-					flex: 1 1 auto;
-					min-width: 0;
-					border: 1.5px solid #000000;
-					border-radius: 2px;
-					padding: 0.15rem 0.45rem;
-					font-size: var(--text-body);
-					line-height: 1.25;
-					color: #1e293b;
-					background: #ffffff;
-					min-height: 1.35rem;
-					display: flex;
-					align-items: center;
-					box-sizing: border-box;
-					text-transform: none;
-					font-weight: 400;
-					font-family: var(--font-primary);
-
-					.trait-statement-text {
-						overflow-wrap: break-word;
-						text-transform: none;
-						font-weight: 400;
-					}
-
-					.trait-statement-hint {
-						color: #94a3b8;
-						font-style: italic;
-					}
-				}
-			}
-
-			&.trait-title-stacked {
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				text-align: center;
-				gap: 0.2rem;
-
-				.trait-name {
-					text-align: center;
-					width: 100%;
-					font-size: var(--text-trait-title);
-					font-weight: 800;
-					letter-spacing: 0.05em;
-					min-height: 1.25rem;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-
-					&.trait-name-blank {
-						display: flex;
-						justify-content: center;
-					}
-
-					.trait-blank-line {
-						width: 80%;
-						max-width: 160px;
-						margin: 0 auto;
-					}
-				}
-
-				.trait-value {
-					justify-content: center;
-					width: 100%;
-				}
-			}
-		}
-
-		.trait-asset-card {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
-			width: 100%;
-
-			.trait-value {
-				display: flex;
-				justify-content: flex-start;
-				align-items: center;
-			}
-
-			.trait-asset-box {
 				border: 1.5px solid #000000;
 				border-radius: 2px;
-				padding: 0.35rem 0.5rem;
-				min-height: 2.3rem;
-				box-sizing: border-box;
+				padding: 0.15rem 0.45rem;
+				font-size: var(--text-body);
+				line-height: 1.25;
+				color: #1e293b;
 				background: #ffffff;
+				min-height: 1.35rem;
 				display: flex;
-				flex-direction: column;
-				justify-content: center;
+				align-items: center;
+				box-sizing: border-box;
+				text-transform: none;
+				font-weight: 400;
+				font-family: var(--font-primary);
 
-				.trait-asset-name {
-					font-weight: 800;
-					font-size: var(--text-card-title);
-					color: #0f172a;
-					line-height: 1.2;
+				.trait-statement-text {
+					overflow-wrap: break-word;
+					text-transform: none;
+					font-weight: 400;
 				}
 
-				.trait-asset-desc {
-					font-size: var(--text-body);
-					color: #334155;
-					line-height: 1.2;
-					margin-top: 0.1rem;
-				}
-
-				.trait-asset-hint {
-					font-size: var(--text-meta);
+				.trait-statement-hint {
 					color: #94a3b8;
 					font-style: italic;
 				}
 			}
 		}
 
-		.trait-description {
-			font-size: var(--text-body);
-			color: #334155;
-			margin-top: 0.2rem;
-			line-height: 1.25;
-			min-width: 0;
-			box-sizing: border-box;
+		&.trait-title-stacked {
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			gap: 0.2rem;
+
+			.trait-name {
+				text-align: center;
+				width: 100%;
+				font-size: var(--text-trait-title);
+				font-weight: 800;
+				letter-spacing: 0.05em;
+				min-height: 1.25rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				&.trait-name-blank {
+					display: flex;
+					justify-content: center;
+				}
+
+				.trait-blank-line {
+					width: 80%;
+					max-width: 160px;
+					margin: 0 auto;
+				}
+			}
+
+			.trait-value {
+				justify-content: center;
+				width: 100%;
+			}
 		}
+	}
+
+	.trait-asset-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		width: 100%;
+
+		.trait-value {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+		}
+
+		.trait-asset-box {
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			padding: 0.35rem 0.5rem;
+			min-height: 2.3rem;
+			box-sizing: border-box;
+			background: #ffffff;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			.trait-asset-name {
+				font-weight: 800;
+				font-size: var(--text-card-title);
+				color: #0f172a;
+				line-height: 1.2;
+			}
+
+			.trait-asset-desc {
+				font-size: var(--text-body);
+				color: #334155;
+				line-height: 1.2;
+				margin-top: 0.1rem;
+			}
+
+			.trait-asset-hint {
+				font-size: var(--text-meta);
+				color: #94a3b8;
+				font-style: italic;
+			}
+		}
+	}
+
+	.trait-description {
+		font-size: var(--text-body);
+		color: #334155;
+		margin-top: 0.2rem;
+		line-height: 1.25;
+		min-width: 0;
+		box-sizing: border-box;
 	}
 
 	/* DIE STEPPERS & RATINGS */
@@ -1315,22 +1315,22 @@
 			border-bottom: none;
 			margin-bottom: 0.45rem;
 			padding-bottom: 0;
+		}
 
-			.trait-title {
-				border: 1.5px solid #000000;
-				border-radius: 2px;
-				padding: 0.25rem 0.5rem;
-				background: #ffffff;
-				box-sizing: border-box;
-				min-height: 1.45rem;
-				align-items: center;
+		.trait-title {
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			padding: 0.25rem 0.5rem;
+			background: #ffffff;
+			box-sizing: border-box;
+			min-height: 1.45rem;
+			align-items: center;
 
-				.trait-name {
-					font-weight: 800;
-					font-size: var(--text-trait-title);
-					letter-spacing: 0.05em;
-					color: #000000;
-				}
+			.trait-name {
+				font-weight: 800;
+				font-size: var(--text-trait-title);
+				letter-spacing: 0.05em;
+				color: #000000;
 			}
 		}
 	}
@@ -1346,139 +1346,139 @@
 			flex-direction: column;
 			gap: 0.25rem;
 			width: 100%;
+		}
 
-			.paired-slot-header-row {
-				display: flex;
-				align-items: stretch;
-				gap: 0.4rem;
+		.paired-slot-header-row {
+			display: flex;
+			align-items: stretch;
+			gap: 0.4rem;
+			width: 100%;
+		}
+
+		.paired-slot-name-box {
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			padding: 0.2rem 0.45rem;
+			font-size: var(--text-trait-title);
+			font-weight: 800;
+			text-transform: uppercase;
+			color: #0f172a;
+			background: #ffffff;
+			flex: 0 0 38%;
+			max-width: 38%;
+			min-height: 1.15rem;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+
+			.paired-slot-placeholder-hint {
+				color: #94a3b8;
+				font-style: italic;
+			}
+			.paired-slot-blank-line {
 				width: 100%;
+				border-bottom: 1px solid #000000;
+				height: 0.65rem;
+			}
+		}
 
-				.paired-slot-name-box {
-					border: 1.5px solid #000000;
-					border-radius: 2px;
-					padding: 0.2rem 0.45rem;
-					font-size: var(--text-trait-title);
-					font-weight: 800;
-					text-transform: uppercase;
-					color: #0f172a;
-					background: #ffffff;
-					flex: 0 0 38%;
-					max-width: 38%;
-					min-height: 1.15rem;
-					display: flex;
-					align-items: center;
-					box-sizing: border-box;
+		.paired-slot-statement-box {
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			padding: 0.2rem 0.45rem;
+			font-size: var(--text-body);
+			color: #1e293b;
+			background: #ffffff;
+			flex: 1 1 auto;
+			min-width: 0;
+			min-height: 1.15rem;
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+			text-transform: none;
+			font-weight: 400;
+			font-family: var(--font-primary);
 
-					.paired-slot-placeholder-hint {
-						color: #94a3b8;
-						font-style: italic;
-					}
-					.paired-slot-blank-line {
-						width: 100%;
-						border-bottom: 1px solid #000000;
-						height: 0.65rem;
-					}
-				}
-
-				.paired-slot-statement-box {
-					border: 1.5px solid #000000;
-					border-radius: 2px;
-					padding: 0.2rem 0.45rem;
-					font-size: var(--text-body);
-					color: #1e293b;
-					background: #ffffff;
-					flex: 1 1 auto;
-					min-width: 0;
-					min-height: 1.15rem;
-					display: flex;
-					align-items: center;
-					box-sizing: border-box;
-					text-transform: none;
-					font-weight: 400;
-					font-family: var(--font-primary);
-
-					.paired-slot-statement-text {
-						text-transform: none;
-						font-weight: 400;
-					}
-
-					.paired-slot-placeholder-hint {
-						color: #94a3b8;
-						font-style: italic;
-					}
-					.paired-slot-blank-line {
-						width: 100%;
-						border-bottom: 1px solid #000000;
-						height: 0.65rem;
-					}
-				}
+			.paired-slot-statement-text {
+				text-transform: none;
+				font-weight: 400;
 			}
 
-			.paired-slot-dice-row {
-				display: flex;
-				flex-direction: column;
-				align-items: stretch;
-				gap: 0.25rem;
+			.paired-slot-placeholder-hint {
+				color: #94a3b8;
+				font-style: italic;
+			}
+			.paired-slot-blank-line {
 				width: 100%;
-				min-width: 0;
-				box-sizing: border-box;
+				border-bottom: 1px solid #000000;
+				height: 0.65rem;
+			}
+		}
 
-				.paired-slot-main-dice {
-					display: inline-flex;
-					align-items: center;
-					gap: 0.1rem;
-					flex-shrink: 0;
-					padding-top: 0.05rem;
+		.paired-slot-dice-row {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.25rem;
+			width: 100%;
+			min-width: 0;
+			box-sizing: border-box;
+		}
 
-					svg {
-						width: 1.15rem !important;
-						height: 1.15rem !important;
-					}
-				}
+		.paired-slot-main-dice {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.1rem;
+			flex-shrink: 0;
+			padding-top: 0.05rem;
 
-				.paired-slot-sub-group {
-					display: flex;
-					flex-direction: column;
-					align-items: stretch;
-					gap: 0.15rem;
-					font-size: var(--text-meta);
-					font-weight: 800;
-					letter-spacing: 0.03em;
-					color: #000000;
-					width: 100%;
-					min-width: 0;
+			svg {
+				width: 1.15rem !important;
+				height: 1.15rem !important;
+			}
+		}
 
-					.paired-slot-sub-row {
-						display: flex;
-						align-items: center;
-						justify-content: space-between;
-						gap: 0.2rem;
-						width: 100%;
-						min-width: 0;
-					}
+		.paired-slot-sub-group {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0.15rem;
+			font-size: var(--text-meta);
+			font-weight: 800;
+			letter-spacing: 0.03em;
+			color: #000000;
+			width: 100%;
+			min-width: 0;
+		}
 
-					.paired-slot-sub-label {
-						text-transform: uppercase;
-						text-align: left;
-					}
+		.paired-slot-sub-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.2rem;
+			width: 100%;
+			min-width: 0;
+		}
 
-					.subtrait-value {
-						display: inline-flex;
-						align-items: center;
-						gap: 0.1rem;
-						flex-shrink: 0;
-						margin-left: auto;
+		.paired-slot-sub-label {
+			text-transform: uppercase;
+			text-align: left;
+		}
 
-						.c {
-							display: inline-flex;
-						}
+		.subtrait-value {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.1rem;
+			flex-shrink: 0;
+			margin-left: auto;
 
-						svg {
-							width: 1.15rem !important;
-							height: 1.15rem !important;
-						}
-					}
-				}
+			.c {
+				display: inline-flex;
+			}
+
+			svg {
+				width: 1.15rem !important;
+				height: 1.15rem !important;
 			}
 		}
 	}
@@ -1514,38 +1514,38 @@
 			&:last-child {
 				border-bottom: none;
 			}
+		}
 
-			.die-row-name {
-				flex: 1 1 auto;
-				font-size: var(--text-trait-title);
-				font-weight: 700;
-				color: #0f172a;
-				min-width: 0;
+		.die-row-name {
+			flex: 1 1 auto;
+			font-size: var(--text-trait-title);
+			font-weight: 700;
+			color: #0f172a;
+			min-width: 0;
 
-				&.die-row-blank .trait-blank-line {
-					width: 100%;
-					border-bottom: 1px solid #000000;
-					height: 0.65rem;
-					display: block;
-				}
+			&.die-row-blank .trait-blank-line {
+				width: 100%;
+				border-bottom: 1px solid #000000;
+				height: 0.65rem;
+				display: block;
 			}
+		}
 
-			.die-row-counter {
-				border: 1.5px solid #000000;
-				border-radius: 2px;
-				min-width: 1.5rem;
-				height: 1.15rem;
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				font-weight: 800;
-				font-size: var(--text-meta);
-				color: #000000;
-				background: #ffffff;
-				box-sizing: border-box;
-				margin-left: 0.35rem;
-				flex-shrink: 0;
-			}
+		.die-row-counter {
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			min-width: 1.5rem;
+			height: 1.15rem;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 800;
+			font-size: var(--text-meta);
+			color: #000000;
+			background: #ffffff;
+			box-sizing: border-box;
+			margin-left: 0.35rem;
+			flex-shrink: 0;
 		}
 	}
 
@@ -1686,71 +1686,71 @@
 			flex-direction: column;
 			row-gap: 0.4rem;
 			padding: 0.25rem 0;
+		}
 
-			.pip-label-row {
-				display: flex;
-				align-items: center;
-				gap: 0.55rem;
+		.pip-label-row {
+			display: flex;
+			align-items: center;
+			gap: 0.55rem;
+			min-width: 0;
+
+			.pip-bubble-wrap {
+				cursor: pointer;
+				user-select: none;
+			}
+
+			.pip-bubble {
+				width: 15px;
+				height: 15px;
+				border-radius: 50%;
+				border: 1.5px solid #000000;
+				background: #ffffff;
+				box-sizing: border-box;
+
+				&.filled {
+					background: #000000;
+				}
+			}
+
+			.pip-label-name {
+				font-size: var(--text-trait-title);
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
 				min-width: 0;
+				overflow-wrap: break-word;
+				border-bottom: 1px solid #000000;
+				flex: 1 1 auto;
+			}
 
-				.pip-bubble-wrap {
-					cursor: pointer;
-					user-select: none;
+			.pip-label-input {
+				font: inherit;
+				font-size: var(--text-trait-title);
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
+				color: inherit;
+				background: transparent;
+				border: none;
+				border-bottom: 1px solid #000000;
+				border-radius: 0;
+				padding: 0 0 1px 0;
+				margin: 0;
+				min-width: 0;
+				flex: 1 1 auto;
+
+				&::placeholder {
+					font-weight: 400;
+					text-transform: none;
+					letter-spacing: 0;
+					font-style: italic;
+					opacity: 0.55;
 				}
 
-				.pip-bubble {
-					width: 15px;
-					height: 15px;
-					border-radius: 50%;
-					border: 1.5px solid #000000;
-					background: #ffffff;
-					box-sizing: border-box;
-
-					&.filled {
-						background: #000000;
-					}
-				}
-
-				.pip-label-name {
-					font-size: var(--text-trait-title);
-					font-weight: 700;
-					text-transform: uppercase;
-					letter-spacing: 0.04em;
-					min-width: 0;
-					overflow-wrap: break-word;
-					border-bottom: 1px solid #000000;
-					flex: 1 1 auto;
-				}
-
-				.pip-label-input {
-					font: inherit;
-					font-size: var(--text-trait-title);
-					font-weight: 700;
-					text-transform: uppercase;
-					letter-spacing: 0.04em;
-					color: inherit;
-					background: transparent;
-					border: none;
-					border-bottom: 1px solid #000000;
-					border-radius: 0;
-					padding: 0 0 1px 0;
-					margin: 0;
-					min-width: 0;
-					flex: 1 1 auto;
-
-					&::placeholder {
-						font-weight: 400;
-						text-transform: none;
-						letter-spacing: 0;
-						font-style: italic;
-						opacity: 0.55;
-					}
-
-					&:focus {
-						outline: none;
-						border-bottom-width: 2px;
-						padding-bottom: 0;
-					}
+				&:focus {
+					outline: none;
+					border-bottom-width: 2px;
+					padding-bottom: 0;
 				}
 			}
 		}
@@ -1779,56 +1779,56 @@
 					max-width: none;
 				}
 			}
+		}
 
-			.pip-row {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				position: relative;
-				gap: 16px;
-				width: fit-content;
-				max-width: 100%;
-				margin: 0 auto;
+		.pip-row {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			gap: 16px;
+			width: fit-content;
+			max-width: 100%;
+			margin: 0 auto;
 
-				.pip-row-line {
-					position: absolute;
-					left: 9.5px;
-					right: 9.5px;
-					height: 1px;
-					background: #000000;
-					top: 50%;
-					transform: translateY(-50%);
-					z-index: 0;
-				}
+			.pip-row-line {
+				position: absolute;
+				left: 9.5px;
+				right: 9.5px;
+				height: 1px;
+				background: #000000;
+				top: 50%;
+				transform: translateY(-50%);
+				z-index: 0;
+			}
+		}
 
-				.pip-bubble-wrap {
-					position: relative;
-					z-index: 1;
-					cursor: pointer;
-					user-select: none;
-					padding: 2px;
-					background: transparent;
+		.pip-bubble-wrap {
+			position: relative;
+			z-index: 1;
+			cursor: pointer;
+			user-select: none;
+			padding: 2px;
+			background: transparent;
 
-					.pip-bubble {
-						width: 15px;
-						height: 15px;
-						border-radius: 50%;
-						border: 1.5px solid #000000;
-						background: #ffffff;
-						box-sizing: border-box;
-						transition:
-							transform 0.1s ease,
-							background-color 0.15s ease;
+			&:hover .pip-bubble {
+				transform: scale(1.18);
+			}
+		}
 
-						&.filled {
-							background: #000000;
-						}
-					}
+		.pip-bubble {
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			border: 1.5px solid #000000;
+			background: #ffffff;
+			box-sizing: border-box;
+			transition:
+				transform 0.1s ease,
+				background-color 0.15s ease;
 
-					&:hover .pip-bubble {
-						transform: scale(1.18);
-					}
-				}
+			&.filled {
+				background: #000000;
 			}
 		}
 	}
@@ -2201,32 +2201,32 @@
 				margin-top: 0.15rem;
 				font-weight: 600;
 			}
+		}
 
-			.spotlight-card-badges {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: center;
-				gap: 0.5rem;
-				margin-top: 0.5rem;
+		.spotlight-card-badges {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 0.5rem;
+			margin-top: 0.5rem;
 
-				.badge-genre {
-					font-size: 0.65rem;
-					font-weight: 600;
-					padding: 0.15rem 0.5rem;
-					border-radius: 4px;
-					background: #f8fafc;
-					color: #64748b;
-					border: 1px solid #e2e8f0;
-				}
+			.badge-genre {
+				font-size: 0.65rem;
+				font-weight: 600;
+				padding: 0.15rem 0.5rem;
+				border-radius: 4px;
+				background: #f8fafc;
+				color: #64748b;
+				border: 1px solid #e2e8f0;
 			}
+		}
 
-			.spotlight-card-title a {
-				color: #0284c7;
-				text-decoration: none;
+		.spotlight-card-title a {
+			color: #0284c7;
+			text-decoration: none;
 
-				&:hover {
-					text-decoration: underline;
-				}
+			&:hover {
+				text-decoration: underline;
 			}
 		}
 
@@ -2451,7 +2451,7 @@
 			min-width: 0 !important;
 		}
 
-		.spotlight-grid > .trait-set + .trait-set {
+		.spotlight-grid > .trait-set:not(:first-child) {
 			margin-top: -2px !important;
 		}
 
@@ -2503,8 +2503,7 @@
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
 }
-.character-sheet.spotlight-style .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner,
-.character-sheet.spotlight-print-style .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner {
+:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-top .trait-set-header-inner {
 	writing-mode: horizontal-tb;
 	transform: translateY(1px);
 	display: inline-flex;
@@ -2522,62 +2521,25 @@
 	margin-left: auto;
 	font-weight: 900;
 }
-.character-sheet.spotlight-style
-	.trait-set.trait-set-header-top.trait-set-header-align-center
-	&
-	> .trait-set-header
-	&
-	> .trait-set-header-inner,
-.character-sheet.spotlight-print-style
-	.trait-set.trait-set-header-top.trait-set-header-align-center
-	&
-	> .trait-set-header
-	&
-	> .trait-set-header-inner {
+:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-align-center .trait-set-header-inner {
 	justify-content: center;
 	text-align: center;
 }
-.character-sheet.spotlight-style
-	.trait-set.trait-set-header-top.trait-set-header-align-left
-	&
-	> .trait-set-header
-	&
-	> .trait-set-header-inner,
-.character-sheet.spotlight-print-style
-	.trait-set.trait-set-header-top.trait-set-header-align-left
-	&
-	> .trait-set-header
-	&
-	> .trait-set-header-inner {
+:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-align-left .trait-set-header-inner {
 	justify-content: flex-start;
 	text-align: left;
 }
-.character-sheet.spotlight-style
-	.trait-set.trait-set-header-top.trait-set-header-align-right
-	&
-	> .trait-set-header
-	&
-	> .trait-set-header-inner,
-.character-sheet.spotlight-print-style
-	.trait-set.trait-set-header-top.trait-set-header-align-right
-	&
-	> .trait-set-header
-	&
-	> .trait-set-header-inner {
+:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-align-right .trait-set-header-inner {
 	justify-content: flex-end;
 	text-align: right;
 }
-.character-sheet.spotlight-style .trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header,
-.character-sheet.spotlight-print-style
+:is(.spotlight-style, .spotlight-print-style)
 	.trait-set.trait-set-header-align-left:not(.trait-set-header-top)
-	&
 	> .trait-set-header {
 	align-items: flex-start;
 }
-.character-sheet.spotlight-style .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header,
-.character-sheet.spotlight-print-style
+:is(.spotlight-style, .spotlight-print-style)
 	.trait-set.trait-set-header-align-right:not(.trait-set-header-top)
-	&
 	> .trait-set-header {
 	align-items: flex-end;
 }
@@ -2777,8 +2739,7 @@ body:has(.character-sheet.submode-print) .main {
 
 /* No separating line between a top header label and its traits (source sheets */
 /* have none); reclaim that space into a larger header label. */
-.character-sheet.spotlight-style .trait-set-header-top > .trait-set-header > .trait-set-header-inner,
-.character-sheet.spotlight-print-style .trait-set-header-top > .trait-set-header > .trait-set-header-inner {
+:is(.spotlight-style, .spotlight-print-style) .trait-set-header-top .trait-set-header-inner {
 	font-size: var(--text-header) !important;
 }
 
@@ -2969,9 +2930,6 @@ body:has(.character-sheet.submode-print) .main {
 			align-self: center;
 			margin: 0;
 			line-height: 1;
-			& > .trait-name:not(.trait-name-blank) {
-				width: 100%;
-			}
 		}
 
 		& > .statement-pip {
@@ -3021,13 +2979,10 @@ body:has(.character-sheet.submode-print) .main {
 			display: flex;
 			align-items: center;
 			box-sizing: border-box;
+		}
 
-			&.trait-name-blank,
-			& > .trait-name.trait-name-blank {
-				.trait-blank-line {
-					border-bottom: none !important;
-				}
-			}
+		.trait-blank-line {
+			border-bottom: none !important;
 		}
 
 		& > .trait-value {
@@ -3063,55 +3018,60 @@ body:has(.character-sheet.submode-print) .main {
 			margin-top: 0;
 		}
 	}
+}
 
-	/* 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'): */
-	/* Row 1: Trait Name (left) + Die Scale (right) */
-	/* Row 2: Full-width Statement Box underneath. */
-	.trait-set-rating-above .trait-title.trait-title-statement,
-	.trait-title.trait-title-statement.trait-title-above {
-		display: flex !important;
-		flex-direction: row !important;
-		flex-wrap: wrap !important;
-		align-items: center;
-		justify-content: space-between;
-		row-gap: 0.2rem;
+/* 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'): */
+/* Row 1: Trait Name (left) + Die Scale (right) */
+/* Row 2: Full-width Statement Box underneath. */
+.trait-set-rating-above .trait-title-statement,
+.trait-title-statement.trait-title-above {
+	display: flex !important;
+	flex-direction: row !important;
+	flex-wrap: wrap !important;
+	align-items: center;
+	justify-content: space-between;
+	row-gap: 0.2rem;
+}
 
-		& > .trait-name,
-		& > .trait-title-btn {
-			order: 1;
-			flex: 1 1 auto;
-		}
-		& > .trait-value {
-			order: 2;
-			flex: 0 0 auto;
-			margin-left: auto;
-		}
-		& > .trait-statement-box {
-			order: 3;
-			flex: 1 0 100%;
-			width: 100%;
-			min-height: 1.45rem;
-		}
-	}
+.trait-title-statement.trait-title-above > .trait-name,
+.trait-title-statement.trait-title-above > .trait-title-btn,
+.trait-set-rating-above .trait-title-statement > .trait-name,
+.trait-set-rating-above .trait-title-statement > .trait-title-btn {
+	order: 1;
+	flex: 1 1 auto;
+}
+.trait-title-statement.trait-title-above > .trait-value,
+.trait-set-rating-above .trait-title-statement > .trait-value {
+	order: 2;
+	flex: 0 0 auto;
+	margin-left: auto;
+}
+.trait-title-statement.trait-title-above > .trait-statement-box,
+.trait-set-rating-above .trait-title-statement > .trait-statement-box {
+	order: 3;
+	flex: 1 0 100%;
+	width: 100%;
+	min-height: 1.45rem;
+}
 
-	/* 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes): */
-	/* When a default-style set has features.description enabled and inline blank */
-	/* slots, render the blank slot as a full-width bordered write-in box beside the dice. */
-	.trait-set-style-default.trait-set-has-feature-description {
-		.trait-title:not(.trait-title-statement):not(.trait-title-stacked) {
-			& > .trait-name.trait-name-blank {
-				border: 1.5px solid #000000;
-				border-radius: 2px;
-				min-height: 1.35rem;
-				padding: 0.15rem 0.4rem;
-				background: #ffffff;
-				.trait-blank-line {
-					border-bottom: none !important;
-				}
-			}
-		}
-	}
+/* 6. INLINE BLANK WRITE-IN BOXES (e.g. Signature Assets/Tech inline boxes): */
+/* When a default-style set has features.description enabled and inline blank */
+/* slots, render the blank slot as a full-width bordered write-in box beside the dice. */
+.trait-set-has-feature-description
+	.trait-title:not(.trait-title-statement):not(.trait-title-stacked)
+	> .trait-name.trait-name-blank {
+	border: 1.5px solid #000000;
+	border-radius: 2px;
+	min-height: 1.35rem;
+	padding: 0.15rem 0.4rem;
+	background: #ffffff;
+}
+.trait-set-has-feature-description .trait-name.trait-name-blank .trait-blank-line {
+	border-bottom: none !important;
+}
 
+.character-sheet.spotlight-style,
+.character-sheet.spotlight-print-style {
 	/* 7. ASSET CARDS (ratingPosition: 'above'): right-align die scale over the box */
 	/* when inside multi-column grids, and remove double bottom borders. */
 	.trait-list-cols-2,
@@ -3216,23 +3176,6 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	/* 7. PIP TRACKS: Opt-in vertical connectors (.pips-lattice or connected single-column .pips-connected.pips-per-row-1) */
-	.trait-pips-body .pips-track-container.pips-lattice,
-	.trait-pips-body .pips-track-container.pips-connected.pips-per-row-1,
-	.trait-pips-body .pips-track-container.connected.pips-per-row-1 {
-		.pip-row:not(:last-child) .pip-bubble-wrap::after {
-			content: '';
-			position: absolute;
-			left: 50%;
-			top: 100%;
-			width: 1px;
-			height: 0.55rem;
-			background: #000000;
-			transform: translateX(-50%);
-			z-index: 0;
-		}
-	}
-
 	/* 8. BLANK SHEET MODE: Hollow out filled SVG diecons and pips for pencil write-in */
 	&.print-blank-mode {
 		.diecon-filled {
@@ -3252,6 +3195,21 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
+/* 7. PIP TRACKS: Opt-in vertical connectors */
+:is(.pips-lattice, .pips-connected.pips-per-row-1, .connected.pips-per-row-1)
+	.pip-row:not(:last-child)
+	.pip-bubble-wrap::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 100%;
+	width: 1px;
+	height: 0.55rem;
+	background: #000000;
+	transform: translateX(-50%);
+	z-index: 0;
+}
+
 /* 9. MOBILE PRINT-TAB WYSIWYG ZOOM: Scale the locked A4 page to fit phone viewports */
 @media screen and (max-width: 768px) {
 	.character-sheet.submode-print .pages {
@@ -3267,98 +3225,90 @@ body:has(.character-sheet.submode-print) .main {
 /* ============================================================ */
 /* GENERIC PREFILLED STATEMENT & LABELED-FIELDS GEOMETRY */
 /* ============================================================ */
-.character-sheet.spotlight-style,
-.character-sheet.spotlight-print-style {
-	/* 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships): */
-	/* When a slot has a blank write-in trait name AND a pre-filled statement prompt, */
-	/* fuse the blank name box and statement box into a single continuous bordered */
-	/* field with open write-in space on the left and the prompt flush-right. */
-	.trait-title.trait-title-statement:not(.trait-title-stacked):has(> .trait-name-blank) {
-		& > .trait-name.trait-name-blank {
-			flex: 1 1 45%;
-			border: 1.5px solid #000000;
-			border-right: none;
-			border-radius: 2px 0 0 2px;
-			min-height: 1.35rem;
-			padding: 0.15rem 0.4rem;
-			background: #ffffff;
-			.trait-blank-line {
-				border-bottom: none !important;
-			}
-		}
-		& > .trait-statement-box {
-			flex: 0 1 auto;
-			border-left: none;
-			border-radius: 0 2px 2px 0;
-			justify-content: flex-end;
-			text-align: right;
-			padding-left: 0.25rem;
+/* 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships): */
+/* When a slot has a blank write-in trait name AND a pre-filled statement prompt, */
+/* fuse the blank name box and statement box into a single continuous bordered */
+/* field with open write-in space on the left and the prompt flush-right. */
+.trait-title.trait-title-statement:not(.trait-title-stacked):has(> .trait-name-blank) {
+	& > .trait-name.trait-name-blank {
+		flex: 1 1 45%;
+		border: 1.5px solid #000000;
+		border-right: none;
+		border-radius: 2px 0 0 2px;
+		min-height: 1.35rem;
+		padding: 0.15rem 0.4rem;
+		background: #ffffff;
+		.trait-blank-line {
+			border-bottom: none !important;
 		}
 	}
+	& > .trait-statement-box {
+		flex: 0 1 auto;
+		border-left: none;
+		border-radius: 0 2px 2px 0;
+		justify-content: flex-end;
+		text-align: right;
+		padding-left: 0.25rem;
+	}
+}
 
-	/* 2. MULTI-COLUMN LABELED FIELDS (when traitColumns: 2 is set on a labeled-fields set, */
-	/* e.g. KitBash Power Sets where Powers + Limits sit side-by-side above full-width SFX): */
-	.trait-set-style-labeled-fields {
-		.trait-list-cols-2 .trait-labeled-fields,
-		&.trait-set-cols-2 .trait-labeled-fields {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 0.35rem;
+/* 2. MULTI-COLUMN LABELED FIELDS (when traitColumns: 2 is set on a labeled-fields set, */
+/* e.g. KitBash Power Sets where Powers + Limits sit side-by-side above full-width SFX): */
+.trait-set-style-labeled-fields.trait-set-cols-2 .trait-labeled-fields,
+.trait-set-style-labeled-fields.trait-list-cols-2 .trait-labeled-fields {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0.35rem;
 
-			& > .field-block:nth-child(3):last-child {
-				grid-column: 1 / -1;
-			}
-		}
+	& > .field-block:nth-child(3):last-child {
+		grid-column: 1 / -1;
 	}
 }
 
 /* ============================================================ */
 /* GENERIC LEFT-RATED & STACKED-BOX GEOMETRY */
 /* ============================================================ */
-.character-sheet.spotlight-style,
-.character-sheet.spotlight-print-style {
-	/* 1. INLINE BLANK WRITE-IN BOX WITH DICE ON THE LEFT (ratingPosition: 'left'): */
-	/* Places the die scale on the left and the bordered write-in box on the right */
-	/* (e.g. Misty Cove Relationships). */
-	.trait-set-rating-left {
-		.trait-title:not(.trait-title-stacked) {
-			flex-direction: row;
-			& > .trait-value {
-				order: -1;
-				margin-left: 0;
-				margin-right: 0.45rem;
-			}
-			& > .trait-name {
-				order: 1;
-				flex: 1 1 auto;
-			}
+/* 1. INLINE BLANK WRITE-IN BOX WITH DICE ON THE LEFT (ratingPosition: 'left'): */
+/* Places the die scale on the left and the bordered write-in box on the right */
+/* (e.g. Misty Cove Relationships). */
+.trait-set-rating-left {
+	.trait-title:not(.trait-title-stacked) {
+		flex-direction: row;
+		& > .trait-value {
+			order: -1;
+			margin-left: 0;
+			margin-right: 0.45rem;
+		}
+		& > .trait-name {
+			order: 1;
+			flex: 1 1 auto;
 		}
 	}
+}
 
-	/* 2. STACKED BLANK WRITE-IN BOX ABOVE DICE (ratingPosition: 'below' + features.description): */
-	/* When a blank write-in slot has ratingPosition: 'below' and description enabled */
-	/* (e.g. Retired No More Resources, Signature Assets, Aging Complications), */
-	/* render the blank name as a rectangular write-in box with the die scale centered below it. */
-	.trait-set-style-default.trait-set-has-feature-description {
-		.trait-title.trait-title-stacked:not(.trait-title-statement) {
-			align-items: stretch;
-			& > .trait-name.trait-name-blank {
-				border: 1.5px solid #000000;
-				border-radius: 2px;
-				min-height: 1.45rem;
-				padding: 0.15rem 0.4rem;
-				background: #ffffff;
-				width: 100%;
-				.trait-blank-line {
-					border-bottom: none !important;
-				}
-			}
-			& > .trait-value {
-				justify-content: center;
-				width: 100%;
-				margin-top: -0.35rem;
-				z-index: 1;
-			}
+/* 2. STACKED BLANK WRITE-IN BOX ABOVE DICE (ratingPosition: 'below' + features.description): */
+/* When a blank write-in slot has ratingPosition: 'below' and description enabled */
+/* (e.g. Retired No More Resources, Signature Assets, Aging Complications), */
+/* render the blank name as a rectangular write-in box with the die scale centered below it. */
+.trait-set-style-default.trait-set-has-feature-description {
+	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+		align-items: stretch;
+		& > .trait-name.trait-name-blank {
+			border: 1.5px solid #000000;
+			border-radius: 2px;
+			min-height: 1.45rem;
+			padding: 0.15rem 0.4rem;
+			background: #ffffff;
+			width: 100%;
+		}
+		.trait-blank-line {
+			border-bottom: none !important;
+		}
+		& > .trait-value {
+			justify-content: center;
+			width: 100%;
+			margin-top: -0.35rem;
+			z-index: 1;
 		}
 	}
 }
@@ -3366,55 +3316,55 @@ body:has(.character-sheet.submode-print) .main {
 /* ============================================================ */
 /* UI POLISH, ATTACHED STRESS FIX, EMPTY SFX SLOTS & MOBILE REFLOW */
 /* ============================================================ */
+/* 1. STACKED ATTACHED STRESS (when parent trait is stacked, e.g. Eidolon Alpha, */
+/* Hammerheads, Titans): always show the STRESS label and stack below the trait! */
+.trait-inner:has(> .trait-title.trait-title-stacked) > .attached-stress-block {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	gap: 0.4rem;
+	border: 1.5px solid #000000 !important;
+	border-top: none !important;
+	border-radius: 0 0 2px 2px;
+	padding: 0.15rem 0.4rem !important;
+	margin-top: 0.1rem !important;
+
+	.attached-stress-header {
+		display: inline-flex !important;
+		margin-bottom: 0 !important;
+		font-weight: 800;
+		font-size: var(--text-meta);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+}
+
+/* 2. INLINE ATTACHED STRESS (ONLY when parent trait is NOT stacked, */
+/* e.g. Snowfall Initiative Attributes & Stress): */
+.trait-inner:has(> .trait-title:not(.trait-title-stacked)):has(> .attached-stress-block) {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+
+	& > .trait-title {
+		flex: 1 1 auto;
+	}
+	& > .attached-stress-block {
+		flex: 0 0 auto;
+		border: none !important;
+		padding: 0 !important;
+		margin-top: 0 !important;
+		.attached-stress-header {
+			display: none !important;
+		}
+	}
+}
+
 .character-sheet.spotlight-style,
 .character-sheet.spotlight-print-style {
-	/* 1. STACKED ATTACHED STRESS (when parent trait is stacked, e.g. Eidolon Alpha, */
-	/* Hammerheads, Titans): always show the STRESS label and stack below the trait! */
-	.trait-inner:has(> .trait-title.trait-title-stacked) > .attached-stress-block {
-		display: flex !important;
-		flex-direction: row !important;
-		align-items: center !important;
-		justify-content: space-between !important;
-		gap: 0.4rem;
-		border: 1.5px solid #000000 !important;
-		border-top: none !important;
-		border-radius: 0 0 2px 2px;
-		padding: 0.15rem 0.4rem !important;
-		margin-top: 0.1rem !important;
-
-		.attached-stress-header {
-			display: inline-flex !important;
-			margin-bottom: 0 !important;
-			font-weight: 800;
-			font-size: var(--text-meta);
-			letter-spacing: 0.04em;
-			text-transform: uppercase;
-		}
-	}
-
-	/* 2. INLINE ATTACHED STRESS (ONLY when parent trait is NOT stacked, */
-	/* e.g. Snowfall Initiative Attributes & Stress): */
-	.trait-inner:has(> .trait-title:not(.trait-title-stacked)):has(> .attached-stress-block) {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-
-		& > .trait-title {
-			flex: 1 1 auto;
-		}
-		& > .attached-stress-block {
-			flex: 0 0 auto;
-			border: none !important;
-			padding: 0 !important;
-			margin-top: 0 !important;
-			.attached-stress-header {
-				display: none !important;
-			}
-		}
-	}
-
 	/* 3. EMPTY SFX WRITE-IN SLOTS: */
 	/* Prevent blank SFX names from rendering as solid black pills ("• █") */
 	.sfx-item,
@@ -4210,192 +4160,185 @@ body:has(.character-sheet.submode-print) .main {
 
 /* LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only) */
 @media screen {
-	[data-theme='dark'],
-	.theme-dark {
-		.character-sheet.spotlight-style:not(.submode-print),
-		.character-sheet:not(.submode-print) {
-			/* Name & Header Block */
-			.page-header-inner.spotlight-header-card {
-				background: var(--bg-surface-card) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-main) !important;
+	:is([data-theme='dark'], .theme-dark) .character-sheet:not(.submode-print) {
+		/* Name & Header Block */
+		.page-header-inner.spotlight-header-card {
+			background: var(--bg-surface-card) !important;
+			border-color: var(--border-strong) !important;
+			color: var(--text-main) !important;
+		}
 
-				.spotlight-header-meta-box,
-				.spotlight-header-desc-box {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
+		.spotlight-header-meta-box,
+		.spotlight-header-desc-box {
+			background: var(--bg-surface-elevated) !important;
+			border-color: var(--border-strong) !important;
+			color: var(--text-main) !important;
 
-					.spotlight-cell-label {
-						color: var(--text-secondary) !important;
-					}
-
-					.spotlight-cell-sublabel {
-						color: var(--text-muted) !important;
-					}
-
-					.name-content,
-					.desc-content,
-					.spotlight-nickname-val,
-					.spotlight-pronoun-val {
-						color: var(--text-main) !important;
-
-						&.placeholder-dim {
-							color: var(--text-muted) !important;
-						}
-					}
-
-					.spotlight-blank-line,
-					.desc-blank-line,
-					.spotlight-meta-divider {
-						border-color: var(--border-subtle) !important;
-					}
-				}
-
-				.spotlight-header-portrait-box {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
-
-					.portrait-small-placeholder {
-						color: var(--text-muted) !important;
-					}
-
-					.portrait-placeholder-logo {
-						filter: invert(0.85);
-					}
-				}
-			}
-
-			/* Trait Sets & Inner Boxes */
-			.trait-set {
-				background: var(--bg-surface-card) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-main) !important;
-
-				.trait-set-header {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
-				}
-
-				.trait-statement-box {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
-				}
-
-				.statement-pip:not(.questioned) {
-					background-color: transparent !important;
-					border-color: var(--border-strong) !important;
-				}
-
-				.trait-asset-box,
-				.trait-asset-card {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
-				}
-			}
-
-			/* Trait Names, Titles, and Labels across all Set Styles */
-			.trait-title {
-				color: var(--text-main) !important;
-			}
-
-			.trait-name,
-			.trait-title-name,
-			.ladder-name,
-			.subtrait-name,
-			.die-row-name,
-			.branch-slot-name {
-				color: var(--text-main) !important;
-
-				.trait-name-hint {
-					color: var(--text-muted) !important;
-				}
-			}
-
-			/* Distinctions Bordered Title (Heritage, Destiny, Camp Reputation) */
-			.trait-set-style-sfx-rows {
-				.trait .trait-title {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
-
-					.trait-name,
-					.trait-title-name {
-						color: var(--text-main) !important;
-					}
-				}
-			}
-
-			/* General SFX lists */
-			.trait-sfx {
-				li {
-					color: var(--text-secondary) !important;
-
-					.trait-sfx-name {
-						background: var(--bg-surface-elevated) !important;
-						border: 1px solid var(--border-strong) !important;
-						color: var(--text-main) !important;
-					}
-				}
-			}
-
-			/* Trait Descriptions & Body Text */
-			.trait-description {
+			.spotlight-cell-label {
 				color: var(--text-secondary) !important;
-
-				&.placeholder-dim,
-				.placeholder-dim {
-					color: var(--text-muted) !important;
-				}
 			}
 
-			.spotlight-desc-textarea {
-				background: var(--bg-surface-elevated) !important;
+			.spotlight-cell-sublabel {
+				color: var(--text-muted) !important;
+			}
+
+			.name-content,
+			.desc-content,
+			.spotlight-nickname-val,
+			.spotlight-pronoun-val {
 				color: var(--text-main) !important;
-				border-color: var(--border-subtle) !important;
 
-				&::placeholder {
+				&.placeholder-dim {
 					color: var(--text-muted) !important;
 				}
 			}
 
-			/* Paired Slots (Standing, Relationships) */
-			.trait-paired-slots {
-				.paired-slot-name-box {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-main) !important;
-
-					.paired-slot-placeholder-hint {
-						color: var(--text-muted) !important;
-					}
-
-					.paired-slot-blank-line {
-						border-color: var(--border-subtle) !important;
-					}
-				}
-
-				.paired-slot-statement-box {
-					background: var(--bg-surface-elevated) !important;
-					border-color: var(--border-strong) !important;
-					color: var(--text-secondary) !important;
-				}
-
-				.paired-slot-sub-label {
-					color: var(--text-secondary) !important;
-				}
-			}
-
-			/* Write-in blank lines & dividers */
-			.die-blank-line,
-			.trait-blank-line,
-			.desc-blank-line {
+			.spotlight-blank-line,
+			.desc-blank-line,
+			.spotlight-meta-divider {
 				border-color: var(--border-subtle) !important;
 			}
+		}
+
+		.spotlight-header-portrait-box {
+			background: var(--bg-surface-elevated) !important;
+			border-color: var(--border-strong) !important;
+			color: var(--text-main) !important;
+
+			.portrait-small-placeholder {
+				color: var(--text-muted) !important;
+			}
+
+			.portrait-placeholder-logo {
+				filter: invert(0.85);
+			}
+		}
+
+		/* Trait Sets & Inner Boxes */
+		.trait-set {
+			background: var(--bg-surface-card) !important;
+			border-color: var(--border-strong) !important;
+			color: var(--text-main) !important;
+
+			.trait-set-header {
+				background: var(--bg-surface-elevated) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-main) !important;
+			}
+
+			.trait-statement-box {
+				background: var(--bg-surface-elevated) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-main) !important;
+			}
+
+			.statement-pip:not(.questioned) {
+				background-color: transparent !important;
+				border-color: var(--border-strong) !important;
+			}
+
+			.trait-asset-box,
+			.trait-asset-card {
+				background: var(--bg-surface-elevated) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-main) !important;
+			}
+		}
+
+		/* Trait Names, Titles, and Labels across all Set Styles */
+		.trait-title {
+			color: var(--text-main) !important;
+		}
+
+		.trait-name,
+		.trait-title-name,
+		.ladder-name,
+		.subtrait-name,
+		.die-row-name,
+		.branch-slot-name {
+			color: var(--text-main) !important;
+
+			.trait-name-hint {
+				color: var(--text-muted) !important;
+			}
+		}
+
+		/* Distinctions Bordered Title (Heritage, Destiny, Camp Reputation) */
+		.trait-set-style-sfx-rows .trait-title {
+			background: var(--bg-surface-elevated) !important;
+			border-color: var(--border-strong) !important;
+			color: var(--text-main) !important;
+		}
+
+		.trait-set-style-sfx-rows :is(.trait-name, .trait-title-name) {
+			color: var(--text-main) !important;
+		}
+
+		/* General SFX lists */
+		.trait-sfx {
+			li {
+				color: var(--text-secondary) !important;
+			}
+
+			.trait-sfx-name {
+				background: var(--bg-surface-elevated) !important;
+				border: 1px solid var(--border-strong) !important;
+				color: var(--text-main) !important;
+			}
+		}
+
+		/* Trait Descriptions & Body Text */
+		.trait-description {
+			color: var(--text-secondary) !important;
+
+			&.placeholder-dim,
+			.placeholder-dim {
+				color: var(--text-muted) !important;
+			}
+		}
+
+		.spotlight-desc-textarea {
+			background: var(--bg-surface-elevated) !important;
+			color: var(--text-main) !important;
+			border-color: var(--border-subtle) !important;
+
+			&::placeholder {
+				color: var(--text-muted) !important;
+			}
+		}
+
+		/* Paired Slots (Standing, Relationships) */
+		.trait-paired-slots {
+			.paired-slot-name-box {
+				background: var(--bg-surface-elevated) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-main) !important;
+			}
+
+			.paired-slot-placeholder-hint {
+				color: var(--text-muted) !important;
+			}
+
+			.paired-slot-blank-line {
+				border-color: var(--border-subtle) !important;
+			}
+
+			.paired-slot-statement-box {
+				background: var(--bg-surface-elevated) !important;
+				border-color: var(--border-strong) !important;
+				color: var(--text-secondary) !important;
+			}
+
+			.paired-slot-sub-label {
+				color: var(--text-secondary) !important;
+			}
+		}
+
+		/* Write-in blank lines & dividers */
+		.die-blank-line,
+		.trait-blank-line,
+		.desc-blank-line {
+			border-color: var(--border-subtle) !important;
 		}
 	}
 }
