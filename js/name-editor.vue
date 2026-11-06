@@ -734,11 +734,8 @@ function updateCharacter(character: any) {
 					<!-- ================= TAB 1: SHEET LEVEL ================= -->
 					<template v-if="currentTab === 'sheet'">
 						<div class="editor-field">
-							<div
-								class="name-heading-row"
-								style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem"
-							>
-								<span class="editor-label" style="margin: 0">Name Block Set</span>
+							<div class="name-heading-row editor-row-between mb-sm">
+								<span class="editor-label m-0">Name Block Set</span>
 								<visibility-eye :state="nameSetVisibility()" @toggle="toggleNameSetVisibility()" />
 							</div>
 							<div class="editor-button-container">
@@ -964,13 +961,9 @@ function updateCharacter(character: any) {
 
 						<div class="editor-field">
 							<div class="editor-label">Pillar Labels</div>
-							<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.45rem; margin-top: 0.35rem">
+							<div class="editor-grid-2 mt-sm">
 								<div v-for="pKey in activePillarKeys" :key="'pillar-lbl-' + pKey">
-									<label
-										:for="'char-pillar-label-' + pKey"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.15rem"
-										>{{ pKey }}</label
-									>
+									<label :for="'char-pillar-label-' + pKey" class="editor-sub-label">{{ pKey }}</label>
 									<input
 										type="text"
 										:id="'char-pillar-label-' + pKey"
@@ -985,7 +978,7 @@ function updateCharacter(character: any) {
 
 						<div class="editor-field">
 							<div class="editor-label">Layout Template</div>
-							<div style="font-size: 0.75rem; opacity: 0.85; margin-bottom: 0.4rem">
+							<div class="editor-field-hint">
 								<span v-if="sheetTemplateId"
 									>Resolves against <strong>{{ sheetTemplateId }}</strong> — values you haven't changed come from the
 									template, keeping this file clean.</span
@@ -1007,45 +1000,19 @@ function updateCharacter(character: any) {
 						<!-- WATERMARK CONFIGURATION -->
 						<div class="editor-field">
 							<label for="name-editor-watermark-enabled">Watermark Image</label>
-							<div
-								class="editor-checkbox-row"
-								style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem"
-							>
+							<div class="editor-checkbox-row mb-md">
 								<input
 									type="checkbox"
 									id="name-editor-watermark-enabled"
 									name="watermarkEnabled"
 									v-model="watermarkEnabled"
 								/>
-								<label for="name-editor-watermark-enabled" style="margin: 0; font-size: 0.8rem; cursor: pointer"
-									>Enable Background Watermark</label
-								>
+								<label for="name-editor-watermark-enabled">Enable Background Watermark</label>
 							</div>
 
-							<div
-								v-if="watermarkEnabled"
-								class="watermark-settings"
-								style="
-									display: flex;
-									flex-direction: column;
-									gap: 0.5rem;
-									padding: 0.5rem;
-									background: rgba(255, 255, 255, 0.05);
-									border: 1px solid rgba(255, 255, 255, 0.15);
-									border-radius: 4px;
-								"
-							>
-								<div v-if="watermarkURL" style="text-align: center; padding: 0.25rem">
-									<img
-										:src="watermarkURL"
-										style="
-											max-height: 70px;
-											max-width: 100%;
-											object-fit: contain;
-											border-radius: 3px;
-											border: 1px solid #cbd5e1;
-										"
-									/>
+							<div v-if="watermarkEnabled" class="watermark-settings editor-watermark-preview-box">
+								<div v-if="watermarkURL" class="text-center p-xs">
+									<img :src="watermarkURL" class="editor-watermark-preview-img" />
 								</div>
 
 								<div class="editor-button-container">
@@ -1054,9 +1021,8 @@ function updateCharacter(character: any) {
 											<span><i class="fas fa-upload"></i> {{ watermarkURL ? 'Change' : 'Upload' }} Watermark</span>
 										</div>
 										<div
-											class="editor-button"
+											class="editor-button editor-btn-danger-mini"
 											v-if="watermarkURL"
-											style="background: #ef4444; color: #ffffff"
 											@click.prevent="removeWatermark"
 										>
 											<span><i class="fas fa-trash-alt"></i> Remove</span>
@@ -1069,7 +1035,8 @@ function updateCharacter(character: any) {
 									id="char-field-watermark-file"
 									name="watermarkFile"
 									ref="watermarkFileInput"
-									style="display: none"
+									class="sr-only"
+									aria-label="Upload watermark file"
 									@change="uploadWatermarkProcess"
 									accept="image/*"
 								/>
@@ -1077,11 +1044,7 @@ function updateCharacter(character: any) {
 								<div class="editor-upload-error" v-if="watermarkError">{{ watermarkError }}</div>
 
 								<div>
-									<label
-										for="char-field-watermark-url"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
-										>Image URL</label
-									>
+									<label for="char-field-watermark-url" class="editor-sub-label">Image URL</label>
 									<input
 										type="text"
 										id="char-field-watermark-url"
@@ -1092,17 +1055,7 @@ function updateCharacter(character: any) {
 								</div>
 
 								<div class="slider-row">
-									<div
-										class="slider-header"
-										style="
-											display: flex;
-											justify-content: space-between;
-											font-size: 0.7rem;
-											font-weight: 700;
-											color: #cbd5e1;
-											margin-bottom: 0.2rem;
-										"
-									>
+									<div class="slider-header">
 										<label for="char-field-watermark-opacity">Opacity</label>
 										<span>{{ Math.round(watermarkOpacity * 100) }}%</span>
 									</div>
@@ -1118,17 +1071,7 @@ function updateCharacter(character: any) {
 								</div>
 
 								<div class="slider-row">
-									<div
-										class="slider-header"
-										style="
-											display: flex;
-											justify-content: space-between;
-											font-size: 0.7rem;
-											font-weight: 700;
-											color: #cbd5e1;
-											margin-bottom: 0.2rem;
-										"
-									>
+									<div class="slider-header">
 										<label for="char-field-watermark-scale">Scale</label>
 										<span>{{ watermarkScale }}%</span>
 									</div>
@@ -1150,21 +1093,8 @@ function updateCharacter(character: any) {
 					<template v-else-if="currentTab === 'page'">
 						<div class="editor-field">
 							<div class="editor-label">Page Justification</div>
-							<div
-								class="editor-segmented-wrap"
-								style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.25rem"
-							>
-								<label
-									for="char-field-just-top"
-									style="
-										font-size: 0.8rem;
-										display: flex;
-										align-items: center;
-										gap: 0.4rem;
-										cursor: pointer;
-										color: #f1f5f9;
-									"
-								>
+							<div class="editor-segmented-wrap flex-col gap-sm mt-xs">
+								<label for="char-field-just-top" class="editor-radio-row">
 									<input
 										type="radio"
 										id="char-field-just-top"
@@ -1174,21 +1104,11 @@ function updateCharacter(character: any) {
 									/>
 									<strong>Top Base</strong>
 								</label>
-								<p style="font-size: 0.7rem; color: #94a3b8; margin: 0 0 0 1.4rem; line-height: 1.3">
+								<p class="editor-radio-hint">
 									Columns start strictly level at the top base with flush vertical baselines.
 								</p>
 
-								<label
-									for="char-field-just-dist"
-									style="
-										font-size: 0.8rem;
-										display: flex;
-										align-items: center;
-										gap: 0.4rem;
-										cursor: pointer;
-										color: #f1f5f9;
-									"
-								>
+								<label for="char-field-just-dist" class="editor-radio-row">
 									<input
 										type="radio"
 										id="char-field-just-dist"
@@ -1198,9 +1118,7 @@ function updateCharacter(character: any) {
 									/>
 									<strong>Distributed</strong>
 								</label>
-								<p style="font-size: 0.7rem; color: #94a3b8; margin: 0 0 0 1.4rem; line-height: 1.3">
-									Sections distribute vertically to fill the full printable page height.
-								</p>
+								<p class="editor-radio-hint">Sections distribute vertically to fill the full printable page height.</p>
 							</div>
 						</div>
 
@@ -1210,12 +1128,7 @@ function updateCharacter(character: any) {
 								<option value="portrait">Portrait</option>
 								<option value="landscape">Landscape</option>
 							</select>
-							<span
-								class="editor-field-hint"
-								style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem; display: block"
-							>
-								Selects page aspect ratio and printable page rotation.
-							</span>
+							<span class="editor-field-hint"> Selects page aspect ratio and printable page rotation. </span>
 						</div>
 
 						<div class="editor-field">
@@ -1253,13 +1166,13 @@ function updateCharacter(character: any) {
 									@click.stop="setAccent(swatch.hex)"
 								></button>
 							</div>
-							<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem">
+							<div class="editor-row-inline mt-sm">
 								<input
 									type="color"
 									id="char-field-accent-color"
 									name="accentColorPicker"
 									v-model="accentColor"
-									style="width: 2.2rem; height: 1.8rem; padding: 0; border: none; cursor: pointer; border-radius: 4px"
+									class="editor-color-swatch-input"
 								/>
 								<input
 									type="text"
@@ -1267,12 +1180,11 @@ function updateCharacter(character: any) {
 									name="accentColorHex"
 									v-model="accentColor"
 									placeholder="#0ea5e9"
-									style="font-family: monospace; font-size: 0.8rem"
+									class="editor-hex-input"
 								/>
 								<button
 									type="button"
-									class="editor-tab-btn"
-									style="border: 1px solid rgba(255, 255, 255, 0.2)"
+									class="editor-tab-btn editor-border-subtle"
 									@click.stop="resetAccent"
 									title="Reset"
 								>
@@ -1373,49 +1285,28 @@ function updateCharacter(character: any) {
 									{{ cf }}
 								</button>
 							</div>
-							<span
-								class="editor-field-hint"
-								style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; display: block"
-							>
+							<span class="editor-field-hint">
 								Any family name from fonts.google.com works — it loads and previews as you type, and applies on Enter.
 							</span>
 						</div>
 
 						<!-- CUSTOM FONT UPLOAD -->
-						<div
-							class="editor-field"
-							style="
-								background: rgba(255, 255, 255, 0.05);
-								padding: 0.6rem;
-								border-radius: 4px;
-								border: 1px solid rgba(255, 255, 255, 0.15);
-							"
-						>
-							<label for="char-field-font-upload" style="font-size: 0.75rem"
-								><i class="fas fa-file-arrow-up"></i> Upload Custom Font</label
-							>
+						<div class="editor-field editor-box-inset">
+							<label for="char-field-font-upload"><i class="fas fa-file-arrow-up"></i> Upload Custom Font</label>
 							<input
 								type="file"
 								id="char-field-font-upload"
 								name="fontUpload"
 								ref="fontFileInput"
-								style="display: none"
+								class="sr-only"
 								@change="handleFontUpload"
 								accept=".woff,.woff2,.ttf,.otf"
 							/>
-							<button
-								type="button"
-								class="editor-tab-btn"
-								style="width: 100%; margin-top: 0.3rem; border: 1px solid rgba(255, 255, 255, 0.25); text-align: center"
-								@click.stop="triggerFontUpload"
-							>
+							<button type="button" class="editor-tab-btn editor-full-btn mt-xs" @click.stop="triggerFontUpload">
 								<i class="fas fa-upload"></i> Choose Font File
 							</button>
 							<div class="editor-upload-error" v-if="fontUploadError">{{ fontUploadError }}</div>
-							<span
-								class="editor-field-hint"
-								style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; display: block"
-							>
+							<span class="editor-field-hint">
 								Uploaded fonts are embedded into the character JSON and available immediately.
 							</span>
 						</div>
@@ -1424,25 +1315,9 @@ function updateCharacter(character: any) {
 						<div id="die-style-anchor" class="editor-section-divider">Die Style &amp; Geometry</div>
 
 						<!-- LIVE SVG PREVIEW OF ALL 5 DICE -->
-						<div
-							class="editor-field"
-							style="
-								text-align: center;
-								background: #ffffff;
-								padding: 0.75rem;
-								border-radius: 6px;
-								border: 1px solid #cbd5e1;
-							"
-						>
-							<div
-								class="editor-label"
-								style="font-size: 0.75rem; color: #1e293b; margin-bottom: 0.4rem; display: block; font-weight: 700"
-							>
-								Live Dice Appearance Preview
-							</div>
-							<div
-								style="display: flex; justify-content: center; gap: 0.6rem; align-items: center; margin-bottom: 0.5rem"
-							>
+						<div class="editor-field editor-box-white">
+							<div class="editor-label font-bold text-dark mb-sm">Live Dice Appearance Preview</div>
+							<div class="editor-dice-preview-row">
 								<span
 									v-for="d in [4, 6, 8, 10, 12]"
 									:key="'filled-' + d"
@@ -1450,10 +1325,8 @@ function updateCharacter(character: any) {
 									:title="'d' + d + ' (Active / Filled)'"
 								></span>
 							</div>
-							<div style="font-size: 0.68rem; color: #64748b; margin-top: 0.2rem; font-weight: 600">
-								Unfilled / Reserved Slots Preview:
-							</div>
-							<div style="display: flex; justify-content: center; gap: 0.6rem; align-items: center; margin-top: 0.3rem">
+							<div class="editor-field-hint font-semibold">Unfilled / Reserved Slots Preview:</div>
+							<div class="editor-dice-preview-row is-unfilled">
 								<span
 									v-for="d in [4, 6, 8, 10, 12]"
 									:key="'unfilled-' + d"
@@ -1466,31 +1339,19 @@ function updateCharacter(character: any) {
 						<!-- PRESET PALETTES -->
 						<div class="editor-field">
 							<div class="editor-label">Dice Themes &amp; Presets</div>
-							<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.25rem">
+							<div class="editor-grid-2 mt-xs">
 								<button
 									v-for="p in dicePresets"
 									:key="p.name"
 									type="button"
-									class="editor-tab-btn"
-									style="
-										font-size: 0.75rem;
-										padding: 0.35rem;
-										border: 1px solid rgba(255, 255, 255, 0.2);
-										text-align: left;
-										display: flex;
-										align-items: center;
-										gap: 0.4rem;
-									"
+									class="editor-tab-btn editor-dice-preset-btn"
 									@click.stop="applyDicePreset(p)"
 								>
 									<span
+										class="editor-dice-preset-swatch"
 										:style="{
-											width: '12px',
-											height: '12px',
-											borderRadius: '2px',
-											background: p.backgroundColor1,
-											display: 'inline-block',
-											border: '1px solid ' + p.borderColor,
+											backgroundColor: p.backgroundColor1,
+											borderColor: p.borderColor,
 										}"
 									></span>
 									{{ p.name }}
@@ -1501,7 +1362,7 @@ function updateCharacter(character: any) {
 						<!-- BACKGROUND TYPE: SOLID VS GRADIENT -->
 						<div class="editor-field">
 							<div class="editor-label">Die Fill Background</div>
-							<div class="editor-button-group" style="margin-bottom: 0.5rem">
+							<div class="editor-button-group mb-md">
 								<button
 									type="button"
 									class="editor-group-btn"
@@ -1520,19 +1381,19 @@ function updateCharacter(character: any) {
 								</button>
 							</div>
 
-							<div style="display: flex; flex-direction: column; gap: 0.5rem">
-								<div style="display: flex; align-items: center; justify-content: space-between">
-									<label for="char-field-dice-bg1" style="font-size: 0.75rem; color: #cbd5e1; margin: 0">{{
+							<div class="flex-col gap-sm">
+								<div class="editor-row-between">
+									<label for="char-field-dice-bg1" class="editor-sub-label m-0">{{
 										diceConfig.backgroundType === 'gradient' ? 'Start Color' : 'Fill Color'
 									}}</label>
-									<div style="display: flex; align-items: center; gap: 0.4rem">
+									<div class="editor-row-inline">
 										<input
 											type="color"
 											id="char-field-dice-bg1"
 											name="diceBgColor1"
 											:value="diceConfig.backgroundColor1 || '#ffffff'"
 											@input="updateDiceProp('backgroundColor1', targetValue($event))"
-											style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px"
+											class="editor-color-swatch-input"
 										/>
 										<input
 											type="text"
@@ -1540,26 +1401,21 @@ function updateCharacter(character: any) {
 											name="diceBgColor1Text"
 											:value="diceConfig.backgroundColor1 || '#ffffff'"
 											@input="updateDiceProp('backgroundColor1', targetValue($event))"
-											style="font-family: monospace; font-size: 0.75rem; width: 5.5rem"
+											class="editor-hex-input"
 										/>
 									</div>
 								</div>
 
-								<div
-									v-if="diceConfig.backgroundType === 'gradient'"
-									style="display: flex; align-items: center; justify-content: space-between"
-								>
-									<label for="char-field-dice-bg2" style="font-size: 0.75rem; color: #cbd5e1; margin: 0"
-										>End Color</label
-									>
-									<div style="display: flex; align-items: center; gap: 0.4rem">
+								<div v-if="diceConfig.backgroundType === 'gradient'" class="editor-row-between">
+									<label for="char-field-dice-bg2" class="editor-sub-label m-0">End Color</label>
+									<div class="editor-row-inline">
 										<input
 											type="color"
 											id="char-field-dice-bg2"
 											name="diceBgColor2"
 											:value="diceConfig.backgroundColor2 || '#f1f5f9'"
 											@input="updateDiceProp('backgroundColor2', targetValue($event))"
-											style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px"
+											class="editor-color-swatch-input"
 										/>
 										<input
 											type="text"
@@ -1567,23 +1423,13 @@ function updateCharacter(character: any) {
 											name="diceBgColor2Text"
 											:value="diceConfig.backgroundColor2 || '#f1f5f9'"
 											@input="updateDiceProp('backgroundColor2', targetValue($event))"
-											style="font-family: monospace; font-size: 0.75rem; width: 5.5rem"
+											class="editor-hex-input"
 										/>
 									</div>
 								</div>
 
 								<div v-if="diceConfig.backgroundType === 'gradient'" class="slider-row">
-									<div
-										class="slider-header"
-										style="
-											display: flex;
-											justify-content: space-between;
-											font-size: 0.7rem;
-											font-weight: 700;
-											color: #cbd5e1;
-											margin-bottom: 0.2rem;
-										"
-									>
+									<div class="slider-header">
 										<label for="char-field-dice-gradient-angle">Gradient Angle</label>
 										<span>{{ diceConfig.gradientAngle || 135 }}°</span>
 									</div>
@@ -1603,16 +1449,16 @@ function updateCharacter(character: any) {
 
 						<!-- NUMERAL COLOR -->
 						<div class="editor-field">
-							<div style="display: flex; align-items: center; justify-content: space-between">
-								<label for="char-field-dice-numeral-color" style="margin: 0">Numeral / Text Color</label>
-								<div style="display: flex; align-items: center; gap: 0.4rem">
+							<div class="editor-row-between">
+								<label for="char-field-dice-numeral-color" class="m-0">Numeral / Text Color</label>
+								<div class="editor-row-inline">
 									<input
 										type="color"
 										id="char-field-dice-numeral-color"
 										name="diceNumeralColor"
 										:value="diceConfig.numeralColor || '#000000'"
 										@input="updateDiceProp('numeralColor', targetValue($event))"
-										style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px"
+										class="editor-color-swatch-input"
 									/>
 									<input
 										type="text"
@@ -1620,7 +1466,7 @@ function updateCharacter(character: any) {
 										name="diceNumeralColorText"
 										:value="diceConfig.numeralColor || '#000000'"
 										@input="updateDiceProp('numeralColor', targetValue($event))"
-										style="font-family: monospace; font-size: 0.75rem; width: 5.5rem"
+										class="editor-hex-input"
 									/>
 								</div>
 							</div>
@@ -1628,16 +1474,16 @@ function updateCharacter(character: any) {
 
 						<!-- BORDER COLOR & WIDTH -->
 						<div class="editor-field">
-							<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem">
-								<label for="char-field-dice-border-color" style="margin: 0">Border Color</label>
-								<div style="display: flex; align-items: center; gap: 0.4rem">
+							<div class="editor-row-between mb-sm">
+								<label for="char-field-dice-border-color" class="m-0">Border Color</label>
+								<div class="editor-row-inline">
 									<input
 										type="color"
 										id="char-field-dice-border-color"
 										name="diceBorderColor"
 										:value="diceConfig.borderColor || '#000000'"
 										@input="updateDiceProp('borderColor', targetValue($event))"
-										style="width: 2rem; height: 1.6rem; border: none; cursor: pointer; border-radius: 3px"
+										class="editor-color-swatch-input"
 									/>
 									<input
 										type="text"
@@ -1645,22 +1491,12 @@ function updateCharacter(character: any) {
 										name="diceBorderColorText"
 										:value="diceConfig.borderColor || '#000000'"
 										@input="updateDiceProp('borderColor', targetValue($event))"
-										style="font-family: monospace; font-size: 0.75rem; width: 5.5rem"
+										class="editor-hex-input"
 									/>
 								</div>
 							</div>
 							<div class="slider-row">
-								<div
-									class="slider-header"
-									style="
-										display: flex;
-										justify-content: space-between;
-										font-size: 0.7rem;
-										font-weight: 700;
-										color: #cbd5e1;
-										margin-bottom: 0.2rem;
-									"
-								>
+								<div class="slider-header">
 									<label for="char-field-dice-border-width">Border Width</label>
 									<span>{{ diceConfig.borderWidth || 1 }}px</span>
 								</div>
@@ -1678,13 +1514,8 @@ function updateCharacter(character: any) {
 						</div>
 
 						<!-- RESET DICE BUTTON -->
-						<div class="editor-field" style="margin-top: 0.75rem">
-							<button
-								type="button"
-								class="editor-tab-btn"
-								style="width: 100%; border: 1px solid rgba(255, 255, 255, 0.25); text-align: center"
-								@click.stop="resetDiceConfig"
-							>
+						<div class="editor-field mt-md">
+							<button type="button" class="editor-tab-btn editor-full-btn" @click.stop="resetDiceConfig">
 								<i class="fas fa-undo"></i> Reset to Default Dice Appearance
 							</button>
 						</div>

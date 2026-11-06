@@ -132,7 +132,9 @@ const {
 								selected: !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]),
 								'trait-placeholder-slot': item.isPlaceholder,
 							}"
-							:style="partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet))"
+							:style="
+								!isPositionalFrameActive ? partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet)) : undefined
+							"
 						>
 							<!-- NAME (above: the asset box; the dice live in the rating cell) -->
 							<div
@@ -140,7 +142,7 @@ const {
 								class="trait-part trait-part-name"
 								:class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }"
 								:style="[
-									partCellStyle(partsGridFor(traitSet), 'name'),
+									!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'name') : undefined,
 									isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined,
 								]"
 							>
@@ -292,7 +294,7 @@ const {
 									'trait-asset-card': getRatingPosition(traitSet) === 'above',
 									'trait-title trait-title-stacked': getRatingPosition(traitSet) === 'below',
 								}"
-								:style="partCellStyle(partsGridFor(traitSet), 'rating')"
+								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'rating') : undefined"
 							>
 								<div class="trait-value stress-value" v-if="getView(traitSet)?.style?.body === 'die-track'">
 									<span
@@ -516,7 +518,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.trackLabel"
 								class="trait-part trait-part-track-label"
-								:style="partCellStyle(partsGridFor(traitSet), 'trackLabel')"
+								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'trackLabel') : undefined"
 							>
 								<div class="attached-stress-divider" v-if="!isPartsInline(traitSet)"></div>
 								<span class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
@@ -526,7 +528,9 @@ const {
 								v-if="partsGridFor(traitSet)?.cells.track"
 								class="trait-part trait-part-track"
 								:style="
-									partCellStyle(partsGridFor(traitSet), 'track') + '; --track-faces: ' + getTrackScale(traitSet).length
+									(!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'track') + '; ' : '') +
+									'--track-faces: ' +
+									getTrackScale(traitSet).length
 								"
 							>
 								<div class="attached-stress-track">
@@ -588,7 +592,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.description"
 								class="trait-part trait-part-description"
-								:style="partCellStyle(partsGridFor(traitSet), 'description')"
+								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'description') : undefined"
 							>
 								<div class="trait-description">
 									<div
@@ -606,7 +610,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.badge && (getView(item.trait) as any)?.badge"
 								class="trait-part trait-part-badge"
-								:style="partCellStyle(partsGridFor(traitSet), 'badge')"
+								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'badge') : undefined"
 							>
 								<span
 									class="badge"
@@ -627,7 +631,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.block && getDisplayTraitSfx(traitSet, item.trait).length"
 								class="trait-part trait-part-block"
-								:style="partCellStyle(partsGridFor(traitSet), 'block')"
+								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'block') : undefined"
 							>
 								<ul class="trait-sfx">
 									<li
@@ -659,7 +663,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.subtraits"
 								class="trait-part trait-part-subtraits"
-								:style="partCellStyle(partsGridFor(traitSet), 'subtraits')"
+								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'subtraits') : undefined"
 							>
 								<ul class="subtraits" v-if="visibleSubtraits(traitSet, item.trait).length || printBlank">
 									<li

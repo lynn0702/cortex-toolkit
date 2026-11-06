@@ -1432,9 +1432,7 @@ function getDieDisplayValue(val: any) {
 							<option :value="null">Unlinked</option>
 							<option v-for="opt in branchParentOptions" :key="opt.index" :value="opt.index">{{ opt.name }}</option>
 						</select>
-						<span
-							class="editor-field-hint"
-							style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem; display: block; line-height: 1.35"
+						<span class="editor-field-hint mt-xs"
 							>Draws the connecting arrow from this subtrait to any parent trait in the set.</span
 						>
 					</div>
@@ -1644,28 +1642,20 @@ function getDieDisplayValue(val: any) {
 
 						<!-- COUNTER NUMBER + RANGE -->
 						<div v-else-if="ratingType === 'Counter'">
-							<div v-if="!isPlay" style="display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap">
-								<div style="flex: 1; min-width: 5rem">
-									<label
-										:for="'trait-' + traitID + '-counter-number'"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-										>Count</label
-									>
+							<div v-if="!isPlay" class="editor-row-inline flex-wrap">
+								<div class="flex-1 min-w-5rem">
+									<label :for="'trait-' + traitID + '-counter-number'" class="editor-sub-label">Count</label>
 									<input
 										type="number"
 										:id="'trait-' + traitID + '-counter-number'"
 										name="counterNumber"
 										v-model.number="counterNumber"
 										inputmode="numeric"
-										style="width: 100%"
+										class="w-full"
 									/>
 								</div>
-								<div style="flex: 1; min-width: 4rem">
-									<label
-										:for="'trait-' + traitID + '-counter-min'"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-										>Min</label
-									>
+								<div class="flex-1 min-w-4rem">
+									<label :for="'trait-' + traitID + '-counter-min'" class="editor-sub-label">Min</label>
 									<input
 										type="number"
 										:id="'trait-' + traitID + '-counter-min'"
@@ -1673,15 +1663,11 @@ function getDieDisplayValue(val: any) {
 										:value="counterBounds()[0]"
 										@change="commitCounterBound(0, $event)"
 										inputmode="numeric"
-										style="width: 100%"
+										class="w-full"
 									/>
 								</div>
-								<div style="flex: 1; min-width: 4rem">
-									<label
-										:for="'trait-' + traitID + '-counter-max'"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-										>Max</label
-									>
+								<div class="flex-1 min-w-4rem">
+									<label :for="'trait-' + traitID + '-counter-max'" class="editor-sub-label">Max</label>
 									<input
 										type="number"
 										:id="'trait-' + traitID + '-counter-max'"
@@ -1689,10 +1675,10 @@ function getDieDisplayValue(val: any) {
 										:value="counterBounds()[1]"
 										@change="commitCounterBound(1, $event)"
 										inputmode="numeric"
-										style="width: 100%"
+										class="w-full"
 									/>
 								</div>
-								<div style="width: 100%; margin-top: 0.5rem" v-if="!isPlay">
+								<div class="w-full mt-md" v-if="!isPlay">
 									<button
 										type="button"
 										class="editor-button"
@@ -1714,11 +1700,7 @@ function getDieDisplayValue(val: any) {
 								>
 									-
 								</button>
-								<span
-									class="stepper-count"
-									style="font-size: 1rem; font-weight: bold; min-width: 2.2rem; text-align: center; color: white"
-									>{{ counterNumber }}</span
-								>
+								<span class="stepper-count">{{ counterNumber }}</span>
 								<button
 									type="button"
 									class="btn-step"
@@ -1750,7 +1732,7 @@ function getDieDisplayValue(val: any) {
 								</div>
 								<span class="pip-editor-count" v-if="pipBubbleCount === 0">No bubbles</span>
 							</div>
-							<div class="num-stepper" v-if="!isPlay" style="margin-top: 0.4rem">
+							<div class="num-stepper mt-sm" v-if="!isPlay">
 								<button
 									type="button"
 									class="btn-step"
@@ -1771,7 +1753,7 @@ function getDieDisplayValue(val: any) {
 									@change="commitPipBubbleCount($event)"
 									inputmode="numeric"
 									aria-label="Bubble count"
-									style="width: 4rem"
+									class="editor-input-short"
 								/>
 								<button
 									type="button"
@@ -1859,7 +1841,7 @@ function getDieDisplayValue(val: any) {
 							</div>
 							<div><label :for="'trait-' + traitID + '-spendable'">Spendable</label></div>
 						</div>
-						<div class="editor-toggles" v-if="hitchesDiffers" style="margin-top: 0.4rem">
+						<div class="editor-toggles mt-sm" v-if="hitchesDiffers">
 							<div><label :for="'trait-' + traitID + '-hitches'">Hitches</label></div>
 							<div>
 								<input
@@ -1869,7 +1851,7 @@ function getDieDisplayValue(val: any) {
 									min="0"
 									max="12"
 									v-model.number="traitHitches"
-									style="width: 4rem"
+									class="editor-input-short"
 								/>
 							</div>
 						</div>
@@ -1888,7 +1870,7 @@ function getDieDisplayValue(val: any) {
 								@click.stop="setTrackValue(0)"
 								title="None"
 							>
-								<span style="font-size: 0.75rem; font-weight: 700">-</span>
+								<span class="font-bold text-sm">-</span>
 							</li>
 							<li
 								v-for="val in trackScale"
@@ -1944,9 +1926,9 @@ function getDieDisplayValue(val: any) {
 					<!-- BADGE -->
 					<div class="editor-field" v-if="!isPlay && hasSfxChildren">
 						<div class="editor-label">Badge</div>
-						<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap">
-							<div style="flex: 1; min-width: 8rem">
-								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem">Text</label>
+						<div class="editor-row-inline flex-wrap mb-sm">
+							<div class="flex-1 min-w-8rem">
+								<label class="editor-sub-label">Text</label>
 								<input
 									type="text"
 									:value="badgeValue('text')"
@@ -1954,8 +1936,8 @@ function getDieDisplayValue(val: any) {
 									:placeholder="badgeValue('text') || 'SFX'"
 								/>
 							</div>
-							<div style="min-width: 7rem">
-								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem">Shape</label>
+							<div class="min-w-7rem">
+								<label class="editor-sub-label">Shape</label>
 								<select
 									:value="badgeValue('shape') || 'vertical-bar'"
 									@change="setBadgeValue('shape', targetValue($event))"
@@ -1966,8 +1948,8 @@ function getDieDisplayValue(val: any) {
 									<option value="chamfer">Chamfer</option>
 								</select>
 							</div>
-							<div style="min-width: 7rem">
-								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem">Color</label>
+							<div class="min-w-7rem">
+								<label class="editor-sub-label">Color</label>
 								<select :value="badgeValue('color') || 'black'" @change="setBadgeValue('color', targetValue($event))">
 									<option value="black">Black</option>
 									<option value="primary">Primary</option>
@@ -1976,8 +1958,8 @@ function getDieDisplayValue(val: any) {
 									<option value="muted">Muted</option>
 								</select>
 							</div>
-							<div style="flex: 1; min-width: 8rem">
-								<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem">Icon</label>
+							<div class="flex-1 min-w-8rem">
+								<label class="editor-sub-label">Icon</label>
 								<input
 									type="text"
 									:value="badgeValue('icon')"
@@ -1986,8 +1968,8 @@ function getDieDisplayValue(val: any) {
 								/>
 							</div>
 						</div>
-						<div style="margin-bottom: 0.4rem">
-							<label style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem">Prefix</label>
+						<div class="mb-sm">
+							<label class="editor-sub-label">Prefix</label>
 							<input
 								type="text"
 								:value="prefixValue()"

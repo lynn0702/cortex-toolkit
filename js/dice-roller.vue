@@ -871,7 +871,7 @@ defineExpose({
 										title="Click to toggle as kept die for this group"
 									>
 										<div class="card-top">
-											<span class="c" style="color: #0284c7">{{ getDieDisplayValue(die.size) }}</span>
+											<span class="c">{{ getDieDisplayValue(die.size) }}</span>
 											<span class="card-size">d{{ die.size }}</span>
 										</div>
 										<div class="card-value">
@@ -904,9 +904,7 @@ defineExpose({
 							:title="die.isHitch ? 'Hitch: cannot be used' : 'Click to cycle: Total / Effect / Unused'"
 						>
 							<div class="card-top">
-								<span class="c" :style="die.hitches === 0 ? 'color: #0284c7;' : ''">{{
-									getDieDisplayValue(die.size)
-								}}</span>
+								<span class="c">{{ getDieDisplayValue(die.size) }}</span>
 								<span class="card-size">d{{ die.size }}</span>
 							</div>
 
@@ -920,7 +918,7 @@ defineExpose({
 							<div class="card-badge badge-unused" v-else>Unused</div>
 
 							<div class="card-source" v-if="die.source">
-								{{ die.source }}<span v-if="die.hitches === 0" style="color: #0284c7; font-weight: 700"> (Sep)</span>
+								{{ die.source }}<span v-if="die.hitches === 0" class="roller-sep-label"> (Sep)</span>
 							</div>
 						</div>
 					</div>
@@ -939,7 +937,7 @@ defineExpose({
 							</div>
 							<div class="calc-row" v-if="separateGroupsResults.length > 0">
 								<span class="calc-label">Separate</span>
-								<span class="calc-val" style="color: #0284c7">+{{ manualSeparateBonus }}</span>
+								<span class="calc-val calc-val-separate">+{{ manualSeparateBonus }}</span>
 							</div>
 							<div class="calc-row">
 								<span class="calc-label">Grand Total</span>

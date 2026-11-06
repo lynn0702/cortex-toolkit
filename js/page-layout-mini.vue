@@ -650,8 +650,8 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 
 <template>
 	<div class="page-layout-mini-wrap">
-		<div v-for="pg in pages" :key="'page-mini-' + pg.page" style="margin-bottom: 0.6rem">
-			<div style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.2rem">Page {{ pg.page }}</div>
+		<div v-for="pg in pages" :key="'page-mini-' + pg.page" class="mb-md">
+			<div class="editor-sub-label">Page {{ pg.page }}</div>
 			<div
 				:ref="
 					(el) => {
@@ -765,7 +765,7 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 		</div>
 		<div class="editor-field" v-if="selected !== null && props.character?.traitSets?.[selected]">
 			<div class="editor-label">{{ setNameOf(selected) }}</div>
-			<div class="editor-button-group" style="margin-bottom: 0.4rem; display: flex; gap: 0.4rem; flex-wrap: wrap">
+			<div class="editor-button-group mb-sm flex-wrap">
 				<button
 					v-for="p in pageCount"
 					:key="'sel-page-' + p"
@@ -794,13 +794,9 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 					<i class="fas fa-th"></i> Edit Parts
 				</button>
 			</div>
-			<div style="display: flex; gap: 0.5rem; margin-bottom: 0.4rem">
-				<div style="flex: 1">
-					<label
-						:for="'page-mini-left'"
-						style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-						>Left %</label
-					>
+			<div class="editor-row-inline mb-sm">
+				<div class="flex-1">
+					<label :for="'page-mini-left'" class="editor-sub-label">Left %</label>
 					<input
 						type="number"
 						id="page-mini-left"
@@ -812,12 +808,8 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 						@change="setNum(selected as number, 'left', targetNum($event))"
 					/>
 				</div>
-				<div style="flex: 1">
-					<label
-						:for="'page-mini-width'"
-						style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-						>Width %</label
-					>
+				<div class="flex-1">
+					<label :for="'page-mini-width'" class="editor-sub-label">Width %</label>
 					<input
 						type="number"
 						id="page-mini-width"
@@ -830,11 +822,9 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 					/>
 				</div>
 			</div>
-			<div style="display: flex; gap: 0.5rem">
-				<div style="flex: 1">
-					<label :for="'page-mini-top'" style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-						>Top</label
-					>
+			<div class="editor-row-inline">
+				<div class="flex-1">
+					<label :for="'page-mini-top'" class="editor-sub-label">Top</label>
 					<input
 						type="number"
 						id="page-mini-top"
@@ -845,12 +835,8 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 						@change="setNum(selected as number, 'top', Math.max(0, Math.round(targetNum($event) || 0)))"
 					/>
 				</div>
-				<div style="flex: 1">
-					<label
-						:for="'page-mini-height'"
-						style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-						>Height</label
-					>
+				<div class="flex-1">
+					<label :for="'page-mini-height'" class="editor-sub-label">Height</label>
 					<input
 						type="number"
 						id="page-mini-height"
@@ -862,7 +848,7 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 					/>
 				</div>
 			</div>
-			<div class="editor-field-hint" style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.3rem">
+			<div class="editor-field-hint mt-xs">
 				<span v-if="hasPlaceSet(selected as number)"
 					>Page {{ pageOfSet(selected as number) }} · Left {{ numOf(selected as number, 'left') }}% · Width
 					{{ numOf(selected as number, 'width') }}% · Top {{ numOf(selected as number, 'top') }} · Height
@@ -871,9 +857,7 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 				<span v-else>Full width · stacked in document order</span>
 			</div>
 		</div>
-		<div class="editor-field-hint" v-else style="font-size: 0.72rem; color: #94a3b8">
-			Select a set on the miniature to edit its placement.
-		</div>
+		<div class="editor-field-hint" v-else>Select a set on the miniature to edit its placement.</div>
 
 		<!-- Teleport: Trait Block Mini Handoff -->
 		<teleport to="body">

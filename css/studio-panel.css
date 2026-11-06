@@ -5,63 +5,88 @@
 }
 
 /* Side Panel container: pinned to the side */
+
 .studio-panel {
 	position: fixed;
+
 	top: var(--header-size);
+
 	bottom: var(--header-size);
+
 	width: var(--studio-panel-width);
+
 	background: #0f172a;
+
 	color: #f8fafc;
+
 	z-index: var(--z-frame);
+
 	display: flex;
+
 	flex-direction: column;
+
 	overflow: hidden;
+
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+
 	transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
 	&.position-right {
 		right: 0;
+
 		left: auto;
+
 		border-left: 1px solid rgba(255, 255, 255, 0.1);
+
 		transform: translateX(0);
 
 		&.panel-collapsed {
 			transform: translateX(100%);
+
 			pointer-events: none;
 		}
 	}
 
 	&.position-left {
 		left: 0;
+
 		right: auto;
+
 		border-right: 1px solid rgba(255, 255, 255, 0.1);
+
 		transform: translateX(0);
 
 		&.panel-collapsed {
 			transform: translateX(-100%);
+
 			pointer-events: none;
 		}
 	}
 }
 
 /* Push sheet column when space allows (>= 1400px) */
+
 @media screen and (min-width: 1400px) {
 	.play-shell.panel-open.panel-right .sheet-column {
 		margin-right: var(--studio-panel-width);
+
 		margin-left: 0;
 	}
 
 	.play-shell.panel-open.panel-left .sheet-column {
 		margin-left: var(--studio-panel-width);
+
 		margin-right: 0;
 	}
 }
 
 /* Below 1400px: Overlay drawer, sheet stays centered without margin shift */
+
 @media screen and (max-width: 1399px) {
 	.play-shell .sheet-column {
-		margin-left: 0 !important;
-		margin-right: 0 !important;
+		margin-left: 0;
+
+		margin-right: 0;
 	}
 
 	.studio-panel {
@@ -70,7 +95,9 @@
 }
 
 /* Not-wide viewports: panel header buttons are icons only (labels hide; */
+
 /* titles carry the names). Matches the JS narrow-viewport line in app.vue. */
+
 @media screen and (max-width: 1399px) {
 	.studio-panel-actions .studio-tab-label {
 		display: none;
@@ -78,45 +105,66 @@
 }
 
 /* Mobile (< 768px): Full width drawer / Play mode bottom sheet */
+
 @media screen and (max-width: 768px) {
 	html,
 	body,
 	#cortex-toolkit,
 	.play-shell {
 		max-width: 100vw;
+
 		overflow-x: hidden;
 	}
 
 	.studio-panel {
 		top: calc(var(--header-size) + 42px);
+
 		bottom: var(--header-size);
-		left: 0 !important;
-		right: 0 !important;
-		width: 100vw !important;
-		max-width: 100vw !important;
-		box-sizing: border-box !important;
-		overflow-x: hidden !important;
+
+		left: 0;
+
+		right: 0;
+
+		width: 100vw;
+
+		max-width: 100vw;
+
+		box-sizing: border-box;
+
+		overflow-x: hidden;
 	}
 
 	.studio-panel-body,
 	.studio-panel .editor,
 	.studio-panel .editor-fields {
-		max-width: 100vw !important;
-		box-sizing: border-box !important;
+		max-width: 100vw;
+
+		box-sizing: border-box;
 	}
 
 	.submode-play .studio-panel {
 		top: auto;
+
 		bottom: 0;
+
 		left: 0;
+
 		right: 0;
+
 		width: 100%;
+
 		max-height: 75vh;
+
 		border-radius: 16px 16px 0 0;
+
 		border-top: 1px solid rgba(255, 255, 255, 0.15);
+
 		border-left: none;
+
 		border-right: none;
+
 		box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+
 		transform: translateY(0);
 
 		&.position-right,
@@ -125,20 +173,25 @@
 
 			&.panel-collapsed {
 				transform: translateY(100%);
+
 				pointer-events: none;
 			}
 		}
 	}
 
 	/* No side-to-side docking on a full-width drawer: the toggle hides. */
+
 	.studio-panel .studio-action-dock {
 		display: none;
 	}
 }
 
 /* Editor flex rows (multi-column label/number inputs) must shrink with the */
+
 /* panel: flex items and inputs keep an auto minimum by default, which forced */
+
 /* a ~421px floor and sideways scroll on mobile. */
+
 .studio-panel .editor-fields div[style*='flex: 1'] {
 	min-width: 0;
 }
@@ -151,105 +204,144 @@
 }
 
 /* One toolbar row: sheet tabs or crumbs on the left, actions on the right. */
+
 /* The row never wraps: the left side truncates, the actions never shrink. */
+
 .studio-panel-header {
 	display: flex;
+
 	flex-wrap: nowrap;
+
 	align-items: center;
+
 	justify-content: space-between;
+
 	gap: 0.4rem;
+
 	padding: 0.45rem 0.5rem;
+
 	background: #1e293b;
+
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
 	flex-shrink: 0;
 }
 
 .studio-toolbar-left {
 	flex: 1 1 auto;
+
 	min-width: 0;
+
 	display: flex;
+
 	align-items: center;
+
 	overflow: hidden;
+
 	text-overflow: ellipsis;
+
 	white-space: nowrap;
 }
 
 .studio-sheet-tabs {
 	display: flex;
-	gap: 0.25rem;
+
+	gap: 0.15rem;
+
 	min-width: 0;
 }
 
 .studio-tab-btn {
 	background: transparent;
+
 	border: 1px solid transparent;
+
 	border-radius: 4px;
+
 	color: #94a3b8;
-	font-size: 0.8rem;
+
+	font-size: 0.75rem;
+
 	font-weight: 600;
-	padding: 0.35rem 0.65rem;
+
+	padding: 0.35rem 0.45rem;
+
 	cursor: pointer;
+
 	display: inline-flex;
+
 	align-items: center;
+
 	flex-shrink: 0;
-	gap: 0.4rem;
+
+	gap: 0.3rem;
+
 	transition: all 0.15s ease;
 
 	&:hover {
 		color: #ffffff;
+
 		background: rgba(255, 255, 255, 0.05);
 	}
 
 	&.active {
 		color: #ffffff;
+
 		background: rgba(255, 255, 255, 0.12);
+
 		border-color: rgba(255, 255, 255, 0.2);
 	}
 
 	.studio-tab-badge {
 		background: var(--color-interactive, #0284c7);
+
 		color: #ffffff;
+
 		font-size: 0.7rem;
+
 		padding: 0.1rem 0.35rem;
+
 		border-radius: 9999px;
+
 		font-weight: 700;
-	}
-}
-
-/* Sheet tabs: compact so all three labels fit the 23rem panel and 360px. */
-.studio-sheet-tabs {
-	gap: 0.15rem;
-
-	.studio-tab-btn {
-		font-size: 0.75rem;
-		padding: 0.35rem 0.45rem;
-		gap: 0.3rem;
 	}
 }
 
 .studio-panel-actions {
 	display: flex;
+
 	align-items: center;
+
 	flex-shrink: 0;
+
 	gap: 0.1rem;
 
 	.studio-action-btn {
 		background: transparent;
+
 		border: none;
+
 		color: #94a3b8;
+
 		padding: 0.35rem 0.45rem;
+
 		border-radius: 4px;
+
 		cursor: pointer;
+
 		flex-shrink: 0;
+
 		font-size: 0.85rem;
 
 		&:hover {
 			color: #ffffff;
+
 			background: rgba(255, 255, 255, 0.1);
 		}
 
 		&.active {
 			color: #ffffff;
+
 			background: rgba(255, 255, 255, 0.12);
 		}
 	}
@@ -257,46 +349,67 @@
 
 .studio-breadcrumb {
 	display: flex;
+
 	align-items: center;
+
 	gap: 0.35rem;
+
 	min-width: 0;
+
 	color: #cbd5e1;
+
 	font-size: 0.75rem;
+
 	font-weight: 600;
+
 	overflow: hidden;
+
 	white-space: nowrap;
 
 	.crumb-link,
 	.crumb-current {
 		flex: 0 1 auto;
+
 		min-width: 0;
+
 		overflow: hidden;
+
 		text-overflow: ellipsis;
+
 		white-space: nowrap;
 	}
 
 	.crumb-link {
 		background: none;
+
 		border: none;
+
 		padding: 0;
+
 		font: inherit;
+
 		color: #94a3b8;
+
 		cursor: pointer;
 
 		/* The root link stays whole; set and trait names take the truncation. */
+
 		&:first-child {
 			flex-shrink: 0;
 		}
 
 		&:hover {
 			color: #38bdf8;
+
 			text-decoration: underline;
 		}
 	}
 
 	.crumb-sep {
 		flex-shrink: 0;
+
 		font-size: 0.65rem;
+
 		color: #64748b;
 	}
 
@@ -307,64 +420,96 @@
 
 .studio-panel-body {
 	flex: 1 1 auto;
+
 	overflow-y: auto;
+
 	overflow-x: hidden;
+
 	position: relative;
+
 	min-height: 0;
 
 	&::-webkit-scrollbar {
 		width: 6px;
 	}
+
 	&::-webkit-scrollbar-thumb {
 		background: rgba(255, 255, 255, 0.2);
+
 		border-radius: 3px;
 	}
 
 	.studio-tab-pane {
 		height: 100%;
+
 		display: flex;
+
 		flex-direction: column;
 	}
 
 	/* Docked editor adaptation inside studio panel */
+
 	.editor {
-		position: static !important;
-		width: 100% !important;
-		max-height: none !important;
-		box-shadow: none !important;
-		border-radius: 0 !important;
-		padding: 0.75rem !important;
-		background: transparent !important;
-		backdrop-filter: none !important;
-		transform: none !important;
-		opacity: 1 !important;
-		display: block !important;
-		border: none !important;
+		position: static;
+
+		width: 100%;
+
+		max-height: none;
+
+		box-shadow: none;
+
+		border-radius: 0;
+
+		padding: 0.75rem;
+
+		background: transparent;
+
+		backdrop-filter: none;
+
+		transform: none;
+
+		opacity: 1;
+
+		display: block;
+
+		border: none;
 
 		.editor-arrow {
-			display: none !important;
+			display: none;
 		}
 
 		.editor-controls {
-			position: static !important;
-			display: flex !important;
-			flex-direction: row !important;
-			justify-content: flex-end !important;
-			align-items: center !important;
-			gap: 0.6rem !important;
-			margin-bottom: 0.6rem !important;
-			padding-bottom: 0.4rem !important;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+			position: static;
+
+			display: flex;
+
+			flex-direction: row;
+
+			justify-content: flex-end;
+
+			align-items: center;
+
+			gap: 0.6rem;
+
+			margin-bottom: 0.6rem;
+
+			padding-bottom: 0.4rem;
+
+			border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
 			/* The 'X' close button is redundant with the Sheet crumb link */
+
 			button:first-child:not(.editor-copy):not(.editor-delete):not(.editor-delete-confirm):not(.editor-revert) {
-				display: none !important;
+				display: none;
 			}
 
 			button {
-				font-size: 1.05rem !important;
-				padding: 0.2rem 0.35rem !important;
+				font-size: 1.05rem;
+
+				padding: 0.2rem 0.35rem;
+
 				opacity: 0.8;
+
 				transition: opacity 0.15s ease;
 
 				&:hover {
@@ -375,56 +520,76 @@
 	}
 
 	.editor-inner {
-		max-height: none !important;
-		overflow: visible !important;
-		padding: 0 !important;
+		max-height: none;
+
+		overflow: visible;
+
+		padding: 0;
 
 		/* The floating editor's scroll-position chevrons describe an inner */
+
 		/* scroll region that never scrolls while docked (the panel body */
+
 		/* owns scrolling) — without this they float mid-content, looking */
+
 		/* like a broken expander. */
+
 		&::before,
 		&::after {
-			display: none !important;
+			display: none;
 		}
 
 		/* The floating editor's scroll region (absolute stretch +2rem with */
+
 		/* hidden scrollbars) must not leak into the docked panel: there it */
+
 		/* is a normal static block and the panel body owns scrolling. */
+
 		> div {
-			position: static !important;
-			padding: 0 !important;
-			overflow: visible !important;
+			position: static;
+
+			padding: 0;
+
+			overflow: visible;
 		}
 	}
 
 	.dice-roller-sidebar {
-		border: none !important;
-		box-shadow: none !important;
-		background: transparent !important;
-		width: 100% !important;
-		height: 100% !important;
+		border: none;
+
+		box-shadow: none;
+
+		background: transparent;
+
+		width: 100%;
+
+		height: 100%;
 
 		.roller-header {
-			display: none !important;
+			display: none;
 		}
 
 		.roller-body {
 			background: #ffffff;
+
 			height: 100%;
+
 			overflow-y: auto;
 		}
 	}
 }
 
 /* Active trait selection focus highlight on sheet */
+
 .trait.is-selected,
 .trait.selected {
-	outline: 2px solid var(--color-interactive, #0284c7) !important;
-	outline-offset: 2px !important;
-	border-radius: 3px !important;
+	outline: 2px solid var(--color-interactive, #0284c7);
+
+	outline-offset: 2px;
+
+	border-radius: 3px;
 }
 
 .trait-set.is-selected {
-	box-shadow: 0 0 0 2px var(--color-interactive, #0284c7) !important;
+	box-shadow: 0 0 0 2px var(--color-interactive, #0284c7);
 }

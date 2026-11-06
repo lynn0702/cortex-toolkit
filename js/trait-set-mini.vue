@@ -1232,7 +1232,8 @@ function onFileImportSelected(ev: Event) {
 				ref="fileImportInput"
 				type="file"
 				accept=".json,application/json"
-				style="display: none"
+				class="sr-only"
+				aria-label="Import trait set file"
 				@change="onFileImportSelected"
 			/>
 

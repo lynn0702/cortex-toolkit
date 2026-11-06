@@ -103,7 +103,7 @@
 	}
 
 	@media print {
-		display: none !important;
+		display: none;
 	}
 }
 
@@ -114,8 +114,8 @@
 	}
 
 	.play-shell .sheet-column {
-		margin-left: 0 !important;
-		margin-right: 0 !important;
+		margin-left: 0;
+		margin-right: 0;
 	}
 }
 
@@ -126,8 +126,8 @@
 	}
 
 	.play-shell .sheet-column {
-		margin-left: 0 !important;
-		margin-right: 0 !important;
+		margin-left: 0;
+		margin-right: 0;
 	}
 }
 
@@ -350,9 +350,9 @@
 	gap: 0.4rem;
 	min-height: 2.2rem;
 	padding: 0.4rem;
-	background: #f8f9fa;
+	background: #f8fafc;
 	border-radius: 6px;
-	border: 1px solid #ebebeb;
+	border: 1px solid #e2e8f0;
 }
 
 .roller-chip {
@@ -821,6 +821,10 @@
 		border-color: #bae6fd;
 		background: #f0f9ff;
 
+		.card-top .c {
+			color: #0284c7;
+		}
+
 		&.role-total {
 			border-color: #0284c7;
 			box-shadow: 0 0 0 1px #0284c7;
@@ -830,6 +834,15 @@
 			background: #0284c7;
 			color: white;
 		}
+	}
+
+	.roller-sep-label {
+		color: #0284c7;
+		font-weight: 700;
+	}
+
+	.calc-val-separate {
+		color: #0284c7;
 	}
 
 	&:hover:not(.is-hitch) {
@@ -852,7 +865,7 @@
 
 /* CALCULATION BOX */
 .roller-calc-box {
-	background: #f8f9fa;
+	background: #f8fafc;
 	border: 1px solid var(--color-separator);
 	border-radius: 6px;
 	padding: 0.6rem 0.8rem;
@@ -900,7 +913,7 @@
 
 	&:hover {
 		border-color: var(--color-interactive);
-		background: #fbfbfb;
+		background: #f8fafc;
 	}
 
 	.preset-title {
@@ -930,7 +943,7 @@
 /* RAW LOG VIEW */
 .roller-raw-log {
 	background: #1e1e1e;
-	color: #f0f0f0;
+	color: #f1f5f9;
 	padding: 0.8rem;
 	border-radius: 6px;
 	font-family: monospace;
@@ -980,7 +993,7 @@
 	display: flex;
 	align-items: center;
 	column-gap: 0.5rem;
-	z-index: 2000;
+	z-index: var(--z-editor);
 	pointer-events: none;
 
 	i {

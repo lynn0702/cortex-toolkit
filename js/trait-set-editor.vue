@@ -140,11 +140,8 @@ function applyFromMini(updatedSet: any) {
 						<summary class="editor-group-title">Content</summary>
 
 						<div class="editor-field">
-							<div
-								class="name-heading-row"
-								style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem"
-							>
-								<label :for="'trait-set-name-' + traitSetID" style="margin: 0">Trait Set Name</label>
+							<div class="name-heading-row editor-row-between mb-xs">
+								<label :for="'trait-set-name-' + traitSetID">Trait Set Name</label>
 								<VisibilityEye :state="setVisibility" @toggle="cycleSetVisibility" />
 							</div>
 							<input
@@ -163,22 +160,14 @@ function applyFromMini(updatedSet: any) {
 									{{ option.label }}
 								</option>
 							</select>
-							<div
-								class="editor-checkbox-row"
-								v-if="styleBody === 'subtrait-columns'"
-								style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem"
-							>
+							<div class="editor-checkbox-row mt-sm" v-if="styleBody === 'subtrait-columns'">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-branch-arrows'"
 									name="branchArrows"
 									v-model="branchArrows"
 								/>
-								<label
-									:for="'trait-set-' + traitSetID + '-branch-arrows'"
-									style="margin: 0; font-size: 0.8rem; cursor: pointer"
-									>Connecting arrows</label
-								>
+								<label :for="'trait-set-' + traitSetID + '-branch-arrows'">Connecting arrows</label>
 							</div>
 						</div>
 
@@ -201,13 +190,9 @@ function applyFromMini(updatedSet: any) {
 								</div>
 								<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Out marker</label></div>
 							</div>
-							<div v-if="includeOut" style="display: flex; gap: 0.5rem; margin-top: 0.4rem">
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-out-word'"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-										>Out Word</label
-									>
+							<div v-if="includeOut" class="editor-row-inline mt-sm">
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-out-word'" class="editor-sub-label">Out Word</label>
 									<input
 										type="text"
 										:id="'trait-set-' + traitSetID + '-out-word'"
@@ -227,13 +212,9 @@ function applyFromMini(updatedSet: any) {
 						<!-- PIPS TRACK SETTINGS -->
 						<div class="editor-field" v-if="styleBody === 'pips'">
 							<div class="editor-label">Pip Track Settings</div>
-							<div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem">
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-pip-count'"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-										>Total Pips</label
-									>
+							<div class="editor-row-inline mb-md">
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-pip-count'" class="editor-sub-label">Total Pips</label>
 									<input
 										type="number"
 										:id="'trait-set-' + traitSetID + '-pip-count'"
@@ -244,12 +225,8 @@ function applyFromMini(updatedSet: any) {
 										inputmode="numeric"
 									/>
 								</div>
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-pip-per-row'"
-										style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-										>Pips Per Row</label
-									>
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-pip-per-row'" class="editor-sub-label">Pips Per Row</label>
 									<div class="num-stepper">
 										<button
 											type="button"
@@ -283,12 +260,8 @@ function applyFromMini(updatedSet: any) {
 									</div>
 								</div>
 							</div>
-							<div style="margin-bottom: 0.5rem">
-								<label
-									:for="'trait-set-' + traitSetID + '-pip-filled'"
-									style="font-size: 0.7rem; color: #64748b; display: block; margin-bottom: 0.2rem"
-									>Filled Pips</label
-								>
+							<div class="mb-md">
+								<label :for="'trait-set-' + traitSetID + '-pip-filled'" class="editor-sub-label">Filled Pips</label>
 								<div class="num-stepper">
 									<button
 										type="button"
@@ -321,23 +294,16 @@ function applyFromMini(updatedSet: any) {
 									</button>
 								</div>
 							</div>
-							<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.4rem">
+							<div class="editor-checkbox-row">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-pips-connected'"
 									name="pipsConnected"
 									v-model="pipsConnected"
 								/>
-								<label
-									:for="'trait-set-' + traitSetID + '-pips-connected'"
-									style="margin: 0; font-size: 0.8rem; cursor: pointer"
-									>Connect pips</label
-								>
+								<label :for="'trait-set-' + traitSetID + '-pips-connected'">Connect pips</label>
 							</div>
-							<div
-								class="editor-checkbox-row"
-								style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.35rem"
-							>
+							<div class="editor-checkbox-row mt-sm">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-pip-labels'"
@@ -346,7 +312,6 @@ function applyFromMini(updatedSet: any) {
 								/>
 								<label
 									:for="'trait-set-' + traitSetID + '-pip-labels'"
-									style="margin: 0; font-size: 0.8rem; cursor: pointer"
 									title="Name a pip per row: rows render as bubble-plus-label entries"
 									>Labels</label
 								>
@@ -407,38 +372,23 @@ function applyFromMini(updatedSet: any) {
 
 						<!-- STATEMENT MODE -->
 						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
-							<div
-								class="editor-checkbox-row"
-								style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem"
-							>
+							<div class="editor-checkbox-row">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-statement-mode'"
 									name="statementMode"
 									v-model="isStatementSet"
 								/>
-								<label
-									:for="'trait-set-' + traitSetID + '-statement-mode'"
-									style="margin: 0; font-size: 0.8rem; cursor: pointer"
-									>Statement field</label
-								>
+								<label :for="'trait-set-' + traitSetID + '-statement-mode'">Statement field</label>
 							</div>
-							<div
-								class="editor-checkbox-row"
-								v-if="isStatementSet"
-								style="display: flex; align-items: center; gap: 0.4rem; margin-left: 1.25rem"
-							>
+							<div class="editor-checkbox-row is-indented" v-if="isStatementSet">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-questioned-pip'"
 									name="questionedPip"
 									v-model="hasQuestionedPip"
 								/>
-								<label
-									:for="'trait-set-' + traitSetID + '-questioned-pip'"
-									style="margin: 0; font-size: 0.75rem; cursor: pointer"
-									>Questioned</label
-								>
+								<label :for="'trait-set-' + traitSetID + '-questioned-pip'">Questioned</label>
 							</div>
 						</div>
 
@@ -448,26 +398,17 @@ function applyFromMini(updatedSet: any) {
 							v-if="styleBody === 'die-rows' || styleBody === 'default' || styleBody === 'list'"
 						>
 							<div class="editor-label">Counter</div>
-							<div
-								class="editor-checkbox-row"
-								style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem"
-							>
+							<div class="editor-checkbox-row">
 								<input
 									type="checkbox"
 									:id="'trait-set-' + traitSetID + '-counter-col'"
 									name="counterCol"
 									v-model="hasCounterColumn"
 								/>
-								<label
-									:for="'trait-set-' + traitSetID + '-counter-col'"
-									style="margin: 0; font-size: 0.8rem; cursor: pointer"
-									>Counter column</label
-								>
+								<label :for="'trait-set-' + traitSetID + '-counter-col'">Counter column</label>
 							</div>
-							<div v-if="hasCounterColumn" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem">
-								<label
-									:for="'trait-set-' + traitSetID + '-counter-label'"
-									style="font-size: 0.75rem; color: #64748b; margin: 0"
+							<div v-if="hasCounterColumn" class="editor-row-inline mt-sm">
+								<label :for="'trait-set-' + traitSetID + '-counter-label'" class="editor-sub-label"
 									>Header Label:</label
 								>
 								<input
@@ -476,7 +417,7 @@ function applyFromMini(updatedSet: any) {
 									name="counterLabel"
 									v-model="counterLabel"
 									placeholder="XP"
-									style="width: 5rem"
+									class="editor-input-short"
 								/>
 							</div>
 						</div>
@@ -484,7 +425,7 @@ function applyFromMini(updatedSet: any) {
 						<!-- RESTORE TEMPLATE TRAITS (D19) -->
 						<div class="editor-field" v-if="restorableTraitNames.length">
 							<div class="editor-label">Restore Removed Traits</div>
-							<div class="editor-button-group" style="flex-wrap: wrap">
+							<div class="editor-button-group flex-wrap">
 								<button
 									v-for="tname in restorableTraitNames"
 									:key="'restore-' + tname"
@@ -506,13 +447,9 @@ function applyFromMini(updatedSet: any) {
 
 						<div class="editor-field" v-if="styleBody === 'subtrait-columns'">
 							<div class="editor-label">Branch Headings</div>
-							<div style="display: flex; gap: 0.5rem; margin-top: 0.4rem">
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-sub-left'"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
-										>Left Heading</label
-									>
+							<div class="editor-row-inline mt-sm">
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-sub-left'" class="editor-sub-label">Left Heading</label>
 									<input
 										type="text"
 										:id="'trait-set-' + traitSetID + '-sub-left'"
@@ -522,12 +459,8 @@ function applyFromMini(updatedSet: any) {
 										:placeholder="styleLabel('left')"
 									/>
 								</div>
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-sub-right'"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
-										>Right Heading</label
-									>
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-sub-right'" class="editor-sub-label">Right Heading</label>
 									<input
 										type="text"
 										:id="'trait-set-' + traitSetID + '-sub-right'"
@@ -537,10 +470,8 @@ function applyFromMini(updatedSet: any) {
 										:placeholder="styleLabel('right')"
 									/>
 								</div>
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-sub-center'"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-sub-center'" class="editor-sub-label"
 										>Center Heading</label
 									>
 									<input
@@ -556,11 +487,9 @@ function applyFromMini(updatedSet: any) {
 						</div>
 						<div class="editor-field" v-if="styleBody === 'dice-count'">
 							<div class="editor-label">Count Headings</div>
-							<div style="display: flex; gap: 0.5rem; margin-top: 0.4rem">
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-rating-label'"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
+							<div class="editor-row-inline mt-sm">
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-rating-label'" class="editor-sub-label"
 										>Rating Label</label
 									>
 									<input
@@ -572,12 +501,8 @@ function applyFromMini(updatedSet: any) {
 										:placeholder="styleLabel('rating')"
 									/>
 								</div>
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-' + traitSetID + '-dice-label'"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
-										>Count Label</label
-									>
+								<div class="flex-1">
+									<label :for="'trait-set-' + traitSetID + '-dice-label'" class="editor-sub-label">Count Label</label>
 									<input
 										type="text"
 										:id="'trait-set-' + traitSetID + '-dice-label'"
@@ -592,13 +517,9 @@ function applyFromMini(updatedSet: any) {
 
 						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips'">
 							<div class="editor-label">Nouns</div>
-							<div style="display: flex; gap: 0.5rem">
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-noun-singular-' + traitSetID"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
-										>Singular</label
-									>
+							<div class="editor-row-inline">
+								<div class="flex-1">
+									<label :for="'trait-set-noun-singular-' + traitSetID" class="editor-sub-label">Singular</label>
 									<input
 										type="text"
 										:id="'trait-set-noun-singular-' + traitSetID"
@@ -607,12 +528,8 @@ function applyFromMini(updatedSet: any) {
 										placeholder="Trait"
 									/>
 								</div>
-								<div style="flex: 1">
-									<label
-										:for="'trait-set-noun-plural-' + traitSetID"
-										style="font-size: 0.7rem; color: #94a3b8; display: block; margin-bottom: 0.2rem"
-										>Plural</label
-									>
+								<div class="flex-1">
+									<label :for="'trait-set-noun-plural-' + traitSetID" class="editor-sub-label">Plural</label>
 									<input
 										type="text"
 										:id="'trait-set-noun-plural-' + traitSetID"
@@ -663,7 +580,7 @@ function applyFromMini(updatedSet: any) {
 									<i class="fas fa-grip-lines"></i> Top Bar
 								</button>
 							</div>
-							<div class="editor-button-group" style="margin-top: 0.35rem">
+							<div class="editor-button-group mt-sm">
 								<button
 									type="button"
 									class="editor-group-btn"
@@ -699,12 +616,11 @@ function applyFromMini(updatedSet: any) {
 						<!-- PILLAR (DROPDOWN + EXPLICIT CUSTOM TEXT ENTRY) -->
 						<div class="editor-field">
 							<label :for="'trait-set-' + traitSetID + '-pillar-select'">Pillar</label>
-							<div style="display: flex; gap: 0.4rem; align-items: center">
+							<div class="editor-row-inline">
 								<select
 									:id="'trait-set-' + traitSetID + '-pillar-select'"
 									v-model="selectedPillar"
-									class="editor-select"
-									style="flex: 1"
+									class="editor-select flex-1"
 									aria-label="Pillar"
 								>
 									<option value="prime">Prime</option>
@@ -723,7 +639,7 @@ function applyFromMini(updatedSet: any) {
 									name="setPillarCustom"
 									v-model="setPillar"
 									placeholder="Custom pillar name..."
-									style="flex: 1"
+									class="flex-1"
 									aria-label="Custom pillar name"
 								/>
 							</div>

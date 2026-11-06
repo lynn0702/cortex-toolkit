@@ -58,13 +58,20 @@
 	--diecon-size: 1.45rem; /* Standalone die icons */
 	--diecon-scale-size: 1.35rem; /* Rating scale die buttons ([4] [6] [8] [10] [12]) */
 
+	--z-chip-drag: 5;
+	--z-beneath-editor: 10;
+	--z-elevated-card: 12;
 	--z-main: 100;
 	--z-page: 200;
 	--z-ring-items: 500;
 	--z-portrait: 600;
+	--z-portrait-active: 650;
 	--z-editable-highlight: 700;
 	--z-editable-content: 800;
+	--z-workspace-nav: 850;
 	--z-frame: 900;
+	--z-toolbar: 950;
+	--z-toolbar-pinned: 1000;
 	--z-editor: 2000;
 	--z-editor-scroll-indicator: 2100;
 	--z-editor-controls: 2200;
@@ -99,7 +106,7 @@
 	.submode-edit .attribute-inner::before,
 	.submode-edit .scale-die-inner::before,
 	.submode-edit .scale-die .scale-die-inner::before {
-		display: none !important;
+		display: none;
 	}
 }
 
@@ -127,9 +134,9 @@ body,
 html {
 	font-size: 16px;
 	@media print {
-		width: 100% !important;
-		height: auto !important;
-		background: #ffffff !important;
+		width: 100%;
+		height: auto;
+		background: #ffffff;
 	}
 }
 
@@ -313,6 +320,39 @@ select:focus-visible,
 textarea:focus-visible {
 	outline: 2px solid var(--color-interactive);
 	outline-offset: 2px;
+}
+
+.template-update-banner {
+	margin: 0.5rem auto;
+	max-width: 60rem;
+	padding: 0.5rem 0.75rem;
+	background: #fef9c3;
+	border: 1px solid #eab308;
+	border-radius: 6px;
+	color: #713f12;
+	font-size: 0.8rem;
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+
+	.btn-update-primary {
+		background: #ca8a04;
+		color: #fff;
+		border: none;
+		border-radius: 4px;
+		padding: 0.25rem 0.6rem;
+		cursor: pointer;
+	}
+
+	.btn-update-secondary {
+		background: transparent;
+		color: #713f12;
+		border: 1px solid #ca8a04;
+		border-radius: 4px;
+		padding: 0.25rem 0.6rem;
+		cursor: pointer;
+	}
 }
 
 .sr-only {

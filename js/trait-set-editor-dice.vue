@@ -103,8 +103,8 @@ function toggleSetRating(size: number | null) {
 	<!-- OPTIONS -->
 	<div class="editor-field" v-if="needsDiceUI">
 		<div class="editor-label">Options</div>
-		<div style="display: flex; flex-wrap: wrap; gap: 0.85rem 1.25rem; align-items: center; margin-bottom: 0.5rem">
-			<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.35rem">
+		<div class="editor-row-inline flex-wrap mb-md">
+			<div class="editor-checkbox-row">
 				<input
 					type="checkbox"
 					:id="'trait-set-' + traitSetID + '-pool'"
@@ -114,13 +114,12 @@ function toggleSetRating(size: number | null) {
 				/>
 				<label
 					:for="'trait-set-' + traitSetID + '-pool'"
-					style="margin: 0; font-size: 0.8rem; cursor: pointer"
 					title="Clicking a trait adds its whole array of available dice to the roller"
 					>Pool</label
 				>
 			</div>
 
-			<div class="editor-checkbox-row" style="display: flex; align-items: center; gap: 0.35rem">
+			<div class="editor-checkbox-row">
 				<input
 					type="checkbox"
 					:id="'trait-set-' + traitSetID + '-spendable'"
@@ -128,27 +127,20 @@ function toggleSetRating(size: number | null) {
 					:false-value="false"
 					v-model="setSpendable"
 				/>
-				<label :for="'trait-set-' + traitSetID + '-spendable'" style="margin: 0; font-size: 0.8rem; cursor: pointer"
-					>Spendable</label
-				>
+				<label :for="'trait-set-' + traitSetID + '-spendable'">Spendable</label>
 			</div>
 
 			<div
 				v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'"
 				class="editor-checkbox-row"
-				style="display: flex; align-items: center; gap: 0.35rem"
 			>
 				<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-track'" v-model="hasTrackPart" />
-				<label
-					:for="'trait-set-' + traitSetID + '-attached-track'"
-					style="margin: 0; font-size: 0.8rem; cursor: pointer"
-					>Attached track</label
-				>
+				<label :for="'trait-set-' + traitSetID + '-attached-track'">Attached track</label>
 			</div>
 		</div>
 
-		<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.4rem">
-			<label :for="'trait-set-' + traitSetID + '-hitches'" style="font-size: 0.8rem; margin: 0">Hitches on</label>
+		<div class="editor-row-between mt-sm">
+			<label :for="'trait-set-' + traitSetID + '-hitches'" class="m-0">Hitches on</label>
 			<div class="num-stepper">
 				<button
 					type="button"

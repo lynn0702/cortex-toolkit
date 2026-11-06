@@ -1146,14 +1146,9 @@ watch(
 				<aside class="modal modal-style-gallery" v-if="showPlayPresetPicker">
 					<div class="modal-close" @click.prevent="showPlayPresetPicker = false"><i class="fas fa-times"></i></div>
 					<div class="modal-inner">
-						<div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem">
+						<div class="modal-header-actions">
 							<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
-							<button
-								type="button"
-								class="btn-gallery-add btn-open-mini"
-								style="width: auto; padding: 0.35rem 0.75rem"
-								@click.stop="openPlayMini"
-							>
+							<button type="button" class="btn-gallery-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
 								<i class="fas fa-th-large"></i> New Card in Mini
 							</button>
 						</div>
@@ -1167,7 +1162,7 @@ watch(
 								</button>
 							</div>
 							<div class="style-gallery-card" v-for="preset in playCustomPresets" :key="'play-custom-' + preset.id">
-								<div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem">
+								<div class="style-gallery-card-header">
 									<div class="style-gallery-name">{{ preset.label }}</div>
 									<button
 										type="button"

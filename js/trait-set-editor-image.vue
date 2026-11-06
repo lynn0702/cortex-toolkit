@@ -27,30 +27,23 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 <template>
 	<!-- IMAGE CONTENT -->
 	<div class="editor-field" v-if="showImageEditor">
-		<div
-			class="name-heading-row"
-			style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem"
-		>
-			<label style="margin: 0">Illustration / Image</label>
+		<div class="name-heading-row editor-row-between mb-xs">
+			<label class="m-0">Illustration / Image</label>
 			<VisibilityEye v-if="isName" :state="namePortraitVisibility" @toggle="toggleNamePortraitVisibility" />
 		</div>
 
-		<div class="image-set-preview" v-if="imageURL" style="margin-bottom: 0.5rem">
-			<img
-				:src="imageURL"
-				style="max-height: 120px; border-radius: 4px; display: block; border: 1px solid #cbd5e1; margin-bottom: 0.5rem"
-			/>
+		<div class="image-set-preview mb-md" v-if="imageURL">
+			<img :src="imageURL" class="editor-watermark-preview-img mb-md" />
 		</div>
 
-		<div class="editor-button-container" style="margin-bottom: 0.5rem">
+		<div class="editor-button-container mb-md">
 			<div class="editor-button-container-inner">
 				<div class="editor-button" @click.prevent="uploadImageStart">
 					<span><i class="fas fa-upload"></i> {{ imageURL ? 'Replace' : 'Upload' }} Image</span>
 				</div>
 				<div
-					class="editor-button"
+					class="editor-button editor-btn-danger-mini"
 					v-if="imageURL"
-					style="background: #ef4444; color: #ffffff"
 					@click.prevent="removeImage"
 					title="Remove image"
 				>
@@ -64,7 +57,7 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 			:id="'trait-set-' + traitSetID + '-image-file'"
 			name="imageFile"
 			ref="imageFileInput"
-			style="display: none"
+			class="sr-only"
 			@change="uploadImageProcess"
 			accept="image/*"
 			aria-label="Upload image file"
@@ -72,10 +65,8 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 
 		<div class="editor-upload-error" v-if="uploadError">{{ uploadError }}</div>
 
-		<div style="margin-top: 0.5rem">
-			<label :for="'trait-set-' + traitSetID + '-image-url'" style="font-size: 0.75rem; color: #64748b"
-				>Or Image URL</label
-			>
+		<div class="mt-md">
+			<label :for="'trait-set-' + traitSetID + '-image-url'" class="editor-sub-label">Or Image URL</label>
 			<input
 				type="text"
 				:id="'trait-set-' + traitSetID + '-image-url'"

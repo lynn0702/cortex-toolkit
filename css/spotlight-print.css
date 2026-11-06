@@ -3,7 +3,7 @@
 .print-toolbar {
 	position: sticky;
 	top: 0;
-	z-index: 950;
+	z-index: var(--z-toolbar);
 	background: #1e293b;
 	color: #f8fafc;
 	padding: 0.75rem 1.5rem;
@@ -119,7 +119,7 @@
 	.spotlight-add-portrait-link,
 	.btn-spotlight-add,
 	.btn-remove-header-portrait {
-		display: none !important;
+		display: none;
 	}
 }
 
@@ -135,10 +135,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2.5rem;
-		height: auto !important;
-		overflow: visible !important;
-		border: none !important;
-		box-shadow: none !important;
+		height: auto;
+		overflow: visible;
+		border: none;
+		box-shadow: none;
 	}
 
 	.page {
@@ -660,26 +660,26 @@
 		flex-direction: column;
 		gap: 0;
 		position: relative;
-		padding-top: 0 !important;
-		margin-top: 0 !important;
+		padding-top: 0;
+		margin-top: 0;
 
 		&.spotlight-column-left {
-			padding-top: var(--column-left-offset, 0px) !important;
+			padding-top: var(--column-left-offset, 0px);
 		}
 
 		&.spotlight-column-center {
-			padding-top: var(--column-center-offset, 0px) !important;
+			padding-top: var(--column-center-offset, 0px);
 		}
 
 		&.spotlight-column-right {
-			padding-top: var(--column-right-offset, 0px) !important;
+			padding-top: var(--column-right-offset, 0px);
 		}
 
 		&.spotlight-full-column {
 			width: 100%;
 			flex: none;
-			padding-top: 0 !important;
-			margin-top: 0 !important;
+			padding-top: 0;
+			margin-top: 0;
 		}
 
 		/* NOTE: no z-index here. The open .editor carries z-index */
@@ -689,7 +689,7 @@
 	}
 
 	.spotlight-column > .trait-set:first-child {
-		margin-top: 0 !important;
+		margin-top: 0;
 	}
 
 	.trait-set {
@@ -790,18 +790,18 @@
 		}
 
 		@media (max-width: 600px) {
-			display: flex !important;
-			flex-direction: column !important;
-			gap: 0.5rem !important;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
 
 			.slot-col-1,
 			.slot-center,
 			.slot-col-2,
 			.slot-col-3,
 			.slot-col-last {
-				grid-column: auto !important;
-				grid-row: auto !important;
-				width: 100% !important;
+				grid-column: auto;
+				grid-row: auto;
+				width: 100%;
 			}
 		}
 
@@ -864,9 +864,9 @@
 			}
 
 			&.trait-set-frame-block {
-				border: none !important;
-				box-shadow: none !important;
-				background: transparent !important;
+				border: none;
+				box-shadow: none;
+				background: transparent;
 				position: relative;
 
 				.trait-set-header {
@@ -882,14 +882,21 @@
 			}
 		}
 
+		&.trait-set-framed.trait-set-frame-line,
 		&.trait-set-frame-line {
-			border: none !important;
-			background: transparent !important;
-			box-shadow: none !important;
-			margin: 0.75rem 0 !important;
+			border: none;
+			background: transparent;
+			box-shadow: none;
+			padding: 0;
+			margin: 0.75rem 0;
 
 			.trait-set-header {
-				display: none !important;
+				display: none;
+			}
+
+			.trait-set-body {
+				padding: 0;
+				background: transparent;
 			}
 		}
 
@@ -928,7 +935,7 @@
 		.trait-set-body {
 			flex: 1 1 auto;
 			min-width: 0;
-			margin-left: 0 !important;
+			margin-left: 0;
 			padding: 0.5rem 0.6rem;
 			box-sizing: border-box;
 		}
@@ -964,6 +971,7 @@
 		}
 	}
 
+	.trait .trait-title,
 	.trait-title {
 		display: flex;
 		align-items: baseline;
@@ -1433,8 +1441,8 @@
 			padding-top: 0.05rem;
 
 			svg {
-				width: 1.15rem !important;
-				height: 1.15rem !important;
+				width: 1.15rem;
+				height: 1.15rem;
 			}
 		}
 
@@ -1477,8 +1485,8 @@
 			}
 
 			svg {
-				width: 1.15rem !important;
-				height: 1.15rem !important;
+				width: 1.15rem;
+				height: 1.15rem;
 			}
 		}
 	}
@@ -1615,14 +1623,14 @@
 
 	/* TRAIT COLUMNS WITHIN TRAIT SET (BALANCED COLUMN-FLOW FILL) */
 	.trait-list-cols-2 {
-		display: grid !important;
-		grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-		column-gap: 0.75rem !important;
-		row-gap: 0.25rem !important;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: 0.75rem;
+		row-gap: 0.25rem;
 
 		& > .trait {
-			break-inside: avoid !important;
-			page-break-inside: avoid !important;
+			break-inside: avoid;
+			page-break-inside: avoid;
 			border-bottom: none;
 			margin-bottom: 0.25rem;
 			padding-bottom: 0;
@@ -1634,14 +1642,14 @@
 	}
 
 	.trait-list-cols-3 {
-		display: grid !important;
-		grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-		column-gap: 0.75rem !important;
-		row-gap: 0.25rem !important;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		column-gap: 0.75rem;
+		row-gap: 0.25rem;
 
 		& > .trait {
-			break-inside: avoid !important;
-			page-break-inside: avoid !important;
+			break-inside: avoid;
+			page-break-inside: avoid;
 			border-bottom: none;
 			margin-bottom: 0.25rem;
 			padding-bottom: 0;
@@ -1858,17 +1866,17 @@
 	/* BLANK WRITE-IN FOR PENCIL */
 	&.print-blank-mode {
 		.trait-value .c.active {
-			background: #ffffff !important;
-			color: #111111 !important;
-			-webkit-text-fill-color: #111111 !important;
+			background: #ffffff;
+			color: #111111;
+			-webkit-text-fill-color: #111111;
 		}
 
 		.trait-pips-body {
 			.pip-bubble {
-				background: #ffffff !important;
+				background: #ffffff;
 			}
 			.pip-bubble-wrap:hover .pip-bubble {
-				transform: none !important;
+				transform: none;
 			}
 		}
 
@@ -1945,135 +1953,135 @@
 	.btn-spotlight-add,
 	.btn-remove-header-portrait,
 	.spotlight-add-hint {
-		display: none !important;
-		height: 0 !important;
-		min-height: 0 !important;
-		max-height: 0 !important;
-		margin: 0 !important;
-		padding: 0 !important;
-		border: none !important;
-		visibility: hidden !important;
-		overflow: hidden !important;
-		position: absolute !important;
-		top: -9999px !important;
+		display: none;
+		height: 0;
+		min-height: 0;
+		max-height: 0;
+		margin: 0;
+		padding: 0;
+		border: none;
+		visibility: hidden;
+		overflow: hidden;
+		position: absolute;
+		top: -9999px;
 	}
 
 	body,
 	html {
-		background: #ffffff !important;
-		margin: 0 !important;
-		padding: 0 !important;
-		width: 100% !important;
-		height: auto !important;
-		min-height: 0 !important;
-		-webkit-print-color-adjust: exact !important;
-		print-color-adjust: exact !important;
+		background: #ffffff;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: auto;
+		min-height: 0;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
 	}
 
 	.main {
-		padding: 0 !important;
-		margin: 0 !important;
-		top: 0 !important;
-		left: 0 !important;
-		min-height: 0 !important;
-		height: auto !important;
+		padding: 0;
+		margin: 0;
+		top: 0;
+		left: 0;
+		min-height: 0;
+		height: auto;
 	}
 
 	.character-sheet {
-		padding: 0 !important;
-		margin: 0 !important;
-		background: #ffffff !important;
-		width: 100% !important;
-		min-height: 0 !important;
-		height: auto !important;
+		padding: 0;
+		margin: 0;
+		background: #ffffff;
+		width: 100%;
+		min-height: 0;
+		height: auto;
 
 		.spotlight-header-portrait-box {
-			-webkit-print-color-adjust: exact !important;
-			print-color-adjust: exact !important;
-			border-radius: 50% !important;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+			border-radius: 50%;
 
 			&.has-image {
-				background: transparent !important;
-				border: none !important;
+				background: transparent;
+				border: none;
 			}
 
 			&:not(.has-image) {
-				border: 1.5px solid #000000 !important;
-				background: #ffffff !important;
+				border: 1.5px solid #000000;
+				background: #ffffff;
 
 				.portrait-small-placeholder {
-					background: #ffffff !important;
-					color: #000000 !important;
+					background: #ffffff;
+					color: #000000;
 				}
 			}
 
 			.portrait-small-image {
-				display: block !important;
-				width: 100% !important;
-				height: 100% !important;
-				object-fit: cover !important;
-				-webkit-print-color-adjust: exact !important;
-				print-color-adjust: exact !important;
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
 			}
 		}
 
 		.pages {
-			width: 100% !important;
-			max-width: 100% !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			gap: 0 !important;
-			border: none !important;
-			box-shadow: none !important;
-			height: auto !important;
-			overflow: visible !important;
+			width: 100%;
+			max-width: 100%;
+			margin: 0;
+			padding: 0;
+			gap: 0;
+			border: none;
+			box-shadow: none;
+			height: auto;
+			overflow: visible;
 		}
 
 		.page {
-			width: 100% !important;
-			max-width: 100% !important;
-			height: auto !important;
-			min-height: 0 !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			border: none !important;
-			box-shadow: none !important;
-			border-radius: 0 !important;
-			overflow: visible !important;
-			position: relative !important;
+			width: 100%;
+			max-width: 100%;
+			height: auto;
+			min-height: 0;
+			margin: 0;
+			padding: 0;
+			border: none;
+			box-shadow: none;
+			border-radius: 0;
+			overflow: visible;
+			position: relative;
 			/* Tall sheets flow across physical pages (cut lines are a screen */
 			/* preview aid only and must never print). */
-			background-image: none !important;
-			page-break-inside: auto !important;
-			break-inside: auto !important;
-			box-sizing: border-box !important;
+			background-image: none;
+			page-break-inside: auto;
+			break-inside: auto;
+			box-sizing: border-box;
 
 			&:not(:last-child) {
-				page-break-after: always !important;
-				break-after: page !important;
+				page-break-after: always;
+				break-after: page;
 			}
 
 			&:last-child {
-				page-break-after: auto !important;
-				break-after: auto !important;
+				page-break-after: auto;
+				break-after: auto;
 			}
 		}
 
 		.page-inner {
-			width: 100% !important;
-			max-width: 100% !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			box-sizing: border-box !important;
+			width: 100%;
+			max-width: 100%;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
 		}
 	}
 }
 
 /* SPOTLIGHT LIBRARY MODAL */
 .modal-spotlight-library {
-	max-width: 1040px !important;
-	width: 95vw !important;
-	max-height: 90vh !important;
+	max-width: 1040px;
+	width: 95vw;
+	max-height: 90vh;
 	display: flex;
 	flex-direction: column;
 	background: #ffffff;
@@ -2406,9 +2414,9 @@
 }
 
 .roster-button-spotlight {
-	background: #0284c7 !important;
+	background: #0284c7;
 	&:hover {
-		background: #0369a1 !important;
+		background: #0369a1;
 	}
 }
 
@@ -2416,64 +2424,64 @@
 
 /* MOBILE (â‰¤768px): the A4 sheet goes fluid and every band stacks to a */
 /* single column â€” no horizontal overflow or clipped content. Inline grid */
-/* placement is neutralized (!important beats inline styles); the -2px seam */
+/* placement is neutralized ( beats inline styles); the -2px seam */
 /* between stacked bands is preserved. Print/designer-preview paper layout */
 /* is untouched (this block is screen-only). */
 @media screen and (max-width: 768px) {
 	.character-sheet .page-inner,
 	.character-sheet .pages,
 	.character-sheet .page {
-		width: 100% !important;
-		max-width: 100% !important;
-		min-width: 0 !important;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
 	}
 
 	.character-sheet.spotlight-style,
 	.character-sheet.spotlight-print-style {
 		.spotlight-layout {
-			width: 100% !important;
-			max-width: 100% !important;
-			min-width: 0 !important;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.columns.spotlight-columns,
 		.columns.spotlight-columns.spotlight-grid {
-			display: flex !important;
-			flex-direction: column !important;
-			align-items: stretch !important;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
 		}
 
 		.spotlight-grid > .trait-set {
-			grid-area: auto !important;
-			margin: 0 !important;
-			width: 100% !important;
-			max-width: 100% !important;
-			min-width: 0 !important;
+			grid-area: auto;
+			margin: 0;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.spotlight-grid > .trait-set:not(:first-child) {
-			margin-top: -2px !important;
+			margin-top: -2px;
 		}
 
 		.columns.spotlight-columns > .spotlight-column {
-			width: 100% !important;
-			max-width: 100% !important;
-			min-width: 0 !important;
-			margin-left: 0 !important;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			margin-left: 0;
 		}
 
 		.page-header-inner.spotlight-header-card,
 		.page-header-inner.spotlight-header-card:not(.has-portrait) {
-			grid-template-columns: 1fr !important;
+			grid-template-columns: 1fr;
 		}
 
 		.trait-set {
-			min-width: 0 !important;
+			min-width: 0;
 		}
 	}
 
 	.multi-character-column {
-		min-width: 0 !important;
+		min-width: 0;
 	}
 }
 
@@ -2503,6 +2511,8 @@
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
 }
+.character-sheet.spotlight-style .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner,
+.character-sheet.spotlight-print-style .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner,
 :is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-top .trait-set-header-inner {
 	writing-mode: horizontal-tb;
 	transform: translateY(1px);
@@ -2521,15 +2531,45 @@
 	margin-left: auto;
 	font-weight: 900;
 }
-:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-align-center .trait-set-header-inner {
+.character-sheet.spotlight-style
+	.trait-set.trait-set-header-top.trait-set-header-align-center
+	> .trait-set-header
+	> .trait-set-header-inner,
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-top.trait-set-header-align-center
+	> .trait-set-header
+	> .trait-set-header-inner,
+:is(.spotlight-style, .spotlight-print-style)
+	.trait-set.trait-set-header-top.trait-set-header-align-center
+	.trait-set-header-inner {
 	justify-content: center;
 	text-align: center;
 }
-:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-align-left .trait-set-header-inner {
+.character-sheet.spotlight-style
+	.trait-set.trait-set-header-top.trait-set-header-align-left
+	> .trait-set-header
+	> .trait-set-header-inner,
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-top.trait-set-header-align-left
+	> .trait-set-header
+	> .trait-set-header-inner,
+:is(.spotlight-style, .spotlight-print-style)
+	.trait-set.trait-set-header-top.trait-set-header-align-left
+	.trait-set-header-inner {
 	justify-content: flex-start;
 	text-align: left;
 }
-:is(.spotlight-style, .spotlight-print-style) .trait-set.trait-set-header-align-right .trait-set-header-inner {
+.character-sheet.spotlight-style
+	.trait-set.trait-set-header-top.trait-set-header-align-right
+	> .trait-set-header
+	> .trait-set-header-inner,
+.character-sheet.spotlight-print-style
+	.trait-set.trait-set-header-top.trait-set-header-align-right
+	> .trait-set-header
+	> .trait-set-header-inner,
+:is(.spotlight-style, .spotlight-print-style)
+	.trait-set.trait-set-header-top.trait-set-header-align-right
+	.trait-set-header-inner {
 	justify-content: flex-end;
 	text-align: right;
 }
@@ -2621,7 +2661,7 @@
 
 	/* Badges: center the rating die between the name (left) and counter (right). */
 	.die-row {
-		display: grid !important;
+		display: grid;
 		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
 		column-gap: 0.4rem;
@@ -2639,12 +2679,12 @@
 	/* Paired-slot fields are already bordered boxes - drop the duplicate inner rule. */
 	.paired-slot-name-box .paired-slot-blank-line,
 	.paired-slot-statement-box .paired-slot-blank-line {
-		border-bottom: none !important;
+		border-bottom: none;
 	}
 
 	/* Header description: match the name/pronoun ruling (solid, not light gray). */
 	.desc-blank-area .desc-blank-line {
-		border-bottom-color: #000000 !important;
+		border-bottom-color: #000000;
 	}
 }
 
@@ -2667,13 +2707,13 @@
 /* ============================================================ */
 /* Proportional die icons for print. */
 .character-sheet.spotlight-print-style .diecon {
-	width: var(--diecon-scale-size) !important;
-	height: var(--diecon-scale-size) !important;
+	width: var(--diecon-scale-size);
+	height: var(--diecon-scale-size);
 }
 .character-sheet.spotlight-print-style .distinction-die .diecon,
 .character-sheet.spotlight-print-style .single-die-value .diecon {
-	width: var(--diecon-size) !important;
-	height: var(--diecon-size) !important;
+	width: var(--diecon-size);
+	height: var(--diecon-size);
 }
 
 /* The print tab must keep the desktop sheet layout at any zoom (browser zoom */
@@ -2685,26 +2725,26 @@
 	}
 	.character-sheet.submode-print .pages,
 	.character-sheet.submode-print .page {
-		width: var(--page-width) !important;
-		max-width: var(--page-width) !important;
-		min-width: 0 !important;
+		width: var(--page-width);
+		max-width: var(--page-width);
+		min-width: 0;
 	}
 	.character-sheet.submode-print .page-inner {
-		width: 100% !important;
-		max-width: 100% !important;
-		min-width: 0 !important;
-		box-sizing: border-box !important;
+		width: 100%;
+		max-width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
 	}
 	.character-sheet.submode-print .columns.spotlight-columns,
 	.character-sheet.submode-print .columns.spotlight-columns.spotlight-grid {
-		display: grid !important;
-		flex-direction: row !important;
-		align-items: stretch !important;
+		display: grid;
+		flex-direction: row;
+		align-items: stretch;
 	}
 	.character-sheet.submode-print .spotlight-grid > .trait-set,
 	.character-sheet.submode-print .spotlight-column {
-		width: auto !important;
-		max-width: none !important;
+		width: auto;
+		max-width: none;
 	}
 }
 
@@ -2712,14 +2752,14 @@
 /* except framed sets which require vertical breathing room for anchored traits. */
 .character-sheet.spotlight-style .trait-set-header-top .trait-set-body:not(.trait-set-body-framed),
 .character-sheet.spotlight-print-style .trait-set-header-top .trait-set-body:not(.trait-set-body-framed) {
-	padding-top: 0 !important;
+	padding-top: 0;
 }
 
 /* Top header flush to its body (remove the `.trait-set` row-gap "margin block"). */
 .character-sheet.spotlight-style .trait-set.trait-set-header-top,
 .character-sheet.spotlight-print-style .trait-set.trait-set-header-top {
-	row-gap: 0 !important;
-	column-gap: 0 !important;
+	row-gap: 0;
+	column-gap: 0;
 }
 
 /* Print tab: never clip the sheet - scroll horizontally when it is wider. */
@@ -2740,7 +2780,7 @@ body:has(.character-sheet.submode-print) .main {
 /* No separating line between a top header label and its traits (source sheets */
 /* have none); reclaim that space into a larger header label. */
 :is(.spotlight-style, .spotlight-print-style) .trait-set-header-top .trait-set-header-inner {
-	font-size: var(--text-header) !important;
+	font-size: var(--text-header);
 }
 
 /* Print Visual Parity & Mobile WYSIWYG Zoom */
@@ -2748,10 +2788,10 @@ body:has(.character-sheet.submode-print) .main {
 .character-sheet.spotlight-print-style {
 	/* Restore table row dividers stripped by .trait reset */
 	.trait-set-style-die-rows .die-row:not(:last-child) {
-		border-bottom: 1px solid #000000 !important;
+		border-bottom: 1px solid #000000;
 	}
 	.trait-set-style-three-column-table .three-col-row {
-		border-top: 1px solid #000000 !important;
+		border-top: 1px solid #000000;
 	}
 
 	/* Center-align stacked trait titles (e.g. Eidolon Alpha Roles & Attributes) */
@@ -2856,16 +2896,16 @@ body:has(.character-sheet.submode-print) .main {
 		.diecon-filled {
 			polygon,
 			rect {
-				fill: none !important;
-				stroke: #000000 !important;
+				fill: none;
+				stroke: #000000;
 			}
 			text {
-				fill: #000000 !important;
+				fill: #000000;
 			}
 		}
 		.dice-count-pip.filled {
-			background: #ffffff !important;
-			color: #000000 !important;
+			background: #ffffff;
+			color: #000000;
 		}
 	}
 }
@@ -2889,10 +2929,10 @@ body:has(.character-sheet.submode-print) .main {
 .character-sheet.spotlight-print-style {
 	/* 1. Restore table row dividers stripped by the shared .trait reset */
 	.trait-set-style-die-rows .die-row:not(:last-child) {
-		border-bottom: 1px solid #000000 !important;
+		border-bottom: 1px solid #000000;
 	}
 	.trait-set-style-three-column-table .three-col-row {
-		border-top: 1px solid #000000 !important;
+		border-top: 1px solid #000000;
 	}
 
 	/* 2. STACKED TRAITS (ratingPosition: 'below', no statement): */
@@ -2917,8 +2957,8 @@ body:has(.character-sheet.submode-print) .main {
 	/* Center-align all elements on the row midline (Name, Pip, Statement box, Dice scale). */
 	/* Uses a consistent 6.5rem name column so statement boxes and right-aligned dice stay flush. */
 	.trait-title.trait-title-statement:not(.trait-title-stacked) {
-		display: flex !important;
-		align-items: center !important;
+		display: flex;
+		align-items: center;
 		gap: 0.45rem;
 		width: 100%;
 
@@ -2930,6 +2970,10 @@ body:has(.character-sheet.submode-print) .main {
 			align-self: center;
 			margin: 0;
 			line-height: 1;
+
+			& > .trait-name:not(.trait-name-blank) {
+				width: 100%;
+			}
 		}
 
 		& > .statement-pip {
@@ -2948,7 +2992,7 @@ body:has(.character-sheet.submode-print) .main {
 		& > .trait-value {
 			flex: 0 0 auto;
 			margin-left: auto;
-			top: 0 !important;
+			top: 0;
 			align-self: center;
 			position: relative;
 		}
@@ -2958,7 +3002,7 @@ body:has(.character-sheet.submode-print) .main {
 	/* Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the */
 	/* full-height Statement box. Works for both named traits and blank slots. */
 	.trait-title.trait-title-statement.trait-title-stacked {
-		display: grid !important;
+		display: grid;
 		grid-template-columns: 38% 1fr;
 		grid-template-rows: auto auto;
 		column-gap: 0.45rem;
@@ -2982,7 +3026,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		.trait-blank-line {
-			border-bottom: none !important;
+			border-bottom: none;
 		}
 
 		& > .trait-value {
@@ -3025,9 +3069,9 @@ body:has(.character-sheet.submode-print) .main {
 /* Row 2: Full-width Statement Box underneath. */
 .trait-set-rating-above .trait-title-statement,
 .trait-title-statement.trait-title-above {
-	display: flex !important;
-	flex-direction: row !important;
-	flex-wrap: wrap !important;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 	row-gap: 0.2rem;
@@ -3067,7 +3111,7 @@ body:has(.character-sheet.submode-print) .main {
 	background: #ffffff;
 }
 .trait-set-has-feature-description .trait-name.trait-name-blank .trait-blank-line {
-	border-bottom: none !important;
+	border-bottom: none;
 }
 
 .character-sheet.spotlight-style,
@@ -3076,13 +3120,13 @@ body:has(.character-sheet.submode-print) .main {
 	/* when inside multi-column grids, and remove double bottom borders. */
 	.trait-list-cols-2,
 	.trait-list-cols-3 {
-		column-gap: 0.85rem !important;
-		row-gap: 0.35rem !important;
+		column-gap: 0.85rem;
+		row-gap: 0.35rem;
 
 		/* Only put the vertical dotted divider on non-trailing columns */
 		& > .trait {
-			border-right: none !important;
-			padding-right: 0 !important;
+			border-right: none;
+			padding-right: 0;
 		}
 
 		.trait-asset-card .trait-value {
@@ -3097,7 +3141,7 @@ body:has(.character-sheet.submode-print) .main {
 	/* the split bar renders, and the bar opens the set editor. */
 	.trait-set-style-subtrait-columns.trait-set-header-top:has(.branch-split-head) {
 		& > .trait-set-header {
-			display: none !important;
+			display: none;
 		}
 	}
 
@@ -3181,16 +3225,16 @@ body:has(.character-sheet.submode-print) .main {
 		.diecon-filled {
 			polygon,
 			rect {
-				fill: none !important;
-				stroke: #000000 !important;
+				fill: none;
+				stroke: #000000;
 			}
 			text {
-				fill: #000000 !important;
+				fill: #000000;
 			}
 		}
 		.dice-count-pip.filled {
-			background: #ffffff !important;
-			color: #000000 !important;
+			background: #ffffff;
+			color: #000000;
 		}
 	}
 }
@@ -3239,7 +3283,7 @@ body:has(.character-sheet.submode-print) .main {
 		padding: 0.15rem 0.4rem;
 		background: #ffffff;
 		.trait-blank-line {
-			border-bottom: none !important;
+			border-bottom: none;
 		}
 	}
 	& > .trait-statement-box {
@@ -3302,7 +3346,7 @@ body:has(.character-sheet.submode-print) .main {
 			width: 100%;
 		}
 		.trait-blank-line {
-			border-bottom: none !important;
+			border-bottom: none;
 		}
 		& > .trait-value {
 			justify-content: center;
@@ -3319,20 +3363,20 @@ body:has(.character-sheet.submode-print) .main {
 /* 1. STACKED ATTACHED STRESS (when parent trait is stacked, e.g. Eidolon Alpha, */
 /* Hammerheads, Titans): always show the STRESS label and stack below the trait! */
 .trait-inner:has(> .trait-title.trait-title-stacked) > .attached-stress-block {
-	display: flex !important;
-	flex-direction: row !important;
-	align-items: center !important;
-	justify-content: space-between !important;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 	gap: 0.4rem;
-	border: 1.5px solid #000000 !important;
-	border-top: none !important;
+	border: 1.5px solid #000000;
+	border-top: none;
 	border-radius: 0 0 2px 2px;
-	padding: 0.15rem 0.4rem !important;
-	margin-top: 0.1rem !important;
+	padding: 0.15rem 0.4rem;
+	margin-top: 0.1rem;
 
 	.attached-stress-header {
-		display: inline-flex !important;
-		margin-bottom: 0 !important;
+		display: inline-flex;
+		margin-bottom: 0;
 		font-weight: 800;
 		font-size: var(--text-meta);
 		letter-spacing: 0.04em;
@@ -3354,11 +3398,11 @@ body:has(.character-sheet.submode-print) .main {
 	}
 	& > .attached-stress-block {
 		flex: 0 0 auto;
-		border: none !important;
-		padding: 0 !important;
-		margin-top: 0 !important;
+		border: none;
+		padding: 0;
+		margin-top: 0;
 		.attached-stress-header {
-			display: none !important;
+			display: none;
 		}
 	}
 }
@@ -3372,7 +3416,7 @@ body:has(.character-sheet.submode-print) .main {
 	.distinction-sfx-row {
 		.sfx-name:empty,
 		.sfx-label:empty {
-			display: none !important;
+			display: none;
 		}
 		/* When both name and description are empty, draw a clean dotted write-in line */
 		&:has(.sfx-name:empty) .sfx-description:empty,
@@ -3407,7 +3451,7 @@ body:has(.character-sheet.submode-print) .main {
 	/* Hide empty black SFX pills in Create/Play mode too */
 	.sfx-name:empty,
 	.sfx-label:empty {
-		display: none !important;
+		display: none;
 	}
 }
 
@@ -3425,43 +3469,43 @@ body:has(.character-sheet.submode-print) .main {
 	.character-sheet.pillar-deck-view {
 		/* Break out of the 210mm A4 paper container */
 		.pages {
-			display: block !important;
-			width: 100% !important;
-			max-width: 100% !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			box-shadow: none !important;
-			border: none !important;
+			display: block;
+			width: 100%;
+			max-width: 100%;
+			margin: 0;
+			padding: 0;
+			box-shadow: none;
+			border: none;
 		}
 
 		.page {
-			width: 100% !important;
-			max-width: 100% !important;
-			min-width: 0 !important;
-			height: auto !important;
-			min-height: calc(100vh - 120px) !important;
-			box-shadow: none !important;
-			border: none !important;
-			background: transparent !important;
-			background-color: transparent !important;
-			background-image: none !important;
-			padding: 0 !important;
-			overflow: visible !important;
-			position: static !important;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			height: auto;
+			min-height: calc(100vh - 120px);
+			box-shadow: none;
+			border: none;
+			background: transparent;
+			background-color: transparent;
+			background-image: none;
+			padding: 0;
+			overflow: visible;
+			position: static;
 		}
 
 		.page-inner {
-			width: 100% !important;
-			max-width: 100% !important;
-			padding: 0 !important;
-			overflow: visible !important;
+			width: 100%;
+			max-width: 100%;
+			padding: 0;
+			overflow: visible;
 		}
 
 		.mobile-set-jump-strip {
-			display: flex !important;
+			display: flex;
 			position: sticky;
 			top: calc(var(--header-size) + 42px);
-			z-index: 850;
+			z-index: var(--z-workspace-nav);
 			background: var(--bg-sticky-glass, rgba(15, 23, 42, 0.95));
 			backdrop-filter: blur(8px);
 			padding: 0.5rem 1.5rem;
@@ -3471,29 +3515,29 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		.mobile-pillar-track {
-			display: flex !important;
-			flex-direction: row !important;
-			flex-wrap: nowrap !important;
-			overflow-x: auto !important;
-			overflow-y: hidden !important;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			overflow-y: hidden;
 			scroll-snap-type: x mandatory;
 			scroll-behavior: smooth;
-			gap: 1.5rem !important;
-			padding: 1.25rem 2rem 4rem 2rem !important;
-			align-items: flex-start !important;
-			width: 100% !important;
-			box-sizing: border-box !important;
+			gap: 1.5rem;
+			padding: 1.25rem 2rem 4rem 2rem;
+			align-items: flex-start;
+			width: 100%;
+			box-sizing: border-box;
 		}
 
 		.mobile-pillar-column {
-			flex: 0 0 380px !important;
-			width: 380px !important;
-			max-width: 420px !important;
-			min-width: 340px !important;
+			flex: 0 0 380px;
+			width: 380px;
+			max-width: 420px;
+			min-width: 340px;
 			scroll-snap-align: start;
-			display: flex !important;
-			flex-direction: column !important;
-			gap: 1rem !important;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
 			max-height: calc(100vh - 180px);
 			overflow-y: auto;
 			padding-bottom: 2rem;
@@ -3502,25 +3546,25 @@ body:has(.character-sheet.submode-print) .main {
 			.page-header,
 			.portrait,
 			.trait-set {
-				width: 100% !important;
-				max-width: 100% !important;
-				min-width: 0 !important;
-				margin: 0 !important;
+				width: 100%;
+				max-width: 100%;
+				min-width: 0;
+				margin: 0;
 				background: var(--bg-surface-card, #ffffff);
 				border-radius: 12px;
 				box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 				padding: 0.65rem;
-				box-sizing: border-box !important;
+				box-sizing: border-box;
 				border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
 			}
 
 			.page-header-inner.spotlight-header-card,
 			.page-header-inner.spotlight-header-card:not(.has-portrait) {
-				grid-template-columns: 1fr !important;
-				gap: 0.5rem !important;
-				min-height: auto !important;
-				width: 100% !important;
-				box-sizing: border-box !important;
+				grid-template-columns: 1fr;
+				gap: 0.5rem;
+				min-height: auto;
+				width: 100%;
+				box-sizing: border-box;
 			}
 
 			.spotlight-header-portrait-wrap {
@@ -3584,7 +3628,7 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		.mobile-carousel-track {
-			display: none !important;
+			display: none;
 		}
 	}
 }
@@ -3600,15 +3644,15 @@ body:has(.character-sheet.submode-print) .main {
 		.columns-2,
 		.columns-3,
 		.columns-4 {
-			display: flex !important;
-			flex-direction: column !important;
-			gap: 0.75rem !important;
-			width: 100% !important;
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+			width: 100%;
 		}
 		.trait-set {
-			width: 100% !important;
-			grid-column: 1 / -1 !important;
-			overflow: visible !important;
+			width: 100%;
+			grid-column: 1 / -1;
+			overflow: visible;
 		}
 	}
 
@@ -3695,19 +3739,19 @@ body:has(.character-sheet.submode-print) .main {
 	.character-sheet.submode-play,
 	.play-shell .character-sheet:not(.submode-print):not(.submode-edit) {
 		.mobile-pillar-track {
-			display: flex !important;
-			flex-direction: row !important;
-			flex-wrap: nowrap !important;
-			align-items: flex-start !important;
-			overflow-x: auto !important;
-			overflow-y: hidden !important;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: flex-start;
+			overflow-x: auto;
+			overflow-y: hidden;
 			scroll-snap-type: x mandatory;
 			scroll-behavior: smooth;
 			-webkit-overflow-scrolling: touch;
-			gap: 0.75rem !important;
-			width: 100% !important;
-			padding: 0.25rem 6vw 5.5rem 6vw !important;
-			box-sizing: border-box !important;
+			gap: 0.75rem;
+			width: 100%;
+			padding: 0.25rem 6vw 5.5rem 6vw;
+			box-sizing: border-box;
 			scrollbar-width: none;
 
 			&::-webkit-scrollbar {
@@ -3716,10 +3760,10 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		.mobile-pillar-column {
-			flex: 0 0 88vw !important;
-			width: 88vw !important;
-			max-width: 88vw !important;
-			min-width: 88vw !important;
+			flex: 0 0 88vw;
+			width: 88vw;
+			max-width: 88vw;
+			min-width: 88vw;
 			scroll-snap-align: center;
 			scroll-snap-stop: always;
 			display: flex;
@@ -3735,17 +3779,17 @@ body:has(.character-sheet.submode-print) .main {
 			.page-header,
 			.portrait,
 			.trait-set {
-				width: 100% !important;
-				max-width: 100% !important;
-				min-width: 0 !important;
-				margin: 0 !important;
+				width: 100%;
+				max-width: 100%;
+				min-width: 0;
+				margin: 0;
 				scroll-snap-align: start;
 				background: var(--color-sheet-bg, #ffffff);
 				border-radius: 12px;
 				box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 				padding: 0.5rem;
-				box-sizing: border-box !important;
-				overflow: visible !important;
+				box-sizing: border-box;
+				overflow: visible;
 			}
 		}
 
@@ -3818,37 +3862,37 @@ body:has(.character-sheet.submode-print) .main {
 	align-items: center;
 	justify-content: center;
 	gap: 0.4rem;
-	padding: 0.45rem 0.75rem !important;
-	background: #141923 !important;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+	padding: 0.45rem 0.75rem;
+	background: #141923;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
 	button,
 	.button,
 	.toolbar-btn,
 	.btn-toolbar-theme,
 	.btn-print-action {
-		background: rgba(255, 255, 255, 0.08) !important;
-		color: #e6edf3 !important;
-		border: 1px solid rgba(255, 255, 255, 0.18) !important;
-		border-radius: 6px !important;
-		padding: 0.32rem 0.68rem !important;
-		font-size: 0.78rem !important;
-		font-weight: 600 !important;
+		background: rgba(255, 255, 255, 0.08);
+		color: #e2e8f0;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: 6px;
+		padding: 0.32rem 0.68rem;
+		font-size: 0.78rem;
+		font-weight: 600;
 		letter-spacing: 0.02em;
-		box-shadow: none !important;
+		box-shadow: none;
 		transition:
 			background 0.15s ease,
 			border-color 0.15s ease;
 
 		&:hover {
-			background: rgba(255, 255, 255, 0.16) !important;
-			border-color: rgba(255, 255, 255, 0.32) !important;
+			background: rgba(255, 255, 255, 0.16);
+			border-color: rgba(255, 255, 255, 0.32);
 		}
 		&.active,
 		&.is-active {
-			background: #2563eb !important;
-			border-color: #3b82f6 !important;
-			color: #ffffff !important;
+			background: #2563eb;
+			border-color: #3b82f6;
+			color: #ffffff;
 		}
 	}
 }
@@ -3894,7 +3938,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 .trait-parts .trait-part-description .trait-description {
-	margin-top: 0 !important;
+	margin-top: 0;
 }
 
 /* Trait-row wrap parity (nested-grid repairs 2026-10-19): narrow rows
@@ -3937,20 +3981,20 @@ body:has(.character-sheet.submode-print) .main {
 	--face-size: var(--diecon-size, 1.45rem);
 	--track-gap: 1.6px;
 	display: flex;
-	flex-wrap: nowrap !important;
-	column-gap: var(--track-gap) !important;
+	flex-wrap: nowrap;
+	column-gap: var(--track-gap);
 	align-items: center;
 	justify-content: center;
 	width: auto;
 	max-width: none;
 
 	.attached-stress-die {
-		font-size: 1.15rem !important;
-		width: var(--face-size) !important;
-		display: inline-flex !important;
-		justify-content: center !important;
-		align-items: center !important;
-		margin: 0 !important;
+		font-size: 1.15rem;
+		width: var(--face-size);
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		margin: 0;
 		flex-shrink: 0;
 		cursor: pointer;
 		line-height: 1;
@@ -3965,11 +4009,11 @@ body:has(.character-sheet.submode-print) .main {
 
 	.out-badge {
 		flex-shrink: 0;
-		display: inline-flex !important;
-		align-items: center !important;
-		justify-content: center !important;
-		vertical-align: middle !important;
-		line-height: 1 !important;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		vertical-align: middle;
+		line-height: 1;
 		transform: translateY(1px);
 	}
 }
@@ -3980,12 +4024,12 @@ body:has(.character-sheet.submode-print) .main {
 
 	.out-badge {
 		flex-shrink: 0;
-		display: inline-flex !important;
-		align-items: center !important;
-		justify-content: center !important;
-		vertical-align: middle !important;
-		line-height: 1 !important;
-		height: var(--diecon-size, 1.45rem) !important;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		vertical-align: middle;
+		line-height: 1;
+		height: var(--diecon-size, 1.45rem);
 		margin-left: 0.35rem;
 		font-size: 0.82rem;
 		transform: translateY(2px);
@@ -4160,53 +4204,53 @@ body:has(.character-sheet.submode-print) .main {
 
 /* LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only) */
 @media screen {
-	:is([data-theme='dark'], .theme-dark) .character-sheet:not(.submode-print) {
+	:is([data-theme='dark'], .theme-dark) :is(.character-sheet, .character-sheet.spotlight-style):not(.submode-print) {
 		/* Name & Header Block */
 		.page-header-inner.spotlight-header-card {
-			background: var(--bg-surface-card) !important;
-			border-color: var(--border-strong) !important;
-			color: var(--text-main) !important;
+			background: var(--bg-surface-card);
+			border-color: var(--border-strong);
+			color: var(--text-main);
 		}
 
 		.spotlight-header-meta-box,
 		.spotlight-header-desc-box {
-			background: var(--bg-surface-elevated) !important;
-			border-color: var(--border-strong) !important;
-			color: var(--text-main) !important;
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-main);
 
 			.spotlight-cell-label {
-				color: var(--text-secondary) !important;
+				color: var(--text-secondary);
 			}
 
 			.spotlight-cell-sublabel {
-				color: var(--text-muted) !important;
+				color: var(--text-muted);
 			}
 
 			.name-content,
 			.desc-content,
 			.spotlight-nickname-val,
 			.spotlight-pronoun-val {
-				color: var(--text-main) !important;
+				color: var(--text-main);
 
 				&.placeholder-dim {
-					color: var(--text-muted) !important;
+					color: var(--text-muted);
 				}
 			}
 
 			.spotlight-blank-line,
 			.desc-blank-line,
 			.spotlight-meta-divider {
-				border-color: var(--border-subtle) !important;
+				border-color: var(--border-subtle);
 			}
 		}
 
 		.spotlight-header-portrait-box {
-			background: var(--bg-surface-elevated) !important;
-			border-color: var(--border-strong) !important;
-			color: var(--text-main) !important;
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-main);
 
 			.portrait-small-placeholder {
-				color: var(--text-muted) !important;
+				color: var(--text-muted);
 			}
 
 			.portrait-placeholder-logo {
@@ -4215,39 +4259,55 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		/* Trait Sets & Inner Boxes */
-		.trait-set {
-			background: var(--bg-surface-card) !important;
-			border-color: var(--border-strong) !important;
-			color: var(--text-main) !important;
+		.trait-set:not(.trait-set-style-name),
+		.trait-set.trait-set-framed:not(.trait-set-frame-line),
+		.trait-set.trait-set-framed.trait-set-frame-ring,
+		.trait-set.trait-set-framed.trait-set-frame-ellipse,
+		.trait-set.trait-set-framed.trait-set-frame-arc {
+			background: var(--bg-surface-card);
+			border-color: var(--border-strong);
+			color: var(--text-main);
 
 			.trait-set-header {
-				background: var(--bg-surface-elevated) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-main) !important;
+				background: var(--bg-surface-elevated);
+				border-color: var(--border-strong);
+				color: var(--text-main);
 			}
 
 			.trait-statement-box {
-				background: var(--bg-surface-elevated) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-main) !important;
+				background: var(--bg-surface-elevated);
+				border-color: var(--border-strong);
+				color: var(--text-main);
+			}
+
+			.attached-stress-label {
+				color: var(--text-secondary);
 			}
 
 			.statement-pip:not(.questioned) {
-				background-color: transparent !important;
-				border-color: var(--border-strong) !important;
+				background-color: transparent;
+				border-color: var(--border-strong);
 			}
 
 			.trait-asset-box,
 			.trait-asset-card {
-				background: var(--bg-surface-elevated) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-main) !important;
+				background: var(--bg-surface-elevated);
+				border-color: var(--border-strong);
+				color: var(--text-main);
+			}
+		}
+
+		.trait-set.trait-set-framed.trait-set-frame-block {
+			background: transparent;
+
+			.trait-set-header {
+				background: transparent;
 			}
 		}
 
 		/* Trait Names, Titles, and Labels across all Set Styles */
 		.trait-title {
-			color: var(--text-main) !important;
+			color: var(--text-main);
 		}
 
 		.trait-name,
@@ -4256,81 +4316,81 @@ body:has(.character-sheet.submode-print) .main {
 		.subtrait-name,
 		.die-row-name,
 		.branch-slot-name {
-			color: var(--text-main) !important;
+			color: var(--text-main);
 
 			.trait-name-hint {
-				color: var(--text-muted) !important;
+				color: var(--text-muted);
 			}
 		}
 
 		/* Distinctions Bordered Title (Heritage, Destiny, Camp Reputation) */
 		.trait-set-style-sfx-rows .trait-title {
-			background: var(--bg-surface-elevated) !important;
-			border-color: var(--border-strong) !important;
-			color: var(--text-main) !important;
+			background: var(--bg-surface-elevated);
+			border-color: var(--border-strong);
+			color: var(--text-main);
 		}
 
 		.trait-set-style-sfx-rows :is(.trait-name, .trait-title-name) {
-			color: var(--text-main) !important;
+			color: var(--text-main);
 		}
 
 		/* General SFX lists */
 		.trait-sfx {
 			li {
-				color: var(--text-secondary) !important;
+				color: var(--text-secondary);
 			}
 
 			.trait-sfx-name {
-				background: var(--bg-surface-elevated) !important;
-				border: 1px solid var(--border-strong) !important;
-				color: var(--text-main) !important;
+				background: var(--bg-surface-elevated);
+				border: 1px solid var(--border-strong);
+				color: var(--text-main);
 			}
 		}
 
 		/* Trait Descriptions & Body Text */
 		.trait-description {
-			color: var(--text-secondary) !important;
+			color: var(--text-secondary);
 
 			&.placeholder-dim,
 			.placeholder-dim {
-				color: var(--text-muted) !important;
+				color: var(--text-muted);
 			}
 		}
 
 		.spotlight-desc-textarea {
-			background: var(--bg-surface-elevated) !important;
-			color: var(--text-main) !important;
-			border-color: var(--border-subtle) !important;
+			background: var(--bg-surface-elevated);
+			color: var(--text-main);
+			border-color: var(--border-subtle);
 
 			&::placeholder {
-				color: var(--text-muted) !important;
+				color: var(--text-muted);
 			}
 		}
 
 		/* Paired Slots (Standing, Relationships) */
 		.trait-paired-slots {
 			.paired-slot-name-box {
-				background: var(--bg-surface-elevated) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-main) !important;
+				background: var(--bg-surface-elevated);
+				border-color: var(--border-strong);
+				color: var(--text-main);
 			}
 
 			.paired-slot-placeholder-hint {
-				color: var(--text-muted) !important;
+				color: var(--text-muted);
 			}
 
 			.paired-slot-blank-line {
-				border-color: var(--border-subtle) !important;
+				border-color: var(--border-subtle);
 			}
 
 			.paired-slot-statement-box {
-				background: var(--bg-surface-elevated) !important;
-				border-color: var(--border-strong) !important;
-				color: var(--text-secondary) !important;
+				background: var(--bg-surface-elevated);
+				border-color: var(--border-strong);
+				color: var(--text-secondary);
 			}
 
 			.paired-slot-sub-label {
-				color: var(--text-secondary) !important;
+				color: var(--text-secondary);
 			}
 		}
 
@@ -4338,18 +4398,43 @@ body:has(.character-sheet.submode-print) .main {
 		.die-blank-line,
 		.trait-blank-line,
 		.desc-blank-line {
-			border-color: var(--border-subtle) !important;
+			border-color: var(--border-subtle);
 		}
 	}
 }
 
 /* Phase 3c: SVG Frames in Print */
+:is(.character-sheet.spotlight-style, .character-sheet.spotlight-print-style, .character-sheet) .trait-list-framed,
 .trait-list-framed {
 	min-height: 240px;
 	overflow: visible;
 
-	.trait-set-frame-svg {
-		stroke: #000000 !important;
+	.trait {
+		border-bottom: none;
+		margin-bottom: 0;
+		padding-bottom: 0;
+		width: max-content;
+		max-width: min(320px, 90vw);
+
+		.trait-inner {
+			border-bottom: none;
+		}
+
+		.trait-title {
+			border-bottom: none;
+			margin-bottom: 0;
+			padding-bottom: 0;
+		}
+	}
+}
+
+.character-sheet.submode-print .trait-list-framed .trait-set-frame-svg {
+	stroke: #000000;
+}
+
+@media print {
+	.trait-list-framed .trait-set-frame-svg {
+		stroke: #000000;
 	}
 }
 

@@ -50,7 +50,7 @@
 	/* TRAIT */
 
 	.trait {
-		margin-left: 0 !important;
+		margin-left: 0;
 		width: 100%;
 		position: relative;
 	}
@@ -141,7 +141,7 @@
 
 			& > .trait-value {
 				position: relative;
-				top: 0 !important;
+				top: 0;
 				align-self: center;
 				margin-left: auto;
 			}
@@ -203,8 +203,8 @@
 	.trait-description {
 		font-style: italic;
 		font-size: var(--text-body);
-		margin-left: 0 !important;
-		margin-top: 0.333rem !important;
+		margin-left: 0;
+		margin-top: 0.333rem;
 	}
 
 	.trait-sfx-name {
@@ -781,7 +781,7 @@
 
 	.trait-notes-body {
 		padding: 0.6rem 0.8rem;
-		background: #fbfbfb;
+		background: #f8fafc;
 		border: 1px solid var(--color-separator);
 		border-radius: 6px;
 		font-size: var(--text-body);
@@ -856,7 +856,7 @@
 
 /* MULTI-DIE TRAITS */
 .multidie-value {
-	display: inline-flex !important;
+	display: inline-flex;
 	align-items: center;
 	column-gap: 0.45rem;
 	flex-wrap: wrap;
@@ -896,8 +896,8 @@
 					border-color 0.15s,
 					background 0.15s,
 					transform 0.1s;
-				opacity: 1 !important;
-				filter: none !important;
+				opacity: 1;
+				filter: none;
 
 				&:hover {
 					color: var(--color-primary);
@@ -927,8 +927,8 @@
 			}
 
 			.die-play-controls .btn-play-spend {
-				opacity: 1 !important;
-				filter: none !important;
+				opacity: 1;
+				filter: none;
 				color: var(--color-interactive);
 				border-color: var(--color-interactive);
 				background: white;
@@ -1639,7 +1639,7 @@
 			color: var(--color-separator);
 		}
 		&.multidie-value {
-			display: flex !important;
+			display: flex;
 			flex: 1 1 10rem;
 			min-width: 0;
 			flex-wrap: wrap;
@@ -1784,15 +1784,15 @@
 	}
 }
 
-.trait-set.trait-set-header-align-center .trait-set-header-inner {
+.trait-set.trait-set-header-top.trait-set-header-align-center > .trait-set-header > .trait-set-header-inner {
 	justify-content: center;
 	text-align: center;
 }
-.trait-set.trait-set-header-align-left .trait-set-header-inner {
+.trait-set.trait-set-header-top.trait-set-header-align-left > .trait-set-header > .trait-set-header-inner {
 	justify-content: flex-start;
 	text-align: left;
 }
-.trait-set.trait-set-header-align-right .trait-set-header-inner {
+.trait-set.trait-set-header-top.trait-set-header-align-right > .trait-set-header > .trait-set-header-inner {
 	justify-content: flex-end;
 	text-align: right;
 }
@@ -1839,5 +1839,5 @@
 	align-self: center;
 }
 .trait-parts .trait-part-description .trait-description {
-	margin-top: 0 !important;
+	margin-top: 0;
 }

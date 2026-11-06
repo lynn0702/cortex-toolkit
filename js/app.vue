@@ -1723,55 +1723,14 @@ defineExpose({
 
 			<main class="main" ref="main" @scroll="setViewY" @click.stop="handleMainClick">
 				<!-- TEMPLATE VERSION SWITCH PROMPT -->
-				<div
-					class="template-update-banner"
-					v-if="pendingTemplateUpdate && submode === 'edit'"
-					style="
-						margin: 0.5rem auto;
-						max-width: 60rem;
-						padding: 0.5rem 0.75rem;
-						background: #fef9c3;
-						border: 1px solid #eab308;
-						border-radius: 6px;
-						color: #713f12;
-						font-size: 0.8rem;
-						display: flex;
-						align-items: center;
-						gap: 0.6rem;
-						flex-wrap: wrap;
-					"
-				>
+				<div class="template-update-banner" v-if="pendingTemplateUpdate && submode === 'edit'">
 					<span
 						><i class="fas fa-layer-group"></i> A newer layout (v{{ pendingTemplateUpdate.current }}) is available for
 						this sheet — you are on your saved v{{ pendingTemplateUpdate.pinned }}. Your content and arrangement carry
 						over.</span
 					>
-					<button
-						type="button"
-						@click.stop="applyTemplateUpdate"
-						style="
-							background: #ca8a04;
-							color: #fff;
-							border: none;
-							border-radius: 4px;
-							padding: 0.25rem 0.6rem;
-							cursor: pointer;
-						"
-					>
-						Update layout
-					</button>
-					<button
-						type="button"
-						@click.stop="stayOnTemplateSnapshot"
-						style="
-							background: transparent;
-							color: #713f12;
-							border: 1px solid #ca8a04;
-							border-radius: 4px;
-							padding: 0.25rem 0.6rem;
-							cursor: pointer;
-						"
-					>
+					<button type="button" class="btn-update-primary" @click.stop="applyTemplateUpdate">Update layout</button>
+					<button type="button" class="btn-update-secondary" @click.stop="stayOnTemplateSnapshot">
 						Stay on v{{ pendingTemplateUpdate.pinned }}
 					</button>
 				</div>

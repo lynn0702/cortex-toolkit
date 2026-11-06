@@ -339,10 +339,11 @@ onUnmounted(() => {
 		<div v-if="isTop" class="row-mini-headerbar">
 			<div
 				class="row-mini-headerbox"
+				:class="{ 'is-dragging': !!headerDrag }"
 				:style="
 					'text-align: ' +
 					align +
-					(headerDrag ? '; transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px); z-index: 5;' : '')
+					(headerDrag ? '; transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : '')
 				"
 				@mousedown="startHeaderDrag($event)"
 				@touchstart="startHeaderDrag($event)"
@@ -355,9 +356,8 @@ onUnmounted(() => {
 			<div v-if="!isTop" class="row-mini-side">
 				<div
 					class="row-mini-headerbox row-mini-vertical"
-					:style="
-						headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px); z-index: 5;' : ''
-					"
+					:class="{ 'is-dragging': !!headerDrag }"
+					:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
 					@mousedown="startHeaderDrag($event)"
 					@touchstart="startHeaderDrag($event)"
 					:title="headerTitle"

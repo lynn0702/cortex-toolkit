@@ -2,21 +2,21 @@
 
 .session-nav {
 	@media print {
-		display: none !important;
-		height: 0 !important;
-		min-height: 0 !important;
-		max-height: 0 !important;
-		margin: 0 !important;
-		padding: 0 !important;
-		border: none !important;
-		visibility: hidden !important;
-		overflow: hidden !important;
-		position: absolute !important;
-		top: -9999px !important;
+		display: none;
+		height: 0;
+		min-height: 0;
+		max-height: 0;
+		margin: 0;
+		padding: 0;
+		border: none;
+		visibility: hidden;
+		overflow: hidden;
+		position: absolute;
+		top: -9999px;
 	}
 	position: sticky;
 	top: var(--header-size);
-	z-index: 850;
+	z-index: var(--z-workspace-nav);
 	background: #0f172a;
 	border-bottom: 1px solid #1e293b;
 	padding: 0.35rem 1rem;
@@ -245,7 +245,7 @@
 
 		.sheet-bar-roller,
 		.session-view-controls {
-			display: none !important;
+			display: none;
 		}
 
 		.session-tab {
@@ -399,10 +399,10 @@
 
 /* ADD CHARACTER TO SESSION MODAL */
 .modal-session-add {
-	max-width: 580px !important;
-	width: 90vw !important;
-	background: #ffffff !important;
-	color: #0f172a !important;
+	max-width: 580px;
+	width: 90vw;
+	background: #ffffff;
+	color: #0f172a;
 	border-radius: 10px;
 	border: 1px solid #cbd5e1;
 	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
@@ -586,23 +586,23 @@
 
 /* ROSTER BUTTONS FOR MULTI-CHARACTER */
 .roster-button-resume {
-	background: #0284c7 !important;
-	color: #ffffff !important;
-	border-color: #0284c7 !important;
+	background: #0284c7;
+	color: #ffffff;
+	border-color: #0284c7;
 
 	&:hover {
-		background: #0369a1 !important;
+		background: #0369a1;
 	}
 }
 
 .roster-button-alongside {
-	background: #e0f2fe !important;
-	color: #0284c7 !important;
-	border-color: #bae6fd !important;
+	background: #e0f2fe;
+	color: #0284c7;
+	border-color: #bae6fd;
 
 	&:hover {
-		background: #bae6fd !important;
-		color: #0369a1 !important;
+		background: #bae6fd;
+		color: #0369a1;
 	}
 }
 
@@ -610,8 +610,8 @@
 	[data-theme='dark'],
 	.theme-dark {
 		.modal-session-add {
-			background: var(--bg-surface-card) !important;
-			color: var(--text-main) !important;
+			background: var(--bg-surface-card);
+			color: var(--text-main);
 			border-color: var(--border-subtle);
 
 			.session-modal-header {
