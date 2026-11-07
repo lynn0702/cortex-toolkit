@@ -3,7 +3,19 @@ set -e
 
 echo ""
 echo "=== [PRE-COMMIT] Full Definition of Done gates ==="
+
+# Capture staged files before the gate formats (excluding deleted files)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=d)
+
 npm run gate
+
+# Re-stage formatted files, strictly scoped to what was already staged
+if [ -n "$STAGED_FILES" ]; then
+	echo "$STAGED_FILES" | while IFS= read -r file; do
+		[ -f "$file" ] && git add "$file"
+	done
+fi
+
 echo "=== [PRE-COMMIT] Passed! ==="
 echo ""
 
