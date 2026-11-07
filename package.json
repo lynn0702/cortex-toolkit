@@ -20,7 +20,8 @@
 	"scripts": {
 		"prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
 		"gate": "node scripts/gate.js",
-		"build": "npm run types && vite build && node scripts/combine-templates.js && node scripts/version-assets.js",
+		"format": "prettier --write .",
+		"build": "npm run format && npm run types && vite build && node scripts/combine-templates.js && node scripts/version-assets.js",
 		"dev": "vite",
 		"watch": "vite build --watch",
 		"serve": "node scripts/serve.js",

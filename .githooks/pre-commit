@@ -2,10 +2,8 @@
 set -e
 
 echo ""
-echo "=== [PRE-COMMIT] Fast gate: typecheck + schema validation + style ==="
-npm run check
-npm run validate
-npx prettier --check .
+echo "=== [PRE-COMMIT] Full Definition of Done gates ==="
+npm run gate
 echo "=== [PRE-COMMIT] Passed! ==="
 echo ""
 

@@ -67,6 +67,13 @@ Tiers (all three, no skipping):
   device width the change affects. A smoke pass that skips
   the affected surface is not a smoke pass.
 
+Run the full gate (`npm run gate`) AFTER your last file edit. Do
+not edit any file after the final gate run — an edit after the
+gate makes the gate's result stale, and a stale gate is not
+evidence. Paste the gate's full terminal output (all six `[PASS]`
+lines plus `ALL GATES PASSED`) into the session report. A "gate
+green" claim without the output is not evidence.
+
 ## What gates do not prove
 
 Gates green is not a mobile verdict and not a visual

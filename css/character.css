@@ -40,7 +40,6 @@
 }
 
 .character-sheet {
-
 	&.v-enter-active,
 	&.v-leave-active {
 		transition:
@@ -175,7 +174,7 @@
 	align-items: stretch;
 	column-gap: 1rem;
 
-	&>* {
+	& > * {
 		flex: 1 1 0;
 		position: relative;
 		display: flex;
@@ -187,29 +186,27 @@
 		flex-direction: column;
 		row-gap: 2rem;
 
-		&>* {
+		& > * {
 			width: 100%;
 		}
 	}
 }
 
 .page-justification-top-base {
-
-	.columns>*,
+	.columns > *,
 	.spotlight-column {
 		justify-content: flex-start;
 	}
 }
 
 .page-justification-distributed {
-
-	.columns>*,
+	.columns > *,
 	.spotlight-column {
 		justify-content: space-between;
 	}
 }
 
-.columns>* {
+.columns > * {
 	padding-top: 0;
 	margin-top: 0;
 }
@@ -222,17 +219,17 @@
 	row-gap: 1.5rem;
 	margin-top: 1.5rem;
 
-	&>* {
+	& > * {
 		min-width: 0;
 	}
 }
 
 .columns .trait-set:first-child,
-.spotlight-column>.trait-set:first-child {
+.spotlight-column > .trait-set:first-child {
 	margin-top: 0;
 }
 
-.columns>.column-left,
+.columns > .column-left,
 .column-left,
 .spotlight-column-left {
 	padding-top: var(--column-left-offset, 0px);
@@ -243,7 +240,7 @@
 	}
 }
 
-.columns>.column-right,
+.columns > .column-right,
 .column-right,
 .spotlight-column-right {
 	padding-top: var(--column-right-offset, 0px);
@@ -254,7 +251,7 @@
 	}
 }
 
-.columns>.column-center,
+.columns > .column-center,
 .column-center,
 .spotlight-column-center {
 	padding-top: var(--column-center-offset, 0px);
@@ -311,7 +308,8 @@
 	position: relative;
 }
 
-.page-header-inner {}
+.page-header-inner {
+}
 
 .title-container {
 	display: flex;
@@ -559,7 +557,7 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	&>div,
+	& > div,
 	.trait-set-header-name {
 		font-size: inherit;
 		font-weight: inherit;
@@ -586,7 +584,6 @@
 }
 
 .trait-inner {
-
 	&.trait-enter-active,
 	&.trait-leave-active {
 		transition:
@@ -630,7 +627,7 @@
 			left: -0.083rem;
 		}
 
-		&+li {
+		& + li {
 			padding-top: 0.083rem;
 		}
 	}
@@ -764,7 +761,6 @@
 }
 
 .submode-edit {
-
 	.attribute,
 	.scale-die {
 		cursor: grab;
@@ -913,7 +909,7 @@
 	pointer-events: auto;
 }
 
-.vertical .attribute-inner>div {
+.vertical .attribute-inner > div {
 	writing-mode: vertical-lr;
 	transform: rotate(180deg);
 	padding-bottom: 1mm;
@@ -1108,7 +1104,7 @@
 /* In-set add buttons fit narrow set columns instead of clipping: the row */
 /* grows with wrapped text rather than holding a fixed height. */
 .trait-set .preview-button-container {
-	&>div {
+	& > div {
 		height: auto;
 		min-height: var(--button-container-height);
 		display: flex;
@@ -1135,7 +1131,7 @@
 	align-items: center;
 	text-align: center;
 
-	&>span {
+	& > span {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -1155,7 +1151,7 @@
 	}
 }
 
-.trait-set.trait-set-frame-block.trait-set-header-top>.trait-set-header {
+.trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header {
 	margin-inline: 1rem;
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
@@ -1576,13 +1572,13 @@ button.trait-title-btn {
 	}
 }
 
-.trait-title.trait-title-stacked:not(.trait-title-statement)>button.trait-title-btn {
+.trait-title.trait-title-stacked:not(.trait-title-statement) > button.trait-title-btn {
 	width: 100%;
 	justify-content: center;
 	text-align: center;
 }
 
-.trait-title.trait-title-statement>button.trait-title-btn {
+.trait-title.trait-title-statement > button.trait-title-btn {
 	flex: 0 0 auto;
 	text-align: left;
 }
@@ -1590,7 +1586,6 @@ button.trait-title-btn {
 /* WCAG 2.2 AA Touch Targets in Mobile Play Mode */
 @media screen and (max-width: 768px) {
 	.submode-play {
-
 		.trait-value .c,
 		.subtrait-value .c,
 		.attached-stress-track .c {
@@ -1648,7 +1643,6 @@ button.trait-title-btn {
 }
 
 @media print {
-
 	.trait-set-play-only,
 	.trait-play-only {
 		display: none;
@@ -1759,7 +1753,6 @@ button.trait-title-btn {
 	stroke: #111111;
 
 	@media screen {
-
 		[data-theme='dark'] &,
 		.theme-dark & {
 			stroke: var(--border-strong, #64748b);
@@ -1771,7 +1764,6 @@ button.trait-title-btn {
 	stroke: #000000;
 
 	@media screen {
-
 		[data-theme='dark'] &,
 		.theme-dark & {
 			stroke: var(--border-strong, #64748b);
@@ -1783,7 +1775,9 @@ button.trait-title-btn {
 	fill: none;
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style) .trait-set:is(.trait-set-frame-ring, .trait-set-frame-ellipse, .trait-set-frame-arc) .trait-set-body.trait-set-body-framed,
+:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style)
+	.trait-set:is(.trait-set-frame-ring, .trait-set-frame-ellipse, .trait-set-frame-arc)
+	.trait-set-body.trait-set-body-framed,
 .trait-set-body-framed {
 	position: relative;
 	padding: 4.5rem 1rem 3.5rem;
@@ -1972,7 +1966,8 @@ button.trait-title-btn {
 	}
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style) .trait-set.trait-set-frame-line,
+:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style)
+	.trait-set.trait-set-frame-line,
 .trait-set.trait-set-frame-line {
 	border: none;
 	background: transparent;
@@ -1999,7 +1994,6 @@ button.trait-title-btn {
 
 /* LATE-NIGHT DARK MODE (Print-Immune: screen only, non-print submodes only) */
 @media screen {
-
 	[data-theme='dark'],
 	.theme-dark {
 		.character-sheet:not(.submode-print) {
@@ -2047,7 +2041,6 @@ button.trait-title-btn {
 
 			/* Unfilled die range outlines and glyphs remain crisp and legible */
 			.c:not(.active) {
-
 				polygon,
 				path,
 				rect {

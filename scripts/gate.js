@@ -18,14 +18,14 @@ function run(label, command) {
 	}
 }
 
-// 1. Code Style
-run('1. Code Style (prettier)', 'npx prettier --check .');
+// 1. Production Build (formats with prettier, compiles types, bundles assets)
+run('1. Production Build (vite + asset versioning)', 'npm run build');
 
-// 2. Type Check
-run('2. Type Check (vue-tsc)', 'npm run check');
+// 2. Code Style
+run('2. Code Style (prettier)', 'npx prettier --check .');
 
-// 3. Production Build
-run('3. Production Build (vite + asset versioning)', 'npm run build');
+// 3. Type Check
+run('3. Type Check (vue-tsc)', 'npm run check');
 
 // 4. Test Suites
 run('4. Test Suites (vitest + 8 legacy suites)', 'npm test');
