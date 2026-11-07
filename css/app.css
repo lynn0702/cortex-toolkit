@@ -26,25 +26,39 @@
 	--font-secondary: 'Alegreya Sans SC', sans-serif;
 	--font-heading: 'Josefin Sans', sans-serif;
 
-	--color-primary: hsl(337, 92%, 40%); /* Fuschia */
-	--color-secondary: hsl(137, 36%, 88%); /* Green */
-	--color-interactive: hsl(204, 71%, 47%); /* Blue */
-	--color-separator: hsl(0, 0%, 83%); /* */
-	--color-label: hsl(0, 0%, 60%); /* */
-	--color-inactive: hsl(0, 0%, 40%); /* */
-	--color-input: hsl(0, 0%, 15%); /* */
+	--color-primary: hsl(337, 92%, 40%);
+	/* Fuschia */
+	--color-secondary: hsl(137, 36%, 88%);
+	/* Green */
+	--color-interactive: hsl(204, 71%, 47%);
+	/* Blue */
+	--color-separator: hsl(0, 0%, 83%);
+	/* */
+	--color-label: hsl(0, 0%, 60%);
+	/* */
+	--color-inactive: hsl(0, 0%, 40%);
+	/* */
+	--color-input: hsl(0, 0%, 15%);
+	/* */
 
 	--highlight-radius: 0.5em;
 
 	/* TYPOGRAPHIC & ICON TOKENS (REM-based, auto-scales down in print) */
-	--text-header: 1.2rem; /* Trait set headers (sidebar & top) */
-	--text-trait-title: 1rem; /* Trait names / titles */
-	--text-card-title: 0.95rem; /* Asset box names / card headers */
-	--text-body: 0.9rem; /* SFX text, notes, descriptions, milestone lists */
-	--text-meta: 0.82rem; /* Sublabels, pips, statement placeholder text, counters */
+	--text-header: 1.2rem;
+	/* Trait set headers (sidebar & top) */
+	--text-trait-title: 1rem;
+	/* Trait names / titles */
+	--text-card-title: 0.95rem;
+	/* Asset box names / card headers */
+	--text-body: 0.9rem;
+	/* SFX text, notes, descriptions, milestone lists */
+	--text-meta: 0.82rem;
+	/* Sublabels, pips, statement placeholder text, counters */
 
-	--diecon-size: 1.45rem; /* Standalone die icons */
-	--diecon-scale-size: 1.35rem; /* Rating scale die buttons ([4] [6] [8] [10] [12]) */
+	--diecon-size: 2.2rem;
+	/* Standalone die icons */
+	--diecon-scale-size: 1.75rem;
+	/* Rating scale die buttons ([4] [6] [8] [10] [12]) */
 
 	--z-chip-drag: 5;
 	--z-beneath-editor: 10;
@@ -121,6 +135,7 @@
 body,
 html {
 	font-size: 16px;
+
 	@media print {
 		width: 100%;
 		height: auto;
@@ -152,6 +167,12 @@ textarea:focus-visible {
 	outline-offset: 2px;
 }
 
+/* DIE VALUES */
+
+.diecon {
+	color: var(--color-primary);
+}
+
 /* PLOT POINTS */
 
 .pp {
@@ -180,20 +201,24 @@ textarea:focus-visible {
 	--button-font-size: 0.75rem;
 	--button-container-height: 2.4em;
 	font-size: var(--button-font-size);
+
 	&.v-enter-active,
 	&.v-leave-active {
 		transition:
 			opacity 0.2s ease,
 			transform 0.2s ease,
 			height 0.2s ease;
+
 		& > div {
 			transition: height 0.2s ease;
 		}
 	}
+
 	&.v-enter-from,
 	&.v-leave-to {
 		opacity: 0;
 		transform: translateY(-1em);
+
 		& > div {
 			height: 0;
 		}
@@ -260,6 +285,7 @@ textarea:focus-visible {
 		min-width: 2.75rem;
 		min-height: 2.75rem;
 	}
+
 	.chip-remove,
 	.session-tab-close,
 	.roller-btn-icon,
@@ -270,6 +296,7 @@ textarea:focus-visible {
 		align-items: center;
 		justify-content: center;
 	}
+
 	.preview-button {
 		min-height: 2.75rem;
 	}

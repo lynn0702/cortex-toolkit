@@ -38,7 +38,7 @@ function toggleSetRating(size: number | null) {
 					@click.stop="toggleRatingOption(size)"
 					:title="(isRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
 				>
-					<span class="c" v-html="getDieDisplayValue(size)"></span>
+					<span v-html="getDieDisplayValue(size)"></span>
 					<span class="chip-label">d{{ size }}</span>
 				</button>
 			</div>
@@ -72,7 +72,7 @@ function toggleSetRating(size: number | null) {
 						(setRating === size ? ')' : '')
 					"
 				>
-					<span class="c" v-html="getDieDisplayValue(size)"></span>
+					<span v-html="getDieDisplayValue(size)"></span>
 					<span class="chip-label">d{{ size }}</span>
 				</button>
 			</div>
@@ -93,7 +93,7 @@ function toggleSetRating(size: number | null) {
 					@click.stop="toggleSubtraitRatingOption(size)"
 					:title="(isSubtraitRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
 				>
-					<span class="c" v-html="getDieDisplayValue(size)"></span>
+					<span v-html="getDieDisplayValue(size)"></span>
 					<span class="chip-label">d{{ size }}</span>
 				</button>
 			</div>

@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const ROOT = path.resolve(__dirname, '..');
@@ -64,7 +65,56 @@ const server = http.createServer((req, res) => {
 	});
 });
 
+let watcher = null;
+
+function cleanup() {
+	if (watcher && !watcher.killed) {
+		try {
+			watcher.kill();
+		} catch {
+			// ignore
+		}
+	}
+	server.close();
+	process.exit(0);
+}
+
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
+process.on('exit', () => {
+	if (watcher && !watcher.killed) {
+		try {
+			watcher.kill();
+		} catch {
+			// ignore
+		}
+	}
+});
+
 server.listen(PORT, () => {
 	console.log(`\n  Cortex Toolkit dev server running at:`);
 	console.log(`  > Local:   http://localhost:${PORT}/\n`);
+
+	const shouldWatch = !process.env.NO_WATCH && !process.argv.includes('--no-watch');
+	if (shouldWatch) {
+		const viteBin = path.join(ROOT, 'node_modules', 'vite', 'bin', 'vite.js');
+		if (fs.existsSync(viteBin)) {
+			console.log(`  > Watcher: starting vite build --watch...\n`);
+			watcher = spawn(process.execPath, [viteBin, 'build', '--watch'], {
+				cwd: ROOT,
+				stdio: 'inherit',
+				env: { ...process.env },
+			});
+			watcher.on('error', (err) => {
+				console.error(`[watch error] Failed to start Vite watcher:`, err.message);
+			});
+			watcher.on('exit', (code) => {
+				if (code && code !== 0) {
+					console.warn(`[watch] Vite watcher exited with code ${code}`);
+				}
+			});
+		} else {
+			console.warn(`  > Watcher: vite binary not found at ${viteBin}`);
+		}
+	}
 });

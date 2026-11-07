@@ -325,7 +325,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function renderDieValue(value: number) {
-		return cortexFunctions.getDieDisplayValue(value);
+		return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 	}
 
 	function selectElement(selector: unknown[]) {

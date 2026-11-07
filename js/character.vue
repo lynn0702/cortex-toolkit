@@ -312,7 +312,7 @@ function renderText(text: unknown) {
 	return cortexFunctions.renderText(text);
 }
 function renderDieValue(value: number) {
-	return cortexFunctions.getDieDisplayValue(value);
+	return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 }
 
 function getSpotlightSections(pageIndex: number) {

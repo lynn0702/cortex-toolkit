@@ -165,7 +165,7 @@ watch(
 );
 
 function getDieDisplayValue(value: any) {
-	return cortexFunctions.getDieDisplayValue(value);
+	return cortexFunctions.renderDieconSVG(value, false, '', null);
 }
 
 function cleanTraitLabel(source: any) {
@@ -650,7 +650,7 @@ defineExpose({
 				<div class="roller-label">Quick Add Dice</div>
 				<div class="roller-adhoc-grid">
 					<button v-for="size in diceSizes" :key="'adhoc-d' + size" class="roller-adhoc-btn" @click="addAdHoc(size)">
-						<span class="c">{{ getDieDisplayValue(size) }}</span>
+						<span v-html="getDieDisplayValue(size)"></span>
 						<span class="die-label">d{{ size }}</span>
 					</button>
 				</div>
@@ -665,7 +665,7 @@ defineExpose({
 							@click="addScaleAdHoc(size)"
 							:title="'Add d' + size + ' Scale Die (Keep 3)'"
 						>
-							<span class="c">{{ getDieDisplayValue(size) }}</span>
+							<span v-html="getDieDisplayValue(size)"></span>
 						</button>
 					</div>
 				</div>
@@ -680,7 +680,7 @@ defineExpose({
 							@click="addSeparateAdHoc(size)"
 							:title="'Add d' + size + ' Separate Die'"
 						>
-							<span class="c">{{ getDieDisplayValue(size) }}</span>
+							<span v-html="getDieDisplayValue(size)"></span>
 						</button>
 					</div>
 				</div>
@@ -706,7 +706,7 @@ defineExpose({
 						:data-die-source="item.source || 'ad-hoc'"
 						:data-die-exempt="isExempt(item) ? 'true' : 'false'"
 					>
-						<span class="c">{{ getDieDisplayValue(item.size) }}</span>
+						<span v-html="getDieDisplayValue(item.size)"></span>
 						<span class="chip-source" v-if="cleanTraitLabel(item.source)" :title="cleanTraitLabel(item.source)">{{
 							cleanTraitLabel(item.source)
 						}}</span>
@@ -833,7 +833,7 @@ defineExpose({
 									:title="die.isHitch ? 'Hitch: cannot be used' : 'Click to cycle: Total / Effect / Unused'"
 								>
 									<div class="card-top">
-										<span class="c" :class="{ exempt: die.hitches === 0 }">{{ getDieDisplayValue(die.size) }}</span>
+										<span :class="{ exempt: die.hitches === 0 }" v-html="getDieDisplayValue(die.size)"></span>
 										<span class="card-size">d{{ die.size }}</span>
 									</div>
 									<div class="card-value" :class="{ 'hitch-value': die.isHitch }">
@@ -871,7 +871,7 @@ defineExpose({
 										title="Click to toggle as kept die for this group"
 									>
 										<div class="card-top">
-											<span class="c">{{ getDieDisplayValue(die.size) }}</span>
+											<span v-html="getDieDisplayValue(die.size)"></span>
 											<span class="card-size">d{{ die.size }}</span>
 										</div>
 										<div class="card-value">
@@ -904,7 +904,7 @@ defineExpose({
 							:title="die.isHitch ? 'Hitch: cannot be used' : 'Click to cycle: Total / Effect / Unused'"
 						>
 							<div class="card-top">
-								<span class="c">{{ getDieDisplayValue(die.size) }}</span>
+								<span v-html="getDieDisplayValue(die.size)"></span>
 								<span class="card-size">d{{ die.size }}</span>
 							</div>
 

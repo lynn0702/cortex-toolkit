@@ -148,7 +148,7 @@ function removeFromSheet() {
 }
 
 function getDieDisplayValue(value: any) {
-	return cortexFunctions.getDieDisplayValue(value);
+	return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 }
 
 function subFirstDie() {
@@ -216,7 +216,7 @@ function stepSubtraitUp() {
 					@keydown.space.prevent="toggleSubtraitValue(size)"
 					@click.stop="toggleSubtraitValue(size)"
 				>
-					<span class="c" v-html="getDieDisplayValue(size)"></span>
+					<span v-html="getDieDisplayValue(size)"></span>
 				</li>
 			</ul>
 
@@ -232,7 +232,7 @@ function stepSubtraitUp() {
 					-
 				</button>
 				<div class="die-rating-current">
-					<span class="c" v-html="getDieDisplayValue(subFirstDie())"></span>
+					<span v-html="getDieDisplayValue(subFirstDie())"></span>
 					<span class="die-rating-text">d{{ subFirstDie() }}</span>
 				</div>
 				<button

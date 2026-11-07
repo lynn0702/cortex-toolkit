@@ -484,12 +484,12 @@ const {
 										title="Take d4 and gain 1 PP"
 										aria-label="Take d4 and gain 1 PP"
 									>
-										<span class="c" aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span
+										<span aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span
 										><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
 									</button>
 									<span
 										v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)"
-										class="c set-rating-die"
+										class="set-rating-die"
 										v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)"
 										:title="'Rating d' + getSetRatingDie(traitSet)"
 										aria-hidden="true"
@@ -759,7 +759,6 @@ const {
 													v-for="size in getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))
 														?.range || [4, 6, 8, 10, 12]"
 													:key="size"
-													class="c"
 													:class="{
 														active:
 															!printBlank &&
@@ -787,7 +786,7 @@ const {
 													class="multidie-badge-wrap"
 												>
 													<span
-														class="c active"
+														class="active"
 														v-html="renderDieValueForPrint(Number(dieSize) || 6, !printBlank)"
 													></span>
 												</div>
@@ -1188,12 +1187,12 @@ const {
 											title="Take d4 and gain 1 PP"
 											aria-label="Take d4 and gain 1 PP"
 										>
-											<span class="c" aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span
+											<span aria-hidden="true">d{{ hinderDie(item.trait) || 4 }}</span
 											><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
 										</button>
 										<span
 											v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)"
-											class="c set-rating-die"
+											class="set-rating-die"
 											v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)"
 											:title="'Rating d' + getSetRatingDie(traitSet)"
 											aria-hidden="true"

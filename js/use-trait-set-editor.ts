@@ -1370,7 +1370,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function getDieDisplayValue(value: any) {
-		return cortexFunctions.getDieDisplayValue(value);
+		return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 	}
 
 	function updateCharacter(character?: any) {

@@ -59,23 +59,6 @@ export const cortexFunctions = {
 		});
 	},
 
-	getDieDisplayValue: function (dieValue: number) {
-		switch (dieValue) {
-			case 4:
-				return '4';
-			case 6:
-				return '6';
-			case 8:
-				return '8';
-			case 10:
-				return '0';
-			case 12:
-				return '2';
-			default:
-				return '';
-		}
-	},
-
 	loadGoogleFont: function (fontName: string) {
 		if (!fontName || typeof document === 'undefined') return;
 		const safeId = 'gfont-' + fontName.toLowerCase().replace(/[^a-z0-9]/g, '-');
@@ -110,9 +93,9 @@ export const cortexFunctions = {
 		const cls = `diecon diecon-d${s} ${filledClass} ${extraClass}`.trim();
 
 		const cfg = diceConfig || (typeof window !== 'undefined' ? (window as any).__cortexActiveDiceConfig : null);
-		let fill = isFilled ? '#000000' : 'none';
-		let stroke = '#000000';
-		let textFill = isFilled ? '#ffffff' : '#000000';
+		let fill = isFilled ? 'currentColor' : 'none';
+		let stroke = 'currentColor';
+		let textFill = isFilled ? '#ffffff' : 'currentColor';
 		let strokeWidth = 1;
 		let defs = '';
 
@@ -154,8 +137,12 @@ export const cortexFunctions = {
 		} else {
 			if (!isFilled) {
 				fill = 'none';
-				stroke = '#000000';
-				textFill = '#000000';
+				stroke = 'currentColor';
+				textFill = 'currentColor';
+			} else {
+				fill = 'currentColor';
+				stroke = 'currentColor';
+				textFill = '#ffffff';
 			}
 		}
 
@@ -1543,9 +1530,9 @@ export const cortexFunctions = {
 		// Escape user HTML first: everything below re-adds only our own safe tags.
 		let str = this.escapeHtml(text);
 		// Dice tokens
-		str = str.replace(/\bd(4|6|8)\b/gi, '<span class="c" role="img" aria-label="d$1">$1</span>');
-		str = str.replace(/\bd10\b/gi, '<span class="c" role="img" aria-label="d10">0</span>');
-		str = str.replace(/\bd12\b/gi, '<span class="c" role="img" aria-label="d12">2</span>');
+		str = str.replace(/\bd(4|6|8)\b/gi, (_m: string, s: string) => this.renderDieconSVG(Number(s), false, '', null));
+		str = str.replace(/\bd10\b/gi, () => this.renderDieconSVG(10, false, '', null));
+		str = str.replace(/\bd12\b/gi, () => this.renderDieconSVG(12, false, '', null));
 		// Plot points
 		str = str.replace(/(^|\W)PP(\W|$)/g, '$1<span class="pp">PP</span>$2');
 		// Bold: **text** or __text__

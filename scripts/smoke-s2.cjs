@@ -22,7 +22,7 @@ function check(name, cond, extra) {
 async function main() {
 	const { chromium } = require('playwright-core');
 	const server = spawn(process.execPath, [path.join(__dirname, 'serve.js')], {
-		env: { ...process.env, PORT: String(PORT) },
+		env: { ...process.env, PORT: String(PORT), NO_WATCH: '1' },
 		stdio: 'ignore',
 	});
 	const errors = [];

@@ -939,6 +939,7 @@
 		align-items: center;
 		cursor: pointer;
 
+		.diecon,
 		.c {
 			font-size: var(--diecon-size);
 			display: block;
@@ -1017,7 +1018,7 @@
 	}
 }
 
-.submode-play .scale-die .scale-die-inner:hover .c {
+.submode-play .scale-die .scale-die-inner:hover :is(.diecon, .c) {
 	transform: scale(1.15);
 }
 
@@ -1052,6 +1053,7 @@
 			cursor: pointer;
 			transition: all 0.15s;
 
+			.diecon,
 			.c {
 				font-size: 1.1rem;
 				line-height: 1;
@@ -1074,6 +1076,7 @@
 				background: #1e293b;
 				border-color: #1e293b;
 
+				.diecon,
 				.c {
 					color: white;
 				}
@@ -2037,6 +2040,7 @@ button.trait-title-btn {
 			}
 
 			/* Unfilled die range outlines and glyphs remain crisp and legible */
+			.diecon-unfilled,
 			.c:not(.active) {
 				polygon,
 				path,

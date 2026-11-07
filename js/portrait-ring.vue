@@ -98,7 +98,7 @@ function updateCharacter(character: any) {
 }
 
 function renderDieValue(value: any) {
-	return cortexFunctions.getDieDisplayValue(value);
+	return cortexFunctions.renderDieconSVG(value, false, '', null);
 }
 
 function getTraitAngle(t: number | string) {
@@ -424,7 +424,6 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 					"
 				>
 					<span
-						class="c"
 						:class="['die-' + (ringDie(trait) || 8), { 'die-empty': !ringDie(trait) }]"
 						v-html="renderDieValue(ringDie(trait))"
 						:title="!ringDie(trait) && submode === 'edit' ? 'Unrated — click to set a die rating' : ''"
@@ -460,12 +459,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 						: 'Click to edit Scale die'
 				"
 			>
-				<span
-					class="c"
-					:class="'die-' + (scaleDieValue || 8)"
-					v-html="renderDieValue(scaleDieValue)"
-					aria-hidden="true"
-				></span>
+				<span :class="'die-' + (scaleDieValue || 8)" v-html="renderDieValue(scaleDieValue)" aria-hidden="true"></span>
 				<div class="scale-name">SCALE</div>
 			</div>
 
@@ -498,7 +492,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 									:class="{ active: scaleDieValue === s }"
 									@click.stop="setScaleDieValue(s)"
 								>
-									<span class="c">{{ renderDieValue(s) }}</span>
+									<span v-html="renderDieValue(s)"></span>
 									<span class="step-label">d{{ s }}</span>
 								</button>
 							</div>

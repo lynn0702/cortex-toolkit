@@ -1,6 +1,6 @@
 ---
 name: style-controls
-description: The standing controls for styles: no static inline styles, no hardcoded z-index, no new !important, no selector deeper than 3 combinators of effective depth, no hardcoded color outside the palette tokens, px only for boundaries (rem for spacing, % for positioning offsets), Prettier-clean. Load it when writing or changing CSS, a Vue template, or any style-adjacent code, and when reviewing a change that touches styles. Prevents the specificity and token drift the CSS diet removed from creeping back.
+description: The standing controls for styles: no static inline styles, no hardcoded z-index, no new !important, no selector deeper than 3 combinators of effective depth, no hardcoded color outside the palette tokens, px only for boundaries (rem for spacing, % for positioning offsets), no empty rulesets, Prettier-clean. Load it when writing or changing CSS, a Vue template, or any style-adjacent code, and when reviewing a change that touches styles. Prevents the specificity and token drift the CSS diet removed from creeping back.
 ---
 
 # Style controls
@@ -73,6 +73,11 @@ regression, and it stops the session the way a red gate does.
    fractions of the trait block's own height. Print CSS is the
    exception: it is a defined, confined space, so `px` is expected
    throughout it.
+8. **No empty rulesets.** A stylesheet carries no empty rules
+   (`selector {}`). Empty rulesets clutter stylesheets, trigger linter
+   and IDE warnings, and usually indicate incomplete refactors or
+   abandoned overrides. If a ruleset has no declarations or nested
+   rules, delete it.
 
 ## Self-check (run before the gate)
 
@@ -88,6 +93,8 @@ grep -rn '!important' css/*.css | grep -v 'app.min.css' | wc -l
 # offset is a Control 7 violation. Print CSS (spotlight-print.css)
 # is excluded — px is expected there.
 grep -rn '[0-9]px' css/*.css | grep -v 'app.min.css' | grep -v 'spotlight-print.css'
+# empty rulesets: must return nothing
+node -e "const fs = require('fs'); const path = require('path'); const files = fs.readdirSync('css').filter(f => f.endsWith('.css') && !f.endsWith('.min.css')); let found = false; for (const f of files) { const content = fs.readFileSync(path.join('css', f), 'utf8'); const regex = /([^{}\r\n]+)\{\s*\}/g; let m; while ((m = regex.exec(content)) !== null) { console.error('Empty ruleset in ' + f + ': ' + m[1].trim()); found = true; } } if (found) process.exit(1);"
 # Prettier
 npx prettier --check .
 ```

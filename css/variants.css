@@ -285,12 +285,6 @@
 	}
 }
 
-/* PORTRAIT RING (FALLBACK LIST RENDERING -- USED WHENEVER THE RING */
-/* ITSELF DOES NOT ENGAGE, E.G. SPOTLIGHT MODE OR A MISSING PORTRAIT) */
-.trait-set-style-portrait-ring,
-.trait-set-style-attributes {
-}
-
 .trait-set-style-sfx-rows {
 	.trait-title {
 		font-family: var(--font-secondary);
@@ -1721,11 +1715,11 @@
 
 /* PLAY MODE INTERACTIONS */
 .submode-play {
-	.trait-set-style-die-track .c,
+	.trait-set-style-die-track :is(.diecon, .c),
 	.trait-set-style-die-track .out-badge,
-	.single-die-value .c,
-	.attribute-inner .c,
-	.subtrait-value .c {
+	.single-die-value :is(.diecon, .c),
+	.attribute-inner :is(.diecon, .c),
+	.subtrait-value :is(.diecon, .c) {
 		cursor: pointer;
 		transition:
 			transform 0.12s,
@@ -1735,8 +1729,8 @@
 		}
 	}
 
-	.single-die-value .c:not(.active),
-	.subtrait-value .c:not(.active) {
+	.single-die-value :is(.diecon, .c):not(.active),
+	.subtrait-value :is(.diecon, .c):not(.active) {
 		&:hover {
 			color: var(--color-interactive, #1976d2);
 		}

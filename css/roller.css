@@ -248,9 +248,11 @@
 		transform 0.1s,
 		box-shadow 0.15s;
 
+	.diecon,
 	.c {
 		font-size: 1.3rem;
 		line-height: 1;
+		color: var(--color-primary);
 	}
 
 	.die-label {
@@ -310,6 +312,7 @@
 		background-color 0.15s ease,
 		border-color 0.15s ease;
 
+	.diecon,
 	.c {
 		display: inline-block;
 		vertical-align: middle;
@@ -321,6 +324,7 @@
 .roller-btn-scale-quick {
 	border: 1px solid var(--border-subtle, #cbd5e1);
 
+	.diecon,
 	.c {
 		color: var(--text-main, #1e293b);
 	}
@@ -334,6 +338,7 @@
 .roller-btn-res-quick {
 	border: 1px solid var(--color-interactive, #bae6fd);
 
+	.diecon,
 	.c {
 		color: var(--color-interactive, #0284c7);
 	}
@@ -366,6 +371,7 @@
 	font-size: 0.75rem;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
+	.diecon,
 	.c {
 		font-size: 1rem;
 	}
@@ -444,6 +450,7 @@
 		border-color: #475569;
 		background: #f8fafc;
 
+		.diecon,
 		.c {
 			color: #1e293b;
 		}
@@ -458,6 +465,7 @@
 		border-color: #0284c7;
 		background: #f0f9ff;
 
+		.diecon,
 		.c {
 			color: #0284c7;
 		}
@@ -739,6 +747,7 @@
 		display: flex;
 		align-items: center;
 		column-gap: 0.2rem;
+		.diecon,
 		.c {
 			font-size: 0.95rem;
 		}
@@ -807,7 +816,7 @@
 		}
 	}
 
-	.card-top .c.exempt {
+	.card-top :is(.diecon, .c).exempt {
 		color: #0284c7;
 	}
 
@@ -825,7 +834,7 @@
 		border-color: #bae6fd;
 		background: #f0f9ff;
 
-		.card-top .c {
+		.card-top :is(.diecon, .c) {
 			color: #0284c7;
 		}
 
@@ -1058,6 +1067,7 @@
 				font-size: 1.1rem;
 				line-height: 1;
 
+				.diecon,
 				.c {
 					font-size: 1.1rem;
 				}

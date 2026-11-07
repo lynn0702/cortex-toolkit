@@ -28,7 +28,7 @@ prompt, the prompt wins for that session — then update this file.
 
 ## Skills (load before acting)
 
-This repo ships six skills in `.agents/skills/`. When a
+This repo ships seven skills in `.agents/skills/`. When a
 task matches a skill's trigger, load that skill's SKILL.md
 first and follow it; do not paraphrase it from memory.
 
@@ -45,6 +45,8 @@ first and follow it; do not paraphrase it from memory.
 - mobile-verdict-separation — verifying mobile,
   responsive, print, or geometric work, or writing
   rendering claims.
+- style-controls — writing or changing CSS, a Vue template,
+  or any style-adjacent code.
 
 If skill discovery is unavailable in your tool, read the
 SKILL.md file directly from `.agents/skills/<name>/`.

@@ -293,7 +293,7 @@ const branchGridStyle = computed(() => {
 						>{{ getTraitSetLabel(traitSet, 'center')
 						}}<span
 							v-if="getSetRatingDie(traitSet)"
-							class="c set-rating-die"
+							class="set-rating-die"
 							v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)"
 						></span></span
 					><span></span><span>{{ getTraitSetLabel(traitSet, 'right') }}</span></template
@@ -415,7 +415,6 @@ const branchGridStyle = computed(() => {
 										<span
 											v-for="size in getSubtraitRatings(traitSet)"
 											:key="size"
-											class="c"
 											v-html="renderDieValueForPrint(size, false)"
 										></span>
 									</div>
@@ -628,7 +627,6 @@ const branchGridStyle = computed(() => {
 										<span
 											v-for="size in getSubtraitRatings(traitSet)"
 											:key="size"
-											class="c"
 											v-html="renderDieValueForPrint(size, false)"
 										></span>
 									</div>

@@ -1199,7 +1199,7 @@ function checkScrollPosition() {
 }
 
 function getDieDisplayValue(val: any) {
-	return cortexFunctions.getDieDisplayValue(val);
+	return cortexFunctions.renderDieconSVG(val, false, '', getView(props.character)?.diceConfig);
 }
 </script>
 
@@ -1509,7 +1509,7 @@ function getDieDisplayValue(val: any) {
 								@keydown.space.prevent="toggleTraitValue(val)"
 								@click.stop="toggleTraitValue(val)"
 							>
-								<span class="c" v-html="getDieDisplayValue(val)"></span>
+								<span v-html="getDieDisplayValue(val)"></span>
 							</li>
 							<li
 								v-if="shouldShowTrackOut"
@@ -1539,7 +1539,7 @@ function getDieDisplayValue(val: any) {
 								-
 							</button>
 							<div class="die-rating-current">
-								<span class="c" v-html="getDieDisplayValue(firstDieOf(trait))"></span>
+								<span v-html="getDieDisplayValue(firstDieOf(trait))"></span>
 								<span class="die-rating-text">d{{ firstDieOf(trait) }}</span>
 							</div>
 							<button
@@ -1571,7 +1571,7 @@ function getDieDisplayValue(val: any) {
 						<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
 							<div class="editor-die-steppers" v-if="!isPlay">
 								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
-									<span class="c" v-html="getDieDisplayValue(size)"></span>
+									<span v-html="getDieDisplayValue(size)"></span>
 									<span class="stepper-label">d{{ size }}</span>
 									<div class="stepper-controls">
 										<button
@@ -1593,7 +1593,7 @@ function getDieDisplayValue(val: any) {
 								<span class="sub-label">Current Dice ({{ dice.length }}):</span>
 								<div class="multidie-chips">
 									<div v-for="(dieSize, dIdx) in dice" :key="dIdx" class="multidie-chip">
-										<span class="c" v-html="getDieDisplayValue(dieSize)"></span>
+										<span v-html="getDieDisplayValue(dieSize)"></span>
 										<span class="chip-text">d{{ dieSize }}</span>
 										<template v-if="isPlay">
 											<button
@@ -1792,7 +1792,7 @@ function getDieDisplayValue(val: any) {
 									@click.stop="toggleRangeOption(size)"
 									:title="(isRangeIncluded(size) ? 'Exclude d' : 'Include d') + size"
 								>
-									<span class="c" v-html="getDieDisplayValue(size)"></span>
+									<span v-html="getDieDisplayValue(size)"></span>
 									<span class="chip-label">d{{ size }}</span>
 								</button>
 							</div>
@@ -1881,7 +1881,7 @@ function getDieDisplayValue(val: any) {
 								@keydown.space.prevent="setTrackValue(val)"
 								@click.stop="setTrackValue(val)"
 							>
-								<span class="c" v-html="getDieDisplayValue(val)"></span>
+								<span v-html="getDieDisplayValue(val)"></span>
 							</li>
 						</ul>
 					</div>

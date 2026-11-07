@@ -1688,7 +1688,7 @@ function onFileImportSelected(ev: Event) {
 											:class="{ active: (selectedPart.range || [4, 6, 8, 10, 12]).includes(side) }"
 											@click="toggleBlueprintRangeSide(selectedPartKey, side)"
 										>
-											<span class="c" v-html="cortexFunctions.getDieDisplayValue(side)"></span>
+											<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
 										</button>
 									</div>
 
@@ -1816,7 +1816,7 @@ function onFileImportSelected(ev: Event) {
 												:class="{ active: trait.rating.value?.[0] === side }"
 												@click="setTraitDieValue(trait, side)"
 											>
-												<span class="c" v-html="cortexFunctions.getDieDisplayValue(side)"></span>
+												<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
 											</button>
 										</div>
 
@@ -1830,7 +1830,7 @@ function onFileImportSelected(ev: Event) {
 												:class="{ active: (trait.rating.value || []).includes(side) }"
 												@click="toggleTraitPoolDie(trait, side)"
 											>
-												<span class="c" v-html="cortexFunctions.getDieDisplayValue(side)"></span>
+												<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
 											</button>
 										</div>
 
@@ -1924,7 +1924,7 @@ function onFileImportSelected(ev: Event) {
 														:class="{ active: getChildTraitInstance(trait, slot.noun).rating.value?.[0] === side }"
 														@click="setChildDieValue(getChildTraitInstance(trait, slot.noun), side)"
 													>
-														<span class="c" v-html="cortexFunctions.getDieDisplayValue(side)"></span>
+														<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
 													</button>
 												</div>
 											</template>
@@ -1942,7 +1942,7 @@ function onFileImportSelected(ev: Event) {
 														}"
 														@click="toggleTraitPoolDie(getChildTraitInstance(trait, slot.noun), side)"
 													>
-														<span class="c" v-html="cortexFunctions.getDieDisplayValue(side)"></span>
+														<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
 													</button>
 												</div>
 											</template>

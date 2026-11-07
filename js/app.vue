@@ -1878,7 +1878,7 @@ defineExpose({
 					</template>
 					<template v-else-if="dicePool.items.length > 0">
 						<span v-for="(item, pIdx) in dicePool.items" :key="pIdx" class="pill-die">
-							<span class="c">{{ cortexFunctions.getDieDisplayValue(item.size) }}</span>
+							<span v-html="cortexFunctions.renderDieconSVG(item.size, false, '', null)"></span>
 							<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
 						</span>
 					</template>
