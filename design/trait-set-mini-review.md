@@ -18,7 +18,7 @@ The user requested an external agent review specifically examining:
 1. **L/T Marker Scope**: The user notes: *"I should only be able to toggle the type L T in the drag and place grid or on the parts adder above not custom per trait at the bottom."*
 2. **Multi-Trait / Rating Types (Pip, Pool, etc.)**: The user notes: *"I still don't see where I can customize and add a second trait with pip for instance or change the rating type to be a pip or a pool. We're still lacking the full features."*
 3. **Storage Portability**: Confirming preset card portability across devices (IndexedDB vs. localStorage) and export/import archive format.
-4. **Glyph Centering (Resolved)**: Fixed the die glyph centering issue where ascent/descent asymmetry in `cortex-icons` (ascent 960, descent 64) caused glyphs to draw 3px (~0.15em) too low inside buttons. Resolved via `display: inline-block; transform: translateY(-0.15em);`.
+4. **Glyph Centering (Resolved)**: Fixed the die glyph centering issue where ascent/descent asymmetry in the legacy die font (ascent 960, descent 64) caused glyphs to draw 3px (~0.15em) too low inside buttons. Resolved via `display: inline-block; transform: translateY(-0.15em);`.
 
 ---
 

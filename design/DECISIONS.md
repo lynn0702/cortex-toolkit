@@ -169,268 +169,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-11-01: Supersedes the 2026-10-30 "Rebrief remainder" line's "statement-flag derivation" clause: statement flags were ratified and landed on 2026-10-31 and are not part of this brief. The rest of that line stands.
 - 2026-11-01: Rebrief remainder part 2. Completed F1 (badge renders before SFX list), R3 (SFX editor retirement via shared SubtraitEditor), R4 (vocabulary rename: ratingLadder, subtraitRatingLadder, reservedSlots, trackDice, out-badge, ring-grid/ring-items, isPlayMutableSet), and R5 dark badge toggle. Remaining phone pass, classic-on-place section 4d, and item 5 remain out of scope.
 
-## Open (decisions needed)
-
-- (none pending)
-
-## Superseded (do not revive)
-
-- 2026-10-10: `kind` field (mob/boss/challenge) — differences are table rulings, not data.
-- 2026-10-10: `layers` array / namespaces — fields reference layers directly.
-- 2026-10-10: `required` selection flag — renamed `requiresSelect`.
-- 2026-10-10: Explicit `type: "set"` marker — position under `sets` identifies a set.
-- 2026-10-11: "Build exactly what was asked, nothing more" — replaced by the genuinely-helpful rule.
-- 2026-10-11: "v2" naming for the layered-model work — still 0.x.
-- 2026-10-11: Trait shorthand as canonical emit — emit is rating objects; shorthand reads on import only.
-- 2026-10-11: Dice-string ratings as canonical emit — emit is rating objects; strings parse on import only.
-- 2026-10-11: `pool: true` auto-emitted on every multi-die rating — pool is staging intent, authored, not inferred.
-- 2026-10-11: Challenge/boss pools as flags — Dice ratings with pool and spendable.
-- 2026-10-11: Multi-die ratings carry `pool: true` — see above.
-- 2026-10-22: Trait visibility as a three-state enum, then as a hidden boolean — visibility is a word; booleans map onto it (superseded 2026-10-23).
-- 2026-10-22: `custom.cortexToolkit.setDie` / branch-head set die / "Set Die" wording — the set node's own Rating.
-- 2026-10-11: `nounSingular` / `nounPlural` — renamed `noun` / `plural` (2026-10-23).
-- 2026-10-22: `custom.cortexToolkit` bag name — renamed `view` (single accessor, no branding).
-- 2026-10-22: `view.sheetStyle` / `hasAttributes` sheet deduction — one stored key `view.style.sheet`.
-- 2026-10-22: session-record / angled-lines bodies and spine renderer — unified into pips with labels.
-- 2026-10-22: `custom.isScale` flag — the effect is `keepsExtra`, Scale stays a name.
-- 2026-10-22: `custom.checked` pip mirrors — the Pip rating reads filled/true.
-- 2026-10-22: `view.nameLabels` bag — name traits carry labels directly.
-- 2026-10-19: Band model (track / span / widths / rowBreak) — nested grids with explicit coordinates.
-- 2026-10-22: Arranging flips bespoke rows to a custom grid — presets never flip.
-- 2026-10-22: Hide-redundant-header for split sets — split headers are never hidden.
-- 2026-10-22: "Pool Options" section label — the section is Options.
-- 2026-10-12: `html.print-view` global scaling; separate edit-mode Print View button.
-- 2026-10-12: Vue from CDN — bundled.
-- 2026-10-12: Global `.component()` registrations — consumers import locally.
-- 2026-10-18: `ratingDirection` key — ladders use `ratingPosition: 'vertical'` + `labelPosition`.
-- 2026-10-18: `widths` triples on sets — one `colWidth` share per set.
-- 2026-10-18: `rowBreak` markers — explicit `view.row`, bands derive.
-- 2026-10-18: Multi-die flag `view.multiDie` and "Multiple dice" checkbox — multi-die is a Dice rating (2026-10-24).
-- 2026-10-18: `traitColumns` dead data — flank layout (kept where meaningful).
-- 2026-10-12: `haloConfig` persisted key and halo-attributes vocabulary — `ringConfig` / ring vocabulary.
-- 2026-10-12: `includeD4`, `styleHeader`/`styleHint`/`setStyle`, template `?v=33` confusion — removed/clarified.
-- 2026-10-10/11: Structured cost (cost as an object; `{plotPoints}`, `{stepUp}/{stepDown}`, `{pool}`, `{narrative}` cases) — cost is dead (2026-10-26); cost lives in SFX description prose.
-- 2026-10-24 (SFX costs are descriptive): kept the cost vocabulary, editor Cost section, validation, and codecs as descriptive data — superseded by 2026-10-26 (cost is dead).
-
-
-### 2026-10-28 — Trait-block mini (`js/trait-set-mini.vue`) & creator preset cards (Phase 3a)
-- **Standalone trait-block mini:** `js/trait-set-mini.vue` authors one `TraitSet` block in isolation (accessible directly from the Roster, Style Gallery, Play Preset Picker, or Set Editor without requiring an open character sheet). Every part (`name`, `rating`, `description`, `block`, `subtraits`, `trackLabel`, `track`) is a box on the 2D block grid (`view.parts`), dragged from the noun-grouped Inventory Grid, moved by drag or arrow keys, and resized by edge-grab or `Shift+Arrow`, with synced numeric readouts.
-- **Icon language & noun consistency check:** Inventory tiles and grid part boxes use `T` (text), `L` (Edit-only label when `!playMutable`), the app's own die geometry SVG (`renderDieGeometrySVG`, single die = rating, bundle = pool, `aria-hidden="true"`), and `.pip-bubble` (pip). Grouping the inventory by trait and companion nouns surfaces any misspelled noun as an extra inventory group without validation gates.
-- **Save as preset:** Creator-typed `label` (required) and optional `blurb` (never auto-generated); `id` derives from `label` (`derivePresetId`) and rejects collisions with existing built-in or custom presets (`hasPresetCollision`) rather than overwriting silently. Saved cards carry `view.pillar` (default `'play'`, open string) and optional `view.labels.pillars[key]`.
-- **Model vocabulary & track synchronization:** Subrow controls mirror JSON schema properties: `Range` (`rating.range`) and `Rating` (`rating.value`). `view.labels.track` and legacy `view.labels.stress` are unified in `getTrackLabel`. Companion track nouns synchronize with the set's track label so renaming updates all companions, the preview, and the model in lockstep. Pillars icon is `fa-building-columns`.
-
-### 2026-10-28 — Page mini (`js/page-layout-mini.vue`) & trait-block mini handoff (Phase 3b)
-- **Page miniature as page placement control:** `js/page-layout-mini.vue` renders every trait set across all pages as a draggable box (`view.place = { left, top, width, height }`) on the page grid (`getSpotlightSections`, `layoutFor`). Moving a box commits on release; dragging across page miniatures reorders sets in document order and updates `view.page` while keeping vertical grouping intact. Dropping outside all miniatures or pressing `Escape` cancels the drag and leaves the model completely untouched.
-- **Collision avoidance & live clamping:** Live movement and resizing clamp against canvas boundaries and existing placed obstacles on the target page, maintaining valid integer rows, minimum height 1, and `%`-suffixed string coordinates (`formatPct`) matching `validate.js` requirements. Unplaced sets render in full width or 2-column classic bands (`isFullWidthClassic`, `getTraitSetColumn`), and clearing placement (`clearPlace`) safely restores stacked-band document order.
-- **Keyboard navigation:** Full keyboard alternatives (`tabindex="0"`, `role="button"`): Arrow keys nudge position (5% horizontal, 1 row vertical) with collision detection; `Shift + Arrow` resizes width (5%) or height (1 row); `Enter` or `Space` opens the Trait-Block Mini.
-- **Bidirectional Trait-Block Mini handoff:** Double-click or activating "Edit Parts" opens `<TraitSetMini>` for the selected set via Teleport; closing or applying updates the set and smoothly returns the creator to the same page mini with the set still selected.
-- **Pillar non-interference:** Page layout operations never mutate or reset `view.pillar`; the Play deck renders identically before and after page moves.
-
-### 2026-10-28 — SVG Frames, Dynamic Positional Anchors, & Mobile Fallback (Phase 3c)
-- **Data-driven SVG Frames (`view.frame`):** Frames live strictly in `traitSet.view.frame` alongside `place`, `parts`, and `pillar` (resolved via `resolveFrame` from shorthand string `"frame": "ring"` or sparse object `{ shape, span, corner, stroke, path }`). Shapes include `ring`, `ellipse`, `arc`, `block`, `line`, and `none`.
-- **Frame places the Trait; `view.parts` shapes inside the Trait:** For radial/path frames (`ring`, `ellipse`, `arc`, `path`), `computeFrameAnchors` dynamically derives anchor coordinates $(x_i, y_i)$ and outward quadrant docking (`left`, `right`, `top`, `bottom`) for visible traits reactively ($0..N-1$), preventing multi-part stress tracks from colliding with the frame interior. At each anchor, the standard HTML `.trait` container renders its internal `view.parts` intact. Block frames (`shape: "block"`) render outer decorative SVG borders while traits flow in standard `view.parts`. Bare-path divider lines (`shape: "line"`) render a crisp SVG section divider.
-- **Mobile Forced-Off & User Toggled-Off Fallback (Zero Overspill):** Radial/positioned frames automatically turn off in mobile card containers (`<= 768px`) or when toggled off via the header button (`aria-pressed`), dropping anchor positioning and falling back directly to the unframed stacked `view.parts` layout with zero horizontal overflow, zero data modification, and zero DOM remounting.
-- **Strict A11y & Content Invariant:** All text, dice, and pips remain standard HTML elements in logical DOM order ($0..N-1$). The `<svg>` elements are purely decorative (`aria-hidden="true"`, `focusable="false"`) containing zero SVG `<text>` or `<textPath>` nodes.
-
-### 2026-10-29 — SVG Frames Correction & Width-Based Forcing (Follow-up to 2026-10-28 Phase 3c)
-- **Width-Based Forcing Correction:** Corrects the forced-off rule recorded in the 2026-10-28 entry from blanket mobile viewport threshold (`<= 768px`) to container width-based forcing. Radial frames measure container width via ResizeObserver and force off only when the container is narrower than their minimum required layout threshold (`360px` for arc, `480px` for ring/ellipse), allowing radial frames to render at mobile widths when container width allows, and falling back directly to unframed linear layout when container width overflows or collides. `block` and `line` frames never force off on width grounds.
-- **Implemented Spec Resolutions Pending Ratification:** Records the `arc` shape, outward quadrant docking (`left`, `right`, `top`, `bottom`), and the relationship where the Frame positions the Trait while `view.parts` shapes inside the Trait as implemented per Phase 3c execution spec and pending user ratification.
-- 2026-10-29: frames Step 1 chrome parity: dedicated
-  js/trait-set-frame.vue with live pixel viewBox via
-  ResizeObserver reproduces the Classic block (measured
-  perimeter + sidebar/top spine, legacy chrome suppressed
-  via existing framed classes) and the portrait-ring
-  (unified from view.ringTrait + view.ringConfig, anchors
-  matching the legacy getTraitAngle formula under 0.01
-  points, name offsets reproduced, center slot preserved).
-  Baselines measured at f105d4f, not copied: the old
-  draft's 10px/2px set chrome, view.style.body 'ring' /
-  view.ring keys, isRing flag, and .has-svg-frame class do
-  not exist in code and are struck. Classic ring overlay
-  NOT rewired in this slice — parity proven, swap is a
-  follow-up. Grid question still OPEN; arc/dock resolutions
-  still pending ratification. No dogfood or new-shape work
-  in this slice.
-
-- 2026-10-29: Ring detection is explicit-only. `getRingTrait` returns
-  `view.ringTrait` only, `resolveFrame` unifies `ringTrait`/`ringConfig` only,
-  and the pillar `attributesRing` read is deleted. Runtime ring detection is
-  body `'portrait-ring'` OR `view.ringTrait === true` — the set-name, noun,
-  location, and `isAttributes` fallbacks are deleted from `character.vue`
-  and the set editor. The 13 spotlight Attributes sets carry
-  `ringTrait: false` explicitly; no corpus set relies on a fallback.
-
-- 2026-10-29: Range rules (Phase 2 item 4) implemented per the 2026-10-26
-  decisions. Range controls render only on rated traits (Die/Dice section
-  already gated on rated; Counter and Pip sections verified gated). The
-  set-all-range action is built in the trait editor, type-scoped: it applies
-  the source trait's range verbatim to every rated trait and subtrait of the
-  same type in the set (Die/Dice ladder subsets, Counter [lo, hi] pairs),
-  preserves target values verbatim, writes locally, and does not exist for
-  Pip or unrated traits. Pip range is derived, not stored: bubble count is
-  the value-list length everywhere (editor, runtime writers, mini, dogfood).
-  Pip ranges are never stored. Validator already exempted Pip and is
-  unchanged. Corpus impact: 3 stored pip ranges stripped (all with range[0]
-  equal to value length); 15 corpus pips already carried no range. Note on
-  the record: commit 2f2a8f7's message claims an "open range array UX," but
-  its patches contain no range-array editor (clear-rating buttons, a Play
-  die-click fix, header/carousel work), so no range UX was kept, trimmed, or
-  reverted from it; the D3 range leg closes on that evidence, while D3's
-  header and name-card legs remain open.
-
-- 2026-10-30: Hinder is data, not app fallback. The constructed
-  Hinder sentence (getHinderSentence), the labels.hinderSentence
-  hook, and the set-level sharedHinder/sharedHinderText props are
-  removed. A Hinder entry is an ordinary SFX child trait: its
-  sentence is its own description, its position is its place among
-  the set's traits. Corpus backfill preserved every current
-  rendering exactly: Hinder traits without a description gained
-  their set's shared text verbatim, else the constructed sentence
-  frozen during the backfill; shared-block placement moves into the
-  per-entry SFX list by design. Name-based Hinder identification
-  (the HINDER badge) is unchanged — it is a name match, not a
-  stored prop. Supersedes any earlier reading that Hinder inherits
-  shared text from the app.
-
-- 2026-10-30: Editor section labels removed, controls kept. The
-  "Statements" label is gone from the set editor (Statement field
-  checkbox + Questioned row stay); the "Trait Set SFX" label is
-  gone from the SFX editor (Badge Word + Line Prefix inputs, SFX
-  entries, New SFX stay). Badge Word / Line Prefix remain flat
-  view.labels strings; whether they become an object is an open
-  question, not decided here.
-
-- 2026-10-30: Modal direction noted. Modals were killed and have
-  resurrected in new form (Add Trait Set gallery, Add Play Card
-  picker, trait-set mini dialog). The Add Trait Set gallery dies
-  in this session: adding a set opens directly into the editor,
-  where the user names it and sets its style with the editor's
-  existing controls — no teaser UI, no sample cards, no fake data.
-  Presets and the mini entry move to a small inline, non-modal Add
-  area. Stacking is fixed without adding modal layers (opening
-  the mini closes its opener; the mini renders topmost when open).
-  Whether the picker and the mini dialog die too is a further
-  direction call, not decided here.
-
-- 2026-10-29 (correction to the 2026-10-29 range-rules entry
-  above): the corpus pip-strip count in that entry is wrong. 20
-  stored pip ranges were stripped in the layered corpus (17
-  set-level ratings plus 3 slot pips), mirrored in templates.js —
-  not 3. The 3 figure counted trait-level pips only and missed
-  set-level ratings (Session Record, XP, Progress Track, Mission
-  Chronicle, Stress, Life Points). All 20 strips were verified
-  value-preserving (range[0] equal to value length in every case);
-  the 15 range-free corpus pips in that entry are correct as
-  stated.
-
-- 2026-10-30: Regression fix for modern frame ring anchors (Vanguard Showcase).
-  Unflagged sets named 'Attributes' no longer infer a ring, so Phase 3c sets
-  carrying modern `view.frame` objects are not treated as portrait rings.
-  `resolveFrame` treats explicit frame objects as modern frames unless
-  explicitly configured with `legacyRing: true` or `raw.ringConfig`.
-
-- 2026-10-30: Studio header consolidation. Edit chrome goes
-  from 5 rows at the sheet root (and 4 on inspection) to 3
-  rows everywhere: app header, session nav, one unified
-  toolbar row. The toolbar carries sheet tabs (Sheet, Page,
-  Theme & Dice) at the root or crumb links (Sheet › Set ›
-  Trait, Sheet › Portrait) on inspection, plus JSON, dock,
-  and collapse on the right. The standalone "Sheet
-  Properties" crumb and the Done button are deleted as
-  redundant; the active tab and the crumb links already say
-  where you are and how to get back.
-
-- 2026-10-30: Theme & Dice tab merge. Fonts & Colors and
-  Dice merge into one Theme & Dice tab (fa-palette): fonts
-  controls, then a "Die Style & Geometry" divider, then
-  dice controls. The theme entry lands at tab top; the dice
-  entry scrolls the dice section into view. This kills the
-  duplicate fa-dice-d20 between the sheet tabs and the
-  roller toggle.
-
-- 2026-10-30: Roller is a Play tool. The studio panel's
-  Roller toggle renders only in Play; entering Edit while
-  on the roller resets the panel tab to properties. The
-  roller pane itself is unchanged, and Play navigation
-  (pillar deck, roller pill) is untouched. Accepted cost:
-  die-theme testing becomes edit → Play → roll → back.
-
-- 2026-10-31: Statement flags single-home on the set.
-  `statement`, `hasQuestionedPip`, and `hasCounterColumn`
-  live at set level only; `view.statement`,
-  `view.hasQuestionedPip`, and `view.hasCounterColumn` are
-  retired. Flags stay as flags; they are not derived from
-  Statement containers or pips. The set editor writes the
-  set home only. Corpus gate: effective values identical on
-  all 253 sets.
-
-- 2026-11-02: Spotlight Library lazy-load fixed: the bundle
-  (`js/templates.bundle.js`, built by Mix
-  `.combine` from `js/templates.js`) was a bare
-  `module.exports` assignment, which throws in a
-  browser classic script, so the roster/app
-  loaders' `onload` never fired, the loading
-  spinner stuck, and only the DOGFOOD template
-  rendered. The bundle is now bookended by two
-  combine inputs — a prelude defining
-  `window.module` and a trailing file assigning
-  `window.cortexSpotlightTemplates` — with
-  `js/templates.js` unchanged for its Node
-  consumers. Verified live in the local build:
-  29 library cards, spinner clears, no bundle
-  console error.
-
-- 2026-11-02: Spotlight Library modal dark mode: the modal
-  forced light rendering (`background: #ffffff
-  !important`, hardcoded light cards/pills/rows)
-  with no dark-theme rules targeting it, so it
-  stayed white while the app ran dark. Removed
-  the base `!important` flags (safe: the modal
-  stylesheet imports after the generic modal
-  stylesheet) and added a screen-only dark block
-  in the same file using the app's existing dark
-  tokens; light-mode values unchanged, action
-  buttons and hero images unchanged, print rules
-  untouched. Verified in the local build: light
-  identical, dark legible across panel, cards,
-  pills, rows, and search input, theme toggle
-  while open switches the modal.
-
-- 2026-11-02: Spotlight Library card hero readability in dark
-  mode: `.attribute-name` (Setting/Prep/Complexity
-  labels on the card ring) was hardcoded `color: black`
-  and unreadable on the dark card. Added a dark-mode
-  override (`#f1f5f9`) scoped to the library modal's
-  dark block, aligned with the modal's other dark text
-  tokens. Verified in the local build.
-
-- 2026-11-02: Classic rendering unified on place (section 4d):
-  classic sheets now read view.place - a classic
-  set with place renders on the grid through the
-  shared section engine (same place semantics as
-  spotlight: percent left/width, integer-row
-  top/height, height as floor), while unplaced
-  sets keep the existing column rendering
-  (location/track left/right, span full-width)
-  and the full band. Placed sets are excluded
-  from the column and full-band loops (including
-  the band's guard), ring sets never enter grid
-  sections, and a classic-scoped companion rule
-  gives the grid region the spotlight grid
-  display (the screen grid rules are scoped
-  under spotlight-style and do not apply to
-  classic sheets on their own). Page order is
-  columns, then grid sections, then the full
-  band; document-order interleaving between
-  column sets and grid sets is not preserved.
-  No data change needed: no existing set gained place,
-  and the corpus (all spotlight) renders
-  identically. Verified in the local build on
-  constructed classic cases in Edit, with the
-  mini agreeing.
-
-
-## 2026-11-02 — DOM diet: scoped v-show diet + pillar gating; page windowing deferred
+### DOM diet: scoped v-show diet + pillar gating; page windowing deferred
 
 Decided: shrink the live DOM in two scoped moves, with no visible change.
 (1) Preview-button containers convert v-show → v-if (conditions unchanged):
@@ -457,7 +196,7 @@ Edit/Play/pillar) are the evidence that decides whether windowing is still
 needed. Print renders all pages regardless and is untouched.
 
 
-## 2026-11-04 — Dissolve phase 1: Frame extension (box + arc frames, stroke as width, CSS-variable color/width/dash)
+### Frame extension (box + arc frames, stroke as width, CSS-variable color/width/dash)
 
 Decided: extend `view.frame` as the single carrier for borders and positional
 frames (no `view.border` key).
@@ -477,7 +216,7 @@ The `black` token resolves to `#000000` in light mode and print, and `#f1f5f9`
 visible on dark cards.
 
 
-## 2026-11-04 — Dissolve phase 2: Retire `view.style.sheet` as a behavior switch
+### Retire `view.style.sheet` as a behavior switch
 
 Decided: retire `view.style.sheet` (`'classic' | 'spotlight'`) across the corpus,
 validator, runtime, and editors. Supersedes the 2026-10-12 `view.style.sheet`
@@ -505,7 +244,7 @@ both the Sheet editor and the Print toolbar. `scripts/validate.js` rejects
 `view.style.sheet`.
 
 
-## 2026-11-05 — Name block as a set (`96cb5f4`)
+### Name block as a set (`96cb5f4`)
 
 Decided: the name block is an ordinary set. It can render anywhere on the page
 via `view.place`, can be placed or unplaced, and can be hidden via `view.visibility`.
@@ -515,7 +254,7 @@ Portrait presentation unifies through the existing `image` style rather than
 treating portrait as a bespoke hard-coded region.
 
 
-## 2026-11-05 — Place wins: Retire location, track, and span (`ca713e4`)
+### Place wins: Retire location, track, and span (`ca713e4`)
 
 Decided: place wins. A set's position on the page is expressed solely through
 `view.place` (`{ left, top, width, height }`). The classic column language retires:
@@ -524,7 +263,7 @@ runtime layout path. Unplaced sets render full-width across page columns in
 document order.
 
 
-## 2026-11-05 — Mechanical consolidation (957dbda & follow-up)
+### Mechanical consolidation (957dbda & follow-up)
 
 Decided: consolidate redundant and single-use trait-set bodies into general
 mechanisms (`die-rows`, `parts`, `frame`):
@@ -553,3 +292,7 @@ by `scripts/validate.js`.
 (8) Badge printing: `.badge` rules in `css/_spotlight-print.scss` enforce `print-color-adjust: exact`
 so that background colors (black, primary, interactive, secondary, muted) and white text
 remain fully legible in print and economy print modes.
+
+## Open (decisions needed)
+
+- (none pending)

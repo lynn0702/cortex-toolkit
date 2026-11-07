@@ -81,19 +81,6 @@ subset("node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf", "
 subset("node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf", "fonts/fa-regular-subset.woff2", regular_unicodes)
 subset("node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf", "fonts/fa-brands-subset.woff2", brands_unicodes)
 
-# Also convert cortex-icons.woff to cortex-icons.woff2
-cmd = [
-    r".venv\Scripts\pyftsubset.exe",
-    "fonts/cortex-icons.woff",
-    "--unicodes=*",
-    "--flavor=woff2",
-    "--output-file=fonts/cortex-icons.woff2"
-]
-res = subprocess.run(cmd, capture_output=True, text=True)
-if res.returncode != 0:
-    raise RuntimeError(f"Failed converting cortex-icons: {res.stderr}")
-print(f"Generated fonts/cortex-icons.woff2 ({os.path.getsize('fonts/cortex-icons.woff2')} bytes)")
-
 # 3. Generate css/fontawesome.css
 css_lines = [
     "/* Font Awesome 6.5.1 Subset (Solid, Regular, Brands) */",

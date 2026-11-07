@@ -14,18 +14,6 @@
 
 /* Google Fonts */
 
-/* Cortex Icons */
-@font-face {
-	font-family: 'cortex-icons';
-	src:
-		url('data:font/woff2;charset=utf-8;base64,d09GMgABAAAAAAPwAAsAAAAABxAAAAOiAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAABmAAZBEICogohhwBNgIkAyQLFAAEIAWBCgcgGy8FIB6FcXsSKYjTT2DynpNP4Wb/NtlagtfVSdXp3IQ7B07Vv6k0wP9AwAYYALk7cU39SPu3t2+TR+xFAXZR0dOiCQc0yuQN7Ae8nY+nbkzjNAi0Rd7dHtQNYNljZAWMAGYj8wSwvM9CvhY+M1CRgEhRF/Mb3ZDSZieDXUAmwwKwaF4CmqLknxQUWAAELkKEiRAlpgBwfo78/3Gv9HIv9WIvJFJLQP7/n7zCZttUAAsgRQARAbTRgBoQULCXEGXtAWN7E3su2ITlKQ2wo6E2toTO7O1gOgW2Tf/Q9+CrjhBf8TnwgNM98jv0mhPRvu5/+DFfwTMcW0HadXss1myxgbjVcu1eXr/fev12QrTbrNbt43orKpjKyupqtqpC/9Dz4FGI0nkbjvhU8JCQ6vWH4dps0CZ1lUUbwGm3228+7L3//OpnNk9rWnjw4MARzqnaooJvpnIj7zZOd8ZjzxGbw5d5/UXbgzt77IDFnjM5EqdI4277zde999/nK9r4Gov8zKfW9nZ0Cm36u4m5NsjCByzWHrT8RohHPF41tO+YuTZHMIet1x1q3US0x70P3+eR6zRx44L9VEyNc2D67bc3+bjCtRGnxed5VHlZqdL44kBVhrV3lYe72srbQ3IlgNcz3F8zMTtZla92ztIx8voeTYdJj516tq9Poajv6x23FezVmrNcgS8e/luyWR3a/NLh+gfAS05+beuQW0mwS5CTQisO3c/q7LmRHZq4fMP3Db29al4+IUxly+TT07oZZa3lGnHFQVubaeuHRty12soulxwsXOOQrnJYrbrTk/eJb5xvcW7xusANhuz8qVIsXfYh38xnmyzL1PE7mVN2rGKnncPtX9hfZrlAFDf9YVZj4SZkZRd5O7s/ffRWzZyly1wzXuM8FoxdjbGzGtLoexXSnpklGpVyVrekR4Zf/n7zjTfx6vc+cHF2drF3kGs0fWWv/T7fYFiudAxMdilxdUsJSU50VG43GOZ/fq9sVtMrd7B31l+QKbES1BVSabkgeEsk3tVC+fBKtbXkrCxn0eSETDY+NVkjl1V3TY7LS0D24YP4DZrP+DbLE3415SkA4F1dgPR24f+51IL5B5iCCdR+cA50EzBOLaCRhRmFFlfHXkFqLykOemQRBZax37FHAJhBjSrtuc8YRVgQagYCGxjKDGSwaWen2mmVjWDFy2tct7UbNGJMpymBul2ZAaPKUCkY16dVAlZRI0a1/ctdhAoSggUBAAAA')
-			format('woff2'),
-		url('../fonts/cortex-icons.woff2') format('woff2');
-	font-weight: normal;
-	font-style: normal;
-	font-display: block;
-}
-
 :root {
 	--page-width: 210mm;
 	--page-height: 297.1mm;
@@ -162,17 +150,6 @@ select:focus-visible,
 textarea:focus-visible {
 	outline: 2px solid var(--color-interactive);
 	outline-offset: 2px;
-}
-
-/* DIE VALUES */
-
-.c {
-	display: inline;
-	font-family: 'cortex-icons';
-	font-size: 1.4em;
-	font-style: normal;
-	position: relative;
-	color: var(--color-primary);
 }
 
 /* PLOT POINTS */
