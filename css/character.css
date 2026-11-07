@@ -40,6 +40,7 @@
 }
 
 .character-sheet {
+
 	&.v-enter-active,
 	&.v-leave-active {
 		transition:
@@ -160,7 +161,8 @@
 	right: 0;
 	bottom: 0;
 	pointer-events: none;
-	z-index: 0; /* small local stacking literal */
+	z-index: 0;
+	/* small local stacking literal */
 	background-repeat: no-repeat;
 	background-position: center 50%;
 	background-size: 75%;
@@ -173,7 +175,7 @@
 	align-items: stretch;
 	column-gap: 1rem;
 
-	& > * {
+	&>* {
 		flex: 1 1 0;
 		position: relative;
 		display: flex;
@@ -185,27 +187,29 @@
 		flex-direction: column;
 		row-gap: 2rem;
 
-		& > * {
+		&>* {
 			width: 100%;
 		}
 	}
 }
 
 .page-justification-top-base {
-	.columns > *,
+
+	.columns>*,
 	.spotlight-column {
 		justify-content: flex-start;
 	}
 }
 
 .page-justification-distributed {
-	.columns > *,
+
+	.columns>*,
 	.spotlight-column {
 		justify-content: space-between;
 	}
 }
 
-.columns > * {
+.columns>* {
 	padding-top: 0;
 	margin-top: 0;
 }
@@ -218,17 +222,17 @@
 	row-gap: 1.5rem;
 	margin-top: 1.5rem;
 
-	& > * {
+	&>* {
 		min-width: 0;
 	}
 }
 
 .columns .trait-set:first-child,
-.spotlight-column > .trait-set:first-child {
+.spotlight-column>.trait-set:first-child {
 	margin-top: 0;
 }
 
-.columns > .column-left,
+.columns>.column-left,
 .column-left,
 .spotlight-column-left {
 	padding-top: var(--column-left-offset, 0px);
@@ -239,7 +243,7 @@
 	}
 }
 
-.columns > .column-right,
+.columns>.column-right,
 .column-right,
 .spotlight-column-right {
 	padding-top: var(--column-right-offset, 0px);
@@ -250,7 +254,7 @@
 	}
 }
 
-.columns > .column-center,
+.columns>.column-center,
 .column-center,
 .spotlight-column-center {
 	padding-top: var(--column-center-offset, 0px);
@@ -307,8 +311,7 @@
 	position: relative;
 }
 
-.page-header-inner {
-}
+.page-header-inner {}
 
 .title-container {
 	display: flex;
@@ -556,7 +559,7 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
-	& > div,
+	&>div,
 	.trait-set-header-name {
 		font-size: inherit;
 		font-weight: inherit;
@@ -583,6 +586,7 @@
 }
 
 .trait-inner {
+
 	&.trait-enter-active,
 	&.trait-leave-active {
 		transition:
@@ -626,7 +630,7 @@
 			left: -0.083rem;
 		}
 
-		& + li {
+		&+li {
 			padding-top: 0.083rem;
 		}
 	}
@@ -760,6 +764,7 @@
 }
 
 .submode-edit {
+
 	.attribute,
 	.scale-die {
 		cursor: grab;
@@ -817,12 +822,14 @@
 	height: 100%;
 	line-height: 1;
 	text-align: center;
+
 	/* White numeral fill, see die-backing in app.scss */
 	&:before {
 		position: absolute;
 		content: ' ';
 		background: white;
-		z-index: -1; /* small local stacking literal */
+		z-index: -1;
+		/* small local stacking literal */
 		pointer-events: none;
 		/* Default (no die-N class) matches the d8 glyph */
 		left: calc(50% + -0.0078em);
@@ -831,30 +838,35 @@
 		height: 0.4586em;
 		transform: translate(-50%, -50%);
 	}
+
 	&.die-4:before {
 		left: calc(50% + -0.0161em);
 		top: calc(50% + 0.0872em);
 		width: 0.2607em;
 		height: 0.3814em;
 	}
+
 	&.die-6:before {
 		left: calc(50% + 0.001em);
 		top: calc(50% + 0.1805em);
 		width: 0.2891em;
 		height: 0.4547em;
 	}
+
 	&.die-8:before {
 		left: calc(50% + -0.0078em);
 		top: calc(50% + 0.1629em);
 		width: 0.2852em;
 		height: 0.4586em;
 	}
+
 	&.die-10:before {
 		left: calc(50% + -0.0313em);
 		top: calc(50% + 0.1688em);
 		width: 0.5293em;
 		height: 0.4586em;
 	}
+
 	&.die-12:before {
 		left: calc(50% + -0.0181em);
 		top: calc(50% + 0.1629em);
@@ -901,7 +913,7 @@
 	pointer-events: auto;
 }
 
-.vertical .attribute-inner > div {
+.vertical .attribute-inner>div {
 	writing-mode: vertical-lr;
 	transform: rotate(180deg);
 	padding-bottom: 1mm;
@@ -947,7 +959,8 @@
 				position: absolute;
 				content: ' ';
 				background: white;
-				z-index: -1; /* small local stacking literal */
+				z-index: -1;
+				/* small local stacking literal */
 				pointer-events: none;
 				/* Default (no die-N class) matches the d8 glyph */
 				left: calc(50% + -0.0078em);
@@ -956,30 +969,35 @@
 				height: 0.4586em;
 				transform: translate(-50%, -50%);
 			}
+
 			&.die-4:before {
 				left: calc(50% + -0.0161em);
 				top: calc(50% + 0.0872em);
 				width: 0.2607em;
 				height: 0.3814em;
 			}
+
 			&.die-6:before {
 				left: calc(50% + 0.001em);
 				top: calc(50% + 0.1805em);
 				width: 0.2891em;
 				height: 0.4547em;
 			}
+
 			&.die-8:before {
 				left: calc(50% + -0.0078em);
 				top: calc(50% + 0.1629em);
 				width: 0.2852em;
 				height: 0.4586em;
 			}
+
 			&.die-10:before {
 				left: calc(50% + -0.0313em);
 				top: calc(50% + 0.1688em);
 				width: 0.5293em;
 				height: 0.4586em;
 			}
+
 			&.die-12:before {
 				left: calc(50% + -0.0181em);
 				top: calc(50% + 0.1629em);
@@ -1090,7 +1108,7 @@
 /* In-set add buttons fit narrow set columns instead of clipping: the row */
 /* grows with wrapped text rather than holding a fixed height. */
 .trait-set .preview-button-container {
-	& > div {
+	&>div {
 		height: auto;
 		min-height: var(--button-container-height);
 		display: flex;
@@ -1117,7 +1135,7 @@
 	align-items: center;
 	text-align: center;
 
-	& > span {
+	&>span {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -1137,7 +1155,7 @@
 	}
 }
 
-.trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header {
+.trait-set.trait-set-frame-block.trait-set-header-top>.trait-set-header {
 	margin-inline: 1rem;
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
@@ -1558,13 +1576,13 @@ button.trait-title-btn {
 	}
 }
 
-.trait-title.trait-title-stacked:not(.trait-title-statement) > button.trait-title-btn {
+.trait-title.trait-title-stacked:not(.trait-title-statement)>button.trait-title-btn {
 	width: 100%;
 	justify-content: center;
 	text-align: center;
 }
 
-.trait-title.trait-title-statement > button.trait-title-btn {
+.trait-title.trait-title-statement>button.trait-title-btn {
 	flex: 0 0 auto;
 	text-align: left;
 }
@@ -1572,6 +1590,7 @@ button.trait-title-btn {
 /* WCAG 2.2 AA Touch Targets in Mobile Play Mode */
 @media screen and (max-width: 768px) {
 	.submode-play {
+
 		.trait-value .c,
 		.subtrait-value .c,
 		.attached-stress-track .c {
@@ -1629,6 +1648,7 @@ button.trait-title-btn {
 }
 
 @media print {
+
 	.trait-set-play-only,
 	.trait-play-only {
 		display: none;
@@ -1679,7 +1699,8 @@ button.trait-title-btn {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 0; /* small local stacking literal */
+	z-index: 0;
+	/* small local stacking literal */
 	pointer-events: none;
 
 	path {
@@ -1693,7 +1714,8 @@ button.trait-title-btn {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 0; /* small local stacking literal */
+	z-index: 0;
+	/* small local stacking literal */
 	pointer-events: none;
 }
 
@@ -1709,7 +1731,8 @@ button.trait-title-btn {
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	z-index: 0; /* small local stacking literal */
+	z-index: 0;
+	/* small local stacking literal */
 
 	.frame-hub-circle {
 		width: 100%;
@@ -1736,6 +1759,7 @@ button.trait-title-btn {
 	stroke: #111111;
 
 	@media screen {
+
 		[data-theme='dark'] &,
 		.theme-dark & {
 			stroke: var(--border-strong, #64748b);
@@ -1747,6 +1771,7 @@ button.trait-title-btn {
 	stroke: #000000;
 
 	@media screen {
+
 		[data-theme='dark'] &,
 		.theme-dark & {
 			stroke: var(--border-strong, #64748b);
@@ -1758,9 +1783,7 @@ button.trait-title-btn {
 	fill: none;
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style)
-	.trait-set:is(.trait-set-frame-ring, .trait-set-frame-ellipse, .trait-set-frame-arc)
-	.trait-set-body.trait-set-body-framed,
+:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style) .trait-set:is(.trait-set-frame-ring, .trait-set-frame-ellipse, .trait-set-frame-arc) .trait-set-body.trait-set-body-framed,
 .trait-set-body-framed {
 	position: relative;
 	padding: 4.5rem 1rem 3.5rem;
@@ -1800,7 +1823,8 @@ button.trait-title-btn {
 
 	.trait {
 		position: absolute;
-		z-index: 1; /* small local stacking literal */
+		z-index: 1;
+		/* small local stacking literal */
 		width: max-content;
 		max-width: min(320px, 90vw);
 		box-sizing: border-box;
@@ -1875,15 +1899,15 @@ button.trait-title-btn {
 		}
 
 		&[data-frame-dock='left'] {
-			transform: translate(calc(-100% - 6px), -50%);
+			transform: translate(calc(-100% - 0.375rem), -50%);
 			text-align: right;
 
 			&[data-frame-hemisphere='top'] {
-				transform: translate(calc(-100% - 6px), -75%);
+				transform: translate(calc(-100% - 0.375rem), -75%);
 			}
 
 			&[data-frame-hemisphere='bottom'] {
-				transform: translate(calc(-100% - 6px), -25%);
+				transform: translate(calc(-100% - 0.375rem), -25%);
 			}
 
 			.trait-inner {
@@ -1892,15 +1916,15 @@ button.trait-title-btn {
 		}
 
 		&[data-frame-dock='right'] {
-			transform: translate(6px, -50%);
+			transform: translate(0.375rem, -50%);
 			text-align: left;
 
 			&[data-frame-hemisphere='top'] {
-				transform: translate(6px, -75%);
+				transform: translate(0.375rem, -75%);
 			}
 
 			&[data-frame-hemisphere='bottom'] {
-				transform: translate(6px, -25%);
+				transform: translate(0.375rem, -25%);
 			}
 
 			.trait-inner {
@@ -1909,7 +1933,7 @@ button.trait-title-btn {
 		}
 
 		&[data-frame-dock='top'] {
-			transform: translate(-50%, calc(-100% - 6px));
+			transform: translate(-50%, calc(-100% - 0.375rem));
 			text-align: center;
 
 			.trait-inner {
@@ -1918,7 +1942,7 @@ button.trait-title-btn {
 		}
 
 		&[data-frame-dock='bottom'] {
-			transform: translate(-50%, 6px);
+			transform: translate(-50%, 0.375rem);
 			text-align: center;
 
 			.trait-inner {
@@ -1937,17 +1961,18 @@ button.trait-title-btn {
 	.trait-set-header {
 		background: transparent;
 		position: relative;
-		z-index: 1; /* small local stacking literal */
+		z-index: 1;
+		/* small local stacking literal */
 	}
 
 	.trait-set-body {
 		position: relative;
-		z-index: 1; /* small local stacking literal */
+		z-index: 1;
+		/* small local stacking literal */
 	}
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style)
-	.trait-set.trait-set-frame-line,
+:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style) .trait-set.trait-set-frame-line,
 .trait-set.trait-set-frame-line {
 	border: none;
 	background: transparent;
@@ -1974,6 +1999,7 @@ button.trait-title-btn {
 
 /* LATE-NIGHT DARK MODE (Print-Immune: screen only, non-print submodes only) */
 @media screen {
+
 	[data-theme='dark'],
 	.theme-dark {
 		.character-sheet:not(.submode-print) {
@@ -2021,6 +2047,7 @@ button.trait-title-btn {
 
 			/* Unfilled die range outlines and glyphs remain crisp and legible */
 			.c:not(.active) {
+
 				polygon,
 				path,
 				rect {
@@ -2144,12 +2171,14 @@ button.trait-title-btn {
 		font-size: 0.78rem;
 		font-weight: 700;
 		cursor: pointer;
+
 		&:hover {
 			background: #0369a1;
 		}
 
 		&.btn-inline-mini {
 			background: #334155;
+
 			&:hover {
 				background: #1e293b;
 			}
@@ -2164,6 +2193,7 @@ button.trait-title-btn {
 		font-size: 0.9rem;
 		padding: 0.25rem 0.4rem;
 		border-radius: 4px;
+
 		&:hover {
 			color: #0f172a;
 			background: #e2e8f0;
@@ -2221,6 +2251,7 @@ button.trait-title-btn {
 			font-weight: 700;
 			cursor: pointer;
 			align-self: flex-start;
+
 			&:hover {
 				background: #0369a1;
 			}
@@ -2240,6 +2271,7 @@ button.trait-title-btn {
 			padding: 0.25rem 0.45rem;
 			font-size: 0.75rem;
 			cursor: pointer;
+
 			&:hover {
 				color: #ef4444;
 				border-color: #ef4444;
@@ -2273,6 +2305,7 @@ button.trait-title-btn {
 
 		.btn-inline-close {
 			color: #94a3b8;
+
 			&:hover {
 				color: #f8fafc;
 				background: #334155;
@@ -2312,61 +2345,76 @@ button.trait-title-btn {
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 }
+
 .badge--vertical-bar {
 	flex-direction: column;
 	padding: 0.3rem 0.2rem;
 	border-radius: 2px;
 }
+
 .badge--vertical-bar .badge-label {
 	writing-mode: vertical-rl;
 	transform: rotate(180deg);
 }
+
 .badge--pill {
 	border-radius: 999px;
 }
+
 .badge--square {
 	border-radius: 0;
 }
+
 .badge--chamfer {
 	clip-path: polygon(15% 0, 85% 0, 100% 25%, 100% 75%, 85% 100%, 15% 100%, 0 75%, 0 25%);
 }
+
 /* colors */
 .badge--black {
 	background: #000;
 	color: #fff;
 }
+
 .badge--primary {
 	background: var(--color-primary);
 	color: #fff;
 }
+
 .badge--secondary {
 	background: var(--color-secondary);
 	color: #111;
 }
+
 .badge--interactive {
 	background: var(--color-interactive);
 	color: #fff;
 }
+
 .badge--muted {
 	background: #f1f5f9;
 	color: #333;
 	border: 1px solid #cbd5e1;
 }
+
 .badge-icon {
 	font-size: 0.85em;
 }
+
 .trait-part-badge {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
+
 .trait-part-badge-fallback {
 	margin: 0.2rem 0;
 }
+
 .block-prefix {
 	font-weight: 700;
 	margin-right: 0.25rem;
 }
+
 /* dark mode */
 [data-theme='dark'],
 .theme-dark {
