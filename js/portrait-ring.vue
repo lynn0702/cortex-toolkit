@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, toRaw } from 'vue';
 import { cortexFunctions } from './functions.ts';
+import { resolveFrame } from './frame-geometry.ts';
 import {
 	getView,
 	ensureView,
@@ -102,16 +103,28 @@ function renderDieValue(value: any) {
 
 function getTraitAngle(t: number | string) {
 	const idx = Number(t);
+	const count = traits.value.length;
+	if (count <= 0) return 0;
+
+	const frameCfg = resolveFrame(ringTraitSet.value);
+	const delta = frameCfg ? frameCfg.span[1] - frameCfg.span[0] : 0;
+	const isClosed = frameCfg ? Math.abs(delta) >= 360 : false;
+
+	if (frameCfg && isClosed && !frameCfg.legacyRing) {
+		const baseAngle = (frameCfg.span[0] ?? 0) - 90;
+		return baseAngle + (idx / count) * 360;
+	}
+
 	const cfg = ringConfig.value;
 	const centerAngle = 90 + (cfg.arcAngle ?? -90);
 	const spreadFactor = (cfg.arcSpread ?? 100) / 100;
 	const totalSpan = 85 * spreadFactor;
 
 	let alpha: number;
-	if (traits.value.length === 1) {
+	if (count === 1) {
 		alpha = 0.5;
 	} else {
-		alpha = idx / (traits.value.length - 1);
+		alpha = idx / (count - 1);
 	}
 
 	return centerAngle + (alpha - 0.5) * totalSpan;

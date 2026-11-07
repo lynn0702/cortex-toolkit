@@ -80,6 +80,7 @@ const {
 	frameStrokeStyle,
 	getTraitAnchorStyle,
 	getTraitAnchorDock,
+	getTraitAnchorHemisphere,
 	getTraitNameAnchorStyle,
 } = injectTraitSet();
 </script>
@@ -120,6 +121,7 @@ const {
 					:data-trait-questioned="isTraitQuestioned(item.trait) ? 'true' : undefined"
 					:style="isPositionalFrameActive ? getTraitAnchorStyle(t) : undefined"
 					:data-frame-dock="isPositionalFrameActive ? getTraitAnchorDock(t) : undefined"
+					:data-frame-hemisphere="isPositionalFrameActive ? getTraitAnchorHemisphere(t) : undefined"
 				>
 					<transition name="trait" appear>
 						<!-- PARTS GRID (explicit trait-part coordinates) -->

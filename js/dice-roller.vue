@@ -833,7 +833,7 @@ defineExpose({
 									:title="die.isHitch ? 'Hitch: cannot be used' : 'Click to cycle: Total / Effect / Unused'"
 								>
 									<div class="card-top">
-										<span class="c">{{ getDieDisplayValue(die.size) }}</span>
+										<span class="c" :class="{ exempt: die.hitches === 0 }">{{ getDieDisplayValue(die.size) }}</span>
 										<span class="card-size">d{{ die.size }}</span>
 									</div>
 									<div class="card-value" :class="{ 'hitch-value': die.isHitch }">
@@ -871,7 +871,7 @@ defineExpose({
 										title="Click to toggle as kept die for this group"
 									>
 										<div class="card-top">
-											<span class="c" :class="{ exempt: die.hitches === 0 }">{{ getDieDisplayValue(die.size) }}</span>
+											<span class="c">{{ getDieDisplayValue(die.size) }}</span>
 											<span class="card-size">d{{ die.size }}</span>
 										</div>
 										<div class="card-value">

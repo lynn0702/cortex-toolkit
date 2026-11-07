@@ -162,6 +162,13 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return frameAnchors.value[t]?.dock;
 	}
 
+	function getTraitAnchorHemisphere(t: number): 'top' | 'bottom' | 'center' | undefined {
+		if (!isPositionalFrameActive.value) return undefined;
+		const a = frameAnchors.value[t];
+		if (!a) return undefined;
+		return a.y < 48 ? 'top' : a.y > 52 ? 'bottom' : 'center';
+	}
+
 	function getTraitSetLabel(traitSetArg: TraitSet, key: string) {
 		const labels = getView(traitSetArg)?.labels;
 		if (labels && labels[key] !== undefined && labels[key] !== null && String(labels[key]).length) {
@@ -1492,6 +1499,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		frameAnchors,
 		getTraitAnchorStyle,
 		getTraitAnchorDock,
+		getTraitAnchorHemisphere,
 		getTraitNameAnchorStyle,
 		containerWidth,
 		observeContainer,

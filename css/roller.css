@@ -808,7 +808,7 @@
 	}
 
 	.card-top .c.exempt {
-		color: var(--color-interactive, #0284c7);
+		color: #0284c7;
 	}
 
 	&.role-total {

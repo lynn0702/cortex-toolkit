@@ -1875,8 +1875,16 @@ button.trait-title-btn {
 		}
 
 		&[data-frame-dock='left'] {
-			transform: translate(calc(-100% - 6px), -14px);
+			transform: translate(calc(-100% - 6px), -50%);
 			text-align: right;
+
+			&[data-frame-hemisphere='top'] {
+				transform: translate(calc(-100% - 6px), -75%);
+			}
+
+			&[data-frame-hemisphere='bottom'] {
+				transform: translate(calc(-100% - 6px), -25%);
+			}
 
 			.trait-inner {
 				justify-content: flex-end;
@@ -1884,8 +1892,16 @@ button.trait-title-btn {
 		}
 
 		&[data-frame-dock='right'] {
-			transform: translate(6px, -14px);
+			transform: translate(6px, -50%);
 			text-align: left;
+
+			&[data-frame-hemisphere='top'] {
+				transform: translate(6px, -75%);
+			}
+
+			&[data-frame-hemisphere='bottom'] {
+				transform: translate(6px, -25%);
+			}
 
 			.trait-inner {
 				justify-content: flex-start;
