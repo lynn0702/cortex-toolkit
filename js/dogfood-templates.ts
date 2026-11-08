@@ -211,8 +211,6 @@ export const VANGUARD_FRAME_SHOWCASE = {
 			{
 				name: 'Values',
 				noun: 'Value',
-				statement: true,
-				hasQuestionedPip: true,
 				view: {
 					pillar: 'plus',
 					page: 1,

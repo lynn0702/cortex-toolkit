@@ -206,7 +206,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			classes['rating-pos-' + ratingPos] = true;
 		}
 
-		if (isStatementSet(traitSetArg)) {
+		const hasPip =
+			Array.isArray(traitSetArg?.traits) && traitSetArg.traits.some((t: any) => getPipChild(t) !== undefined);
+		if (hasPip) {
 			classes['trait-set-statement-mode'] = true;
 		}
 
@@ -284,27 +286,32 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return Boolean(grid && name && rating && name.row === 1 && rating.row === 1);
 	}
 
-	function isStatementSet(traitSetArg: TraitSet) {
-		if (Boolean(traitSetArg?.statement)) return true;
-		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
-		return traits.some((t: any) => cortexFunctions.statementChild(t) !== undefined);
+	function getPipChild(node: any): Trait | undefined {
+		if (!node || !Array.isArray(node.traits)) return undefined;
+		for (const ch of node.traits) {
+			if (!ch || typeof ch !== 'object') continue;
+			const r = getRating(ch);
+			if (r && r.type === 'Pip') return ch;
+			if (Array.isArray(ch.traits)) {
+				const nested = ch.traits.find((sub: any) => getRating(sub)?.type === 'Pip');
+				if (nested) return nested;
+			}
+		}
+		return undefined;
 	}
 
-	function hasQuestionedPip(traitSetArg: TraitSet) {
-		if (Boolean(traitSetArg?.hasQuestionedPip)) return true;
-		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
-		return traits.some((t: any) => cortexFunctions.statementChild(t)?.rating?.type === 'Pip');
+	function isChildPipFilled(node: any): boolean {
+		const child = getPipChild(node);
+		return Boolean(child?.rating?.type === 'Pip' && child.rating.value?.[0] === true);
 	}
 
-	function isTraitQuestioned(trait: Trait) {
-		return cortexFunctions.isStatementFilled(trait);
-	}
-
-	function toggleTraitQuestioned(sArg: any, t: any, traitArg?: Trait) {
+	function togglePip(sArg: any, t: any, traitArg?: Trait) {
 		if (props.submode === 'print') return;
 		const trait = traitArg ?? props.character?.traitSets?.[sArg]?.traits?.[t];
 		if (!trait) return;
-		if (!cortexFunctions.setStatementFilled(trait, !cortexFunctions.isStatementFilled(trait))) return;
+		const child = getPipChild(trait);
+		if (!child || !child.rating || child.rating.type !== 'Pip' || !Array.isArray(child.rating.value)) return;
+		child.rating.value[0] = !child.rating.value[0];
 		updateCharacter(props.character);
 	}
 
@@ -325,7 +332,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// Statement boxes read the sentence child only; description is a general
 	// fallback for asset-style boxes, not a second statement home.
 	function getTraitStatement(trait: Trait, statementOnly = false) {
-		const sentence = cortexFunctions.statementText(trait);
+		const child = getPipChild(trait);
+		const sentence = child && typeof child.name === 'string' ? child.name : '';
 		if (sentence) return sentence;
 		return statementOnly ? '' : (trait?.description ?? '');
 	}
@@ -440,7 +448,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				: t?.traits && typeof t.traits === 'object'
 					? Object.values(t.traits)
 					: [];
-			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && !cortexFunctions.isStatementContainer(s));
+			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && s?.name !== 'Statement');
 		});
 		return {
 			name: '',
@@ -508,7 +516,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function nonSfxSubtraits(trait: Trait) {
 		const subs = (trait as any)?.traits;
 		return (Array.isArray(subs) ? subs : []).filter(
-			(st: any) => !cortexFunctions.isSfxContainer(st) && !cortexFunctions.isStatementContainer(st),
+			(st: any) => !cortexFunctions.isSfxContainer(st) && st?.name !== 'Statement',
 		);
 	}
 
@@ -1039,7 +1047,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			) as Trait | undefined;
 		}
 		if (n === 'statement') {
-			const child = cortexFunctions.statementChild(trait);
+			const child = getPipChild(trait);
 			if (child) return child as Trait;
 			if (trait.description) return { name: trait.description, description: trait.description, traits: [] } as any;
 			return undefined;
@@ -1140,7 +1148,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const groups: any[] = parents.map((traitItem: any) => {
 			const tIdx = traitItem.originalIndex;
 			const nested = (traitItem.trait?.traits || [])
-				.filter((sub: any) => !cortexFunctions.isStatementContainer(sub))
+				.filter((sub: any) => sub?.name !== 'Statement')
 				.map((sub: any, u: number) => ({ kind: 'sub', sub, u }));
 			const linked = flats
 				.filter((f: any) => getView(f.trait)?.linkTo === tIdx)
@@ -1378,10 +1386,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		renderNotesText,
 		getTraitSetClasses,
 		getRatingPosition,
-		isStatementSet,
-		hasQuestionedPip,
-		isTraitQuestioned,
-		toggleTraitQuestioned,
+		getPipChild,
+		isChildPipFilled,
+		togglePip,
 		getParts,
 		partsGridFor,
 		partCellStyle,

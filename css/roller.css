@@ -282,7 +282,7 @@
 
 	.roller-sublabel {
 		font-weight: 700;
-		color: var(--text-main, #1e293b);
+		color: var(--color-label);
 		font-style: normal;
 		font-size: 0.65rem;
 		text-transform: uppercase;
@@ -303,7 +303,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	background: var(--bg-surface-elevated, #ffffff);
+	background: white;
 	border-radius: 4px;
 	padding: 2px 5px;
 	cursor: pointer;
@@ -322,16 +322,16 @@
 }
 
 .roller-btn-scale-quick {
-	border: 1px solid var(--border-subtle, #cbd5e1);
+	border: 1px solid var(--color-separator);
 
 	.diecon,
 	.c {
-		color: var(--text-main, #1e293b);
+		color: #1e293b;
 	}
 
 	&:hover {
 		border-color: var(--color-interactive, #0284c7);
-		background: var(--bg-surface-card, #f8fafc);
+		background: #f8fafc;
 	}
 }
 

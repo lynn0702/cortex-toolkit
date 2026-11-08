@@ -117,18 +117,18 @@ function createTestCharacter() {
 			{
 				name: 'Values',
 				noun: 'Value',
-				statement: true,
-				hasQuestionedPip: true,
 				view: { pillar: 'prime' },
 				traits: [
 					{
 						name: 'Justice',
-						statement: 'No one gets left behind.',
-						questioned: true,
 						rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
-						traits: [],
+						traits: [
+							{
+								name: 'No one gets left behind.',
+								rating: { type: 'Pip', value: [true] },
+							},
+						],
 						tags: [],
-						custom: { questioned: true },
 					},
 				],
 			},

@@ -25,11 +25,10 @@ const {
 	getRatingPosition,
 	getTraitStatement,
 	renderText,
-	isStatementSet,
 	isFixedSystemTrait,
-	hasQuestionedPip,
-	isTraitQuestioned,
-	toggleTraitQuestioned,
+	getPipChild,
+	isChildPipFilled,
+	togglePip,
 	handleSingleDieClick,
 	handleDieClick,
 	handleSteppedDieClick,
@@ -118,7 +117,7 @@ const {
 					:data-trait-name="item.trait.name || undefined"
 					:data-trait-rating="firstDie(item.trait) ? 'd' + firstDie(item.trait) : undefined"
 					:data-trait-out="isTraitOut(item.trait, traitSet) ? 'true' : undefined"
-					:data-trait-questioned="isTraitQuestioned(item.trait) ? 'true' : undefined"
+					:data-trait-questioned="isChildPipFilled(item.trait) ? 'true' : undefined"
 					:style="isPositionalFrameActive ? getTraitAnchorStyle(t) : undefined"
 					:data-frame-dock="isPositionalFrameActive ? getTraitAnchorDock(t) : undefined"
 					:data-frame-hemisphere="isPositionalFrameActive ? getTraitAnchorHemisphere(t) : undefined"
@@ -135,7 +134,7 @@ const {
 								'trait-placeholder-slot': item.isPlaceholder,
 							}"
 							:style="
-								!isPositionalFrameActive ? partsGridStyle(partsGridFor(traitSet), !isStatementSet(traitSet)) : undefined
+								!isPositionalFrameActive ? partsGridStyle(partsGridFor(traitSet), !getPipChild(item.trait)) : undefined
 							"
 						>
 							<!-- NAME (above: the asset box; the dice live in the rating cell) -->
@@ -151,12 +150,13 @@ const {
 								<div
 									:class="{
 										'trait-title': getRatingPosition(traitSet) !== 'above',
-										'trait-title-statement': isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above',
+										'trait-title-statement':
+											Boolean(getPipChild(item.trait)) && getRatingPosition(traitSet) !== 'above',
 										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
 										'trait-asset-box': getRatingPosition(traitSet) === 'above',
 									}"
 								>
-									<template v-if="isStatementSet(traitSet) && getRatingPosition(traitSet) !== 'above'">
+									<template v-if="Boolean(getPipChild(item.trait)) && getRatingPosition(traitSet) !== 'above'">
 										<button
 											type="button"
 											class="trait-title-btn"
@@ -193,19 +193,19 @@ const {
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 										</button>
 										<span
-											v-if="hasQuestionedPip(traitSet)"
+											v-if="getPipChild(item.trait)"
 											class="statement-pip"
-											:class="{ questioned: isTraitQuestioned(item.trait) }"
+											:class="{ questioned: isChildPipFilled(item.trait) }"
 											role="checkbox"
 											tabindex="0"
-											:aria-checked="isTraitQuestioned(item.trait) ? 'true' : 'false'"
+											:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
 											:aria-label="`Question statement for ${item.trait.name || 'trait'}`"
-											@keydown.enter.prevent="toggleTraitQuestioned(s, item.originalIndex)"
-											@keydown.space.prevent="toggleTraitQuestioned(s, item.originalIndex)"
-											@click.stop="toggleTraitQuestioned(s, item.originalIndex)"
+											@keydown.enter.prevent="togglePip(s, item.originalIndex)"
+											@keydown.space.prevent="togglePip(s, item.originalIndex)"
+											@click.stop="togglePip(s, item.originalIndex)"
 											:title="
 												submode === 'play'
-													? isTraitQuestioned(item.trait)
+													? isChildPipFilled(item.trait)
 														? 'Questioned (click to reset)'
 														: 'Click to question'
 													: ''
@@ -879,7 +879,7 @@ const {
 								<div
 									class="trait-title"
 									:class="{
-										'trait-title-statement': isStatementSet(traitSet),
+										'trait-title-statement': Boolean(getPipChild(item.trait)),
 										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
 									}"
 									:style="isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined"
@@ -887,7 +887,7 @@ const {
 									<span class="list-bullet" v-if="getView(traitSet)?.style?.body === 'list'">•</span>
 
 									<!-- STATEMENT MODE (e.g. Values) -->
-									<template v-if="isStatementSet(traitSet)">
+									<template v-if="Boolean(getPipChild(item.trait))">
 										<button
 											type="button"
 											class="trait-title-btn"
@@ -924,19 +924,19 @@ const {
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 										</button>
 										<span
-											v-if="hasQuestionedPip(traitSet)"
+											v-if="getPipChild(item.trait)"
 											class="statement-pip"
-											:class="{ questioned: isTraitQuestioned(item.trait) }"
+											:class="{ questioned: isChildPipFilled(item.trait) }"
 											role="checkbox"
 											tabindex="0"
-											:aria-checked="isTraitQuestioned(item.trait) ? 'true' : 'false'"
+											:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
 											:aria-label="`Question statement for ${item.trait.name || 'trait'}`"
-											@keydown.enter.prevent="toggleTraitQuestioned(s, item.originalIndex)"
-											@keydown.space.prevent="toggleTraitQuestioned(s, item.originalIndex)"
-											@click.stop="toggleTraitQuestioned(s, item.originalIndex)"
+											@keydown.enter.prevent="togglePip(s, item.originalIndex)"
+											@keydown.space.prevent="togglePip(s, item.originalIndex)"
+											@click.stop="togglePip(s, item.originalIndex)"
 											:title="
 												submode === 'play'
-													? isTraitQuestioned(item.trait)
+													? isChildPipFilled(item.trait)
 														? 'Questioned (click to reset)'
 														: 'Click to question'
 													: ''
@@ -1220,7 +1220,7 @@ const {
 									</div>
 								</div>
 
-								<div class="trait-description" v-if="!isStatementSet(traitSet)">
+								<div class="trait-description" v-if="!getPipChild(item.trait)">
 									<div
 										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
 										v-html="renderText(item.trait.description)"

@@ -220,7 +220,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				: t?.traits && typeof t.traits === 'object'
 					? Object.values(t.traits)
 					: [];
-			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && !cortexFunctions.isStatementContainer(s));
+			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && s?.name !== 'Statement');
 		});
 		return {
 			rating,
@@ -881,20 +881,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		get: () => (getView(traitSet.value)?.labelPosition === 'vertical' ? 'vertical' : 'horizontal'),
 		set: (val: 'horizontal' | 'vertical') => {
 			setCustomProperty('labelPosition', val === 'vertical' ? 'vertical' : null);
-		},
-	});
-
-	const isStatementSet = computed({
-		get: () => Boolean(traitSet.value?.statement),
-		set: (val: boolean) => {
-			setProperty('statement', Boolean(val));
-		},
-	});
-
-	const hasQuestionedPip = computed({
-		get: () => Boolean(traitSet.value?.hasQuestionedPip),
-		set: (val: boolean) => {
-			setProperty('hasQuestionedPip', Boolean(val));
 		},
 	});
 
@@ -1571,8 +1557,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		trackLabel,
 		ratingPosition,
 		labelPosition,
-		isStatementSet,
-		hasQuestionedPip,
 		hasCounterColumn,
 		counterLabel,
 		pipCount,

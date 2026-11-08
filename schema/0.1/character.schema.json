@@ -52,20 +52,6 @@
 					],
 					"description": "Placement of trait rating dice relative to trait labels."
 				},
-				"statement": {
-					"type": [
-						"boolean",
-						"null"
-					],
-					"description": "Whether traits in this set feature a statement box alongside the trait name."
-				},
-				"hasQuestionedPip": {
-					"type": [
-						"boolean",
-						"null"
-					],
-					"description": "Whether statement traits feature a toggleable questioned pip."
-				},
 				"hasCounterColumn": {
 					"type": [
 						"boolean",
@@ -269,20 +255,20 @@
 						]
 					}
 				},
-			"range": {
-				"type": "array",
-				"description": "The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip. Pip may omit it (a lone bubble's [true, false] pair is derived).",
-				"items": {
-					"type": "integer"
+				"range": {
+					"type": "array",
+					"description": "The ladder: die scale for Die/Dice, [min, max] for Counter, [count] for Pip. Pip may omit it (a lone bubble's [true, false] pair is derived).",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"out": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Out is part of this rating's range (one step past the top). Default off; most ratings lack it."
 				}
-			},
-			"out": {
-				"type": [
-					"boolean",
-					"null"
-				],
-				"description": "Out is part of this rating's range (one step past the top). Default off; most ratings lack it."
-			}
 			},
 			"required": [
 				"type",

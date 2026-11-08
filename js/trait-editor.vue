@@ -84,8 +84,21 @@ const isListStyle = computed(() => {
 	return b === 'list' || Boolean(parts && !parts.rating);
 });
 
-const isStatementSet = computed(() => Boolean(traitSet.value?.statement));
-const hasQuestionedPip = computed(() => Boolean(traitSet.value?.hasQuestionedPip));
+function getPipChild(node: any) {
+	if (!node || !Array.isArray(node.traits)) return undefined;
+	for (const ch of node.traits) {
+		if (!ch || typeof ch !== 'object') continue;
+		const r = getRating(ch);
+		if (r && r.type === 'Pip') return ch;
+		if (Array.isArray(ch.traits)) {
+			const nested = ch.traits.find((sub: any) => getRating(sub)?.type === 'Pip');
+			if (nested) return nested;
+		}
+	}
+	return undefined;
+}
+
+const hasPipChild = computed(() => Boolean(getPipChild(trait.value)));
 
 const hasSfxChildren = computed(
 	() => Array.isArray(cortexFunctions.sfxChildren(trait.value)) && cortexFunctions.sfxChildren(trait.value).length > 0,
@@ -93,11 +106,14 @@ const hasSfxChildren = computed(
 
 const isQuestioned = computed({
 	get() {
-		return cortexFunctions.isStatementFilled(trait.value);
+		const child = getPipChild(trait.value);
+		return Boolean(child?.rating?.type === 'Pip' && child.rating.value?.[0] === true);
 	},
 	set(val: any) {
 		if (!trait.value) return;
-		if (!cortexFunctions.setStatementFilled(trait.value, Boolean(val))) return;
+		const child = getPipChild(trait.value);
+		if (!child || !child.rating || child.rating.type !== 'Pip' || !Array.isArray(child.rating.value)) return;
+		child.rating.value[0] = Boolean(val);
 		updateCharacter(props.character);
 	},
 });
@@ -457,11 +473,40 @@ const description = computed({
 // the questioned state. Editing here creates/renames/removes that child.
 const statementText = computed({
 	get() {
-		return cortexFunctions.statementText(trait.value);
+		const child = getPipChild(trait.value);
+		return child && typeof child.name === 'string' ? child.name : '';
 	},
 	set(val: string) {
 		if (!trait.value) return;
-		cortexFunctions.setStatementText(trait.value, val);
+		const sentence = (val || '').trim();
+		if (!Array.isArray(trait.value.traits)) trait.value.traits = [];
+		const child = getPipChild(trait.value);
+		if (!sentence) {
+			if (child) {
+				const idx = trait.value.traits.indexOf(child);
+				if (idx !== -1) {
+					trait.value.traits.splice(idx, 1);
+				} else {
+					for (const grp of trait.value.traits) {
+						if (Array.isArray(grp.traits)) {
+							const gi = grp.traits.indexOf(child);
+							if (gi !== -1) grp.traits.splice(gi, 1);
+						}
+					}
+				}
+			}
+		} else {
+			if (child) {
+				child.name = sentence;
+			} else {
+				trait.value.traits.push({
+					name: sentence,
+					description: '',
+					tags: [],
+					rating: { type: 'Pip', value: [false] },
+				} as any);
+			}
+		}
 		updateCharacter(props.character);
 	},
 });
@@ -476,9 +521,7 @@ const subtraits = computed(() => {
 	if (!Array.isArray(subs)) return [];
 	return subs
 		.map((sub: any, idx: number) => ({ sub, idx }))
-		.filter(
-			(item: any) => !cortexFunctions.isSfxContainer(item.sub) && !cortexFunctions.isStatementContainer(item.sub),
-		);
+		.filter((item: any) => !cortexFunctions.isSfxContainer(item.sub) && item.sub?.name !== 'Statement');
 });
 
 const scrollable = computed(() =>
@@ -1335,7 +1378,7 @@ function getDieDisplayValue(val: any) {
 					</div>
 
 					<!-- STATEMENT FIELD -->
-					<div class="editor-field" v-if="isStatementSet || isPairedSlotsStyle">
+					<div class="editor-field" v-if="hasPipChild || isPairedSlotsStyle">
 						<label :for="'trait-statement-' + traitID">Statement</label>
 						<textarea
 							:id="'trait-statement-' + traitID"
@@ -1346,7 +1389,7 @@ function getDieDisplayValue(val: any) {
 					</div>
 
 					<!-- QUESTIONED PIP TOGGLE -->
-					<div class="editor-field" v-if="isStatementSet && hasQuestionedPip">
+					<div class="editor-field" v-if="hasPipChild">
 						<div class="editor-toggles">
 							<div>
 								<input
@@ -1888,7 +1931,7 @@ function getDieDisplayValue(val: any) {
 
 					<div
 						class="editor-field"
-						v-if="!isPlay && !isThreeColumnTable && !isStatementSet && !isPairedSlotsStyle && !isLabeledPipsSet"
+						v-if="!isPlay && !isThreeColumnTable && !hasPipChild && !isPairedSlotsStyle && !isLabeledPipsSet"
 					>
 						<label :for="'trait-desc-' + traitID">Description</label>
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>

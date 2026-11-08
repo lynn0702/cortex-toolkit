@@ -140,14 +140,6 @@ export interface TraitSet {
    */
   ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
   /**
-   * Whether traits in this set feature a statement box alongside the trait name.
-   */
-  statement?: boolean | null;
-  /**
-   * Whether statement traits feature a toggleable questioned pip.
-   */
-  hasQuestionedPip?: boolean | null;
-  /**
    * Whether this trait set renders a secondary counter column (e.g. Badges XP).
    */
   hasCounterColumn?: boolean | null;

@@ -190,6 +190,16 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(
 		JSON.stringify(
 			F.getTrackScale({
+				name: 'LadderSet',
+				view: { subtraitRatingLadder: [12, 6, 8] },
+				traits: [{ name: 'A', traits: [{ name: 'Stress', rating: { type: 'Die', range: [4, 6] } }] }],
+			}),
+		) === '[6,8,12]',
+		'getTrackScale prefers view.subtraitRatingLadder when present and returns sorted copy',
+	);
+	ok(
+		JSON.stringify(
+			F.getTrackScale({
 				name: 'Bare',
 				traits: [{ name: 'A', traits: [{ name: 'AnyTrack', rating: { type: 'Die', range: [4, 6, 8] } }] }],
 			}),
