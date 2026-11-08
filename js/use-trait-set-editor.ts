@@ -576,6 +576,27 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
+	const endWord = computed({
+		get: () => {
+			const view = getView(traitSet.value);
+			if (view && typeof view.endWord === 'string') return view.endWord;
+			if (view && view.labels && typeof view.labels.out === 'string') return view.labels.out;
+			return 'OUT';
+		},
+		set: (val: string) => {
+			setCustomProperty('endWord', val);
+			const view = ensureView(traitSet.value);
+			if (!view.labels) view.labels = {};
+			view.labels.out = val;
+			updateCharacter(structuredClone(toRaw(props.character)));
+		},
+	});
+
+	const hasCounterTrait = computed(() => {
+		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
+		return traits.some((t: any) => t?.rating?.type === 'Counter');
+	});
+
 	const ratingLadder = computed({
 		get: () => cortexFunctions.getTraitSetRatings(traitSet.value),
 		set: (scale: number[]) => {
@@ -1526,6 +1547,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		namePortraitVisibility,
 		toggleNamePortraitVisibility,
 		includeOut,
+		endWord,
+		hasCounterTrait,
 		ratingLadder,
 		subtraitRatingLadder,
 		isPool,

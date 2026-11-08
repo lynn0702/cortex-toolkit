@@ -170,6 +170,10 @@ textarea:focus-visible {
 /* DIE VALUES */
 
 .diecon {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 1;
+	overflow: visible;
 	color: var(--color-primary);
 }
 

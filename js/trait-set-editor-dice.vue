@@ -16,6 +16,7 @@ const {
 	styleBody,
 	allowsTraitColumns,
 	hasTrackPart,
+	includeOut,
 } = injectTraitSetEditor();
 
 function toggleSetRating(size: number | null) {
@@ -40,6 +41,15 @@ function toggleSetRating(size: number | null) {
 				>
 					<span v-html="getDieDisplayValue(size)"></span>
 					<span class="chip-label">d{{ size }}</span>
+				</button>
+				<button
+					type="button"
+					class="rating-scale-chip rating-scale-chip-out"
+					:class="{ active: includeOut }"
+					@click.stop="includeOut = !includeOut"
+					:title="(includeOut ? 'Disable' : 'Enable') + ' Out marker'"
+				>
+					<span class="chip-label chip-out-label">OUT</span>
 				</button>
 			</div>
 		</div>

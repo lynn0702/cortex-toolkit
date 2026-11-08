@@ -1937,7 +1937,7 @@
 
 	.rating-scale-chips {
 		display: grid;
-		grid-template-columns: repeat(5, 1fr);
+		grid-template-columns: repeat(6, 1fr);
 		gap: 0.35rem;
 
 		&.set-rating-die-chips {
@@ -1989,8 +1989,15 @@
 				}
 			}
 
-			&.set-rating-die-none {
+			&.set-rating-die-none,
+			&.rating-scale-chip-out {
 				justify-content: center;
+			}
+
+			.chip-out-label {
+				font-size: 0.75rem;
+				font-weight: 700;
+				letter-spacing: 0.05em;
 			}
 		}
 	}

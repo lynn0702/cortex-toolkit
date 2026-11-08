@@ -516,6 +516,7 @@ export interface CortexToolkitCustom {
 	labelPosition?: 'horizontal' | 'vertical';
 	counterLabel?: string;
 	branchArrows?: boolean;
+	endWord?: string;
 	/** Pool staging on the set node (one recursive shape): clicks stage the whole array. */
 	pool?: boolean;
 	/** Spend control on the set node; spent state lives in spentDice beside the rating. */

@@ -1025,4 +1025,222 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			wrapper.unmount();
 		});
 	});
+
+	describe('Phase 4: Unified Set & Subtrait Editor (Rule of 3)', () => {
+		it('renders identity (name line 1, description line 2) and unified rating types in SubtraitEditor', async () => {
+			const { default: SubtraitEditor } = await import('../js/subtrait-editor.vue');
+			const char: any = {
+				name: 'Test Hero',
+				traitSets: [
+					{
+						name: 'Skills',
+						traits: [
+							{
+								name: 'Combat',
+								traits: [{ name: 'Swords', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
+							},
+						],
+					},
+				],
+			};
+
+			const wrapper = mount(SubtraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					subtraitID: 0,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+
+			// 1. Identity order
+			const fields = wrapper.findAll('.editor-field');
+			expect(fields.length).toBeGreaterThanOrEqual(2);
+			expect(fields[0].find('input[name="subtraitName"]').exists()).toBe(true);
+			expect(fields[1].find('textarea[name="subtraitDescription"]').exists()).toBe(true);
+
+			// 2. Rating type picker
+			const typeButtons = wrapper.findAll('.editor-group-btn');
+			const buttonTexts = typeButtons.map((b) => b.text());
+			expect(buttonTexts).toContain('Die');
+			expect(buttonTexts).toContain('Dice');
+			expect(buttonTexts).toContain('Counter');
+			expect(buttonTexts).toContain('Pip');
+
+			// 3. Switch to Pip (statement / questioned)
+			const pipBtn = typeButtons.find((b) => b.text() === 'Pip');
+			expect(pipBtn).toBeDefined();
+			await pipBtn!.trigger('click');
+			expect(char.traitSets[0].traits[0].traits[0].rating.type).toBe('Pip');
+
+			wrapper.unmount();
+		});
+
+		it('derives counter column presence structurally from Counter rating traits without set flags', async () => {
+			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
+			const char: any = {
+				name: 'Counter Hero',
+				traitSets: [
+					{
+						name: 'Badges',
+						view: { style: { body: 'die-rows' } },
+						traits: [
+							{
+								name: 'XP Badge',
+								rating: { type: 'Counter', value: [5], range: [0, 20] },
+							},
+						],
+					},
+				],
+			};
+
+			const wrapper = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body,
+			});
+
+			// Has counter column rendered structurally
+			expect(wrapper.find('.die-row-counter').exists()).toBe(true);
+			wrapper.unmount();
+		});
+
+		it('warns before rating-type change when child traits exist and confirms switch', async () => {
+			const { default: SubtraitEditor } = await import('../js/subtrait-editor.vue');
+			const char: any = {
+				name: 'Complex Trait Hero',
+				traitSets: [
+					{
+						name: 'Powers',
+						traits: [
+							{
+								name: 'Sorcery',
+								traits: [
+									{
+										name: 'Spell',
+										rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+										traits: [
+											{
+												name: 'Subordinate FX',
+												rating: { type: 'Die', value: [6] },
+											},
+										],
+									},
+								],
+							},
+						],
+					},
+				],
+			};
+
+			const wrapper = mount(SubtraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					subtraitID: 0,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+
+			const typeButtons = wrapper.findAll('.editor-group-btn');
+			const counterBtn = typeButtons.find((b) => b.text() === 'Counter');
+			expect(counterBtn).toBeDefined();
+
+			// Click Counter -> warning banner displayed
+			await counterBtn!.trigger('click');
+			expect(wrapper.find('.editor-warning-banner').exists()).toBe(true);
+			expect(char.traitSets[0].traits[0].traits[0].rating.type).toBe('Die');
+
+			// Click Confirm in warning banner -> switches type to Counter
+			const confirmBtn = wrapper.find('.btn-warning-confirm');
+			expect(confirmBtn.exists()).toBe(true);
+			await confirmBtn.trigger('click');
+			expect(char.traitSets[0].traits[0].traits[0].rating.type).toBe('Counter');
+
+			wrapper.unmount();
+		});
+
+		it('supports statement child trait in Play mode with read-only name and interactive pip toggle', async () => {
+			const { default: SubtraitEditor } = await import('../js/subtrait-editor.vue');
+			const char: any = {
+				name: 'Statement Hero',
+				traitSets: [
+					{
+						name: 'Distinctions',
+						traits: [
+							{
+								name: 'Bounty Hunter',
+								traits: [
+									{
+										name: 'I always get my bounty.',
+										rating: { type: 'Pip', value: [false] },
+									},
+								],
+							},
+						],
+					},
+				],
+			};
+
+			const wrapper = mount(SubtraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					subtraitID: 0,
+					submode: 'play',
+				},
+				attachTo: document.body,
+			});
+
+			// In Play mode, name is rendered read-only
+			expect(wrapper.find('.editor-readonly-title').exists()).toBe(true);
+			expect(wrapper.find('input[name="subtraitName"]').exists()).toBe(false);
+
+			// Pip bubble is interactive and toggles questioned state
+			const pipWrap = wrapper.find('.pip-bubble-wrap');
+			expect(pipWrap.exists()).toBe(true);
+			expect(pipWrap.attributes('aria-checked')).toBe('false');
+
+			await pipWrap.trigger('click');
+			expect(char.traitSets[0].traits[0].traits[0].rating.value[0]).toBe(true);
+
+			wrapper.unmount();
+		});
+
+		it('renders [OUT] toggle chip in the scale row and updates out state', async () => {
+			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
+			const char: any = {
+				name: 'Out Hero',
+				traitSets: [
+					{
+						name: 'Stress',
+						view: { style: { body: 'die-track' }, parts: { track: true } },
+						traits: [{ name: 'Physical', rating: { type: 'Die', value: [6] } }],
+					},
+				],
+			};
+
+			const wrapper = mount(TraitSetEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+				},
+				attachTo: document.body,
+			});
+
+			const outChip = wrapper.find('.rating-scale-chip-out');
+			expect(outChip.exists()).toBe(true);
+			expect(outChip.text()).toContain('OUT');
+
+			// Click [OUT] -> toggles outIndicator
+			await outChip.trigger('click');
+			expect(outChip.classes()).toContain('active');
+
+			wrapper.unmount();
+		});
+	});
 });

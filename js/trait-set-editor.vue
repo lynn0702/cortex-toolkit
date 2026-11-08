@@ -43,6 +43,8 @@ const {
 	hasLabelContent,
 	description,
 	includeOut,
+	endWord,
+	hasCounterTrait,
 	allowsTraitColumns,
 	traitColumns,
 	needsDiceUI,
@@ -58,9 +60,6 @@ const {
 	reservedSlots,
 	ratingPosition,
 	labelPosition,
-	isStatementSet,
-	hasQuestionedPip,
-	hasCounterColumn,
 	counterLabel,
 	restorableTraitNames,
 	restoreTrait,
@@ -173,37 +172,6 @@ function applyFromMini(updatedSet: any) {
 
 						<!-- STYLE-CONDITIONAL SECTIONS (each exists only for the styles that summon it) -->
 						<TraitSetEditorRing />
-
-						<!-- OUT MARKER (generic stepped-track indicator, default off) -->
-						<div class="editor-field" v-if="styleBody === 'die-track' || styleBody === 'default'">
-							<div class="editor-label">Out Marker</div>
-							<div class="editor-toggles">
-								<div>
-									<input
-										type="checkbox"
-										:id="'trait-set-' + traitSetID + '-stress-out'"
-										name="stressOut"
-										:true-value="true"
-										:false-value="false"
-										v-model="includeOut"
-									/>
-								</div>
-								<div><label :for="'trait-set-' + traitSetID + '-stress-out'">Out marker</label></div>
-							</div>
-							<div v-if="includeOut" class="editor-row-inline mt-sm">
-								<div class="flex-1">
-									<label :for="'trait-set-' + traitSetID + '-out-word'" class="editor-sub-label">Out Word</label>
-									<input
-										type="text"
-										:id="'trait-set-' + traitSetID + '-out-word'"
-										name="outWord"
-										:value="styleLabel('out')"
-										@change="setStyleLabel('out', targetValue($event))"
-										:placeholder="styleLabel('out')"
-									/>
-								</div>
-							</div>
-						</div>
 
 						<TraitSetEditorDice />
 
@@ -370,44 +338,23 @@ function applyFromMini(updatedSet: any) {
 							</div>
 						</div>
 
-						<!-- STATEMENT MODE -->
-						<div class="editor-field" v-if="styleBody !== 'image' && styleBody !== 'pips' && !isName">
-							<div class="editor-checkbox-row">
-								<input
-									type="checkbox"
-									:id="'trait-set-' + traitSetID + '-statement-mode'"
-									name="statementMode"
-									v-model="isStatementSet"
-								/>
-								<label :for="'trait-set-' + traitSetID + '-statement-mode'">Statement field</label>
-							</div>
-							<div class="editor-checkbox-row is-indented" v-if="isStatementSet">
-								<input
-									type="checkbox"
-									:id="'trait-set-' + traitSetID + '-questioned-pip'"
-									name="questionedPip"
-									v-model="hasQuestionedPip"
-								/>
-								<label :for="'trait-set-' + traitSetID + '-questioned-pip'">Questioned</label>
-							</div>
+						<!-- END WORD (active when Out marker is enabled) -->
+						<div class="editor-field" v-if="includeOut">
+							<label :for="'trait-set-' + traitSetID + '-end-word'" class="editor-sub-label">End Word</label>
+							<input
+								type="text"
+								:id="'trait-set-' + traitSetID + '-end-word'"
+								name="endWord"
+								v-model="endWord"
+								placeholder="OUT"
+								class="editor-input-short"
+							/>
 						</div>
 
-						<!-- COUNTER COLUMN (e.g. BADGES XP) -->
-						<div
-							class="editor-field"
-							v-if="styleBody === 'die-rows' || styleBody === 'default' || styleBody === 'list'"
-						>
-							<div class="editor-label">Counter</div>
-							<div class="editor-checkbox-row">
-								<input
-									type="checkbox"
-									:id="'trait-set-' + traitSetID + '-counter-col'"
-									name="counterCol"
-									v-model="hasCounterColumn"
-								/>
-								<label :for="'trait-set-' + traitSetID + '-counter-col'">Counter column</label>
-							</div>
-							<div v-if="hasCounterColumn" class="editor-row-inline mt-sm">
+						<!-- COUNTER COLUMN HEADER (shown when set has Counter traits) -->
+						<div class="editor-field" v-if="hasCounterTrait">
+							<div class="editor-label">Counter Column</div>
+							<div class="editor-row-inline mt-sm">
 								<label :for="'trait-set-' + traitSetID + '-counter-label'" class="editor-sub-label"
 									>Header Label:</label
 								>

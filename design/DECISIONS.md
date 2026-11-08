@@ -293,6 +293,13 @@ by `scripts/validate.js`.
 so that background colors (black, primary, interactive, secondary, muted) and white text
 remain fully legible in print and economy print modes.
 
+### Editor unification (Rule of 3)
+- 2026-11-07: Unify trait/subtrait editing (Rule of 3): top-level trait sets, traits, and child traits follow an identical 4-stage hierarchy: (1) Identity (name first, then description), (2) Rating (type picker `Die | Dice | Counter | Pip` then scale/value), (3) Parts & Behavior (out marker, spendable, pool, etc.), (4) Children (unified "Add Child Trait" control).
+- 2026-11-07: Separate statement, attached stress, and counter column checkboxes dissolve: statements are ordinary child traits with Pip rating; attached stress are ordinary child traits with Die rating; counter columns render structurally from `rating.type === 'Counter'` without set flags.
+- 2026-11-07: Out marker sits in the scale row as an `[OUT]` glyph toggle chip beside the dice (`[4] [6] [8] [10] [12] [OUT]`). The word at the end of the scale is configured via `endWord` in Parts & Behavior (default "OUT").
+- 2026-11-07: Rating-type switching clears values; warns if child values or subordinate data would be wiped; silent otherwise.
+- 2026-11-07: `trait-editor.vue` is in scope alongside set and subtrait editors. Subtrait name input is hoisted to line 1 of the child editor block and auto-focuses on open.
+
 ## Open (decisions needed)
 
 - (none pending)

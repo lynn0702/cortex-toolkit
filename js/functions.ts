@@ -92,15 +92,21 @@ export const cortexFunctions = {
 		const filledClass = isFilled ? 'diecon-filled' : 'diecon-unfilled';
 		const cls = `diecon diecon-d${s} ${filledClass} ${extraClass}`.trim();
 
-		const cfg = diceConfig || (typeof window !== 'undefined' ? (window as any).__cortexActiveDiceConfig : null);
+		const cfg =
+			diceConfig !== undefined
+				? diceConfig
+				: typeof window !== 'undefined'
+					? (window as any).__cortexActiveDiceConfig
+					: null;
+		const isCustom = Boolean(cfg && cfg.style === 'custom');
 		let fill = isFilled ? 'currentColor' : 'none';
 		let stroke = 'currentColor';
 		let textFill = isFilled ? '#ffffff' : 'currentColor';
-		let strokeWidth = 1;
+		let strokeWidth = 1.5;
 		let defs = '';
 
-		if (cfg && (cfg.style === 'custom' || cfg.backgroundType)) {
-			strokeWidth = Number(cfg.borderWidth) || 1;
+		if (isCustom && cfg) {
+			strokeWidth = Number(cfg.borderWidth) || 1.5;
 			if (isFilled) {
 				stroke = cfg.borderColor || '#000000';
 				textFill = cfg.numeralColor || '#ffffff';
@@ -128,11 +134,11 @@ export const cortexFunctions = {
 				// Unset / unfilled dice: must remain unfilled (transparent) and only show border outline + numeral
 				fill = 'none';
 				stroke =
-					cfg.unfilledBorder && cfg.unfilledBorder !== 'none' ? cfg.unfilledBorder : cfg.borderColor || '#000000';
+					cfg.unfilledBorder && cfg.unfilledBorder !== 'none' ? cfg.unfilledBorder : cfg.borderColor || 'currentColor';
 				if (stroke.toLowerCase() === '#ffffff' || stroke.toLowerCase() === '#fff') {
 					stroke = '#334155';
 				}
-				textFill = stroke;
+				textFill = cfg.unfilledNumeral || stroke;
 			}
 		} else {
 			if (!isFilled) {
@@ -174,7 +180,7 @@ export const cortexFunctions = {
 			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">${s}</text>`;
 		}
 
-		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1.45rem" height="1.45rem" style="display:inline-block; vertical-align:middle; overflow:visible; width:var(--diecon-size, 1.45rem); height:var(--diecon-size, 1.45rem);">${defs}${shape}${text}</svg>`;
+		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1em" height="1em">${defs}${shape}${text}</svg>`;
 	},
 
 	// Geometry-only die SVG for miniature icons: reuses the exact diecon polygon

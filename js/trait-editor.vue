@@ -1097,7 +1097,7 @@ function removeSfxEntry(entryIndex: number) {
 
 function addSubtrait() {
 	const subtrait: any = structuredClone(cortexFunctions.defaultTrait);
-	subtrait.name = 'New subtrait';
+	subtrait.name = 'New child trait';
 	const allowed = cortexFunctions.getSubtraitRatings(traitSet.value);
 	const cur =
 		subtrait.rating && subtrait.rating.type === 'Die' && Array.isArray(subtrait.rating.value)
@@ -1894,9 +1894,9 @@ function getDieDisplayValue(val: any) {
 						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
 					</div>
 
-					<!-- SUBTRAITS -->
+					<!-- CHILD TRAITS (SUBTRAITS, STATEMENTS, SFX) -->
 					<div class="editor-field">
-						<div class="editor-label">Subtraits</div>
+						<div class="editor-label">Child Traits</div>
 
 						<div class="editor-subgroups">
 							<transition-group appear>
@@ -1917,7 +1917,7 @@ function getDieDisplayValue(val: any) {
 						<div class="editor-button-container" v-if="!isPlay">
 							<div class="editor-button-container-inner">
 								<div class="editor-button" @click.stop="addSubtrait">
-									<span><i class="fas fa-plus"></i> New Subtrait</span>
+									<span><i class="fas fa-plus"></i> Add Child Trait</span>
 								</div>
 							</div>
 						</div>
@@ -1979,8 +1979,8 @@ function getDieDisplayValue(val: any) {
 						</div>
 					</div>
 
-					<!-- SFX -->
-					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable">
+					<!-- SFX (Existing container entries) -->
+					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && sfxEntries.length > 0">
 						<div class="editor-label">SFX</div>
 
 						<div class="editor-subgroups">
@@ -1998,14 +1998,6 @@ function getDieDisplayValue(val: any) {
 									@removeSubtrait="removeSfxEntry"
 								></subtrait-editor>
 							</transition-group>
-						</div>
-
-						<div class="editor-button-container">
-							<div class="editor-button-container-inner">
-								<div class="editor-button" @click.stop="addSfxEntry">
-									<span><i class="fas fa-plus"></i> New SFX</span>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>

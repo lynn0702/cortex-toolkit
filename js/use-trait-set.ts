@@ -285,11 +285,15 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function isStatementSet(traitSetArg: TraitSet) {
-		return Boolean(traitSetArg?.statement);
+		if (Boolean(traitSetArg?.statement)) return true;
+		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
+		return traits.some((t: any) => cortexFunctions.statementChild(t) !== undefined);
 	}
 
 	function hasQuestionedPip(traitSetArg: TraitSet) {
-		return Boolean(traitSetArg?.hasQuestionedPip);
+		if (Boolean(traitSetArg?.hasQuestionedPip)) return true;
+		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
+		return traits.some((t: any) => cortexFunctions.statementChild(t)?.rating?.type === 'Pip');
 	}
 
 	function isTraitQuestioned(trait: Trait) {
@@ -305,7 +309,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function hasCounterColumn(traitSetArg: TraitSet) {
-		return Boolean(traitSetArg?.hasCounterColumn);
+		if (Boolean(traitSetArg?.hasCounterColumn)) return true;
+		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
+		return traits.some((t: any) => t?.rating?.type === 'Counter');
 	}
 
 	function getCounterLabel(traitSetArg: TraitSet) {
