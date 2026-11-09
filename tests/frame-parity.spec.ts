@@ -239,7 +239,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			const res = resolveFrame({ shape: 'arc' });
 			expect(res).toEqual({
 				shape: 'arc',
-				span: [-120, 120],
+				span: [45, 135],
 				corner: 8,
 				stroke: '2px',
 				color: 'primary',
@@ -248,6 +248,70 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				ringConfig: null,
 			});
 			expect('dash' in res!).toBe(false);
+		});
+
+		it('honors 2D view.parts layout on arc frame (e.g. Rating before Name, Block in row 2)', () => {
+			const character = {
+				name: 'Horizon Vanguard',
+				traitSets: [
+					{
+						name: 'Distinctions',
+						noun: 'Distinction',
+						view: {
+							frame: { shape: 'arc', color: 'primary', stroke: '4px' },
+							parts: {
+								rating: { left: '0%', width: '30%', top: 0, height: 1 },
+								name: { left: '30%', width: '70%', top: 0, height: 1 },
+								block: { left: '0%', width: '100%', top: 1, height: 1 },
+							},
+						},
+						traits: [
+							{
+								name: 'Slipstream Test Pilot',
+								rating: { type: 'Die', value: [8] },
+								traits: [{ name: 'SFX', traits: [{ name: 'Hinder', text: 'Gain a PP' }] }],
+							},
+						],
+					},
+				],
+			};
+
+			const wrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+			});
+
+			const listEl = wrapper.find('.trait-list-framed.frame-shape-arc');
+			expect(listEl.exists()).toBe(true);
+
+			const traitInner = listEl.find('.trait .trait-inner.trait-parts');
+			expect(traitInner.exists()).toBe(true);
+
+			// Container style has 2-column grid tracks
+			const innerStyle = traitInner.attributes('style') || '';
+			expect(innerStyle).toContain('grid-template-columns:');
+
+			// Rating cell: col 1 / span 1, row 1 / span 1
+			const ratingPart = traitInner.find('.trait-part-rating');
+			expect(ratingPart.exists()).toBe(true);
+			const ratingStyle = ratingPart.attributes('style') || '';
+			expect(ratingStyle).toContain('grid-column: 1 / span 1');
+			expect(ratingStyle).toContain('grid-row: 1 / span 1');
+
+			// Name cell: col 2 / span 1, row 1 / span 1
+			const namePart = traitInner.find('.trait-part-name');
+			expect(namePart.exists()).toBe(true);
+			const nameStyle = namePart.attributes('style') || '';
+			expect(nameStyle).toContain('grid-column: 2 / span 1');
+			expect(nameStyle).toContain('grid-row: 1 / span 1');
+
+			// Block cell: col 1 / span 2, row 2 / span 1
+			const blockPart = traitInner.find('.trait-part-block');
+			expect(blockPart.exists()).toBe(true);
+			const blockStyle = blockPart.attributes('style') || '';
+			expect(blockStyle).toContain('grid-column: 1 / span 2');
+			expect(blockStyle).toContain('grid-row: 2 / span 1');
+
+			wrapper.unmount();
 		});
 	});
 });

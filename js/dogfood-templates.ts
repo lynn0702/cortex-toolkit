@@ -120,9 +120,10 @@ export const VANGUARD_FRAME_SHOWCASE = {
 					place: { left: '0%', top: 2, width: '100%', height: 2 },
 					header: 'top',
 					features: { sfx: true },
+					ratingDisplay: 'rating',
 					frame: {
 						shape: 'arc',
-						span: [-110, 110],
+						span: [45, 135],
 						color: 'accent',
 					},
 					parts: {

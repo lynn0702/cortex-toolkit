@@ -77,7 +77,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		const shape = raw.trim() as FrameShape;
 		return {
 			shape,
-			span: shape === 'arc' ? [-120, 120] : [0, 360],
+			span: shape === 'arc' ? [45, 135] : [0, 360],
 			corner: 8,
 			stroke: '2px',
 			color: 'primary',
@@ -90,15 +90,23 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 	if (typeof raw === 'object' && !Array.isArray(raw)) {
 		const shape = (raw.shape || 'block') as FrameShape;
 		if (shape === 'none') return null;
-		const defaultSpan: [number, number] = shape === 'arc' ? [-120, 120] : [0, 360];
+		const defaultSpan: [number, number] = shape === 'arc' ? [45, 135] : [0, 360];
 		const parseNum = (val: any, fallback: number): number => {
 			const n = Number(val);
 			return Number.isFinite(n) ? n : fallback;
 		};
-		const span: [number, number] =
+		const rawSpan =
 			Array.isArray(raw.span) && raw.span.length >= 2
 				? [parseNum(raw.span[0], defaultSpan[0]), parseNum(raw.span[1], defaultSpan[1])]
 				: defaultSpan;
+		// For open arc shape, prevent 360° full-circle collapse and normalize legacy dome spans (e.g. [-110, 110])
+		const isLegacyArcSpan =
+			shape === 'arc' &&
+			(Math.abs(rawSpan[1] - rawSpan[0]) > 180 ||
+				rawSpan[0] < 0 ||
+				(rawSpan[0] === -110 && rawSpan[1] === 110) ||
+				(rawSpan[0] === -120 && rawSpan[1] === 120));
+		const span: [number, number] = isLegacyArcSpan ? defaultSpan : (rawSpan as [number, number]);
 		const effectiveRingConfig = shape === 'ring' ? raw.ringConfig || ringConfig || null : null;
 
 		let color: FrameColor = 'primary';
@@ -157,8 +165,8 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 		rx = 31;
 		ry = 23;
 	} else if (config.shape === 'arc') {
-		rx = 29;
-		ry = 25;
+		rx = 28;
+		ry = 28;
 	}
 
 	const delta = config.span[1] - config.span[0];
@@ -231,7 +239,7 @@ export function buildRadialShapePath(config: FrameConfig): string {
 		ry = 22;
 	} else if (config.shape === 'arc') {
 		rx = 28;
-		ry = 24;
+		ry = 28;
 	}
 
 	const delta = config.span[1] - config.span[0];

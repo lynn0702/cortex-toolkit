@@ -104,7 +104,7 @@ const headerModeComputed = computed(() => {
 
 const hasHeaderComputed = computed(() => {
 	if (props.hasHeader !== undefined) return props.hasHeader;
-	return Boolean(props.traitSet?.name) && shape.value !== 'line';
+	return Boolean(props.traitSet?.name);
 });
 
 const VALID_COLORS = ['primary', 'accent', 'muted', 'strong', 'black'];

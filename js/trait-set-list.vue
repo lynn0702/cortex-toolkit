@@ -24,11 +24,15 @@ const {
 	getSubtraitRatings,
 	renderDieValueForPrint,
 	getRatingPosition,
+	getRatingDisplay,
 	renderText,
 	isFixedSystemTrait,
 	getPipChild,
 	isChildPipFilled,
 	togglePip,
+	canEditStatement,
+	getStatementText,
+	setStatementText,
 	handleSingleDieClick,
 	handleDieClick,
 	handleSteppedDieClick,
@@ -64,6 +68,7 @@ const {
 	toggleTraitPipBubble,
 	getDynamicChildParts,
 	parseChildPartKey,
+	hasChildPartCell,
 	getChildTraitByNoun,
 	isPlayMutableSet,
 	traitHasHinder,
@@ -132,19 +137,14 @@ const {
 								selected: !item.isPlaceholder && isSelected(['trait', s, item.originalIndex]),
 								'trait-placeholder-slot': item.isPlaceholder,
 							}"
-							:style="
-								!isPositionalFrameActive ? partsGridStyle(partsGridFor(traitSet), !getPipChild(item.trait)) : undefined
-							"
+							:style="partsGridStyle(partsGridFor(traitSet), !getPipChild(item.trait))"
 						>
 							<!-- NAME (above: the asset box; the dice live in the rating cell) -->
 							<div
 								v-if="partsGridFor(traitSet)?.cells.name"
 								class="trait-part trait-part-name"
 								:class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }"
-								:style="[
-									!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'name') : undefined,
-									isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined,
-								]"
+								:style="partCellStyle(partsGridFor(traitSet), 'name')"
 							>
 								<div
 									:class="{
@@ -152,8 +152,7 @@ const {
 										'trait-title-statement':
 											Boolean(getPipChild(item.trait)) &&
 											getRatingPosition(traitSet) !== 'above' &&
-											!partsGridFor(traitSet)?.cells['child:Statement:label'] &&
-											!partsGridFor(traitSet)?.cells['child:Statement'],
+											!hasChildPartCell(traitSet, 'statement', 'label'),
 										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
 										'trait-asset-box': getRatingPosition(traitSet) === 'above',
 									}"
@@ -195,9 +194,9 @@ const {
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 										</button>
 										<span
-											v-if="getPipChild(item.trait) && !partsGridFor(traitSet)?.cells['child:Statement:rating']"
+											v-if="getPipChild(item.trait) && !hasChildPartCell(traitSet, 'statement', 'rating')"
 											class="statement-pip"
-											:class="{ questioned: isChildPipFilled(item.trait) }"
+											:class="{ questioned: !printBlank && isChildPipFilled(item.trait) }"
 											role="checkbox"
 											tabindex="0"
 											:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
@@ -214,16 +213,22 @@ const {
 											"
 										></span>
 										<span
-											v-if="
-												!partsGridFor(traitSet)?.cells['child:Statement:label'] &&
-												!partsGridFor(traitSet)?.cells['child:Statement']
-											"
+											v-if="!hasChildPartCell(traitSet, 'statement', 'label')"
 											class="trait-statement-box"
 											@click.stop="openTraitAt(s, item)"
 										>
+											<input
+												v-if="!printBlank && !item.isPlaceholder && canEditStatement(item.trait, traitSet)"
+												type="text"
+												class="trait-statement-input"
+												:value="getStatementText(item.trait)"
+												@input="setStatementText(item.trait, ($event.target as HTMLInputElement).value)"
+												@click.stop="openTraitAt(s, item)"
+												placeholder="Statement..."
+											/>
 											<span
 												class="trait-statement-text"
-												v-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
+												v-else-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
 												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
 											<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
@@ -309,7 +314,7 @@ const {
 									'trait-asset-card': getRatingPosition(traitSet) === 'above',
 									'trait-title trait-title-stacked': getRatingPosition(traitSet) === 'below',
 								}"
-								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'rating') : undefined"
+								:style="partCellStyle(partsGridFor(traitSet), 'rating')"
 							>
 								<div class="trait-value stress-value" v-if="getView(traitSet)?.style?.body === 'die-track'">
 									<span
@@ -460,33 +465,88 @@ const {
 											: null
 									"
 								>
-									<span
-										v-for="size in getTraitSetRatings(traitSet)"
-										:key="size"
-										:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
-										role="button"
-										tabindex="0"
-										:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
-										:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
-										@click.stop="
-											!printBlank && !item.isPlaceholder
-												? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-												: null
-										"
-										@keydown.enter.prevent="
-											!printBlank && !item.isPlaceholder
-												? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-												: null
-										"
-										@keydown.space.prevent="
-											!printBlank && !item.isPlaceholder
-												? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-												: null
-										"
-										v-html="
-											renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))
-										"
-									></span>
+									<template v-if="getRatingDisplay(traitSet) === 'rating'">
+										<span
+											:class="{ active: !printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) }"
+											role="button"
+											tabindex="0"
+											:aria-label="`Stage d${firstDie(item.trait) || getSetRatingDie(traitSet) || 4} from ${item.trait.name || 'trait'}`"
+											:aria-pressed="
+												!printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) ? 'true' : 'false'
+											"
+											@click.stop="
+												!printBlank && !item.isPlaceholder
+													? handleSingleDieClick(
+															item.trait,
+															firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+															traitSet,
+															s,
+															item.originalIndex,
+														)
+													: null
+											"
+											@keydown.enter.prevent="
+												!printBlank && !item.isPlaceholder
+													? handleSingleDieClick(
+															item.trait,
+															firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+															traitSet,
+															s,
+															item.originalIndex,
+														)
+													: null
+											"
+											@keydown.space.prevent="
+												!printBlank && !item.isPlaceholder
+													? handleSingleDieClick(
+															item.trait,
+															firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+															traitSet,
+															s,
+															item.originalIndex,
+														)
+													: null
+											"
+											v-html="
+												renderDieValueForPrint(
+													firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+													!printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)),
+												)
+											"
+										></span>
+									</template>
+									<template v-else>
+										<span
+											v-for="size in getTraitSetRatings(traitSet)"
+											:key="size"
+											:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+											role="button"
+											tabindex="0"
+											:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
+											:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
+											@click.stop="
+												!printBlank && !item.isPlaceholder
+													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+													: null
+											"
+											@keydown.enter.prevent="
+												!printBlank && !item.isPlaceholder
+													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+													: null
+											"
+											@keydown.space.prevent="
+												!printBlank && !item.isPlaceholder
+													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+													: null
+											"
+											v-html="
+												renderDieValueForPrint(
+													size,
+													!printBlank && !item.isPlaceholder && isDieActive(item.trait, size),
+												)
+											"
+										></span>
+									</template>
 									<button
 										v-if="
 											submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet)
@@ -501,7 +561,12 @@ const {
 										><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
 									</button>
 									<span
-										v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)"
+										v-if="
+											getRatingDisplay(traitSet) !== 'rating' &&
+											getSetRatingDie(traitSet) &&
+											!item.isPlaceholder &&
+											!isTraitRated(item.trait)
+										"
 										class="set-rating-die"
 										v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)"
 										:title="'Rating d' + getSetRatingDie(traitSet)"
@@ -533,7 +598,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.trackLabel"
 								class="trait-part trait-part-track-label"
-								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'trackLabel') : undefined"
+								:style="partCellStyle(partsGridFor(traitSet), 'trackLabel')"
 							>
 								<div class="attached-stress-divider" v-if="!isPartsInline(traitSet)"></div>
 								<span class="attached-stress-label">{{ getTraitTrackLabel(traitSet, item.trait) }}</span>
@@ -543,9 +608,7 @@ const {
 								v-if="partsGridFor(traitSet)?.cells.track"
 								class="trait-part trait-part-track"
 								:style="
-									(!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'track') + '; ' : '') +
-									'--track-faces: ' +
-									getTrackScale(traitSet).length
+									partCellStyle(partsGridFor(traitSet), 'track') + '; --track-faces: ' + getTrackScale(traitSet).length
 								"
 							>
 								<div class="attached-stress-track">
@@ -606,7 +669,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.description"
 								class="trait-part trait-part-description"
-								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'description') : undefined"
+								:style="partCellStyle(partsGridFor(traitSet), 'description')"
 							>
 								<div class="trait-description">
 									<div
@@ -624,7 +687,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.badge && (getView(item.trait) as any)?.badge"
 								class="trait-part trait-part-badge"
-								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'badge') : undefined"
+								:style="partCellStyle(partsGridFor(traitSet), 'badge')"
 							>
 								<span
 									class="badge"
@@ -645,7 +708,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.block && cortexFunctions.sfxChildren(item.trait).length"
 								class="trait-part trait-part-block"
-								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'block') : undefined"
+								:style="partCellStyle(partsGridFor(traitSet), 'block')"
 							>
 								<ul class="trait-sfx">
 									<li
@@ -677,7 +740,7 @@ const {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.subtraits"
 								class="trait-part trait-part-subtraits"
-								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'subtraits') : undefined"
+								:style="partCellStyle(partsGridFor(traitSet), 'subtraits')"
 							>
 								<ul class="subtraits" v-if="visibleSubtraits(traitSet, item.trait).length || printBlank">
 									<li
@@ -729,9 +792,18 @@ const {
 									<template v-if="parseChildPartKey(partKey).kind === 'label'">
 										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
 											<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
+												<input
+													v-if="!printBlank && !item.isPlaceholder && canEditStatement(item.trait, traitSet)"
+													type="text"
+													class="trait-statement-input"
+													:value="getStatementText(item.trait)"
+													@input="setStatementText(item.trait, ($event.target as HTMLInputElement).value)"
+													@click.stop="openTraitAt(s, item)"
+													placeholder="Statement..."
+												/>
 												<span
 													class="trait-statement-text"
-													v-if="
+													v-else-if="
 														!printBlank &&
 														!item.isPlaceholder &&
 														(getChildTraitByNoun(item.trait, 'statement')?.name || getPipChild(item.trait)?.name)
@@ -770,7 +842,7 @@ const {
 										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
 											<span
 												class="statement-pip"
-												:class="{ questioned: isChildPipFilled(item.trait) }"
+												:class="{ questioned: !printBlank && isChildPipFilled(item.trait) }"
 												role="checkbox"
 												tabindex="0"
 												:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
@@ -875,36 +947,88 @@ const {
 							<template v-if="getRatingPosition(traitSet) === 'above'">
 								<div class="trait-asset-card">
 									<div class="trait-value single-die-value">
-										<span
-											v-for="size in getTraitSetRatings(traitSet)"
-											:key="size"
-											:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
-											role="button"
-											tabindex="0"
-											:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
-											:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
-											@click.stop="
-												!printBlank && !item.isPlaceholder
-													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-													: null
-											"
-											@keydown.enter.prevent="
-												!printBlank && !item.isPlaceholder
-													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-													: null
-											"
-											@keydown.space.prevent="
-												!printBlank && !item.isPlaceholder
-													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-													: null
-											"
-											v-html="
-												renderDieValueForPrint(
-													size,
-													!printBlank && !item.isPlaceholder && isDieActive(item.trait, size),
-												)
-											"
-										></span>
+										<template v-if="getRatingDisplay(traitSet) === 'rating'">
+											<span
+												:class="{ active: !printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) }"
+												role="button"
+												tabindex="0"
+												:aria-label="`Stage d${firstDie(item.trait) || getSetRatingDie(traitSet) || 4} from ${item.trait.name || 'trait'}`"
+												:aria-pressed="
+													!printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) ? 'true' : 'false'
+												"
+												@click.stop="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(
+																item.trait,
+																firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+																traitSet,
+																s,
+																item.originalIndex,
+															)
+														: null
+												"
+												@keydown.enter.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(
+																item.trait,
+																firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+																traitSet,
+																s,
+																item.originalIndex,
+															)
+														: null
+												"
+												@keydown.space.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(
+																item.trait,
+																firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+																traitSet,
+																s,
+																item.originalIndex,
+															)
+														: null
+												"
+												v-html="
+													renderDieValueForPrint(
+														firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+														!printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)),
+													)
+												"
+											></span>
+										</template>
+										<template v-else>
+											<span
+												v-for="size in getTraitSetRatings(traitSet)"
+												:key="size"
+												:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+												role="button"
+												tabindex="0"
+												:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
+												:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
+												@click.stop="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+														: null
+												"
+												@keydown.enter.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+														: null
+												"
+												@keydown.space.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+														: null
+												"
+												v-html="
+													renderDieValueForPrint(
+														size,
+														!printBlank && !item.isPlaceholder && isDieActive(item.trait, size),
+													)
+												"
+											></span>
+										</template>
 									</div>
 									<button
 										type="button"
@@ -1001,10 +1125,19 @@ const {
 													: ''
 											"
 										></span>
-										<span class="trait-statement-box">
+										<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
+											<input
+												v-if="!printBlank && !item.isPlaceholder && canEditStatement(item.trait, traitSet)"
+												type="text"
+												class="trait-statement-input"
+												:value="getStatementText(item.trait)"
+												@input="setStatementText(item.trait, ($event.target as HTMLInputElement).value)"
+												@click.stop="openTraitAt(s, item)"
+												placeholder="Statement..."
+											/>
 											<span
 												class="trait-statement-text"
-												v-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
+												v-else-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
 												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
 											<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
@@ -1206,36 +1339,88 @@ const {
 												: null
 										"
 									>
-										<span
-											v-for="size in getTraitSetRatings(traitSet)"
-											:key="size"
-											:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
-											role="button"
-											tabindex="0"
-											:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
-											:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
-											@click.stop="
-												!printBlank && !item.isPlaceholder
-													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-													: null
-											"
-											@keydown.enter.prevent="
-												!printBlank && !item.isPlaceholder
-													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-													: null
-											"
-											@keydown.space.prevent="
-												!printBlank && !item.isPlaceholder
-													? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
-													: null
-											"
-											v-html="
-												renderDieValueForPrint(
-													size,
-													!printBlank && !item.isPlaceholder && isDieActive(item.trait, size),
-												)
-											"
-										></span>
+										<template v-if="getRatingDisplay(traitSet) === 'rating'">
+											<span
+												:class="{ active: !printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) }"
+												role="button"
+												tabindex="0"
+												:aria-label="`Stage d${firstDie(item.trait) || getSetRatingDie(traitSet) || 4} from ${item.trait.name || 'trait'}`"
+												:aria-pressed="
+													!printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)) ? 'true' : 'false'
+												"
+												@click.stop="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(
+																item.trait,
+																firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+																traitSet,
+																s,
+																item.originalIndex,
+															)
+														: null
+												"
+												@keydown.enter.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(
+																item.trait,
+																firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+																traitSet,
+																s,
+																item.originalIndex,
+															)
+														: null
+												"
+												@keydown.space.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(
+																item.trait,
+																firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+																traitSet,
+																s,
+																item.originalIndex,
+															)
+														: null
+												"
+												v-html="
+													renderDieValueForPrint(
+														firstDie(item.trait) || getSetRatingDie(traitSet) || 4,
+														!printBlank && !item.isPlaceholder && Boolean(firstDie(item.trait)),
+													)
+												"
+											></span>
+										</template>
+										<template v-else>
+											<span
+												v-for="size in getTraitSetRatings(traitSet)"
+												:key="size"
+												:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+												role="button"
+												tabindex="0"
+												:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
+												:aria-pressed="isDieActive(item.trait, size) ? 'true' : 'false'"
+												@click.stop="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+														: null
+												"
+												@keydown.enter.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+														: null
+												"
+												@keydown.space.prevent="
+													!printBlank && !item.isPlaceholder
+														? handleSingleDieClick(item.trait, size, traitSet, s, item.originalIndex)
+														: null
+												"
+												v-html="
+													renderDieValueForPrint(
+														size,
+														!printBlank && !item.isPlaceholder && isDieActive(item.trait, size),
+													)
+												"
+											></span>
+										</template>
 										<button
 											v-if="
 												submode === 'play' && !printBlank && !item.isPlaceholder && traitHasHinder(item.trait, traitSet)
@@ -1250,7 +1435,12 @@ const {
 											><span class="hinder-pp-tag" aria-hidden="true">+PP</span>
 										</button>
 										<span
-											v-if="getSetRatingDie(traitSet) && !item.isPlaceholder && !isTraitRated(item.trait)"
+											v-if="
+												getRatingDisplay(traitSet) !== 'rating' &&
+												getSetRatingDie(traitSet) &&
+												!item.isPlaceholder &&
+												!isTraitRated(item.trait)
+											"
 											class="set-rating-die"
 											v-html="renderDieValueForPrint(getSetRatingDie(traitSet), true)"
 											:title="'Rating d' + getSetRatingDie(traitSet)"

@@ -13,9 +13,11 @@ const {
 	createSubtrait,
 	isPool,
 	setSpendable,
+	setEditableOnSheet,
 	setHitches,
 	traitSetID,
 	includeOut,
+	ratingDisplay,
 } = injectTraitSetEditor();
 
 function toggleSetRating(size: number | null) {
@@ -88,15 +90,42 @@ function toggleSetRating(size: number | null) {
 		</div>
 	</div>
 
+	<!-- RATING DISPLAY (FULL TRACK OR SINGLE DIE) -->
+	<div class="editor-field" v-if="needsDiceUI">
+		<label :for="'trait-set-' + traitSetID + '-rating-display'">Rating Display</label>
+		<div class="editor-button-group">
+			<button
+				type="button"
+				class="editor-group-btn"
+				:class="{ active: (ratingDisplay || 'track') === 'track' }"
+				@click.stop="ratingDisplay = 'track'"
+			>
+				Full Track
+			</button>
+			<button
+				type="button"
+				class="editor-group-btn"
+				:class="{ active: ratingDisplay === 'rating' }"
+				@click.stop="ratingDisplay = 'rating'"
+			>
+				Single Die
+			</button>
+		</div>
+	</div>
+
 	<!-- SUBTRAITS -->
 	<div class="editor-field" v-if="needsDiceUI">
 		<div class="editor-label" v-if="setSubtraits.length > 0">Subtraits</div>
 		<div class="editor-subtrait-list" v-if="setSubtraits.length > 0">
-			<div v-for="item in setSubtraits" :key="'set-sub-' + item.idx" class="editor-subtrait-row">
+			<div
+				v-for="(item, itemIdx) in setSubtraits"
+				:key="'set-sub-' + item.idx + '-' + (item.sfxIdx ?? itemIdx)"
+				class="editor-subtrait-row"
+			>
 				<button
 					type="button"
 					class="editor-subtrait-drill"
-					@click.stop="openSetSubtrait(item.idx)"
+					@click.stop="openSetSubtrait(item)"
 					:title="'Edit ' + item.label"
 				>
 					<span class="editor-subtrait-name">{{ item.label }}</span>
@@ -108,7 +137,7 @@ function toggleSetRating(size: number | null) {
 				<button
 					type="button"
 					class="editor-subtrait-delete"
-					@click.stop="removeSetSubtrait(item.idx)"
+					@click.stop="removeSetSubtrait(item)"
 					:title="'Delete ' + item.label"
 					:aria-label="'Delete ' + item.label"
 				>
@@ -153,6 +182,17 @@ function toggleSetRating(size: number | null) {
 					v-model="setSpendable"
 				/>
 				<label :for="'trait-set-' + traitSetID + '-spendable'">Spendable</label>
+			</div>
+
+			<div class="editor-checkbox-row">
+				<input
+					type="checkbox"
+					:id="'trait-set-' + traitSetID + '-editable-sheet'"
+					:true-value="true"
+					:false-value="false"
+					v-model="setEditableOnSheet"
+				/>
+				<label :for="'trait-set-' + traitSetID + '-editable-sheet'">Editable on sheet</label>
 			</div>
 		</div>
 

@@ -447,10 +447,12 @@ function setFrameShape(shape: FrameShape) {
 		return;
 	}
 	const prev = resolveFrame(workingSet.value);
-	const defaultSpan: [number, number] = shape === 'arc' ? [-120, 120] : [0, 360];
+	const defaultSpan: [number, number] = shape === 'arc' ? [45, 135] : [0, 360];
+	const hasLegacySpan =
+		shape === 'arc' && (prev ? Math.abs(prev.span[1] - prev.span[0]) > 180 || prev.span[0] < 0 : false);
 	const f: any = {
 		shape,
-		span: prev ? prev.span : defaultSpan,
+		span: hasLegacySpan ? defaultSpan : prev ? prev.span : defaultSpan,
 		corner: prev ? prev.corner : 8,
 	};
 	if (prev?.color && prev.color !== 'primary') f.color = prev.color;
@@ -537,6 +539,24 @@ function toggleFrameBox() {
 	}
 	v.frame = f;
 }
+
+const ratingDisplay = computed<'track' | 'rating'>({
+	get: () => {
+		const v = getView(workingSet.value);
+		return (v?.ratingDisplay as 'track' | 'rating') || (workingSet.value as any)?.ratingDisplay || 'track';
+	},
+	set: (val: 'track' | 'rating') => {
+		const v = ensureView(workingSet.value);
+		if (val === 'track') {
+			delete v.ratingDisplay;
+			if (workingSet.value && typeof workingSet.value === 'object') {
+				delete (workingSet.value as any).ratingDisplay;
+			}
+		} else {
+			v.ratingDisplay = val;
+		}
+	},
+});
 
 // Die SVGs for palette icons
 const singleDieSVG = computed(() => cortexFunctions.renderDieGeometrySVG(8, false, 'mini-icon-die'));
@@ -1577,7 +1597,7 @@ function onFileImportSelected(ev: Event) {
 									</label>
 									<div class="mini-param-presets" role="group" aria-label="Span Presets">
 										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(0, 360)">360° Loop</button>
-										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(-120, 120)">Top Arch</button>
+										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(45, 135)">Right Arc</button>
 										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(180, 360)">Left Arc</button>
 									</div>
 								</div>
@@ -1674,6 +1694,29 @@ function onFileImportSelected(ev: Event) {
 									</button>
 								</div>
 							</div>
+						</div>
+					</section>
+
+					<!-- Rating Display (Full Track vs Single Die) -->
+					<section class="mini-frame-section" aria-label="Rating Display">
+						<div class="mini-section-label">RATING DISPLAY</div>
+						<div class="mini-btn-group" role="group" aria-label="Rating Display Mode">
+							<button
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: (ratingDisplay || 'track') === 'track' }"
+								@click="ratingDisplay = 'track'"
+							>
+								Full Track
+							</button>
+							<button
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: ratingDisplay === 'rating' }"
+								@click="ratingDisplay = 'rating'"
+							>
+								Single Die
+							</button>
 						</div>
 					</section>
 

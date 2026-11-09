@@ -313,29 +313,57 @@
 }
 
 .roster-item-button-container {
-	--button-font-size: 0.72rem;
-	margin-block-start: 0.85rem;
+	margin-block-start: 0.95rem;
+
 	& > div {
+		display: flex;
 		justify-content: flex-start;
 		align-items: center;
 		flex-wrap: wrap;
 		height: auto;
 		min-height: auto;
 		overflow: visible;
-		gap: 0.5rem 0.65rem;
+		gap: 0.55rem 0.65rem;
 	}
 }
 
 .roster-item-button {
 	display: inline-flex;
 	align-items: center;
-	padding: 0.4rem 0.95rem;
-	height: auto;
-	font-size: var(--button-font-size, 0.72rem);
-	line-height: 1.25;
+	justify-content: center;
+	padding: 0.45rem 1.15rem;
+	font-family: var(--font-heading);
+	font-weight: 700;
+	text-transform: uppercase;
+	font-size: 0.74rem;
+	line-height: 1.2;
+	white-space: nowrap;
+	border: none;
+	outline: none;
+	color: #ffffff;
+	background: var(--button-color, var(--color-interactive));
 	border-radius: 999px;
-	letter-spacing: 0.04em;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+	letter-spacing: 0.05em;
+	cursor: pointer;
+	opacity: 0.9;
+	transition:
+		opacity 0.2s,
+		transform 0.15s;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+
+	&:hover {
+		opacity: 1;
+		transform: translateY(-1px);
+	}
+
+	& > span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.4em;
+		line-height: 1.2;
+	}
+
 	&.roster-button-delete {
 		--button-color: var(--color-primary);
 	}
@@ -347,12 +375,12 @@
 	}
 	&.roster-button-toggle-template {
 		--button-color: var(--color-secondary);
-		color: black;
+		color: #0f172a;
 	}
 	&.roster-button-export,
 	&.roster-button-import {
 		--button-color: var(--color-secondary);
-		color: black;
+		color: #0f172a;
 	}
 }
 

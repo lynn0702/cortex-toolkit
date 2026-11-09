@@ -16,6 +16,8 @@ import {
 	rangeTop,
 	isOutDie,
 	applyTypeScopedRange,
+	resolveSubtraitNoun,
+	resolveSubtraitPlural,
 	type Character,
 } from './model.ts';
 import { buildParts } from './spotlight-grid.ts';
@@ -120,24 +122,81 @@ const identityLabel = computed(() => {
 	return 'Trait Name';
 });
 
+const subtraitNoun = computed({
+	get() {
+		return resolveSubtraitNoun(trait.value);
+	},
+	set(val: string) {
+		const target = trait.value as Record<string, any> | undefined;
+		if (!target) return;
+		const prev = resolveSubtraitNoun(target);
+		target.noun = val;
+		ensureView(target).noun = val;
+		if (!target.name || target.name.trim().toLowerCase() === prev.toLowerCase()) {
+			target.name = val;
+		}
+		syncCompanionSubtraits(prev);
+		updateCharacter(props.character);
+	},
+});
+
+const subtraitPlural = computed({
+	get() {
+		return resolveSubtraitPlural(trait.value);
+	},
+	set(val: string) {
+		const target = trait.value as Record<string, any> | undefined;
+		if (!target) return;
+		target.plural = val;
+		ensureView(target).plural = val;
+		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
+		const path = resolvedPath.value;
+		traits.forEach((tr: any) => {
+			if (!tr || typeof tr !== 'object' || tr === parentTrait.value) return;
+			if (typeof path[1] === 'number' && tr.traits?.[path[1]]) {
+				const sibling = tr.traits[path[1]];
+				sibling.plural = val;
+				ensureView(sibling).plural = val;
+			}
+		});
+		updateCharacter(props.character);
+	},
+});
+
+const statementChild = computed(() => {
+	if (!trait.value || isSubtraitMode.value) return null;
+	return (
+		(Array.isArray(trait.value.traits) &&
+			trait.value.traits.find((st: any) => {
+				const r = getRating(st);
+				return r?.type === 'Pip' || resolveSubtraitNoun(st).toLowerCase() === 'statement';
+			})) ||
+		null
+	);
+});
+const statementNoun = computed(() => (statementChild.value ? resolveSubtraitNoun(statementChild.value) : 'Statement'));
+const statementText = computed({
+	get() {
+		return statementChild.value?.name ?? '';
+	},
+	set(val: string) {
+		if (statementChild.value) {
+			statementChild.value.name = val;
+			updateCharacter(props.character);
+		}
+	},
+});
+
 const name = computed({
 	get() {
 		if (isSetSubtraitMode.value) {
-			return trait.value?.noun || trait.value?.name || '';
+			return resolveSubtraitNoun(trait.value);
 		}
 		return trait.value?.name ?? '';
 	},
 	set(val: string) {
 		if (isSetSubtraitMode.value) {
-			const target = trait.value as Record<string, any> | undefined;
-			if (!target) return;
-			const prev = target.noun || target.name || '';
-			target.noun = val;
-			if (!target.name || target.name === prev) {
-				target.name = val;
-			}
-			syncCompanionSubtraits(prev);
-			updateCharacter(props.character);
+			subtraitNoun.value = val;
 			return;
 		}
 		setProperty('name', val);
@@ -247,8 +306,15 @@ const ratingHasOut = computed({
 		const t = trait.value as unknown as Record<string, any>;
 		const r = t && t.rating;
 		if (!r || typeof r !== 'object' || (r.type !== 'Die' && r.type !== 'Dice')) return;
-		if (value) r.out = true;
-		else delete r.out;
+		if (value) {
+			r.out = true;
+		} else {
+			delete r.out;
+			if (t.isOut) {
+				t.isOut = false;
+				cortexFunctions.setTraitDice(trait.value, []);
+			}
+		}
 		if (isSetSubtraitMode.value) {
 			syncCompanionSubtraits(t.noun || t.name);
 		} else if (traitSet.value) {
@@ -486,6 +552,30 @@ const traitSpendable = computed({
 	},
 });
 
+const editableOnSheet = computed({
+	get() {
+		return Boolean(getView(trait.value)?.editableOnSheet ?? getView(traitSet.value)?.editableOnSheet);
+	},
+	set(val: boolean) {
+		const v = ensureView(trait.value);
+		if (val) v.editableOnSheet = true;
+		else delete v.editableOnSheet;
+		if (isSetSubtraitMode.value) {
+			const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
+			const path = resolvedPath.value;
+			traits.forEach((tr: any) => {
+				if (!tr || typeof tr !== 'object') return;
+				if (typeof path[1] === 'number' && tr.traits?.[path[1]]) {
+					const sv = ensureView(tr.traits[path[1]]);
+					if (val) sv.editableOnSheet = true;
+					else delete sv.editableOnSheet;
+				}
+			});
+		}
+		updateCharacter(props.character);
+	},
+});
+
 const inheritedHitches = computed(() => resolveHitches(undefined, [trait.value, traitSet.value]));
 
 const traitHitches = computed({
@@ -556,22 +646,45 @@ const description = computed({
 const childSubtraits = computed(() => {
 	const subs = trait.value?.traits;
 	if (!Array.isArray(subs)) return [];
-	return subs
-		.map((sub: any, idx: number) => {
-			if (!sub || typeof sub !== 'object') return null;
-			const r = getRating(sub);
-			const isSinglePip = r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
-			const label =
-				(isSetSubtraitMode.value ? sub.noun || (isSinglePip ? 'Statement' : sub.name) : sub.name || sub.noun) ||
-				'Subtrait';
-			const summary = r?.type
-				? r.type
-				: Array.isArray(sub.traits) && sub.traits.length
-					? `${sub.traits.length}`
-					: 'Unrated';
-			return { sub, idx, label: String(label).trim() || 'Subtrait', summary };
-		})
-		.filter((item): item is { sub: any; idx: number; label: string; summary: string } => item !== null);
+	const result: Array<{
+		idx: number;
+		sfxIdx?: number;
+		isSfx?: boolean;
+		sub: any;
+		label: string;
+		summary: string;
+	}> = [];
+	subs.forEach((sub: any, idx: number) => {
+		if (!sub || typeof sub !== 'object') return;
+		if (cortexFunctions.isSfxContainer(sub)) {
+			const sfxList = Array.isArray(sub.traits) ? sub.traits : [];
+			sfxList.forEach((sfx: any, sIdx: number) => {
+				if (!sfx || typeof sfx !== 'object') return;
+				const label = sfx.name || 'SFX';
+				result.push({
+					idx,
+					sfxIdx: sIdx,
+					isSfx: true,
+					sub: sfx,
+					label: String(label).trim() || 'SFX',
+					summary: 'SFX',
+				});
+			});
+			return;
+		}
+		const r = getRating(sub);
+		const isSinglePip = r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
+		const label =
+			(isSetSubtraitMode.value ? sub.noun || (isSinglePip ? 'Statement' : sub.name) : sub.name || sub.noun) ||
+			'Subtrait';
+		const summary = r?.type
+			? r.type
+			: Array.isArray(sub.traits) && sub.traits.length
+				? `${sub.traits.length}`
+				: 'Unrated';
+		result.push({ sub, idx, label: String(label).trim() || 'Subtrait', summary });
+	});
+	return result;
 });
 
 const scrollable = computed(() => Boolean(childSubtraits.value.length > 0));
@@ -663,7 +776,7 @@ const isScaleDie = computed({
 const isSteppedTrackSet = computed(() => getView(traitSet.value)?.style?.body === 'die-track');
 
 const shouldShowTrackOut = computed(() => {
-	return isSteppedTrackSet.value;
+	return isSteppedTrackSet.value || ratingHasOut.value;
 });
 
 const isOut = computed(() => isOutDie(trait.value, [traitSet.value]));
@@ -671,7 +784,7 @@ const isOut = computed(() => isOutDie(trait.value, [traitSet.value]));
 const outLabel = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
 	if (labels && typeof labels.out === 'string' && labels.out.length) return labels.out;
-	return cortexFunctions.labelDefaultForStyle(getView(traitSet.value)?.style?.body, 'out') || '💥 OUT';
+	return 'OUT';
 });
 
 const availableValues = computed(() => cortexFunctions.getTraitSetRatings(traitSet.value));
@@ -852,8 +965,8 @@ function targetValue(e: Event) {
 function syncCompanionSubtraits(prevName?: string) {
 	if (!isSetSubtraitMode.value || !traitSet.value || !trait.value) return;
 	const src = trait.value as any;
-	const targetName = String(src.name || '').trim();
-	const targetNoun = String(src.noun || targetName).trim();
+	const targetNoun = resolveSubtraitNoun(src);
+	const targetPlural = resolveSubtraitPlural(src);
 	const prevLower = String(prevName ?? targetNoun)
 		.trim()
 		.toLowerCase();
@@ -881,15 +994,20 @@ function syncCompanionSubtraits(prevName?: string) {
 			sibling = sibling.traits[path[2]];
 		}
 		if (sibling && typeof sibling === 'object') {
-			sibling.name = src.name;
-			if (src.noun) sibling.noun = src.noun;
+			sibling.noun = targetNoun;
+			sibling.plural = targetPlural;
+			ensureView(sibling).noun = targetNoun;
+			ensureView(sibling).plural = targetPlural;
+			if (!sibling.name || sibling.name.trim().toLowerCase() === prevLower) {
+				sibling.name = targetNoun;
+			}
 			if (src.rating) {
 				sibling.rating = structuredClone(toRaw(src.rating));
 			}
 		}
 	});
 	const trackTarget = cortexFunctions.getTrackLabel(traitSet.value).toLowerCase();
-	if (targetName.toLowerCase() === trackTarget || targetNoun.toLowerCase() === trackTarget) {
+	if (targetNoun.toLowerCase() === trackTarget) {
 		const view = ensureView(traitSet.value);
 		const body = view.style?.body;
 		if (body !== 'portrait-ring' && body !== 'image' && body !== 'pips' && body !== 'die-track') {
@@ -1182,11 +1300,16 @@ function removeFromSheet() {
 	updateCharacter(props.character);
 }
 
-function openChildSubtrait(childIdx: number) {
+function openChildSubtrait(item: any) {
 	const s = props.traitSetID;
 	const path = resolvedPath.value;
 	if (path.length >= 3) return;
-	selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, childIdx]);
+	const targetItem = typeof item === 'number' ? childSubtraits.value[item] || { idx: item } : item;
+	if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
+		selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, targetItem.idx, targetItem.sfxIdx]);
+	} else {
+		selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, targetItem.idx]);
+	}
 }
 
 function addSubtrait() {
@@ -1277,10 +1400,19 @@ function removeSubtraitAtCurrentParent(targetIdx: number) {
 	}
 }
 
-function removeSubtrait(subtraitID: number) {
+function removeSubtrait(item: any) {
 	const character = props.character;
 	const s = props.traitSetID;
 	const path = resolvedPath.value;
+	const targetItem = typeof item === 'number' ? childSubtraits.value[item] || { idx: item } : item;
+	if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
+		if (trait.value) {
+			cortexFunctions.removeSfxAt(trait.value, targetItem.sfxIdx);
+			updateCharacter(character);
+		}
+		return;
+	}
+	const subtraitID = targetItem?.idx ?? 0;
 	if (depth.value === 1) {
 		const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
 		cortexFunctions.removeSubtraitFromSheet(character, entry, s, path[0], subtraitID);
@@ -1475,6 +1607,33 @@ function getDieDisplayValue(val: any) {
 						</div>
 					</template>
 
+					<div class="editor-field" v-else-if="isSetSubtraitMode">
+						<div class="editor-label">Nouns</div>
+						<div class="editor-row-inline">
+							<div class="flex-1">
+								<label :for="'trait-name-' + traitID" class="editor-sub-label">Noun</label>
+								<input
+									type="text"
+									:id="'trait-name-' + traitID"
+									name="subtraitNoun"
+									v-model="subtraitNoun"
+									placeholder="Statement"
+									ref="inputName"
+								/>
+							</div>
+							<div class="flex-1">
+								<label :for="'subtrait-noun-plural-' + traitID" class="editor-sub-label">Plural</label>
+								<input
+									type="text"
+									:id="'subtrait-noun-plural-' + traitID"
+									name="subtraitPlural"
+									v-model="subtraitPlural"
+									placeholder="Statements"
+								/>
+							</div>
+						</div>
+					</div>
+
 					<div class="editor-field" v-else>
 						<label :for="'trait-name-' + traitID">{{ identityLabel }}</label>
 						<div class="editor-readonly-title" v-if="isPlay && !canDeleteInPlay">{{ name }}</div>
@@ -1486,6 +1645,17 @@ function getDieDisplayValue(val: any) {
 							v-model="name"
 							ref="inputName"
 							@focus="nameBeforeEdit = name"
+						/>
+					</div>
+
+					<div class="editor-field" v-if="statementChild && !isSubtraitMode">
+						<label :for="'trait-statement-' + traitID">{{ statementNoun }}</label>
+						<input
+							type="text"
+							:id="'trait-statement-' + traitID"
+							name="traitStatement"
+							v-model="statementText"
+							placeholder="Statement text..."
 						/>
 					</div>
 
@@ -1656,32 +1826,32 @@ function getDieDisplayValue(val: any) {
 						</div>
 
 						<!-- SINGLE DIE SELECTOR (EDIT MODE) -->
-						<ul class="editor-values" v-if="ratingType === 'Die' && !isPlay">
-							<li
-								v-for="val in dieRange"
-								:class="{ active: isDieActiveOf(trait, val) && !isOut }"
-								tabindex="0"
-								role="button"
-								@keydown.enter.prevent="toggleTraitValue(val)"
-								@keydown.space.prevent="toggleTraitValue(val)"
-								@click.stop="toggleTraitValue(val)"
-							>
-								<span v-html="getDieDisplayValue(val)"></span>
-							</li>
-							<li
-								v-if="shouldShowTrackOut"
-								class="editor-value-out"
-								:class="{ active: isOut }"
-								tabindex="0"
-								role="button"
-								@keydown.enter.prevent="toggleOutValue"
-								@keydown.space.prevent="toggleOutValue"
-								@click.stop="toggleOutValue"
-								title="Out"
-							>
-								<span>{{ outLabel }}</span>
-							</li>
-						</ul>
+						<div class="rating-scale-container editor-rating-chips" v-if="ratingType === 'Die' && !isPlay">
+							<div class="rating-scale-chips">
+								<button
+									type="button"
+									v-for="val in dieRange"
+									:key="'rating-die-' + val"
+									class="rating-scale-chip"
+									:class="{ active: isDieActiveOf(trait, val) && !isOut }"
+									@click.stop="toggleTraitValue(val)"
+									:title="(isDieActiveOf(trait, val) ? 'Clear d' : 'Set d') + val"
+								>
+									<span v-html="getDieDisplayValue(val)"></span>
+									<span class="chip-label">d{{ val }}</span>
+								</button>
+								<button
+									type="button"
+									v-if="shouldShowTrackOut"
+									class="rating-scale-chip rating-scale-chip-out"
+									:class="{ active: isOut }"
+									@click.stop="toggleOutValue"
+									title="Out"
+								>
+									<span class="chip-label chip-out-label">{{ outLabel }}</span>
+								</button>
+							</div>
+						</div>
 
 						<!-- SINGLE DIE STEPPER (PLAY MODE) -->
 						<div class="die-rating-stepper" v-else-if="ratingType === 'Die' && isPlay">
@@ -1985,6 +2155,20 @@ function getDieDisplayValue(val: any) {
 								/>
 								<label :for="'trait-' + traitID + '-spendable'">Spendable</label>
 							</div>
+							<div class="editor-checkbox-row">
+								<input
+									type="checkbox"
+									:id="'trait-' + traitID + '-editable-sheet'"
+									:true-value="true"
+									:false-value="false"
+									v-model="editableOnSheet"
+								/>
+								<label
+									:for="'trait-' + traitID + '-editable-sheet'"
+									title="Allow this trait or its statement/text to be edited directly on the sheet in play/edit mode"
+									>Editable on sheet</label
+								>
+							</div>
 						</div>
 						<div class="editor-toggles mt-sm" v-if="hitchesDiffers">
 							<div><label :for="'trait-' + traitID + '-hitches'">Hitches</label></div>
@@ -2007,11 +2191,15 @@ function getDieDisplayValue(val: any) {
 						<div class="editor-label">Subtraits</div>
 
 						<div class="editor-subtrait-list" v-if="childSubtraits.length > 0">
-							<div v-for="item in childSubtraits" :key="'child-sub-' + item.idx" class="editor-subtrait-row">
+							<div
+								v-for="(item, itemIdx) in childSubtraits"
+								:key="'child-sub-' + item.idx + '-' + (item.sfxIdx ?? itemIdx)"
+								class="editor-subtrait-row"
+							>
 								<button
 									type="button"
 									class="editor-subtrait-drill"
-									@click.stop="openChildSubtrait(item.idx)"
+									@click.stop="openChildSubtrait(item)"
 									:title="(isPlay ? 'Inspect ' : 'Edit ') + item.label"
 								>
 									<span class="editor-subtrait-name">{{ item.label }}</span>
@@ -2024,7 +2212,7 @@ function getDieDisplayValue(val: any) {
 									v-if="!isPlay"
 									type="button"
 									class="editor-subtrait-delete"
-									@click.stop="removeSubtrait(item.idx)"
+									@click.stop="removeSubtrait(item)"
 									:title="'Delete ' + item.label"
 									:aria-label="'Delete ' + item.label"
 								>

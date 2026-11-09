@@ -108,7 +108,7 @@ watch(rootEl, (el) => {
 			:has-header="Boolean(traitSet.name)"
 		/>
 
-		<div class="trait-set-header" v-if="!isName && resolvedFrame?.shape !== 'line' && traitSet.name">
+		<div class="trait-set-header" v-if="!isName && traitSet.name">
 			<transition appear>
 				<div
 					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
@@ -149,7 +149,7 @@ watch(rootEl, (el) => {
 				v-if="isName || !(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))"
 			/>
 
-			<ul class="sfx" v-if="!isName && resolvedFrame?.shape !== 'line' && setSfxEntries.length">
+			<ul class="sfx" v-if="!isName && setSfxEntries.length">
 				<li v-for="(sfx, sfId) in setSfxEntries" :key="(sfx && sfx._lid) || 'sfx' + sfId">
 					<span class="sfx-name">{{ sfx.name }}</span
 					>:

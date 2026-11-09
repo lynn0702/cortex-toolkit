@@ -59,6 +59,7 @@ const {
 	plural,
 	reservedSlots,
 	ratingPosition,
+	ratingDisplay,
 	labelPosition,
 	counterLabel,
 	restorableTraitNames,

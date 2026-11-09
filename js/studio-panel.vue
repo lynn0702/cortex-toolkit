@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
+import { resolveSubtraitNoun } from './model.ts';
 import TraitEditor from './trait-editor.vue';
 import TraitSetEditor from './trait-set-editor.vue';
 import NameEditor from './name-editor.vue';
@@ -190,7 +191,7 @@ const crumbs = computed<Crumb[]>(() => {
 		const path = traitPath.value;
 		for (let k = 1; k < chain.length; k++) {
 			const node = chain[k];
-			const label = node?.noun || node?.name || (k === 1 ? 'Stress' : 'Subtrait');
+			const label = resolveSubtraitNoun(node);
 			const isLast = k === chain.length - 1;
 			list.push({
 				label,

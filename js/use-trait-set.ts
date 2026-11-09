@@ -265,6 +265,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return traitSetArg?.ratingPosition || getView(traitSetArg)?.ratingPosition || 'inline';
 	}
 
+	function getRatingDisplay(traitSetArg: TraitSet | null | undefined): 'track' | 'rating' {
+		return (traitSetArg as any)?.ratingDisplay || getView(traitSetArg)?.ratingDisplay || 'track';
+	}
+
 	// Trait-part layout (view.parts), or null for legacy flex rows.
 	// Unknown part names never reach the grid: validation rejects them.
 	function getParts(traitSetArg: TraitSet) {
@@ -357,9 +361,57 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (props.submode === 'print') return;
 		const trait = traitArg ?? props.character?.traitSets?.[sArg]?.traits?.[t];
 		if (!trait) return;
-		const child = getPipChild(trait);
-		if (!child || !child.rating || child.rating.type !== 'Pip' || !Array.isArray(child.rating.value)) return;
+		let child = getPipChild(trait) || getChildTraitByNoun(trait, 'statement');
+		if (!child) {
+			if (!Array.isArray(trait.traits)) trait.traits = [];
+			child = {
+				name: 'Statement',
+				description: '',
+				tags: [],
+				rating: { type: 'Pip', value: [false] },
+				traits: [],
+				view: { noun: 'Statement' },
+			};
+			trait.traits.push(child);
+		}
+		if (!child.rating || child.rating.type !== 'Pip') {
+			child.rating = { type: 'Pip', value: [false] };
+		}
+		if (!Array.isArray(child.rating.value) || child.rating.value.length === 0) {
+			child.rating.value = [false];
+		}
 		child.rating.value[0] = !child.rating.value[0];
+		updateCharacter(props.character);
+	}
+
+	function canEditStatement(trait: any, traitSetArg: any): boolean {
+		if (props.submode === 'print') return false;
+		return Boolean(
+			getView(trait)?.editableOnSheet || getView(traitSetArg)?.editableOnSheet || getView(traitSetArg)?.playMutable,
+		);
+	}
+
+	function getStatementText(trait: any): string {
+		const sub = getChildTraitByNoun(trait, 'statement') || getPipChild(trait);
+		return sub?.name || trait?.description || '';
+	}
+
+	function setStatementText(trait: any, val: string) {
+		let sub = getChildTraitByNoun(trait, 'statement') || getPipChild(trait);
+		if (sub) {
+			sub.name = val;
+		} else {
+			if (!Array.isArray(trait.traits)) trait.traits = [];
+			sub = {
+				name: val,
+				description: '',
+				tags: [],
+				rating: { type: 'Pip', value: [false] },
+				traits: [],
+				view: { noun: 'Statement' },
+			};
+			trait.traits.push(sub);
+		}
 		updateCharacter(props.character);
 	}
 
@@ -1052,6 +1104,18 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return { noun: partKey, kind: 'label' };
 	}
 
+	function hasChildPartCell(traitSetArg: TraitSet, noun: string, kind?: 'label' | 'rating'): boolean {
+		const grid = partsGridFor(traitSetArg);
+		if (!grid?.cells) return false;
+		const n = noun.toLowerCase();
+		return Object.keys(grid.cells).some((k) => {
+			const parsed = parseChildPartKey(k);
+			if (parsed.noun.toLowerCase() !== n) return false;
+			if (kind && parsed.kind !== kind) return false;
+			return true;
+		});
+	}
+
 	function getChildTraitByNoun(trait: Trait | undefined, noun: string): Trait | undefined {
 		if (!trait) return undefined;
 		const n = noun.trim().toLowerCase();
@@ -1404,9 +1468,13 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		renderNotesText,
 		getTraitSetClasses,
 		getRatingPosition,
+		getRatingDisplay,
 		getPipChild,
 		isChildPipFilled,
 		togglePip,
+		canEditStatement,
+		getStatementText,
+		setStatementText,
 		getParts,
 		partsGridFor,
 		partCellStyle,
@@ -1514,6 +1582,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		toggleTraitPipBubble,
 		getDynamicChildParts,
 		parseChildPartKey,
+		hasChildPartCell,
 		getChildTraitByNoun,
 		resolvedFrame,
 		isFrameForcedOff,

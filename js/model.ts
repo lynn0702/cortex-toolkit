@@ -264,7 +264,7 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 				type: targetRating.type,
 				value: Array.isArray(targetRating.value) ? [...targetRating.value] : targetRating.value,
 				range: [...sourceRange],
-				...((targetRating as any).out !== undefined ? { out: (targetRating as any).out } : {}),
+				...((sourceRating as any).out !== undefined ? { out: (sourceRating as any).out } : {}),
 			};
 		}
 		if (Array.isArray(targetTrait.traits)) {
@@ -279,6 +279,32 @@ export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 			walk(rootTrait);
 		}
 	}
+}
+
+/** Resolves the display noun for a child trait / subtrait definition. */
+export function resolveSubtraitNoun(sub: any): string {
+	if (!sub || typeof sub !== 'object') return 'Subtrait';
+	if (typeof sub.noun === 'string' && sub.noun.trim().length > 0) return sub.noun.trim();
+	const v = getView(sub);
+	if (typeof v?.noun === 'string' && v.noun.trim().length > 0) return v.noun.trim();
+	const r = getRating(sub);
+	if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return 'Statement';
+	const name = String(sub.name || '').trim();
+	if (name.includes(' ') && name.length > 20) return 'Statement';
+	return name || 'Subtrait';
+}
+
+/** Resolves the plural noun for a child trait / subtrait definition. */
+export function resolveSubtraitPlural(sub: any): string {
+	if (!sub || typeof sub !== 'object') return 'Subtraits';
+	if (typeof sub.plural === 'string' && sub.plural.trim().length > 0) return sub.plural.trim();
+	const v = getView(sub);
+	if (typeof v?.plural === 'string' && v.plural.trim().length > 0) return v.plural.trim();
+	const n = resolveSubtraitNoun(sub);
+	if (!n) return 'Subtraits';
+	if (n.toLowerCase() === 'stress') return 'Stress';
+	if (n.endsWith('s')) return n;
+	return n + 's';
 }
 
 // ---------- visibility (2026-10-23: shown | editor-only | hidden) ----------
@@ -522,6 +548,8 @@ export interface CortexToolkitCustom {
 	spendable?: boolean;
 	/** Whether this set permits adding and removing traits during Play mode. */
 	playMutable?: boolean;
+	/** How die ratings are displayed on traits: full track (ladder) or rating only. Defaults to 'track'. */
+	ratingDisplay?: 'track' | 'rating';
 	/** SVG Frame & Border layout configuration (Phase 3c). */
 	frame?:
 		| import('./frame-geometry.ts').FrameConfig
@@ -575,6 +603,9 @@ export interface CortexToolkitCustom {
 	accentColor?: string;
 	primaryColor?: string;
 	secondaryColor?: string;
+	editableOnSheet?: boolean;
+	noun?: string;
+	plural?: string;
 }
 
 export type ViewBag = CortexToolkitCustom;

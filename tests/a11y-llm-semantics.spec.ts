@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
@@ -536,7 +536,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(boxes.length).toBeGreaterThanOrEqual(3);
 
 			// Click to select
-			await boxes[0].trigger('mousedown');
+			await boxes[0].trigger('pointerdown');
 			expect(wrapper.find('.place-mini-block').exists()).toBe(true);
 
 			// Check Full Width button clears place
@@ -570,30 +570,162 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Select the block
 			const ghost = wrapper.find('.place-mini-ghost');
-			await ghost.trigger('mousedown');
+			await ghost.trigger('pointerdown');
 
 			const block = wrapper.find('.place-mini-block');
 			expect(block.exists()).toBe(true);
 
 			// Start drag
-			const mousedownEv = new MouseEvent('mousedown', { clientX: 50, clientY: 20 });
-			block.element.dispatchEvent(mousedownEv);
+			const pointerdownEv = new PointerEvent('pointerdown', { clientX: 50, clientY: 20 });
+			block.element.dispatchEvent(pointerdownEv);
 
 			// Move
-			const mousemoveEv = new MouseEvent('mousemove', { clientX: 100, clientY: 20 });
-			window.dispatchEvent(mousemoveEv);
+			const pointermoveEv = new PointerEvent('pointermove', { clientX: 100, clientY: 20 });
+			window.dispatchEvent(pointermoveEv);
 
 			// Press Escape to cancel
 			const escapeEv = new KeyboardEvent('keydown', { key: 'Escape' });
 			window.dispatchEvent(escapeEv);
 
-			// End mouseup
-			const mouseupEv = new MouseEvent('mouseup', { clientX: 100, clientY: 20 });
-			window.dispatchEvent(mouseupEv);
+			// End pointerup
+			const pointerupEv = new PointerEvent('pointerup', { clientX: 100, clientY: 20 });
+			window.dispatchEvent(pointerupEv);
 
 			// Verify place remains untouched
 			expect(char.traitSets[0].view.place.left).toBe('0%');
 			expect(char.traitSets[0].view.place.width).toBe('100%');
+
+			wrapper.unmount();
+		});
+
+		it('starts drag on the first pointerdown on an unselected block and commits with 5% snap, with mouse and touch unified', async () => {
+			const char: any = {
+				name: 'Pointer Drag Hero',
+				view: { pageCount: 1 },
+				traitSets: [
+					{
+						name: 'Unselected Set',
+						view: { page: 1, place: { left: '10%', width: '40%', top: 0, height: 1 } },
+						traits: [],
+					},
+				],
+			};
+
+			const wrapper = mount(PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body,
+			});
+
+			const miniEl = wrapper.find('.place-mini').element as HTMLElement;
+			vi.spyOn(miniEl, 'getBoundingClientRect').mockReturnValue({
+				left: 0,
+				top: 0,
+				right: 500,
+				bottom: 300,
+				width: 500,
+				height: 300,
+				x: 0,
+				y: 0,
+				toJSON: () => {},
+			} as DOMRect);
+
+			// Find block: currently unselected (has ghost class, does NOT have place-mini-block)
+			const block = wrapper.find('[data-index="0"]');
+			expect(block.exists()).toBe(true);
+			expect(block.classes()).toContain('place-mini-ghost');
+			expect(block.classes()).not.toContain('place-mini-block');
+
+			// Direct pointerdown (mouse) on unselected block without prior click, moving right by 75px (15% of 500px)
+			const pointerdownMouse = new PointerEvent('pointerdown', { clientX: 50, clientY: 10, pointerType: 'mouse' });
+			block.element.dispatchEvent(pointerdownMouse);
+			await wrapper.vm.$nextTick();
+
+			// It is now selected
+			expect(block.classes()).toContain('place-mini-block');
+
+			// Pointermove on window
+			const pointermoveMouse = new PointerEvent('pointermove', { clientX: 125, clientY: 10, pointerType: 'mouse' });
+			window.dispatchEvent(pointermoveMouse);
+
+			// Pointerup commits new position with 5% snap (10% + 15% = 25%)
+			const pointerupMouse = new PointerEvent('pointerup', { clientX: 125, clientY: 10, pointerType: 'mouse' });
+			window.dispatchEvent(pointerupMouse);
+			await wrapper.vm.$nextTick();
+
+			expect(char.traitSets[0].view.place.left).toBe('25%');
+
+			// Now test touch pointerType drag moving by 38px (7.6% of 500px, snaps to 10% -> 25% + 10% = 35%)
+			const pointerdownTouch = new PointerEvent('pointerdown', { clientX: 125, clientY: 10, pointerType: 'touch' });
+			block.element.dispatchEvent(pointerdownTouch);
+
+			const pointermoveTouch = new PointerEvent('pointermove', { clientX: 163, clientY: 10, pointerType: 'touch' });
+			window.dispatchEvent(pointermoveTouch);
+
+			const pointerupTouch = new PointerEvent('pointerup', { clientX: 163, clientY: 10, pointerType: 'touch' });
+			window.dispatchEvent(pointerupTouch);
+
+			expect(char.traitSets[0].view.place.left).toBe('35%');
+
+			// Verify openSet is not emitted
+			expect(wrapper.emitted('openSet')).toBeUndefined();
+
+			wrapper.unmount();
+		});
+
+		it('resizes width and height via pointer on resize edges with 5% snap', async () => {
+			const char: any = {
+				name: 'Resize Edge Hero',
+				view: { pageCount: 1 },
+				traitSets: [
+					{
+						name: 'Resizable Set',
+						view: { page: 1, place: { left: '10%', width: '40%', top: 0, height: 1 } },
+						traits: [],
+					},
+				],
+			};
+
+			const wrapper = mount(PageLayoutMini, {
+				props: { character: char },
+				attachTo: document.body,
+			});
+
+			const miniEl = wrapper.find('.place-mini').element as HTMLElement;
+			vi.spyOn(miniEl, 'getBoundingClientRect').mockReturnValue({
+				left: 0,
+				top: 0,
+				right: 500,
+				bottom: 300,
+				width: 500,
+				height: 300,
+				x: 0,
+				y: 0,
+				toJSON: () => {},
+			} as DOMRect);
+
+			// Select block so resize edges render
+			const block = wrapper.find('[data-index="0"]');
+			await block.trigger('pointerdown');
+
+			const edgeE = wrapper.find('.place-mini-edge-e');
+			expect(edgeE.exists()).toBe(true);
+
+			// Drag width edge by +50px (+10% of 500px width -> 40% + 10% = 50%)
+			edgeE.element.dispatchEvent(new PointerEvent('pointerdown', { clientX: 250, clientY: 10 }));
+			window.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 10 }));
+			window.dispatchEvent(new PointerEvent('pointerup', { clientX: 300, clientY: 10 }));
+
+			expect(char.traitSets[0].view.place.width).toBe('50%');
+
+			// Drag height edge down by 40px (2 rows of 20px -> 1 + 2 = 3)
+			const edgeS = wrapper.find('.place-mini-edge-s');
+			expect(edgeS.exists()).toBe(true);
+
+			edgeS.element.dispatchEvent(new PointerEvent('pointerdown', { clientX: 250, clientY: 20 }));
+			window.dispatchEvent(new PointerEvent('pointermove', { clientX: 250, clientY: 60 }));
+			window.dispatchEvent(new PointerEvent('pointerup', { clientX: 250, clientY: 60 }));
+
+			expect(char.traitSets[0].view.place.height).toBe(3);
 
 			wrapper.unmount();
 		});
@@ -623,7 +755,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Select Set 1
 			const ghost = wrapper.findAll('.place-mini-ghost')[0];
-			await ghost.trigger('mousedown');
+			await ghost.trigger('pointerdown');
 
 			// Click Page 2 button
 			const pageButtons = wrapper.findAll('.editor-group-btn');
@@ -659,7 +791,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Select Movable Set
 			const ghost = wrapper.find('.place-mini-ghost');
-			await ghost.trigger('mousedown');
+			await ghost.trigger('pointerdown');
 
 			const block = wrapper.find('.place-mini-block');
 
@@ -724,7 +856,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Select the stress set
 			const ghost = wrapper.find('.place-mini-ghost');
-			await ghost.trigger('mousedown');
+			await ghost.trigger('pointerdown');
 
 			const block = wrapper.find('.place-mini-block');
 
@@ -765,7 +897,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// Select the set
 			const ghost = wrapper.find('.place-mini-ghost');
-			await ghost.trigger('mousedown');
+			await ghost.trigger('pointerdown');
 
 			// Click "Edit Parts" button
 			const editPartsBtn = wrapper.find('.btn-open-block-mini');
@@ -926,12 +1058,12 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(anchors4[2].angle).toBe(180);
 			expect(anchors4[3].angle).toBe(270);
 
-			// 2 traits open arc [-120, 120]
-			const arcCfg = resolveFrame({ view: { frame: { shape: 'arc', span: [-120, 120] } } })!;
+			// 2 traits open arc [45, 135] (1:30 to 4:30 centered at 3 o'clock)
+			const arcCfg = resolveFrame({ view: { frame: { shape: 'arc', span: [45, 135] } } })!;
 			const anchorsArc = computeFrameAnchors(2, arcCfg);
 			expect(anchorsArc.length).toBe(2);
-			expect(anchorsArc[0].angle).toBe(-120);
-			expect(anchorsArc[1].angle).toBe(120);
+			expect(anchorsArc[0].angle).toBe(45);
+			expect(anchorsArc[1].angle).toBe(135);
 		});
 
 		it('4. Bare-Path Section Line (shape: "line"): renders crisp SVG section divider across Edit, Play, and Print', () => {
@@ -953,7 +1085,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				expect(lineSvg.attributes('preserveAspectRatio')).toBe('none');
 				expect(lineSvg.find('path').attributes('d')).toBe('M 0,6 L 100,6');
 
-				// Content guarantee: trait still renders
+				// Content guarantee: header and trait still render
+				expect(block.find('.trait-set-header').exists()).toBe(true);
+				expect(block.find('.trait-set-header-name').text()).toBe('Divider Section');
 				expect(block.find('.trait').exists()).toBe(true);
 				block.unmount();
 			}
@@ -1022,6 +1156,64 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(cloned.view.frame.count).toBeUndefined();
 
 			await runAxeAudit(wrapper.element as HTMLElement);
+			wrapper.unmount();
+		});
+
+		it('7. Frame = Arc fan-out distribution & ratingDisplay option', async () => {
+			const arcSet: any = {
+				name: 'Roles',
+				view: {
+					frame: { shape: 'arc' },
+					ratingDisplay: 'rating',
+				},
+				traits: [
+					{ name: 'Commander', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
+					{ name: 'Engineer', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } },
+					{ name: 'Navigator', rating: { type: 'Die', value: [10], range: [4, 6, 8, 10, 12] } },
+				],
+			};
+			const char: any = { name: 'Arc Hero', traitSets: [arcSet] };
+
+			const wrapper = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'play' },
+				attachTo: document.body,
+			});
+
+			// Frame shape arc & open radial SVG rendered
+			expect(wrapper.find('.trait-list-framed.frame-shape-arc').exists()).toBe(true);
+			const svg = wrapper.find('.trait-set-frame-svg.frame-radial-svg');
+			expect(svg.exists()).toBe(true);
+			const pathD = svg.find('path').attributes('d') || '';
+			// Open arc path: M ... A ... with no Z (not closed circle)
+			expect(pathD).toMatch(/^M [\d.]+,\s*[\d.]+ A /);
+			expect(pathD.endsWith('Z')).toBe(false);
+
+			// Dynamic anchors span from 1:30 (45°) to 4:30 (135°) centered at 3 o'clock (90°)
+			const traits = wrapper.findAll('.trait');
+			expect(traits.length).toBe(3);
+			expect(traits[0].attributes('data-frame-dock')).toBe('right');
+			expect(traits[1].attributes('data-frame-dock')).toBe('right');
+			expect(traits[2].attributes('data-frame-dock')).toBe('right');
+
+			// Rating display = 'rating': renders single active die instead of full 5-die ladder
+			const singleDieVals = wrapper.findAll('.single-die-value');
+			expect(singleDieVals.length).toBe(3);
+			// Under ratingDisplay: 'rating', each trait renders exactly 1 die glyph
+			for (const val of singleDieVals) {
+				const dice = val.findAll('[role="button"]');
+				expect(dice.length).toBe(1);
+			}
+
+			// Switch to ratingDisplay: 'track': renders full 5-die ladder track
+			const trackSet = structuredClone(arcSet);
+			trackSet.view.ratingDisplay = 'track';
+			await wrapper.setProps({ character: { name: 'Arc Hero', traitSets: [trackSet] } });
+			const trackDieVals = wrapper.findAll('.single-die-value');
+			for (const val of trackDieVals) {
+				const dice = val.findAll('[role="button"]');
+				expect(dice.length).toBe(5);
+			}
+
 			wrapper.unmount();
 		});
 	});
@@ -1539,6 +1731,11 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const pipInNameCell = dutyRow.find('.trait-part-name .statement-pip');
 			expect(pipInNameCell.exists()).toBe(false);
 
+			// Clicking pip toggles questioned state
+			expect(char.traitSets[4].traits[0].traits[0].rating.value[0]).toBe(false);
+			await pipInRatingCell.trigger('click');
+			expect(char.traitSets[4].traits[0].traits[0].rating.value[0]).toBe(true);
+
 			// Statement box is in child:Statement:label cell, not in name cell
 			const boxInLabelCell = dutyRow.find('.trait-part-child-Statement-label .trait-statement-box');
 			expect(boxInLabelCell.exists()).toBe(true);
@@ -1594,6 +1791,181 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(style1).toContain('top: calc(50%)');
 
 			ringWrapper.unmount();
+		});
+
+		it('supports on-sheet editable toggle for statements, rating selector die chips with OUT option, and set-level subtrait noun editing', async () => {
+			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const valuesSet = char.traitSets.find((ts: any) => ts.name === 'Values');
+			expect(valuesSet).toBeDefined();
+
+			// 1. With editableOnSheet true on Values trait, renders input on sheet
+			const dutyTrait = valuesSet.traits.find((t: any) => t.name === 'Duty');
+			expect(dutyTrait).toBeDefined();
+			dutyTrait.view = { editableOnSheet: true };
+
+			const valuesWrapper = mount(TraitSetBlock, {
+				props: {
+					character: char,
+					traitSetID: 4, // Values
+					submode: 'play',
+					editing: [],
+				},
+				attachTo: document.body,
+			});
+
+			const statementInput = valuesWrapper.find('.trait[data-trait-name="Duty"] input.trait-statement-input');
+			expect(statementInput.exists()).toBe(true);
+			expect((statementInput.element as HTMLInputElement).value).toBe('The crew comes home before the cargo.');
+
+			// Typing in input updates statement text
+			await statementInput.setValue('Protect the outpost.');
+			const dutyStatementChild = dutyTrait.traits[0];
+			expect(dutyStatementChild.name).toBe('Protect the outpost.');
+
+			valuesWrapper.unmount();
+
+			// 2. TraitEditor Rating Selector with die chips and Range OUT integration
+			const traitEditorWrapper = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 4,
+					traitID: 0, // Duty
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+
+			// Verify rating selector renders rating-scale-chips
+			const ratingChips = traitEditorWrapper.findAll('.editor-field .rating-scale-chips .rating-scale-chip');
+			expect(ratingChips.length).toBeGreaterThanOrEqual(5);
+
+			// Initially OUT is not in rating chips
+			const ratingOutChipBefore = traitEditorWrapper.find('.editor-rating-chips .rating-scale-chip-out');
+			expect(ratingOutChipBefore.exists()).toBe(false);
+
+			// Toggle OUT in Range section
+			const rangeOutBtn = traitEditorWrapper.find(
+				'.range-scale-container .rating-scale-chip-out, .rating-scale-chip-out',
+			);
+			expect(rangeOutBtn.exists()).toBe(true);
+			await rangeOutBtn.trigger('click');
+
+			// Now OUT is displayed in Rating chips!
+			const ratingOutChipAfter = traitEditorWrapper.find('.editor-rating-chips .rating-scale-chip-out');
+			expect(ratingOutChipAfter.exists()).toBe(true);
+
+			// Click OUT in Rating chips
+			await ratingOutChipAfter.trigger('click');
+			expect(dutyTrait.isOut).toBe(true);
+
+			traitEditorWrapper.unmount();
+
+			// 3. Drill down into set-level subtrait from parent set: shows Noun: Statement, Plural: Statements
+			const setSubEditor = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 4,
+					traitID: 0,
+					subtraitID: 0,
+					traitPath: [0, 0],
+					isSetSubtrait: true,
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+
+			// Displays Noun label and input with 'Statement', NOT instance text!
+			expect(setSubEditor.find('label[for="trait-name-0"]').text()).toBe('Noun');
+			const nounInput = setSubEditor.find('input[name="subtraitNoun"]');
+			expect(nounInput.exists()).toBe(true);
+			expect((nounInput.element as HTMLInputElement).value).toBe('Statement');
+
+			const pluralInput = setSubEditor.find('input[name="subtraitPlural"]');
+			expect(pluralInput.exists()).toBe(true);
+			expect((pluralInput.element as HTMLInputElement).value).toBe('Statements');
+
+			setSubEditor.unmount();
+		});
+
+		it('surfaces Distinctions SFX (Hinder) as child subtrait in TraitSetEditor and TraitEditor with delete and ratingDisplay options', async () => {
+			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const distinctionsSetIdx = char.traitSets.findIndex((ts: any) => ts.name === 'Distinctions');
+			expect(distinctionsSetIdx).toBeGreaterThanOrEqual(0);
+			const distinctionsSet = char.traitSets[distinctionsSetIdx];
+
+			// 1. Mount TraitSetEditor for Distinctions
+			const setEditor = mount(TraitSetEditor, {
+				props: {
+					character: char,
+					traitSetID: distinctionsSetIdx,
+				},
+				attachTo: document.body,
+			});
+
+			// Rating display button group is rendered right under Rating
+			const ratingDisplayBtns = setEditor.findAll('.editor-field .editor-button-group .editor-group-btn');
+			const displayTexts = ratingDisplayBtns.map((b) => b.text());
+			expect(displayTexts).toContain('Full Track');
+			expect(displayTexts).toContain('Single Die');
+
+			// Clicking 'Full Track' or 'Single Die' toggles ratingDisplay
+			const singleDieBtn = ratingDisplayBtns.find((b) => b.text() === 'Single Die');
+			expect(singleDieBtn).toBeDefined();
+			await singleDieBtn!.trigger('click');
+			expect(distinctionsSet.view.ratingDisplay).toBe('rating');
+
+			// Subtraits section displays Hinder with SFX summary badge
+			const subtraitRows = setEditor.findAll('.editor-subtrait-row');
+			expect(subtraitRows.length).toBeGreaterThanOrEqual(1);
+			const hinderRow = subtraitRows.find((r) => r.text().includes('Hinder'));
+			expect(hinderRow).toBeDefined();
+			expect(hinderRow!.find('.editor-subtrait-badge').text()).toBe('SFX');
+
+			// Clicking delete on Hinder row removes Hinder from all distinctions in the set
+			const deleteBtn = hinderRow!.find('.editor-subtrait-delete');
+			expect(deleteBtn.exists()).toBe(true);
+			await deleteBtn.trigger('click');
+
+			// Check that traits no longer have SFX
+			for (const tr of distinctionsSet.traits) {
+				const hasHinder = tr.traits?.some((st: any) => st.name === 'Hinder' || st.name === 'SFX');
+				expect(hasHinder).toBeFalsy();
+			}
+
+			setEditor.unmount();
+
+			// 2. TraitEditor on an individual distinction also surfaces Hinder
+			const charWithHinder: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const traitEditor = mount(TraitEditor, {
+				props: {
+					character: charWithHinder,
+					traitSetID: distinctionsSetIdx,
+					traitID: 0, // Slipstream Test Pilot
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+
+			const traitSubRows = traitEditor.findAll('.editor-subtrait-row');
+			const traitHinderRow = traitSubRows.find((r) => r.text().includes('Hinder'));
+			expect(traitHinderRow).toBeDefined();
+			expect(traitHinderRow!.find('.editor-subtrait-badge').text()).toBe('SFX');
+
+			// Delete on trait editor removes Hinder from this trait
+			const traitDeleteBtn = traitHinderRow!.find('.editor-subtrait-delete');
+			await traitDeleteBtn.trigger('click');
+			const firstTrait = charWithHinder.traitSets[distinctionsSetIdx].traits[0];
+			const stillHasHinder = firstTrait.traits?.some((st: any) => st.name === 'Hinder' || st.name === 'SFX');
+			expect(stillHasHinder).toBeFalsy();
+
+			traitEditor.unmount();
 		});
 	});
 });

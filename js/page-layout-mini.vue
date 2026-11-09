@@ -17,7 +17,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{
 	(e: 'updateCharacter', character: any): void;
-	(e: 'openSet', index: number): void;
 }>();
 
 const ROW_H = 20;
@@ -263,7 +262,7 @@ function targetNum(e: Event) {
 
 const rootEls = ref<HTMLElement[]>([]);
 
-const snapPct = (n: number) => Math.round(n * 2) / 2;
+const snapPct = (n: number) => Math.round(n / 5) * 5;
 
 // Map a drop (page miniature + row) to model truth, computed against an
 // array the dragged set was already removed from: the doc slot
@@ -294,13 +293,13 @@ function mapDrop(sets: any[], page: number, row: number): { to: number; top: num
 	return { to, top };
 }
 
-function startBoxDrag(event: MouseEvent | TouchEvent, b: Block, pg: number, mode: 'move' | 'w' | 'h') {
+function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'move' | 'w' | 'h') {
 	event.preventDefault();
 	event.stopPropagation();
 	selected.value = b.index;
 	pressBox(b.index, event);
-	const startX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-	const startY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+	const startX = event.clientX;
+	const startY = event.clientY;
 	const sets = props.character?.traitSets || [];
 	const origin = rootEls.value[pg];
 	const originRect = origin ? origin.getBoundingClientRect() : null;
@@ -332,21 +331,19 @@ function startBoxDrag(event: MouseEvent | TouchEvent, b: Block, pg: number, mode
 	};
 
 	const cleanup = () => {
-		window.removeEventListener('mousemove', onMove);
-		window.removeEventListener('mouseup', onUp);
-		window.removeEventListener('touchmove', onMove);
-		window.removeEventListener('touchend', onUp);
+		window.removeEventListener('pointermove', onMove);
+		window.removeEventListener('pointerup', onUp);
 		window.removeEventListener('keydown', onKeydown);
 	};
 
-	const onMove = (e: any) => {
+	const onMove = (e: PointerEvent) => {
 		if (cancelled) return;
-		const cx = e.clientX ?? e.touches?.[0]?.clientX;
-		const cy = e.clientY ?? e.touches?.[0]?.clientY;
+		const cx = e.clientX;
+		const cy = e.clientY;
 		if (cx === undefined || cy === undefined) return;
 		if (Math.hypot(cx - startX, cy - startY) < 3 && !moved) return;
 		moved = true;
-		const w = originRect ? originRect.width : 1;
+		const w = originRect && originRect.width > 0 ? originRect.width : 1;
 		const dxPct = ((cx - startX) / w) * 100;
 		if (mode !== 'move') {
 			if (mode === 'w') {
@@ -455,15 +452,15 @@ function startBoxDrag(event: MouseEvent | TouchEvent, b: Block, pg: number, mode
 		};
 	};
 
-	const onUp = (e?: any) => {
+	const onUp = (e?: PointerEvent) => {
 		cleanup();
 		if (cancelled) return;
 		const d = drag.value;
 		drag.value = null;
 		if (!moved || !d) return;
 
-		const cx = e ? (e.clientX ?? e.changedTouches?.[0]?.clientX ?? d.cx) : d.cx;
-		const cy = e ? (e.clientY ?? e.changedTouches?.[0]?.clientY ?? d.cy) : d.cy;
+		const cx = e ? e.clientX : d.cx;
+		const cy = e ? e.clientY : d.cy;
 		const hit = overAt(cx, cy);
 		if (!hit) {
 			// Dropped outside all page miniatures: cancel gesture, leave model untouched
@@ -494,10 +491,8 @@ function startBoxDrag(event: MouseEvent | TouchEvent, b: Block, pg: number, mode
 		selected.value = to;
 	};
 
-	window.addEventListener('mousemove', onMove);
-	window.addEventListener('mouseup', onUp);
-	window.addEventListener('touchmove', onMove, { passive: false });
-	window.addEventListener('touchend', onUp);
+	window.addEventListener('pointermove', onMove);
+	window.addEventListener('pointerup', onUp);
 	window.addEventListener('keydown', onKeydown);
 }
 
@@ -610,9 +605,9 @@ function clearArm() {
 		armCleanup = null;
 	}
 }
-function pressBox(index: number, event: MouseEvent | TouchEvent) {
-	const cx = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-	const cy = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+function pressBox(index: number, event: PointerEvent) {
+	const cx = event.clientX;
+	const cy = event.clientY;
 	const now = Date.now();
 	const quick = lastPress.value && lastPress.value.index === index && now - lastPress.value.at < 500;
 	lastPress.value = { index, at: now };
@@ -623,15 +618,13 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 	const done = () => {
 		if (settled) return;
 		settled = true;
-		window.removeEventListener('mousemove', onMove);
-		window.removeEventListener('mouseup', onUp);
-		window.removeEventListener('touchmove', onMove);
-		window.removeEventListener('touchend', onUp);
+		window.removeEventListener('pointermove', onMove);
+		window.removeEventListener('pointerup', onUp);
 		armCleanup = null;
 	};
-	const onMove = (e: any) => {
-		const x = e.clientX ?? e.touches?.[0]?.clientX;
-		const y = e.clientY ?? e.touches?.[0]?.clientY;
+	const onMove = (e: PointerEvent) => {
+		const x = e.clientX;
+		const y = e.clientY;
 		if (x === undefined || y === undefined) return;
 		if (Math.hypot(x - cx, y - cy) > 4) done();
 	};
@@ -641,10 +634,8 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 		openBlockMini(index);
 	};
 	armCleanup = done;
-	window.addEventListener('mousemove', onMove);
-	window.addEventListener('mouseup', onUp);
-	window.addEventListener('touchmove', onMove, { passive: true });
-	window.addEventListener('touchend', onUp);
+	window.addEventListener('pointermove', onMove);
+	window.addEventListener('pointerup', onUp);
 }
 </script>
 
@@ -678,8 +669,16 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 				></div>
 				<template v-for="b in pg.blocks" :key="b.kind + '-' + b.index">
 					<div
-						class="place-mini-ghost place-mini-pick"
-						:class="{ 'place-mini-band': b.kind === 'band' }"
+						:class="{
+							'place-mini-block': selected === b.index,
+							'place-mini-ghost': selected !== b.index,
+							'place-mini-pick': selected !== b.index,
+							'place-mini-band': b.kind === 'band',
+							'place-mini-stacked': b.kind === 'band' && selected === b.index,
+							'place-mini-dragging': drag && drag.index === b.index,
+							selected: selected === b.index,
+							dragging: drag && drag.index === b.index,
+						}"
 						:data-index="b.index"
 						:data-page="pg.page"
 						:style="
@@ -692,65 +691,38 @@ function pressBox(index: number, event: MouseEvent | TouchEvent) {
 							'%; height: ' +
 							(b.height * ROW_H - 3) +
 							'px;'
-						"
-						:title="
-							b.name +
-							(b.kind === 'band' ? ' (stacked)' : '') +
-							' — click to select, double-click or Enter to edit parts'
 						"
 						tabindex="0"
 						role="button"
 						:aria-label="
-							b.name +
-							(b.kind === 'band' ? ' (stacked)' : '') +
-							' — click to select, double-click or Enter to edit parts'
+							selected === b.index
+								? b.name + ' — arrows to move, shift+arrows to resize, enter to edit parts'
+								: b.name +
+									(b.kind === 'band' ? ' (stacked)' : '') +
+									' — click to select, double-click or Enter to edit parts'
 						"
-						@mousedown="
-							selected = b.index;
-							pressBox(b.index, $event);
+						:title="
+							selected === b.index
+								? 'Drag to move within and between pages · right and bottom edges resize · double-click or Enter to edit parts'
+								: b.name +
+									(b.kind === 'band' ? ' (stacked)' : '') +
+									' — click to select, double-click or Enter to edit parts'
 						"
+						@pointerdown="onBlockPointerDown($event, b, pg.page, 'move')"
 						@keydown="onBoxKeydown($event, b)"
-						v-if="selected !== b.index"
 					>
-						<span class="place-mini-ghostname">{{ b.name }}</span>
-					</div>
-					<div
-						v-else
-						class="place-mini-block"
-						:class="{ 'place-mini-stacked': b.kind === 'band', 'place-mini-dragging': drag && drag.index === b.index }"
-						:data-index="b.index"
-						:data-page="pg.page"
-						:style="
-							'left: ' +
-							b.left +
-							'%; top: ' +
-							(b.top * ROW_H + 4) +
-							'px; width: ' +
-							b.width +
-							'%; height: ' +
-							(b.height * ROW_H - 3) +
-							'px;'
-						"
-						tabindex="0"
-						role="button"
-						:aria-label="b.name + ' — arrows to move, shift+arrows to resize, enter to edit parts'"
-						@mousedown="startBoxDrag($event, b, pg.page, 'move')"
-						@touchstart="startBoxDrag($event, b, pg.page, 'move')"
-						@keydown="onBoxKeydown($event, b)"
-						:title="'Drag to move within and between pages · right and bottom edges resize · double-click or Enter to edit parts'"
-					>
-						<span class="place-mini-name">{{ b.name }}</span>
+						<span :class="selected === b.index ? 'place-mini-name' : 'place-mini-ghostname'">{{ b.name }}</span>
 						<span
+							v-if="selected === b.index"
 							class="place-mini-edge place-mini-edge-e"
 							title="Resize width"
-							@mousedown.stop="startBoxDrag($event, b, pg.page, 'w')"
-							@touchstart.stop="startBoxDrag($event, b, pg.page, 'w')"
+							@pointerdown.stop="onBlockPointerDown($event, b, pg.page, 'w')"
 						></span>
 						<span
+							v-if="selected === b.index"
 							class="place-mini-edge place-mini-edge-s"
 							title="Resize height"
-							@mousedown.stop="startBoxDrag($event, b, pg.page, 'h')"
-							@touchstart.stop="startBoxDrag($event, b, pg.page, 'h')"
+							@pointerdown.stop="onBlockPointerDown($event, b, pg.page, 'h')"
 						></span>
 					</div>
 				</template>

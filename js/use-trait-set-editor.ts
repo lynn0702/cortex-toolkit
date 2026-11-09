@@ -24,6 +24,8 @@ import {
 	resolveVisibility,
 	nextVisibility,
 	resolveSetPillar,
+	resolveSubtraitNoun,
+	resolveSubtraitPlural,
 } from './model.ts';
 import { resolveFrame, type FrameConfig } from './frame-geometry.ts';
 import type {
@@ -118,6 +120,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		set: (v: string) => setProperty('plural', v),
 	});
 
+	const setEditableOnSheet = computed({
+		get: () => Boolean(getView(traitSet.value)?.editableOnSheet),
+		set: (v: boolean) => {
+			const view = ensureView(traitSet.value);
+			if (v) view.editableOnSheet = true;
+			else delete view.editableOnSheet;
+			updateCharacter(props.character);
+		},
+	});
+
 	const styleBody = computed({
 		get: () => {
 			const view = getView(traitSet.value);
@@ -182,13 +194,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// Trait-part cells (view.parts): the generator spec shared by rebuilds
 	// and the default comparison, so hand-tuned widths survive control
 	// changes and Reset restores exactly what the generator would emit.
-	function resolveSubtraitNoun(sub: any): string {
-		if (sub && typeof sub.noun === 'string' && sub.noun.trim().length > 0) return sub.noun.trim();
-		const r = getRating(sub);
-		if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return 'Statement';
-		return String(sub?.name || 'Subtrait').trim() || 'Subtrait';
-	}
-
 	function partsSpec() {
 		const view = getView(traitSet.value) || {};
 		const scale =
@@ -938,23 +943,69 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			traits[0];
 		const subs = firstTrait?.traits;
 		if (!Array.isArray(subs)) return [];
-		return subs
-			.map((sub: any, idx: number) => {
-				if (!sub || typeof sub !== 'object' || cortexFunctions.isSfxContainer(sub)) return null;
-				const label = resolveSubtraitNoun(sub);
-				const r = getRating(sub);
-				const summary = r?.type ? r.type : 'Unrated';
-				return { idx, sub, label, summary };
-			})
-			.filter((item): item is { idx: number; sub: any; label: string; summary: string } => item !== null);
+		const result: Array<{
+			idx: number;
+			sfxIdx?: number;
+			isSfx?: boolean;
+			sub: any;
+			label: string;
+			summary: string;
+		}> = [];
+		subs.forEach((sub: any, idx: number) => {
+			if (!sub || typeof sub !== 'object') return;
+			if (cortexFunctions.isSfxContainer(sub)) {
+				const sfxList = Array.isArray(sub.traits) ? sub.traits : [];
+				sfxList.forEach((sfx: any, sIdx: number) => {
+					if (!sfx || typeof sfx !== 'object') return;
+					const label = sfx.name || 'SFX';
+					result.push({
+						idx,
+						sfxIdx: sIdx,
+						isSfx: true,
+						sub: sfx,
+						label: String(label).trim() || 'SFX',
+						summary: 'SFX',
+					});
+				});
+				return;
+			}
+			const label = resolveSubtraitNoun(sub);
+			const r = getRating(sub);
+			const summary = r?.type ? r.type : 'Unrated';
+			result.push({ idx, sub, label, summary });
+		});
+		return result;
 	});
 
-	function openSetSubtrait(subIdx: number) {
-		selectElement(['subtrait', props.traitSetID, 0, subIdx]);
+	function openSetSubtrait(item: any) {
+		const targetItem = typeof item === 'number' ? setSubtraits.value[item] || { idx: item } : item;
+		const subIdx = targetItem?.idx ?? 0;
+		if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
+			selectElement(['subtrait', props.traitSetID, 0, subIdx, targetItem.sfxIdx]);
+		} else {
+			selectElement(['subtrait', props.traitSetID, 0, subIdx]);
+		}
 	}
 
-	function removeSetSubtrait(subIdx: number) {
+	function removeSetSubtrait(item: any) {
 		if (!traitSet.value || !Array.isArray(traitSet.value.traits)) return;
+		const targetItem = typeof item === 'number' ? setSubtraits.value[item] || { idx: item } : item;
+		if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
+			const sfxIdx = targetItem.sfxIdx;
+			traitSet.value.traits.forEach((tr: any) => {
+				cortexFunctions.removeSfxAt(tr, sfxIdx);
+			});
+			const hasRemainingSfx = traitSet.value.traits.some((tr: any) => cortexFunctions.sfxChildren(tr).length > 0);
+			if (!hasRemainingSfx) {
+				const v = getView(traitSet.value);
+				if (v?.parts?.block) {
+					delete v.parts.block;
+				}
+			}
+			updateCharacter(structuredClone(toRaw(props.character)));
+			return;
+		}
+		const subIdx = targetItem?.idx ?? 0;
 		const firstSubs = traitSet.value.traits[0]?.traits;
 		const target: any = Array.isArray(firstSubs) ? firstSubs[subIdx] : null;
 		const targetKey = String(target?.noun || target?.name || '')
@@ -1116,6 +1167,25 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
+	const ratingDisplay = computed<'track' | 'rating'>({
+		get: () => {
+			const v = getView(traitSet.value);
+			return (v?.ratingDisplay as 'track' | 'rating') || (traitSet.value as any)?.ratingDisplay || 'track';
+		},
+		set: (val: 'track' | 'rating') => {
+			const view = ensureView(traitSet.value);
+			if (val === 'track') {
+				delete view.ratingDisplay;
+				if (traitSet.value && typeof traitSet.value === 'object') {
+					delete (traitSet.value as any).ratingDisplay;
+				}
+			} else {
+				view.ratingDisplay = val;
+			}
+			updateCharacter(structuredClone(toRaw(props.character)));
+		},
+	});
+
 	// Ladder rung label direction: horizontal text or rotated vertical
 	// (sidebar-style) for narrow tracks such as Initiative and Hero Dice.
 	const labelPosition = computed({
@@ -1193,15 +1263,18 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			delete ctk.frame;
 		} else {
 			const existing = resolveFrame(props.character.traitSets[s]);
+			const defaultSpan: [number, number] = shape === 'arc' ? [45, 135] : [0, 360];
 			if (existing) {
+				const hasFullSpan = Math.abs(existing.span[1] - existing.span[0]) >= 360;
 				ctk.frame = {
 					...existing,
 					shape: shape as any,
+					span: shape === 'arc' && hasFullSpan ? defaultSpan : existing.span,
 				};
 			} else {
 				ctk.frame = {
 					shape: shape as any,
-					span: [0, 360],
+					span: defaultSpan,
 					corner: 8,
 					color: 'primary',
 					stroke: '2px',
@@ -1755,6 +1828,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		isPool,
 		setRating,
 		setSpendable,
+		setEditableOnSheet,
 		setHitches,
 		reservedSlots,
 		traitColumns,
@@ -1775,6 +1849,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		createSubtrait,
 		trackLabel,
 		ratingPosition,
+		ratingDisplay,
 		labelPosition,
 		counterLabel,
 		pipCount,

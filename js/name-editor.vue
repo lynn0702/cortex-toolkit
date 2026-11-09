@@ -1142,11 +1142,7 @@ function updateCharacter(character: any) {
 
 						<div class="editor-field">
 							<div class="editor-label">Page Layout</div>
-							<PageLayoutMini
-								:character="props.character"
-								@updateCharacter="updateCharacter"
-								@openSet="(i: number) => emit('selectElement', ['traitSet', i])"
-							/>
+							<PageLayoutMini :character="props.character" @updateCharacter="updateCharacter" />
 						</div>
 					</template>
 
