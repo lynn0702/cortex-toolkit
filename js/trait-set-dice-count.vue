@@ -84,7 +84,7 @@ const {
 							:class="{ spent: !item.isPlaceholder && isDieSpent(item.trait, dIdx) }"
 						>
 							<span
-								:class="{ 'c active': !item.isPlaceholder, c: item.isPlaceholder }"
+								:class="{ active: !item.isPlaceholder }"
 								role="button"
 								tabindex="0"
 								:aria-label="`Stage d${dieSize} from ${item.trait.name || 'trait'}`"

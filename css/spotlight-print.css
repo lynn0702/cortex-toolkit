@@ -1480,7 +1480,7 @@
 			flex-shrink: 0;
 			margin-left: auto;
 
-			.c {
+			& > span {
 				display: inline-flex;
 			}
 
@@ -1865,12 +1865,6 @@
 
 	/* BLANK WRITE-IN FOR PENCIL */
 	&.print-blank-mode {
-		.trait-value .c.active {
-			background: #ffffff;
-			color: #111111;
-			-webkit-text-fill-color: #111111;
-		}
-
 		.trait-pips-body {
 			.pip-bubble {
 				background: #ffffff;

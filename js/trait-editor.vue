@@ -18,13 +18,16 @@ import {
 	applyTypeScopedRange,
 	type Character,
 } from './model.ts';
-import SubtraitEditor from './subtrait-editor.vue';
+import { buildParts } from './spotlight-grid.ts';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{
 	character: Character;
 	traitSetID: number;
 	traitID: number;
+	subtraitID?: number;
+	traitPath?: number[];
+	isSetSubtrait?: boolean;
 	open: boolean;
 	submode?: string | null;
 	viewY?: number | null;
@@ -49,24 +52,94 @@ const nameBeforeEdit = ref('');
 
 const traitSet = computed(() => props.character?.traitSets?.[props.traitSetID]);
 
-const trait = computed(() => props.character?.traitSets?.[props.traitSetID]?.traits?.[props.traitID]);
+const resolvedPath = computed<number[]>(() => {
+	if (Array.isArray(props.traitPath) && props.traitPath.length > 0) {
+		return props.traitPath
+			.slice(0, 3)
+			.map((n) => Number(n))
+			.filter((n) => Number.isFinite(n) && n >= 0);
+	}
+	if (typeof props.subtraitID === 'number' && props.subtraitID >= 0) {
+		return [props.traitID, props.subtraitID];
+	}
+	return [props.traitID];
+});
+
+const depth = computed(() => resolvedPath.value.length);
+
+const isSubtraitMode = computed(() => depth.value >= 2);
+
+const isSetSubtraitMode = computed(() => Boolean(props.isSetSubtrait && depth.value >= 2));
+
+const canCreateSubtrait = computed(() => depth.value < 3);
+
+const traitChain = computed<any[]>(() => {
+	if (!traitSet.value || !Array.isArray(traitSet.value.traits)) return [];
+	const chain: any[] = [];
+	let list: any[] | undefined = traitSet.value.traits;
+	for (const idx of resolvedPath.value) {
+		if (!Array.isArray(list) || !list[idx]) return [];
+		const node: any = list[idx];
+		chain.push(node);
+		list = node.traits;
+	}
+	return chain;
+});
+
+const parentTrait = computed(() => traitChain.value[0] ?? null);
+
+const parentNode = computed(() =>
+	traitChain.value.length >= 2 ? traitChain.value[traitChain.value.length - 2] : traitSet.value,
+);
+
+const trait = computed<any>(() =>
+	traitChain.value.length > 0 ? traitChain.value[traitChain.value.length - 1] : undefined,
+);
 
 const isPlay = computed(() => props.submode === 'play');
 const canDeleteInPlay = computed(() => cortexFunctions.isPlayMutableSet(traitSet.value));
 
 const templateEntry = computed(() => cortexFunctions.resolveTemplateFor(props.character, rootTemplates()));
 
-const templateTraitMatched = computed(() => templateHasTrait(trait.value ? trait.value.name : ''));
+const templateTraitMatched = computed(
+	() => !isSubtraitMode.value && templateHasTrait(trait.value ? trait.value.name : ''),
+);
 
 const renameWarning = computed(() =>
-	Boolean(nameBeforeEdit.value && nameBeforeEdit.value !== name.value && templateHasTrait(nameBeforeEdit.value)),
+	Boolean(
+		!isSubtraitMode.value &&
+		nameBeforeEdit.value &&
+		nameBeforeEdit.value !== name.value &&
+		templateHasTrait(nameBeforeEdit.value),
+	),
 );
+
+const identityLabel = computed(() => {
+	if (isSetSubtraitMode.value) return 'Noun';
+	if (isLabeledPipsSet.value) return 'Label';
+	return 'Trait Name';
+});
 
 const name = computed({
 	get() {
+		if (isSetSubtraitMode.value) {
+			return trait.value?.noun || trait.value?.name || '';
+		}
 		return trait.value?.name ?? '';
 	},
 	set(val: string) {
+		if (isSetSubtraitMode.value) {
+			const target = trait.value as Record<string, any> | undefined;
+			if (!target) return;
+			const prev = target.noun || target.name || '';
+			target.noun = val;
+			if (!target.name || target.name === prev) {
+				target.name = val;
+			}
+			syncCompanionSubtraits(prev);
+			updateCharacter(props.character);
+			return;
+		}
 		setProperty('name', val);
 		if (isThreeColumnTable.value) {
 			const entries = cortexFunctions.sfxChildren(trait.value);
@@ -79,44 +152,15 @@ const name = computed({
 });
 
 const isListStyle = computed(() => {
+	if (isSubtraitMode.value) return false;
 	const b = getView(traitSet.value)?.style?.body;
 	const parts = getView(traitSet.value)?.parts;
 	return b === 'list' || Boolean(parts && !parts.rating);
 });
 
-function getPipChild(node: any) {
-	if (!node || !Array.isArray(node.traits)) return undefined;
-	for (const ch of node.traits) {
-		if (!ch || typeof ch !== 'object') continue;
-		const r = getRating(ch);
-		if (r && r.type === 'Pip') return ch;
-		if (Array.isArray(ch.traits)) {
-			const nested = ch.traits.find((sub: any) => getRating(sub)?.type === 'Pip');
-			if (nested) return nested;
-		}
-	}
-	return undefined;
-}
-
-const hasPipChild = computed(() => Boolean(getPipChild(trait.value)));
-
 const hasSfxChildren = computed(
 	() => Array.isArray(cortexFunctions.sfxChildren(trait.value)) && cortexFunctions.sfxChildren(trait.value).length > 0,
 );
-
-const isQuestioned = computed({
-	get() {
-		const child = getPipChild(trait.value);
-		return Boolean(child?.rating?.type === 'Pip' && child.rating.value?.[0] === true);
-	},
-	set(val: any) {
-		if (!trait.value) return;
-		const child = getPipChild(trait.value);
-		if (!child || !child.rating || child.rating.type !== 'Pip' || !Array.isArray(child.rating.value)) return;
-		child.rating.value[0] = Boolean(val);
-		updateCharacter(props.character);
-	},
-});
 
 const counterLabel = computed(() => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP');
 
@@ -136,12 +180,8 @@ const counterValue = computed({
 	},
 });
 
-const isPairedSlotsStyle = computed(() => {
-	const parts = getView(traitSet.value)?.parts;
-	return Boolean(parts && (parts['child:Statement'] || (parts as any)['child_statement']));
-});
-
 const isLabeledPipsSet = computed(() => {
+	if (isSubtraitMode.value) return false;
 	const v = getView(traitSet.value);
 	return v?.style?.body === 'pips' && (v as any)?.pips?.labels === true;
 });
@@ -209,15 +249,45 @@ const ratingHasOut = computed({
 		if (!r || typeof r !== 'object' || (r.type !== 'Die' && r.type !== 'Dice')) return;
 		if (value) r.out = true;
 		else delete r.out;
+		if (isSetSubtraitMode.value) {
+			syncCompanionSubtraits(t.noun || t.name);
+		} else if (traitSet.value) {
+			applyTypeScopedRange(traitSet.value, trait.value);
+		}
 		updateCharacter(props.character);
 	},
 });
 
-function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
+const confirmRatingChange = ref<'Counter' | 'Die' | 'Dice' | 'Pip' | null>(null);
+
+function requestRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 	const t = trait.value as unknown as Record<string, any>;
 	if (!t) return;
 	const cur = getRating(t);
 	if (cur?.type === type) return;
+	const hasChildValues =
+		Array.isArray(t.traits) &&
+		t.traits.some((ct: any) => getRating(ct) !== undefined || (Array.isArray(ct?.traits) && ct.traits.length > 0));
+	if (hasChildValues) {
+		confirmRatingChange.value = type;
+	} else {
+		setRatingType(type);
+	}
+}
+
+function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
+	confirmRatingChange.value = null;
+	const t = trait.value as unknown as Record<string, any>;
+	if (!t) return;
+	const cur = getRating(t);
+	if (cur?.type === type) return;
+	if (Array.isArray(t.traits)) {
+		t.traits.forEach((ct: any) => {
+			if (ct && typeof ct === 'object' && ct.rating) {
+				ct.rating.value = [];
+			}
+		});
+	}
 	const scale = availableValues.value;
 	const range = Array.isArray(scale) && scale.length ? [...scale] : undefined;
 	const size = Array.isArray(scale) && scale.length ? scale[0] : 8;
@@ -242,6 +312,9 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 		t.rating = { type: 'Counter', value: [0], range: [0, 20] };
 	} else {
 		t.rating = { type: 'Pip', value: [false] };
+	}
+	if (isSetSubtraitMode.value) {
+		syncCompanionSubtraits(t.noun || t.name);
 	}
 	updateCharacter(props.character);
 }
@@ -293,6 +366,11 @@ function setCounterBound(which: 0 | 1, val: any) {
 	}
 	const cur = typeof getRating(t)?.value[0] === 'number' ? ((getRating(t) as any).value[0] as number) : lo;
 	t.rating = { type: 'Counter', value: [Math.max(lo, Math.min(hi, cur))], range: [lo, hi] };
+	if (isSetSubtraitMode.value) {
+		syncCompanionSubtraits(t.noun || t.name);
+	} else if (traitSet.value) {
+		applyTypeScopedRange(traitSet.value, trait.value);
+	}
 	updateCharacter(props.character);
 }
 
@@ -351,7 +429,17 @@ function setTraitRange(scale: number[]) {
 	const t = trait.value as unknown as Record<string, any>;
 	const rating = getRating(t);
 	if (!rating) return;
-	t.rating = { type: rating.type, value: [...rating.value], range: [...scale] };
+	t.rating = {
+		type: rating.type,
+		value: [...rating.value],
+		range: [...scale],
+		...((rating as any).out === true ? { out: true } : {}),
+	};
+	if (isSetSubtraitMode.value) {
+		syncCompanionSubtraits(t.noun || t.name);
+	} else if (traitSet.value) {
+		applyTypeScopedRange(traitSet.value, trait.value);
+	}
 	updateCharacter(props.character);
 }
 
@@ -370,12 +458,6 @@ function toggleRangeOption(size: number) {
 	else base.push(size);
 	base.sort((a, b) => a - b);
 	setTraitRange(base);
-}
-
-function applyRangeToAllInSet() {
-	if (!traitSet.value || !trait.value) return;
-	applyTypeScopedRange(traitSet.value, trait.value);
-	updateCharacter(props.character);
 }
 
 // Options render only what the shape makes meaningful: Pool and
@@ -468,66 +550,34 @@ const description = computed({
 	},
 });
 
-// The statement is a child trait: its name is the sentence and its Pip is
-// the questioned state. Editing here creates/renames/removes that child.
-const statementText = computed({
-	get() {
-		const child = getPipChild(trait.value);
-		return child && typeof child.name === 'string' ? child.name : '';
-	},
-	set(val: string) {
-		if (!trait.value) return;
-		const sentence = (val || '').trim();
-		if (!Array.isArray(trait.value.traits)) trait.value.traits = [];
-		const child = getPipChild(trait.value);
-		if (!sentence) {
-			if (child) {
-				const idx = trait.value.traits.indexOf(child);
-				if (idx !== -1) {
-					trait.value.traits.splice(idx, 1);
-				} else {
-					for (const grp of trait.value.traits) {
-						if (Array.isArray(grp.traits)) {
-							const gi = grp.traits.indexOf(child);
-							if (gi !== -1) grp.traits.splice(gi, 1);
-						}
-					}
-				}
-			}
-		} else {
-			if (child) {
-				child.name = sentence;
-			} else {
-				trait.value.traits.push({
-					name: sentence,
-					description: '',
-					tags: [],
-					rating: { type: 'Pip', value: [false] },
-				} as any);
-			}
-		}
-		updateCharacter(props.character);
-	},
-});
-
-const sfxEntries = computed(() => cortexFunctions.sfxChildren(trait.value));
-
-// Child traits that are subtraits, not the SFX or statement containers.
-// Index is the real position in `trait.traits`, so the subtrait editor
-// reads correctly.
-const subtraits = computed(() => {
+// Child subtraits on the current node (`trait.traits[]`). Every child trait
+// (companion track, statement, specialty, SFX, or nested child) is surfaced
+// as a drill-in row that opens this same TraitEditor at `depth + 1`.
+const childSubtraits = computed(() => {
 	const subs = trait.value?.traits;
 	if (!Array.isArray(subs)) return [];
 	return subs
-		.map((sub: any, idx: number) => ({ sub, idx }))
-		.filter((item: any) => !cortexFunctions.isSfxContainer(item.sub) && item.sub?.name !== 'Statement');
+		.map((sub: any, idx: number) => {
+			if (!sub || typeof sub !== 'object') return null;
+			const r = getRating(sub);
+			const isSinglePip = r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
+			const label =
+				(isSetSubtraitMode.value ? sub.noun || (isSinglePip ? 'Statement' : sub.name) : sub.name || sub.noun) ||
+				'Subtrait';
+			const summary = r?.type
+				? r.type
+				: Array.isArray(sub.traits) && sub.traits.length
+					? `${sub.traits.length}`
+					: 'Unrated';
+			return { sub, idx, label: String(label).trim() || 'Subtrait', summary };
+		})
+		.filter((item): item is { sub: any; idx: number; label: string; summary: string } => item !== null);
 });
 
-const scrollable = computed(() =>
-	Boolean((sfxEntries.value.length > 0 && !isThreeColumnTable.value) || subtraits.value.length > 0),
-);
+const scrollable = computed(() => Boolean(childSubtraits.value.length > 0));
 
 const isThreeColumnTable = computed(() => {
+	if (isSubtraitMode.value) return false;
 	const parts = getView(traitSet.value)?.parts;
 	return Boolean(parts && (parts['child:SFX'] || (parts as any)['child_sfx']));
 });
@@ -626,52 +676,6 @@ const outLabel = computed(() => {
 
 const availableValues = computed(() => cortexFunctions.getTraitSetRatings(traitSet.value));
 
-const hasTrackPart = computed(() => cortexFunctions.hasTrackPart(traitSet.value));
-const trackLabel = computed(() => cortexFunctions.getTrackLabel(traitSet.value));
-const trackScale = computed(() => cortexFunctions.getTrackScale(traitSet.value));
-
-const trackCompanion = computed(() => {
-	const subs = trait.value?.traits;
-	if (!Array.isArray(subs)) return undefined;
-	const target = trackLabel.value.toLowerCase();
-	return subs.find(
-		(st: any) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target,
-	);
-});
-
-const trackValue = computed({
-	get() {
-		if (trackCompanion.value) {
-			const dice = cortexFunctions.getTraitDice(trackCompanion.value);
-			return dice[0] || 0;
-		}
-		return 0;
-	},
-	set(val: any) {
-		const character = props.character;
-		const t = character.traitSets[props.traitSetID].traits[props.traitID];
-		if (!Array.isArray(t.traits)) t.traits = [];
-		const label = trackLabel.value;
-		const target = label.toLowerCase();
-		let companion = t.traits.find(
-			(st: any) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target,
-		);
-		if (val) {
-			if (companion) cortexFunctions.setTraitDice(companion, [val]);
-			else
-				t.traits.push({
-					name: label,
-					description: '',
-					tags: [],
-					rating: { type: 'Die', value: [val], range: trackScale.value.slice() },
-				});
-		} else if (companion) {
-			t.traits.splice(t.traits.indexOf(companion), 1);
-		}
-		updateCharacter(character);
-	},
-});
-
 const cssClass = computed(() => {
 	const cls: Record<string, boolean> = {
 		editor: true,
@@ -744,7 +748,13 @@ const setRating = computed(() => {
 });
 
 const hideUnratedSetDie = computed(() =>
-	Boolean(parentIsBranch.value && branchRole.value !== 'specialty' && setRating.value && !isRated(trait.value)),
+	Boolean(
+		!isSubtraitMode.value &&
+		parentIsBranch.value &&
+		branchRole.value !== 'specialty' &&
+		setRating.value &&
+		!isRated(trait.value),
+	),
 );
 
 const parentIsFullWidth = computed(() => {
@@ -839,11 +849,76 @@ function targetValue(e: Event) {
 	return (e?.target as HTMLInputElement)?.value ?? '';
 }
 
+function syncCompanionSubtraits(prevName?: string) {
+	if (!isSetSubtraitMode.value || !traitSet.value || !trait.value) return;
+	const src = trait.value as any;
+	const targetName = String(src.name || '').trim();
+	const targetNoun = String(src.noun || targetName).trim();
+	const prevLower = String(prevName ?? targetNoun)
+		.trim()
+		.toLowerCase();
+	const path = resolvedPath.value;
+	const traits = Array.isArray(traitSet.value.traits) ? traitSet.value.traits : [];
+	traits.forEach((tr: any) => {
+		if (!tr || typeof tr !== 'object' || tr === parentTrait.value) return;
+		if (!Array.isArray(tr.traits)) tr.traits = [];
+		let sibling = tr.traits.find(
+			(st: any) =>
+				st &&
+				typeof st === 'object' &&
+				(String(st.name || '')
+					.trim()
+					.toLowerCase() === prevLower ||
+					String(st.noun || '')
+						.trim()
+						.toLowerCase() === prevLower),
+		);
+		if (!sibling && typeof path[1] === 'number' && tr.traits[path[1]]) {
+			sibling = tr.traits[path[1]];
+		}
+		if (depth.value === 3 && sibling && typeof path[2] === 'number') {
+			if (!Array.isArray(sibling.traits)) sibling.traits = [];
+			sibling = sibling.traits[path[2]];
+		}
+		if (sibling && typeof sibling === 'object') {
+			sibling.name = src.name;
+			if (src.noun) sibling.noun = src.noun;
+			if (src.rating) {
+				sibling.rating = structuredClone(toRaw(src.rating));
+			}
+		}
+	});
+	const trackTarget = cortexFunctions.getTrackLabel(traitSet.value).toLowerCase();
+	if (targetName.toLowerCase() === trackTarget || targetNoun.toLowerCase() === trackTarget) {
+		const view = ensureView(traitSet.value);
+		const body = view.style?.body;
+		if (body !== 'portrait-ring' && body !== 'image' && body !== 'pips' && body !== 'die-track') {
+			const existingParts = view.parts && typeof view.parts === 'object' ? view.parts : null;
+			if (!existingParts || !(existingParts as any).track) {
+				const frameShape = typeof view.frame === 'string' ? view.frame : view.frame?.shape;
+				view.parts = buildParts({
+					rating: frameShape === 'ring' ? 'below' : 'inline',
+					ratingDice: cortexFunctions.getTraitSetRatings(traitSet.value).length || 5,
+					trackDice: Array.isArray(src.rating?.range) && src.rating.range.length ? src.rating.range.length : 5,
+					description: Boolean((view.features as any)?.description),
+					block: false,
+					subtraits: false,
+				});
+			}
+		}
+	}
+}
+
 function setProperty(key: string, val: any) {
 	const character = props.character;
-	const s = props.traitSetID;
-	const t = props.traitID;
-	(character.traitSets[s].traits[t] as Record<string, any>)[key] = val;
+	const target = trait.value as Record<string, any> | undefined;
+	if (!target) return;
+	const prevName = target.name;
+	target[key] = val;
+	if (isSetSubtraitMode.value && key === 'name') {
+		target.noun = val;
+		syncCompanionSubtraits(prevName);
+	}
 	updateCharacter(character);
 }
 
@@ -880,31 +955,6 @@ function setPrefixValue(val: any) {
 		v.prefix.text = val;
 	}
 	updateCharacter(props.character);
-}
-
-function setTrackValue(val: any) {
-	const character = props.character;
-	const t = character.traitSets[props.traitSetID].traits[props.traitID];
-	if (!Array.isArray(t.traits)) t.traits = [];
-	const label = trackLabel.value;
-	const target = label.toLowerCase();
-	const companion = t.traits.find(
-		(st: any) => st && typeof st === 'object' && typeof st.name === 'string' && st.name.toLowerCase() === target,
-	);
-	const current = companion ? cortexFunctions.getTraitDice(companion)[0] || 0 : 0;
-	if (current === val) {
-		if (companion) t.traits.splice(t.traits.indexOf(companion), 1);
-	} else if (companion) {
-		cortexFunctions.setTraitDice(companion, [val]);
-	} else {
-		t.traits.push({
-			name: label,
-			description: '',
-			tags: [],
-			rating: { type: 'Die', value: [val], range: trackScale.value.slice() },
-		});
-	}
-	updateCharacter(character);
 }
 
 function getDieCount(size: number) {
@@ -1082,24 +1132,38 @@ function stepCounterUp() {
 function duplicateTrait() {
 	const character = props.character;
 	const s = props.traitSetID;
-	const t = props.traitID;
+	const path = resolvedPath.value;
+	const current = trait.value;
+	const container = parentNode.value;
+	if (!current || !container || !Array.isArray(container.traits)) return;
+	const lastIdx = path[path.length - 1];
 
-	const clone = structuredClone(toRaw(character.traitSets[s].traits[t]));
-	// A duplicate is a new instance: drop internal ids so keys and
-	// preferences never collide with the original (fresh ones are
-	// assigned on update).
+	const clone = structuredClone(toRaw(current));
 	delete clone._lid;
 	delete clone.id;
 	cortexFunctions.stripInternalIds({ traits: [clone] });
-	character.traitSets[s].traits.splice(t + 1, 0, clone);
+	container.traits.splice(lastIdx + 1, 0, clone);
 
 	updateCharacter(character);
-	selectElement(['trait', s, t + 1]);
+	const nextPath = [...path.slice(0, -1), lastIdx + 1];
+	selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...nextPath]);
 }
 
 function removeTrait() {
 	confirmDelete.value = false;
-	emit('removeTrait', props.traitSetID, props.traitID);
+	const path = resolvedPath.value;
+	const s = props.traitSetID;
+	if (depth.value >= 2) {
+		const lastIdx = path[path.length - 1];
+		removeSubtraitAtCurrentParent(lastIdx);
+		if (isSetSubtraitMode.value && depth.value === 2) {
+			selectElement(['traitSet', s]);
+		} else {
+			selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path.slice(0, -1)]);
+		}
+		return;
+	}
+	emit('removeTrait', s, props.traitID);
 }
 
 function templateHasTrait(name: string) {
@@ -1118,28 +1182,23 @@ function removeFromSheet() {
 	updateCharacter(props.character);
 }
 
-function addSfxEntry() {
-	const character = props.character;
+function openChildSubtrait(childIdx: number) {
 	const s = props.traitSetID;
-	const t = props.traitID;
-	const container = cortexFunctions.ensureSfxContainer(character.traitSets[s].traits[t]);
-	if (container && Array.isArray(container.traits)) {
-		container.traits.push(structuredClone(cortexFunctions.defaultSFX));
-	}
-	updateCharacter(character);
-}
-
-function removeSfxEntry(entryIndex: number) {
-	const character = props.character;
-	const s = props.traitSetID;
-	const t = props.traitID;
-	cortexFunctions.removeSfxAt(character.traitSets[s].traits[t], entryIndex);
-	updateCharacter(character);
+	const path = resolvedPath.value;
+	if (path.length >= 3) return;
+	selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, childIdx]);
 }
 
 function addSubtrait() {
+	if (!canCreateSubtrait.value) return;
+	const tr = trait.value;
+	if (!tr) return;
+	if (!Array.isArray(tr.traits)) tr.traits = [];
+
 	const subtrait: any = structuredClone(cortexFunctions.defaultTrait);
-	subtrait.name = 'New child trait';
+	const nextNum = tr.traits.length + 1;
+	subtrait.name = nextNum === 1 ? 'New subtrait' : `New subtrait ${nextNum}`;
+	subtrait.noun = nextNum === 1 ? 'Subtrait' : `Subtrait ${nextNum}`;
 	const allowed = cortexFunctions.getSubtraitRatings(traitSet.value);
 	const cur =
 		subtrait.rating && subtrait.rating.type === 'Die' && Array.isArray(subtrait.rating.value)
@@ -1151,21 +1210,97 @@ function addSubtrait() {
 
 	const character = props.character;
 	const s = props.traitSetID;
-	const t = props.traitID;
-	const tr = character.traitSets[s].traits[t];
-	if (!Array.isArray(tr.traits)) tr.traits = [];
+	const path = resolvedPath.value;
 	tr.traits.push(subtrait);
+	const newIdx = tr.traits.length - 1;
+
+	if (isSetSubtraitMode.value && depth.value === 2 && traitSet.value && Array.isArray(traitSet.value.traits)) {
+		const u = path[1];
+		traitSet.value.traits.forEach((setTrait: any, tIdx: number) => {
+			if (tIdx === path[0] || !setTrait || typeof setTrait !== 'object') return;
+			const comp = Array.isArray(setTrait.traits) ? setTrait.traits[u] : null;
+			if (comp && typeof comp === 'object') {
+				if (!Array.isArray(comp.traits)) comp.traits = [];
+				comp.traits.push(structuredClone(toRaw(subtrait)));
+			}
+		});
+	}
+
 	updateCharacter(character);
+	selectElement([isSetSubtraitMode.value ? 'subtrait' : 'trait', s, ...path, newIdx]);
+}
+
+function removeSubtraitAtCurrentParent(targetIdx: number) {
+	const character = props.character;
+	const s = props.traitSetID;
+	const path = resolvedPath.value;
+	if (isSetSubtraitMode.value && depth.value === 2 && traitSet.value && Array.isArray(traitSet.value.traits)) {
+		const target = parentNode.value?.traits?.[targetIdx];
+		const targetKey = String(target?.noun || target?.name || '')
+			.trim()
+			.toLowerCase();
+		traitSet.value.traits.forEach((tr: any) => {
+			if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
+			if (targetKey) {
+				const hit = tr.traits.findIndex(
+					(st: any) =>
+						st &&
+						typeof st === 'object' &&
+						(String(st.noun || '')
+							.trim()
+							.toLowerCase() === targetKey ||
+							String(st.name || '')
+								.trim()
+								.toLowerCase() === targetKey),
+				);
+				if (hit !== -1) {
+					tr.traits.splice(hit, 1);
+					return;
+				}
+			}
+			if (targetIdx >= 0 && targetIdx < tr.traits.length) {
+				tr.traits.splice(targetIdx, 1);
+			}
+		});
+		updateCharacter(character);
+		return;
+	}
+	if (depth.value === 2) {
+		const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
+		cortexFunctions.removeSubtraitFromSheet(character, entry, s, path[0], targetIdx);
+		updateCharacter(character);
+		return;
+	}
+	if (parentNode.value && Array.isArray(parentNode.value.traits)) {
+		parentNode.value.traits.splice(targetIdx, 1);
+		updateCharacter(character);
+	}
 }
 
 function removeSubtrait(subtraitID: number) {
 	const character = props.character;
 	const s = props.traitSetID;
-	const t = props.traitID;
-	const u = subtraitID;
-	const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
-	cortexFunctions.removeSubtraitFromSheet(character, entry, s, t, u);
-	updateCharacter(character);
+	const path = resolvedPath.value;
+	if (depth.value === 1) {
+		const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
+		cortexFunctions.removeSubtraitFromSheet(character, entry, s, path[0], subtraitID);
+		updateCharacter(character);
+		return;
+	}
+	if (trait.value && Array.isArray(trait.value.traits)) {
+		trait.value.traits.splice(subtraitID, 1);
+		if (isSetSubtraitMode.value && depth.value === 2 && traitSet.value && Array.isArray(traitSet.value.traits)) {
+			const u = path[1];
+			traitSet.value.traits.forEach((setTrait: any, tIdx: number) => {
+				if (tIdx === path[0] || !setTrait || typeof setTrait !== 'object') return;
+				const comp = Array.isArray(setTrait.traits) ? setTrait.traits[u] : null;
+				if (comp && Array.isArray(comp.traits) && subtraitID < comp.traits.length) {
+					comp.traits.splice(subtraitID, 1);
+				}
+			});
+		}
+		updateCharacter(character);
+	}
 }
 
 function updateCharacter(character: any) {
@@ -1341,7 +1476,7 @@ function getDieDisplayValue(val: any) {
 					</template>
 
 					<div class="editor-field" v-else>
-						<label :for="'trait-name-' + traitID">{{ isLabeledPipsSet ? 'Label' : 'Trait Name' }}</label>
+						<label :for="'trait-name-' + traitID">{{ identityLabel }}</label>
 						<div class="editor-readonly-title" v-if="isPlay && !canDeleteInPlay">{{ name }}</div>
 						<input
 							v-else
@@ -1358,7 +1493,7 @@ function getDieDisplayValue(val: any) {
 						Renaming unlinks this trait from template updates — the original name will reappear as inherited.
 					</div>
 
-					<div class="editor-field" v-if="isNameSet && !isPlay">
+					<div class="editor-field" v-if="isNameSet && !isSubtraitMode && !isPlay">
 						<label :for="'trait-label-' + traitID">Label</label>
 						<input
 							type="text"
@@ -1369,39 +1504,15 @@ function getDieDisplayValue(val: any) {
 						/>
 					</div>
 
+					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && !isLabeledPipsSet">
+						<label :for="'trait-desc-' + traitID">Description</label>
+						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
+					</div>
+
 					<div class="editor-field" v-if="!isPlay">
 						<div class="name-heading-row">
 							<label>Visibility</label>
 							<visibility-eye :state="traitVisibility" @toggle="traitVisibility = nextVisibility(traitVisibility)" />
-						</div>
-					</div>
-
-					<!-- STATEMENT FIELD -->
-					<div class="editor-field" v-if="hasPipChild || isPairedSlotsStyle">
-						<label :for="'trait-statement-' + traitID">Statement</label>
-						<textarea
-							:id="'trait-statement-' + traitID"
-							name="traitStatement"
-							v-model="statementText"
-							rows="2"
-						></textarea>
-					</div>
-
-					<!-- QUESTIONED PIP TOGGLE -->
-					<div class="editor-field" v-if="hasPipChild">
-						<div class="editor-toggles">
-							<div>
-								<input
-									type="checkbox"
-									:id="'trait-' + traitID + '-questioned'"
-									name="traitQuestioned"
-									v-model="isQuestioned"
-									:disabled="!statementText"
-								/>
-							</div>
-							<div>
-								<label :for="'trait-' + traitID + '-questioned'"> Questioned </label>
-							</div>
 						</div>
 					</div>
 
@@ -1513,6 +1624,23 @@ function getDieDisplayValue(val: any) {
 							</div>
 						</div>
 
+						<!-- Warning Prompt if child values would be cleared -->
+						<div class="editor-warning-prompt editor-warning-banner mb-sm" v-if="confirmRatingChange">
+							<span>Changing rating type will clear existing ratings. Proceed?</span>
+							<div class="mt-xs">
+								<button
+									type="button"
+									class="btn-step btn-warning-confirm px-2"
+									@click.stop="setRatingType(confirmRatingChange)"
+								>
+									Proceed
+								</button>
+								<button type="button" class="btn-step px-2 ms-2" @click.stop="confirmRatingChange = null">
+									Cancel
+								</button>
+							</div>
+						</div>
+
 						<!-- TYPE (Die | Dice | Counter | Pip) -->
 						<div class="editor-button-group" v-if="isRatedTrait && !isPlay">
 							<button
@@ -1521,29 +1649,16 @@ function getDieDisplayValue(val: any) {
 								:key="'rating-type-' + rt"
 								class="editor-group-btn"
 								:class="{ active: ratingType === rt }"
-								@click.stop="setRatingType(rt)"
+								@click.stop="requestRatingType(rt)"
 							>
 								{{ rt }}
 							</button>
 						</div>
 
-						<!-- OUT (range option for Die/Dice, default off) -->
-						<div
-							class="editor-toggles"
-							v-if="isRatedTrait && (ratingType === 'Die' || ratingType === 'Dice') && !isPlay"
-						>
-							<div>
-								<input type="checkbox" :id="'trait-' + traitID + '-out'" name="ratingOut" v-model="ratingHasOut" />
-							</div>
-							<div>
-								<label :for="'trait-' + traitID + '-out'"> Out </label>
-							</div>
-						</div>
-
 						<!-- SINGLE DIE SELECTOR (EDIT MODE) -->
 						<ul class="editor-values" v-if="ratingType === 'Die' && !isPlay">
 							<li
-								v-for="val in availableValues"
+								v-for="val in dieRange"
 								:class="{ active: isDieActiveOf(trait, val) && !isOut }"
 								tabindex="0"
 								role="button"
@@ -1612,7 +1727,7 @@ function getDieDisplayValue(val: any) {
 						<!-- DICE LIST EDITOR -->
 						<div class="editor-multidie-container" v-else-if="ratingType === 'Dice'">
 							<div class="editor-die-steppers" v-if="!isPlay">
-								<div v-for="size in availableValues" :key="'stepper-' + size" class="die-stepper-item">
+								<div v-for="size in dieRange" :key="'stepper-' + size" class="die-stepper-item">
 									<span v-html="getDieDisplayValue(size)"></span>
 									<span class="stepper-label">d{{ size }}</span>
 									<div class="stepper-controls">
@@ -1720,16 +1835,6 @@ function getDieDisplayValue(val: any) {
 										class="w-full"
 									/>
 								</div>
-								<div class="w-full mt-md" v-if="!isPlay">
-									<button
-										type="button"
-										class="editor-button"
-										@click.stop="applyRangeToAllInSet"
-										title="Apply to all counters in set"
-									>
-										<span>Apply to all counters in set</span>
-									</button>
-								</div>
 							</div>
 							<div v-else class="num-stepper">
 								<button
@@ -1764,7 +1869,9 @@ function getDieDisplayValue(val: any) {
 									:key="'pip-' + bubbleIndex"
 									class="pip-bubble-wrap"
 									tabindex="0"
-									role="button"
+									role="checkbox"
+									:aria-checked="pipBubbleAt(bubbleIndex - 1) ? 'true' : 'false'"
+									:aria-label="'Pip ' + bubbleIndex"
 									@keydown.enter.prevent="togglePipBubble(bubbleIndex - 1)"
 									@keydown.space.prevent="togglePipBubble(bubbleIndex - 1)"
 									@click.stop="togglePipBubble(bubbleIndex - 1)"
@@ -1837,15 +1944,14 @@ function getDieDisplayValue(val: any) {
 									<span v-html="getDieDisplayValue(size)"></span>
 									<span class="chip-label">d{{ size }}</span>
 								</button>
-							</div>
-							<div class="rating-scale-actions mt-2" v-if="!isPlay">
 								<button
 									type="button"
-									class="editor-button"
-									@click.stop="applyRangeToAllInSet"
-									title="Apply to all dice in set"
+									class="rating-scale-chip rating-scale-chip-out"
+									:class="{ active: ratingHasOut }"
+									@click.stop="ratingHasOut = !ratingHasOut"
+									:title="(ratingHasOut ? 'Disable' : 'Enable') + ' Out marker'"
 								>
-									<span>Apply to all dice in set</span>
+									<span class="chip-label chip-out-label">OUT</span>
 								</button>
 							</div>
 						</div>
@@ -1854,8 +1960,8 @@ function getDieDisplayValue(val: any) {
 					<!-- OPTIONS (only what the shape makes meaningful) -->
 					<div class="editor-field" v-if="!isPlay && isRatedTrait && !isListStyle && !isLabeledPipsSet">
 						<div class="editor-label">Options</div>
-						<div class="editor-toggles">
-							<div>
+						<div class="editor-row-inline flex-wrap">
+							<div class="editor-checkbox-row">
 								<input
 									type="checkbox"
 									:id="'trait-' + traitID + '-pool'"
@@ -1863,16 +1969,13 @@ function getDieDisplayValue(val: any) {
 									:false-value="false"
 									v-model="traitPool"
 								/>
-							</div>
-							<div>
 								<label
 									:for="'trait-' + traitID + '-pool'"
 									title="Adding the trait stages its whole array of available dice"
 									>Pool</label
 								>
 							</div>
-
-							<div>
+							<div class="editor-checkbox-row">
 								<input
 									type="checkbox"
 									:id="'trait-' + traitID + '-spendable'"
@@ -1880,8 +1983,8 @@ function getDieDisplayValue(val: any) {
 									:false-value="false"
 									v-model="traitSpendable"
 								/>
+								<label :for="'trait-' + traitID + '-spendable'">Spendable</label>
 							</div>
-							<div><label :for="'trait-' + traitID + '-spendable'">Spendable</label></div>
 						</div>
 						<div class="editor-toggles mt-sm" v-if="hitchesDiffers">
 							<div><label :for="'trait-' + traitID + '-hitches'">Hitches</label></div>
@@ -1899,68 +2002,48 @@ function getDieDisplayValue(val: any) {
 						</div>
 					</div>
 
-					<!-- ATTACHED TRACK SELECTOR -->
-					<div class="editor-field" v-if="hasTrackPart">
-						<div class="editor-label">Attached {{ trackLabel }}</div>
-						<ul class="editor-values">
-							<li
-								:class="{ active: trackValue === 0 }"
-								tabindex="0"
-								role="button"
-								@keydown.enter.prevent="setTrackValue(0)"
-								@keydown.space.prevent="setTrackValue(0)"
-								@click.stop="setTrackValue(0)"
-								title="None"
-							>
-								<span class="font-bold text-sm">-</span>
-							</li>
-							<li
-								v-for="val in trackScale"
-								:class="{ active: trackValue === val }"
-								tabindex="0"
-								role="button"
-								@keydown.enter.prevent="setTrackValue(val)"
-								@keydown.space.prevent="setTrackValue(val)"
-								@click.stop="setTrackValue(val)"
-							>
-								<span v-html="getDieDisplayValue(val)"></span>
-							</li>
-						</ul>
-					</div>
+					<!-- SUBTRAITS -->
+					<div class="editor-field" v-if="!isPlay || childSubtraits.length > 0">
+						<div class="editor-label">Subtraits</div>
 
-					<div
-						class="editor-field"
-						v-if="!isPlay && !isThreeColumnTable && !hasPipChild && !isPairedSlotsStyle && !isLabeledPipsSet"
-					>
-						<label :for="'trait-desc-' + traitID">Description</label>
-						<textarea :id="'trait-desc-' + traitID" name="traitDescription" v-model="description"></textarea>
-					</div>
-
-					<!-- CHILD TRAITS (SUBTRAITS, STATEMENTS, SFX) -->
-					<div class="editor-field">
-						<div class="editor-label">Child Traits</div>
-
-						<div class="editor-subgroups">
-							<transition-group appear>
-								<subtrait-editor
-									v-for="item in subtraits"
-									:key="traitSetID + '-' + traitID + '-' + item.idx"
-									:character="character"
-									:traitSetID="traitSetID"
-									:traitID="traitID"
-									:subtraitID="Number(item.idx)"
-									:submode="submode"
-									@updateCharacter="updateCharacter"
-									@removeSubtrait="removeSubtrait"
-								></subtrait-editor>
-							</transition-group>
+						<div class="editor-subtrait-list" v-if="childSubtraits.length > 0">
+							<div v-for="item in childSubtraits" :key="'child-sub-' + item.idx" class="editor-subtrait-row">
+								<button
+									type="button"
+									class="editor-subtrait-drill"
+									@click.stop="openChildSubtrait(item.idx)"
+									:title="(isPlay ? 'Inspect ' : 'Edit ') + item.label"
+								>
+									<span class="editor-subtrait-name">{{ item.label }}</span>
+									<span class="editor-subtrait-meta">
+										<span class="editor-subtrait-badge">{{ item.summary }}</span>
+										<i class="fas fa-chevron-right editor-subtrait-chevron" aria-hidden="true"></i>
+									</span>
+								</button>
+								<button
+									v-if="!isPlay"
+									type="button"
+									class="editor-subtrait-delete"
+									@click.stop="removeSubtrait(item.idx)"
+									:title="'Delete ' + item.label"
+									:aria-label="'Delete ' + item.label"
+								>
+									<i class="fas fa-trash" aria-hidden="true"></i>
+								</button>
+							</div>
 						</div>
 
 						<div class="editor-button-container" v-if="!isPlay">
 							<div class="editor-button-container-inner">
-								<div class="editor-button" @click.stop="addSubtrait">
-									<span><i class="fas fa-plus"></i> Add Child Trait</span>
-								</div>
+								<button
+									type="button"
+									class="editor-button"
+									:disabled="!canCreateSubtrait"
+									:title="canCreateSubtrait ? 'Create subtrait' : 'Maximum subtrait depth (3 levels) reached'"
+									@click.stop="addSubtrait"
+								>
+									<span><i class="fas fa-plus"></i> Create subtrait</span>
+								</button>
 							</div>
 						</div>
 					</div>
@@ -2018,28 +2101,6 @@ function getDieDisplayValue(val: any) {
 								@change="setPrefixValue(targetValue($event))"
 								:placeholder="prefixValue()"
 							/>
-						</div>
-					</div>
-
-					<!-- SFX (Existing container entries) -->
-					<div class="editor-field" v-if="!isPlay && !isThreeColumnTable && sfxEntries.length > 0">
-						<div class="editor-label">SFX</div>
-
-						<div class="editor-subgroups">
-							<transition-group appear>
-								<subtrait-editor
-									v-for="(entry, entryIndex) in sfxEntries"
-									:key="traitSetID + '-' + traitID + '-' + entryIndex"
-									:character="character"
-									:traitSetID="traitSetID"
-									:traitID="traitID"
-									:subtraitID="entryIndex"
-									:entries="sfxEntries"
-									entryLabel="SFX"
-									@updateCharacter="updateCharacter"
-									@removeSubtrait="removeSfxEntry"
-								></subtrait-editor>
-							</transition-group>
 						</div>
 					</div>
 				</div>

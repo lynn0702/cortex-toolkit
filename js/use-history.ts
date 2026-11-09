@@ -66,11 +66,24 @@ export function useHistory(deps: HistoryDeps) {
 
 	function validateEditing(characterData: any) {
 		if (!editing.value || !editing.value.length || !characterData) return;
-		const [type, s, t] = editing.value;
+		const [type, s, ...rest] = editing.value;
 		if (type === 'traitSet' && !characterData.traitSets?.[s]) {
 			editing.value = [];
-		} else if (type === 'trait' && !characterData.traitSets?.[s]?.traits?.[t]) {
-			editing.value = [];
+		} else if (type === 'trait' || type === 'subtrait') {
+			const set = characterData.traitSets?.[s];
+			if (!set || !Array.isArray(set.traits)) {
+				editing.value = [];
+				return;
+			}
+			const indices = type === 'subtrait' && rest.length === 1 ? [0, Number(rest[0])] : rest.map(Number);
+			let list: any[] | undefined = set.traits;
+			for (const idx of indices) {
+				if (!Array.isArray(list) || !list[idx]) {
+					editing.value = [];
+					return;
+				}
+				list = list[idx].traits;
+			}
 		}
 	}
 

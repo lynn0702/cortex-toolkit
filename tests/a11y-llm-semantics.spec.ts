@@ -1027,8 +1027,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	describe('Phase 4: Unified Set & Subtrait Editor (Rule of 3)', () => {
-		it('renders identity (name line 1, description line 2) and unified rating types in SubtraitEditor', async () => {
-			const { default: SubtraitEditor } = await import('../js/subtrait-editor.vue');
+		it('renders identity (name line 1, description line 2) and unified rating types in TraitEditor for a subtrait', async () => {
 			const char: any = {
 				name: 'Test Hero',
 				traitSets: [
@@ -1044,22 +1043,24 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				],
 			};
 
-			const wrapper = mount(SubtraitEditor, {
+			const wrapper = mount(TraitEditor, {
 				props: {
 					character: char,
 					traitSetID: 0,
 					traitID: 0,
 					subtraitID: 0,
+					traitPath: [0, 0],
+					open: true,
 					submode: 'edit',
 				},
 				attachTo: document.body,
 			});
 
-			// 1. Identity order
+			// 1. Identity order (Trait Name in field 0, Description in field 1)
 			const fields = wrapper.findAll('.editor-field');
 			expect(fields.length).toBeGreaterThanOrEqual(2);
-			expect(fields[0].find('input[name="subtraitName"]').exists()).toBe(true);
-			expect(fields[1].find('textarea[name="subtraitDescription"]').exists()).toBe(true);
+			expect(fields[0].find('input[name="traitName"]').exists()).toBe(true);
+			expect(fields[1].find('textarea[name="traitDescription"]').exists()).toBe(true);
 
 			// 2. Rating type picker
 			const typeButtons = wrapper.findAll('.editor-group-btn');
@@ -1107,7 +1108,6 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('warns before rating-type change when child traits exist and confirms switch', async () => {
-			const { default: SubtraitEditor } = await import('../js/subtrait-editor.vue');
 			const char: any = {
 				name: 'Complex Trait Hero',
 				traitSets: [
@@ -1134,12 +1134,14 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				],
 			};
 
-			const wrapper = mount(SubtraitEditor, {
+			const wrapper = mount(TraitEditor, {
 				props: {
 					character: char,
 					traitSetID: 0,
 					traitID: 0,
 					subtraitID: 0,
+					traitPath: [0, 0],
+					open: true,
 					submode: 'edit',
 				},
 				attachTo: document.body,
@@ -1164,7 +1166,6 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		});
 
 		it('supports statement child trait in Play mode with read-only name and interactive pip toggle', async () => {
-			const { default: SubtraitEditor } = await import('../js/subtrait-editor.vue');
 			const char: any = {
 				name: 'Statement Hero',
 				traitSets: [
@@ -1185,12 +1186,14 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				],
 			};
 
-			const wrapper = mount(SubtraitEditor, {
+			const wrapper = mount(TraitEditor, {
 				props: {
 					character: char,
 					traitSetID: 0,
 					traitID: 0,
 					subtraitID: 0,
+					traitPath: [0, 0],
+					open: true,
 					submode: 'play',
 				},
 				attachTo: document.body,
@@ -1198,7 +1201,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			// In Play mode, name is rendered read-only
 			expect(wrapper.find('.editor-readonly-title').exists()).toBe(true);
-			expect(wrapper.find('input[name="subtraitName"]').exists()).toBe(false);
+			expect(wrapper.find('input[name="traitName"]').exists()).toBe(false);
 
 			// Pip bubble is interactive and toggles questioned state
 			const pipWrap = wrapper.find('.pip-bubble-wrap');
@@ -1241,6 +1244,269 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(outChip.classes()).toContain('active');
 
 			wrapper.unmount();
+		});
+
+		it('creates a subtrait from set editor, drills into TraitEditor with breadcrumb, and surfaces subtrait parts on parent mini', async () => {
+			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
+			const { default: StudioPanel } = await import('../js/studio-panel.vue');
+			const char: any = {
+				name: 'Subtrait Hero',
+				traitSets: [
+					{
+						name: 'Attributes',
+						noun: 'Attribute',
+						view: {},
+						traits: [
+							{ name: 'Agility', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] }, traits: [] },
+							{ name: 'Brawn', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] }, traits: [] },
+						],
+					},
+				],
+			};
+
+			// 1. Set editor offers "Create subtrait" (no SUBTRAIT SCALE or ATTACHED TRACK)
+			const setEditor = mount(TraitSetEditor, {
+				props: { character: char, traitSetID: 0 },
+				attachTo: document.body,
+			});
+			expect(setEditor.text()).not.toContain('Subtrait scale');
+			expect(setEditor.text()).not.toContain('Attached track');
+
+			const createSubBtn = setEditor.findAll('button.editor-button').find((b) => b.text().includes('Create subtrait'));
+			expect(createSubBtn).toBeDefined();
+			await createSubBtn!.trigger('click');
+
+			const selectedEvents = setEditor.emitted('selectElement');
+			expect(selectedEvents).toBeTruthy();
+			expect(selectedEvents![0][0]).toEqual(['subtrait', 0, 0, 0]);
+			expect(cortexFunctions.hasTrackPart(char.traitSets[0])).toBe(true);
+			setEditor.unmount();
+
+			// 2. StudioPanel drills down into TraitEditor with breadcrumb "Sheet › Attributes › Stress"
+			const studio = mount(StudioPanel, {
+				props: {
+					character: char,
+					editing: ['subtrait', 0, 0, 0],
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			const crumbText = studio.find('.studio-breadcrumb').text();
+			expect(crumbText).toContain('Attributes');
+			expect(crumbText).toContain('Stress');
+			expect(crumbText).not.toContain('Subtrait Stress');
+			expect(studio.findComponent(TraitEditor).exists()).toBe(true);
+			studio.unmount();
+
+			// 3. Parent's mini surfaces both parent's parts and subtraits' parts labelled by owner trait
+			const mini = mount(TraitSetMini, {
+				props: {
+					initialSet: {
+						name: 'Values',
+						noun: 'Value',
+						traits: [
+							{
+								name: 'Justice',
+								rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+								traits: [
+									{ name: 'Stress', noun: 'Stress', rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] } },
+									{ name: 'Statement', noun: 'Statement', rating: { type: 'Pip', value: [false] } },
+								],
+							},
+						],
+					},
+				},
+				attachTo: document.body,
+			});
+
+			const namePart = mini.find('[data-grid-part="name"]');
+			const ratingPart = mini.find('[data-grid-part="rating"]');
+			const trackPart = mini.find('[data-grid-part="track"]');
+			const statementPipPart = mini.find('[data-grid-part="child:Statement:rating"]');
+
+			expect(namePart.exists()).toBe(true);
+			expect(namePart.attributes('data-part-owner')).toBe('Value');
+			expect(namePart.text()).toContain('Value · Name');
+
+			expect(ratingPart.exists()).toBe(true);
+			expect(ratingPart.attributes('data-part-owner')).toBe('Value');
+			expect(ratingPart.text()).toContain('Value · Rating');
+
+			expect(trackPart.exists()).toBe(true);
+			expect(trackPart.attributes('data-part-owner')).toBe('Stress');
+			expect(trackPart.text()).toContain('Stress · Rating');
+
+			expect(statementPipPart.exists()).toBe(true);
+			expect(statementPipPart.attributes('data-part-owner')).toBe('Statement');
+			expect(statementPipPart.text()).toContain('Statement · Rating');
+
+			mini.unmount();
+		});
+
+		it('supports multiple subtraits with drill-in buttons, Noun vs Trait Name labels, and 3-level recursion cap', async () => {
+			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
+			const { default: StudioPanel } = await import('../js/studio-panel.vue');
+			const char: any = {
+				name: 'Recursive Hero',
+				traitSets: [
+					{
+						name: 'Attributes',
+						noun: 'Attribute',
+						view: {},
+						traits: [
+							{
+								name: 'Agility',
+								rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+								traits: [
+									{
+										name: 'Stress',
+										noun: 'Stress',
+										rating: { type: 'Die', value: [6], range: [4, 6, 8, 10, 12] },
+										traits: [],
+									},
+								],
+							},
+						],
+					},
+				],
+			};
+
+			// 1. Set editor lists existing subtrait drill-in button AND Create subtrait button for adding more
+			const setEditor = mount(TraitSetEditor, {
+				props: { character: char, traitSetID: 0 },
+				attachTo: document.body,
+			});
+			const drillBtns = setEditor.findAll('.editor-subtrait-drill');
+			expect(drillBtns.length).toBe(1);
+			expect(drillBtns[0].text()).toContain('Stress');
+
+			const createSubBtn = setEditor.findAll('button.editor-button').find((b) => b.text().includes('Create subtrait'));
+			expect(createSubBtn).toBeDefined();
+			await createSubBtn!.trigger('click');
+			expect(char.traitSets[0].traits[0].traits.length).toBe(2);
+			expect(char.traitSets[0].traits[0].traits[1].noun).toBe('Subtrait 2');
+			setEditor.unmount();
+
+			// 2. Set-level drilldown uses "Noun" label; instance drilldown uses "Trait Name" label
+			const setSubEditor = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					subtraitID: 0,
+					traitPath: [0, 0],
+					isSetSubtrait: true,
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			expect(setSubEditor.find('label[for="trait-name-0"]').text()).toBe('Noun');
+			setSubEditor.unmount();
+
+			const instanceSubEditor = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					subtraitID: 0,
+					traitPath: [0, 0],
+					isSetSubtrait: false,
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			expect(instanceSubEditor.find('label[for="trait-name-0"]').text()).toBe('Trait Name');
+
+			// 3. Level 2 (Child) allows creating a Level 3 (Grandchild) subtrait and drills into ['trait', 0, 0, 0, 0]
+			const lvl2CreateBtn = instanceSubEditor
+				.findAll('button.editor-button')
+				.find((b) => b.text().includes('Create subtrait'));
+			expect(lvl2CreateBtn).toBeDefined();
+			expect(lvl2CreateBtn!.attributes('disabled')).toBeUndefined();
+			await lvl2CreateBtn!.trigger('click');
+			expect(instanceSubEditor.emitted('selectElement')![0][0]).toEqual(['trait', 0, 0, 0, 0]);
+			instanceSubEditor.unmount();
+
+			// 4. Level 3 (Grandchild) disables the "Create subtrait" button and StudioPanel renders 3-level breadcrumb
+			const studioLvl3 = mount(StudioPanel, {
+				props: {
+					character: char,
+					editing: ['trait', 0, 0, 0, 0],
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			const crumbText = studioLvl3.find('.studio-breadcrumb').text();
+			expect(crumbText).toContain('Attributes');
+			expect(crumbText).toContain('Agility');
+			expect(crumbText).toContain('Stress');
+			expect(crumbText).toContain('New subtrait');
+
+			const lvl3CreateBtn = studioLvl3
+				.findAll('button.editor-button')
+				.find((b) => b.text().includes('Create subtrait'));
+			expect(lvl3CreateBtn).toBeDefined();
+			expect(lvl3CreateBtn!.attributes('disabled')).toBeDefined();
+			studioLvl3.unmount();
+		});
+
+		it('mirrors Range with OUT chip, applies range across the set automatically, and wires Attributes (4 rows) and Values (4 parts) in Section Layout mini', async () => {
+			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+
+			// 1. Subtrait editor mirrors Range with OUT chip, inline Pool/Spendable, no Apply-to-all button, and auto-syncs range across set
+			const subEditor = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0, // Attributes
+					traitID: 0,
+					subtraitID: 0, // Stress
+					traitPath: [0, 0],
+					isSetSubtrait: true,
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			expect(subEditor.text()).not.toContain('Apply to all');
+			const outChip = subEditor.find('.rating-scale-chip-out');
+			expect(outChip.exists()).toBe(true);
+			await outChip.trigger('click');
+			expect(char.traitSets[0].traits[0].traits[0].rating.out).toBe(true);
+			expect(char.traitSets[0].traits[4].traits[0].rating.out).toBe(true);
+			subEditor.unmount();
+
+			// 2. Attributes Section Layout mini renders 4 stacked rows (Attribute · Name, Attribute · Rating, Stress · Label, Stress · Rating) with no Subtrait · Subtraits
+			const attrEditor = mount(TraitSetEditor, {
+				props: { character: char, traitSetID: 0 },
+				attachTo: document.body,
+			});
+			const attrBoxes = attrEditor.findAll('.row-mini-box');
+			expect(attrBoxes.length).toBe(4);
+			expect(attrBoxes.map((b) => b.find('.row-mini-name').text())).toEqual([
+				'Attribute · Name',
+				'Attribute · Rating',
+				'Stress · Label',
+				'Stress · Rating',
+			]);
+			attrEditor.unmount();
+
+			// 3. Values Section Layout mini renders 4 parts (Value · Name, Statement · Rating, Value · Rating, Statement · Label)
+			const valEditor = mount(TraitSetEditor, {
+				props: { character: char, traitSetID: 4 },
+				attachTo: document.body,
+			});
+			const valBoxes = valEditor.findAll('.row-mini-box');
+			expect(valBoxes.length).toBe(4);
+			const valNames = valBoxes.map((b) => b.find('.row-mini-name').text());
+			expect(valNames).toContain('Value · Name');
+			expect(valNames).toContain('Statement · Rating');
+			expect(valNames).toContain('Value · Rating');
+			expect(valNames).toContain('Statement · Label');
+			valEditor.unmount();
 		});
 	});
 });

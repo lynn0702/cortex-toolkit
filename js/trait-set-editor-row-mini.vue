@@ -19,11 +19,40 @@ const PART_TITLES: Record<string, string> = {
 	name: 'Name',
 	rating: 'Rating',
 	description: 'Description',
+	badge: 'Badge',
 	block: 'Block',
 	subtraits: 'Subtraits',
 	trackLabel: 'Track Label',
 	track: 'Track',
 };
+
+function partBoxLabel(key: string): string {
+	const setNoun = (traitSet.value as any)?.noun || (traitSet.value as any)?.name || 'Trait';
+	const trackNoun = getView(traitSet.value)?.labels?.track || 'Stress';
+	if (key === 'trackLabel') return `${trackNoun} · Label`;
+	if (key === 'track') return `${trackNoun} · Rating`;
+	if (key.startsWith('child:')) {
+		const segs = key.slice(6).split(':');
+		const cNoun = segs[0] || 'Subtrait';
+		const cKind = segs[1] === 'rating' ? 'Rating' : 'Label';
+		return `${cNoun} · ${cKind}`;
+	}
+	if (key === 'subtraits') {
+		let sNoun = 'Subtrait';
+		for (const t of (traitSet.value as any)?.traits || []) {
+			for (const sub of t?.traits || []) {
+				const cand = (sub?.noun || sub?.name || '').trim();
+				if (cand && cand.toLowerCase() !== trackNoun.toLowerCase() && sub?.rating?.type !== 'SFX') {
+					sNoun = cand;
+					break;
+				}
+			}
+			if (sNoun !== 'Subtrait') break;
+		}
+		return `${sNoun} · Subtraits`;
+	}
+	return `${setNoun} · ${PART_TITLES[key] || key}`;
+}
 
 const NON_ROW = ['image', 'pips', 'portrait-ring'];
 
@@ -412,11 +441,9 @@ onUnmounted(() => {
 						:style="cellPlace(b.key)"
 						@mousedown="startBoxDrag($event, b.key, 'move')"
 						@touchstart="startBoxDrag($event, b.key, 'move')"
-						:title="
-							(PART_TITLES[b.key] || b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height
-						"
+						:title="partBoxLabel(b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height"
 					>
-						<span class="row-mini-name">{{ PART_TITLES[b.key] || b.key }}</span>
+						<span class="row-mini-name">{{ partBoxLabel(b.key) }}</span>
 						<span class="row-mini-dims">{{ b.width }}%</span>
 						<span
 							class="row-mini-edge row-mini-edge-e"

@@ -193,7 +193,7 @@
 	.trait-value {
 		position: relative;
 		top: -0.5em;
-		.c {
+		& > span {
 			font-size: var(--diecon-scale-size);
 			&:not(.active) {
 				color: var(--color-separator);
@@ -243,7 +243,7 @@
 	.subtrait-value {
 		position: relative;
 		top: -0.25em;
-		.c {
+		& > span {
 			font-size: var(--diecon-scale-size);
 			&:not(.active) {
 				color: var(--color-separator);
@@ -296,8 +296,7 @@
 
 	.trait-value {
 		top: -0.1em;
-		& > span:not(.active),
-		.c:not(.active) {
+		& > span:not(.active) {
 			color: var(--color-separator);
 		}
 	}
@@ -333,8 +332,7 @@
 	}
 
 	.trait-value {
-		& > span:not(.active),
-		.c:not(.active) {
+		& > span:not(.active) {
 			color: var(--color-separator);
 		}
 	}
@@ -416,11 +414,10 @@
 			background: white;
 			z-index: -1; /* small local stacking literal */
 		}
-		& > span:not(.active),
-		.c:not(.active) {
+		& > span:not(.active) {
 			display: none;
 		}
-		.c {
+		& > span {
 			font-size: 1em;
 		}
 	}
@@ -462,7 +459,7 @@
 	.subtrait-value {
 		position: relative;
 		top: -0.1em;
-		.c {
+		& > span {
 			font-size: var(--diecon-scale-size);
 			&:not(.active) {
 				color: var(--color-separator);
@@ -538,8 +535,7 @@
 	.trait-value {
 		position: relative;
 		transform: translateY(-0.15em);
-		& > span:not(.active),
-		.c:not(.active) {
+		& > span:not(.active) {
 			display: none;
 		}
 	}
@@ -598,7 +594,7 @@
 	.subtrait-value {
 		position: relative;
 		top: -0.1em;
-		.c {
+		& > span {
 			font-size: var(--diecon-scale-size);
 			&:not(.active) {
 				color: var(--color-separator);
@@ -673,7 +669,7 @@
 			z-index: -1; /* small local stacking literal */
 		}
 
-		.c {
+		& > span:not(.out-badge) {
 			position: relative;
 			top: -0.12em;
 			font-size: var(--diecon-size);
@@ -861,7 +857,7 @@
 		align-items: center;
 		column-gap: 0.2rem;
 
-		.c {
+		& > span {
 			cursor: pointer;
 			transition: transform 0.12s;
 			&:hover {
@@ -902,7 +898,7 @@
 		}
 
 		&.spent {
-			.c {
+			& > span {
 				opacity: 0.35;
 				filter: grayscale(1);
 				position: relative;
@@ -981,7 +977,7 @@
 		.trait-value {
 			position: relative;
 			top: -0.1em;
-			.c:not(.active) {
+			& > span:not(.active) {
 				color: var(--color-separator);
 			}
 		}
@@ -1063,7 +1059,7 @@
 		position: relative;
 		top: -0.1em;
 		white-space: nowrap;
-		.c {
+		& > span {
 			font-size: var(--diecon-scale-size);
 			&:not(.active) {
 				color: var(--color-separator);
@@ -1295,7 +1291,7 @@
 			position: relative;
 			top: -0.1em;
 			white-space: nowrap;
-			.c:not(.active) {
+			& > span:not(.active) {
 				color: var(--color-separator);
 			}
 		}
@@ -1341,7 +1337,7 @@
 			position: relative;
 			top: -0.1em;
 			flex-shrink: 0;
-			.c {
+			& > span {
 				display: inline-flex;
 				&:not(.active) {
 					color: var(--color-separator);
@@ -1370,7 +1366,7 @@
 			position: relative;
 			top: -0.1em;
 			white-space: nowrap;
-			.c:not(.active) {
+			& > span:not(.active) {
 				color: var(--color-separator);
 			}
 		}
@@ -1402,7 +1398,7 @@
 		position: relative;
 		top: -0.1em;
 		white-space: nowrap;
-		.c {
+		& > span {
 			font-size: var(--diecon-scale-size);
 			&:not(.active) {
 				color: var(--color-separator);
@@ -1478,7 +1474,7 @@
 		position: relative;
 		top: -0.1em;
 		white-space: nowrap;
-		.c:not(.active) {
+		& > span:not(.active) {
 			color: var(--color-separator);
 		}
 	}
@@ -1555,7 +1551,7 @@
 			position: relative;
 			top: -0.1em;
 			white-space: nowrap;
-			.c {
+			& > span {
 				font-size: var(--diecon-size);
 				&:not(.active) {
 					color: var(--color-separator);
@@ -1629,7 +1625,7 @@
 		position: relative;
 		top: -0.1em;
 		white-space: nowrap;
-		.c:not(.active) {
+		& > span:not(.active) {
 			color: var(--color-separator);
 		}
 		&.multidie-value {
@@ -1715,12 +1711,12 @@
 
 /* PLAY MODE INTERACTIONS */
 .submode-play {
-	.trait-set-style-die-track :is(.diecon, .c),
+	.trait-set-style-die-track .diecon,
 	.trait-set-style-die-track .out-badge,
-	.single-die-value :is(.diecon, .c),
-	.attribute-inner :is(.diecon, .c),
-	.subtrait-value :is(.diecon, .c),
-	.attached-stress-track :is(.diecon, .c) {
+	.single-die-value .diecon,
+	.attribute-inner .diecon,
+	.subtrait-value .diecon,
+	.attached-stress-track .diecon {
 		cursor: pointer;
 		transition:
 			transform 0.12s,
@@ -1730,9 +1726,9 @@
 		}
 	}
 
-	.single-die-value :is(.diecon, .c):not(.active),
-	.subtrait-value :is(.diecon, .c):not(.active),
-	.attached-stress-track :is(.diecon, .c):not(.active) {
+	.single-die-value > span:not(.active) .diecon,
+	.subtrait-value > span:not(.active) .diecon,
+	.attached-stress-track > span:not(.active) .diecon {
 		&:hover {
 			color: var(--color-interactive, #1976d2);
 		}
@@ -1803,9 +1799,8 @@
 /* UNRATED TRACKS STAY VISIBLE (sheet, print, pencil). Rated rows print only */
 /* the circled die; rows with no rating yet keep the full track so one can be */
 /* circled. Without this, unrated rows (and blank pencil sheets) render bare. */
-.trait-set .trait-value:not(:has(> .c.active)),
-.trait-set .subtrait-value:not(:has(> .c.active)) {
-	& > .c:not(.active),
+.trait-set .trait-value:not(:has(> span.active)),
+.trait-set .subtrait-value:not(:has(> span.active)) {
 	& > span:not(.active) {
 		display: initial;
 	}

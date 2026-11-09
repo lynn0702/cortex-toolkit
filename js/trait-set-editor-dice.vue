@@ -7,15 +7,14 @@ const {
 	toggleRatingOption,
 	getDieDisplayValue,
 	setRating,
-	isSubtraitRatingIncluded,
-	toggleSubtraitRatingOption,
+	setSubtraits,
+	openSetSubtrait,
+	removeSetSubtrait,
+	createSubtrait,
 	isPool,
 	setSpendable,
 	setHitches,
 	traitSetID,
-	styleBody,
-	allowsTraitColumns,
-	hasTrackPart,
 	includeOut,
 } = injectTraitSetEditor();
 
@@ -25,9 +24,9 @@ function toggleSetRating(size: number | null) {
 </script>
 
 <template>
-	<!-- RATING SCALE (OPT IN/OUT OF RATINGS) -->
+	<!-- RANGE (OPT IN/OUT OF RATINGS) -->
 	<div class="editor-field" v-if="needsDiceUI">
-		<label>Rating scale</label>
+		<label>Range</label>
 		<div class="rating-scale-container">
 			<div class="rating-scale-chips">
 				<button
@@ -89,22 +88,38 @@ function toggleSetRating(size: number | null) {
 		</div>
 	</div>
 
-	<!-- SUB-TRAIT RATING SCALE -->
+	<!-- SUBTRAITS -->
 	<div class="editor-field" v-if="needsDiceUI">
-		<label>Subtrait scale</label>
-		<div class="rating-scale-container">
-			<div class="rating-scale-chips">
+		<div class="editor-label" v-if="setSubtraits.length > 0">Subtraits</div>
+		<div class="editor-subtrait-list" v-if="setSubtraits.length > 0">
+			<div v-for="item in setSubtraits" :key="'set-sub-' + item.idx" class="editor-subtrait-row">
 				<button
 					type="button"
-					v-for="size in [4, 6, 8, 10, 12]"
-					:key="size"
-					class="rating-scale-chip"
-					:class="{ active: isSubtraitRatingIncluded(size) }"
-					@click.stop="toggleSubtraitRatingOption(size)"
-					:title="(isSubtraitRatingIncluded(size) ? 'Exclude d' : 'Include d') + size"
+					class="editor-subtrait-drill"
+					@click.stop="openSetSubtrait(item.idx)"
+					:title="'Edit ' + item.label"
 				>
-					<span v-html="getDieDisplayValue(size)"></span>
-					<span class="chip-label">d{{ size }}</span>
+					<span class="editor-subtrait-name">{{ item.label }}</span>
+					<span class="editor-subtrait-meta">
+						<span class="editor-subtrait-badge">{{ item.summary }}</span>
+						<i class="fas fa-chevron-right editor-subtrait-chevron" aria-hidden="true"></i>
+					</span>
+				</button>
+				<button
+					type="button"
+					class="editor-subtrait-delete"
+					@click.stop="removeSetSubtrait(item.idx)"
+					:title="'Delete ' + item.label"
+					:aria-label="'Delete ' + item.label"
+				>
+					<i class="fas fa-trash" aria-hidden="true"></i>
+				</button>
+			</div>
+		</div>
+		<div class="editor-button-container">
+			<div class="editor-button-container-inner">
+				<button type="button" class="editor-button" @click.stop="createSubtrait">
+					<span><i class="fas fa-plus"></i> Create subtrait</span>
 				</button>
 			</div>
 		</div>
@@ -138,14 +153,6 @@ function toggleSetRating(size: number | null) {
 					v-model="setSpendable"
 				/>
 				<label :for="'trait-set-' + traitSetID + '-spendable'">Spendable</label>
-			</div>
-
-			<div
-				v-if="allowsTraitColumns && styleBody !== 'image' && styleBody !== 'pips' && styleBody !== 'die-track'"
-				class="editor-checkbox-row"
-			>
-				<input type="checkbox" :id="'trait-set-' + traitSetID + '-attached-track'" v-model="hasTrackPart" />
-				<label :for="'trait-set-' + traitSetID + '-attached-track'">Attached track</label>
 			</div>
 		</div>
 

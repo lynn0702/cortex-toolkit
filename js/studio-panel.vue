@@ -49,24 +49,44 @@ const editingType = computed(() => {
 	const sel = props.editing;
 	if (!Array.isArray(sel) || !sel.length) return 'sheet';
 	const type = sel[0];
+	if (type === 'subtrait' && sel[1] !== undefined && sel[2] !== undefined) return 'subtrait';
 	if (type === 'trait' && sel[1] !== undefined && sel[2] !== undefined) return 'trait';
 	if (type === 'traitSet' && sel[1] !== undefined) return 'traitSet';
 	return 'sheet';
 });
 
 const traitSetID = computed(() => {
-	if (editingType.value === 'trait' || editingType.value === 'traitSet') {
+	if (editingType.value === 'trait' || editingType.value === 'subtrait' || editingType.value === 'traitSet') {
 		return Number(props.editing?.[1]);
 	}
 	return -1;
 });
 
-const traitID = computed(() => {
+const traitPath = computed<number[]>(() => {
+	const sel = props.editing;
+	if (!Array.isArray(sel)) return [];
 	if (editingType.value === 'trait') {
-		return Number(props.editing?.[2]);
+		return sel
+			.slice(2, 5)
+			.map((n) => Number(n))
+			.filter((n) => Number.isFinite(n) && n >= 0);
 	}
-	return -1;
+	if (editingType.value === 'subtrait') {
+		if (sel.length >= 4) {
+			return sel
+				.slice(2, 5)
+				.map((n) => Number(n))
+				.filter((n) => Number.isFinite(n) && n >= 0);
+		}
+		const u = Number(sel[2]);
+		return Number.isFinite(u) && u >= 0 ? [0, u] : [];
+	}
+	return [];
 });
+
+const traitID = computed(() => (traitPath.value.length >= 1 ? traitPath.value[0] : -1));
+
+const subtraitID = computed(() => (traitPath.value.length >= 2 ? traitPath.value[1] : -1));
 
 const traitSet = computed(() => {
 	if (traitSetID.value >= 0 && props.character?.traitSets) {
@@ -75,15 +95,30 @@ const traitSet = computed(() => {
 	return null;
 });
 
-const trait = computed(() => {
-	if (traitSet.value && traitID.value >= 0 && traitSet.value.traits) {
-		return traitSet.value.traits[traitID.value];
+const resolvedTraitChain = computed<any[]>(() => {
+	if (!traitSet.value || !Array.isArray(traitSet.value.traits) || !traitPath.value.length) return [];
+	const chain: any[] = [];
+	let currentList: any[] | undefined = traitSet.value.traits;
+	for (const idx of traitPath.value) {
+		if (!Array.isArray(currentList) || !currentList[idx]) return [];
+		const node = currentList[idx];
+		chain.push(node);
+		currentList = node.traits;
 	}
-	return null;
+	return chain;
 });
 
+const trait = computed(() => resolvedTraitChain.value[0] ?? null);
+
+const subtrait = computed(() =>
+	resolvedTraitChain.value.length >= 2 ? resolvedTraitChain.value[resolvedTraitChain.value.length - 1] : null,
+);
+
+const activeTraitNode = computed(() =>
+	resolvedTraitChain.value.length ? resolvedTraitChain.value[resolvedTraitChain.value.length - 1] : null,
+);
+
 const traitSetName = computed(() => traitSet.value?.name || 'Trait Set');
-const traitName = computed(() => trait.value?.name || (traitSet.value?.noun ? `New ${traitSet.value.noun}` : 'Trait'));
 
 type SheetTab = 'sheet' | 'page' | 'theme';
 
@@ -148,10 +183,37 @@ const canNavigate = computed(() => props.submode !== 'play');
 const crumbs = computed<Crumb[]>(() => {
 	const list: Crumb[] = [];
 	const sheet: Crumb = { label: 'Sheet', selector: [] };
-	if (editingType.value === 'trait') {
+	if (editingType.value === 'subtrait') {
 		if (canNavigate.value) list.push(sheet);
 		list.push({ label: traitSetName.value, selector: ['traitSet', traitSetID.value] });
-		list.push({ label: traitName.value, selector: null });
+		const chain = resolvedTraitChain.value;
+		const path = traitPath.value;
+		for (let k = 1; k < chain.length; k++) {
+			const node = chain[k];
+			const label = node?.noun || node?.name || (k === 1 ? 'Stress' : 'Subtrait');
+			const isLast = k === chain.length - 1;
+			list.push({
+				label,
+				selector: isLast ? null : ['subtrait', traitSetID.value, ...path.slice(0, k + 1)],
+			});
+		}
+	} else if (editingType.value === 'trait') {
+		if (canNavigate.value) list.push(sheet);
+		list.push({ label: traitSetName.value, selector: ['traitSet', traitSetID.value] });
+		const chain = resolvedTraitChain.value;
+		const path = traitPath.value;
+		for (let k = 0; k < chain.length; k++) {
+			const node = chain[k];
+			const label =
+				k === 0
+					? node?.name || (traitSet.value?.noun ? `New ${traitSet.value.noun}` : 'Trait')
+					: node?.name || node?.noun || 'Subtrait';
+			const isLast = k === chain.length - 1;
+			list.push({
+				label,
+				selector: isLast ? null : ['trait', traitSetID.value, ...path.slice(0, k + 1)],
+			});
+		}
 	} else if (editingType.value === 'traitSet') {
 		list.push(sheet, { label: traitSetName.value, selector: null });
 	}
@@ -259,11 +321,14 @@ defineExpose({
 				<template v-if="character">
 					<!-- TRAIT EDITOR -->
 					<TraitEditor
-						v-if="editingType === 'trait' && trait"
-						:key="'trait-' + traitSetID + '-' + traitID"
+						v-if="(editingType === 'trait' || editingType === 'subtrait') && activeTraitNode"
+						:key="editingType + '-' + traitSetID + '-' + traitPath.join('-')"
 						:character="character"
 						:traitSetID="traitSetID"
 						:traitID="traitID"
+						:subtraitID="traitPath.length >= 2 ? subtraitID : undefined"
+						:traitPath="traitPath"
+						:isSetSubtrait="editingType === 'subtrait'"
 						:submode="submode"
 						:open="true"
 						:viewY="viewY"

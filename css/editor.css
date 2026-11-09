@@ -1341,8 +1341,7 @@
 		min-width: 4rem;
 		justify-content: center;
 
-		.diecon,
-		.c {
+		.diecon {
 			font-size: 1.1rem;
 			color: var(--color-primary);
 			display: inline-flex;
@@ -1415,11 +1414,11 @@
 		transition: color 0.2s;
 		user-select: none;
 
-		& > :is(.diecon, .c) {
+		& > .diecon {
 			color: var(--color-inactive);
 			position: relative;
 		}
-		&.active > :is(.diecon, .c) {
+		&.active > .diecon {
 			color: var(--color-primary);
 		}
 
@@ -1474,8 +1473,7 @@
 		align-items: center;
 		row-gap: 0.2rem;
 
-		.diecon,
-		.c {
+		.diecon {
 			font-size: 1.1rem;
 			color: var(--color-primary);
 		}
@@ -1553,8 +1551,7 @@
 		align-items: center;
 		column-gap: 0.25rem;
 
-		.diecon,
-		.c {
+		.diecon {
 			font-size: 0.85rem;
 			color: var(--color-primary);
 		}
@@ -1647,6 +1644,9 @@
 
 .editor-button-container {
 	--button-font-size: 0.66rem;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 	.editor-field & {
 		margin-top: 0.5em;
 	}
@@ -1657,6 +1657,10 @@
 	/* Inside editors the panel is narrow: let buttons wrap instead of */
 	/* clipping past the panel edge. */
 	& > div {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		flex-wrap: wrap;
 		height: auto;
 		min-height: var(--button-container-height);
@@ -1669,11 +1673,97 @@
 	&.editor-button-remove {
 		--button-color: var(--color-primary);
 	}
+	&:disabled {
+		opacity: 0.35;
+		cursor: not-allowed;
+	}
 	.editor-button-container & {
+		min-height: var(--button-container-height);
 		padding-inline: 1.25em;
 		white-space: normal;
 		text-align: center;
-		line-height: 1.25;
+		line-height: 1;
+	}
+}
+
+.editor-subtrait-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin-bottom: 0.5rem;
+}
+
+.editor-subtrait-row {
+	display: flex;
+	align-items: stretch;
+	gap: 0.25rem;
+}
+
+.editor-subtrait-drill {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	padding: 0.4rem 0.6rem;
+	background: var(--color-input);
+	border: 1px solid var(--border-subtle);
+	border-radius: 0.25rem;
+	color: var(--text-main);
+	font-size: 0.8rem;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.15s;
+
+	&:hover {
+		border-color: var(--color-interactive);
+	}
+}
+
+.editor-subtrait-name {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+}
+
+.editor-subtrait-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	flex-shrink: 0;
+}
+
+.editor-subtrait-badge {
+	font-size: 0.68rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--color-label);
+}
+
+.editor-subtrait-chevron {
+	font-size: 0.7rem;
+	color: var(--color-interactive);
+}
+
+.editor-subtrait-delete {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 0.55rem;
+	background: var(--color-input);
+	border: 1px solid var(--border-subtle);
+	border-radius: 0.25rem;
+	color: var(--color-primary);
+	font-size: 0.75rem;
+	cursor: pointer;
+	transition: border-color 0.15s;
+
+	&:hover {
+		border-color: var(--color-primary);
 	}
 }
 
@@ -1956,8 +2046,7 @@
 			user-select: none;
 			transition: all 0.15s ease;
 
-			.diecon,
-			.c {
+			.diecon {
 				font-size: 1.15rem;
 				color: var(--color-inactive);
 				transition: color 0.15s ease;
@@ -1979,8 +2068,7 @@
 				background: color-mix(in srgb, var(--color-primary) 25%, transparent);
 				border-color: var(--color-primary);
 
-				.diecon,
-				.c {
+				.diecon {
 					color: var(--color-primary);
 				}
 
@@ -2900,8 +2988,7 @@
 			background-color 0.15s ease,
 			border-color 0.15s ease;
 
-		.diecon,
-		.c {
+		.diecon {
 			display: inline-block;
 			font-size: 1.25rem;
 			line-height: 1;
@@ -2912,8 +2999,7 @@
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.08);
-			.diecon,
-			.c {
+			.diecon {
 				color: #f8fafc;
 			}
 		}
@@ -2922,8 +3008,7 @@
 			background: color-mix(in srgb, var(--color-primary, #0284c7) 20%, transparent);
 			border-color: var(--color-primary, #0284c7);
 
-			.diecon,
-			.c {
+			.diecon {
 				color: var(--color-primary, #0284c7);
 			}
 		}

@@ -120,6 +120,96 @@ function createDefaultWorkingSet(source?: any): any {
 				}
 			});
 		}
+		// Surface any existing subtraits' parts onto the parent's parts canvas
+		const partsMap = (v as any).parts as Record<string, PartBlueprint>;
+		const configuredTrack = (v?.labels?.track || 'Stress').trim();
+		let nextTop = 0;
+		for (const k of Object.keys(partsMap)) {
+			const c = partsMap[k];
+			const bottom = (Number(c?.top) || 0) + (Number(c?.height) || 1);
+			if (bottom > nextTop) nextTop = bottom;
+		}
+		const seededNouns = new Set<string>();
+		for (const t of copy.traits || []) {
+			for (const sub of t?.traits || []) {
+				if (!sub || typeof sub !== 'object' || sub?.rating?.type === 'SFX') continue;
+				const isSinglePip =
+					sub.rating?.type === 'Pip' && (!Array.isArray(sub.rating.value) || sub.rating.value.length <= 1);
+				const sName = (sub.noun || (isSinglePip ? 'Statement' : sub.name) || '').trim();
+				if (!sName || seededNouns.has(sName.toLowerCase())) continue;
+				seededNouns.add(sName.toLowerCase());
+				const isTrackSub = sName.toLowerCase() === 'stress' || sName.toLowerCase() === configuredTrack.toLowerCase();
+				const labelKey = isTrackSub ? 'trackLabel' : `child:${sName}:label`;
+				const ratingKey = isTrackSub ? 'track' : `child:${sName}:rating`;
+				const rType: RatingType | undefined = sub.rating?.type;
+				const rRange: number[] | undefined =
+					Array.isArray(sub.rating?.range) && sub.rating.range.length
+						? [...sub.rating.range]
+						: rType === 'Pip'
+							? [Array.isArray(sub.rating?.value) ? sub.rating.value.length || 5 : 5]
+							: rType === 'Counter'
+								? [0, 10]
+								: [4, 6, 8, 10, 12];
+				if (
+					sName.toLowerCase() === 'statement' &&
+					isSinglePip &&
+					partsMap.name &&
+					partsMap.rating &&
+					Number(partsMap.name.top || 0) === 0 &&
+					Number(partsMap.rating.top || 0) === 0 &&
+					!partsMap[labelKey] &&
+					!partsMap[ratingKey]
+				) {
+					partsMap.name = { ...partsMap.name, left: '0%', top: 0, width: '40%', height: 1 };
+					partsMap[ratingKey] = {
+						left: '40%',
+						top: 0,
+						width: '10%',
+						height: 1,
+						ratingType: rType,
+						range: rRange,
+						noun: sName,
+					};
+					partsMap.rating = { ...partsMap.rating, left: '50%', top: 0, width: '50%', height: 1 };
+					partsMap[labelKey] = {
+						left: '0%',
+						top: nextTop,
+						width: '100%',
+						height: 1,
+						marker: 'T',
+						noun: sName,
+					};
+					nextTop += 1;
+					continue;
+				}
+				const rowTop = nextTop;
+				let addedRow = false;
+				if (!partsMap[labelKey]) {
+					partsMap[labelKey] = {
+						left: '0%',
+						top: rowTop,
+						width: rType ? '35%' : '100%',
+						height: 1,
+						marker: rType === 'Pip' && sName.toLowerCase() !== 'stress' ? 'T' : 'L',
+						noun: sName,
+					};
+					addedRow = true;
+				}
+				if (rType && !partsMap[ratingKey]) {
+					partsMap[ratingKey] = {
+						left: partsMap[labelKey] && partsMap[labelKey].top === rowTop ? '35%' : '0%',
+						top: rowTop,
+						width: partsMap[labelKey] && partsMap[labelKey].top === rowTop ? '65%' : '100%',
+						height: 1,
+						ratingType: rType,
+						range: rRange,
+						noun: sName,
+					};
+					addedRow = true;
+				}
+				if (addedRow) nextTop = rowTop + 1;
+			}
+		}
 		return copy;
 	}
 	return {
@@ -207,15 +297,53 @@ function ensurePartsMap(): Record<string, PartBlueprint> {
 }
 
 const activeParts = computed<
-	{ kind: string; left: string; top: number; width: string; height: number; blueprint: PartBlueprint }[]
+	{
+		kind: string;
+		ownerNoun: string;
+		partLabel: string;
+		left: string;
+		top: number;
+		width: string;
+		height: number;
+		blueprint: PartBlueprint;
+	}[]
 >(() => {
 	const v = getView(workingSet.value);
 	const raw = v?.parts;
+	const baseNoun = (workingSet.value?.noun || workingSet.value?.name || 'Trait').trim() || 'Trait';
+	const trackNoun = (v?.labels?.track || 'Stress').trim() || 'Stress';
+	const PART_NAMES: Record<string, string> = {
+		name: 'Name',
+		rating: 'Rating',
+		description: 'Description',
+		badge: 'Badge',
+		block: 'SFX Block',
+		subtraits: 'Subtraits',
+		trackLabel: 'Label',
+		track: 'Rating',
+	};
+	const resolveOwnerAndLabel = (kind: string, cell: PartBlueprint) => {
+		if (kind === 'trackLabel' || kind === 'track') {
+			const owner = cell?.noun || trackNoun;
+			return { ownerNoun: owner, partLabel: `${owner} · ${PART_NAMES[kind]}` };
+		}
+		if (kind.startsWith('child:')) {
+			const segs = kind.slice(6).split(':');
+			const owner = cell?.noun || segs[0] || 'Subtrait';
+			const pKind = segs[1] === 'rating' ? 'Rating' : 'Label';
+			return { ownerNoun: owner, partLabel: `${owner} · ${pKind}` };
+		}
+		const owner = cell?.noun || baseNoun;
+		return { ownerNoun: owner, partLabel: `${owner} · ${PART_NAMES[kind] || kind}` };
+	};
 	if (raw && typeof raw === 'object' && !Array.isArray(raw) && Object.keys(raw).length > 0) {
 		return Object.keys(raw).map((kind) => {
 			const cell = (raw as Record<string, PartBlueprint>)[kind]!;
+			const { ownerNoun, partLabel } = resolveOwnerAndLabel(kind, cell);
 			return {
 				kind,
+				ownerNoun,
+				partLabel,
 				left: cell.left || '0%',
 				top: Number(cell.top) || 0,
 				width: cell.width || '100%',
@@ -227,6 +355,8 @@ const activeParts = computed<
 	return [
 		{
 			kind: 'name',
+			ownerNoun: baseNoun,
+			partLabel: `${baseNoun} · Name`,
 			left: '0%',
 			top: 0,
 			width: '65%',
@@ -235,6 +365,8 @@ const activeParts = computed<
 		},
 		{
 			kind: 'rating',
+			ownerNoun: baseNoun,
+			partLabel: `${baseNoun} · Rating`,
 			left: '65%',
 			top: 0,
 			width: '35%',
@@ -1555,6 +1687,7 @@ function onFileImportSelected(ev: Event) {
 									class="block-mini-part"
 									:class="{ selected: selectedPartKey === part.kind, dragging: draggingKey === part.kind }"
 									:data-grid-part="part.kind"
+									:data-part-owner="part.ownerNoun"
 									:style="getPartBoxStyle(part)"
 									tabindex="0"
 									@pointerdown="onPartPointerDown($event, part.kind, 'move')"
@@ -1581,7 +1714,7 @@ function onFileImportSelected(ev: Event) {
 										></span>
 										<span v-else-if="part.blueprint.ratingType === 'Counter'" class="mini-counter-badge">#</span>
 										<span v-else class="mini-tile-svg" v-html="singleDieSVG"></span>
-										<span class="block-mini-part-name">{{ part.kind }}</span>
+										<span class="block-mini-part-name">{{ part.partLabel }}</span>
 										<span class="block-mini-part-coords">{{ part.left }} · {{ part.width }}</span>
 									</div>
 									<button

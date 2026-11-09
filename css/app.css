@@ -266,9 +266,11 @@ textarea:focus-visible {
 	transition: opacity 0.2s;
 
 	& > span {
-		display: inline-block;
-		line-height: inherit;
-		transform: translateY(-1.5px);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35em;
+		line-height: 1;
 	}
 
 	&:hover {

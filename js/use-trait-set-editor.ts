@@ -182,6 +182,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// Trait-part cells (view.parts): the generator spec shared by rebuilds
 	// and the default comparison, so hand-tuned widths survive control
 	// changes and Reset restores exactly what the generator would emit.
+	function resolveSubtraitNoun(sub: any): string {
+		if (sub && typeof sub.noun === 'string' && sub.noun.trim().length > 0) return sub.noun.trim();
+		const r = getRating(sub);
+		if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return 'Statement';
+		return String(sub?.name || 'Subtrait').trim() || 'Subtrait';
+	}
+
 	function partsSpec() {
 		const view = getView(traitSet.value) || {};
 		const scale =
@@ -204,13 +211,25 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		const hasSfx = traits.some(
 			(t: any) => Array.isArray(cortexFunctions.sfxChildren(t)) && cortexFunctions.sfxChildren(t).length > 0,
 		);
+		const trackNameLower = String(trackLabel.value || 'Stress')
+			.trim()
+			.toLowerCase();
 		const hasSub = traits.some((t: any) => {
 			const subs = Array.isArray(t?.traits)
 				? t.traits
 				: t?.traits && typeof t.traits === 'object'
 					? Object.values(t.traits)
 					: [];
-			return subs.some((s: any) => !cortexFunctions.isSfxContainer(s) && s?.name !== 'Statement');
+			return subs.some((s: any) => {
+				if (!s || typeof s !== 'object' || cortexFunctions.isSfxContainer(s)) return false;
+				const sNoun = resolveSubtraitNoun(s).toLowerCase();
+				const sName = String(s.name || '')
+					.trim()
+					.toLowerCase();
+				if (sNoun === 'statement' || sName === 'statement' || getRating(s)?.type === 'Pip') return false;
+				if (trackOn && (sNoun === trackNameLower || sName === trackNameLower)) return false;
+				return true;
+			});
 		});
 		return {
 			rating,
@@ -222,14 +241,91 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		};
 	}
 
+	function isRingFrame(): boolean {
+		const f = getView(traitSet.value)?.frame;
+		const shape = typeof f === 'string' ? f : f?.shape;
+		return shape === 'ring';
+	}
+
+	function normalizeEffectiveParts(
+		rawParts: Record<string, any> | null | undefined,
+	): Record<string, { left: string; top: number; width: string; height: number }> {
+		const spec = partsSpec();
+		const base =
+			rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts) && Object.keys(rawParts).length > 0
+				? (structuredClone(toRaw(rawParts)) as Record<string, any>)
+				: buildParts(spec);
+		if (!spec.subtraits && base.subtraits) {
+			delete base.subtraits;
+		}
+		if (isRingFrame()) {
+			const hasFour = Boolean(base.name && base.rating && base.trackLabel && base.track);
+			const isStaleInlineOrTwoRow =
+				hasFour &&
+				((Number(base.name.top) === 0 &&
+					Number(base.rating.top) === 0 &&
+					Number(base.trackLabel.top) === 0 &&
+					Number(base.track.top) === 0) ||
+					(Number(base.name.top) === 0 &&
+						Number(base.rating.top) === 0 &&
+						Number(base.trackLabel.top) === 1 &&
+						Number(base.track.top) === 1));
+			if (isStaleInlineOrTwoRow) {
+				base.name = { ...base.name, left: '0%', top: 0, width: '100%', height: 1 };
+				base.rating = { ...base.rating, left: '0%', top: 1, width: '100%', height: 1 };
+				base.trackLabel = { ...base.trackLabel, left: '0%', top: 2, width: '100%', height: 1 };
+				base.track = { ...base.track, left: '0%', top: 3, width: '100%', height: 1 };
+			}
+		}
+		const traits = Array.isArray(traitSet.value?.traits) ? traitSet.value.traits : [];
+		const hasStatementPip = traits.some(
+			(t: any) =>
+				Array.isArray(t?.traits) &&
+				t.traits.some((sub: any) => {
+					const r = getRating(sub);
+					return r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
+				}),
+		);
+		if (
+			hasStatementPip &&
+			base.name &&
+			base.rating &&
+			Number(base.name.top || 0) === 0 &&
+			Number(base.rating.top || 0) === 0 &&
+			!base['child:Statement:rating'] &&
+			!base['child:Statement:label'] &&
+			!base['child:Statement']
+		) {
+			let nextTop = 1;
+			for (const k of Object.keys(base)) {
+				if (k === 'name' || k === 'rating') continue;
+				const top = Number(base[k]?.top);
+				if (Number.isInteger(top) && top >= 1) {
+					base[k] = { ...base[k], top: top + 1 };
+					nextTop = Math.max(nextTop, top + 2);
+				}
+			}
+			base.name = { ...base.name, left: '0%', top: 0, width: '40%', height: 1 };
+			base['child:Statement:rating'] = { left: '40%', top: 0, width: '10%', height: 1 };
+			base.rating = { ...base.rating, left: '50%', top: 0, width: '50%', height: 1 };
+			base['child:Statement:label'] = { left: '0%', top: nextTop, width: '100%', height: 1 };
+		}
+		return base;
+	}
+
 	type PartCellEdit = { key: string; left: number; width: number; top: number; height: number };
 
 	// Explicit part cells in stable part order. Absent = generated layout.
 	const partCells = computed((): PartCellEdit[] => {
-		const parts = getView(traitSet.value)?.parts;
-		if (!parts || typeof parts !== 'object') return [];
+		const rawParts = getView(traitSet.value)?.parts;
+		if (!rawParts || typeof rawParts !== 'object') return [];
+		const parts = normalizeEffectiveParts(rawParts);
 		const out: PartCellEdit[] = [];
-		for (const key of KNOWN_PARTS as readonly string[]) {
+		const orderedKeys = [
+			...(KNOWN_PARTS as readonly string[]),
+			...Object.keys(parts).filter((k) => !(KNOWN_PARTS as readonly string[]).includes(k)),
+		];
+		for (const key of orderedKeys) {
 			const cell = (parts as Record<string, any>)[key];
 			if (!cell || typeof cell !== 'object') continue;
 			const left = parsePct(cell.left);
@@ -279,9 +375,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const effectivePartCells = computed((): (PartCellEdit & { implicit: boolean })[] => {
 		const stored = partCells.value.map((c) => ({ ...c, implicit: false }));
 		if (stored.length || !isPartsDriven()) return stored;
-		const gen = buildParts(partsSpec());
+		const gen = normalizeEffectiveParts(null);
 		const out: (PartCellEdit & { implicit: boolean })[] = [];
-		for (const key of KNOWN_PARTS as readonly string[]) {
+		const orderedKeys = [
+			...(KNOWN_PARTS as readonly string[]),
+			...Object.keys(gen).filter((k) => !(KNOWN_PARTS as readonly string[]).includes(k)),
+		];
+		for (const key of orderedKeys) {
 			const cell = (gen as Record<string, any>)[key];
 			if (!cell || typeof cell !== 'object') continue;
 			const left = parsePct(cell.left);
@@ -320,9 +420,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	function setPartCell(key: string, field: 'left' | 'width' | 'top' | 'height', val: number) {
 		const view = ensureView(traitSet.value);
-		if (!view.parts || typeof view.parts !== 'object') {
-			view.parts = buildParts(partsSpec());
-		}
+		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
 		const cells = view.parts as Record<string, any>;
 		if (!cells[key] || typeof cells[key] !== 'object') {
 			cells[key] = { left: '0%', top: 0, width: '100%', height: 1 };
@@ -390,11 +488,18 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			return;
 		}
+		if (isRingFrame()) {
+			rebuildParts('below');
+			return;
+		}
 		rebuildParts(
 			currentRatingPosition() === 'vertical'
 				? 'inline'
 				: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
 		);
+		const refreshed = ensureView(traitSet.value);
+		refreshed.parts = normalizeEffectiveParts(refreshed.parts as Record<string, any> | undefined);
+		updateCharacter(props.character);
 	}
 
 	const templateEntry = computed(() => {
@@ -596,15 +701,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
-	const subtraitRatingLadder = computed({
-		get: () => cortexFunctions.getSubtraitRatings(traitSet.value),
-		set: (scale: number[]) => {
-			let s = props.traitSetID;
-			ctkFor(s).subtraitRatingLadder = scale;
-			updateCharacter(structuredClone(toRaw(props.character)));
-		},
-	});
-
 	// Pool sets add a whole trait pool to the roller on click, and their
 	// dice are never flagged as resources (e.g. Growth Pool). Pool lives
 	// on the set node.
@@ -780,14 +876,26 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function partsHaveTrack() {
-		const parts = getView(traitSet.value)?.parts;
-		return Boolean(parts && typeof parts === 'object' && (parts as Record<string, unknown>).track);
+		return cortexFunctions.hasTrackPart(traitSet.value);
 	}
 
 	function currentRatingPosition(): 'inline' | 'above' | 'below' | 'none' | 'vertical' {
-		const parts = getView(traitSet.value)?.parts;
-		if (parts && typeof parts === 'object') {
-			const cells = parts as Record<string, { top?: unknown }>;
+		const rawParts = getView(traitSet.value)?.parts;
+		if (rawParts && typeof rawParts === 'object') {
+			if (isRingFrame()) {
+				const raw = rawParts as Record<string, { top?: unknown }>;
+				if (
+					raw.name &&
+					raw.rating &&
+					raw.trackLabel &&
+					raw.track &&
+					Number(raw.name.top || 0) === 0 &&
+					Number(raw.rating.top || 0) === 0
+				) {
+					return 'below';
+				}
+			}
+			const cells = rawParts as Record<string, { top?: unknown }>;
 			if (!cells.rating) return 'none';
 			const rTop = Number(cells.rating.top) || 0;
 			const nTop = cells.name ? Number(cells.name.top) || 0 : 0;
@@ -795,6 +903,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (rTop === 0) return 'above';
 			return 'below';
 		}
+		if (isRingFrame()) return 'below';
 		const legacy = (traitSet.value as any)?.ratingPosition || getView(traitSet.value)?.ratingPosition;
 		if (legacy === 'above' || legacy === 'below' || legacy === 'none' || legacy === 'vertical') return legacy;
 		return 'inline';
@@ -820,6 +929,148 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			);
 		},
 	});
+
+	const setSubtraits = computed(() => {
+		const traits = traitSet.value?.traits;
+		if (!Array.isArray(traits) || traits.length === 0) return [];
+		const firstTrait =
+			traits.find((tr: any) => tr && typeof tr === 'object' && Array.isArray(tr.traits) && tr.traits.length > 0) ||
+			traits[0];
+		const subs = firstTrait?.traits;
+		if (!Array.isArray(subs)) return [];
+		return subs
+			.map((sub: any, idx: number) => {
+				if (!sub || typeof sub !== 'object' || cortexFunctions.isSfxContainer(sub)) return null;
+				const label = resolveSubtraitNoun(sub);
+				const r = getRating(sub);
+				const summary = r?.type ? r.type : 'Unrated';
+				return { idx, sub, label, summary };
+			})
+			.filter((item): item is { idx: number; sub: any; label: string; summary: string } => item !== null);
+	});
+
+	function openSetSubtrait(subIdx: number) {
+		selectElement(['subtrait', props.traitSetID, 0, subIdx]);
+	}
+
+	function removeSetSubtrait(subIdx: number) {
+		if (!traitSet.value || !Array.isArray(traitSet.value.traits)) return;
+		const firstSubs = traitSet.value.traits[0]?.traits;
+		const target: any = Array.isArray(firstSubs) ? firstSubs[subIdx] : null;
+		const targetKey = String(target?.noun || target?.name || '')
+			.trim()
+			.toLowerCase();
+		traitSet.value.traits.forEach((tr: any) => {
+			if (!tr || typeof tr !== 'object' || !Array.isArray(tr.traits)) return;
+			if (targetKey) {
+				const matchIdx = tr.traits.findIndex(
+					(st: any) =>
+						st &&
+						typeof st === 'object' &&
+						(String(st.noun || '')
+							.trim()
+							.toLowerCase() === targetKey ||
+							String(st.name || '')
+								.trim()
+								.toLowerCase() === targetKey),
+				);
+				if (matchIdx !== -1) {
+					tr.traits.splice(matchIdx, 1);
+					return;
+				}
+			}
+			if (subIdx >= 0 && subIdx < tr.traits.length) {
+				tr.traits.splice(subIdx, 1);
+			}
+		});
+		if (targetKey && targetKey === (trackLabel.value || 'Stress').toLowerCase()) {
+			const parts = getView(traitSet.value)?.parts;
+			if (parts && typeof parts !== 'string') {
+				delete (parts as Record<string, unknown>).trackLabel;
+				delete (parts as Record<string, unknown>).track;
+			}
+		}
+		updateCharacter(props.character);
+	}
+
+	function createSubtrait() {
+		if (!traitSet.value) return;
+		if (!Array.isArray(traitSet.value.traits)) {
+			traitSet.value.traits = [];
+		}
+		if (traitSet.value.traits.length === 0) {
+			const baseTrait: any = structuredClone(cortexFunctions.defaultTrait);
+			baseTrait.name = 'New ' + (traitSet.value.noun || 'Trait');
+			traitSet.value.traits.push(baseTrait);
+		}
+		const firstTrait = traitSet.value.traits[0];
+		const existingSubs = Array.isArray(firstTrait?.traits) ? firstTrait.traits : [];
+		const defaultTrackNoun = trackLabel.value || 'Stress';
+		const hasTrackSub = existingSubs.some(
+			(st: any) =>
+				st &&
+				typeof st === 'object' &&
+				(String(st.name || '')
+					.trim()
+					.toLowerCase() === defaultTrackNoun.toLowerCase() ||
+					String(st.noun || '')
+						.trim()
+						.toLowerCase() === defaultTrackNoun.toLowerCase()),
+		);
+		let subNoun = defaultTrackNoun;
+		if (hasTrackSub) {
+			let n = existingSubs.length + 1;
+			subNoun = `Subtrait ${n}`;
+			while (
+				existingSubs.some(
+					(st: any) =>
+						st &&
+						typeof st === 'object' &&
+						(String(st.name || '')
+							.trim()
+							.toLowerCase() === subNoun.toLowerCase() ||
+							String(st.noun || '')
+								.trim()
+								.toLowerCase() === subNoun.toLowerCase()),
+				)
+			) {
+				n++;
+				subNoun = `Subtrait ${n}`;
+			}
+		}
+		let targetSubIdx = 0;
+		traitSet.value.traits.forEach((tr: any, tIdx: number) => {
+			if (!tr || typeof tr !== 'object') return;
+			if (!Array.isArray(tr.traits)) tr.traits = [];
+			const sub: any = {
+				name: subNoun,
+				noun: subNoun,
+				description: '',
+				tags: [],
+				rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
+				traits: [],
+			};
+			tr.traits.push(sub);
+			if (tIdx === 0) targetSubIdx = tr.traits.length - 1;
+		});
+		if (
+			subNoun.toLowerCase() === (trackLabel.value || 'Stress').toLowerCase() &&
+			allowsTraitColumns.value &&
+			styleBody.value !== 'image' &&
+			styleBody.value !== 'pips' &&
+			styleBody.value !== 'die-track'
+		) {
+			rebuildParts(
+				currentRatingPosition() === 'vertical'
+					? 'inline'
+					: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
+				true,
+			);
+		} else {
+			updateCharacter(props.character);
+		}
+		selectElement(['subtrait', props.traitSetID, 0, targetSubIdx]);
+	}
 
 	const trackLabel = computed({
 		get: () => {
@@ -1342,23 +1593,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		ratingLadder.value = current;
 	}
 
-	function isSubtraitRatingIncluded(size: any) {
-		return subtraitRatingLadder.value.includes(size);
-	}
-
-	function toggleSubtraitRatingOption(size: any) {
-		let current = [...subtraitRatingLadder.value];
-		if (current.includes(size)) {
-			if (current.length > 1) {
-				current = current.filter((s: number) => s !== size);
-			}
-		} else {
-			current.push(size);
-			current.sort((a, b) => a - b);
-		}
-		subtraitRatingLadder.value = current;
-	}
-
 	function getDieDisplayValue(value: any) {
 		return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 	}
@@ -1518,7 +1752,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		endWord,
 		hasCounterTrait,
 		ratingLadder,
-		subtraitRatingLadder,
 		isPool,
 		setRating,
 		setSpendable,
@@ -1536,6 +1769,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		closeBlockMini,
 		characterCustomPillars,
 		hasTrackPart,
+		setSubtraits,
+		openSetSubtrait,
+		removeSetSubtrait,
+		createSubtrait,
 		trackLabel,
 		ratingPosition,
 		labelPosition,
@@ -1584,8 +1821,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		removeImage,
 		isRatingIncluded,
 		toggleRatingOption,
-		isSubtraitRatingIncluded,
-		toggleSubtraitRatingOption,
 		getDieDisplayValue,
 		updateCharacter,
 		ensurePipStruct,

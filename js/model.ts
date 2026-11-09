@@ -506,7 +506,6 @@ export interface CortexToolkitCustom {
 	editorDock?: 'left' | 'right';
 	traitColumns?: number;
 	ratingLadder?: number[];
-	subtraitRatingLadder?: number[];
 	reservedSlots?: number | null;
 
 	// behavior / labels
