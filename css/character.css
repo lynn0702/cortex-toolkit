@@ -806,7 +806,7 @@
 	cursor: pointer;
 }
 
-.attribute-inner .c {
+.attribute-inner span {
 	font-size: 1.66rem;
 	display: flex;
 	align-items: center;
@@ -869,7 +869,7 @@
 }
 
 /* Unrated attribute slot: no white backing blob, just a dashed empty ring. */
-.attribute-inner .c.die-empty {
+.attribute-inner .die-empty {
 	&:before {
 		display: none;
 	}
@@ -939,8 +939,7 @@
 		align-items: center;
 		cursor: pointer;
 
-		.diecon,
-		.c {
+		.diecon {
 			font-size: var(--diecon-size);
 			display: block;
 			color: #1e293b;
@@ -1012,13 +1011,13 @@
 			text-align: center;
 		}
 
-		&:hover .c {
+		&:hover .diecon {
 			transform: scale(1.15);
 		}
 	}
 }
 
-.submode-play .scale-die .scale-die-inner:hover :is(.diecon, .c) {
+.submode-play .scale-die .scale-die-inner:hover .diecon {
 	transform: scale(1.15);
 }
 
@@ -1053,8 +1052,7 @@
 			cursor: pointer;
 			transition: all 0.15s;
 
-			.diecon,
-			.c {
+			.diecon {
 				font-size: 1.1rem;
 				line-height: 1;
 				color: #1e293b;
@@ -1076,8 +1074,7 @@
 				background: #1e293b;
 				border-color: #1e293b;
 
-				.diecon,
-				.c {
+				.diecon {
 					color: white;
 				}
 
@@ -1382,9 +1379,9 @@
 			justify-content: flex-end;
 		}
 
-		.stress-value .c,
-		.attached-stress-track .c,
-		.multidie-value .c {
+		.stress-value span,
+		.attached-stress-die,
+		.multidie-value span {
 			min-width: 36px;
 			min-height: 36px;
 			display: inline-flex;
@@ -1411,7 +1408,7 @@
 		background 0.15s,
 		border-color 0.15s;
 
-	.c {
+	span:first-child {
 		font-size: 0.9rem;
 		line-height: 1;
 	}
@@ -1586,9 +1583,9 @@ button.trait-title-btn {
 /* WCAG 2.2 AA Touch Targets in Mobile Play Mode */
 @media screen and (max-width: 768px) {
 	.submode-play {
-		.trait-value .c,
-		.subtrait-value .c,
-		.attached-stress-track .c {
+		.trait-value span,
+		.subtrait-value span,
+		.attached-stress-die {
 			min-width: 36px;
 			min-height: 38px;
 			display: inline-flex;
@@ -1890,6 +1887,10 @@ button.trait-title-btn {
 			white-space: nowrap;
 			width: auto;
 			max-width: none;
+
+			.attached-stress-die {
+				font-size: var(--diecon-scale-size);
+			}
 		}
 
 		&[data-frame-dock='left'] {
@@ -2040,8 +2041,7 @@ button.trait-title-btn {
 			}
 
 			/* Unfilled die range outlines and glyphs remain crisp and legible */
-			.diecon-unfilled,
-			.c:not(.active) {
+			.diecon-unfilled {
 				polygon,
 				path,
 				rect {

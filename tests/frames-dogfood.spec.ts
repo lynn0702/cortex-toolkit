@@ -359,11 +359,9 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		const clone = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 		const attrSet = (clone.traitSets as any[]).find((s: any) => s.name === 'Attributes');
 		expect(attrSet).toBeDefined();
-		expect(attrSet.view.ringTrait, 'Attributes with explicit frame must not gain ringTrait').toBeUndefined();
 
 		const resolved = resolveFrame(attrSet);
 		expect(resolved).not.toBeNull();
-		expect(resolved?.legacyRing, 'Explicit frame ring must not be legacyRing').toBe(false);
 
 		const anchors = computeFrameAnchors(attrSet.traits.length, resolved!);
 		expect(anchors.length).toBe(6);

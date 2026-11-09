@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getView } from './model.ts';
+import { cortexFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
 import TraitSetFrame from './trait-set-frame.vue';
@@ -23,7 +24,6 @@ const {
 	getSubtraitRatings,
 	renderDieValueForPrint,
 	getRatingPosition,
-	getTraitStatement,
 	renderText,
 	isFixedSystemTrait,
 	getPipChild,
@@ -54,7 +54,6 @@ const {
 	isTrackOut,
 	handleTrackClick,
 	handleTrackOutClick,
-	getDisplayTraitSfx,
 	getTraitSetLabel,
 	getParts,
 	partsGridFor,
@@ -214,8 +213,8 @@ const {
 										<span class="trait-statement-box">
 											<span
 												class="trait-statement-text"
-												v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait, true)"
-												v-html="renderText(getTraitStatement(item.trait, true))"
+												v-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
+												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
 											<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
 											<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
@@ -238,8 +237,12 @@ const {
 											</div>
 											<div
 												class="trait-asset-desc"
-												v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)"
-												v-html="renderText(getTraitStatement(item.trait))"
+												v-if="
+													!printBlank &&
+													!item.isPlaceholder &&
+													(getPipChild(item.trait)?.name || item.trait.description)
+												"
+												v-html="renderText(getPipChild(item.trait)?.name || item.trait.description || '')"
 											></div>
 											<div class="trait-asset-empty" v-else-if="printBlank || item.isPlaceholder"></div>
 											<div class="trait-asset-hint" v-else-if="submode === 'edit'">Click to edit asset...</div>
@@ -302,7 +305,7 @@ const {
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
-										:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+										:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 										role="button"
 										tabindex="0"
 										:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
@@ -450,7 +453,7 @@ const {
 									<span
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
-										:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+										:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 										role="button"
 										tabindex="0"
 										:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
@@ -541,7 +544,6 @@ const {
 										:key="size"
 										:class="{
 											'attached-stress-die': true,
-											c: true,
 											active: !printBlank && getTrackValue(item.trait, traitSet) === size,
 										}"
 										role="button"
@@ -631,19 +633,19 @@ const {
 							</div>
 							<!-- BLOCK (SFX) -->
 							<div
-								v-if="partsGridFor(traitSet)?.cells.block && getDisplayTraitSfx(traitSet, item.trait).length"
+								v-if="partsGridFor(traitSet)?.cells.block && cortexFunctions.sfxChildren(item.trait).length"
 								class="trait-part trait-part-block"
 								:style="!isPositionalFrameActive ? partCellStyle(partsGridFor(traitSet), 'block') : undefined"
 							>
 								<ul class="trait-sfx">
 									<li
-										v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)"
+										v-for="(sfx, sfIdx) in cortexFunctions.sfxChildren(item.trait)"
 										:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 									>
 										<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
 											>{{ (getView(item.trait) as any).prefix.text }}
 										</span>
-										<template v-if="sfx.isHinder">
+										<template v-if="String(sfx.name || '').toLowerCase() === 'hinder'">
 											<span class="trait-sfx-name">Hinder</span>:
 											<span class="trait-sfx-description" v-html="renderText(sfx.description)"></span>
 										</template>
@@ -690,7 +692,7 @@ const {
 											<span
 												v-for="size in getSubtraitRatings(traitSet)"
 												:key="size"
-												:class="{ c: true, active: !printBlank && isDieActive(subtrait, size) }"
+												:class="{ active: !printBlank && isDieActive(subtrait, size) }"
 												role="button"
 												tabindex="0"
 												:aria-label="`Stage d${size} from ${subtrait.name || 'subtrait'}`"
@@ -821,7 +823,7 @@ const {
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
-											:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+											:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 											role="button"
 											tabindex="0"
 											:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
@@ -864,8 +866,10 @@ const {
 										</div>
 										<div
 											class="trait-asset-desc"
-											v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait)"
-											v-html="renderText(getTraitStatement(item.trait))"
+											v-if="
+												!printBlank && !item.isPlaceholder && (getPipChild(item.trait)?.name || item.trait.description)
+											"
+											v-html="renderText(getPipChild(item.trait)?.name || item.trait.description || '')"
 										></div>
 										<div class="trait-asset-empty" v-else-if="printBlank || item.isPlaceholder"></div>
 										<div class="trait-asset-hint" v-else-if="submode === 'edit'">Click to edit asset...</div>
@@ -945,8 +949,8 @@ const {
 										<span class="trait-statement-box">
 											<span
 												class="trait-statement-text"
-												v-if="!printBlank && !item.isPlaceholder && getTraitStatement(item.trait, true)"
-												v-html="renderText(getTraitStatement(item.trait, true))"
+												v-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
+												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
 											<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
 											<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
@@ -1001,7 +1005,7 @@ const {
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
-											:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+											:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 											role="button"
 											tabindex="0"
 											:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
@@ -1150,7 +1154,7 @@ const {
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
-											:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+											:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 											role="button"
 											tabindex="0"
 											:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
@@ -1256,7 +1260,7 @@ const {
 										<span
 											v-for="size in getSubtraitRatings(traitSet)"
 											:key="size"
-											:class="{ c: true, active: !printBlank && isDieActive(subtrait, size) }"
+											:class="{ active: !printBlank && isDieActive(subtrait, size) }"
 											role="button"
 											tabindex="0"
 											:aria-label="`Stage d${size} from ${subtrait.name || 'subtrait'}`"
@@ -1285,7 +1289,6 @@ const {
 										:key="size"
 										:class="{
 											'attached-stress-die': true,
-											c: true,
 											active: !printBlank && getTrackValue(item.trait, traitSet) === size,
 										}"
 										role="button"
@@ -1354,15 +1357,15 @@ const {
 									<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
 								</span>
 							</span>
-							<ul class="trait-sfx" v-if="!hasTrackPart(traitSet) && getDisplayTraitSfx(traitSet, item.trait).length">
+							<ul class="trait-sfx" v-if="!hasTrackPart(traitSet) && cortexFunctions.sfxChildren(item.trait).length">
 								<li
-									v-for="(sfx, sfIdx) in getDisplayTraitSfx(traitSet, item.trait)"
+									v-for="(sfx, sfIdx) in cortexFunctions.sfxChildren(item.trait)"
 									:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 								>
 									<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
 										>{{ (getView(item.trait) as any).prefix.text }}
 									</span>
-									<template v-if="sfx.isHinder">
+									<template v-if="String(sfx.name || '').toLowerCase() === 'hinder'">
 										<span class="trait-sfx-name">Hinder</span>:
 										<span class="trait-sfx-description" v-html="renderText(sfx.description)"></span>
 									</template>

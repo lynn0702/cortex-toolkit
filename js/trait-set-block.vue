@@ -44,7 +44,7 @@ const {
 	selectElement,
 	updateCharacter,
 	removeTraitSet,
-	hasCounterColumn,
+	getRating,
 	getCounterLabel,
 	isHiddenIn,
 	resolvedFrame,
@@ -120,7 +120,10 @@ watch(rootEl, (el) => {
 					@click.stop="submode === 'edit' ? selectElement(['traitSet', s]) : null"
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
-					<div class="trait-set-header-counter" v-if="headerTop && hasCounterColumn(traitSet)">
+					<div
+						class="trait-set-header-counter"
+						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"
+					>
 						{{ getCounterLabel(traitSet) }}
 					</div>
 					<button

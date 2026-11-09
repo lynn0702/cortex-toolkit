@@ -202,12 +202,6 @@ export const cortexFunctions = {
 		return [4, 6, 8, 10, 12];
 	},
 
-	getRingTrait: function (traitSet: TraitSet) {
-		const ctk = getView(traitSet);
-		if (!ctk) return undefined;
-		return ctk.ringTrait !== undefined ? ctk.ringTrait : undefined;
-	},
-
 	getSubtraitRatings: function (traitSet: TraitSet) {
 		const custom = getView(traitSet);
 		if (Array.isArray(custom?.subtraitRatingLadder) && custom.subtraitRatingLadder.length > 0) {

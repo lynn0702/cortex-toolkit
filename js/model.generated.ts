@@ -140,10 +140,6 @@ export interface TraitSet {
    */
   ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
   /**
-   * Whether this trait set renders a secondary counter column (e.g. Badges XP).
-   */
-  hasCounterColumn?: boolean | null;
-  /**
    * Label for the secondary counter column header, e.g. 'XP'.
    */
   counterLabel?: string | null;

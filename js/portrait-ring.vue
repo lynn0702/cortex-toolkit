@@ -34,18 +34,18 @@ const isRingDragging = ref(false);
 const dragArcAngle = ref<number | null>(null);
 const dragScaleAngle = ref<number | null>(null);
 
-const ringTraitSet = computed(() => props.character?.traitSets?.[props.ringTraitID] ?? null);
+const ringSet = computed(() => props.character?.traitSets?.[props.ringTraitID] ?? null);
 const scaleTrait = computed(() => {
-	const ringSet = ringTraitSet.value;
-	if (!ringSet || !Array.isArray(ringSet.traits)) return null;
-	return ringSet.traits.find((t: any) => t.name?.trim().toLowerCase() === 'scale');
+	const setNode = ringSet.value;
+	if (!setNode || !Array.isArray(setNode.traits)) return null;
+	return setNode.traits.find((t: any) => t.name?.trim().toLowerCase() === 'scale');
 });
 const traits = computed<Trait[]>(() => {
-	const all = (ringTraitSet.value?.traits || []) as Trait[];
+	const all = (ringSet.value?.traits || []) as Trait[];
 	return all.filter((t: any) => !(t.name?.trim().toLowerCase() === 'scale'));
 });
 const isRingPool = computed(() => {
-	const ts = ringTraitSet.value;
+	const ts = ringSet.value;
 	const node = (ts && typeof ts === 'object' ? ts : undefined) as { pool?: unknown } | undefined;
 	if (node && typeof node.pool === 'boolean') return node.pool;
 	return Boolean(getView(ts)?.pool);
@@ -53,9 +53,9 @@ const isRingPool = computed(() => {
 const scaleDieValue = computed(() => {
 	const st = scaleTrait.value;
 	if (st) return ratingDice(getRating(st))[0] || 8;
-	const ringSet = ringTraitSet.value;
-	if (getView(ringSet)?.scaleDie) {
-		return Number(getView(ringSet)?.scaleDie);
+	const setNode = ringSet.value;
+	if (getView(setNode)?.scaleDie) {
+		return Number(getView(setNode)?.scaleDie);
 	}
 	if (getView(props.character)?.scale) {
 		return Number(getView(props.character)?.scale);
@@ -70,8 +70,8 @@ const isOtherEditorOpen = computed(() =>
 );
 
 const ringConfig = computed(() => {
-	const ringSet = ringTraitSet.value;
-	const cfg = getView(ringSet)?.ringConfig;
+	const setNode = ringSet.value;
+	const cfg = getView(setNode)?.ringConfig;
 	const baseArcAngle = cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
 	const baseScaleAngle = cfg?.scaleAngle ?? 0;
 	return {
@@ -106,11 +106,11 @@ function getTraitAngle(t: number | string) {
 	const count = traits.value.length;
 	if (count <= 0) return 0;
 
-	const frameCfg = resolveFrame(ringTraitSet.value);
+	const frameCfg = resolveFrame(ringSet.value);
 	const delta = frameCfg ? frameCfg.span[1] - frameCfg.span[0] : 0;
 	const isClosed = frameCfg ? Math.abs(delta) >= 360 : false;
 
-	if (frameCfg && isClosed && !frameCfg.legacyRing) {
+	if (frameCfg && isClosed) {
 		const baseAngle = (frameCfg.span[0] ?? 0) - 90;
 		return baseAngle + (idx / count) * 360;
 	}
@@ -332,9 +332,9 @@ function startRingDrag(event: any, targetType: string) {
 }
 
 function setRingConfigProp(key: string, value: any) {
-	const ringSet = ringTraitSet.value;
-	if (ringSet) {
-		const view = ensureView(ringSet);
+	const ringSetNode = ringSet.value;
+	if (ringSetNode) {
+		const view = ensureView(ringSetNode);
 		if (!view.ringConfig) {
 			view.ringConfig = {
 				arcAngle: -90,
@@ -352,17 +352,17 @@ function setRingConfigProp(key: string, value: any) {
 
 function setScaleDieValue(val: any) {
 	const num = Number(val) || 0;
-	const ringSet = ringTraitSet.value;
-	if (ringSet) {
-		ensureView(ringSet).scaleDie = num;
+	const ringSetNode = ringSet.value;
+	if (ringSetNode) {
+		ensureView(ringSetNode).scaleDie = num;
 
-		const stIndex = ringSet.traits.findIndex((t: any) => t.name?.trim().toLowerCase() === 'scale');
+		const stIndex = ringSetNode.traits.findIndex((t: any) => t.name?.trim().toLowerCase() === 'scale');
 		if (num === 0) {
 			if (stIndex !== -1) {
-				ringSet.traits.splice(stIndex, 1);
+				ringSetNode.traits.splice(stIndex, 1);
 			}
 		} else if (stIndex !== -1) {
-			const st = ringSet.traits[stIndex] as unknown as Record<string, any>;
+			const st = ringSetNode.traits[stIndex] as unknown as Record<string, any>;
 			st.rating = { type: 'Die', value: [num], range: [4, 6, 8, 10, 12] };
 			// Scale remains a trait name; its effect is keepsExtra.
 			st.keepsExtra = 1;
@@ -411,7 +411,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 					:class="{ 'attribute-inner': true, selected: isSelected(['trait', ringTraitID, Number(t)]) }"
 					role="button"
 					tabindex="0"
-					:aria-label="trait.name ? `Stage d${ringDie(trait) || 8} ${trait.name}` : ringTraitSet?.noun || 'Trait'"
+					:aria-label="trait.name ? `Stage d${ringDie(trait) || 8} ${trait.name}` : ringSet?.noun || 'Trait'"
 					@click.stop="handleTraitClick(ringTraitID, Number(t), trait)"
 					@keydown.enter.prevent="handleTraitClick(ringTraitID, Number(t), trait)"
 					@keydown.space.prevent="handleTraitClick(ringTraitID, Number(t), trait)"

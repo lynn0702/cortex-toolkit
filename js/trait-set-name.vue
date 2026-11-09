@@ -62,12 +62,11 @@ const descriptionLabel = computed(() => nameLabel('description', 'DESCRIPTION'))
 const playerLabel = computed(() => nameWord('player', 'PLAYER:'));
 const plotPointsLabel = computed(() => nameWord('plotPoints', 'PP'));
 
-const ringTraitSetIndex = computed(() =>
+const ringSetIndex = computed(() =>
 	(character.value?.traitSets || []).findIndex((ts: any) => {
 		const view = getView(ts);
 		const body = view?.style?.body;
 		if (body === 'portrait-ring') return true;
-		if (cortexFunctions.getRingTrait(ts) === true) return true;
 		return false;
 	}),
 );
@@ -79,7 +78,7 @@ const ringTraitSetIndex = computed(() =>
 const hasNameSetPortrait = computed(() => {
 	if (!nameShown('portrait')) return false;
 	const hasOwnCfgUrl = Boolean(getView(traitSet.value)?.imageConfig?.url);
-	if (!hasOwnCfgUrl && ringTraitSetIndex.value !== -1) return false;
+	if (!hasOwnCfgUrl && ringSetIndex.value !== -1) return false;
 	return Boolean(effectivePortraitUrl.value);
 });
 

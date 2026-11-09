@@ -131,7 +131,6 @@
           "multiDie": false,
           "notes": "",
           "reservedSlots": 4,
-          "ringTrait": false,
           "place": {
             "left": "0%",
             "top": 0,

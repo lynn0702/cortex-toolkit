@@ -9,11 +9,14 @@ STAGED_FILES=$(git diff --cached --name-only --diff-filter=d)
 
 npm run gate
 
-# Re-stage formatted files, strictly scoped to what was already staged
+# Re-stage formatted files in a single fast command
 if [ -n "$STAGED_FILES" ]; then
-	echo "$STAGED_FILES" | while IFS= read -r file; do
-		[ -f "$file" ] && git add "$file"
-	done
+	echo "$STAGED_FILES" | xargs git add --
+fi
+
+# If staged files include source changes, ensure build outputs stay in sync
+if echo "$STAGED_FILES" | grep -qE '^(js|css|schema|data)/'; then
+	git add -- index.html js/app.min.js js/templates.bundle.js css/app.min.css 2>/dev/null || true
 fi
 
 echo "=== [PRE-COMMIT] Passed! ==="

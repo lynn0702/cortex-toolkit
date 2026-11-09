@@ -145,7 +145,7 @@ const {
 							<span
 								v-for="size in getTraitSetRatings(traitSet)"
 								:key="size"
-								:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+								:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 								v-html="
 									renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))
 								"

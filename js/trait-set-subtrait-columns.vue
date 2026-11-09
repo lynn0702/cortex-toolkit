@@ -142,7 +142,6 @@ const branchGridStyle = computed(() => {
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
 											:class="{
-												c: true,
 												active:
 													!printBlank && !group.traitItem.isPlaceholder && isDieActive(group.traitItem.trait, size),
 											}"
@@ -231,7 +230,7 @@ const branchGridStyle = computed(() => {
 								<span
 									v-for="size in getSubtraitRatings(traitSet)"
 									:key="size"
-									:class="{ c: true, active: !printBlank && isDieActive(entry.sub, size) }"
+									:class="{ active: !printBlank && isDieActive(entry.sub, size) }"
 									v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.sub, size))"
 								></span>
 							</div>
@@ -258,7 +257,7 @@ const branchGridStyle = computed(() => {
 								<span
 									v-for="size in getTraitSetRatings(traitSet)"
 									:key="size"
-									:class="{ c: true, active: !printBlank && isDieActive(entry.item.trait, size) }"
+									:class="{ active: !printBlank && isDieActive(entry.item.trait, size) }"
 									v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.item.trait, size))"
 								></span>
 							</div>
@@ -372,7 +371,7 @@ const branchGridStyle = computed(() => {
 											<span
 												v-for="size in getSubtraitRatings(traitSet)"
 												:key="size"
-												:class="{ c: true, active: !printBlank && isDieActive(entry.sub, size) }"
+												:class="{ active: !printBlank && isDieActive(entry.sub, size) }"
 												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.sub, size))"
 											></span>
 										</div>
@@ -403,7 +402,7 @@ const branchGridStyle = computed(() => {
 											<span
 												v-for="size in getTraitSetRatings(traitSet)"
 												:key="size"
-												:class="{ c: true, active: !printBlank && isDieActive(entry.item.trait, size) }"
+												:class="{ active: !printBlank && isDieActive(entry.item.trait, size) }"
 												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.item.trait, size))"
 											></span>
 										</div>
@@ -496,7 +495,6 @@ const branchGridStyle = computed(() => {
 										v-for="size in getTraitSetRatings(traitSet)"
 										:key="size"
 										:class="{
-											c: true,
 											active: !printBlank && !group.traitItem.isPlaceholder && isDieActive(group.traitItem.trait, size),
 										}"
 										role="button"
@@ -581,7 +579,7 @@ const branchGridStyle = computed(() => {
 											<span
 												v-for="size in getSubtraitRatings(traitSet)"
 												:key="size"
-												:class="{ c: true, active: !printBlank && isDieActive(entry.sub, size) }"
+												:class="{ active: !printBlank && isDieActive(entry.sub, size) }"
 												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.sub, size))"
 											></span>
 										</div>
@@ -612,7 +610,7 @@ const branchGridStyle = computed(() => {
 											<span
 												v-for="size in getTraitSetRatings(traitSet)"
 												:key="size"
-												:class="{ c: true, active: !printBlank && isDieActive(entry.item.trait, size) }"
+												:class="{ active: !printBlank && isDieActive(entry.item.trait, size) }"
 												v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.item.trait, size))"
 											></span>
 										</div>
@@ -671,7 +669,7 @@ const branchGridStyle = computed(() => {
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
-											:class="{ c: true, active: !printBlank && isDieActive(entry.item.trait, size) }"
+											:class="{ active: !printBlank && isDieActive(entry.item.trait, size) }"
 											v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.item.trait, size))"
 										></span>
 									</div>
@@ -702,7 +700,7 @@ const branchGridStyle = computed(() => {
 										<span
 											v-for="size in getTraitSetRatings(traitSet)"
 											:key="size"
-											:class="{ c: true, active: !printBlank && isDieActive(entry.item.trait, size) }"
+											:class="{ active: !printBlank && isDieActive(entry.item.trait, size) }"
 											v-html="renderDieValueForPrint(size, !printBlank && isDieActive(entry.item.trait, size))"
 										></span>
 									</div>

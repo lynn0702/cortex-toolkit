@@ -331,7 +331,7 @@ export function resolveSetPillar(traitSet: unknown): string {
 		return 'play';
 	}
 	const body = v?.style?.body;
-	if (body === 'portrait-ring' || v?.ringTrait === true) {
+	if (body === 'portrait-ring') {
 		return 'prime';
 	}
 	return 'plus';
@@ -531,8 +531,6 @@ export interface CortexToolkitCustom {
 		| string;
 
 	// ring / portrait ring
-	/** Whether this set owns the portrait ring. */
-	ringTrait?: boolean;
 	scaleDie?: number;
 	scale?: number;
 
@@ -707,5 +705,3 @@ export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
 
 // Convenience aliases used across the app.
 export type CortexToolkit = CortexToolkitCustom;
-
-export * from './frame-geometry.ts';

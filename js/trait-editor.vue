@@ -118,7 +118,6 @@ const isQuestioned = computed({
 	},
 });
 
-const hasCounterColumn = computed(() => Boolean(traitSet.value?.hasCounterColumn));
 const counterLabel = computed(() => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP');
 
 const counterValue = computed({
@@ -577,9 +576,9 @@ const tableCol3Text = computed({
 	},
 });
 
-const isRingTrait = computed(() => {
+const isRingSet = computed(() => {
 	const body = getView(traitSet.value)?.style?.body;
-	return cortexFunctions.getRingTrait(traitSet.value) === true || body === 'portrait-ring';
+	return body === 'portrait-ring';
 });
 
 const isScaleDie = computed({
@@ -1407,7 +1406,7 @@ function getDieDisplayValue(val: any) {
 					</div>
 
 					<!-- COUNTER / XP FIELD -->
-					<div class="editor-field" v-if="hasCounterColumn">
+					<div class="editor-field" v-if="ratingType === 'Counter'">
 						<label :for="'trait-counter-' + traitID">{{ counterLabel }}</label>
 						<input
 							type="text"
@@ -1436,7 +1435,7 @@ function getDieDisplayValue(val: any) {
 					</div>
 
 					<!-- SCALE DIE TOGGLE FOR PORTRAIT RING -->
-					<div class="editor-field" v-if="isRingTrait && !isPlay">
+					<div class="editor-field" v-if="isRingSet && !isPlay">
 						<div class="editor-toggles">
 							<div>
 								<input type="checkbox" :id="'trait-' + traitID + '-is-scale'" name="isScaleDie" v-model="isScaleDie" />

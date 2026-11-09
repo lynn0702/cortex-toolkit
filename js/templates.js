@@ -1667,7 +1667,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '66%',
 							top: 1,
@@ -1837,7 +1836,6 @@ const cortexSpotlightTemplates = [
 					id: 'badges',
 					name: 'Badges',
 					description: 'Merit badges earned at camp',
-					hasCounterColumn: true,
 					counterLabel: 'XP',
 					view: {
 						features: {
@@ -2612,7 +2610,6 @@ const cortexSpotlightTemplates = [
 						ratingLadder: [4, 6, 8, 10, 12],
 						notes: '',
 						reservedSlots: 5,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 1,
@@ -3165,7 +3162,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -4328,7 +4324,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 4,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -7286,7 +7281,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 5,
-						ringTrait: false,
 						parts: {
 							name: {
 								left: '0%',
@@ -9691,7 +9685,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '66.663%',
 							top: 1,
@@ -11461,7 +11454,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 6,
-						ringTrait: false,
 						place: {
 							left: '48%',
 							top: 1,
@@ -12120,7 +12112,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -12650,7 +12641,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -13782,7 +13772,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -14247,7 +14236,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 6,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -15150,7 +15138,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -15625,7 +15612,6 @@ const cortexSpotlightTemplates = [
 						multiDie: false,
 						notes: '',
 						reservedSlots: 3,
-						ringTrait: false,
 						place: {
 							left: '0%',
 							top: 0,
@@ -17134,7 +17120,6 @@ const cortexSpotlightTemplates = [
 				{
 					id: 'ks-die-rows',
 					name: 'Badges',
-					hasCounterColumn: true,
 					counterLabel: 'XP',
 					view: {
 						page: 1,

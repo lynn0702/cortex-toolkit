@@ -650,7 +650,6 @@
       },
       "Badges": {
         "id": "ks-die-rows",
-        "hasCounterColumn": true,
         "counterLabel": "XP",
         "view": {
           "page": 1,

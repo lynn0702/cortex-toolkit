@@ -212,7 +212,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			classes['trait-set-statement-mode'] = true;
 		}
 
-		if (hasCounterColumn(traitSetArg)) {
+		const hasCounter = (Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : []).some(
+			(t: any) => getRating(t)?.type === 'Counter',
+		);
+		if (hasCounter) {
 			classes['trait-set-has-counter'] = true;
 		}
 
@@ -315,27 +318,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function hasCounterColumn(traitSetArg: TraitSet) {
-		if (Boolean(traitSetArg?.hasCounterColumn)) return true;
-		const traits = Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : [];
-		return traits.some((t: any) => t?.rating?.type === 'Counter');
-	}
-
 	function getCounterLabel(traitSetArg: TraitSet) {
 		return traitSetArg?.counterLabel || getView(traitSetArg)?.counterLabel || 'XP';
 	}
 
 	function getTraitCounter(trait: Trait) {
 		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView(trait)?.xp ?? '';
-	}
-
-	// Statement boxes read the sentence child only; description is a general
-	// fallback for asset-style boxes, not a second statement home.
-	function getTraitStatement(trait: Trait, statementOnly = false) {
-		const child = getPipChild(trait);
-		const sentence = child && typeof child.name === 'string' ? child.name : '';
-		if (sentence) return sentence;
-		return statementOnly ? '' : (trait?.description ?? '');
 	}
 
 	function renderDieValue(value: number) {
@@ -731,21 +719,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	function isTraitOut(trait: Trait, traitSetArg?: TraitSet) {
 		return isOutDie(trait, traitSetArg ? [traitSetArg] : undefined);
-	}
-
-	function getDisplayTraitSfx(traitSetArg: TraitSet, trait: Trait) {
-		const entries = cortexFunctions.sfxChildren(trait);
-		if (!entries.length) return [];
-		return entries.map((sfx: any) => {
-			if (String(sfx.name || '').toLowerCase() === 'hinder') {
-				return {
-					name: 'Hinder',
-					isHinder: true,
-					description: sfx.description || '',
-				};
-			}
-			return sfx;
-		});
 	}
 
 	function hasTrackPart(traitSetArg: TraitSet) {
@@ -1394,10 +1367,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		partCellStyle,
 		partsGridStyle,
 		isPartsInline,
-		hasCounterColumn,
 		getCounterLabel,
 		getTraitCounter,
-		getTraitStatement,
 		renderDieValue,
 		selectElement,
 		updateCharacter,
@@ -1423,7 +1394,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		handleOutClick,
 		shouldShowOut,
 		isTraitOut,
-		getDisplayTraitSfx,
 		hasTrackPart,
 		getTrackLabel,
 		getTraitTrackLabel,

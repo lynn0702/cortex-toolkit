@@ -21,7 +21,7 @@ const {
 	getRatingPosition,
 	renderDieValueForPrint,
 	handleSingleDieClick,
-	hasCounterColumn,
+	getRating,
 	getTraitCounter,
 	firstDie,
 	isDieActive,
@@ -91,7 +91,7 @@ const {
 						<span
 							v-for="size in getTraitSetRatings(traitSet)"
 							:key="size"
-							:class="{ c: true, active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
+							:class="{ active: !printBlank && !item.isPlaceholder && isDieActive(item.trait, size) }"
 							role="button"
 							tabindex="0"
 							:aria-label="`Stage d${size} from ${item.trait.name || 'trait'}`"
@@ -114,7 +114,13 @@ const {
 							v-html="renderDieValueForPrint(size, !printBlank && !item.isPlaceholder && isDieActive(item.trait, size))"
 						></span>
 					</div>
-					<span class="die-row-counter" v-if="hasCounterColumn(traitSet)">
+					<span
+						class="die-row-counter"
+						v-if="
+							getRating(item.trait)?.type === 'Counter' ||
+							traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')
+						"
+					>
 						{{ !printBlank && !item.isPlaceholder ? getTraitCounter(item.trait) : '' }}
 					</span>
 				</div>

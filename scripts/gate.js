@@ -22,7 +22,7 @@ function run(label, command) {
 run('1. Production Build (vite + asset versioning)', 'npm run build');
 
 // 2. Code Style
-run('2. Code Style (prettier)', 'npx prettier --check .');
+run('2. Code Style (prettier)', 'npx prettier --check --cache .');
 
 // 3. Type Check
 run('3. Type Check (vue-tsc)', 'npm run check');

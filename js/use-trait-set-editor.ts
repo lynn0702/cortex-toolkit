@@ -122,7 +122,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		get: () => {
 			const view = getView(traitSet.value);
 			const body = view?.style?.body;
-			if (body === 'portrait-ring' || view?.ringTrait === true) {
+			if (body === 'portrait-ring') {
 				return 'portrait-ring';
 			}
 			return body || 'default';
@@ -133,13 +133,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				props.character.traitSets.forEach((ts: any, idx: number) => {
 					if (idx !== props.traitSetID) {
 						const tsBody = getView(ts)?.style?.body;
-						if (tsBody === 'portrait-ring' || cortexFunctions.getRingTrait(ts)) {
+						if (tsBody === 'portrait-ring') {
 							const view = ensureView(ts);
 							if (!view.style) view.style = {};
 							view.style.body = 'default';
 							view.style.header = 'default';
 							delete (view as Record<string, unknown>).location;
-							view.ringTrait = false;
 						}
 					}
 				});
@@ -150,7 +149,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				view.style.body = 'portrait-ring';
 				view.style.header = 'portrait-ring';
 				delete (view as Record<string, unknown>).location;
-				view.ringTrait = true;
 			} else {
 				const view = ensureView(traitSet.value);
 				if (!view.style) view.style = {};
@@ -166,7 +164,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 					delete (view as Record<string, unknown>).branch;
 				}
 				delete (view as Record<string, unknown>).location;
-				view.ringTrait = false;
 			}
 			updateCharacter(props.character);
 		},
@@ -174,13 +171,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const isRing = computed(() => styleBody.value === 'portrait-ring');
 	const isName = computed(() => isNameSet(traitSet.value));
-
-	const ringTrait = computed({
-		get: () => isRing.value,
-		set: (value: boolean) => {
-			styleBody.value = value ? 'portrait-ring' : 'default';
-		},
-	});
 
 	const isFullWidthSpan = computed(() => {
 		const place = getView(traitSet.value)?.place;
@@ -884,13 +874,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
-	const hasCounterColumn = computed({
-		get: () => Boolean(traitSet.value?.hasCounterColumn),
-		set: (val: boolean) => {
-			setProperty('hasCounterColumn', Boolean(val));
-		},
-	});
-
 	const counterLabel = computed({
 		get: () => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP',
 		set: (val: string) => {
@@ -1500,7 +1483,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		styleBody,
 		isRing,
 		isName,
-		ringTrait,
 		isFullWidthSpan,
 		partPreview,
 		partCells,
@@ -1557,7 +1539,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		trackLabel,
 		ratingPosition,
 		labelPosition,
-		hasCounterColumn,
 		counterLabel,
 		pipCount,
 		pipsPerRow,

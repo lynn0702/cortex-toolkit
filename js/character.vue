@@ -137,46 +137,45 @@ const portrait = computed(() => props.character?.portrait ?? null);
 const game = computed(() => props.character?.game ?? '');
 const traitSets = computed(() => props.character?.traitSets ?? []);
 
-const ringTraitSetIndex = computed(() =>
+const ringSetIndex = computed(() =>
 	traitSets.value.findIndex((ts) => {
 		const view = getView(ts);
 		const body = view?.style?.body;
 		if (body === 'portrait-ring') return true;
-		if (cortexFunctions.getRingTrait(ts) === true) return true;
 		return false;
 	}),
 );
 
-const hasRingTrait = computed(() => ringTraitSetIndex.value !== -1);
+const hasRingSet = computed(() => ringSetIndex.value !== -1);
 
-const ringTraitID = computed(() => (hasRingTrait.value ? ringTraitSetIndex.value : -1));
-const ringTraitSet = computed(() => (hasRingTrait.value ? traitSets.value[ringTraitID.value] : null));
-const effectivePortraitUrl = computed(() => getView(ringTraitSet.value)?.imageConfig?.url || portrait.value?.url || '');
+const ringTraitID = computed(() => (hasRingSet.value ? ringSetIndex.value : -1));
+const ringSet = computed(() => (hasRingSet.value ? traitSets.value[ringTraitID.value] : null));
+const effectivePortraitUrl = computed(() => getView(ringSet.value)?.imageConfig?.url || portrait.value?.url || '');
 const isRingPool = computed(() => {
-	const ts = ringTraitSet.value as unknown as Record<string, unknown> | null;
+	const ts = ringSet.value as unknown as Record<string, unknown> | null;
 	if (ts && typeof ts.pool === 'boolean') return ts.pool;
 	return Boolean(getView(ts)?.pool);
 });
 const ringNoun = computed(() => {
-	const ts = ringTraitSet.value;
+	const ts = ringSet.value;
 	return ts?.noun && ts.noun.length ? ts.noun : 'Trait';
 });
 const scaleTrait = computed(() => {
-	const attrSet = ringTraitSet.value;
+	const attrSet = ringSet.value;
 	if (!attrSet || !Array.isArray(attrSet.traits)) return null;
 	return attrSet.traits.find(
 		(t) => t.name?.trim().toLowerCase() === 'scale' || (typeof t.keepsExtra === 'number' && t.keepsExtra > 0),
 	);
 });
-const ringTraits = computed(() => {
-	if (!hasRingTrait.value) return [];
-	const all = ringTraitSet.value?.traits || [];
+const ringSetTraits = computed(() => {
+	if (!hasRingSet.value) return [];
+	const all = ringSet.value?.traits || [];
 	return all.filter((t) => !(t.name?.trim().toLowerCase() === 'scale'));
 });
 const scaleDieValue = computed(() => {
 	const st = scaleTrait.value;
 	if (st) return Number(st.value) || 8;
-	const attrSet = ringTraitSet.value;
+	const attrSet = ringSet.value;
 	const attrView = getView(attrSet);
 	if (attrView?.scaleDie) {
 		return Number(attrView.scaleDie);
@@ -588,13 +587,13 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 	ensureBucket('identity');
 
 	let ringPillarKey: string | null = null;
-	if (hasRingTrait.value && ringTraitSet.value && !isHiddenIn(ringTraitSet.value, 'play')) {
-		ringPillarKey = resolveSetPillar(ringTraitSet.value);
+	if (hasRingSet.value && ringSet.value && !isHiddenIn(ringSet.value, 'play')) {
+		ringPillarKey = resolveSetPillar(ringSet.value);
 		ensureBucket(ringPillarKey);
 	}
 
 	allSets.forEach((ts, idx) => {
-		if (hasRingTrait.value && idx === ringTraitID.value) return;
+		if (hasRingSet.value && idx === ringTraitID.value) return;
 		if (isHiddenIn(ts, 'play')) return;
 		const pKey = resolveSetPillar(ts);
 		const bucket = ensureBucket(pKey);
@@ -618,8 +617,8 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 			const sets = byPillar.get(key) || [];
 			const hasClassicRing = ringPillarKey === key;
 			const setsForCount = sets.map((s) => s.traitSet);
-			if (hasClassicRing && hasRingTrait.value && ringTraitSet.value) {
-				setsForCount.unshift(ringTraitSet.value);
+			if (hasClassicRing && hasRingSet.value && ringSet.value) {
+				setsForCount.unshift(ringSet.value);
 			}
 			return {
 				key,
@@ -634,10 +633,10 @@ const mobilePillarColumns = computed<MobilePillarColumn[]>(() => {
 
 function columnStackItems(col: MobilePillarColumn): { index: number; label: string }[] {
 	const items: { index: number; label: string }[] = [];
-	if (col.hasClassicRing && hasRingTrait.value && ringTraitSet.value) {
+	if (col.hasClassicRing && hasRingSet.value && ringSet.value) {
 		items.push({
 			index: -2,
-			label: getMobileJumpPillLabel(ringTraitSet.value, 0),
+			label: getMobileJumpPillLabel(ringSet.value, 0),
 		});
 	}
 	for (const s of col.sets) {
@@ -875,14 +874,14 @@ watch(
 							<!-- PORTRAIT RING IN PILLAR COLUMN -->
 							<div
 								v-if="col.hasClassicRing"
-								:class="{ portrait: true, 'portrait-standalone': !hasRingTrait }"
+								:class="{ portrait: true, 'portrait-standalone': !hasRingSet }"
 								:data-set-index="-2"
 							>
 								<div class="portrait-inner" @click.stop="selectElement(['traitSet', ringTraitID])">
 									<div
 										:class="
 											'portrait-circle portrait-alignment-' +
-											(getView(ringTraitSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')
+											(getView(ringSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')
 										"
 										width="100%"
 										height="100%"
@@ -897,7 +896,7 @@ watch(
 									</div>
 								</div>
 								<PortraitRing
-									v-if="hasRingTrait && ringTraitID > -1"
+									v-if="hasRingSet && ringTraitID > -1"
 									ref="ringRef"
 									:character="character"
 									:editing="editing"
@@ -969,9 +968,7 @@ watch(
 													<div
 														:class="
 															'portrait-circle portrait-alignment-' +
-															(getView(ringTraitSet)?.imageConfig?.alignment ||
-																getView(portrait)?.alignment ||
-																'top-center')
+															(getView(ringSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')
 														"
 														width="100%"
 														height="100%"
@@ -986,7 +983,7 @@ watch(
 													</div>
 												</div>
 												<PortraitRing
-													v-if="hasRingTrait && ringTraitID > -1"
+													v-if="hasRingSet && ringTraitID > -1"
 													ref="ringRef"
 													:character="character"
 													:editing="editing"
@@ -999,7 +996,7 @@ watch(
 													@removeTrait="removeTrait"
 												/>
 											</div>
-											<div :class="{ attributes: true, vertical: ringTraits.length > 5 }">
+											<div :class="{ attributes: true, vertical: ringSetTraits.length > 5 }">
 												<transition appear>
 													<div class="preview-button-container">
 														<div class="preview-button-container-inner" v-if="submode === 'edit'">
@@ -1022,14 +1019,14 @@ watch(
 														</div>
 														<div
 															class="preview-button-container-inner"
-															v-if="submode === 'play' && isRingPool && ringTraits.length > 0"
+															v-if="submode === 'play' && isRingPool && ringSetTraits.length > 0"
 														>
 															<div
 																class="preview-button"
-																@click.stop="ringRef?.handleTraitClick(ringTraitID, 0, ringTraits[0])"
+																@click.stop="ringRef?.handleTraitClick(ringTraitID, 0, ringSetTraits[0])"
 																title="Add all pool dice to roller"
 															>
-																<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ ringTraits.length }} dice)</span>
+																<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ ringSetTraits.length }} dice)</span>
 															</div>
 														</div>
 													</div>

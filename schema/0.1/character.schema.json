@@ -52,13 +52,6 @@
 					],
 					"description": "Placement of trait rating dice relative to trait labels."
 				},
-				"hasCounterColumn": {
-					"type": [
-						"boolean",
-						"null"
-					],
-					"description": "Whether this trait set renders a secondary counter column (e.g. Badges XP)."
-				},
 				"counterLabel": {
 					"type": [
 						"string",
