@@ -2,7 +2,7 @@
 .submode-edit .trait-set-header-inner,
 .submode-edit .trait-inner,
 .submode-edit .portrait-inner,
-.submode-edit .attribute-inner,
+.submode-edit .ring-trait-inner,
 .submode-edit .scale-die-inner,
 .scale-die .submode-edit .scale-die-inner {
 	position: relative;
@@ -738,7 +738,7 @@
 
 /* ATTRIBUTES */
 
-.attributes {
+.ring-actions {
 	position: relative;
 	padding-top: 1.5rem;
 
@@ -758,7 +758,7 @@
 }
 
 .submode-edit {
-	.attribute,
+	.ring-trait,
 	.scale-die {
 		cursor: grab;
 
@@ -783,7 +783,7 @@
 	}
 }
 
-.attribute {
+.ring-trait {
 	position: absolute;
 	z-index: var(--z-beneath-editor);
 	pointer-events: auto;
@@ -794,7 +794,7 @@
 	}
 }
 
-.attribute-inner {
+.ring-trait-inner {
 	display: block;
 	position: absolute;
 	left: 0;
@@ -806,7 +806,7 @@
 	cursor: pointer;
 }
 
-.attribute-inner span {
+.ring-trait-inner span {
 	font-size: 1.66rem;
 	display: flex;
 	align-items: center;
@@ -815,65 +815,15 @@
 	height: 100%;
 	line-height: 1;
 	text-align: center;
-
-	/* White numeral fill, see die-backing in app.scss */
-	&:before {
-		position: absolute;
-		content: ' ';
-		background: white;
-		z-index: -1;
-		/* small local stacking literal */
-		pointer-events: none;
-		/* Default (no die-N class) matches the d8 glyph */
-		left: calc(50% + -0.0078em);
-		top: calc(50% + 0.1629em);
-		width: 0.2852em;
-		height: 0.4586em;
-		transform: translate(-50%, -50%);
-	}
-
-	&.die-4:before {
-		left: calc(50% + -0.0161em);
-		top: calc(50% + 0.0872em);
-		width: 0.2607em;
-		height: 0.3814em;
-	}
-
-	&.die-6:before {
-		left: calc(50% + 0.001em);
-		top: calc(50% + 0.1805em);
-		width: 0.2891em;
-		height: 0.4547em;
-	}
-
-	&.die-8:before {
-		left: calc(50% + -0.0078em);
-		top: calc(50% + 0.1629em);
-		width: 0.2852em;
-		height: 0.4586em;
-	}
-
-	&.die-10:before {
-		left: calc(50% + -0.0313em);
-		top: calc(50% + 0.1688em);
-		width: 0.5293em;
-		height: 0.4586em;
-	}
-
-	&.die-12:before {
-		left: calc(50% + -0.0181em);
-		top: calc(50% + 0.1629em);
-		width: 0.5322em;
-		height: 0.4664em;
-	}
 }
 
-/* Unrated attribute slot: no white backing blob, just a dashed empty ring. */
-.attribute-inner .die-empty {
-	&:before {
-		display: none;
-	}
+.ring-trait-inner .diecon,
+.scale-die-inner .diecon {
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
 
+/* Unrated ring trait slot: dashed empty ring. */
+.ring-trait-inner .die-empty {
 	&:after {
 		position: absolute;
 		content: ' ';
@@ -889,7 +839,7 @@
 	}
 }
 
-.attribute-name {
+.ring-trait-name {
 	font-family: var(--font-secondary);
 	color: black;
 	text-transform: none;
@@ -906,7 +856,7 @@
 	pointer-events: auto;
 }
 
-.vertical .attribute-inner > div {
+.vertical .ring-trait-inner > div {
 	writing-mode: vertical-lr;
 	transform: rotate(180deg);
 	padding-bottom: 1mm;
@@ -946,57 +896,6 @@
 			line-height: 1;
 			transition: transform 0.12s;
 			position: relative;
-
-			/* White numeral fill, see die-backing in app.scss */
-			&:before {
-				position: absolute;
-				content: ' ';
-				background: white;
-				z-index: -1;
-				/* small local stacking literal */
-				pointer-events: none;
-				/* Default (no die-N class) matches the d8 glyph */
-				left: calc(50% + -0.0078em);
-				top: calc(50% + 0.1629em);
-				width: 0.2852em;
-				height: 0.4586em;
-				transform: translate(-50%, -50%);
-			}
-
-			&.die-4:before {
-				left: calc(50% + -0.0161em);
-				top: calc(50% + 0.0872em);
-				width: 0.2607em;
-				height: 0.3814em;
-			}
-
-			&.die-6:before {
-				left: calc(50% + 0.001em);
-				top: calc(50% + 0.1805em);
-				width: 0.2891em;
-				height: 0.4547em;
-			}
-
-			&.die-8:before {
-				left: calc(50% + -0.0078em);
-				top: calc(50% + 0.1629em);
-				width: 0.2852em;
-				height: 0.4586em;
-			}
-
-			&.die-10:before {
-				left: calc(50% + -0.0313em);
-				top: calc(50% + 0.1688em);
-				width: 0.5293em;
-				height: 0.4586em;
-			}
-
-			&.die-12:before {
-				left: calc(50% + -0.0181em);
-				top: calc(50% + 0.1629em);
-				width: 0.5322em;
-				height: 0.4664em;
-			}
 		}
 
 		.scale-name {

@@ -223,8 +223,10 @@ export const VANGUARD_FRAME_SHOWCASE = {
 						stroke: '1.5px',
 					},
 					parts: {
-						name: { left: '0%', top: 0, width: '55%', height: 1, marker: 'L' },
-						rating: { left: '55%', top: 0, width: '45%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+						name: { left: '0%', top: 0, width: '40%', height: 1, marker: 'L' },
+						'child:Statement:rating': { left: '40%', top: 0, width: '10%', height: 1 },
+						rating: { left: '50%', top: 0, width: '50%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
+						'child:Statement:label': { left: '0%', top: 1, width: '100%', height: 1 },
 					},
 				},
 				traits: [

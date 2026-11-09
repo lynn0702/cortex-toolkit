@@ -150,7 +150,10 @@ const {
 									:class="{
 										'trait-title': getRatingPosition(traitSet) !== 'above',
 										'trait-title-statement':
-											Boolean(getPipChild(item.trait)) && getRatingPosition(traitSet) !== 'above',
+											Boolean(getPipChild(item.trait)) &&
+											getRatingPosition(traitSet) !== 'above' &&
+											!partsGridFor(traitSet)?.cells['child:Statement:label'] &&
+											!partsGridFor(traitSet)?.cells['child:Statement'],
 										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
 										'trait-asset-box': getRatingPosition(traitSet) === 'above',
 									}"
@@ -192,7 +195,7 @@ const {
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 										</button>
 										<span
-											v-if="getPipChild(item.trait)"
+											v-if="getPipChild(item.trait) && !partsGridFor(traitSet)?.cells['child:Statement:rating']"
 											class="statement-pip"
 											:class="{ questioned: isChildPipFilled(item.trait) }"
 											role="checkbox"
@@ -210,7 +213,14 @@ const {
 													: ''
 											"
 										></span>
-										<span class="trait-statement-box">
+										<span
+											v-if="
+												!partsGridFor(traitSet)?.cells['child:Statement:label'] &&
+												!partsGridFor(traitSet)?.cells['child:Statement']
+											"
+											class="trait-statement-box"
+											@click.stop="openTraitAt(s, item)"
+										>
 											<span
 												class="trait-statement-text"
 												v-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
@@ -717,22 +727,67 @@ const {
 									:style="partCellStyle(partsGridFor(traitSet), partKey)"
 								>
 									<template v-if="parseChildPartKey(partKey).kind === 'label'">
-										<span class="child-part-label" v-if="(getView(traitSet)?.parts?.[partKey] as any)?.marker === 'L'">
-											{{
-												getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.name ||
-												parseChildPartKey(partKey).noun
-											}}
-										</span>
-										<span class="child-part-text" v-else>
-											{{
-												getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.description ||
-												getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.name ||
-												''
-											}}
-										</span>
+										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
+											<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
+												<span
+													class="trait-statement-text"
+													v-if="
+														!printBlank &&
+														!item.isPlaceholder &&
+														(getChildTraitByNoun(item.trait, 'statement')?.name || getPipChild(item.trait)?.name)
+													"
+													v-html="
+														renderText(
+															getChildTraitByNoun(item.trait, 'statement')?.name || getPipChild(item.trait)?.name || '',
+														)
+													"
+												></span>
+												<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
+												<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
+												<span class="trait-statement-blank" v-else></span>
+											</span>
+										</template>
+										<template v-else>
+											<span
+												class="child-part-label"
+												v-if="(getView(traitSet)?.parts?.[partKey] as any)?.marker === 'L'"
+											>
+												{{
+													getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.name ||
+													parseChildPartKey(partKey).noun
+												}}
+											</span>
+											<span class="child-part-text" v-else>
+												{{
+													getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.description ||
+													getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun)?.name ||
+													''
+												}}
+											</span>
+										</template>
 									</template>
 									<template v-else-if="parseChildPartKey(partKey).kind === 'rating'">
-										<div class="trait-value child-part-value">
+										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
+											<span
+												class="statement-pip"
+												:class="{ questioned: isChildPipFilled(item.trait) }"
+												role="checkbox"
+												tabindex="0"
+												:aria-checked="isChildPipFilled(item.trait) ? 'true' : 'false'"
+												:aria-label="`Question statement for ${item.trait.name || 'trait'}`"
+												@keydown.enter.prevent="togglePip(s, item.originalIndex)"
+												@keydown.space.prevent="togglePip(s, item.originalIndex)"
+												@click.stop="togglePip(s, item.originalIndex)"
+												:title="
+													submode === 'play'
+														? isChildPipFilled(item.trait)
+															? 'Questioned (click to reset)'
+															: 'Click to question'
+														: ''
+												"
+											></span>
+										</template>
+										<div class="trait-value child-part-value" v-else>
 											<template
 												v-if="
 													getRating(getChildTraitByNoun(item.trait, parseChildPartKey(partKey).noun))?.type === 'Pip'

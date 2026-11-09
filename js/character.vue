@@ -996,7 +996,7 @@ watch(
 													@removeTrait="removeTrait"
 												/>
 											</div>
-											<div :class="{ attributes: true, vertical: ringSetTraits.length > 5 }">
+											<div :class="{ 'ring-actions': true, vertical: ringSetTraits.length > 5 }">
 												<transition appear>
 													<div class="preview-button-container">
 														<div class="preview-button-container-inner" v-if="submode === 'edit'">

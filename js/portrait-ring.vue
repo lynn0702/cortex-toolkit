@@ -98,7 +98,7 @@ function updateCharacter(character: any) {
 }
 
 function renderDieValue(value: any) {
-	return cortexFunctions.renderDieconSVG(value, false, '', null);
+	return cortexFunctions.renderDieconSVG(value, true, '', null);
 }
 
 function getTraitAngle(t: number | string) {
@@ -397,7 +397,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 		<div class="ring-items" :class="{ 'has-open-editor': isTraitEditorOpen }">
 			<div
 				v-for="(trait, t) in traits"
-				class="attribute"
+				class="ring-trait"
 				:class="{
 					'has-open-editor': isSelected(['trait', ringTraitID, Number(t)]),
 					'is-draggable': submode === 'edit',
@@ -407,8 +407,8 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 				@touchstart="startRingDrag($event, 'traits')"
 			>
 				<div
-					class="attribute-inner"
-					:class="{ 'attribute-inner': true, selected: isSelected(['trait', ringTraitID, Number(t)]) }"
+					class="ring-trait-inner"
+					:class="{ selected: isSelected(['trait', ringTraitID, Number(t)]) }"
 					role="button"
 					tabindex="0"
 					:aria-label="trait.name ? `Stage d${ringDie(trait) || 8} ${trait.name}` : ringSet?.noun || 'Trait'"
@@ -430,7 +430,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 						aria-hidden="true"
 					></span>
 
-					<div class="attribute-name" :style="getTraitNameStyle(Number(t))">{{ trait.name }}</div>
+					<div class="ring-trait-name" :style="getTraitNameStyle(Number(t))">{{ trait.name }}</div>
 				</div>
 			</div>
 		</div>

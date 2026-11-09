@@ -1508,5 +1508,92 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(valNames).toContain('Statement · Label');
 			valEditor.unmount();
 		});
+
+		it('renders Vanguard Values statement with zero duplication, places pip and box in dynamic grid cells, and renders Spotlight card hero traits in 3 o clock arc distribution', async () => {
+			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
+			const { default: PortraitRing } = await import('../js/portrait-ring.vue');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+
+			// 1. Mount Values set: zero duplicate statements, pip in child:Statement:rating, box in child:Statement:label
+			const valuesWrapper = mount(TraitSetBlock, {
+				props: {
+					character: char,
+					traitSetID: 4, // Values
+					submode: 'edit',
+					editing: [],
+				},
+				attachTo: document.body,
+			});
+
+			const dutyRow = valuesWrapper.find('.trait[data-trait-name="Duty"]');
+			expect(dutyRow.exists()).toBe(true);
+
+			// Exactly one occurrence of the statement text
+			const textMatches = dutyRow.text().match(/The crew comes home before the cargo\./g);
+			expect(textMatches?.length).toBe(1);
+
+			// Statement pip is in child:Statement:rating cell, not in name cell
+			const pipInRatingCell = dutyRow.find('.trait-part-child-Statement-rating .statement-pip');
+			expect(pipInRatingCell.exists()).toBe(true);
+			const pipInNameCell = dutyRow.find('.trait-part-name .statement-pip');
+			expect(pipInNameCell.exists()).toBe(false);
+
+			// Statement box is in child:Statement:label cell, not in name cell
+			const boxInLabelCell = dutyRow.find('.trait-part-child-Statement-label .trait-statement-box');
+			expect(boxInLabelCell.exists()).toBe(true);
+			const boxInNameCell = dutyRow.find('.trait-part-name .trait-statement-box');
+			expect(boxInNameCell.exists()).toBe(false);
+
+			valuesWrapper.unmount();
+
+			// 2. Spotlight Library card hero: arc distribution at 3 o'clock (1:30, 3:00, 4:30)
+			const mockSpotlightTmpl = {
+				id: 'snowfall',
+				title: 'Snowfall Initiative',
+				subtitle: 'Cold War Espionage',
+				listing: {
+					image: 'data:image/png;base64,mock',
+					setting: 'd10',
+					complexity: 'd8',
+					prep: 'd8',
+				},
+			};
+			const ringChar = {
+				name: mockSpotlightTmpl.title,
+				portrait: { url: mockSpotlightTmpl.listing.image },
+				traitSets: [
+					{
+						id: 'ratings',
+						name: 'Ratings',
+						traits: [
+							{ name: 'Setting', rating: { type: 'Die', value: [10] }, dice: [] },
+							{ name: 'Prep', rating: { type: 'Die', value: [8] }, dice: [] },
+							{ name: 'Complexity', rating: { type: 'Die', value: [8] }, dice: [] },
+						],
+					},
+				],
+			};
+
+			const ringWrapper = mount(PortraitRing, {
+				props: {
+					character: ringChar,
+					editing: [],
+					ringTraitID: 0,
+				},
+				attachTo: document.body,
+			});
+
+			const ringTraits = ringWrapper.findAll('.ring-trait');
+			expect(ringTraits.length).toBe(3);
+
+			// Prep: angle 0° (3 o'clock) -> sits at tighter right baseline at 3 o'clock (x=100%, y=50%)
+			expect(ringTraits[1].find('.ring-trait-name').text()).toBe('Prep');
+			const style1 = ringTraits[1].attributes('style') || '';
+			expect(style1).toContain('left: calc(100%)');
+			expect(style1).toContain('top: calc(50%)');
+
+			ringWrapper.unmount();
+		});
 	});
 });

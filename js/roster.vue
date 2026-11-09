@@ -139,9 +139,24 @@ function cardRingCharacter(tmpl: any) {
 				id: 'ratings',
 				name: 'Ratings',
 				traits: [
-					{ name: 'Setting', value: sizeOf(listing.setting), dice: [] },
-					{ name: 'Prep', value: sizeOf(listing.prep), dice: [] },
-					{ name: 'Complexity', value: sizeOf(listing.complexity), dice: [] },
+					{
+						name: 'Setting',
+						value: sizeOf(listing.setting),
+						rating: { type: 'Die', value: [sizeOf(listing.setting)] },
+						dice: [],
+					},
+					{
+						name: 'Prep',
+						value: sizeOf(listing.prep),
+						rating: { type: 'Die', value: [sizeOf(listing.prep)] },
+						dice: [],
+					},
+					{
+						name: 'Complexity',
+						value: sizeOf(listing.complexity),
+						rating: { type: 'Die', value: [sizeOf(listing.complexity)] },
+						dice: [],
+					},
 				],
 			},
 		],

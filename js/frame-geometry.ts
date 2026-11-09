@@ -51,7 +51,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			? view?.frame
 			: traitSetOrFrame.frame !== undefined
 				? traitSetOrFrame.frame
-				: traitSetOrFrame;
+				: traitSetOrFrame.traits !== undefined || traitSetOrFrame.name !== undefined || traitSetOrFrame.id !== undefined
+					? null
+					: traitSetOrFrame;
 
 	const rawRingCfg = view?.ringConfig || raw?.ringConfig || (traitSetOrFrame as any)?.ringConfig;
 	const ringConfig: RingConfig | null = rawRingCfg

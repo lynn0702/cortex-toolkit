@@ -268,11 +268,56 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	// Trait-part layout (view.parts), or null for legacy flex rows.
 	// Unknown part names never reach the grid: validation rejects them.
 	function getParts(traitSetArg: TraitSet) {
-		const parts = getView(traitSetArg)?.parts;
-		if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return null;
-		const known = Object.keys(parts).filter((k) => isKnownPart(k));
+		const raw = getView(traitSetArg)?.parts;
+		if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+		const known = Object.keys(raw).filter((k) => isKnownPart(k));
 		if (!known.length) return null;
-		return parts as Record<string, { left: string; top: number; width: string; height: number }>;
+		const parts: Record<
+			string,
+			{
+				left: string;
+				top: number;
+				width: string;
+				height: number;
+				marker?: string;
+				ratingType?: string;
+				range?: number[];
+			}
+		> = { ...raw };
+
+		const hasStatementPip =
+			Array.isArray(traitSetArg?.traits) &&
+			traitSetArg.traits.some((t: any) => {
+				const r = getRating(t);
+				if (r?.type === 'Pip') return true;
+				return Array.isArray(t?.traits) && t.traits.some((sub: any) => getRating(sub)?.type === 'Pip');
+			});
+
+		if (
+			hasStatementPip &&
+			parts.name &&
+			parts.rating &&
+			Number(parts.name.top || 0) === 0 &&
+			Number(parts.rating.top || 0) === 0 &&
+			!parts['child:Statement:rating'] &&
+			!parts['child:Statement:label'] &&
+			!parts['child:Statement']
+		) {
+			let nextTop = 1;
+			for (const k of Object.keys(parts)) {
+				if (k === 'name' || k === 'rating') continue;
+				const top = Number(parts[k]?.top);
+				if (Number.isInteger(top) && top >= 1) {
+					parts[k] = { ...parts[k], top: top + 1 };
+					nextTop = Math.max(nextTop, top + 2);
+				}
+			}
+			parts.name = { ...parts.name, left: '0%', top: 0, width: '40%', height: 1 };
+			parts['child:Statement:rating'] = { left: '40%', top: 0, width: '10%', height: 1 };
+			parts.rating = { ...parts.rating, left: '50%', top: 0, width: '50%', height: 1 };
+			parts['child:Statement:label'] = { left: '0%', top: nextTop, width: '100%', height: 1 };
+		}
+		return parts;
 	}
 
 	function partsGridFor(traitSetArg: TraitSet) {
@@ -368,8 +413,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			const targetCount = getTraitSetSlotCount(traitSetArg);
 			const list: any[] = [];
 			const visible = existing
-				.map((t, idx: number) => ({ trait: t, originalIndex: idx }))
-				.filter(({ trait }) => isTraitShown(trait));
+				.map((t: Trait, idx: number) => ({ trait: t, originalIndex: idx }))
+				.filter(({ trait }: { trait: Trait }) => isTraitShown(trait));
 			for (let i = 0; i < targetCount; i++) {
 				if (i < visible.length) {
 					list.push({ trait: visible[i].trait, originalIndex: visible[i].originalIndex, isPlaceholder: false });
@@ -385,8 +430,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		// objects — clicking one fills it (openTraitAt); nothing blank is stored.
 		// Visibility filters first (hidden traits leave no row), so counts
 		// stay stable. Original indices survive the filter for editor routing.
-		const mapped = existing.map((t, idx: number) => ({ trait: t, originalIndex: idx, isPlaceholder: false }));
-		const visible = mapped.filter(({ trait }) => isTraitShown(trait));
+		const mapped = existing.map((t: Trait, idx: number) => ({ trait: t, originalIndex: idx, isPlaceholder: false }));
+		const visible = mapped.filter(({ trait }: { trait: Trait }) => isTraitShown(trait));
 		const targetCount = Math.max(getTraitSetSlotCount(traitSetArg), visible.length);
 		const list: any[] = [...visible];
 		for (let i = visible.length; i < targetCount; i++) {
@@ -1026,7 +1071,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return undefined;
 		}
 		if (!Array.isArray(trait.traits)) return undefined;
-		return trait.traits.find((t) => (t?.name || '').trim().toLowerCase() === n);
+		return trait.traits.find((t: Trait) => (t?.name || '').trim().toLowerCase() === n);
 	}
 
 	function blankPipTrait(): any {

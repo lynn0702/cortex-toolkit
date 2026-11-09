@@ -105,7 +105,7 @@
 	.submode-edit .trait-set-header-inner::before,
 	.submode-edit .trait-inner::before,
 	.submode-edit .portrait-inner::before,
-	.submode-edit .attribute-inner::before,
+	.submode-edit .ring-trait-inner::before,
 	.submode-edit .scale-die-inner::before,
 	.submode-edit .scale-die .scale-die-inner::before {
 		display: none;

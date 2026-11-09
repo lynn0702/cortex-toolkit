@@ -1,6 +1,5 @@
 .trait-set-style-default,
 .trait-set-style-portrait-ring,
-.trait-set-style-attributes,
 .trait-set-style-sfx-rows,
 .trait-set-style-two-columns-detailed,
 .trait-set-style-subtrait-columns,
@@ -1714,7 +1713,7 @@
 	.trait-set-style-die-track .diecon,
 	.trait-set-style-die-track .out-badge,
 	.single-die-value .diecon,
-	.attribute-inner .diecon,
+	.ring-trait-inner .diecon,
 	.subtrait-value .diecon,
 	.attached-stress-track .diecon {
 		cursor: pointer;
@@ -1831,4 +1830,19 @@
 }
 .trait-parts .trait-part-description .trait-description {
 	margin-top: 0;
+}
+.trait-parts > .trait-part-child-Statement-rating {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.trait-parts > .trait-part-child-Statement-label {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	min-width: 0;
+
+	.trait-statement-box {
+		width: 100%;
+	}
 }
