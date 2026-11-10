@@ -1000,7 +1000,7 @@
 			}
 		}
 
-		&.trait-title-statement {
+		&.trait-title-pip {
 			align-items: center;
 			gap: 0.35rem;
 
@@ -1010,7 +1010,7 @@
 				letter-spacing: 0.05em;
 			}
 
-			.statement-pip {
+			.pip {
 				display: inline-block;
 				width: 10px;
 				height: 10px;
@@ -1039,7 +1039,7 @@
 				}
 			}
 
-			.trait-statement-box {
+			.trait-pip-box {
 				flex: 1 1 auto;
 				min-width: 0;
 				border: 1.5px solid #000000;
@@ -1057,7 +1057,7 @@
 				font-weight: 400;
 				font-family: var(--font-primary);
 
-				.trait-statement-input {
+				.trait-pip-input {
 					width: 100%;
 					background: transparent;
 					border: none;
@@ -1075,13 +1075,13 @@
 					}
 				}
 
-				.trait-statement-text {
+				.trait-pip-text {
 					overflow-wrap: break-word;
 					text-transform: none;
 					font-weight: 400;
 				}
 
-				.trait-statement-hint {
+				.trait-pip-hint {
 					color: #94a3b8;
 					font-style: italic;
 				}
@@ -1403,7 +1403,7 @@
 			}
 		}
 
-		.paired-slot-statement-box {
+		.paired-slot-pip-box {
 			border: 1.5px solid #000000;
 			border-radius: 2px;
 			padding: 0.2rem 0.45rem;
@@ -1420,7 +1420,7 @@
 			font-weight: 400;
 			font-family: var(--font-primary);
 
-			.paired-slot-statement-text {
+			.paired-slot-pip-text {
 				text-transform: none;
 				font-weight: 400;
 			}
@@ -2736,7 +2736,7 @@
 
 	/* Paired-slot fields are already bordered boxes - drop the duplicate inner rule. */
 	.paired-slot-name-box .paired-slot-blank-line,
-	.paired-slot-statement-box .paired-slot-blank-line {
+	.paired-slot-pip-box .paired-slot-blank-line {
 		border-bottom: none;
 	}
 
@@ -2850,7 +2850,7 @@ body:has(.character-sheet.submode-print) .main {
 	}
 
 	/* Center-align stacked trait titles (e.g. Eidolon Alpha Roles & Attributes) */
-	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+	.trait-title.trait-title-stacked:not(.trait-title-pip) {
 		align-items: center;
 		text-align: center;
 		.trait-name {
@@ -2989,9 +2989,9 @@ body:has(.character-sheet.submode-print) .main {
 		border-top: 1px solid #000000;
 	}
 
-	/* 2. STACKED TRAITS (ratingPosition: 'below', no statement): */
+	/* 2. STACKED TRAITS (ratingPosition: 'below', no pip child): */
 	/* Center name and die row (reusable across Roles, Attributes, etc.) */
-	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+	.trait-title.trait-title-stacked:not(.trait-title-pip) {
 		align-items: center;
 		text-align: center;
 
@@ -3007,10 +3007,10 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	/* 3. INLINE STATEMENTS (statement: true + ratingPosition: 'inline'): */
-	/* Center-align all elements on the row midline (Name, Pip, Statement box, Dice scale). */
-	/* Uses a consistent 6.5rem name column so statement boxes and right-aligned dice stay flush. */
-	.trait-title.trait-title-statement:not(.trait-title-stacked) {
+	/* 3. INLINE PIP CHILDREN (pip child + ratingPosition: 'inline'): */
+	/* Center-align all elements on the row midline (Name, Pip, Pip box, Dice scale). */
+	/* Uses a consistent 6.5rem name column so pip boxes and right-aligned dice stay flush. */
+	.trait-title.trait-title-pip:not(.trait-title-stacked) {
 		display: flex;
 		align-items: center;
 		gap: 0.45rem;
@@ -3030,13 +3030,13 @@ body:has(.character-sheet.submode-print) .main {
 			}
 		}
 
-		& > .statement-pip {
+		& > .pip {
 			align-self: center;
 			margin: 0 0.15rem;
 			flex-shrink: 0;
 		}
 
-		& > .trait-statement-box {
+		& > .trait-pip-box {
 			flex: 1 1 auto;
 			min-width: 0;
 			align-self: center;
@@ -3052,10 +3052,10 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
-	/* 4. STACKED STATEMENTS (statement: true + ratingPosition: 'below'): */
+	/* 4. STACKED PIP CHILDREN (pip child + ratingPosition: 'below'): */
 	/* Reusable 2-column geometry: Col 1 stacks Name over Dice; Col 2 is the */
-	/* full-height Statement box. Works for both named traits and blank slots. */
-	.trait-title.trait-title-statement.trait-title-stacked {
+	/* full-height Pip box. Works for both named traits and blank slots. */
+	.trait-title.trait-title-pip.trait-title-stacked {
 		display: grid;
 		grid-template-columns: 38% 1fr;
 		grid-template-rows: auto auto;
@@ -3090,7 +3090,7 @@ body:has(.character-sheet.submode-print) .main {
 			width: 100%;
 		}
 
-		& > .trait-statement-box {
+		& > .trait-pip-box {
 			grid-column: 2;
 			grid-row: 1 / span 2;
 			min-height: 100%;
@@ -3118,11 +3118,11 @@ body:has(.character-sheet.submode-print) .main {
 	}
 }
 
-/* 5. STATEMENT + RATING ABOVE (statement: true + ratingPosition: 'above'): */
+/* 5. PIP CHILD + RATING ABOVE (pip child + ratingPosition: 'above'): */
 /* Row 1: Trait Name (left) + Die Scale (right) */
-/* Row 2: Full-width Statement Box underneath. */
-.trait-set-rating-above .trait-title-statement,
-.trait-title-statement.trait-title-above {
+/* Row 2: Full-width Pip Box underneath. */
+.trait-set-rating-above .trait-title-pip,
+.trait-title-pip.trait-title-above {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -3131,21 +3131,21 @@ body:has(.character-sheet.submode-print) .main {
 	row-gap: 0.2rem;
 }
 
-.trait-title-statement.trait-title-above > .trait-name,
-.trait-title-statement.trait-title-above > .trait-title-btn,
-.trait-set-rating-above .trait-title-statement > .trait-name,
-.trait-set-rating-above .trait-title-statement > .trait-title-btn {
+.trait-title-pip.trait-title-above > .trait-name,
+.trait-title-pip.trait-title-above > .trait-title-btn,
+.trait-set-rating-above .trait-title-pip > .trait-name,
+.trait-set-rating-above .trait-title-pip > .trait-title-btn {
 	order: 1;
 	flex: 1 1 auto;
 }
-.trait-title-statement.trait-title-above > .trait-value,
-.trait-set-rating-above .trait-title-statement > .trait-value {
+.trait-title-pip.trait-title-above > .trait-value,
+.trait-set-rating-above .trait-title-pip > .trait-value {
 	order: 2;
 	flex: 0 0 auto;
 	margin-left: auto;
 }
-.trait-title-statement.trait-title-above > .trait-statement-box,
-.trait-set-rating-above .trait-title-statement > .trait-statement-box {
+.trait-title-pip.trait-title-above > .trait-pip-box,
+.trait-set-rating-above .trait-title-pip > .trait-pip-box {
 	order: 3;
 	flex: 1 0 100%;
 	width: 100%;
@@ -3156,7 +3156,7 @@ body:has(.character-sheet.submode-print) .main {
 /* When a default-style set has features.description enabled and inline blank */
 /* slots, render the blank slot as a full-width bordered write-in box beside the dice. */
 .trait-set-has-feature-description
-	.trait-title:not(.trait-title-statement):not(.trait-title-stacked)
+	.trait-title:not(.trait-title-pip):not(.trait-title-stacked)
 	> .trait-name.trait-name-blank {
 	border: 1.5px solid #000000;
 	border-radius: 2px;
@@ -3320,13 +3320,13 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 /* ============================================================ */
-/* GENERIC PREFILLED STATEMENT & LABELED-FIELDS GEOMETRY */
+/* GENERIC PREFILLED PIP CHILD & LABELED-FIELDS GEOMETRY */
 /* ============================================================ */
-/* 1. INLINE STATEMENT WITH BLANK TRAIT NAME (e.g. Hammerheads Relationships): */
-/* When a slot has a blank write-in trait name AND a pre-filled statement prompt, */
-/* fuse the blank name box and statement box into a single continuous bordered */
+/* 1. INLINE PIP CHILD WITH BLANK TRAIT NAME (e.g. Relationships): */
+/* When a slot has a blank write-in trait name AND a pre-filled pip prompt, */
+/* fuse the blank name box and pip box into a single continuous bordered */
 /* field with open write-in space on the left and the prompt flush-right. */
-.trait-title.trait-title-statement:not(.trait-title-stacked):has(> .trait-name-blank) {
+.trait-title.trait-title-pip:not(.trait-title-stacked):has(> .trait-name-blank) {
 	& > .trait-name.trait-name-blank {
 		flex: 1 1 45%;
 		border: 1.5px solid #000000;
@@ -3339,7 +3339,7 @@ body:has(.character-sheet.submode-print) .main {
 			border-bottom: none;
 		}
 	}
-	& > .trait-statement-box {
+	& > .trait-pip-box {
 		flex: 0 1 auto;
 		border-left: none;
 		border-radius: 0 2px 2px 0;
@@ -3388,7 +3388,7 @@ body:has(.character-sheet.submode-print) .main {
 /* (e.g. Retired No More Resources, Signature Assets, Aging Complications), */
 /* render the blank name as a rectangular write-in box with the die scale centered below it. */
 .trait-set-style-default.trait-set-has-feature-description {
-	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+	.trait-title.trait-title-stacked:not(.trait-title-pip) {
 		align-items: stretch;
 		& > .trait-name.trait-name-blank {
 			border: 1.5px solid #000000;
@@ -4161,7 +4161,7 @@ body:has(.character-sheet.submode-print) .main {
 		max-width: 60px;
 	}
 	/* Stacked (below) titles: tighter name-to-dice gap; centered look kept. */
-	.trait-title.trait-title-stacked:not(.trait-title-statement) {
+	.trait-title.trait-title-stacked:not(.trait-title-pip) {
 		row-gap: 0.05rem;
 	}
 	/* SFX/description leading trims a hair; glyph sizes untouched. */
@@ -4326,7 +4326,7 @@ body:has(.character-sheet.submode-print) .main {
 				color: var(--text-main);
 			}
 
-			.trait-statement-box {
+			.trait-pip-box {
 				background: var(--bg-surface-elevated);
 				border-color: var(--border-strong);
 				color: var(--text-main);
@@ -4336,7 +4336,7 @@ body:has(.character-sheet.submode-print) .main {
 				color: var(--text-secondary);
 			}
 
-			.statement-pip:not(.questioned) {
+			.pip:not(.questioned) {
 				background-color: transparent;
 				border-color: var(--border-strong);
 			}
@@ -4435,7 +4435,7 @@ body:has(.character-sheet.submode-print) .main {
 				border-color: var(--border-subtle);
 			}
 
-			.paired-slot-statement-box {
+			.paired-slot-pip-box {
 				background: var(--bg-surface-elevated);
 				border-color: var(--border-strong);
 				color: var(--text-secondary);

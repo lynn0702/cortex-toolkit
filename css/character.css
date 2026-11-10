@@ -898,11 +898,11 @@
 		font-size: 1.15rem;
 	}
 
-	.statement-pip {
+	.pip {
 		display: none;
 	}
 
-	.trait-statement-box {
+	.trait-pip-box {
 		border: none;
 		background: transparent;
 		padding: 0;
@@ -917,7 +917,7 @@
 		font-size: 1rem;
 	}
 
-	.trait-title-statement {
+	.trait-title-pip {
 		gap: 0;
 
 		.trait-name {
@@ -928,7 +928,7 @@
 		}
 	}
 
-	.trait-statement-text {
+	.trait-pip-text {
 		font-family: var(--font-primary);
 		font-weight: 400;
 		font-size: 1rem;
@@ -1005,7 +1005,7 @@
 	display: none;
 }
 
-.trait-statement-separator {
+.trait-pip-separator {
 	color: inherit;
 	font-family: inherit;
 	font-weight: inherit;
@@ -1723,13 +1723,13 @@ button.trait-title-btn {
 	}
 }
 
-.trait-title.trait-title-stacked:not(.trait-title-statement) > button.trait-title-btn {
+.trait-title.trait-title-stacked:not(.trait-title-pip) > button.trait-title-btn {
 	width: 100%;
 	justify-content: center;
 	text-align: center;
 }
 
-.trait-title.trait-title-statement > button.trait-title-btn {
+.trait-title.trait-title-pip > button.trait-title-btn {
 	flex: 0 0 auto;
 	text-align: left;
 }
@@ -1758,7 +1758,7 @@ button.trait-title-btn {
 			box-sizing: border-box;
 		}
 
-		.statement-pip {
+		.pip {
 			position: relative;
 
 			&::after {
@@ -2185,7 +2185,7 @@ button.trait-title-btn {
 			}
 
 			.trait-name,
-			.trait-statement-text,
+			.trait-pip-text,
 			.subtrait-name,
 			.hinder-text,
 			.title,
@@ -2222,7 +2222,7 @@ button.trait-title-btn {
 			}
 
 			.pip-bubble:not(.filled),
-			.statement-pip:not(.questioned) {
+			.pip:not(.questioned) {
 				border-color: var(--text-secondary);
 				background-color: transparent;
 			}

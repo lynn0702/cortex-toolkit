@@ -438,7 +438,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(archItems).toHaveLength(3);
 			// Only Values have statements; Distinctions are simple label traits without statements
 			for (const item of archItems) {
-				const pip = item.find('.statement-pip');
+				const pip = item.find('.pip');
 				expect(pip.exists()).toBe(false);
 			}
 			archWrapper.unmount();
@@ -469,9 +469,9 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			const dreamerNames = dreamerItems.map((v) => v.find('.trait-name').text().trim());
 			expect(dreamerNames).toEqual(['Beauty is all around us', "I'll have another slice", "Darling, let's have tea"]);
 			// Only Values have statements; Dreamer distinctions are simple label traits without statements
-			expect(dreamerItems[0].find('.statement-pip').exists()).toBe(false);
-			expect(dreamerItems[1].find('.statement-pip').exists()).toBe(false);
-			expect(dreamerItems[2].find('.statement-pip').exists()).toBe(false);
+			expect(dreamerItems[0].find('.pip').exists()).toBe(false);
+			expect(dreamerItems[1].find('.pip').exists()).toBe(false);
+			expect(dreamerItems[2].find('.pip').exists()).toBe(false);
 			dreamerWrapper.unmount();
 		});
 	});

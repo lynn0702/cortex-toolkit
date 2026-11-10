@@ -177,7 +177,7 @@
         },
         "ratingDisplay": "rating",
         "ringNoun": "Boss Die",
-        "statementSeparator": " "
+        "pipSeparator": " "
       },
       "id": "the-architect",
       "description": "",
@@ -299,7 +299,7 @@
           "width": "100%"
         },
         "ratingDisplay": "rating",
-        "statementSeparator": " - "
+        "pipSeparator": " - "
       },
       "id": "values",
       "description": "",
@@ -403,7 +403,7 @@
           "width": "100%"
         },
         "ratingDisplay": "rating",
-        "statementSeparator": " "
+        "pipSeparator": " "
       },
       "id": "the-dreamer",
       "description": "",

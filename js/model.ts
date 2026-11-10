@@ -539,7 +539,7 @@ export interface CharacterCurioCustom {
 	/** When true, trait is placed on the set's ring rather than the trait list. */
 	ring?: boolean;
 	hideRingNames?: boolean;
-	statementSeparator?: string;
+	pipSeparator?: string;
 	/** Remove borders, backgrounds, and box-shadows around the section. */
 	borderless?: boolean;
 	/** Singular noun override for traits on a ring (e.g. "Boss Die"). */

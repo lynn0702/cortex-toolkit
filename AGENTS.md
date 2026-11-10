@@ -17,7 +17,7 @@ prompt, the prompt wins for that session — then update this file.
   - Not helpful: presets for taxonomies nobody defined ("Skills (d4–d6)"),
     options for concepts outside the model.
 - **Current-format only.** The app imports current-format files only. Old-format
-  and Kaelri files are rejected; a separate converter project produces
+  files are rejected; a separate converter project produces
   current-format files. Never add a legacy reader.
 - **The model is the spec.** UI reflects `design/DECISIONS.md`. When the model changes,
   controls that embodied the old model get deleted — legacy controls don't

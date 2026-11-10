@@ -67,6 +67,7 @@ const {
 	toggleTraitPipBubble,
 	getDynamicChildParts,
 	parseChildPartKey,
+	isPipChildPart,
 	hasChildPartCell,
 	getChildTraitByNoun,
 	isPlayMutableSet,
@@ -168,10 +169,10 @@ function hasTraitSetDescription(ts: any) {
 								<div
 									:class="{
 										'trait-title': getRatingPosition(traitSet) !== 'above',
-										'trait-title-statement':
+										'trait-title-pip':
 											Boolean(getPipChild(item.trait)) &&
 											getRatingPosition(traitSet) !== 'above' &&
-											!hasChildPartCell(traitSet, 'statement', 'label'),
+											!hasChildPartCell(traitSet, 'pip', 'label'),
 										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
 										'trait-asset-box': getRatingPosition(traitSet) === 'above',
 									}"
@@ -213,8 +214,8 @@ function hasTraitSetDescription(ts: any) {
 											<span class="trait-name" v-else>{{ item.trait.name || '' }}</span>
 										</button>
 										<span
-											v-if="getPipChild(item.trait) && !hasChildPartCell(traitSet, 'statement', 'rating')"
-											class="statement-pip"
+											v-if="getPipChild(item.trait) && !hasChildPartCell(traitSet, 'pip', 'rating')"
+											class="pip"
 											:class="{ questioned: !printBlank && isChildPipFilled(item.trait) }"
 											role="checkbox"
 											tabindex="0"
@@ -231,34 +232,34 @@ function hasTraitSetDescription(ts: any) {
 													: ''
 											"
 										></span>
-										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
-											getView(traitSet)?.statementSeparator
+										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
+											getView(traitSet)?.pipSeparator
 										}}</span>
-										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
-											getView(traitSet)?.statementSeparator
+										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
+											getView(traitSet)?.pipSeparator
 										}}</span>
 										<span
-											v-if="!hasChildPartCell(traitSet, 'statement', 'label')"
-											class="trait-statement-box"
+											v-if="!hasChildPartCell(traitSet, 'pip', 'label')"
+											class="trait-pip-box"
 											@click.stop="openTraitAt(s, item)"
 										>
 											<input
 												v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
 												type="text"
-												class="trait-statement-input"
+												class="trait-pip-input"
 												:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
 												@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 												@click.stop="openTraitAt(s, item)"
 												placeholder="Statement..."
 											/>
 											<span
-												class="trait-statement-text"
+												class="trait-pip-text"
 												v-else-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
 												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
-											<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-											<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
-											<span class="trait-statement-blank" v-else></span>
+											<span class="trait-pip-blank" v-else-if="printBlank || item.isPlaceholder"></span>
+											<span class="trait-pip-hint" v-else-if="submode === 'edit'">Statement...</span>
+											<span class="trait-pip-blank" v-else></span>
 										</span>
 									</template>
 									<template v-else-if="getRatingPosition(traitSet) === 'above'">
@@ -815,39 +816,31 @@ function hasTraitSetDescription(ts: any) {
 									:style="partCellStyle(partsGridFor(traitSet), partKey)"
 								>
 									<template v-if="parseChildPartKey(partKey).kind === 'label'">
-										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
-											<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
-												getView(traitSet)?.statementSeparator
+										<template v-if="isPipChildPart(partKey)">
+											<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
+												getView(traitSet)?.pipSeparator
 											}}</span>
-											<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
-												getView(traitSet)?.statementSeparator
+											<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
+												getView(traitSet)?.pipSeparator
 											}}</span>
-											<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
+											<span class="trait-pip-box" @click.stop="openTraitAt(s, item)">
 												<input
 													v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
 													type="text"
-													class="trait-statement-input"
+													class="trait-pip-input"
 													:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
 													@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 													@click.stop="openTraitAt(s, item)"
 													placeholder="Statement..."
 												/>
 												<span
-													class="trait-statement-text"
-													v-else-if="
-														!printBlank &&
-														!item.isPlaceholder &&
-														(getChildTraitByNoun(item.trait, 'statement')?.name || getPipChild(item.trait)?.name)
-													"
-													v-html="
-														renderText(
-															getChildTraitByNoun(item.trait, 'statement')?.name || getPipChild(item.trait)?.name || '',
-														)
-													"
+													class="trait-pip-text"
+													v-else-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
+													v-html="renderText(getPipChild(item.trait)?.name || '')"
 												></span>
-												<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-												<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
-												<span class="trait-statement-blank" v-else></span>
+												<span class="trait-pip-blank" v-else-if="printBlank || item.isPlaceholder"></span>
+												<span class="trait-pip-hint" v-else-if="submode === 'edit'">Statement...</span>
+												<span class="trait-pip-blank" v-else></span>
 											</span>
 										</template>
 										<template v-else>
@@ -870,10 +863,10 @@ function hasTraitSetDescription(ts: any) {
 										</template>
 									</template>
 									<template v-else-if="parseChildPartKey(partKey).kind === 'rating'">
-										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
+										<template v-if="isPipChildPart(partKey)">
 											<span
 												v-if="getPipChild(item.trait)"
-												class="statement-pip"
+												class="pip"
 												:class="{ questioned: !printBlank && isChildPipFilled(item.trait) }"
 												role="checkbox"
 												tabindex="0"
@@ -1094,14 +1087,14 @@ function hasTraitSetDescription(ts: any) {
 								<div
 									class="trait-title"
 									:class="{
-										'trait-title-statement': Boolean(getPipChild(item.trait)),
+										'trait-title-pip': Boolean(getPipChild(item.trait)),
 										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
 									}"
 									:style="isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined"
 								>
 									<span class="list-bullet" v-if="getView(traitSet)?.style?.body === 'list'">•</span>
 
-									<!-- STATEMENT MODE (e.g. Values) -->
+									<!-- PIP CHILD MODE (e.g. Values) -->
 									<template v-if="Boolean(getPipChild(item.trait))">
 										<button
 											type="button"
@@ -1140,7 +1133,7 @@ function hasTraitSetDescription(ts: any) {
 										</button>
 										<span
 											v-if="getPipChild(item.trait)"
-											class="statement-pip"
+											class="pip"
 											:class="{ questioned: isChildPipFilled(item.trait) }"
 											role="checkbox"
 											tabindex="0"
@@ -1157,30 +1150,30 @@ function hasTraitSetDescription(ts: any) {
 													: ''
 											"
 										></span>
-										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
-											getView(traitSet)?.statementSeparator
+										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
+											getView(traitSet)?.pipSeparator
 										}}</span>
-										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
-											getView(traitSet)?.statementSeparator
+										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
+											getView(traitSet)?.pipSeparator
 										}}</span>
-										<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
+										<span class="trait-pip-box" @click.stop="openTraitAt(s, item)">
 											<input
 												v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
 												type="text"
-												class="trait-statement-input"
+												class="trait-pip-input"
 												:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
 												@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 												@click.stop="openTraitAt(s, item)"
 												placeholder="Statement..."
 											/>
 											<span
-												class="trait-statement-text"
+												class="trait-pip-text"
 												v-else-if="!printBlank && !item.isPlaceholder && getPipChild(item.trait)?.name"
 												v-html="renderText(getPipChild(item.trait)?.name ?? '')"
 											></span>
-											<span class="trait-statement-blank" v-else-if="printBlank || item.isPlaceholder"></span>
-											<span class="trait-statement-hint" v-else-if="submode === 'edit'">Statement...</span>
-											<span class="trait-statement-blank" v-else></span>
+											<span class="trait-pip-blank" v-else-if="printBlank || item.isPlaceholder"></span>
+											<span class="trait-pip-hint" v-else-if="submode === 'edit'">Statement...</span>
+											<span class="trait-pip-blank" v-else></span>
 										</span>
 									</template>
 

@@ -15,17 +15,8 @@ a new file is a defect, even if nothing visibly breaks yet.
 ## the tree — this list is a starting point, not the law)
 
 Layout areas (view language — named for their layout role):
-`name`, `rating`, `description`, `block`, `subtraits`,
-`trackLabel`, `track`.
-
-Dissolved — these must NOT appear in new data:
-- `trait.sfx` (SFX are ordinary child traits, found by
-  name, never by a field).
-- `attachedStress` as a declaration (attached stress is a
-  companion subtrait; the declaration is deleted, not
-  deprecated).
-- Trait-level `statement` / `questioned` (statements are
-  pip child traits; filled means questioned).
+`name`, `rating`, `description`, `badge`, `block`,
+`subtraits`, `trackLabel`, `track`.
 
 Live and NOT dead — do not strip these:
 - `span`, `header`, track keys, companions.
@@ -45,14 +36,6 @@ brief-wins rule):
 - Set-level `statement` / `hasQuestionedPip` →
   derived from Statement container presence. Do not
   write them into new data.
-- `labels.sfxBadge` / `labels.sfxPrefix` → moved to
-  per-trait `trait.view.badge` / `trait.view.prefix`.
-  Do not write the label keys into new data.
-- Layout areas gain `badge` (a trait part kind, per
-  the badge decision; joins KNOWN_PARTS when it lands).
-  Never write an `sfx` key, kind, class, or view key:
-  SFX is not model or render language — the word
-  survives only in data (trait names, badge text).
 
 Model rules that constrain data:
 - Rating shape: `rating { type: Counter | Die | Dice |
@@ -64,6 +47,9 @@ Model rules that constrain data:
   on optional fields, NO trait-level ids or
   database-management values in exported JSON.
 - `custom` is an open extension bag; never emit it empty.
+- SFX children are ordinary child traits, found by their
+  grouping (the 'SFX' child trait, by name/shape) — the
+  word survives only in data (trait names, badge text).
 
 When the tree and a user-directed brief disagree, the
 brief wins (see measure-before-you-build). Note the

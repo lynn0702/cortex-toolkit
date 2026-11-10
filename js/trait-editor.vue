@@ -619,7 +619,7 @@ const description = computed({
 });
 
 // Child subtraits on the current node (`trait.traits[]`). Every child trait
-// (companion track, statement, specialty, SFX, or nested child) is surfaced
+// (companion track, pip child, specialty, SFX, or nested child) is surfaced
 // as a drill-in row that opens this same TraitEditor at `depth + 1`.
 const childSubtraits = computed(() => {
 	const subs = trait.value?.traits;
@@ -651,10 +651,7 @@ const childSubtraits = computed(() => {
 			return;
 		}
 		const r = getRating(sub);
-		const isSinglePip = r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1);
-		const label =
-			(isSetSubtraitMode.value ? sub.noun || (isSinglePip ? 'Statement' : sub.name) : sub.name || sub.noun) ||
-			'Subtrait';
+		const label = (isSetSubtraitMode.value ? sub.noun || sub.name : sub.name || sub.noun) || 'Subtrait';
 		const summary = r?.type
 			? r.type
 			: Array.isArray(sub.traits) && sub.traits.length

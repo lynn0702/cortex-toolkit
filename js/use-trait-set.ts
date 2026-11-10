@@ -246,7 +246,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const hasPip =
 			Array.isArray(traitSetArg?.traits) && traitSetArg.traits.some((t: any) => getPipChild(t) !== undefined);
 		if (hasPip) {
-			classes['trait-set-statement-mode'] = true;
+			classes['trait-set-pip-mode'] = true;
 		}
 
 		const hasCounter = (Array.isArray(traitSetArg?.traits) ? traitSetArg.traits : []).some(
@@ -1197,13 +1197,19 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return { noun: partKey, kind: 'label' };
 	}
 
+	function isPipChildPart(partKey: string): boolean {
+		const n = parseChildPartKey(partKey).noun.toLowerCase();
+		return n === 'pip' || n === 'statement';
+	}
+
 	function hasChildPartCell(traitSetArg: TraitSet, noun: string, kind?: 'label' | 'rating'): boolean {
 		const grid = partsGridFor(traitSetArg);
 		if (!grid?.cells) return false;
 		const n = noun.toLowerCase();
 		return Object.keys(grid.cells).some((k) => {
 			const parsed = parseChildPartKey(k);
-			if (parsed.noun.toLowerCase() !== n) return false;
+			const cellNoun = parsed.noun.toLowerCase();
+			if (cellNoun !== n && !(n === 'pip' && cellNoun === 'statement')) return false;
 			if (kind && parsed.kind !== kind) return false;
 			return true;
 		});
@@ -1679,6 +1685,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		toggleTraitPipBubble,
 		getDynamicChildParts,
 		parseChildPartKey,
+		isPipChildPart,
 		hasChildPartCell,
 		getChildTraitByNoun,
 		resolvedFrame,

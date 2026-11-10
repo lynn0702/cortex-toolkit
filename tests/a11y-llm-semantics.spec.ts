@@ -1726,9 +1726,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(textMatches?.length).toBe(1);
 
 			// Statement pip is in child:Statement:rating cell, not in name cell
-			const pipInRatingCell = dutyRow.find('.trait-part-child-Statement-rating .statement-pip');
+			const pipInRatingCell = dutyRow.find('.trait-part-child-Statement-rating .pip');
 			expect(pipInRatingCell.exists()).toBe(true);
-			const pipInNameCell = dutyRow.find('.trait-part-name .statement-pip');
+			const pipInNameCell = dutyRow.find('.trait-part-name .pip');
 			expect(pipInNameCell.exists()).toBe(false);
 
 			// Clicking pip toggles questioned state
@@ -1737,9 +1737,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(char.traitSets[4].traits[0].traits[0].rating.value[0]).toBe(true);
 
 			// Statement box is in child:Statement:label cell, not in name cell
-			const boxInLabelCell = dutyRow.find('.trait-part-child-Statement-label .trait-statement-box');
+			const boxInLabelCell = dutyRow.find('.trait-part-child-Statement-label .trait-pip-box');
 			expect(boxInLabelCell.exists()).toBe(true);
-			const boxInNameCell = dutyRow.find('.trait-part-name .trait-statement-box');
+			const boxInNameCell = dutyRow.find('.trait-part-name .trait-pip-box');
 			expect(boxInNameCell.exists()).toBe(false);
 
 			valuesWrapper.unmount();
@@ -1815,7 +1815,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				attachTo: document.body,
 			});
 
-			const statementInput = valuesWrapper.find('.trait[data-trait-name="Duty"] input.trait-statement-input');
+			const statementInput = valuesWrapper.find('.trait[data-trait-name="Duty"] input.trait-pip-input');
 			expect(statementInput.exists()).toBe(true);
 			expect((statementInput.element as HTMLInputElement).value).toBe('The crew comes home before the cargo.');
 
@@ -2181,7 +2181,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const blockEditable = mount(TraitSetBlock, {
 				props: { character: char, traitSetID: 0, submode: 'edit', editing: [] },
 			});
-			const inputs = blockEditable.findAll('input.trait-statement-input');
+			const inputs = blockEditable.findAll('input.trait-pip-input');
 			expect(inputs.length).toBeGreaterThan(0);
 			// First trait has existing pip child
 			expect((inputs[0].element as HTMLInputElement).value).toBe('Existing statement');
@@ -2193,7 +2193,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const blockNonEditable = mount(TraitSetBlock, {
 				props: { character: nonEditableChar, traitSetID: 0, submode: 'edit', editing: [] },
 			});
-			expect(blockNonEditable.findAll('input.trait-statement-input').length).toBe(0);
+			expect(blockNonEditable.findAll('input.trait-pip-input').length).toBe(0);
 			blockNonEditable.unmount();
 		});
 

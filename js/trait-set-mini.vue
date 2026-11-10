@@ -151,7 +151,6 @@ function createDefaultWorkingSet(source?: any): any {
 								? [0, 10]
 								: [4, 6, 8, 10, 12];
 				if (
-					sName.toLowerCase() === 'statement' &&
 					isSinglePip &&
 					partsMap.name &&
 					partsMap.rating &&

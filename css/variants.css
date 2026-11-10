@@ -70,7 +70,7 @@
 			font-weight: 800;
 		}
 
-		&.trait-title-statement {
+		&.trait-title-pip {
 			display: flex;
 			align-items: center;
 			gap: 0.35rem;
@@ -81,7 +81,7 @@
 				white-space: nowrap;
 			}
 
-			.statement-pip {
+			.pip {
 				position: relative;
 				display: inline-block;
 				width: 10px;
@@ -126,7 +126,7 @@
 				}
 			}
 
-			.trait-statement-box {
+			.trait-pip-box {
 				flex: 1 1 auto;
 				min-width: 0;
 				border: 1px solid var(--color-separator);
@@ -1265,7 +1265,7 @@
 			align-items: center;
 		}
 
-		.paired-slot-statement-box {
+		.paired-slot-pip-box {
 			border: 1px solid var(--color-primary);
 			border-radius: 2px;
 			padding: 0.2rem 0.4rem;
@@ -1832,27 +1832,23 @@
 	margin-top: 0;
 }
 
-.trait-parts > [class*='trait-part-child-'][class*='-rating'],
-.trait-parts > .trait-part-child-Statement-rating,
-.trait-parts > .trait-part-child-statement-rating {
+.trait-parts > [class*='trait-part-child-'][class*='-rating'] {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	min-width: 14px;
 	min-height: 14px;
 }
-.trait-parts > [class*='trait-part-child-'][class*='-label'],
-.trait-parts > .trait-part-child-Statement-label,
-.trait-parts > .trait-part-child-statement-label {
+.trait-parts > [class*='trait-part-child-'][class*='-label'] {
 	display: flex;
 	align-items: center;
 	width: 100%;
 	min-width: 0;
 
-	.trait-statement-box {
+	.trait-pip-box {
 		width: 100%;
 
-		.trait-statement-input {
+		.trait-pip-input {
 			width: 100%;
 			background: transparent;
 			border: none;
@@ -1872,7 +1868,7 @@
 	}
 }
 
-.statement-pip {
+.pip {
 	position: relative;
 	display: inline-block;
 	width: 12px;
@@ -1919,20 +1915,20 @@
 }
 
 @media screen {
-	[data-theme='dark'] .statement-pip:not(.questioned),
-	.theme-dark .statement-pip:not(.questioned) {
+	[data-theme='dark'] .pip:not(.questioned),
+	.theme-dark .pip:not(.questioned) {
 		border-color: var(--border-strong, #64748b);
 		background-color: transparent;
 	}
-	[data-theme='dark'] .statement-pip.questioned,
-	.theme-dark .statement-pip.questioned {
+	[data-theme='dark'] .pip.questioned,
+	.theme-dark .pip.questioned {
 		background-color: var(--color-primary, #be123c);
 		border-color: var(--color-primary, #be123c);
 	}
 }
 
 @media print {
-	.statement-pip {
+	.pip {
 		border-color: #000000 !important;
 		background-color: #ffffff !important;
 
