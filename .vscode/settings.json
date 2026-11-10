@@ -4,5 +4,13 @@
 	"files.associations": {
 		"*.scss": "scss"
 	},
-	"scss.validate": true
+	"scss.validate": true,
+	"json.schemas": [
+		{
+			"fileMatch": [
+				"*.curio.json"
+			],
+			"url": "./schema/0.1/character.schema.json"
+		}
+	]
 }

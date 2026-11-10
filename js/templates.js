@@ -22,7 +22,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/572304.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-alien-us',
 			isTemplate: true,
@@ -700,7 +700,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/568411.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-brighter-stars',
 			isTemplate: true,
@@ -1280,7 +1280,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/574554.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-camp-bewilderwood',
 			isTemplate: true,
@@ -1930,7 +1930,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/572308.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-cosa-nostra',
 			isTemplate: true,
@@ -2420,7 +2420,7 @@ const characterCurioLibraryTemplates = [
 			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-eidolon-alpha',
 			isTemplate: true,
@@ -3027,7 +3027,7 @@ const characterCurioLibraryTemplates = [
 			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-hammerheads-character',
 			isTemplate: true,
@@ -3769,7 +3769,7 @@ const characterCurioLibraryTemplates = [
 			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-hammerheads-vehicle',
 			isTemplate: true,
@@ -4187,7 +4187,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/572309.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-inheritors-char',
 			isTemplate: true,
@@ -4959,7 +4959,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/572309.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-inheritors-family',
 			isTemplate: true,
@@ -6136,7 +6136,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/568416.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-kitbash-hero',
 			isTemplate: true,
@@ -6814,7 +6814,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/568416.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-kitbash-team',
 			isTemplate: true,
@@ -7030,7 +7030,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/568414.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-misty-cove',
 			isTemplate: true,
@@ -7550,7 +7550,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/574557.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-necromancer',
 			isTemplate: true,
@@ -8118,7 +8118,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/567044.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-retired-crystalline',
 			isTemplate: true,
@@ -8760,7 +8760,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/567044.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-retired-aerial',
 			isTemplate: true,
@@ -9302,7 +9302,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/574559.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-safe-zone-survivor',
 			isTemplate: true,
@@ -9962,7 +9962,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/574559.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-safe-zone-colony',
 			isTemplate: true,
@@ -11074,7 +11074,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/574560.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-snowfall',
 			isTemplate: true,
@@ -11964,7 +11964,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/568415.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-solarpunk-citizen',
 			isTemplate: true,
@@ -12492,7 +12492,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/568415.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-solarpunk-commune',
 			isTemplate: true,
@@ -12916,7 +12916,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/572310.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-spellcaught',
 			isTemplate: true,
@@ -13621,7 +13621,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/567043.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-strange-towns',
 			isTemplate: true,
@@ -14084,7 +14084,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/567047.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-terraverse',
 			isTemplate: true,
@@ -14985,7 +14985,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/567042.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-titans-handler',
 			isTemplate: true,
@@ -15458,7 +15458,7 @@ const characterCurioLibraryTemplates = [
 			image: 'https://legacy.drivethrurpg.com/images/31866/567042.jpg',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-titans-titan',
 			isTemplate: true,
@@ -15876,7 +15876,7 @@ const characterCurioLibraryTemplates = [
 			url: 'https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866',
 		},
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-trace-20',
 			isTemplate: true,
@@ -16547,7 +16547,7 @@ const characterCurioLibraryTemplates = [
 		version: 1,
 		updatedAt: '2026-10-14T12:00:00.000Z',
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: '00000000-0000-4000-8000-000000000001',
 			isTemplate: true,
@@ -17884,7 +17884,7 @@ const characterCurioLibraryTemplates = [
 		pages: 2,
 		genre: 'Reference',
 		character: {
-			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+			$schema: '../schema/0.1/character.schema.json',
 			version: '0.1',
 			id: 'template-landscape-showcase',
 			isTemplate: true,

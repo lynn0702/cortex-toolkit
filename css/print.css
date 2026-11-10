@@ -2511,10 +2511,12 @@
 /* ============================================================ */
 /* GENERIC SET HEADER (print) â€” placement + alignment overrides. */
 /* ============================================================ */
-.character-sheet .trait-set.trait-set-header-top {
+.character-sheet .trait-set.trait-set-header-top,
+.character-sheet .trait-set.trait-set-header-bottom {
 	flex-direction: column;
 }
-.character-sheet .trait-set.trait-set-header-top > .trait-set-header {
+.character-sheet .trait-set.trait-set-header-top > .trait-set-header,
+.character-sheet .trait-set.trait-set-header-bottom > .trait-set-header {
 	width: 100%;
 	min-width: 0;
 	border-right: none;
@@ -2525,14 +2527,27 @@
 	align-items: center;
 	box-sizing: border-box;
 }
+.character-sheet .trait-set.trait-set-header-bottom > .trait-set-header {
+	border-bottom: none;
+	border-top: 2px solid #111;
+	border-radius: 0 0 2px 2px;
+	order: 2;
+}
+.character-sheet .trait-set.trait-set-header-bottom > .trait-set-body {
+	order: 1;
+}
 .character-sheet .trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header,
-.trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header {
+.character-sheet .trait-set.trait-set-frame-block.trait-set-header-bottom > .trait-set-header,
+.trait-set.trait-set-frame-block.trait-set-header-top > .trait-set-header,
+.trait-set.trait-set-frame-block.trait-set-header-bottom > .trait-set-header {
 	margin-inline: 1rem;
 	width: calc(100% - 2rem);
 	box-sizing: border-box;
 }
 .character-sheet .trait-set.trait-set-header-top > .trait-set-header > .trait-set-header-inner,
-.print-sheet .trait-set.trait-set-header-top .trait-set-header-inner {
+.character-sheet .trait-set.trait-set-header-bottom > .trait-set-header > .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-top .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-bottom .trait-set-header-inner {
 	writing-mode: horizontal-tb;
 	transform: translateY(1px);
 	display: inline-flex;
@@ -2545,7 +2560,8 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-.character-sheet .trait-set.trait-set-header-top .trait-set-header-counter {
+.character-sheet .trait-set.trait-set-header-top .trait-set-header-counter,
+.character-sheet .trait-set.trait-set-header-bottom .trait-set-header-counter {
 	margin-left: auto;
 	font-weight: 900;
 }
@@ -2553,7 +2569,12 @@
 	.trait-set.trait-set-header-top.trait-set-header-align-center
 	> .trait-set-header
 	> .trait-set-header-inner,
-.print-sheet .trait-set.trait-set-header-top.trait-set-header-align-center .trait-set-header-inner {
+.character-sheet
+	.trait-set.trait-set-header-bottom.trait-set-header-align-center
+	> .trait-set-header
+	> .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-top.trait-set-header-align-center .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-bottom.trait-set-header-align-center .trait-set-header-inner {
 	justify-content: center;
 	text-align: center;
 }
@@ -2561,7 +2582,12 @@
 	.trait-set.trait-set-header-top.trait-set-header-align-left
 	> .trait-set-header
 	> .trait-set-header-inner,
-.print-sheet .trait-set.trait-set-header-top.trait-set-header-align-left .trait-set-header-inner {
+.character-sheet
+	.trait-set.trait-set-header-bottom.trait-set-header-align-left
+	> .trait-set-header
+	> .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-top.trait-set-header-align-left .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-bottom.trait-set-header-align-left .trait-set-header-inner {
 	justify-content: flex-start;
 	text-align: left;
 }
@@ -2569,15 +2595,51 @@
 	.trait-set.trait-set-header-top.trait-set-header-align-right
 	> .trait-set-header
 	> .trait-set-header-inner,
-.print-sheet .trait-set.trait-set-header-top.trait-set-header-align-right .trait-set-header-inner {
+.character-sheet
+	.trait-set.trait-set-header-bottom.trait-set-header-align-right
+	> .trait-set-header
+	> .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-top.trait-set-header-align-right .trait-set-header-inner,
+.print-sheet .trait-set.trait-set-header-bottom.trait-set-header-align-right .trait-set-header-inner {
 	justify-content: flex-end;
 	text-align: right;
 }
-.character-sheet .trait-set.trait-set-header-align-left:not(.trait-set-header-top) > .trait-set-header {
+.character-sheet
+	.trait-set.trait-set-header-align-left:not(.trait-set-header-top):not(.trait-set-header-bottom)
+	> .trait-set-header {
 	align-items: flex-start;
 }
-.character-sheet .trait-set.trait-set-header-align-right:not(.trait-set-header-top) > .trait-set-header {
+.character-sheet
+	.trait-set.trait-set-header-align-right:not(.trait-set-header-top):not(.trait-set-header-bottom)
+	> .trait-set-header {
 	align-items: flex-end;
+}
+
+.character-sheet .trait-set.trait-set-borderless,
+.trait-set.trait-set-borderless {
+	border: none;
+	background: transparent;
+	box-shadow: none;
+
+	& > .trait-set-header {
+		border: none;
+		background: transparent;
+	}
+
+	& > .trait-set-body {
+		border: none;
+		background: transparent;
+	}
+}
+
+.character-sheet .single-die-value .diecon,
+.character-sheet .trait-value .diecon,
+.character-sheet .ring-trait-inner .diecon,
+.character-sheet .trait-set-header-rating .diecon,
+.character-sheet .scale-die-inner .diecon {
+	font-size: 2em;
+	width: 2em;
+	height: 2em;
 }
 
 /* ============================================================ */

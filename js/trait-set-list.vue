@@ -88,6 +88,11 @@ const {
 	effectiveAlignment,
 	effectivePortraitStyle,
 } = injectTraitSet();
+
+function hasTraitSetDescription(ts: any) {
+	const list = Array.isArray(ts?.traits) ? ts.traits : [];
+	return list.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
+}
 </script>
 
 <template>
@@ -226,6 +231,12 @@ const {
 													: ''
 											"
 										></span>
+										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
+											getView(traitSet)?.statementSeparator
+										}}</span>
+										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
+											getView(traitSet)?.statementSeparator
+										}}</span>
 										<span
 											v-if="!hasChildPartCell(traitSet, 'statement', 'label')"
 											class="trait-statement-box"
@@ -805,6 +816,12 @@ const {
 								>
 									<template v-if="parseChildPartKey(partKey).kind === 'label'">
 										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
+											<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
+												getView(traitSet)?.statementSeparator
+											}}</span>
+											<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
+												getView(traitSet)?.statementSeparator
+											}}</span>
 											<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
 												<input
 													v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
@@ -855,6 +872,7 @@ const {
 									<template v-else-if="parseChildPartKey(partKey).kind === 'rating'">
 										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
 											<span
+												v-if="getPipChild(item.trait)"
 												class="statement-pip"
 												:class="{ questioned: !printBlank && isChildPipFilled(item.trait) }"
 												role="checkbox"
@@ -1139,6 +1157,12 @@ const {
 													: ''
 											"
 										></span>
+										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
+											getView(traitSet)?.statementSeparator
+										}}</span>
+										<span v-if="getView(traitSet)?.statementSeparator" class="trait-statement-separator">{{
+											getView(traitSet)?.statementSeparator
+										}}</span>
 										<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
 											<input
 												v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
@@ -1483,7 +1507,10 @@ const {
 									</div>
 								</div>
 
-								<div class="trait-description" v-if="!getPipChild(item.trait)">
+								<div
+									class="trait-description"
+									v-if="!getPipChild(item.trait) && (item.trait.description || hasTraitSetDescription(traitSet))"
+								>
 									<div
 										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
 										v-html="renderText(item.trait.description)"

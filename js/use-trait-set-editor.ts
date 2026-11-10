@@ -1516,10 +1516,20 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	// Set header placement + alignment (generic; applies to every style).
-	const headerMode = computed<'sidebar' | 'top'>({
-		get: () => (getView(traitSet.value)?.header === 'top' ? 'top' : 'sidebar'),
-		set: (val: 'sidebar' | 'top') => {
-			setCustomProperty('header', val === 'top' ? 'top' : 'sidebar');
+	const headerMode = computed<'sidebar' | 'top' | 'bottom'>({
+		get: () => {
+			const h = getView(traitSet.value)?.header;
+			return h === 'top' || h === 'bottom' ? h : 'sidebar';
+		},
+		set: (val: 'sidebar' | 'top' | 'bottom') => {
+			setCustomProperty('header', val === 'top' || val === 'bottom' ? val : 'sidebar');
+		},
+	});
+
+	const borderless = computed<boolean>({
+		get: () => Boolean(getView(traitSet.value)?.borderless),
+		set: (val: boolean) => {
+			setCustomProperty('borderless', Boolean(val));
 		},
 	});
 
@@ -1977,6 +1987,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		branchArrows,
 		headerMode,
 		headerAlign,
+		borderless,
 		cssClass,
 		selectElement,
 		focusFirstInput,

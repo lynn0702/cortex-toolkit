@@ -38,6 +38,7 @@ const {
 	branchArrows,
 	headerMode,
 	headerAlign,
+	borderless,
 	styleLabel,
 	setStyleLabel,
 	hasLabelContent,
@@ -527,6 +528,15 @@ function applyFromMini(updatedSet: any) {
 								>
 									<i class="fas fa-grip-lines"></i> Top Bar
 								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: headerMode === 'bottom' }"
+									@click.stop="headerMode = 'bottom'"
+									title="Bottom bar header"
+								>
+									<i class="fas fa-grip-lines"></i> Bottom Bar
+								</button>
 							</div>
 							<div class="editor-button-group mt-sm">
 								<button
@@ -555,6 +565,29 @@ function applyFromMini(updatedSet: any) {
 									title="Align right"
 								>
 									<i class="fas fa-align-right"></i> Right
+								</button>
+							</div>
+						</div>
+
+						<!-- BORDER / BORDERLESS -->
+						<div class="editor-field">
+							<div class="editor-label">Border</div>
+							<div class="editor-button-group">
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: !borderless }"
+									@click.stop="borderless = false"
+								>
+									Bordered
+								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: borderless }"
+									@click.stop="borderless = true"
+								>
+									Borderless
 								</button>
 							</div>
 						</div>

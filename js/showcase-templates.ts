@@ -1,7 +1,26 @@
+import dreamerArchitectJson from '../data/templates/Dreamer_Architect.curio.json';
+
 /**
  * Showcase Templates (Phase 3c).
  * Pre-authored reference characters immediately selectable in the Template Library.
  */
+export const DREAMER_ARCHITECT_SHOWCASE = {
+	id: 'dreamer-architect',
+	title: 'The Dreamer & the Architect',
+	subtitle: 'Tarot-Card Layout Reference',
+	blurb: 'Two minds, one sheet — a tarot-card display with dual circular portraits, leader lines, and shared values.',
+	genre: 'Reference / Showcase',
+	pages: 1,
+	listing: {
+		genre: 'Reference / Showcase',
+		quote: 'Two minds, one sheet — a tarot-card display with dual circular portraits, leader lines, and shared values.',
+		setting: 'd8',
+		prep: 'd6',
+		complexity: 'd8',
+	},
+	character: dreamerArchitectJson,
+};
+
 export const VANGUARD_FRAME_SHOWCASE = {
 	id: 'vanguard-frame-showcase',
 	title: 'Vanguard Frame Showcase',
@@ -19,6 +38,7 @@ export const VANGUARD_FRAME_SHOWCASE = {
 		complexity: 'd10',
 	},
 	character: {
+		$schema: '../schema/0.1/character.schema.json',
 		version: '0.1',
 		id: 'kaelen-vos-frame-showcase',
 		name: 'Kaelen Vos',

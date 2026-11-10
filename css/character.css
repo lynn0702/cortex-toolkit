@@ -545,6 +545,9 @@
 }
 
 .trait-set-header-inner {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 	font-family: var(--font-heading);
 	font-size: var(--text-header);
 	font-weight: 800;
@@ -755,6 +758,258 @@
 	width: 100%;
 	height: 100%;
 	pointer-events: none;
+}
+
+.portrait-leader-svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	overflow: visible;
+	z-index: var(--z-ring-items, 500);
+}
+
+.portrait-leader-line {
+	stroke: var(--color-primary, #38761d);
+	stroke-width: var(--frame-stroke-width, 2.5px);
+	stroke-linecap: round;
+
+	&.frame-color-primary {
+		stroke: var(--color-primary, #38761d);
+	}
+
+	&.frame-color-accent {
+		stroke: var(--color-interactive, #8b1e2b);
+	}
+
+	&.frame-color-muted {
+		stroke: var(--color-separator, rgba(148, 163, 184, 0.4));
+	}
+
+	&.frame-color-strong {
+		stroke: #111111;
+	}
+
+	&.frame-color-black {
+		stroke: #000000;
+	}
+}
+
+.portrait-leader-dot {
+	fill: var(--color-primary, #38761d);
+
+	&.frame-color-primary {
+		fill: var(--color-primary, #38761d);
+	}
+
+	&.frame-color-accent {
+		fill: var(--color-interactive, #8b1e2b);
+	}
+
+	&.frame-color-muted {
+		fill: var(--color-separator, rgba(148, 163, 184, 0.4));
+	}
+
+	&.frame-color-strong {
+		fill: #111111;
+	}
+
+	&.frame-color-black {
+		fill: #000000;
+	}
+}
+
+.character-sheet .trait-set.trait-set-header-bottom {
+	display: flex;
+	flex-direction: column;
+
+	& > .trait-set-body {
+		order: 1;
+	}
+
+	& > .trait-set-header {
+		order: 2;
+		width: 100%;
+		min-width: 0;
+		border-right: none;
+		margin-top: 0.5rem;
+
+		& > .trait-set-header-inner {
+			writing-mode: horizontal-tb;
+			transform: none;
+			display: inline-flex;
+			align-items: center;
+			width: 100%;
+			font-size: var(--text-header);
+		}
+	}
+}
+
+.character-sheet
+	.trait-set.trait-set-header-bottom.trait-set-header-align-right
+	> .trait-set-header
+	> .trait-set-header-inner {
+	justify-content: flex-end;
+	text-align: right;
+}
+
+.character-sheet .trait-set.trait-set-borderless,
+.trait-set.trait-set-borderless {
+	border: none;
+	background: transparent;
+	box-shadow: none;
+
+	& > .trait-set-header {
+		border: none;
+		background: transparent;
+	}
+
+	& > .trait-set-body {
+		border: none;
+		background: transparent;
+	}
+}
+
+.character-sheet .single-die-value .diecon,
+.character-sheet .trait-value .diecon,
+.character-sheet .ring-trait-inner .diecon,
+.character-sheet .trait-set-header-rating .diecon,
+.character-sheet .scale-die-inner .diecon {
+	font-size: 2em;
+	width: 2em;
+	height: 2em;
+}
+
+.trait-set-header-rating {
+	display: inline-flex;
+	align-items: center;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.character-sheet .trait-set.trait-set-no-pips {
+	.trait-set-header-name {
+		font-family: var(--font-primary);
+		text-transform: none;
+		font-weight: 500;
+		letter-spacing: normal;
+		font-size: 1.15rem;
+	}
+
+	.statement-pip {
+		display: none;
+	}
+
+	.trait-statement-box {
+		border: none;
+		background: transparent;
+		padding: 0;
+	}
+
+	.trait-title .trait-name,
+	.trait-name {
+		font-family: var(--font-primary);
+		text-transform: none;
+		font-weight: 400;
+		letter-spacing: normal;
+		font-size: 1rem;
+	}
+
+	.trait-title-statement {
+		gap: 0;
+
+		.trait-name {
+			font-family: var(--font-primary);
+			text-transform: none;
+			font-weight: 400;
+			letter-spacing: normal;
+		}
+	}
+
+	.trait-statement-text {
+		font-family: var(--font-primary);
+		font-weight: 400;
+		font-size: 1rem;
+	}
+
+	.trait-title-btn {
+		font-family: var(--font-primary);
+		font-weight: 400;
+		letter-spacing: normal;
+	}
+}
+
+.character-sheet .trait-set.trait-set-header-align-center .trait-list {
+	max-width: 540px;
+	margin: 0 auto;
+}
+
+.character-sheet .trait-set.trait-set-framed .portrait-circle,
+.character-sheet .trait-set.trait-set-frame-ring .portrait-circle {
+	border-color: var(--color-primary);
+	border-width: var(--frame-stroke-width, 3px);
+}
+
+.character-sheet .trait-set:has(.portrait):has(.trait-list) {
+	& > .trait-set-body {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+	}
+
+	.portrait {
+		width: 100%;
+		max-width: 240px;
+		margin: 0 auto;
+		aspect-ratio: 1 / 1;
+	}
+}
+
+.trait-set.portrait-pos-right > .trait-set-body {
+	align-items: start;
+
+	& > .portrait {
+		order: 2;
+	}
+
+	& > .trait-list {
+		order: 1;
+		margin-top: 1rem;
+	}
+}
+
+.trait-set.portrait-pos-left > .trait-set-body {
+	align-items: end;
+
+	& > .portrait {
+		order: 1;
+	}
+
+	& > .trait-list {
+		order: 2;
+		margin-bottom: 0.5rem;
+	}
+}
+
+.character-sheet .trait-set.portrait-pos-left .trait-inner:not(.trait-parts) {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.character-sheet .trait-set.hide-ring-names .ring-trait-name {
+	display: none;
+}
+
+.trait-statement-separator {
+	color: inherit;
+	font-family: inherit;
+	font-weight: inherit;
+	white-space: pre;
 }
 
 .submode-edit {

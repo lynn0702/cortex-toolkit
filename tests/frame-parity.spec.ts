@@ -207,6 +207,50 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(resolved?.ringConfig?.arcSpread).toBe(100);
 		});
 
+		it('resolves frame carrying traitsSpan separate from border span', () => {
+			const architectSet = {
+				name: 'The Architect',
+				view: {
+					frame: {
+						shape: 'ring',
+						span: [0, 360],
+						traitsSpan: [45, 135],
+					},
+				},
+			};
+
+			const resolved = resolveFrame(architectSet);
+			expect(resolved).not.toBeNull();
+			expect(resolved?.shape).toBe('ring');
+			expect(resolved?.span).toEqual([0, 360]);
+			expect(resolved?.traitsSpan).toEqual([45, 135]);
+		});
+
+		it('distributes ring traits along traitsSpan on the right arc while border uses span', () => {
+			const frameConfig: FrameConfig = {
+				shape: 'ring',
+				span: [0, 360],
+				traitsSpan: [45, 135],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+			};
+
+			const anchors = computeFrameAnchors(3, frameConfig);
+			expect(anchors).toHaveLength(3);
+			// 3 traits along [45, 135] -> 45, 90, 135
+			expect(anchors[0].angle).toBe(45);
+			expect(anchors[1].angle).toBe(90);
+			expect(anchors[2].angle).toBe(135);
+			// All traits are on right hemisphere (x > 50)
+			expect(anchors[0].x).toBeGreaterThan(50);
+			expect(anchors[1].x).toBeGreaterThan(50);
+			expect(anchors[2].x).toBeGreaterThan(50);
+			expect(anchors[0].dock).toBe('right');
+			expect(anchors[1].dock).toBe('right');
+			expect(anchors[2].dock).toBe('right');
+		});
+
 		it('verifies frame anchors distribute equidistantly across 360° for closed ring', () => {
 			const frameConfig: FrameConfig = {
 				shape: 'ring',
@@ -312,6 +356,123 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(blockStyle).toContain('grid-row: 2 / span 1');
 
 			wrapper.unmount();
+		});
+
+		it('Item 3: renders view.ring traits on ring and distinctions in list without duplicates', async () => {
+			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
+			const character = structuredClone(raw);
+
+			const wrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+
+			// Ring traits: Line, Light, Space (3 traits)
+			const ringTraits = wrapper.findAll('.ring-trait');
+			expect(ringTraits).toHaveLength(3);
+			const ringNames = ringTraits.map((t) => t.find('.ring-trait-name').text());
+			expect(ringNames).toEqual(['Line', 'Light', 'Space']);
+
+			// List traits: Function Before Form, Less is More, All My Darlings are Dead (3 label traits)
+			const listEl = wrapper.findComponent({ name: 'TraitSetList' });
+			expect(listEl.exists()).toBe(true);
+			const listTraits = listEl.findAll('.trait');
+			const listNames = listTraits.map((t) => t.find('.trait-name').text().trim());
+			expect(listNames).toContain('Function Before Form');
+			expect(listNames).toContain('Less is More');
+			expect(listNames).toContain('All My Darlings are Dead');
+			expect(listNames).not.toContain('Line');
+			expect(listNames).not.toContain('Light');
+			expect(listNames).not.toContain('Space');
+
+			wrapper.unmount();
+		});
+
+		it('Item 4: renders leader lines for Architect and Dreamer, but none for Vanguard', async () => {
+			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
+			const character = structuredClone(raw);
+
+			// Architect: set 0 (has image + name) -> renders leader line
+			const archWrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			const archLeader = archWrapper.find('.portrait-leader-line');
+			expect(archLeader.exists()).toBe(true);
+			archWrapper.unmount();
+
+			// Dreamer: set 2 (has image + name) -> renders leader line
+			const dreamerWrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 2, submode: 'edit', editing: [] },
+			});
+			const dreamerLeader = dreamerWrapper.find('.portrait-leader-line');
+			expect(dreamerLeader.exists()).toBe(true);
+			dreamerWrapper.unmount();
+
+			// Vanguard: set 0 (no image) -> renders no leader line
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
+			const vanguardChar = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const vanguardWrapper = mount(TraitSetBlock, {
+				props: { character: vanguardChar, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			expect(vanguardWrapper.find('.portrait-leader-line').exists()).toBe(false);
+			vanguardWrapper.unmount();
+		});
+
+		it('Item 6: verifies The Dreamer & the Architect tarot card composition across all 3 sets', async () => {
+			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
+			const character = structuredClone(raw);
+
+			// 1. Architect (set 0)
+			const archWrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 0, submode: 'play', editing: [] },
+			});
+			// Portrait circle + leader line
+			expect(archWrapper.find('.portrait-circle').exists()).toBe(true);
+			expect(archWrapper.find('.portrait-leader-line').exists()).toBe(true);
+			// 3 ring traits (Line, Light, Space) d10
+			const ringTraits = archWrapper.findAll('.ring-trait');
+			expect(ringTraits).toHaveLength(3);
+			// 3 list distinctions (Function Before Form, Less is More, All My Darlings are Dead) d8 label traits (no pips)
+			const archList = archWrapper.findComponent({ name: 'TraitSetList' });
+			expect(archList.exists()).toBe(true);
+			const archItems = archList.findAll('.trait');
+			expect(archItems).toHaveLength(3);
+			// Only Values have statements; Distinctions are simple label traits without statements
+			for (const item of archItems) {
+				const pip = item.find('.statement-pip');
+				expect(pip.exists()).toBe(false);
+			}
+			archWrapper.unmount();
+
+			// 2. Values (set 1)
+			const valuesWrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 1, submode: 'play', editing: [] },
+			});
+			const valuesList = valuesWrapper.findComponent({ name: 'TraitSetList' });
+			expect(valuesList.exists()).toBe(true);
+			const valItems = valuesList.findAll('.trait');
+			expect(valItems).toHaveLength(3);
+			// Data (d8), Design (d6), Service (d10) each with Pip statement
+			const valNames = valItems.map((v) => v.find('.trait-name').text().trim());
+			expect(valNames).toEqual(['Data', 'Design', 'Service']);
+			valuesWrapper.unmount();
+
+			// 3. Dreamer (set 2)
+			const dreamerWrapper = mount(TraitSetBlock, {
+				props: { character, traitSetID: 2, submode: 'play', editing: [] },
+			});
+			expect(dreamerWrapper.find('.portrait-circle').exists()).toBe(true);
+			expect(dreamerWrapper.find('.portrait-leader-line').exists()).toBe(true);
+			const dreamerList = dreamerWrapper.findComponent({ name: 'TraitSetList' });
+			expect(dreamerList.exists()).toBe(true);
+			const dreamerItems = dreamerList.findAll('.trait');
+			expect(dreamerItems).toHaveLength(3);
+			const dreamerNames = dreamerItems.map((v) => v.find('.trait-name').text().trim());
+			expect(dreamerNames).toEqual(['Beauty is all around us', "I'll have another slice", "Darling, let's have tea"]);
+			// Only Values have statements; Dreamer distinctions are simple label traits without statements
+			expect(dreamerItems[0].find('.statement-pip').exists()).toBe(false);
+			expect(dreamerItems[1].find('.statement-pip').exists()).toBe(false);
+			expect(dreamerItems[2].find('.statement-pip').exists()).toBe(false);
+			dreamerWrapper.unmount();
 		});
 	});
 });

@@ -42,7 +42,17 @@ const scaleTrait = computed(() => {
 });
 const traits = computed<Trait[]>(() => {
 	const all = (ringSet.value?.traits || []) as Trait[];
-	return all.filter((t: any) => !(t.name?.trim().toLowerCase() === 'scale'));
+	const nonScale = all.filter((t: any) => !(t.name?.trim().toLowerCase() === 'scale'));
+	const ringOnly = nonScale.filter((t: any) => Boolean(getView(t)?.ring));
+	if (ringOnly.length > 0) return ringOnly;
+	const hasExplicitRing = all.some((t: any) => Boolean(getView(t)?.ring));
+	if (hasExplicitRing) return [];
+	const frameCfg = resolveFrame(ringSet.value);
+	const hasRingConfig = Boolean(frameCfg?.ring || frameCfg?.ringConfig || frameCfg?.traitsSpan);
+	if (frameCfg?.image?.url && !hasRingConfig) {
+		return [];
+	}
+	return nonScale;
 });
 const isRingPool = computed(() => {
 	const ts = ringSet.value;
@@ -68,6 +78,8 @@ const isTraitEditorOpen = computed(() =>
 const isOtherEditorOpen = computed(() =>
 	Boolean(props.editing && props.editing.length > 0 && !isSelected(['scaleDie'])),
 );
+
+const hideRingNames = computed(() => Boolean(getView(ringSet.value)?.hideRingNames));
 
 const ringConfig = computed(() => {
 	const setNode = ringSet.value;
@@ -99,7 +111,7 @@ function updateCharacter(character: any) {
 }
 
 function renderDieValue(value: any) {
-	return characterCurioFunctions.renderDieconSVG(value, true, '', null);
+	return characterCurioFunctions.renderDieconSVG(value, true, '', getView(props.character)?.diceConfig);
 }
 
 function getTraitAngle(t: number | string) {
@@ -108,6 +120,13 @@ function getTraitAngle(t: number | string) {
 	if (count <= 0) return 0;
 
 	const frameCfg = resolveFrame(ringSet.value);
+	if (frameCfg?.traitsSpan) {
+		const baseAngle = (frameCfg.traitsSpan[0] ?? 0) - 90;
+		const delta = frameCfg.traitsSpan[1] - frameCfg.traitsSpan[0];
+		const alpha = count === 1 ? 0.5 : idx / (count - 1);
+		return baseAngle + alpha * delta;
+	}
+
 	const delta = frameCfg ? frameCfg.span[1] - frameCfg.span[0] : 0;
 	const isClosed = frameCfg ? Math.abs(delta) >= 360 : false;
 
@@ -183,14 +202,14 @@ function handleTraitClick(ringTraitIDVal: number | string, t: number | string, t
 		const ts = props.character?.traitSets?.[setIdx];
 		if (isRingPool.value) {
 			const diceToAdd: any[] = [];
-			const poolName = ts?.name || props.character?.name || 'Pool';
+			const poolName = (getView(ts)?.ringNoun as string) || ts?.name || props.character?.name || 'Pool';
 			for (const tr of traits.value) {
 				const first = ratingDice(getRating(tr))[0];
 				if (first && first > 0) {
 					diceToAdd.push({
 						size: first,
 						qty: 1,
-						source: tr.name || poolName,
+						source: (getView(tr)?.noun as string) || tr.name || poolName,
 						hitches: resolveHitches(tr, [ts]),
 						keepsExtra: keepsExtraDice(tr),
 					});
@@ -205,7 +224,7 @@ function handleTraitClick(ringTraitIDVal: number | string, t: number | string, t
 				emit('addDieToRoller', {
 					size: first,
 					qty: 1,
-					source: trait.name,
+					source: (getView(trait)?.noun as string) || (getView(ts)?.ringNoun as string) || trait.name,
 					hitches: resolveHitches(trait, [ts]),
 					keepsExtra: keepsExtraDice(trait),
 				});
@@ -431,7 +450,11 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 					:class="{ selected: isSelected(['trait', ringTraitID, Number(t)]) }"
 					role="button"
 					tabindex="0"
-					:aria-label="trait.name ? `Stage d${ringDie(trait) || 8} ${trait.name}` : ringSet?.noun || 'Trait'"
+					:aria-label="
+						trait.name
+							? `Stage d${ringDie(trait) || 8} ${trait.name}`
+							: (getView(trait)?.noun as string) || (getView(ringSet)?.ringNoun as string) || ringSet?.noun || 'Trait'
+					"
 					@click.stop="handleTraitClick(ringTraitID, Number(t), trait)"
 					@keydown.enter.prevent="handleTraitClick(ringTraitID, Number(t), trait)"
 					@keydown.space.prevent="handleTraitClick(ringTraitID, Number(t), trait)"

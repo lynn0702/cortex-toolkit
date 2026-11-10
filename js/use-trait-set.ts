@@ -97,6 +97,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 
 	const isPositionalFrameActive = computed(() => {
 		if (!isFrameActive.value || !resolvedFrame.value) return false;
+		if (resolvedFrame.value.image?.url) return false;
 		const s = resolvedFrame.value.shape;
 		return s === 'ring' || s === 'ellipse' || s === 'arc' || (s as any) === 'path';
 	});
@@ -267,7 +268,32 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const ctk = getView(traitSetArg);
 		if (ctk?.header === 'top') {
 			classes['trait-set-header-top'] = true;
+		} else if (ctk?.header === 'bottom') {
+			classes['trait-set-header-bottom'] = true;
 		}
+		if (ctk?.borderless) {
+			classes['trait-set-borderless'] = true;
+		}
+		if ((ctk?.pips as any) === false) {
+			classes['trait-set-no-pips'] = true;
+		}
+		if (ctk?.hideRingNames) {
+			classes['hide-ring-names'] = true;
+		}
+
+		const frameCfg = resolveFrame(traitSetArg);
+		const pos = frameCfg?.position || (ctk?.portraitPosition as string);
+		if (pos) {
+			classes['portrait-pos-' + pos] = true;
+		} else {
+			const name = (traitSetArg.name || '').toLowerCase();
+			if (name.includes('dreamer')) {
+				classes['portrait-pos-left'] = true;
+			} else if (name.includes('architect')) {
+				classes['portrait-pos-right'] = true;
+			}
+		}
+
 		const align = ctk?.headerAlign;
 		classes['trait-set-header-align-' + (align === 'center' || align === 'right' ? align : 'left')] = true;
 
@@ -454,8 +480,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return trait?.xp ?? trait?.counter ?? trait?.custom?.xp ?? trait?.custom?.counter ?? getView(trait)?.xp ?? '';
 	}
 
-	function renderDieValue(value: number) {
-		return characterCurioFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
+	function renderDieValue(value: number, isActive = true) {
+		return characterCurioFunctions.renderDieconSVG(value, isActive, '', getView(props.character)?.diceConfig);
 	}
 
 	function selectElement(selector: unknown[]) {
@@ -490,7 +516,19 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getRenderedTraits(traitSetArg: TraitSet, sArg: number) {
-		const existing = traitSetArg?.traits || [];
+		const existingAll = traitSetArg?.traits || [];
+		const frameCfg = resolveFrame(traitSetArg);
+		const hasExplicitRingTraits = existingAll.some((t: Trait) => Boolean(getView(t)?.ring));
+		const isPureRingWithoutImage =
+			(frameCfg?.shape === 'ring' || getView(traitSetArg)?.style?.body === 'portrait-ring') &&
+			!frameCfg?.image?.url &&
+			!hasExplicitRingTraits;
+
+		const existing = existingAll.filter((t: Trait) => {
+			if (getView(t)?.ring) return false;
+			if (isPureRingWithoutImage) return false;
+			return true;
+		});
 
 		if (props.printBlank) {
 			const targetCount = getTraitSetSlotCount(traitSetArg);
@@ -941,8 +979,11 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function visibleSubtraits(traitSetArg: TraitSet, trait: Trait) {
 		const subs = nonSfxSubtraits(trait);
 		if (!subs.length) return [];
+		const pipChild = getPipChild(trait);
+		const nonStatementSubs = pipChild ? subs.filter((st: any) => st !== pipChild) : subs;
+		if (!nonStatementSubs.length) return [];
 		const comp = hasTrackPart(traitSetArg) ? getTrackCompanion(traitSetArg, trait) : null;
-		const list = comp ? subs.filter((st: any) => st !== comp) : subs;
+		const list = comp ? nonStatementSubs.filter((st: any) => st !== comp) : nonStatementSubs;
 		return list.filter((st: any) => isTraitShown(st));
 	}
 
@@ -1490,12 +1531,23 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const bodyStyle = custom?.style?.body;
 		if (bodyStyle === 'image') return 0;
 
+		const traitsAll = traitSetArg.traits || [];
+		const frameCfg = resolveFrame(traitSetArg);
+		const hasExplicitRingTraits = traitsAll.some((t: Trait) => Boolean(getView(t)?.ring));
+		const isPureRingWithoutImage =
+			(frameCfg?.shape === 'ring' || bodyStyle === 'portrait-ring') && !frameCfg?.image?.url && !hasExplicitRingTraits;
+		const listTraitsCount = traitsAll.filter((t: Trait) => {
+			if (getView(t)?.ring) return false;
+			if (isPureRingWithoutImage) return false;
+			return true;
+		}).length;
+
 		const configured = custom?.reservedSlots;
 		if (configured !== undefined && configured !== null && String(configured) !== '') {
-			return Math.max(Number(configured) || 0, (traitSetArg.traits || []).length);
+			return Math.max(Number(configured) || 0, listTraitsCount);
 		}
 
-		return (traitSetArg.traits || []).length;
+		return listTraitsCount;
 	}
 
 	const api = {

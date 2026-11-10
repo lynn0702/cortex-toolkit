@@ -333,6 +333,18 @@ function checkViewRetired(bag, where) {
 	]) {
 		if (bag[k] !== undefined) err(`${where}: retired column/band key ${k} (place supersedes it)`);
 	}
+	if (bag.frame && typeof bag.frame === 'object') {
+		if (bag.frame.traitsSpan !== undefined) {
+			if (
+				!Array.isArray(bag.frame.traitsSpan) ||
+				bag.frame.traitsSpan.length !== 2 ||
+				typeof bag.frame.traitsSpan[0] !== 'number' ||
+				typeof bag.frame.traitsSpan[1] !== 'number'
+			) {
+				err(`${where}: frame.traitsSpan must be a 2-element array of numbers`);
+			}
+		}
+	}
 }
 
 function checkRetiredTraitKeys(node, where) {

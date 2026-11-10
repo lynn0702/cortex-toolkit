@@ -4,7 +4,7 @@ import { characterCurioFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
 import TraitSetMini from './trait-set-mini.vue';
-import { SHOWCASE_TEMPLATES } from './showcase-templates.ts';
+import { SHOWCASE_TEMPLATES, DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
 
 declare const characterCurioLibraryTemplates: any;
 
@@ -20,6 +20,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
 	(e: 'createFromLibrary', tmpl: any, asTemplate: boolean, openPrint: boolean): void;
+	(e: 'previewTemplate', tmpl: any): void;
 	(e: 'createCharacter', isTemplate: boolean, templateId?: string | null): void;
 	(e: 'createFromTemplate', characterID: string): void;
 	(e: 'toggleTemplate', characterID: string): void;
@@ -99,7 +100,8 @@ const libraryTemplates = computed(() => {
 	if (typeof characterCurioLibraryTemplates === 'undefined') {
 		loadLibraryTemplates();
 	}
-	return [...SHOWCASE_TEMPLATES, ...base];
+	const firstRun = !props.characters || props.characters.length === 0;
+	return firstRun ? [DREAMER_ARCHITECT_SHOWCASE, ...SHOWCASE_TEMPLATES, ...base] : [...SHOWCASE_TEMPLATES, ...base];
 });
 
 const libraryTemplatesFiltered = computed(() => {
@@ -602,6 +604,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 				ref="inputFile"
 				@change="importGetUploads"
 				multiple
+				accept=".json,.curio.json,.layered.json,application/json"
 				aria-label="Import character files"
 			/>
 		</div>
@@ -788,6 +791,15 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								<span class="trait-tag" v-for="ts in tmpl.character.traitSets || []" :key="ts.name">{{ ts.name }}</span>
 							</div>
 							<div class="library-card-actions">
+								<button
+									type="button"
+									class="btn-library secondary"
+									v-if="tmpl.character"
+									@click="emit('previewTemplate', tmpl)"
+									title="Preview template"
+								>
+									<i class="fas fa-eye"></i> Preview
+								</button>
 								<button
 									type="button"
 									class="btn-library primary"

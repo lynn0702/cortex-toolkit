@@ -3,6 +3,9 @@ import { mount } from '@vue/test-utils';
 import { characterCurioFunctions } from '../js/functions.ts';
 import { characterCurioStorage } from '../js/storage.ts';
 import AppFooter from '../js/app-footer.vue';
+import Roster from '../js/roster.vue';
+import App from '../js/app.vue';
+import { DREAMER_ARCHITECT_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
 import type { Character, SheetTemplate } from '../js/model.ts';
 
 describe('Character Curio Branding & Resolution Suite', () => {
@@ -108,5 +111,142 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		document.body.appendChild(el);
 		expect(document.getElementById('character-curio')).not.toBeNull();
 		document.body.removeChild(el);
+	});
+
+	it('imports The Dreamer & the Architect from .curio.json with 3 trait sets, Boss Die ring, and borderless layout', async () => {
+		const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
+		const imported = characterCurioFunctions.sanitizeImportedCharacter(raw);
+		expect(imported).not.toBeNull();
+		expect(imported.name).toBe('The Dreamer & the Architect');
+		expect(imported.traitSets).toHaveLength(3);
+
+		const [architect, values, dreamer] = imported.traitSets;
+		expect(architect.name).toBe('The Architect');
+		expect(architect.traits).toHaveLength(6);
+		expect(architect.traits[0].name).toBe('Line');
+		expect(architect.traits[0].rating.value).toEqual([10]);
+		expect(architect.traits[0].view.ring).toBe(true);
+		expect(architect.traits[0].view.noun).toBe('Boss Die');
+		expect(architect.view.ringNoun).toBe('Boss Die');
+		expect(architect.view.borderless).toBe(true);
+
+		// Distinctions are simple label traits without statements
+		expect(architect.traits[3].name).toBe('Function Before Form');
+		expect(architect.traits[3].traits).toHaveLength(0);
+		expect(architect.traits[4].name).toBe('Less is More');
+		expect(architect.traits[4].traits).toHaveLength(0);
+		expect(architect.traits[5].name).toBe('All My Darlings are Dead');
+		expect(architect.traits[5].traits).toHaveLength(0);
+
+		// Only Values have statements
+		expect(values.name).toBe('Values');
+		expect(values.traits).toHaveLength(3);
+		expect(values.view.borderless).toBe(true);
+		expect(values.traits[0].name).toBe('Data');
+		expect(values.traits[0].traits[0].name).toBe('belongs to the people, not the builders');
+		expect(values.traits[0].traits[0].rating.type).toBe('Pip');
+
+		// Dreamer distinctions are also simple label traits
+		expect(dreamer.name).toBe('The Dreamer');
+		expect(dreamer.traits).toHaveLength(3);
+		expect(dreamer.view.borderless).toBe(true);
+		expect(dreamer.view.header).toBe('bottom');
+		expect(dreamer.view.headerAlign).toBe('right');
+		expect(dreamer.traits[0].name).toBe('Beauty is all around us');
+		expect(dreamer.traits[0].traits).toHaveLength(0);
+		expect(dreamer.traits[1].name).toBe("I'll have another slice");
+		expect(dreamer.traits[1].traits).toHaveLength(0);
+		expect(dreamer.traits[2].name).toBe("Darling, let's have tea");
+		expect(dreamer.traits[2].traits).toHaveLength(0);
+	});
+
+	it('surfaces Dreamer & Architect as showcase template with tarot-card layout details', () => {
+		expect(DREAMER_ARCHITECT_SHOWCASE.id).toBe('dreamer-architect');
+		expect(DREAMER_ARCHITECT_SHOWCASE.title).toBe('The Dreamer & the Architect');
+		expect(DREAMER_ARCHITECT_SHOWCASE.character.name).toBe('The Dreamer & the Architect');
+		expect(DREAMER_ARCHITECT_SHOWCASE.character.traitSets).toHaveLength(3);
+		// Vanguard remains index 0 of SHOWCASE_TEMPLATES
+		expect(SHOWCASE_TEMPLATES[0].id).toBe('vanguard-frame-showcase');
+	});
+
+	it('roster prepends Dreamer & Architect when characters is empty (splash/first run)', () => {
+		const wrapper = mount(Roster, {
+			props: {
+				characters: [],
+			},
+		});
+		const vm = wrapper.vm as any;
+		expect(vm.libraryTemplates).toBeDefined();
+		expect(vm.libraryTemplates.length).toBeGreaterThanOrEqual(2);
+		expect(vm.libraryTemplates[0].id).toBe('dreamer-architect');
+		expect(vm.libraryTemplates[1].id).toBe('vanguard-frame-showcase');
+
+		const select = wrapper.find('#roster-template-picker');
+		expect(select.exists()).toBe(true);
+		const options = select.findAll('option');
+		const values = options.map((o) => o.attributes('value'));
+		expect(values).toContain('library:dreamer-architect');
+		wrapper.unmount();
+	});
+
+	it('roster fades Dreamer & Architect once characters are saved', () => {
+		const wrapper = mount(Roster, {
+			props: {
+				characters: [{ id: 'hero-1', name: 'My Hero' }],
+			},
+		});
+		const vm = wrapper.vm as any;
+		expect(vm.libraryTemplates).toBeDefined();
+		expect(vm.libraryTemplates[0].id).toBe('vanguard-frame-showcase');
+		const found = vm.libraryTemplates.find((t: any) => t.id === 'dreamer-architect');
+		expect(found).toBeUndefined();
+
+		const select = wrapper.find('#roster-template-picker');
+		expect(select.exists()).toBe(true);
+		const options = select.findAll('option');
+		const values = options.map((o) => o.attributes('value'));
+		expect(values).not.toContain('library:dreamer-architect');
+		wrapper.unmount();
+	});
+
+	it('first-run auto-open: App opens Dreamer & Architect as transient preview without saving', async () => {
+		const wrapper = mount(App);
+		const vm = wrapper.vm as any;
+		// Open preview explicitly to simulate first-run branch
+		vm.openPreview();
+		expect(vm.isPreview).toBe(true);
+		expect(vm.previewCharacter).not.toBeNull();
+		expect(vm.previewCharacter.name).toBe('The Dreamer & the Architect');
+		// Characters array remains untouched (not saved)
+		expect(vm.characters).toHaveLength(0);
+
+		// Closing preview navigates to roster and clears preview
+		vm.closePreview();
+		expect(vm.isPreview).toBe(false);
+		expect(vm.previewCharacter).toBeNull();
+		expect(vm.characters).toHaveLength(0);
+		wrapper.unmount();
+	});
+
+	it('preview action: "Use this template" creates a saved character in characters array', async () => {
+		const wrapper = mount(App);
+		const vm = wrapper.vm as any;
+		vm.openPreview();
+		expect(vm.characters).toHaveLength(0);
+
+		vm.usePreviewTemplate();
+		expect(vm.isPreview).toBe(false);
+		expect(vm.characters).toHaveLength(1);
+		expect(vm.characters[0].sheet?.template?.id).toBe('dreamer-architect');
+		wrapper.unmount();
+	});
+
+	it('gracefully falls back to roster if template is missing or unparsable', () => {
+		const wrapper = mount(App);
+		const vm = wrapper.vm as any;
+		vm.openPreview(null);
+		expect(vm.isPreview).toBe(false);
+		expect(vm.characters).toHaveLength(0);
+		wrapper.unmount();
 	});
 });

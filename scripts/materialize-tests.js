@@ -16,8 +16,8 @@ function ok(cond, name, extra) {
 }
 
 const root = path.join(__dirname, '..');
-const cortex = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Sendak_Eggers.cortex.json'), 'utf8'));
-const layered = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Sendak_Eggers.layered.json'), 'utf8'));
+const curio = JSON.parse(fs.readFileSync(path.join(root, 'data/templates/Dreamer_Architect.curio.json'), 'utf8'));
+const layered = toLayeredEntity(curio);
 
 const getDice = (t) => {
 	const r = t && typeof t === 'object' ? t.rating : undefined;
@@ -34,12 +34,12 @@ const named = (arr) =>
 function compareRender(render, label) {
 	ok(render && Array.isArray(render.traitSets), label + ': renders traitSets');
 	ok(
-		JSON.stringify(render.traitSets.map((s) => s.name)) === JSON.stringify(cortex.traitSets.map((s) => s.name)),
+		JSON.stringify(render.traitSets.map((s) => s.name)) === JSON.stringify(curio.traitSets.map((s) => s.name)),
 		label + ': set names + order match',
 		render.traitSets.map((s) => s.name),
 	);
 
-	for (const os of cortex.traitSets) {
+	for (const os of curio.traitSets) {
 		const rs = byName(render.traitSets, os.name);
 		ok(!!rs, label + ': set present ' + os.name);
 		if (!rs) continue;
@@ -48,7 +48,7 @@ function compareRender(render, label) {
 			!!(rs.view || (rs.custom && (rs.custom.characterCurio || rs.custom.cortexToolkit))),
 			label + ': presentation kept ' + os.name,
 		);
-		ok(rs.nounSingular === os.nounSingular, label + ': noun kept ' + os.name);
+		ok((rs.noun || rs.nounSingular) === (os.noun || os.nounSingular), label + ': noun kept ' + os.name);
 		// every original named trait survives with the same dice
 		for (const ot of os.traits) {
 			if (!ot || typeof ot.name !== 'string' || !ot.name.length) continue;
@@ -78,39 +78,38 @@ function compareRender(render, label) {
 
 // ---- 1. the committed layered reference materializes to the render.
 {
-	compareRender(materializeCharacter(layered, cortex), 'layered-ref');
+	compareRender(materializeCharacter(layered, curio), 'layered-ref');
 }
 
 // ---- 2. specific spot checks (content survived the fold).
 {
 	const render = materializeCharacter(layered);
-	const strength = byName(byName(render.traitSets, 'Attributes').traits, 'Strength');
+	const line = byName(byName(render.traitSets, 'The Architect').traits, 'Line');
 	ok(
-		strength &&
-			strength.rating &&
-			strength.rating.type === 'Die' &&
-			JSON.stringify(strength.rating.value) === '[8]' &&
-			strength.value === undefined &&
-			strength.dice === undefined,
-		'Strength folds to a Die rating',
-		strength.rating,
+		line &&
+			line.rating &&
+			line.rating.type === 'Die' &&
+			JSON.stringify(line.rating.value) === '[10]' &&
+			line.value === undefined &&
+			line.dice === undefined,
+		'Line folds to a Die rating',
+		line?.rating,
 	);
-	const halfOrc = byName(byName(render.traitSets, 'Distinctions').traits, 'Half-Orc');
-	const halfOrcSfx =
-		halfOrc && Array.isArray(halfOrc.traits) ? halfOrc.traits.find((s) => s && s.name === 'SFX') : null;
+	const fnTrait = byName(byName(render.traitSets, 'The Architect').traits, 'Function Before Form');
 	ok(
-		halfOrc &&
-			halfOrcSfx &&
-			Array.isArray(halfOrcSfx.traits) &&
-			halfOrcSfx.traits.some((e) => e && e.name === 'Hinder'),
-		'Half-Orc Hinder restored as child trait',
-		halfOrcSfx && halfOrcSfx.traits,
+		fnTrait && fnTrait.rating && JSON.stringify(fnTrait.rating.value) === '[8]',
+		'Function Before Form restored as label trait',
+		fnTrait?.rating,
 	);
-	const ath = byName(byName(render.traitSets, 'Skills').traits, 'Athletics');
+	const dataTrait = byName(byName(render.traitSets, 'Values').traits, 'Data');
 	ok(
-		ath && ath.rating && JSON.stringify(ath.rating.value) === '[6]' && ath.traits && named(ath.traits).includes('Jump'),
-		'Athletics sub-trait map folds back',
-		ath && { v: ath.rating, subs: named(ath.traits) },
+		dataTrait &&
+			dataTrait.rating &&
+			JSON.stringify(dataTrait.rating.value) === '[8]' &&
+			dataTrait.traits &&
+			named(dataTrait.traits).includes('belongs to the people, not the builders'),
+		'Data statement child folds back',
+		dataTrait && { v: dataTrait.rating, subs: named(dataTrait.traits) },
 	);
 }
 
@@ -165,11 +164,11 @@ function compareRender(render, label) {
 // ---- 6. unrated (no rating) round-trips rating-free, not null.
 {
 	const ch = materializeCharacter(layered);
-	const dis = ch.traitSets.find((s) => s.name === 'Distinctions');
+	const dis = ch.traitSets.find((s) => s.name === 'The Architect');
 	const tr = dis.traits[0];
 	delete tr.rating;
 	const back = materializeCharacter(toLayeredEntity(ch), ch);
-	const backDis = back.traitSets.find((s) => s.name === 'Distinctions');
+	const backDis = back.traitSets.find((s) => s.name === 'The Architect');
 	ok(
 		backDis.traits[0].rating === undefined && backDis.traits[0].value === undefined,
 		'unrated round-trips rating-free',
@@ -180,29 +179,29 @@ function compareRender(render, label) {
 // ---- 7. place and parts round-trip untouched through the codec.
 {
 	const ch = materializeCharacter(layered);
-	const dis = ch.traitSets.find((s) => s.name === 'Distinctions');
+	const dis = ch.traitSets.find((s) => s.name === 'The Dreamer');
 	dis.view = {
 		...(dis.view || {}),
-		place: { left: '30%', top: 2, width: '60%', height: 1 },
+		place: { height: 1, left: '30%', top: 2, width: '60%' },
 		parts: {
 			name: { left: '0%', top: 0, width: '70%', height: 1 },
 			rating: { left: '70%', top: 0, width: '30%', height: 1 },
 		},
 	};
 	const back = materializeCharacter(toLayeredEntity(ch), ch);
-	const backDis = back.traitSets.find((s) => s.name === 'Distinctions');
+	const backDis = back.traitSets.find((s) => s.name === 'The Dreamer');
 	ok(
-		JSON.stringify(backDis.view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }),
+		JSON.stringify(backDis.view.place) === JSON.stringify({ height: 1, left: '30%', top: 2, width: '60%' }),
 		'place survives',
 		backDis.view.place,
 	);
 	ok(JSON.stringify(backDis.view.parts) === JSON.stringify(dis.view.parts), 'parts survive', backDis.view.parts);
 	// An unrelated edit (trait rename) leaves coordinates alone.
 	backDis.traits[0].name = 'RENAMED';
-	const back2 = materializeCharacter(toLayeredEntity(back), cortex);
-	const back2Dis = back2.traitSets.find((s) => s.name === 'Distinctions');
+	const back2 = materializeCharacter(toLayeredEntity(back), curio);
+	const back2Dis = back2.traitSets.find((s) => s.name === 'The Dreamer');
 	ok(
-		JSON.stringify(back2Dis.view.place) === JSON.stringify({ left: '30%', top: 2, width: '60%', height: 1 }),
+		JSON.stringify(back2Dis.view.place) === JSON.stringify({ height: 1, left: '30%', top: 2, width: '60%' }),
 		'place untouched by unrelated edit',
 	);
 	ok(JSON.stringify(back2Dis.view.parts) === JSON.stringify(dis.view.parts), 'parts untouched by unrelated edit');

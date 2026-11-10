@@ -1577,7 +1577,7 @@ export const characterCurioFunctions = {
 	},
 
 	defaultCharacter: {
-		$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
+		$schema: '../schema/0.1/character.schema.json',
 		version: '0.1',
 		id: '',
 		isTemplate: false,

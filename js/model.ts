@@ -525,8 +525,8 @@ export interface CharacterCurioCustom {
 	parts?: Record<string, PartCell>;
 	flex?: boolean;
 	cluster?: string;
-	/** Set header placement: vertical sidebar label, or a horizontal top bar. */
-	header?: 'sidebar' | 'top';
+	/** Set header placement: vertical sidebar label, a horizontal top bar, or a bottom bar. */
+	header?: 'sidebar' | 'top' | 'bottom';
 	/** Header text alignment (respected in both orientations). */
 	headerAlign?: 'left' | 'center' | 'right';
 	page?: number;
@@ -535,6 +535,14 @@ export interface CharacterCurioCustom {
 	ratingLadder?: number[];
 	reservedSlots?: number | null;
 
+	/** When true, trait is placed on the set's ring rather than the trait list. */
+	ring?: boolean;
+	hideRingNames?: boolean;
+	statementSeparator?: string;
+	/** Remove borders, backgrounds, and box-shadows around the section. */
+	borderless?: boolean;
+	/** Singular noun override for traits on a ring (e.g. "Boss Die"). */
+	ringNoun?: string;
 	// behavior / labels
 	/** @deprecated superseded by parts; read for legacy data only (kept for vertical ladders). */
 	ratingPosition?: 'inline' | 'above' | 'below' | 'none' | 'vertical';

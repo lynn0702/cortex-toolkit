@@ -28,6 +28,7 @@ export interface FrameImageConfig {
 export interface FrameConfig {
 	shape: FrameShape;
 	span: [number, number];
+	traitsSpan?: [number, number];
 	corner: number | 'cut';
 	stroke: string;
 	color: FrameColor;
@@ -37,6 +38,7 @@ export interface FrameConfig {
 	image?: FrameImageConfig | null;
 	ring?: RingConfig | null;
 	ringConfig?: RingConfig | null;
+	position?: 'left' | 'right' | 'center';
 }
 
 export interface FrameAnchor {
@@ -137,6 +139,10 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			Array.isArray(raw.span) && raw.span.length >= 2
 				? [parseNum(raw.span[0], defaultSpan[0]), parseNum(raw.span[1], defaultSpan[1])]
 				: defaultSpan;
+		const traitsSpan: [number, number] | undefined =
+			Array.isArray(raw.traitsSpan) && raw.traitsSpan.length >= 2
+				? [parseNum(raw.traitsSpan[0], defaultSpan[0]), parseNum(raw.traitsSpan[1], defaultSpan[1])]
+				: undefined;
 		// For open arc shape, prevent 360° full-circle collapse and normalize legacy dome spans (e.g. [-110, 110])
 		const isLegacyArcSpan =
 			shape === 'arc' &&
@@ -178,6 +184,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		return {
 			shape,
 			span,
+			...(traitsSpan ? { traitsSpan } : {}),
 			corner: raw.corner === 'cut' ? 'cut' : Number.isFinite(Number(raw.corner)) ? Number(raw.corner) : 8,
 			stroke,
 			color,
@@ -211,7 +218,8 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 		ry = 28;
 	}
 
-	const delta = config.span[1] - config.span[0];
+	const effectiveSpan = config.traitsSpan || config.span;
+	const delta = effectiveSpan[1] - effectiveSpan[0];
 	const isClosed = Math.abs(delta) >= 360;
 	const anchors: FrameAnchor[] = [];
 
@@ -219,10 +227,10 @@ export function computeFrameAnchors(count: number, config: FrameConfig): FrameAn
 		let theta_i: number;
 		if (isClosed) {
 			const t_i = i / count;
-			theta_i = config.span[0] + t_i * 360;
+			theta_i = effectiveSpan[0] + t_i * 360;
 		} else {
 			const t_i = count === 1 ? 0.5 : i / (count - 1);
-			theta_i = config.span[0] + t_i * delta;
+			theta_i = effectiveSpan[0] + t_i * delta;
 		}
 
 		// Convert angle (0° = top dead center / -90° in standard trig)

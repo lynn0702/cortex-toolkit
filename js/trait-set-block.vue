@@ -48,6 +48,7 @@ const {
 	removeTrait,
 	removeTraitSet,
 	getRating,
+	renderDieValue,
 	getCounterLabel,
 	isHiddenIn,
 	resolvedFrame,
@@ -94,6 +95,45 @@ const isRing = computed(() => {
 	return shape === 'ring' || getView(traitSet.value)?.style?.body === 'portrait-ring';
 });
 
+const shouldRenderBodyComponent = computed(() => {
+	if (isName.value) return true;
+	if (resolvedFrame.value?.shape === 'line' && (!traitSet.value.traits || !traitSet.value.traits.length)) {
+		return false;
+	}
+	if (isRing.value) {
+		const all = traitSet.value?.traits || [];
+		const hasExplicitRingTraits = all.some((t: any) => Boolean(getView(t)?.ring));
+		const isPureRingWithoutImage = !resolvedFrame.value?.image?.url && !hasExplicitRingTraits;
+		if (isPureRingWithoutImage) return false;
+		return all.some((t: any) => !getView(t)?.ring && t.name?.trim().toLowerCase() !== 'scale');
+	}
+	return true;
+});
+
+const hasLeader = computed(() => {
+	const frameCfg = resolvedFrame.value;
+	const hasPortraitImage = Boolean(frameCfg?.image?.url);
+	const hasName = Boolean(traitSet.value?.name?.trim());
+	return hasPortraitImage && hasName;
+});
+
+const frameColorClass = computed(() => {
+	const raw = resolvedFrame.value?.color || 'primary';
+	return 'frame-color-' + raw;
+});
+
+const leaderCoords = computed(() => {
+	const name = (traitSet.value?.name || '').toLowerCase();
+	const frameCfg = resolvedFrame.value;
+	const isLeft = frameCfg?.position === 'left' || name.includes('dreamer');
+	if (isLeft) {
+		// The Dreamer: circle on bottom-left, leader line extends across bottom to right edge with dot
+		return { x1: 34, y1: 84, x2: 96, y2: 84, dotX: 96, dotY: 84 };
+	}
+	// The Architect: leader line extends from dot on top-left to circle on right
+	return { x1: 4, y1: 18, x2: 60, y2: 18, dotX: 4, dotY: 18 };
+});
+
 const rootEl = ref<HTMLElement | null>(null);
 onMounted(() => {
 	ts.observeContainer(rootEl.value);
@@ -112,6 +152,31 @@ watch(rootEl, (el) => {
 		:data-set-name="traitSet.name || undefined"
 		:aria-label="traitSet.name || 'Trait Set'"
 	>
+		<!-- Leader line with terminal dot -->
+		<svg
+			v-if="hasLeader"
+			class="portrait-leader-svg"
+			aria-hidden="true"
+			viewBox="0 0 100 100"
+			preserveAspectRatio="none"
+		>
+			<line
+				class="portrait-leader-line"
+				:class="frameColorClass"
+				:x1="leaderCoords.x1"
+				:y1="leaderCoords.y1"
+				:x2="leaderCoords.x2"
+				:y2="leaderCoords.y2"
+			/>
+			<circle
+				class="portrait-leader-dot"
+				:class="frameColorClass"
+				:cx="leaderCoords.dotX"
+				:cy="leaderCoords.dotY"
+				r="3.5"
+			/>
+		</svg>
+
 		<!-- Block frame SVG enclosing entire trait set (header + body) -->
 		<TraitSetFrame
 			v-if="isFrameActive && resolvedFrame?.shape === 'block'"
@@ -142,6 +207,23 @@ watch(rootEl, (el) => {
 					@click.stop="submode === 'edit' ? selectElement(['traitSet', s]) : null"
 				>
 					<div class="trait-set-header-name">{{ traitSet.name }}</div>
+					<span
+						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die'"
+						class="trait-set-header-rating diecon-wrapper"
+						v-html="renderDieValue((getRating(traitSet)?.value?.[0] as number) || 8, true)"
+						role="button"
+						tabindex="0"
+						:aria-label="`Stage d${(getRating(traitSet)?.value?.[0] as number) || 8} ${traitSet.name}`"
+						@click.stop="
+							submode === 'play'
+								? emit('addDieToRoller', {
+										size: (getRating(traitSet)?.value?.[0] as number) || 8,
+										qty: 1,
+										source: traitSet.name,
+									})
+								: null
+						"
+					></span>
 					<div
 						class="trait-set-header-counter"
 						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"
@@ -170,6 +252,7 @@ watch(rootEl, (el) => {
 			<TraitSetFrame
 				v-if="
 					isFrameActive &&
+					!resolvedFrame?.image?.url &&
 					(resolvedFrame?.shape === 'ring' ||
 						resolvedFrame?.shape === 'ellipse' ||
 						resolvedFrame?.shape === 'arc' ||
@@ -211,16 +294,16 @@ watch(rootEl, (el) => {
 				/>
 			</div>
 
-			<component
-				:is="bodyComponent"
-				v-else-if="isName || !(resolvedFrame?.shape === 'line' && (!traitSet.traits || !traitSet.traits.length))"
-			/>
+			<component :is="bodyComponent" v-if="shouldRenderBodyComponent" />
 
 			<div class="ring-actions" v-if="isRing && submode === 'edit'">
 				<div class="preview-button-container">
 					<div class="preview-button-container-inner">
 						<div class="preview-button" @click.stop="addTrait(s)">
-							<span><i class="fas fa-plus"></i> {{ traitSet?.noun || 'Trait' }}</span>
+							<span
+								><i class="fas fa-plus"></i>
+								{{ (getView(traitSet)?.ringNoun as string) || traitSet?.noun || 'Trait' }}</span
+							>
 						</div>
 					</div>
 				</div>

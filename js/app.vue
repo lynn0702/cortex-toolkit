@@ -13,6 +13,7 @@ import SessionNav from './session-nav.vue';
 import AddCharacterModal from './add-character-modal.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
+import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
 
 declare const characterCurioLibraryTemplates: any;
 
@@ -21,6 +22,9 @@ const localData = ref<any>({});
 const characters = ref<any[]>([]);
 const characterID = ref<string | null>(null);
 const openCharacterIDs = ref<string[]>([]);
+const previewCharacter = ref<any>(null);
+const isPreview = computed(() => Boolean(previewCharacter.value));
+const previewDismissed = ref<boolean>(false);
 const sheetTemplates = ref<any[]>([]);
 const prefs = ref<any>({ version: 1, global: {}, characters: {} });
 const playViewMode = ref('split');
@@ -115,7 +119,10 @@ const year = computed(() => new Date().getFullYear());
 const characterIndex = computed(() =>
 	characters.value.findIndex((character: any) => character.id === characterID.value),
 );
-const character = computed(() => characters.value[characterIndex.value]);
+const character = computed(() => {
+	if (previewCharacter.value) return previewCharacter.value;
+	return characters.value[characterIndex.value];
+});
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
 
 const { canUndo, canRedo, initHistory, commitHistorySnapshot, validateEditing, undo, redo } = useHistory({
@@ -132,6 +139,7 @@ const { canUndo, canRedo, initHistory, commitHistorySnapshot, validateEditing, u
 });
 
 const openCharacters = computed(() => {
+	if (previewCharacter.value) return [previewCharacter.value];
 	const list: any[] = [];
 	for (const id of openCharacterIDs.value) {
 		const found = characters.value.find((c: any) => c.id === id);
@@ -217,6 +225,39 @@ onMounted(async () => {
 });
 
 // ---- methods: view ----
+function openPreview(showcase: any = DREAMER_ARCHITECT_SHOWCASE) {
+	try {
+		if (!showcase || !showcase.character) {
+			console.warn('Dreamer & Architect template missing or invalid — falling back to roster');
+			previewCharacter.value = null;
+			characterID.value = null;
+			setMode('roster', null, false);
+			return;
+		}
+		previewCharacter.value = structuredClone(toRaw(showcase.character));
+		characterID.value = previewCharacter.value.id;
+		setMode('character', 'play', false);
+	} catch (err) {
+		console.warn('Failed to load Dreamer & Architect template preview:', err);
+		previewCharacter.value = null;
+		characterID.value = null;
+		setMode('roster', null, false);
+	}
+}
+
+function closePreview() {
+	previewCharacter.value = null;
+	characterID.value = null;
+	previewDismissed.value = true;
+	setMode('roster', null, true);
+}
+
+function usePreviewTemplate() {
+	previewCharacter.value = null;
+	previewDismissed.value = true;
+	createFromLibrary(DREAMER_ARCHITECT_SHOWCASE, false, false);
+}
+
 function setMode(m: string, sub: string | null, updateHash = true) {
 	if (mode.value === 'character' && submode.value === 'play' && (m !== 'character' || sub !== 'play')) {
 		if (hasUncommittedSessionChanges()) {
@@ -227,6 +268,11 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 			return;
 		}
 	}
+	if (previewCharacter.value && m !== 'character') {
+		previewCharacter.value = null;
+		characterID.value = null;
+		previewDismissed.value = true;
+	}
 	if (m === 'character' && sub === 'play') {
 		if (!openCharacterIDs.value.length && characters.value.length) {
 			if (characterID.value) {
@@ -235,6 +281,9 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 				openCharacterIDs.value = [characters.value[0].id];
 			}
 			saveOpenCharacterIDs();
+		} else if (!characters.value.length && !openCharacterIDs.value.length && !previewCharacter.value) {
+			openPreview();
+			return;
 		}
 		if ((!characterID.value || !openCharacterIDs.value.includes(characterID.value)) && openCharacterIDs.value.length) {
 			characterID.value = openCharacterIDs.value[0];
@@ -292,6 +341,33 @@ function parseRouteHash() {
 			setMode('roster', null, true);
 		}
 	} else {
+		const isDefaultOrEmptyHash =
+			!window.location.hash ||
+			window.location.hash === '#' ||
+			window.location.hash === '#/' ||
+			window.location.hash === '#/roster';
+
+		if (characters.value.length && isDefaultOrEmptyHash && !window.location.hash.startsWith('#/roster')) {
+			const targetId = openCharacterIDs.value[0] || characters.value[0].id;
+			characterID.value = targetId;
+			if (!openCharacterIDs.value.includes(targetId)) {
+				openCharacterIDs.value = [targetId];
+			}
+			setMode('character', 'play', true);
+			nextTick(() => {
+				isHandlingHash.value = false;
+			});
+			return;
+		}
+
+		if (!characters.value.length && !openCharacterIDs.value.length && !previewDismissed.value && isDefaultOrEmptyHash) {
+			openPreview();
+			nextTick(() => {
+				isHandlingHash.value = false;
+			});
+			return;
+		}
+
 		setMode('roster', null, false);
 		if (window.location.hash !== '#/roster') {
 			window.history.replaceState(null, '', '#/roster');
@@ -304,6 +380,7 @@ function parseRouteHash() {
 
 function updateRouteHash() {
 	if (isHandlingHash.value) return;
+	if (isPreview.value) return;
 	let target = '#/roster';
 	if (mode.value === 'about') {
 		target = '#/about';
@@ -656,6 +733,7 @@ function setPageTitle() {
 
 // SESSION & MULTI-CHARACTER
 function saveOpenCharacterIDs() {
+	if (isPreview.value) return;
 	persist();
 }
 
@@ -704,6 +782,9 @@ function openAlongside(id: string) {
 function resumeSession() {
 	if (!openCharacterIDs.value.length && characters.value.length) {
 		openCharacterIDs.value = [characters.value[0].id];
+	} else if (!characters.value.length && !openCharacterIDs.value.length && !previewCharacter.value) {
+		openPreview();
+		return;
 	}
 	if (!characterID.value && openCharacterIDs.value.length) {
 		characterID.value = openCharacterIDs.value[0];
@@ -1184,6 +1265,11 @@ async function exportAllCharacters() {
 }
 
 function updateCharacter(characterData: any) {
+	if (previewCharacter.value && previewCharacter.value.id === characterData.id) {
+		previewCharacter.value = characterData;
+		return Promise.resolve();
+	}
+
 	const c = characters.value.findIndex((savedCharacter: any) => savedCharacter.id === characterData.id);
 
 	if (c === -1) return Promise.resolve();
@@ -1417,6 +1503,7 @@ let lastSavedCharacters: Record<string, string> | null = null;
 let lastSavedSession: string | null = null;
 
 async function persist(options?: { allowSessionCharacterSave?: boolean }) {
+	if (isPreview.value) return;
 	let upsert: any[] = [];
 	let remove: string[] = [];
 	let session: any;
@@ -1542,6 +1629,11 @@ defineExpose({
 	localData,
 	characters,
 	characterID,
+	previewCharacter,
+	isPreview,
+	openPreview,
+	closePreview,
+	usePreviewTemplate,
 	openCharacterIDs,
 	sheetTemplates,
 	prefs,
@@ -1724,6 +1816,13 @@ defineExpose({
 			/>
 
 			<main class="main" ref="main" @scroll="setViewY" @click.stop="handleMainClick">
+				<!-- TEMPLATE PREVIEW BANNER -->
+				<div class="template-update-banner template-preview-banner" v-if="isPreview">
+					<span><i class="fas fa-eye"></i> Template preview — not saved to your characters.</span>
+					<button type="button" class="btn-update-primary" @click.stop="usePreviewTemplate">Use this template</button>
+					<button type="button" class="btn-update-secondary" @click.stop="closePreview">Close preview</button>
+				</div>
+
 				<!-- TEMPLATE VERSION SWITCH PROMPT -->
 				<div class="template-update-banner" v-if="pendingTemplateUpdate && submode === 'edit'">
 					<span
@@ -1753,6 +1852,7 @@ defineExpose({
 					@importCharacter="importCharacter"
 					@importSheetTemplate="importSheetTemplate"
 					@createFromLibrary="createFromLibrary"
+					@previewTemplate="openPreview"
 				></roster>
 
 				<!-- PLAY MODE: MULTI-CHARACTER SPLIT VIEW -->

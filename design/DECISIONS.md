@@ -2,10 +2,9 @@
 
 New decisions: add one dated line here under the right topic. Read this file before proposing anything.
 
-Scope: this repo is the sheet builder. KaelriMonsters
-(https://github.com/lynn0702/KaelriMonsters) is a separate content repo —
-monster-specific rules live there, not here. The original fork is
-https://github.com/kaelri/cortex-toolkit.
+Scope: this repo is the sheet builder. TorchliteMonsters
+(https://github.com/lynn0702/TorchliteMonsters) is a separate content repo —
+monster-specific rules live there, not here.
 
 ## Decided
 
@@ -68,10 +67,9 @@ https://github.com/kaelri/cortex-toolkit.
 
 ### Stress & complications
 - 2026-10-22: Stress lives as an ordinary rated companion subtrait (the "stress ring" is display of the companion's value); templates carry stress as real traits.
-- 2026-10-18 (superseded by 2026-10-27 item 3 below): Attached stress is set-level config (`enabled`, `label`, scale) with an ordinary companion per trait; enabling forces the track on (default five-die scale), disabling deletes the cells.
 - 2026-10-27 (Attached stress declaration dissolve + layout area rename): `view.attachedStress` declaration dies as a set-level configuration. Attached stress is recognized purely by the presence of `parts.track` in the layout grid; its label defaults to 'Stress' or reads `view.labels.stress`. Stress scale lives exclusively on companions (`rating.range`), not at the set or parts level; track scale for empty rows resolves to the range of the first companion found in the set, falling back to default `[4, 6, 8, 10, 12]`. Editor toggle only builds or removes `parts.track` / `parts.trackLabel` cells without writing declarations or seeding companions. Layout areas and parts renamed: `parts.stress` → `parts.track`, `parts.stressLabel` → `parts.trackLabel`, `parts.sfx` → `parts.block`, `stressDice` → `trackDice`, `.trait-part-stress` → `.trait-part-track`, `.trait-part-stress-label` → `.trait-part-track-label`, `.trait-part-sfx` → `.trait-part-block`. CSS sizing wires `--track-faces` dynamically for responsive cell scaling.
 - 2026-10-18: Stepped tracks get a generic `view.outIndicator` (default off); legacy `stressConfig.includeOut` still wins when set on `stress` bodies.
-- 2026-10-27 (playMutable carve-out): Play add/remove is decided strictly by `view.playMutable === true`. Name-sniffing ('complication' substring) and the unflagged stress fallback are removed. Stress sets never add or remove traits in Play (stress only steps ratings). Complications sets keep full add and remove capability in Play. The 6 complication sets in the spotlight corpus are flagged by meaning: Misty Cove Complications, Necromancer Complications, Retired No More Aging Complications, Snowfall Initiative Complications, Strange Towns Complications, Titans vs Leviathans Handler Complications. Assets and stress sets remain unflagged.
+- 2026-10-27 (playMutable carve-out): Play add/remove is decided strictly by `view.playMutable === true`. Name-sniffing ('complication' substring) and the unflagged stress fallback are removed. Stress sets never add or remove traits in Play (stress only steps ratings). Complications sets keep full add and remove capability in Play. The 6 complication sets in the template corpus are flagged by meaning: Misty Cove Complications, Necromancer Complications, Retired No More Aging Complications, Snowfall Initiative Complications, Strange Towns Complications, Titans vs Leviathans Handler Complications. Assets and stress sets remain unflagged.
 - 2026-10-29: attachedStress code rip-out: all code
   references deleted, including preset normalization,
   validator branch, and tests. Delete, not deprecate, per
@@ -82,7 +80,6 @@ https://github.com/kaelri/cortex-toolkit.
 
 ### Visibility & name block
 - 2026-10-28 (Play-only visibility, extends 2026-10-23): Node visibility (`view.visibility` on traits and trait sets) is `shown` | `play-only` | `editor-only` | `hidden` (`shown` is absence); `'play-only'` is visible in `edit` and `play` and hidden in `print` (and `@media print`). One shared 4-state eye toggle (`fa-eye` / `fa-gamepad` / `fa-eye-slash` / `fa-ban`); writes stay sparse against honest defaults.
-- 2026-10-22: Visibility defaults tell the truth about the style: game/plotPoints/notes default hidden in spotlight (no zone renders them), shown in classic; stored visibility always wins.
 - 2026-10-22: The name block is the first trait set; each magenta heading is the name trait's label edited in place; values stay on the character fields. Game identity, portrait, and plot points included.
 - 2026-10-23: Plot Points is a spendable Counter `[0, 20]` on a name-set trait, mirrored to the character field; its stepper is the Counter's spend control.
 
@@ -90,7 +87,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-24: Session record unified into pips with a labels opt-in (`view.pips.labels`): one bubble per row beside the trait name. Pure tracks (XP) keep count semantics and create no traits.
 - 2026-10-23: Labeled rows are bubble plus write-in line (inline rename in edit, underlined text in play/print); the Pip rating reads filled/true with no description anywhere.
 - 2026-10-23: Pip tracks live on the set node's Pip rating; labeled rows on row Pip ratings; `view.pips` keeps perRow/connected/labels only.
-- 2026-10-16: Milestone sets are standard traited sets (`ratingPosition: "none"`, `features: { description: true }`).
+- 2026-11-10: Milestones sets ARE pip traits — a statement set with the pip on the other side (pip left of name, checklist-style); pip is the trait's own rating, not a child.
 
 ### Statements
 - 2026-10-27 (Statements dissolve): `trait.statement` and `trait.questioned` die as named model data fields. A statement is an ordinary child pip trait grouped under a "Statement" child trait (no named field, no kind flag, no statement boolean), with the sentence as the trait's name (and description as alternative). Its Pip rating value represents questioned state: filled (`value: [true]`) = questioned, unfilled (`value: [false]`) = not questioned. Pip range is degenerate (`[true, false]`) and is not stored. Marking questioned is a Play value edit by construction (no special carve-out needed). Set-level `statement` / `hasQuestionedPip` view flags remain presentation-only. Export stops emitting trait-level statement and questioned fields.
@@ -98,6 +95,7 @@ https://github.com/kaelri/cortex-toolkit.
 ### Portrait ring
 - 2026-10-12: The ring is generic, not attributes-only (`ringTrait` flag, `ring-*` vocabulary).
 - 2026-10-12: Scale die offsets X/Y are sliders; the halo drag already consumed them.
+- 2026-11-10: Empty ring center: an interactive portrait drop-zone in Edit mode (when there is no portrait). Not a silhouette/monogram hub, not status quo.
 
 ### Editors
 - 2026-10-11: The editor section holding rating options is Options, not Pool Options.
@@ -119,7 +117,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-18: Rows are explicit and visual (`view.row`, header-inclusive); `rowBreak` is retired; bands derive from shared rows.
 - 2026-10-12: Set header option `sidebar` | `top` with `headerAlign` left|center|right (top-bar labels flush left by default).
 - 2026-10-18: Flank branch layout: `traitColumns: 2` spreads skills to outer columns with specialties down the middle; explicit split wins.
-- 2026-10-12: Internal style ids name the layout (`sfx-rows`, `boxed-rows`, `pool-rows`, `die-track`, `subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`); component files, classes, and identifiers follow the same stems. Legacy Kaelri style ids (`distinctions`, `assets`, `resources`, `stress`, `attributes`) are not imported; use the converter project.
+- 2026-10-12: Internal style ids name the layout (`die-rows`, `die-track`, `subtrait-columns`, `portrait-ring`, `dice-count`); component files, classes, and identifiers follow the same stems. The dissolved ids (`sfx-rows`, `boxed-rows`, `notes`, `paired-slots`, `three-column-table`, `labeled-fields`, `distinctions`, `attributes`) are dead and validated as errors (see Mechanical consolidation). Legacy Kaelri style ids are not imported; use the converter project.
 - 2026-10-24: Paired slots address subtraits by index (`getSubtraitAt`, slot labels for names); the bonus-slot d6 floor is one slot-indexed rule (`getSubtraitSlotRatings`) shared by sheet and editor — the positional wrappers and the BONUS name-sniff are gone.
 - 2026-10-28 (2D Mobile Pillar Carousel & Set Preset Library, supersedes 2026-10-27 1D carousel): Mobile Play (`submode === 'play'` at `<= 768px`) is a data-driven 2D Pillar & Stack Deck powered by `view.pillar` (an open, permissive string with zero hardcoded whitelists; defaults to `'identity' | 'prime' | 'plus' | 'play'`) and customizable display labels under `view.labels.pillars[key]`. Top jump pills represent Pillar Columns (with staged dice count badges and a `+ Card` preset button); each `88vw` Pillar Column vertically stacks its assigned sets with a sticky `.mobile-substack-bar` when a column holds multiple cards. Session cards (`Scene Traits`, `Session Notes`, `Crisis Pool`, `Micro-GMC`) are built as standard `TraitSet` presets (`cortexSetPresets` + user-saved `cortexCustomSetPresets`), never bespoke widgets.
 
@@ -127,17 +125,19 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-12: Print density is `@media print { html { font-size: 13px } }` only; the print tab zooms `.pages` at 0.8125 with inverse-scaled page vars (WYSIWYG). No global shrink, no separate preview button.
 - 2026-10-12: Print fits one page (Bewilderwood sheet the reference); the tab locks the desktop grid with horizontal scroll instead of reflowing.
 - 2026-10-12: Black & White print option (`grayscale(1)`, screen and paper).
-- 2026-10-24: Fixed system names (printed on blank sheets) match a central registry (`fixedNameSetKeys`), not inline name-sniffing; structural checks (columns, attached stress, spotlight membership) stay.
+- 2026-10-24: Fixed system names (printed on blank sheets) match a central registry (`fixedNameSetKeys`), not inline name-sniffing; structural checks (columns, attached stress) stay.
 - 2026-10-12: Fidelity fixes: badge rows are a 3-column grid with centred dice; sections fill their bands; paired-slot dice share the main row; trait names centred; unrated rows keep full tracks (blank sheets stay pencil-usable).
 
 ### Files
 - 2026-11-06: Only current-format files import, superseding the "One migration path" rule. Old-format and Kaelri files are rejected; a separate converter project produces current-format files. Layered templates keep set `id` for join continuity; template layers are complete, not sparse; `$schema`/`version` markers drop in layered form.
 - 2026-11-06: `normalizeLayeredTraits` was import-only (its `slots` → traits conversion is a no-op on current-format data) and was deleted with the migration machinery, not relocated.
+- 2026-11-10: All character template schema references point to the relative schema (`../schema/0.1/character.schema.json` / `../../schema/0.1/character.schema.json`). There are no `*.cortex.json` files in the project; character files have fully migrated to `*.curio.json`.
 
 ### Persistence
 - 2026-10-26 (multi-tab data loss): saves are granular by character — the app upserts and deletes whole character entries by id, and the storage layer merges them into the store (read-modify-write) instead of replacing the whole record, so a stale tab can no longer clobber another tab's characters. A stale save is flagged and surfaced as a toast, never a quiet drop.
 - 2026-10-26 (multi-tab follow-up — atomicity + template merge, supersedes the two limitations above): the IDB save path is one `readwrite` transaction (get → merge → put), so simultaneous saves serialize; and the template registry merges by `id@version` with `written = (S ∪ C) − (T0 − C)`. The localStorage fallback is documented sequential-only. Per-tab UI state (open IDs, play view mode, roller position, preferences) stays last-write-wins by design.
 - 2026-10-27 (Play session boundary + roll-time PP settlement): Play-to-character boundary is PROMPT, NOT ASSUME. In Play mode, `persist()` gates character writes (`upsert = []`, `remove = []`) while continuing to persist per-tab session preferences (panel position, play view mode, open characters). A baseline snapshot of each character is initialized at boot and updated only upon explicit save; switching modes out of Play with uncommitted session changes intercepts navigation and presents exactly two choices: "Save session into character" (writes changes to storage, advances baseline) vs. "Discard session changes" (reverts in-memory characters from baseline, clears dice pool), with Cancel as non-saving/non-discarding deferral. Plot Point timing is settled at ROLL-TIME: staging Hinder d4 adds no PP to the character (`ppDelta: 1`, `ppCommitted: false`), and roll-time settlement applies pending `ppDelta` to `character.plotPoints` upon `roll()`. Die removal and pool clear cancel pending dice without take-back subtraction, and removing a rolled die never takes PP back. Duplicating a die produces zero PP delta.
+- 2026-11-10: Do NOT reject old-format characters on the stored-data load path. Characters live in IndexedDB (primary); localStorage is the fallback (plus the legacy `cortexToolkitData` key). Once the schema is defined and locked, ALWAYS provide a migration path when introducing changes, to keep characters loadable.
 
 ### Stack
 - 2026-10-11: TypeScript migration, incremental. Vue 3 stays.
@@ -154,7 +154,7 @@ https://github.com/kaelri/cortex-toolkit.
 - Removed traits stay removed across export/import.
 - 2026-10-12: Template versions reset to v1 (no release yet); content edits are hand-authored and ship with validate green.
 - 2026-10-11: Templates carry structure, never sample content.
-- 2026-10-11: All 28 spotlight templates are current-format (validate clean).
+- 2026-10-11: All 28 Library templates are current-format (validate clean).
 - 2026-10-11: The map key is the address, the set id the stable identity; trait renames stay add+remove.
 
 ### Agent working style
@@ -182,7 +182,7 @@ Explicitly NOT converted: the roller pane (roll results, text log, and tab
 selection are component-local refs; unmounting wipes the last roll's record
 even though the staged pool, a prop, would survive) and the properties pane
 (its editors are already v-if'd by editing type; the idle pane is light).
-(3) In pillar Play, the sheet sections (spotlight layout, columns, full band,
+(3) In pillar Play, the sheet sections (sheet layout, columns, full band,
 and the classic-grid-sections region where it exists) gain !isPillarPlay, so
 page-1 sets are no longer instantiated twice (sheet block hidden by
 display:none + pillar block). The pillar track is untouched and the page loop
@@ -223,10 +223,10 @@ validator, runtime, and editors. Supersedes the 2026-10-12 `view.style.sheet`
 and `NAME_HIDDEN_IN_SPOTLIGHT` entries above.
 (1) Sheet assembly is unified in `character.vue`: every page renders unplaced
 column sets (`.columns`), placed grid sets (`view.place` via
-`.spotlight-layout.classic-grid-sections`), and unplaced full-width sets
+`.sheet-layout.classic-grid-sections`), and unplaced full-width sets
 (`.classic-full-band`) from the same template path without branching on sheet
 style.
-(2) Corpus rewrite: all 28 spotlight templates in `js/templates.js` and
+(2) Corpus rewrite: all 28 Library templates in `js/templates.js` and
 `data/templates/*.template.layered.json` (plus `js/showcase-templates.ts` and
 `defaultCharacter`) drop `view.style.sheet` and state their presentation
 explicitly on each element: header portraits carry `portrait.view.location:
@@ -289,7 +289,7 @@ SFX children remain fully editable via `SubtraitEditor` in `trait-editor.vue`.
 (7) Retired bodies (`distinctions`, `attributes`, `sfx-rows`, `boxed-rows`, `notes`,
 `paired-slots`, `three-column-table`, `labeled-fields`) are dead and validated as errors
 by `scripts/validate.js`.
-(8) Badge printing: `.badge` rules in `css/_spotlight-print.scss` enforce `print-color-adjust: exact`
+(8) Badge printing: `.badge` rules in `css/print.css` enforce `print-color-adjust: exact`
 so that background colors (black, primary, interactive, secondary, muted) and white text
 remain fully legible in print and economy print modes.
 
@@ -299,6 +299,23 @@ remain fully legible in print and economy print modes.
 - 2026-11-07: Out marker sits in the scale row as an `[OUT]` glyph toggle chip beside the dice (`[4] [6] [8] [10] [12] [OUT]`). The word at the end of the scale is configured via `endWord` in Parts & Behavior (default "OUT").
 - 2026-11-07: Rating-type switching clears values; warns if child values or subordinate data would be wiped; silent otherwise.
 - 2026-11-07: `trait-editor.vue` is in scope alongside set and subtrait editors. Subtrait name input is hoisted to line 1 of the child editor block and auto-focuses on open.
+
+### Spotlight dissolve (2026-11-10)
+- The word 'spotlight' is dissolved everywhere — the style AND the Library. The Library is simply the Library. 'Spotlight' survives only in descriptive data, never in a field, CSS class, ID, code, file name, or UI string.
+- `view.spotlight` → `view.template` at the data layer. The loader resolving the ref looks local first, Library second. No concern for existing characters (no end users yet — no migration, no fallback).
+- Listing IDs drop the `spotlight-` prefix (`spotlight-alien-us` → `alien-us`). `size: 'spotlight'` was dead data and is deleted. Orientation (landscape/portrait) is a separate later design decision, not a rename of `size`.
+
+### Kaelri break & Character Curio (2026-11-06, as amended 2026-11-10)
+- Break with Kaelri: the repo becomes a standalone orphan (new root commit, loses her own history too) — hers to direct, NOT yet executed. The migration path in the app is DEAD (migration.ts deleted; old-format and Kaelri files are rejected on import). The converter lives INSIDE the TorchliteMonsters repo (two repos total, not three).
+- Monsters repo: TorchliteMonsters, CONFIRMED 2026-11-10 (was the leading candidate). The repo has a `character-curio` folder for monster content prepped for Character Curio import — one repo with subfolders for the different destinations. Torchlite first-class support is a scope in itself, for LATER (parked).
+- Sendak goes (data/templates/Sendak_Eggers.cortex.json + .layered.json), replaced by The Dreamer & the Architect (see below). The test fixture (`scripts/materialize-tests.js`) is re-pointed at the new example.
+- Branding and naming move to Character Curio. 'Cortex' survives ONLY in license/attribution or similar descriptive text — no fields, no classes, no IDs, no code, no file names, no UI strings. Name form: `character-curio` for code (hyphenated), "Character Curio" for UI display. Storage keys BREAK CLEAN (no migration, no legacy fallback). Save ONE Cortex logo for the attribution page; use the favicon (tarot World) for the footer logo. `.cortex.json` → `.curio.json`. `cortex.engard.me` stays for the attribution page.
+- Licensing DEFERRED — do not add a license, do not re-raise. Domain purchase DEFERRED — do not re-raise until closer to the new repo's initial commit; the live app stays at characters.lynnjones.rocks until DNS + deploy move. Do NOT position as a VTT product; scope is characters AND solo play, could branch to room/multi-player.
+- Day-1 goal: get ULTRA TIDY for a day-1 commit into the new home (CharacterCurio) — settle the divorce first. Sequencing: font diet, then prep for the move begins (CharacterCurio + TorchliteMonsters).
+
+### The Dreamer & the Architect (2026-11-10)
+- The new example character, replacing Sendak (and superseding The Scrivener). A tarot-card display, intentionally — two circular portraits, leader lines, centered composition. Three sets. "The Architect" (noun Distinction): portrait ring (De bouwmeester, 1919, Rijksmuseum) with 3 ring traits (Line, Light, Space — d10) + 3 distinctions (Function Before Form, Less is More, All My Darlings are Dead — d8). "Values" is the SINGLE shared set: Data (d8) "belongs to the people, not the builders", Design (d6) "what is built is but inspiration", Service (d10) "your fee is yours to set, mine is free". "The Dreamer" (noun Distinction): portrait (Corot, The Dreamer at the Fountain, 1855–63) + 3 distinctions (Beauty is all around us, I'll have another slice, Come darling, let's have tea — d8). The six persona traits are Distinctions, not Values.
+- Surfacing: the example loads on splash but fades away when the user has their own saved characters — first run (no saved characters) auto-opens it as a template preview (not saved, with "Use this template"); once a saved character exists the app opens the user's character instead and the example stops auto-opening and leaves the roster, but stays in the Library.
 
 ## Open (decisions needed)
 
