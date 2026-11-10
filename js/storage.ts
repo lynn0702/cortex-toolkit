@@ -1,5 +1,5 @@
 /**
- * Cortex Toolkit persistent storage. TypeScript leaf.
+ * Character Curio persistent storage. TypeScript leaf.
  *
  * Primary backend is IndexedDB (large quota, structured data, eviction-safe
  * when persistence is granted). First run migrates any legacy localStorage

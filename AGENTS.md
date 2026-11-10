@@ -89,7 +89,7 @@ SKILL.md file directly from `.agents/skills/<name>/`.
   (`scripts/gen-types.mjs`) writes `js/model.generated.ts` (do not hand-edit;
   chained into `npm run build`). `js/model.ts` re-exports the generated shapes
   and adds the app-only `view` types the schema leaves open.
-- Presentation settings live under `view` (`getView` / `ensureView` in `js/model.ts`); `custom.cortexToolkit` is legacy. Never add new unapproved top-level fields to a character, trait set, or trait.
+- Presentation settings live under `view` (`getView` / `ensureView` in `js/model.ts`); Never add new unapproved top-level fields to a character, trait set, or trait.
 - localStorage: single key `characterCurioData`, namespaced as
   `{ "0.1": { characters } }`. Bump the namespace when the schema changes.
 - Deep clones: use `structuredClone()` everywhere (wrap Vue reactive proxies with `toRaw(v)` before cloning: `structuredClone(toRaw(v))`). Do not use the `JSON.parse(JSON.stringify(...))` idiom.

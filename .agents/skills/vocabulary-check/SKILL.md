@@ -1,6 +1,6 @@
 ---
 name: vocabulary-check
-description: Check every key and field in new JSON data against the current cortex-toolkit vocabulary before it ships. Use when writing or reviewing templates, presets, trait sets, or any view data, or when a spec's example JSON looks pre-refactor. Prevents stale, renamed, or dissolved fields from entering the corpus.
+description: Check every key and field in new JSON data against the current character-curio vocabulary before it ships. Use when writing or reviewing templates, presets, trait sets, or any view data, or when a spec's example JSON looks pre-refactor. Prevents stale, renamed, or dissolved fields from entering the corpus.
 ---
 
 # Vocabulary check
@@ -14,11 +14,9 @@ a new file is a defect, even if nothing visibly breaks yet.
 ## Current vocabulary (check against this, then verify in
 ## the tree — this list is a starting point, not the law)
 
-Layout areas (view language, never Cortex or set language):
+Layout areas (view language — named for their layout role):
 `name`, `rating`, `description`, `block`, `subtraits`,
-`trackLabel`, `track`. Renamed from: `sfx` → `block`,
-`stress` → `track`, `stressLabel` → `trackLabel`,
-`stressDice` → `trackDice`. `includeOut` → `outIndicator`.
+`trackLabel`, `track`.
 
 Dissolved — these must NOT appear in new data:
 - `trait.sfx` (SFX are ordinary child traits, found by

@@ -144,7 +144,7 @@ const watermarkError = ref('');
 const fontUploadError = ref('');
 const dicePresets = DICE_PRESETS;
 const presetColors = [
-	{ name: 'Cortex Sky', hex: '#0ea5e9' },
+	{ name: 'Curio Sky', hex: '#0ea5e9' },
 	{ name: 'Crimson Ruby', hex: '#e11d48' },
 	{ name: 'Emerald', hex: '#10b981' },
 	{ name: 'Indigo Purple', hex: '#6366f1' },
@@ -489,7 +489,7 @@ const diceConfig = computed({
 		if (!props.character) return;
 		ensureView(props.character).diceConfig = { ...cfg };
 		if (typeof window !== 'undefined') {
-			(window as any).__cortexActiveDiceConfig = { ...cfg };
+			(window as any).__characterCurioActiveDiceConfig = { ...cfg };
 		}
 		emit('updateCharacter', props.character);
 	},

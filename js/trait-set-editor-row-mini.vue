@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from 'vue';
+import { characterCurioFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import { partsGrid, formatPct } from './sheet-grid.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
@@ -42,7 +43,7 @@ function partBoxLabel(key: string): string {
 		for (const t of (traitSet.value as any)?.traits || []) {
 			for (const sub of t?.traits || []) {
 				const cand = (sub?.noun || sub?.name || '').trim();
-				if (cand && cand.toLowerCase() !== trackNoun.toLowerCase() && sub?.rating?.type !== 'SFX') {
+				if (cand && cand.toLowerCase() !== trackNoun.toLowerCase() && !characterCurioFunctions.isSfxContainer(sub)) {
 					sNoun = cand;
 					break;
 				}

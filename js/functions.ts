@@ -96,7 +96,7 @@ export const characterCurioFunctions = {
 			diceConfig !== undefined
 				? diceConfig
 				: typeof window !== 'undefined'
-					? (window as any).__cortexActiveDiceConfig
+					? (window as any).__characterCurioActiveDiceConfig
 					: null;
 		const isCustom = Boolean(cfg && cfg.style === 'custom');
 		let fill = isFilled ? 'currentColor' : 'none';

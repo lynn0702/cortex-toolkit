@@ -34,11 +34,11 @@ Offline-capable, client-side, and zero-backend. Runs in any modern browser.
 - **Dual Format Showcases**: Reference templates providing side-by-side implementations of portrait (Kitchen Sink Showcase) and true landscape (Panorama Showcase) sheets.
 - **Sparse Layered Inheritance**: Character files pin exact template snapshots, storing only local differences while preserving underlying template updates.
 
-### Integrated Dice Roller & CortexPal Integration
+### Integrated Dice Roller & Dice Pool Export
 - **Interactive Roller**: Tap-to-stage ratings directly from sheet traits or halo attributes into active pools.
 - **Challenge Pools**: Dedicated opposition pool staging alongside player dice.
 - **Pool Modifiers**: Step up, step down, keep, and drop mechanics.
-- **CortexPal Export**: Live formula export formatted for Discord integration via [CortexPal](https://github.com/lynn0702/CortexPalGS).
+- **Discord Bot Export**: Live formula export formatted for Discord integration (e.g. via [CortexPal](https://github.com/lynn0702/CortexPalGS)).
 
 ### WYSIWYG Print Engine
 - **Pixel-Accurate Print Simulation**: Dedicated Print tab mirroring physical paper output at 13px baseline density (`zoom: 0.8125` on screen).
@@ -58,7 +58,7 @@ Offline-capable, client-side, and zero-backend. Runs in any modern browser.
 - **Framework**: [Vue 3](https://vuejs.org/) Single-File Components (`<script setup lang="ts">`) with runtime-only ESM bundler.
 - **Language**: [TypeScript](https://www.typescriptlang.org/) with `vue-tsc` type-checking.
 - **Styling**: Modular SCSS compiling to production-minified CSS.
-- **Build System**: [Webpack Mix](https://laravel-mix.com/) with automated asset version fingerprinting.
+- **Build System**: [Vite](https://vite.dev/) with automated asset version fingerprinting.
 - **Storage**: Client-side `localStorage` with JSON import and export.
 
 ---
@@ -110,7 +110,7 @@ npm run build
 
 Every change committed to `main` must pass the repository definition of done:
 
-1. `npm run build`: Webpack Mix compilation with zero errors or warnings.
+1. `npm run build`: Production compilation with zero errors or warnings.
 2. `npm run check`: `vue-tsc --noEmit` type verification.
 3. `npm test`: All 6 test suites passing:
    - `dice-pool-tests`: Dice pool notation, rolling, and syntax export.

@@ -1,4 +1,4 @@
-# cortex-toolkit agent skills
+# character-curio agent skills
 
 Six distilled skills, one per folder, in the open Agent
 Skills format: each folder holds a `SKILL.md` with YAML
@@ -58,7 +58,7 @@ of this one:
   path before assuming the skill is broken.
 
 Project install is recommended over global: these skills
-reference cortex-toolkit paths (`design/DECISIONS.md`,
+reference character-curio paths (`design/DECISIONS.md`,
 `js/templates.js`, `data/templates/`, `validate.js`), so
 they only make sense inside this repo.
 
@@ -107,7 +107,5 @@ SKILL.md file directly from `.agents/skills/<name>/`.
 
 ## Version
 
-Distilled 2026-10-29 from the cortex-toolkit
-lessons-learned register (back-to-basics item 3). When a
-lesson changes, update the skill that encodes it and the
+When a lesson changes, update the skill that encodes it and the
 register together.

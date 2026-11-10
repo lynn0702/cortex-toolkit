@@ -7,12 +7,13 @@
  * source of truth for those, so types never drift from validation.
  *
  * This module adds the **app-only** layer the schema intentionally leaves open:
- * the `view` compartment (and legacy `custom.characterCurio`: style, features, pips, ring, layout,
- * labels, …). The schema types `custom` as an open map on purpose (other apps
- * may compartmentalize their own keys); we refine our compartment here.
+ * the `view` compartment (style, features, pips, ring, layout, labels, …).
+ * The schema types `custom` as an open map on purpose (other apps may
+ * compartmentalize their own keys); we refine our presentation bag in `view`.
  *
- * Known `cortexToolkit` keys are typed; an index signature (`unknown`, never
- * `any`) keeps the bag open for forward-compatibility without blocking new keys.
+ * Known `characterCurioCustom` / `view` keys are typed; an index signature
+ * (`unknown`, never `any`) keeps the bag open for forward-compatibility without
+ * blocking new keys.
  */
 import type {
 	Character as GeneratedCharacter,
@@ -637,17 +638,16 @@ export function isNameSet(set: unknown): boolean {
 
 /**
  * Accessor for the presentation view bag on any character, set, trait, or portrait.
- * Routes through VIEW_KEY and falls back to legacy custom.characterCurio data.
+ * Routes through VIEW_KEY.
  */
 export function getView<T = ViewBag>(obj: unknown): T | undefined {
 	if (!obj || typeof obj !== 'object') return undefined;
 	const record = obj as Record<string, any>;
-	return (record[VIEW_KEY] ?? record.custom?.characterCurio) as T | undefined;
+	return record[VIEW_KEY] as T | undefined;
 }
 
 /**
- * Ensures the presentation view bag exists on an object, migrating legacy custom.characterCurio
- * if present, and returns the mutable view bag.
+ * Ensures the presentation view bag exists on an object and returns the mutable view bag.
  */
 export function ensureView<T = ViewBag>(obj: unknown): T {
 	if (!obj || typeof obj !== 'object') {
@@ -655,20 +655,12 @@ export function ensureView<T = ViewBag>(obj: unknown): T {
 	}
 	const record = obj as Record<string, any>;
 	if (!record[VIEW_KEY]) {
-		if (record.custom && typeof record.custom === 'object' && record.custom.characterCurio) {
-			record[VIEW_KEY] = record.custom.characterCurio;
-			delete record.custom.characterCurio;
-			if (Object.keys(record.custom).length === 0) {
-				delete record.custom;
-			}
-		} else {
-			record[VIEW_KEY] = {};
-		}
+		record[VIEW_KEY] = {};
 	}
 	return record[VIEW_KEY] as T;
 }
 
-/** `trait.custom` — includes legacy nested `cortexToolkit` compartment for back-compat. */
+/** `trait.custom`. */
 export interface TraitCustom {
 	[k: string]: unknown;
 	spentDice?: number[];
@@ -679,13 +671,11 @@ export interface TraitCustom {
 	isResource?: boolean;
 	xp?: number | string;
 	counter?: number | string;
-	characterCurio?: CharacterCurioCustom;
 }
 
-/** The open `custom` map, with legacy `cortexToolkit` compartment for back-compat. */
+/** The open `custom` map. */
 export interface Custom {
 	[k: string]: unknown;
-	characterCurio?: CharacterCurioCustom;
 }
 
 /** Per-character arrangement preferences (file-traveling + live). */

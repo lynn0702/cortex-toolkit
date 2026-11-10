@@ -955,8 +955,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 					st &&
 					typeof st === 'object' &&
 					st.rating &&
-					st.rating.type !== 'SFX' &&
-					st.rating.type !== 'Statement' &&
+					!characterCurioFunctions.isSfxContainer(st) &&
 					Array.isArray(st.rating.range),
 			);
 		}
@@ -973,7 +972,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return true;
 		}
 		const r = (sub as any)?.rating;
-		return Boolean(r && r.type !== 'SFX' && r.type !== 'Statement' && Array.isArray(r.range));
+		return Boolean(r && !characterCurioFunctions.isSfxContainer(sub) && Array.isArray(r.range));
 	}
 
 	function visibleSubtraits(traitSetArg: TraitSet, trait: Trait) {

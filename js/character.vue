@@ -82,7 +82,7 @@ const isMobileViewport = ref(
 	typeof window !== 'undefined' && Boolean(window.matchMedia && window.matchMedia('(max-width: 768px)').matches),
 );
 const internalDesktopPillars = ref<boolean>(
-	typeof localStorage !== 'undefined' ? localStorage.getItem('cortexPlayPillars') === 'true' : false,
+	typeof localStorage !== 'undefined' ? localStorage.getItem('characterCurioPlayPillars') === 'true' : false,
 );
 const effectiveDesktopPillars = computed(() => {
 	if (props.isDesktopPillars !== undefined) return props.isDesktopPillars;
@@ -99,7 +99,7 @@ function toggleDesktopPillars() {
 	}
 	internalDesktopPillars.value = next;
 	if (typeof localStorage !== 'undefined') {
-		localStorage.setItem('cortexPlayPillars', String(next));
+		localStorage.setItem('characterCurioPlayPillars', String(next));
 	}
 	setupCarouselObserver();
 }
@@ -265,7 +265,7 @@ function applyFonts() {
 		});
 	}
 	if (ctk.diceConfig && typeof window !== 'undefined') {
-		(window as any).__cortexActiveDiceConfig = ctk.diceConfig;
+		(window as any).__characterCurioActiveDiceConfig = ctk.diceConfig;
 	}
 }
 

@@ -358,4 +358,3 @@ export const dicePool = {
 	DicePool: DicePool,
 	DIE_SIZES: DIE_SIZES,
 };
-export { dicePool as cortexPal, Die as CortexDie, DicePool as CortexDicePool };

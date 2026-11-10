@@ -371,7 +371,7 @@ function evaluateRollDisplay() {
 			: '';
 		dicePoolOutput.value = `Normal Pool Roll (Keep ${keep.value})${resNote}:\nDice: ${lastRollResults.value.map((r) => 'd' + r.size + (r.hitches === 0 ? '[sep]' : '') + ': ' + r.value + (r.isHitch ? ' (Hitch)' : '')).join(', ')}\nBest Total: ${totalSum} (${totalFormula}) with Effect: ${effectDie}\nBest Effect: ${effectBest} with Total: ${totalSumForEffect} (${formulaForEffect})\nHitches: ${totalHitches.value}`;
 	} else {
-		// SEPARATE MODE (Standard Cortex Prime)
+		// SEPARATE MODE
 		const actionKeep = 2 + actionKeepsExtra.value;
 		const actionEligible = actionResults.filter((r) => !r.isHitch);
 

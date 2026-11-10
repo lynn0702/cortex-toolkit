@@ -115,7 +115,7 @@ function createDefaultWorkingSet(source?: any): any {
 				if (t.rating) t.rating = normalizeRating(t.rating);
 				if (Array.isArray(t.traits)) {
 					t.traits.forEach((sub: any) => {
-						if (sub.rating && sub.rating.type !== 'SFX') sub.rating = normalizeRating(sub.rating);
+						if (sub.rating && !characterCurioFunctions.isSfxContainer(sub)) sub.rating = normalizeRating(sub.rating);
 					});
 				}
 			});
@@ -132,10 +132,10 @@ function createDefaultWorkingSet(source?: any): any {
 		const seededNouns = new Set<string>();
 		for (const t of copy.traits || []) {
 			for (const sub of t?.traits || []) {
-				if (!sub || typeof sub !== 'object' || sub?.rating?.type === 'SFX') continue;
+				if (!sub || typeof sub !== 'object' || characterCurioFunctions.isSfxContainer(sub)) continue;
 				const isSinglePip =
 					sub.rating?.type === 'Pip' && (!Array.isArray(sub.rating.value) || sub.rating.value.length <= 1);
-				const sName = (sub.noun || (isSinglePip ? 'Statement' : sub.name) || '').trim();
+				const sName = (sub.noun || sub.name || '').trim();
 				if (!sName || seededNouns.has(sName.toLowerCase())) continue;
 				seededNouns.add(sName.toLowerCase());
 				const isTrackSub = sName.toLowerCase() === 'stress' || sName.toLowerCase() === configuredTrack.toLowerCase();
@@ -650,7 +650,7 @@ function toggleBlueprintRangeSide(partKey: string, side: number | string) {
 	} else if (partKey === 'track') {
 		for (const t of workingSet.value.traits || []) {
 			for (const sub of t.traits || []) {
-				if (sub?.rating && sub.rating.type !== 'SFX') {
+				if (sub?.rating && !characterCurioFunctions.isSfxContainer(sub)) {
 					sub.rating.range = [...cur];
 				}
 			}
@@ -722,7 +722,12 @@ const childSlots = computed<ChildSlotDef[]>(() => {
 	for (const t of workingSet.value?.traits || []) {
 		for (const sub of t?.traits || []) {
 			const sName = (sub?.name || '').trim();
-			if (sName && !seen.has(sName.toLowerCase()) && sub?.rating?.type && sub.rating.type !== 'SFX') {
+			if (
+				sName &&
+				!seen.has(sName.toLowerCase()) &&
+				sub?.rating?.type &&
+				!characterCurioFunctions.isSfxContainer(sub)
+			) {
 				explicit.push({
 					id: characterCurioFunctions.generateUUID(),
 					noun: sName,
@@ -860,7 +865,7 @@ const inventoryGroups = computed<InventoryNounGroup[]>(() => {
 	for (const t of workingSet.value?.traits || []) {
 		for (const sub of t?.traits || []) {
 			const sName = (sub?.name || '').trim();
-			if (sName && sub?.rating?.type && sub.rating.type !== 'SFX') {
+			if (sName && sub?.rating?.type && !characterCurioFunctions.isSfxContainer(sub)) {
 				companionNouns.add(sName);
 			}
 		}
@@ -1269,13 +1274,18 @@ function setChildDieValue(sub: any, dieVal: number | string) {
 }
 
 function addTraitSfx(trait: any) {
-	if (!Array.isArray(trait.traits)) trait.traits = [];
-	trait.traits.push({
+	const container = characterCurioFunctions.ensureSfxContainer(trait);
+	if (!container) return;
+	if (!Array.isArray(container.traits)) container.traits = [];
+	container.traits.push({
 		id: characterCurioFunctions.generateUUID(),
 		name: 'SFX',
 		description: 'Spend 1 PP to activate.',
-		rating: { type: 'SFX' },
 	});
+}
+
+function removeSfxChild(trait: any, sIdx: number | string) {
+	characterCurioFunctions.removeSfxAt(trait, Number(sIdx));
 }
 
 function removeChildTraitInstance(trait: any, sIdx: number | string) {
@@ -2152,7 +2162,7 @@ function onFileImportSelected(ev: Event) {
 
 								<!-- SFX block items -->
 								<div
-									v-for="(sub, sIdx) in (trait.traits || []).filter((s: any) => s.rating?.type === 'SFX')"
+									v-for="(sub, sIdx) in characterCurioFunctions.sfxChildren(trait)"
 									:key="sub.id || sIdx"
 									class="mini-trait-subrow"
 								>
@@ -2167,7 +2177,7 @@ function onFileImportSelected(ev: Event) {
 									<button
 										type="button"
 										class="mini-icon-btn mini-btn-danger"
-										@click="removeChildTraitInstance(trait, Number(sIdx))"
+										@click="removeSfxChild(trait, Number(sIdx))"
 									>
 										&times;
 									</button>
