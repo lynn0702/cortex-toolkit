@@ -1,10 +1,10 @@
 /**
- * Dogfood Showcase Templates (Phase 3c).
+ * Showcase Templates (Phase 3c).
  * Pre-authored reference characters immediately selectable in the Template Library.
  */
 export const VANGUARD_FRAME_SHOWCASE = {
 	id: 'vanguard-frame-showcase',
-	title: 'Vanguard Frame Showcase (Dogfood)',
+	title: 'Vanguard Frame Showcase',
 	subtitle: 'Phase 3c SVG Frames & Attached Stress Reference',
 	blurb:
 		'Reference character demonstrating SVG frames (ring, arc, ellipse, chamfered block, bare line), attached stress on a ring, and mobile unframed fallback.',
@@ -341,4 +341,4 @@ export const VANGUARD_FRAME_SHOWCASE = {
 	},
 };
 
-export const DOGFOOD_TEMPLATES = [VANGUARD_FRAME_SHOWCASE];
+export const SHOWCASE_TEMPLATES = [VANGUARD_FRAME_SHOWCASE];

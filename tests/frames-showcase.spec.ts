@@ -2,17 +2,17 @@ import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import TraitSetBlock from '../js/trait-set-block.vue';
-import { VANGUARD_FRAME_SHOWCASE, DOGFOOD_TEMPLATES } from '../js/dogfood-templates.ts';
+import { VANGUARD_FRAME_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
 import { cortexSetPresets, cortexFunctions } from '../js/functions.ts';
 import { computeFrameAnchors, resolveFrame } from '../js/frame-geometry.ts';
 import { isHiddenIn } from '../js/model.ts';
 
-describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', () => {
-	it('verifies DOGFOOD_TEMPLATES exposes the Vanguard Frame Showcase at index 0', () => {
-		expect(DOGFOOD_TEMPLATES.length).toBeGreaterThanOrEqual(1);
-		const tmpl = DOGFOOD_TEMPLATES[0];
+describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', () => {
+	it('verifies SHOWCASE_TEMPLATES exposes the Vanguard Frame Showcase at index 0', () => {
+		expect(SHOWCASE_TEMPLATES.length).toBeGreaterThanOrEqual(1);
+		const tmpl = SHOWCASE_TEMPLATES[0];
 		expect(tmpl.id).toBe('vanguard-frame-showcase');
-		expect(tmpl.title).toBe('Vanguard Frame Showcase (Dogfood)');
+		expect(tmpl.title).toBe('Vanguard Frame Showcase');
 		expect(tmpl.character.traitSets.length).toBe(8);
 	});
 
@@ -49,7 +49,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		}
 	});
 
-	it('F5: verifies dead fields are stripped from dogfood template and presets', () => {
+	it('F5: verifies dead fields are stripped from showcase template and presets', () => {
 		const char = VANGUARD_FRAME_SHOWCASE.character;
 		for (const s of char.traitSets) {
 			expect((s.view as any)?.headerAlign, 'headerAlign must be stripped').toBeUndefined();
