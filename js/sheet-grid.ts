@@ -1,4 +1,4 @@
-// spotlight-grid — nested-grid geometry with explicit coordinates.
+// sheet-grid — nested-grid geometry with explicit coordinates.
 //
 // Layout is a grid at every level (page, set, trait) with placement local
 // to the parent (2026-10-19, supersedes the band model). A set carries
@@ -130,12 +130,12 @@ export function linesForRect(columns: number[], left: number, width: number): { 
 	return { col, span: Math.max(1, span) };
 }
 
-export interface SpotlightSectionItem {
+export interface SheetSectionItem {
 	traitSet: TraitSet;
 	index: number;
 }
 
-export interface SpotlightCell {
+export interface SheetGridCell {
 	s: number;
 	col: number;
 	span: number;
@@ -143,11 +143,11 @@ export interface SpotlightCell {
 	style?: string;
 }
 
-export interface SpotlightSection {
+export interface SheetSection {
 	type: 'grid' | 'full-width';
 	columns: number[];
-	ordered: SpotlightSectionItem[];
-	cells: Record<number, SpotlightCell>;
+	ordered: SheetSectionItem[];
+	cells: Record<number, SheetGridCell>;
 }
 
 // Page layout: placed sets group by top across document distance (the old
@@ -159,12 +159,8 @@ export interface SpotlightSection {
 // Columns come from the page-union edges, so every cell renders its exact
 // rectangle and vertical edges align across rows. Height is a floor via
 // grid-row span plus min-height; rows stay content-sized.
-export function getSpotlightSections(
-	traitSets: TraitSet[],
-	pageIndex: number,
-	submode?: string | null,
-): SpotlightSection[] {
-	const pageSets: SpotlightSectionItem[] = [];
+export function getSheetSections(traitSets: TraitSet[], pageIndex: number, submode?: string | null): SheetSection[] {
+	const pageSets: SheetSectionItem[] = [];
 	(traitSets || []).forEach((traitSet, s) => {
 		if (submode ? isHiddenIn(traitSet, submode) : resolveVisibility(traitSet) === 'hidden') return;
 		const page = getView(traitSet)?.page || 1;
@@ -174,7 +170,7 @@ export function getSpotlightSections(
 	});
 
 	const placed = pageSets.map((item) => ({ item, place: placeOf(item.traitSet) })).filter((e) => e.place !== null) as {
-		item: SpotlightSectionItem;
+		item: SheetSectionItem;
 		place: ParsedPlace;
 	}[];
 	const columns = columnsFromEdges(placed.map((e) => e.place));
@@ -195,12 +191,12 @@ export function getSpotlightSections(
 		}
 	});
 
-	const byIndex = new Map<number, { item: SpotlightSectionItem; place: ParsedPlace }>();
+	const byIndex = new Map<number, { item: SheetSectionItem; place: ParsedPlace }>();
 	placed.forEach((e) => byIndex.set(e.item.index, e));
-	const bySetIndex = new Map<number, SpotlightSectionItem>();
+	const bySetIndex = new Map<number, SheetSectionItem>();
 	pageSets.forEach((item) => bySetIndex.set(item.index, item));
 
-	const cellFor = (entry: { item: SpotlightSectionItem; place: ParsedPlace }, lines: number[]): SpotlightCell => {
+	const cellFor = (entry: { item: SheetSectionItem; place: ParsedPlace }, lines: number[]): SheetGridCell => {
 		const { col, span } = linesForRect(columns, entry.place.left, entry.place.width);
 		const start = lineFor(lines, entry.place.top);
 		const end = lineFor(lines, entry.place.top + entry.place.height);
@@ -211,8 +207,8 @@ export function getSpotlightSections(
 		return { s: entry.item.index, col, span, rowSpan: entry.place.height, style: st };
 	};
 
-	const sections: SpotlightSection[] = [];
-	let pending: { item: SpotlightSectionItem; place: ParsedPlace }[] = [];
+	const sections: SheetSection[] = [];
+	let pending: { item: SheetSectionItem; place: ParsedPlace }[] = [];
 	const flushGrid = () => {
 		if (!pending.length) return;
 		// Rows from the distinct top / top+height edges, auto-sized.
@@ -222,8 +218,8 @@ export function getSpotlightSections(
 			edgeSet.add(round3(e.place.top + e.place.height));
 		});
 		const lines = [...edgeSet].sort((a, b) => a - b);
-		const ordered: SpotlightSectionItem[] = [];
-		const cells: Record<number, SpotlightCell> = {};
+		const ordered: SheetSectionItem[] = [];
+		const cells: Record<number, SheetGridCell> = {};
 		pending.forEach((e) => {
 			ordered.push(e.item);
 			cells[e.item.index] = cellFor(e, lines);
@@ -257,12 +253,12 @@ function lineFor(lines: number[], edge: number): number {
 }
 
 // grid-template-columns value for a section from its column intervals.
-export function getSpotlightGridStyle(section: SpotlightSection): string {
+export function getSheetGridStyle(section: SheetSection): string {
 	const cols = section.columns && section.columns.length ? section.columns : [100];
 	return 'grid-template-columns: ' + cols.map((c) => `${round3(c)}%`).join(' ') + ';';
 }
 
-export function getSpotlightGridCells(section: SpotlightSection): SpotlightCell[] {
+export function getSheetGridCells(section: SheetSection): SheetGridCell[] {
 	return (section.ordered || []).map((entry) => section.cells[entry.index]).filter(Boolean);
 }
 

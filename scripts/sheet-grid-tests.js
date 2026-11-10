@@ -1,6 +1,6 @@
-// spotlight-grid regression tests (nested-grid layout, explicit coordinates).
-// Usage: node scripts/spotlight-grid-tests.js  (exit 1 on failure)
-const G = require('../js/spotlight-grid.ts');
+// sheet-grid regression tests (nested-grid layout, explicit coordinates).
+// Usage: node scripts/sheet-grid-tests.js  (exit 1 on failure)
+const G = require('../js/sheet-grid.ts');
 
 let pass = 0,
 	fail = 0;
@@ -85,14 +85,14 @@ const ctk = (o) => ({ view: o });
 // ---- four across: no column count, no special case
 {
 	const sets = [0, 25, 50, 75].map((left) => ctk({ place: { left: left + '%', top: 0, width: '25%', height: 1 } }));
-	const sections = G.getSpotlightSections(sets, 1);
+	const sections = G.getSheetSections(sets, 1);
 	ok(sections.length === 1 && sections[0].type === 'grid', 'one grid section', sections.length);
 	ok(
-		G.getSpotlightGridStyle(sections[0]) === 'grid-template-columns: 25% 25% 25% 25%;',
+		G.getSheetGridStyle(sections[0]) === 'grid-template-columns: 25% 25% 25% 25%;',
 		'four equal tracks',
-		G.getSpotlightGridStyle(sections[0]),
+		G.getSheetGridStyle(sections[0]),
 	);
-	const cells = G.getSpotlightGridCells(sections[0]);
+	const cells = G.getSheetGridCells(sections[0]);
 	ok(cells.length === 4 && cells[3].col === 4 && cells[3].span === 1, 'fourth cell placed', cells);
 }
 
@@ -104,10 +104,10 @@ const ctk = (o) => ({ view: o });
 		ctk({ place: { left: '0%', top: 1, width: '33%', height: 1 } }),
 		ctk({ place: { left: '33%', top: 0, width: '67%', height: 1 } }),
 	];
-	const sections = G.getSpotlightSections(sets, 1);
+	const sections = G.getSheetSections(sets, 1);
 	ok(sections.length === 1 && sections[0].type === 'grid', 'adjacent tops merge into one grid', sections.length);
 	ok(sections[0].ordered.length === 3, 'top mates join across distance', sections[0].ordered.length);
-	const cells = G.getSpotlightGridCells(sections[0]);
+	const cells = G.getSheetGridCells(sections[0]);
 	ok(cells[0].col === 1 && cells[1].col === 2, 'column lines from union edges', cells);
 	ok(cells[0].style.includes('grid-row: 1 / 2') && cells[2].style.includes('grid-row: 2 / 3'), 'rows from top edges', [
 		cells[0].style,
@@ -116,7 +116,7 @@ const ctk = (o) => ({ view: o });
 }
 {
 	const sets = [ctk({}), ctk({ place: { left: '0%', top: 0, width: '50%', height: 1 } })];
-	const sections = G.getSpotlightSections(sets, 1);
+	const sections = G.getSheetSections(sets, 1);
 	ok(
 		sections.length === 2 && sections[0].type === 'full-width' && sections[1].type === 'grid',
 		'unplaced stacks in order',
@@ -130,7 +130,7 @@ const ctk = (o) => ({ view: o });
 		ctk({}),
 		ctk({ place: { left: '0%', top: 1, width: '50%', height: 1 } }),
 	];
-	const sections = G.getSpotlightSections(sets, 1);
+	const sections = G.getSheetSections(sets, 1);
 	ok(
 		sections.length === 3 && sections[1].type === 'full-width',
 		'unplaced splits grids',
@@ -146,9 +146,9 @@ const ctk = (o) => ({ view: o });
 		ctk({ place: { left: '0%', top: 1, width: '30%', height: 1 } }),
 		ctk({ place: { left: '90%', top: 0, width: '10%', height: 4 } }),
 	];
-	const sections = G.getSpotlightSections(sets, 1);
+	const sections = G.getSheetSections(sets, 1);
 	ok(sections.length === 1, 'one merged grid', sections.length);
-	const cells = G.getSpotlightGridCells(sections[0]);
+	const cells = G.getSheetGridCells(sections[0]);
 	const strip = cells[2];
 	ok(
 		strip.rowSpan === 4 && strip.style.includes('grid-row: 1 / 4') && strip.style.includes('min-height'),
@@ -274,5 +274,5 @@ const ctk = (o) => ({ view: o });
 	);
 }
 
-console.log(`spotlight-grid-tests: ${pass} passed, ${fail} failed`);
+console.log(`sheet-grid-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
