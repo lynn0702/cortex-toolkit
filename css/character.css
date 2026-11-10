@@ -194,14 +194,14 @@
 
 .page-justification-top-base {
 	.columns > *,
-	.spotlight-column {
+	.sheet-column {
 		justify-content: flex-start;
 	}
 }
 
 .page-justification-distributed {
 	.columns > *,
-	.spotlight-column {
+	.sheet-column {
 		justify-content: space-between;
 	}
 }
@@ -225,13 +225,13 @@
 }
 
 .columns .trait-set:first-child,
-.spotlight-column > .trait-set:first-child {
+.sheet-column > .trait-set:first-child {
 	margin-top: 0;
 }
 
 .columns > .column-left,
 .column-left,
-.spotlight-column-left {
+.sheet-column-left {
 	padding-top: var(--column-left-offset, 0px);
 	margin-top: 0;
 
@@ -242,7 +242,7 @@
 
 .columns > .column-right,
 .column-right,
-.spotlight-column-right {
+.sheet-column-right {
 	padding-top: var(--column-right-offset, 0px);
 	margin-top: 0;
 
@@ -253,7 +253,7 @@
 
 .columns > .column-center,
 .column-center,
-.spotlight-column-center {
+.sheet-column-center {
 	padding-top: var(--column-center-offset, 0px);
 	margin-top: 0;
 
@@ -262,12 +262,12 @@
 	}
 }
 
-.spotlight-column {
+.sheet-column {
 	padding-top: 0;
 	margin-top: 0;
 }
 
-.spotlight-full-column {
+.sheet-full-column {
 	padding-top: 0;
 	margin-top: 0;
 }
@@ -1682,7 +1682,7 @@ button.trait-title-btn {
 	fill: none;
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style)
+.character-sheet
 	.trait-set:is(.trait-set-frame-ring, .trait-set-frame-ellipse, .trait-set-frame-arc)
 	.trait-set-body.trait-set-body-framed,
 .trait-set-body-framed {
@@ -1690,7 +1690,7 @@ button.trait-title-btn {
 	padding: 4.5rem 1rem 3.5rem;
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style) .trait-list-framed,
+.character-sheet .trait-list-framed,
 .trait-list-framed {
 	position: relative;
 	aspect-ratio: 1 / 1;
@@ -1885,8 +1885,7 @@ button.trait-title-btn {
 	}
 }
 
-:is(.character-sheet, .character-sheet.spotlight-style, .character-sheet.spotlight-print-style)
-	.trait-set.trait-set-frame-line,
+.character-sheet .trait-set.trait-set-frame-line,
 .trait-set.trait-set-frame-line {
 	border: none;
 	background: transparent;

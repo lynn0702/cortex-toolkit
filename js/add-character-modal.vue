@@ -70,8 +70,8 @@ function targetValue(e: Event) {
 
 					<div class="session-modal-empty" v-if="items.length === 0">
 						<p>No additional characters available in your roster.</p>
-						<button type="button" class="btn-session-spotlight" @click.stop="emit('gotoRoster')">
-							<i class="fas fa-layer-group"></i> Go to Roster / Spotlight Library
+						<button type="button" class="btn-session-library" @click.stop="emit('gotoRoster')">
+							<i class="fas fa-layer-group"></i> Go to Roster / Library
 						</button>
 					</div>
 				</div>

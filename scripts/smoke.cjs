@@ -39,22 +39,22 @@ async function main() {
 			});
 			await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: 'networkidle', timeout: 30000 });
 			await page.waitForTimeout(1500);
-			// Boot to a sheet: open the spotlight library and create from the
+			// Boot to a sheet: open the library and create from the
 			// first template (exercises all renderers), else click New Sheet.
 			const opened = await page.evaluate(async () => {
 				const app = document.querySelector('#cortex-toolkit');
 				if (!app) return 'no-app-root';
 				const libBtn = [...document.querySelectorAll('.roster-button')].find((el) =>
-					/spotlight library/i.test(el.textContent || ''),
+					/library/i.test(el.textContent || ''),
 				);
 				if (libBtn) {
 					libBtn.click();
 					await new Promise((r) => setTimeout(r, 1500));
-					const first = document.querySelector('.btn-spotlight.primary');
+					const first = document.querySelector('.btn-library.primary');
 					if (first) {
 						first.click();
 						await new Promise((r) => setTimeout(r, 1500));
-						return 'spotlight-created';
+						return 'library-created';
 					}
 					return 'library-empty';
 				}

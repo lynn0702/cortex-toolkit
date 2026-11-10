@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-hammerheads-vehicle",
+  "id": "hammerheads-vehicle",
   "version": 1,
   "title": "Hammerheads - Vehicle File",
   "subtitle": "Rescue Craft & Fleet Support",
-  "spotlight": "Hammerheads",
+  "game": "Hammerheads",
   "variant": "Vehicle File",
   "pages": 1,
   "genre": "Action / Rescue / Vehicles",
@@ -11,7 +11,7 @@
     "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
   },
   "character": {
-    "id": "template-spotlight-hammerheads-vehicle",
+    "id": "template-hammerheads-vehicle",
     "isTemplate": true,
     "name": "",
     "game": "Hammerheads",
@@ -23,13 +23,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Hammerheads",
+      "template": "Hammerheads",
       "columnAlignment": "top-base",
       "columnOffsets": {
         "left": 0,

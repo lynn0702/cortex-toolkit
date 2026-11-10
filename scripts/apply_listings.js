@@ -2,8 +2,8 @@
 // regenerate the layered files). Verbatim human copy from the publishers'
 // listings (map researched 2026-10-20); code owns structure, words are theirs.
 // - Drops entry-level `description` (generated summaries) on all 28 entries.
-// - Fixes titles/spotlights: BrighterStars, KitBash, SolarPunk.
-// - Adds `listing` per spotlight: full quote/genre/ratings for the 16
+// - Fixes titles/games: BrighterStars, KitBash, SolarPunk.
+// - Adds `listing` per setting: full quote/genre/ratings for the 16
 //   published settings (variants share their setting's block), URL-only for
 //   the core-book settings, none for the Toolkit Reference showcases.
 // Usage: node scripts/apply_listings.js  (rewrites js/templates.js)
@@ -13,7 +13,7 @@ const path = require('path');
 const MFR = '?manufacturers_id=31866';
 const D = 'https://legacy.drivethrurpg.com/product/';
 const HANDBOOK_URL = D + '567041/Cortex-Prime-Game-Handbook-2nd-Edition' + MFR;
-const HANDBOOK_SPOTLIGHTS = ['Eidolon Alpha', 'Hammerheads', 'TRACE 2.0'];
+const HANDBOOK_SETTINGS = ['Eidolon Alpha', 'Hammerheads', 'TRACE 2.0'];
 
 // Verbatim from the live listings. Genre stored as-is (Safe Zone's pipe is
 // data, never a separator).
@@ -179,19 +179,19 @@ templates.forEach((entry) => {
 	if (!entry || typeof entry !== 'object') return;
 	delete entry.description;
 	entry.title = fix(entry.title);
-	entry.spotlight = fix(entry.spotlight);
-	const sp = entry.spotlight;
+	entry.game = fix(entry.game);
+	const sp = entry.game;
 	delete entry.listing;
 	if (sp === 'Toolkit Reference') {
 		bare++;
 		return;
 	}
-	if (HANDBOOK_SPOTLIGHTS.indexOf(sp) !== -1) {
+	if (HANDBOOK_SETTINGS.indexOf(sp) !== -1) {
 		entry.listing = { url: HANDBOOK_URL };
 		handbook++;
 		return;
 	}
-	if (!LISTINGS[sp]) throw new Error('no listing data for spotlight ' + JSON.stringify(sp) + ' (' + entry.id + ')');
+	if (!LISTINGS[sp]) throw new Error('no listing data for game ' + JSON.stringify(sp) + ' (' + entry.id + ')');
 	const L = LISTINGS[sp];
 	entry.listing = {
 		url: L.url,
@@ -205,7 +205,7 @@ templates.forEach((entry) => {
 	listed++;
 });
 
-const output = `/**\n * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)\n */\nconst cortexSpotlightTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexSpotlightTemplates;\n}\n`;
+const output = `/**\n * Cortex Toolkit - Library Templates Repository (Blank Sheets)\n */\nconst cortexLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexLibraryTemplates;\n}\n`;
 fs.writeFileSync(templatesPath, output, 'utf8');
 console.log(
 	'entries: ' + templates.length + ', full listings: ' + listed + ', handbook: ' + handbook + ', bare: ' + bare,

@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-snowfall-initiative",
+  "id": "snowfall-initiative",
   "version": 1,
   "title": "Snowfall Initiative",
   "subtitle": "Cold War Espionage & Super-Spies",
-  "spotlight": "Snowfall Initiative",
+  "game": "Snowfall Initiative",
   "variant": "Agent File",
   "pages": 1,
   "genre": "Spy / Cold War / High-Tech",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/574560.jpg"
   },
   "character": {
-    "id": "template-spotlight-snowfall",
+    "id": "template-snowfall",
     "isTemplate": true,
     "name": "",
     "game": "Snowfall Initiative",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Snowfall Initiative",
+      "template": "Snowfall Initiative",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-trace-20",
+  "id": "trace-20",
   "version": 1,
   "title": "TRACE 2.0",
   "subtitle": "Civic Paranormal Investigation",
-  "spotlight": "TRACE 2.0",
+  "game": "TRACE 2.0",
   "variant": "Character File",
   "pages": 1,
   "genre": "Mystery / Procedural / Urban Fantasy",
@@ -11,7 +11,7 @@
     "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
   },
   "character": {
-    "id": "template-spotlight-trace-20",
+    "id": "template-trace-20",
     "isTemplate": true,
     "name": "",
     "game": "TRACE 2.0",
@@ -23,13 +23,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "TRACE 2.0",
+      "template": "TRACE 2.0",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

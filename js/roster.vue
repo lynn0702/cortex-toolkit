@@ -6,7 +6,7 @@ import PortraitRing from './portrait-ring.vue';
 import TraitSetMini from './trait-set-mini.vue';
 import { SHOWCASE_TEMPLATES } from './showcase-templates.ts';
 
-declare const cortexSpotlightTemplates: any;
+declare const cortexLibraryTemplates: any;
 
 const props = withDefaults(
 	defineProps<{
@@ -19,7 +19,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-	(e: 'createFromSpotlight', tmpl: any, asTemplate: boolean, openPrint: boolean): void;
+	(e: 'createFromLibrary', tmpl: any, asTemplate: boolean, openPrint: boolean): void;
 	(e: 'createCharacter', isTemplate: boolean, templateId?: string | null): void;
 	(e: 'createFromTemplate', characterID: string): void;
 	(e: 'toggleTemplate', characterID: string): void;
@@ -43,14 +43,14 @@ const showImportConfirm = ref(false);
 const importQueue = ref<any[]>([]);
 const importBuffer = ref<any>(null);
 const importError = ref('');
-const spotlightLoading = ref(false);
-const spotlightError = ref('');
+const libraryLoading = ref(false);
+const libraryError = ref('');
 const showDeleteConfirm = ref(false);
 const characterToDelete = ref<any>(null);
 const showDeleteAllConfirm = ref(false);
-const showSpotlightLibrary = ref(false);
+const showLibrary = ref(false);
 const showTraitSetMini = ref(false);
-const spotlightSearch = ref('');
+const librarySearch = ref('');
 
 const inputFile = ref<HTMLInputElement | null>(null);
 
@@ -94,18 +94,18 @@ const charactersFiltered = computed(() => {
 	return list;
 });
 
-const spotlightTemplates = computed(() => {
-	const base = typeof cortexSpotlightTemplates !== 'undefined' ? cortexSpotlightTemplates : [];
-	if (typeof cortexSpotlightTemplates === 'undefined') {
-		loadSpotlightTemplates();
+const libraryTemplates = computed(() => {
+	const base = typeof cortexLibraryTemplates !== 'undefined' ? cortexLibraryTemplates : [];
+	if (typeof cortexLibraryTemplates === 'undefined') {
+		loadLibraryTemplates();
 	}
 	return [...SHOWCASE_TEMPLATES, ...base];
 });
 
-const spotlightTemplatesFiltered = computed(() => {
-	let list = spotlightTemplates.value;
-	if (spotlightSearch.value && spotlightSearch.value.trim().length) {
-		const q = spotlightSearch.value.toLowerCase().trim();
+const libraryTemplatesFiltered = computed(() => {
+	let list = libraryTemplates.value;
+	if (librarySearch.value && librarySearch.value.trim().length) {
+		const q = librarySearch.value.toLowerCase().trim();
 		list = list.filter(
 			(t: any) =>
 				t.title.toLowerCase().includes(q) ||
@@ -163,41 +163,41 @@ function cardRingCharacter(tmpl: any) {
 	};
 }
 
-function openSpotlightLibrary() {
-	showSpotlightLibrary.value = true;
-	loadSpotlightTemplates();
+function openLibrary() {
+	showLibrary.value = true;
+	loadLibraryTemplates();
 }
 
-function loadSpotlightTemplates() {
-	if (typeof cortexSpotlightTemplates !== 'undefined' || spotlightLoading.value) return;
-	spotlightLoading.value = true;
-	spotlightError.value = '';
+function loadLibraryTemplates() {
+	if (typeof cortexLibraryTemplates !== 'undefined' || libraryLoading.value) return;
+	libraryLoading.value = true;
+	libraryError.value = '';
 	const script = document.createElement('script');
 	// `?v=` is rewritten to the content hash of js/templates.bundle.js by
 	// scripts/version-assets.js during `npm run build`.
 	script.src = 'js/templates.bundle.js?v=33';
 	script.onload = () => {
-		spotlightLoading.value = false;
+		libraryLoading.value = false;
 		(instance?.proxy as any)?.$forceUpdate();
 	};
 	script.onerror = () => {
-		spotlightLoading.value = false;
-		spotlightError.value = 'Could not load the Spotlight library. Check your connection and try again.';
+		libraryLoading.value = false;
+		libraryError.value = 'Could not load the Library. Check your connection and try again.';
 	};
 	document.head.appendChild(script);
 }
 
-function useSpotlight(tmpl: any, asTemplate = false, openPrint = false) {
-	showSpotlightLibrary.value = false;
-	emit('createFromSpotlight', tmpl, asTemplate, openPrint);
+function useLibrary(tmpl: any, asTemplate = false, openPrint = false) {
+	showLibrary.value = false;
+	emit('createFromLibrary', tmpl, asTemplate, openPrint);
 }
 
 function createCharacter() {
-	if (selectedTemplateId.value && selectedTemplateId.value.startsWith('spotlight:')) {
-		const id = selectedTemplateId.value.slice('spotlight:'.length);
-		const tmpl = spotlightTemplates.value.find((t) => t.id === id);
+	if (selectedTemplateId.value && selectedTemplateId.value.startsWith('library:')) {
+		const id = selectedTemplateId.value.slice('library:'.length);
+		const tmpl = libraryTemplates.value.find((t) => t.id === id);
 		if (tmpl) {
-			useSpotlight(tmpl, false, false);
+			useLibrary(tmpl, false, false);
 			return;
 		}
 	}
@@ -304,7 +304,7 @@ function importGetUploads(event: Event) {
 						return;
 					}
 					// Standalone layout template files reuse the
-					// spotlight entry shape; they upsert by static id
+					// library entry shape; they upsert by static id
 					// (replace, never duplicate) instead of importing
 					// as characters.
 					if (cortexFunctions.isSheetTemplateFile(char)) {
@@ -437,15 +437,15 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								</option>
 							</optgroup>
 							<optgroup label="Library Templates">
-								<option v-for="tmpl in spotlightTemplates" :key="tmpl.id" :value="'spotlight:' + tmpl.id">
+								<option v-for="tmpl in libraryTemplates" :key="tmpl.id" :value="'library:' + tmpl.id">
 									{{ tmpl.title || tmpl.id }}
 								</option>
 							</optgroup>
 						</select>
 					</label>
 
-					<div class="roster-button roster-button-spotlight" @click.stop="openSpotlightLibrary">
-						<span><i class="fas fa-layer-group"></i> Spotlight Library</span>
+					<div class="roster-button roster-button-library" @click.stop="openLibrary">
+						<span><i class="fas fa-layer-group"></i> Library</span>
 					</div>
 
 					<div
@@ -717,30 +717,30 @@ function getRelativeDateLabel(date1: any, date2: any) {
 			</aside>
 		</transition>
 
-		<!-- SPOTLIGHT TEMPLATE LIBRARY MODAL -->
+		<!-- LIBRARY MODAL -->
 		<transition>
-			<div class="modal-veil" v-show="showSpotlightLibrary" @click.stop="showSpotlightLibrary = false"></div>
+			<div class="modal-veil" v-show="showLibrary" @click.stop="showLibrary = false"></div>
 		</transition>
 
 		<transition>
-			<aside class="modal modal-spotlight-library" v-if="showSpotlightLibrary">
-				<div class="modal-close" @click.prevent="showSpotlightLibrary = false"><i class="fas fa-times"></i></div>
+			<aside class="modal modal-library" v-if="showLibrary">
+				<div class="modal-close" @click.prevent="showLibrary = false"><i class="fas fa-times"></i></div>
 				<div class="modal-inner">
-					<div class="spotlight-library-header">
-						<h2><i class="fas fa-book-open"></i> Spotlight Templates Library</h2>
+					<div class="library-header">
+						<h2><i class="fas fa-book-open"></i> Library</h2>
 						<p>
-							Select a character sheet template from the official Spotlight collections. Create a new character, save to
-							your templates, or print directly.
+							Select a character sheet template from the official collections. Create a new character, save to your
+							templates, or print directly.
 						</p>
 
-						<div class="spotlight-search-row">
-							<div class="spotlight-search-input">
+						<div class="library-search-row">
+							<div class="library-search-input">
 								<i class="fas fa-search"></i>
 								<input
 									type="text"
-									id="spotlight-search"
-									name="spotlightSearch"
-									v-model="spotlightSearch"
+									id="library-search"
+									name="librarySearch"
+									v-model="librarySearch"
 									placeholder="Search templates by name, genre, or mechanics..."
 									aria-label="Search templates"
 								/>
@@ -748,15 +748,15 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						</div>
 					</div>
 
-					<div class="spotlight-grid">
-						<div class="spotlight-loading" v-if="spotlightLoading">
-							<i class="fas fa-circle-notch fa-spin"></i> Loading Spotlight library…
+					<div class="library-grid">
+						<div class="library-loading" v-if="libraryLoading">
+							<i class="fas fa-circle-notch fa-spin"></i> Loading Library…
 						</div>
-						<div class="roster-import-error" v-if="spotlightError">{{ spotlightError }}</div>
-						<div class="spotlight-card" v-for="tmpl in spotlightTemplatesFiltered" :key="tmpl.id">
-							<div class="spotlight-card-header">
-								<div class="spotlight-card-title-group">
-									<h3 class="spotlight-card-title">
+						<div class="roster-import-error" v-if="libraryError">{{ libraryError }}</div>
+						<div class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
+							<div class="library-card-header">
+								<div class="library-card-title-group">
+									<h3 class="library-card-title">
 										<a
 											v-if="tmpl.listing && tmpl.listing.url"
 											:href="tmpl.listing.url"
@@ -766,13 +766,13 @@ function getRelativeDateLabel(date1: any, date2: any) {
 										>
 										<template v-else>{{ tmpl.title }}</template>
 									</h3>
-									<div class="spotlight-card-subtitle">{{ tmpl.subtitle }}</div>
+									<div class="library-card-subtitle">{{ tmpl.subtitle }}</div>
 								</div>
-								<div class="spotlight-card-badges">
+								<div class="library-card-badges">
 									<span class="badge-genre">{{ (tmpl.listing && tmpl.listing.genre) || tmpl.genre }}</span>
 								</div>
 							</div>
-							<div class="spotlight-card-hero" v-if="tmpl.listing && tmpl.listing.image">
+							<div class="library-card-hero" v-if="tmpl.listing && tmpl.listing.image">
 								<div class="portrait">
 									<div class="portrait-inner">
 										<div
@@ -783,31 +783,31 @@ function getRelativeDateLabel(date1: any, date2: any) {
 									<PortraitRing :character="cardRingCharacter(tmpl)" :editing="[]" :ringTraitID="0" />
 								</div>
 							</div>
-							<p class="spotlight-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
-							<div class="spotlight-card-traits">
+							<p class="library-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
+							<div class="library-card-traits">
 								<span class="trait-tag" v-for="ts in tmpl.character.traitSets || []" :key="ts.name">{{ ts.name }}</span>
 							</div>
-							<div class="spotlight-card-actions">
+							<div class="library-card-actions">
 								<button
 									type="button"
-									class="btn-spotlight primary"
-									@click="useSpotlight(tmpl, false, false)"
+									class="btn-library primary"
+									@click="useLibrary(tmpl, false, false)"
 									title="Create an editable character"
 								>
 									<i class="fas fa-plus"></i> Character
 								</button>
 								<button
 									type="button"
-									class="btn-spotlight secondary"
-									@click="useSpotlight(tmpl, true, false)"
+									class="btn-library secondary"
+									@click="useLibrary(tmpl, true, false)"
 									title="Save template to Roster"
 								>
 									<i class="fas fa-bookmark"></i> Template
 								</button>
 								<button
 									type="button"
-									class="btn-spotlight print"
-									@click="useSpotlight(tmpl, false, true)"
+									class="btn-library print"
+									@click="useLibrary(tmpl, false, true)"
 									title="Open in Print Tab"
 								>
 									<i class="fas fa-print"></i> Print

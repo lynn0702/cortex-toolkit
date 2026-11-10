@@ -4,7 +4,7 @@ const path = require('path');
 
 const scripts = [
 	'cortex-pal-tests.js',
-	'spotlight-grid-tests.js',
+	'sheet-grid-tests.js',
 	'merge-tests.js',
 	'materialize-tests.js',
 	'storage-tests.js',

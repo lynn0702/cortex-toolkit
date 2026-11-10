@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-spellcaught",
+  "id": "spellcaught",
   "version": 1,
   "title": "Spellcaught",
   "subtitle": "Arcane Curses & Eldritch Magic",
-  "spotlight": "Spellcaught",
+  "game": "Spellcaught",
   "variant": "Character File",
   "pages": 1,
   "genre": "Fantasy / Eldritch / Arcane",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/572310.jpg"
   },
   "character": {
-    "id": "template-spotlight-spellcaught",
+    "id": "template-spellcaught",
     "isTemplate": true,
     "name": "",
     "game": "Spellcaught",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Spellcaught",
+      "template": "Spellcaught",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

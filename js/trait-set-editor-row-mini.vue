@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from 'vue';
 import { getView } from './model.ts';
-import { partsGrid, formatPct } from './spotlight-grid.ts';
+import { partsGrid, formatPct } from './sheet-grid.ts';
 import { injectTraitSetEditor } from './use-trait-set-editor.ts';
 
 const {

@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-inheritors-family",
+  "id": "inheritors-family",
   "version": 1,
   "title": "Inheritors - Family & GMCs",
   "subtitle": "Superpowered Dynasty Heritage",
-  "spotlight": "Inheritors",
+  "game": "Inheritors",
   "variant": "Family Tree File",
   "pages": 2,
   "genre": "Superhero / Dynastic Drama",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
   },
   "character": {
-    "id": "template-spotlight-inheritors-family",
+    "id": "template-inheritors-family",
     "isTemplate": true,
     "name": "",
     "game": "Inheritors",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 2,
-      "spotlight": "Inheritors",
+      "template": "Inheritors",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

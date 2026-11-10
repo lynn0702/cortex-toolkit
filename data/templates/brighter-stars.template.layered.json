@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-brighter-stars",
+  "id": "brighter-stars",
   "version": 1,
   "title": "Brighter Stars",
   "subtitle": "Hopepunk Starship Exploration",
-  "spotlight": "Brighter Stars",
+  "game": "Brighter Stars",
   "variant": "Character File",
   "pages": 1,
   "genre": "Sci-Fi / Space Exploration",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/568411.jpg"
   },
   "character": {
-    "id": "template-spotlight-brighter-stars",
+    "id": "template-brighter-stars",
     "isTemplate": true,
     "name": "",
     "game": "BrighterStars",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "BrighterStars",
+      "template": "BrighterStars",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

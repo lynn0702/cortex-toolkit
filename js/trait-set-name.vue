@@ -104,18 +104,18 @@ function adjustPlotPoints(delta: number) {
 <template>
 	<div class="page-header">
 		<div
-			class="page-header-inner spotlight-header-card"
+			class="page-header-inner sheet-header-card"
 			:class="{
 				'has-portrait': hasNameSetPortrait,
 				selected: isSelected(['name']) || isSelected(['traitSet', s]),
 			}"
 		>
 			<!-- LEFT BOX: NAME | NICKNAME | PRONOUNS -->
-			<div class="spotlight-header-meta-box trait-set-box" @click.stop="selectElement(['name'])">
-				<div class="spotlight-meta-name-cell">
-					<div class="spotlight-cell-header">
-						<span class="spotlight-cell-label">NAME</span>
-						<span class="spotlight-cell-sublabel" v-if="player && !printBlank && nameShown('player')"
+			<div class="sheet-header-meta-box trait-set-box" @click.stop="selectElement(['name'])">
+				<div class="sheet-meta-name-cell">
+					<div class="sheet-cell-header">
+						<span class="sheet-cell-label">NAME</span>
+						<span class="sheet-cell-sublabel" v-if="player && !printBlank && nameShown('player')"
 							>{{ playerLabel }} {{ player }}</span
 						>
 					</div>
@@ -124,12 +124,12 @@ function adjustPlotPoints(delta: number) {
 						v-if="game && !printBlank && nameShown('game')"
 						v-html="renderText(game)"
 					></div>
-					<div class="spotlight-cell-content name-content" v-if="!printBlank && name" v-html="renderText(name)"></div>
-					<div class="spotlight-blank-line" v-else-if="printBlank"></div>
-					<div class="spotlight-cell-content name-content placeholder-dim" v-else-if="submode === 'edit'">
+					<div class="sheet-cell-content name-content" v-if="!printBlank && name" v-html="renderText(name)"></div>
+					<div class="sheet-blank-line" v-else-if="printBlank"></div>
+					<div class="sheet-cell-content name-content placeholder-dim" v-else-if="submode === 'edit'">
 						Click to set name...
 					</div>
-					<div class="spotlight-blank-line" v-else></div>
+					<div class="sheet-blank-line" v-else></div>
 					<div class="character-pp-badge" v-if="submode === 'play' && nameShown('plotPoints')">
 						<span class="pp-badge-label">{{ plotPointsLabel }}</span>
 						<button
@@ -148,44 +148,41 @@ function adjustPlotPoints(delta: number) {
 					</div>
 				</div>
 
-				<div
-					class="spotlight-meta-divider"
-					v-if="(hasNickname && nameShown('nickname')) || nameShown('pronouns')"
-				></div>
+				<div class="sheet-meta-divider" v-if="(hasNickname && nameShown('nickname')) || nameShown('pronouns')"></div>
 
-				<div class="spotlight-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
-					<span class="spotlight-cell-label">{{ nicknameLabel }}</span>
-					<span class="spotlight-nickname-val" v-if="!printBlank && nickname" v-html="renderText(nickname)"></span>
-					<span class="spotlight-blank-line" v-else-if="printBlank"></span>
-					<span class="spotlight-nickname-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
-					<span class="spotlight-blank-line" v-else></span>
+				<div class="sheet-meta-nickname-cell" v-if="hasNickname && nameShown('nickname')">
+					<span class="sheet-cell-label">{{ nicknameLabel }}</span>
+					<span class="sheet-nickname-val" v-if="!printBlank && nickname" v-html="renderText(nickname)"></span>
+					<span class="sheet-blank-line" v-else-if="printBlank"></span>
+					<span class="sheet-nickname-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
+					<span class="sheet-blank-line" v-else></span>
 				</div>
 
-				<div class="spotlight-meta-divider" v-if="hasNickname && nameShown('nickname') && nameShown('pronouns')"></div>
+				<div class="sheet-meta-divider" v-if="hasNickname && nameShown('nickname') && nameShown('pronouns')"></div>
 
-				<div class="spotlight-meta-pronoun-cell" v-if="nameShown('pronouns')">
-					<span class="spotlight-cell-label">{{ pronounsLabel }}</span>
-					<span class="spotlight-pronoun-val" v-if="!printBlank && pronouns" v-html="renderText(pronouns)"></span>
-					<span class="spotlight-blank-line" v-else-if="printBlank"></span>
-					<span class="spotlight-pronoun-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
-					<span class="spotlight-blank-line" v-else></span>
+				<div class="sheet-meta-pronoun-cell" v-if="nameShown('pronouns')">
+					<span class="sheet-cell-label">{{ pronounsLabel }}</span>
+					<span class="sheet-pronoun-val" v-if="!printBlank && pronouns" v-html="renderText(pronouns)"></span>
+					<span class="sheet-blank-line" v-else-if="printBlank"></span>
+					<span class="sheet-pronoun-val placeholder-dim" v-else-if="submode === 'edit'">Click to set...</span>
+					<span class="sheet-blank-line" v-else></span>
 				</div>
 			</div>
 
 			<!-- CENTER BOX: DESCRIPTION -->
 			<div
-				class="spotlight-header-desc-box trait-set-box"
+				class="sheet-header-desc-box trait-set-box"
 				v-if="nameShown('description')"
 				@click.stop="selectElement(['name'])"
 			>
-				<div class="spotlight-cell-header">
-					<label :for="'spotlight-header-desc-' + (character?.id || 'char')" class="spotlight-cell-label">{{
+				<div class="sheet-cell-header">
+					<label :for="'sheet-header-desc-' + (character?.id || 'char')" class="sheet-cell-label">{{
 						descriptionLabel
 					}}</label>
 					<button
 						v-if="submode === 'edit'"
 						type="button"
-						class="spotlight-add-portrait-link"
+						class="sheet-add-portrait-link"
 						@click.stop="selectElement(['traitSet', s])"
 						title="Edit Name Set / Image"
 					>
@@ -194,9 +191,9 @@ function adjustPlotPoints(delta: number) {
 				</div>
 				<textarea
 					v-if="submode === 'edit'"
-					:id="'spotlight-header-desc-' + (character?.id || 'char')"
-					name="spotlightHeaderDesc"
-					class="spotlight-desc-textarea"
+					:id="'sheet-header-desc-' + (character?.id || 'char')"
+					name="sheetHeaderDesc"
+					class="sheet-desc-textarea"
 					v-model="descriptionText"
 					placeholder="Character description..."
 					aria-label="Character description"
@@ -213,7 +210,7 @@ function adjustPlotPoints(delta: number) {
 			</div>
 
 			<!-- RIGHT BOX: IMAGE ELEMENT (VIA TRAIT-SET-IMAGE, ONLY WHEN PRESENT AND VISIBLE) -->
-			<div v-if="hasNameSetPortrait" class="spotlight-header-portrait-wrap">
+			<div v-if="hasNameSetPortrait" class="sheet-header-portrait-wrap">
 				<TraitSetImage />
 			</div>
 		</div>

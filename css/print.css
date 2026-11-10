@@ -1,4 +1,4 @@
-/* SPOTLIGHT PRINTABLE LAYOUT & PRINT TAB STYLES */
+/* PRINTABLE LAYOUT & PRINT TAB STYLES */
 
 .print-toolbar {
 	position: sticky;
@@ -612,7 +612,7 @@
 		}
 	}
 
-	/* COLUMNS IN SPOTLIGHT (GRID BANDS) */
+	/* COLUMNS (GRID BANDS) */
 	/* BLOCK BUILDING: sets tile edge-to-edge like the source sheets â€” no */
 	/* gutters. Each band section is a grid: sets carry explicit placement */
 	/* (grid-row/column from the renderer) with per-band track shares, so a */
@@ -2355,7 +2355,7 @@
 	}
 }
 
-/* DARK MODE FOR SPOTLIGHT LIBRARY MODAL (screen only) */
+/* DARK MODE FOR LIBRARY MODAL (screen only) */
 @media screen {
 	[data-theme='dark'],
 	.theme-dark {
@@ -4192,7 +4192,7 @@ body:has(.character-sheet.submode-print) .main {
 	min-width: 0;
 }
 
-/* LATE-NIGHT DARK MODE FOR SPOTLIGHT SHEETS (Print-Immune: screen only, non-print submodes only) */
+/* LATE-NIGHT DARK MODE FOR SHEETS (Print-Immune: screen only, non-print submodes only) */
 @media screen {
 	:is([data-theme='dark'], .theme-dark) .character-sheet:not(.submode-print) {
 		/* Name & Header Block */

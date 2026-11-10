@@ -60,7 +60,7 @@
 		}
 	}
 
-	.spotlight-full-column & {
+	.sheet-full-column & {
 		left: 0;
 		right: auto;
 		transform: none;
@@ -129,7 +129,7 @@
 		}
 
 		/* Full-width trait sets: honor the editor's dock toggle in the gutter too. */
-		.spotlight-full-column &.dock-right {
+		.sheet-full-column &.dock-right {
 			left: auto;
 			right: max(1rem, calc((100vw - var(--page-width)) / 2 - 22rem));
 		}
@@ -257,7 +257,7 @@
 		border-top: 0.5em solid transparent;
 		border-left: 0.5em solid black;
 	}
-	.spotlight-full-column & {
+	.sheet-full-column & {
 		display: none;
 	}
 	.anchor-position-top & {

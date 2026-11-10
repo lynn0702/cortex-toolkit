@@ -1,4 +1,4 @@
-// Browser prelude for the Spotlight templates bundle.
+// Browser prelude for the Library templates bundle.
 // js/templates.js is a CommonJS module (module.exports),
 // but this bundle loads as a classic script tag, where
 // `module` does not exist. Provide it so the module

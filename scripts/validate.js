@@ -47,12 +47,12 @@ if (schema.additionalProperties !== false) warn('schema character: additionalPro
 // DriveThruRPG listings. Generated entry descriptions are gone; published
 // settings carry a listing block, core-book settings a URL-only one, and
 // the Toolkit Reference showcases none.
-const HANDBOOK_SPOTLIGHTS = ['Eidolon Alpha', 'Hammerheads', 'TRACE 2.0'];
+const HANDBOOK_SETTINGS = ['Eidolon Alpha', 'Hammerheads', 'TRACE 2.0'];
 function checkListing(where, entry) {
 	if (entry.description !== undefined) {
 		err(`${where}: generated entry description removed — cards use listing copy`);
 	}
-	const sp = entry.spotlight;
+	const sp = entry.game || entry.title;
 	const listing = entry.listing;
 	if (sp === 'Toolkit Reference') {
 		if (listing !== undefined) err(`${where}: showcase entries carry no listing`);
@@ -70,7 +70,7 @@ function checkListing(where, entry) {
 		err(`${where}: listing.url must be the live DriveThruRPG product URL`);
 	}
 	const textKeys = ['quote', 'genre', 'setting', 'prep', 'complexity'];
-	if (HANDBOOK_SPOTLIGHTS.indexOf(sp) !== -1) {
+	if (HANDBOOK_SETTINGS.indexOf(sp) !== -1) {
 		for (const k of textKeys) {
 			if (listing[k] !== undefined) err(`${where}: core-book setting carries only the Handbook URL (no ${k})`);
 		}

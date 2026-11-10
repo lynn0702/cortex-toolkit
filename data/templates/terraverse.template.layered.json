@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-terraverse",
+  "id": "terraverse",
   "version": 1,
   "title": "Terraverse",
   "subtitle": "Epic Science-Fantasy Multiverse",
-  "spotlight": "Terraverse",
+  "game": "Terraverse",
   "variant": "Character File",
   "pages": 2,
   "genre": "Sci-Fi / Superhero / Multiverse",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/567047.jpg"
   },
   "character": {
-    "id": "template-spotlight-terraverse",
+    "id": "template-terraverse",
     "isTemplate": true,
     "name": "",
     "game": "Terraverse",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 2,
-      "spotlight": "Terraverse",
+      "template": "Terraverse",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onUnmounted } from 'vue';
 import { getView, ensureView } from './model.ts';
-import { getSpotlightSections, parsePct, formatPct } from './spotlight-grid.ts';
+import { getSheetSections, parsePct, formatPct } from './sheet-grid.ts';
 import TraitSetMini from './trait-set-mini.vue';
 
 // Page-level arrangement: every set on every page as a draggable box on
@@ -43,7 +43,7 @@ interface Block {
 
 function layoutFor(page: number, setsInput?: any[]): { blocks: Block[]; rows: number } {
 	const sets = setsInput ?? props.character?.traitSets ?? [];
-	const sections = getSpotlightSections(sets as any, page);
+	const sections = getSheetSections(sets as any, page);
 	const out: Block[] = [];
 	let cursor = 0;
 	const labelOf = (i: number) => {

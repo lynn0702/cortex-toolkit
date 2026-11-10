@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-titans-handler",
+  "id": "titans-handler",
   "version": 1,
   "title": "Titans vs Leviathans - Handler",
   "subtitle": "Giant Mech vs Kaiju Combat",
-  "spotlight": "Titans vs Leviathans",
+  "game": "Titans vs Leviathans",
   "variant": "Handler File",
   "pages": 1,
   "genre": "Mecha / Kaiju / Military",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/567042.jpg"
   },
   "character": {
-    "id": "template-spotlight-titans-handler",
+    "id": "template-titans-handler",
     "isTemplate": true,
     "name": "",
     "game": "Titans vs Leviathans",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Titans vs Leviathans",
+      "template": "Titans vs Leviathans",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

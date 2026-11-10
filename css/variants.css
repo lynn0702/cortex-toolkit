@@ -1091,7 +1091,7 @@
 	/* set editor. The 0,5,0 specificity beats the print file's black twin */
 	/* (which lives in a dual screen+print block); print keeps its black. */
 	/* @at-root because this sits nested inside the subtrait block. */
-	.character-sheet.spotlight-style .trait-set.trait-set-style-subtrait-columns .branch-head {
+	.character-sheet .trait-set.trait-set-style-subtrait-columns .branch-head {
 		color: var(--color-primary);
 		border-bottom-color: var(--color-primary);
 	}

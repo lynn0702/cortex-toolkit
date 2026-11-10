@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-retired-aerial",
+  "id": "retired-aerial",
   "version": 1,
   "title": "Retired No More - Aerial Age",
   "subtitle": "Aging Veteran Heroes",
-  "spotlight": "Retired No More",
+  "game": "Retired No More",
   "variant": "Aerial Age",
   "pages": 1,
   "genre": "Dieselpunk / Aviation Adventure",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
   },
   "character": {
-    "id": "template-spotlight-retired-aerial",
+    "id": "template-retired-aerial",
     "isTemplate": true,
     "name": "",
     "game": "Retired No More",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Retired No More",
+      "template": "Retired No More",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

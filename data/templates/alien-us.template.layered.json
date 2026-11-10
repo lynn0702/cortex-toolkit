@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-alien-us",
+  "id": "alien-us",
   "version": 1,
   "title": "Alien, Us",
   "subtitle": "Sci-Fi Infiltration & Paranoia",
-  "spotlight": "Alien, Us",
+  "game": "Alien, Us",
   "variant": "Character File",
   "pages": 2,
   "genre": "Sci-Fi / Espionage",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/572304.jpg"
   },
   "character": {
-    "id": "template-spotlight-alien-us",
+    "id": "template-alien-us",
     "isTemplate": true,
     "name": "",
     "game": "Alien, Us",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 2,
-      "spotlight": "Alien, Us",
+      "template": "Alien, Us",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

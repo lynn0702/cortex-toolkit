@@ -1,13 +1,13 @@
 /**
- * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)
+ * Cortex Toolkit - Library Templates Repository (Blank Sheets)
  */
-const cortexSpotlightTemplates = [
+const cortexLibraryTemplates = [
 	{
-		id: 'spotlight-alien-us',
+		id: 'alien-us',
 		version: 1,
 		title: 'Alien, Us',
 		subtitle: 'Sci-Fi Infiltration & Paranoia',
-		spotlight: 'Alien, Us',
+		game: 'Alien, Us',
 		variant: 'Character File',
 		pages: 2,
 		genre: 'Sci-Fi / Espionage',
@@ -24,7 +24,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-alien-us',
+			id: 'template-alien-us',
 			isTemplate: true,
 			name: '',
 			game: 'Alien, Us',
@@ -36,13 +36,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 2,
-				spotlight: 'Alien, Us',
+				template: 'Alien, Us',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -683,11 +682,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-brighter-stars',
+		id: 'brighter-stars',
 		version: 1,
 		title: 'Brighter Stars',
 		subtitle: 'Hopepunk Starship Exploration',
-		spotlight: 'Brighter Stars',
+		game: 'Brighter Stars',
 		variant: 'Character File',
 		pages: 1,
 		genre: 'Sci-Fi / Space Exploration',
@@ -703,7 +702,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-brighter-stars',
+			id: 'template-brighter-stars',
 			isTemplate: true,
 			name: '',
 			game: 'BrighterStars',
@@ -715,13 +714,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'BrighterStars',
+				template: 'BrighterStars',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -1264,11 +1262,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-camp-bewilderwood',
+		id: 'camp-bewilderwood',
 		version: 1,
 		title: 'Camp Bewilderwood',
 		subtitle: 'Cryptid Summer Camp Mystery',
-		spotlight: 'Camp Bewilderwood',
+		game: 'Camp Bewilderwood',
 		variant: 'Camper File',
 		pages: 1,
 		genre: 'Supernatural / Youth Mystery',
@@ -1284,7 +1282,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-camp-bewilderwood',
+			id: 'template-camp-bewilderwood',
 			isTemplate: true,
 			name: '',
 			game: 'Camp Bewilderwood',
@@ -1296,13 +1294,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Camp Bewilderwood',
+				template: 'Camp Bewilderwood',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -1915,11 +1912,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-cosa-nostra',
+		id: 'cosa-nostra',
 		version: 1,
 		title: 'Cosa Nostra',
 		subtitle: 'Historical Crime Syndicate Drama',
-		spotlight: 'Cosa Nostra',
+		game: 'Cosa Nostra',
 		variant: 'Mobster File',
 		pages: 1,
 		genre: 'Crime / Drama / Noir',
@@ -1935,7 +1932,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-cosa-nostra',
+			id: 'template-cosa-nostra',
 			isTemplate: true,
 			name: '',
 			game: 'Cosa Nostra',
@@ -1947,13 +1944,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Cosa Nostra',
+				template: 'Cosa Nostra',
 				hasNickname: true,
 				watermark: {
 					enabled: true,
@@ -2412,11 +2408,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-eidolon-alpha',
+		id: 'eidolon-alpha',
 		version: 1,
 		title: 'Eidolon Alpha',
 		subtitle: 'Mythic Summoners & Living Eidolons',
-		spotlight: 'Eidolon Alpha',
+		game: 'Eidolon Alpha',
 		variant: 'Character File',
 		pages: 1,
 		genre: 'Fantasy / Summoning / Mythic',
@@ -2426,7 +2422,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-eidolon-alpha',
+			id: 'template-eidolon-alpha',
 			isTemplate: true,
 			name: '',
 			game: 'Eidolon Alpha',
@@ -2438,13 +2434,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Eidolon Alpha',
+				template: 'Eidolon Alpha',
 				columnAlignment: 'top-base',
 				columnOffsets: {
 					left: 0,
@@ -3020,11 +3015,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-hammerheads-character',
+		id: 'hammerheads-character',
 		version: 1,
 		title: 'Hammerheads',
 		subtitle: 'Disaster Response & Rescue Pilots',
-		spotlight: 'Hammerheads',
+		game: 'Hammerheads',
 		variant: 'Character File',
 		pages: 2,
 		genre: 'Action / Rescue / Drama',
@@ -3034,7 +3029,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-hammerheads-character',
+			id: 'template-hammerheads-character',
 			isTemplate: true,
 			name: '',
 			game: 'Hammerheads',
@@ -3046,13 +3041,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 2,
-				spotlight: 'Hammerheads',
+				template: 'Hammerheads',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -3763,11 +3757,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-hammerheads-vehicle',
+		id: 'hammerheads-vehicle',
 		version: 1,
 		title: 'Hammerheads - Vehicle File',
 		subtitle: 'Rescue Craft & Fleet Support',
-		spotlight: 'Hammerheads',
+		game: 'Hammerheads',
 		variant: 'Vehicle File',
 		pages: 1,
 		genre: 'Action / Rescue / Vehicles',
@@ -3777,7 +3771,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-hammerheads-vehicle',
+			id: 'template-hammerheads-vehicle',
 			isTemplate: true,
 			name: '',
 			game: 'Hammerheads',
@@ -3789,13 +3783,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Hammerheads',
+				template: 'Hammerheads',
 				columnAlignment: 'top-base',
 				columnOffsets: {
 					left: 0,
@@ -4175,11 +4168,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-inheritors-character',
+		id: 'inheritors-character',
 		version: 1,
 		title: 'Inheritors',
 		subtitle: 'Superpowered Dynasty Heritage',
-		spotlight: 'Inheritors',
+		game: 'Inheritors',
 		variant: 'Character File',
 		pages: 1,
 		genre: 'Superhero / Dynastic Drama',
@@ -4196,7 +4189,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-inheritors-char',
+			id: 'template-inheritors-char',
 			isTemplate: true,
 			name: '',
 			game: 'Inheritors',
@@ -4208,13 +4201,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Inheritors',
+				template: 'Inheritors',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -4948,11 +4940,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-inheritors-family',
+		id: 'inheritors-family',
 		version: 1,
 		title: 'Inheritors - Family & GMCs',
 		subtitle: 'Superpowered Dynasty Heritage',
-		spotlight: 'Inheritors',
+		game: 'Inheritors',
 		variant: 'Family Tree File',
 		pages: 2,
 		genre: 'Superhero / Dynastic Drama',
@@ -4969,7 +4961,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-inheritors-family',
+			id: 'template-inheritors-family',
 			isTemplate: true,
 			name: '',
 			game: 'Inheritors',
@@ -4981,13 +4973,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 2,
-				spotlight: 'Inheritors',
+				template: 'Inheritors',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -6126,11 +6117,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-kitbash-hero',
+		id: 'kitbash-hero',
 		version: 1,
 		title: 'Kit Bash!',
 		subtitle: 'Modular Comic Book Superheroes',
-		spotlight: 'Kit Bash!',
+		game: 'Kit Bash!',
 		variant: 'Hero File',
 		pages: 1,
 		genre: 'Comic Book / Superhero',
@@ -6147,7 +6138,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-kitbash-hero',
+			id: 'template-kitbash-hero',
 			isTemplate: true,
 			name: '',
 			game: 'KitBash',
@@ -6159,13 +6150,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'KitBash',
+				template: 'KitBash',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -6805,11 +6795,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-kitbash-team',
+		id: 'kitbash-team',
 		version: 1,
 		title: 'Kit Bash! - Team File',
 		subtitle: 'Modular Comic Book Superheroes',
-		spotlight: 'Kit Bash!',
+		game: 'Kit Bash!',
 		variant: 'Team Roster File',
 		pages: 1,
 		genre: 'Comic Book / Superhero',
@@ -6826,7 +6816,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-kitbash-team',
+			id: 'template-kitbash-team',
 			isTemplate: true,
 			name: '',
 			game: 'KitBash',
@@ -6838,13 +6828,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'KitBash',
+				template: 'KitBash',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -7023,11 +7012,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-misty-cove',
+		id: 'misty-cove',
 		version: 1,
 		title: 'Misty Cove',
 		subtitle: 'Emotional Gothic Mystery',
-		spotlight: 'Misty Cove',
+		game: 'Misty Cove',
 		variant: 'Character File',
 		pages: 1,
 		genre: 'Mystery / Drama / Supernatural',
@@ -7043,7 +7032,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-misty-cove',
+			id: 'template-misty-cove',
 			isTemplate: true,
 			name: '',
 			game: 'Misty Cove',
@@ -7055,13 +7044,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Misty Cove',
+				template: 'Misty Cove',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -7544,11 +7532,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-necromancer',
+		id: 'necromancer',
 		version: 1,
 		title: 'Necromancer',
 		subtitle: 'Dark Fantasy Grimoire & Undead Arts',
-		spotlight: 'Necromancer',
+		game: 'Necromancer',
 		variant: 'Caster File',
 		pages: 1,
 		genre: 'Dark Fantasy / Occult',
@@ -7564,7 +7552,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-necromancer',
+			id: 'template-necromancer',
 			isTemplate: true,
 			name: '',
 			game: 'Necromancer',
@@ -7576,13 +7564,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Necromancer',
+				template: 'Necromancer',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -8113,11 +8100,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-retired-crystalline',
+		id: 'retired-crystalline',
 		version: 1,
 		title: 'Retired No More - Crystalline Age',
 		subtitle: 'Aging Veteran Heroes',
-		spotlight: 'Retired No More',
+		game: 'Retired No More',
 		variant: 'Crystalline Age',
 		pages: 1,
 		genre: 'Superhero / Silver Age Nostalgia',
@@ -8133,7 +8120,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-retired-crystalline',
+			id: 'template-retired-crystalline',
 			isTemplate: true,
 			name: '',
 			game: 'Retired No More',
@@ -8145,13 +8132,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Retired No More',
+				template: 'Retired No More',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -8756,11 +8742,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-retired-aerial',
+		id: 'retired-aerial',
 		version: 1,
 		title: 'Retired No More - Aerial Age',
 		subtitle: 'Aging Veteran Heroes',
-		spotlight: 'Retired No More',
+		game: 'Retired No More',
 		variant: 'Aerial Age',
 		pages: 1,
 		genre: 'Dieselpunk / Aviation Adventure',
@@ -8776,7 +8762,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-retired-aerial',
+			id: 'template-retired-aerial',
 			isTemplate: true,
 			name: '',
 			game: 'Retired No More',
@@ -8788,13 +8774,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Retired No More',
+				template: 'Retired No More',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -9299,11 +9284,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-safe-zone-survivor',
+		id: 'safe-zone-survivor',
 		version: 1,
 		title: 'Safe Zone',
 		subtitle: 'Post-Apocalyptic Survival & Colony',
-		spotlight: 'Safe Zone',
+		game: 'Safe Zone',
 		variant: 'Survivor File',
 		pages: 1,
 		genre: 'Post-Apocalyptic / Survival',
@@ -9319,7 +9304,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-safe-zone-survivor',
+			id: 'template-safe-zone-survivor',
 			isTemplate: true,
 			name: '',
 			game: 'Safe Zone',
@@ -9331,13 +9316,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Safe Zone',
+				template: 'Safe Zone',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -9960,11 +9944,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-safe-zone-colony',
+		id: 'safe-zone-colony',
 		version: 1,
 		title: 'Safe Zone - Colony File',
 		subtitle: 'Post-Apocalyptic Survival & Colony',
-		spotlight: 'Safe Zone',
+		game: 'Safe Zone',
 		variant: 'Colony File',
 		pages: 2,
 		genre: 'Post-Apocalyptic / Base Building',
@@ -9980,7 +9964,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-safe-zone-colony',
+			id: 'template-safe-zone-colony',
 			isTemplate: true,
 			name: '',
 			game: 'Safe Zone',
@@ -9992,13 +9976,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 2,
-				spotlight: 'Safe Zone',
+				template: 'Safe Zone',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -11072,11 +11055,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-snowfall-initiative',
+		id: 'snowfall-initiative',
 		version: 1,
 		title: 'Snowfall Initiative',
 		subtitle: 'Cold War Espionage & Super-Spies',
-		spotlight: 'Snowfall Initiative',
+		game: 'Snowfall Initiative',
 		variant: 'Agent File',
 		pages: 1,
 		genre: 'Spy / Cold War / High-Tech',
@@ -11093,7 +11076,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-snowfall',
+			id: 'template-snowfall',
 			isTemplate: true,
 			name: '',
 			game: 'Snowfall Initiative',
@@ -11105,13 +11088,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Snowfall Initiative',
+				template: 'Snowfall Initiative',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -11964,11 +11946,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-solarpunk-citizen',
+		id: 'solarpunk-citizen',
 		version: 1,
 		title: 'Solarpunk',
 		subtitle: 'Ecological Hope & Community Technology',
-		spotlight: 'Solarpunk',
+		game: 'Solarpunk',
 		variant: 'Citizen File',
 		pages: 1,
 		genre: 'SolarPunk / Sci-Fi / Community',
@@ -11984,7 +11966,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-solarpunk-citizen',
+			id: 'template-solarpunk-citizen',
 			isTemplate: true,
 			name: '',
 			game: 'SolarPunk',
@@ -11996,13 +11978,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'SolarPunk',
+				template: 'SolarPunk',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -12493,11 +12474,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-solarpunk-commune',
+		id: 'solarpunk-commune',
 		version: 1,
 		title: 'Solarpunk - Commune File',
 		subtitle: 'Ecological Hope & Community Technology',
-		spotlight: 'Solarpunk',
+		game: 'Solarpunk',
 		variant: 'Commune File',
 		pages: 1,
 		genre: 'SolarPunk / Settlement',
@@ -12513,7 +12494,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-solarpunk-commune',
+			id: 'template-solarpunk-commune',
 			isTemplate: true,
 			name: '',
 			game: 'SolarPunk',
@@ -12525,13 +12506,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'SolarPunk',
+				template: 'SolarPunk',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -12918,11 +12898,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-spellcaught',
+		id: 'spellcaught',
 		version: 1,
 		title: 'Spellcaught',
 		subtitle: 'Arcane Curses & Eldritch Magic',
-		spotlight: 'Spellcaught',
+		game: 'Spellcaught',
 		variant: 'Character File',
 		pages: 1,
 		genre: 'Fantasy / Eldritch / Arcane',
@@ -12938,7 +12918,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-spellcaught',
+			id: 'template-spellcaught',
 			isTemplate: true,
 			name: '',
 			game: 'Spellcaught',
@@ -12950,13 +12930,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Spellcaught',
+				template: 'Spellcaught',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -13624,11 +13603,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-strange-towns',
+		id: 'strange-towns',
 		version: 1,
 		title: 'Strange Towns',
 		subtitle: 'Small Town Supernatural Weirdness',
-		spotlight: 'Strange Towns',
+		game: 'Strange Towns',
 		variant: 'Townsperson File',
 		pages: 1,
 		genre: 'Horror / Small Town / Weird Fiction',
@@ -13644,7 +13623,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-strange-towns',
+			id: 'template-strange-towns',
 			isTemplate: true,
 			name: '',
 			game: 'Strange Towns',
@@ -13656,13 +13635,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Strange Towns',
+				template: 'Strange Towns',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -14088,11 +14066,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-terraverse',
+		id: 'terraverse',
 		version: 1,
 		title: 'Terraverse',
 		subtitle: 'Epic Science-Fantasy Multiverse',
-		spotlight: 'Terraverse',
+		game: 'Terraverse',
 		variant: 'Character File',
 		pages: 2,
 		genre: 'Sci-Fi / Superhero / Multiverse',
@@ -14108,7 +14086,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-terraverse',
+			id: 'template-terraverse',
 			isTemplate: true,
 			name: '',
 			game: 'Terraverse',
@@ -14120,13 +14098,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 2,
-				spotlight: 'Terraverse',
+				template: 'Terraverse',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -14990,11 +14967,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-titans-handler',
+		id: 'titans-handler',
 		version: 1,
 		title: 'Titans vs Leviathans - Handler',
 		subtitle: 'Giant Mech vs Kaiju Combat',
-		spotlight: 'Titans vs Leviathans',
+		game: 'Titans vs Leviathans',
 		variant: 'Handler File',
 		pages: 1,
 		genre: 'Mecha / Kaiju / Military',
@@ -15010,7 +14987,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-titans-handler',
+			id: 'template-titans-handler',
 			isTemplate: true,
 			name: '',
 			game: 'Titans vs Leviathans',
@@ -15022,13 +14999,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Titans vs Leviathans',
+				template: 'Titans vs Leviathans',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -15464,11 +15440,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-titans-titan',
+		id: 'titans-titan',
 		version: 1,
 		title: 'Titans vs Leviathans - Titan Mech',
 		subtitle: 'Giant Mech vs Kaiju Combat',
-		spotlight: 'Titans vs Leviathans',
+		game: 'Titans vs Leviathans',
 		variant: 'Titan Mech File',
 		pages: 1,
 		genre: 'Mecha / Kaiju / Military',
@@ -15484,7 +15460,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-titans-titan',
+			id: 'template-titans-titan',
 			isTemplate: true,
 			name: '',
 			game: 'Titans vs Leviathans',
@@ -15496,13 +15472,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'Titans vs Leviathans',
+				template: 'Titans vs Leviathans',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -15889,11 +15864,11 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-trace-20',
+		id: 'trace-20',
 		version: 1,
 		title: 'TRACE 2.0',
 		subtitle: 'Civic Paranormal Investigation',
-		spotlight: 'TRACE 2.0',
+		game: 'TRACE 2.0',
 		variant: 'Character File',
 		pages: 1,
 		genre: 'Mystery / Procedural / Urban Fantasy',
@@ -15903,7 +15878,7 @@ const cortexSpotlightTemplates = [
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-trace-20',
+			id: 'template-trace-20',
 			isTemplate: true,
 			name: '',
 			game: 'TRACE 2.0',
@@ -15915,13 +15890,12 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
 			view: {
 				pageCount: 1,
-				spotlight: 'TRACE 2.0',
+				template: 'TRACE 2.0',
 				watermark: {
 					enabled: true,
 					url: 'images/cortex_prime_logo_light_transparent.png',
@@ -16563,10 +16537,10 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-kitchen-sink',
+		id: 'kitchen-sink',
 		title: 'Kitchen Sink Style Showcase',
 		subtitle: 'All 17 Trait Set Styles & Features',
-		spotlight: 'Toolkit Reference',
+		game: 'Toolkit Reference',
 		variant: 'Showcase',
 		pages: 3,
 		genre: 'Reference',
@@ -16594,7 +16568,6 @@ const cortexSpotlightTemplates = [
 				alt: 'Character Portrait',
 				view: {
 					alignment: 'center-center',
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
@@ -17902,18 +17875,18 @@ const cortexSpotlightTemplates = [
 		},
 	},
 	{
-		id: 'spotlight-landscape-showcase',
+		id: 'landscape-showcase',
 		version: 1,
 		title: 'Landscape Style Showcase',
 		subtitle: '3-Column Landscape Layout & Spanning Showcase',
-		spotlight: 'Toolkit Reference',
+		game: 'Toolkit Reference',
 		variant: 'Showcase',
 		pages: 2,
 		genre: 'Reference',
 		character: {
 			$schema: 'https://cortex.engard.me/schema/0.1/character.schema.json',
 			version: '0.1',
-			id: 'template-spotlight-landscape-showcase',
+			id: 'template-landscape-showcase',
 			isTemplate: true,
 			name: 'Landscape Showcase',
 			game: 'Landscape Style Showcase',
@@ -17925,7 +17898,6 @@ const cortexSpotlightTemplates = [
 			portrait: {
 				url: '',
 				view: {
-					size: 'spotlight',
 					location: 'header',
 				},
 			},
@@ -19001,5 +18973,5 @@ const cortexSpotlightTemplates = [
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = cortexSpotlightTemplates;
+	module.exports = cortexLibraryTemplates;
 }

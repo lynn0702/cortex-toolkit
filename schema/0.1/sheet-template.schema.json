@@ -20,7 +20,7 @@
 		"subtitle": {
 			"type": "string"
 		},
-		"spotlight": {
+		"game": {
 			"type": "string"
 		},
 		"variant": {

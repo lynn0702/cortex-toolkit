@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-solarpunk-commune",
+  "id": "solarpunk-commune",
   "version": 1,
   "title": "Solarpunk - Commune File",
   "subtitle": "Ecological Hope & Community Technology",
-  "spotlight": "Solarpunk",
+  "game": "Solarpunk",
   "variant": "Commune File",
   "pages": 1,
   "genre": "SolarPunk / Settlement",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
   },
   "character": {
-    "id": "template-spotlight-solarpunk-commune",
+    "id": "template-solarpunk-commune",
     "isTemplate": true,
     "name": "",
     "game": "SolarPunk",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "SolarPunk",
+      "template": "SolarPunk",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

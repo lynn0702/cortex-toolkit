@@ -21,7 +21,7 @@ import {
 	isOutDie,
 	isNameSet,
 } from './model.ts';
-import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './spotlight-grid.ts';
+import { KNOWN_PARTS, isKnownPart, partsGrid, partCellStyle, partsGridStyle } from './sheet-grid.ts';
 import type { Character, Trait, TraitSet } from './model.ts';
 
 export type TraitSetApi = ReturnType<typeof useTraitSet>;
@@ -590,18 +590,40 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		) {
 			return true;
 		}
-		const spotlightId = getView(props.character)?.spotlight;
-		if (spotlightId && typeof (window as any)?.cortexSpotlightTemplates !== 'undefined') {
-			const tpls = (window as any).cortexSpotlightTemplates;
-			if (Array.isArray(tpls)) {
-				const tpl = tpls.find(
-					(t: any) => t.id === spotlightId || t.title === spotlightId || t.spotlight === spotlightId,
-				);
-				if (tpl?.sets) {
-					for (const sKey of Object.keys(tpl.sets)) {
-						const setDef = tpl.sets[sKey];
-						if (setDef?.traits && Object.hasOwn(setDef.traits, name)) return true;
+		const templateId = getView(props.character)?.template;
+		if (templateId) {
+			let tpl: any = null;
+			// 1. Local first: check user-owned templates & characters
+			try {
+				if (typeof (window as any)?.cortexStorage?.loadData === 'function') {
+					const data = (window as any).cortexStorage.loadData();
+					if (data) {
+						const localTemplates = data.templates || [];
+						const localChars = data.characters || [];
+						tpl =
+							localTemplates.find(
+								(t: any) =>
+									t.id === templateId || t.title === templateId || t.template === templateId || t.name === templateId,
+							) ||
+							localChars.find(
+								(c: any) => (c.isTemplate || c.id === templateId) && (c.id === templateId || c.name === templateId),
+							) ||
+							null;
 					}
+				}
+			} catch {}
+			// 2. Library second
+			if (!tpl && typeof (window as any)?.cortexLibraryTemplates !== 'undefined') {
+				const tpls = (window as any).cortexLibraryTemplates;
+				if (Array.isArray(tpls)) {
+					tpl =
+						tpls.find((t: any) => t.id === templateId || t.title === templateId || t.template === templateId) || null;
+				}
+			}
+			if (tpl?.sets) {
+				for (const sKey of Object.keys(tpl.sets)) {
+					const setDef = tpl.sets[sKey];
+					if (setDef?.traits && Object.hasOwn(setDef.traits, name)) return true;
 				}
 			}
 		}

@@ -15,10 +15,10 @@ import {
 	nextVisibility,
 	isHiddenIn,
 } from './model.ts';
-import { buildParts } from './spotlight-grid.ts';
+import { buildParts } from './sheet-grid.ts';
 import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
-declare const cortexSpotlightTemplates: any;
+declare const cortexLibraryTemplates: any;
 
 export const cortexFunctions = {
 	cloneDeep: cloneDeep,
@@ -412,7 +412,7 @@ export const cortexFunctions = {
 	// when absent (legacy files predate the set). Values stay on the
 	// character fields; only label/hidden live here. Created traits hide
 	// only where the style renders no zone for them (game/PP/notes in
-	// spotlight); shown is absence, never a stored word.
+	// sheet layout); shown is absence, never a stored word.
 	ensureNameTrait: function (character: any, key: string) {
 		if (!character || !Array.isArray(character.traitSets)) return null;
 		let set = character.traitSets.find((s: any) => isNameSetModel(s));
@@ -625,7 +625,7 @@ export const cortexFunctions = {
 	// ---------- Sheet template layer (layout/data split) ----------
 	// A sheet template is a character-shaped blank (same shape as a
 	// character: { id, title, ..., character: {...} }, exactly like the
-	// spotlight library entries). The character keeps the same shape but
+	// template library entries). The character keeps the same shape but
 	// sparse: any layout value it doesn't set resolves from its template
 	// (sheet.template.id). Resolution materializes at load (merge) and
 	// prunes at persist/export (strip), so the renderer reads full inline
@@ -747,9 +747,9 @@ export const cortexFunctions = {
 		return character;
 	},
 
-	findSpotlightTemplate: function (id: string) {
-		if (!id || typeof cortexSpotlightTemplates === 'undefined') return null;
-		return cortexSpotlightTemplates.find((t: any) => t.id === id) || null;
+	findLibraryTemplate: function (id: string) {
+		if (!id || typeof cortexLibraryTemplates === 'undefined') return null;
+		return cortexLibraryTemplates.find((t: any) => t.id === id) || null;
 	},
 
 	// Resolve the template entry for a character: live store array first
@@ -770,7 +770,7 @@ export const cortexFunctions = {
 				return pool[0];
 			}
 		}
-		return this.findSpotlightTemplate(id);
+		return this.findLibraryTemplate(id);
 	},
 
 	templateSetById: function (templateEntry: SheetTemplate | null, setId: string): TraitSet | null {
@@ -892,7 +892,7 @@ export const cortexFunctions = {
 		return inherited;
 	},
 
-	// A standalone template file/entry: same shape as the spotlight
+	// A standalone template file/entry: same shape as the built-in
 	// library ({ id (static), title, ..., character: {...} }).
 	isSheetTemplateFile: function (data: unknown): boolean {
 		const d = data as Record<string, unknown> | null;
@@ -1215,7 +1215,7 @@ export const cortexFunctions = {
 
 	// Snapshot a character into a standalone template entry (static id
 	// assigned once at creation, never regenerated). Same shape as the
-	// spotlight library so all tooling applies unchanged.
+	// template library so all tooling applies unchanged.
 	extractSheetTemplate: function (character: any, meta: any) {
 		this.ensureTraitSetIds(character);
 		const id = meta && meta.id ? String(meta.id) : 'custom-' + this.generateUUID().slice(0, 8);

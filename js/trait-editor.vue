@@ -20,7 +20,7 @@ import {
 	resolveSubtraitPlural,
 	type Character,
 } from './model.ts';
-import { buildParts } from './spotlight-grid.ts';
+import { buildParts } from './sheet-grid.ts';
 import VisibilityEye from './visibility-eye.vue';
 
 const props = defineProps<{

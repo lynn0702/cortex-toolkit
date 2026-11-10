@@ -19,11 +19,10 @@ templates = templates.map((item) => {
 	char.player = '';
 	char.isTemplate = true;
 
-	// 3. Spotlight header portrait
+	// 3. Header portrait
 	char.portrait = {
 		url: '',
 		view: {
-			size: 'spotlight',
 			location: 'header',
 		},
 	};
@@ -39,8 +38,8 @@ templates = templates.map((item) => {
 	delete char.view.columns;
 	delete char.view.columnsPage2;
 	char.view.pageCount = item.pages || 1;
-	char.view.spotlight = item.spotlight || cleanTitle;
-	char.view.columnAlignment = item.id === 'spotlight-alien-us' ? 'full-width' : 'top-base';
+	char.view.template = item.game || cleanTitle;
+	char.view.columnAlignment = item.id === 'alien-us' ? 'full-width' : 'top-base';
 	char.view.columnOffsets = { left: 0, center: 0, right: 0 };
 
 	// 5. Realign Trait Sets
@@ -93,7 +92,7 @@ templates = templates.map((item) => {
 	return item;
 });
 
-const output = `/**\n * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)\n */\nconst cortexSpotlightTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexSpotlightTemplates;\n}\n`;
+const output = `/**\n * Cortex Toolkit - Library Templates Repository (Blank Sheets)\n */\nconst cortexLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexLibraryTemplates;\n}\n`;
 
 fs.writeFileSync(templatesPath, output, 'utf8');
 console.log('Successfully realigned', templates.length, 'templates in js/templates.js');

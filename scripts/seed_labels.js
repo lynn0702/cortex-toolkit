@@ -39,6 +39,6 @@ templates.forEach((item) => {
 	});
 });
 
-const output = `/**\n * Cortex Toolkit - Spotlight Templates Repository (Blank Spotlight Sheets)\n */\nconst cortexSpotlightTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexSpotlightTemplates;\n}\n`;
+const output = `/**\n * Cortex Toolkit - Library Templates Repository (Blank Sheets)\n */\nconst cortexLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexLibraryTemplates;\n}\n`;
 fs.writeFileSync(templatesPath, output, 'utf8');
 console.log('seeded', seeded, 'style labels in', templates.length, 'templates');

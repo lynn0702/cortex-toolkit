@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-camp-bewilderwood",
+  "id": "camp-bewilderwood",
   "version": 1,
   "title": "Camp Bewilderwood",
   "subtitle": "Cryptid Summer Camp Mystery",
-  "spotlight": "Camp Bewilderwood",
+  "game": "Camp Bewilderwood",
   "variant": "Camper File",
   "pages": 1,
   "genre": "Supernatural / Youth Mystery",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/574554.jpg"
   },
   "character": {
-    "id": "template-spotlight-camp-bewilderwood",
+    "id": "template-camp-bewilderwood",
     "isTemplate": true,
     "name": "",
     "game": "Camp Bewilderwood",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Camp Bewilderwood",
+      "template": "Camp Bewilderwood",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

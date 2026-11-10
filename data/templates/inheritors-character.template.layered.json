@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-inheritors-character",
+  "id": "inheritors-character",
   "version": 1,
   "title": "Inheritors",
   "subtitle": "Superpowered Dynasty Heritage",
-  "spotlight": "Inheritors",
+  "game": "Inheritors",
   "variant": "Character File",
   "pages": 1,
   "genre": "Superhero / Dynastic Drama",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/572309.jpg"
   },
   "character": {
-    "id": "template-spotlight-inheritors-char",
+    "id": "template-inheritors-char",
     "isTemplate": true,
     "name": "",
     "game": "Inheritors",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Inheritors",
+      "template": "Inheritors",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-solarpunk-citizen",
+  "id": "solarpunk-citizen",
   "version": 1,
   "title": "Solarpunk",
   "subtitle": "Ecological Hope & Community Technology",
-  "spotlight": "Solarpunk",
+  "game": "Solarpunk",
   "variant": "Citizen File",
   "pages": 1,
   "genre": "SolarPunk / Sci-Fi / Community",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/568415.jpg"
   },
   "character": {
-    "id": "template-spotlight-solarpunk-citizen",
+    "id": "template-solarpunk-citizen",
     "isTemplate": true,
     "name": "",
     "game": "SolarPunk",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "SolarPunk",
+      "template": "SolarPunk",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

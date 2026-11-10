@@ -16,10 +16,10 @@ import {
 	type CortexToolkitCustom,
 } from './model.ts';
 import {
-	getSpotlightSections as gridGetSpotlightSections,
-	getSpotlightGridStyle as gridGetSpotlightGridStyle,
-	type SpotlightSection,
-} from './spotlight-grid.ts';
+	getSheetSections as gridGetSheetSections,
+	getSheetGridStyle as gridGetSheetGridStyle,
+	type SheetSection,
+} from './sheet-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
 import PrintToolbar from './print-toolbar.vue';
 import TraitSetMini from './trait-set-mini.vue';
@@ -276,11 +276,11 @@ function renderDieValue(value: number) {
 	return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 }
 
-function getSpotlightSections(pageIndex: number) {
-	return gridGetSpotlightSections(traitSets.value, pageIndex, props.submode);
+function getSheetSections(pageIndex: number) {
+	return gridGetSheetSections(traitSets.value, pageIndex, props.submode);
 }
-function getSpotlightGridStyle(section: SpotlightSection) {
-	return gridGetSpotlightGridStyle(section);
+function getSheetGridStyle(section: SheetSection) {
+	return gridGetSheetGridStyle(section);
 }
 
 // SELECTING
@@ -734,8 +734,7 @@ watch(
 			'submode-' + submode,
 			'orientation-' + pageOrientation,
 			{
-				'spotlight-print-style': isPrintSubmode,
-				'spotlight-style': true,
+				'print-sheet': isPrintSubmode,
 				'print-blank-mode': effectivePrintBlank,
 				'print-bw': effectivePrintBW,
 				'has-watermark': hasAnyWatermark,
@@ -897,11 +896,11 @@ watch(
 						</header>
 
 						<!-- PLACED & FULL-WIDTH PAGE SECTIONS -->
-						<div class="spotlight-layout classic-grid-sections" v-if="!isPillarPlay">
-							<template v-for="(section, secIdx) in getSpotlightSections(pageIndex)" :key="'classic-grid-' + secIdx">
+						<div class="sheet-layout classic-grid-sections" v-if="!isPillarPlay">
+							<template v-for="(section, secIdx) in getSheetSections(pageIndex)" :key="'classic-grid-' + secIdx">
 								<div
-									:class="['columns', 'spotlight-columns', section.type === 'grid' ? 'spotlight-grid' : 'cols-1']"
-									:style="section.type === 'grid' ? getSpotlightGridStyle(section) : undefined"
+									:class="['columns', 'sheet-columns', section.type === 'grid' ? 'sheet-grid' : 'cols-1']"
+									:style="section.type === 'grid' ? getSheetGridStyle(section) : undefined"
 								>
 									<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
 										<TraitSetBlock
@@ -924,14 +923,14 @@ watch(
 								</div>
 							</template>
 							<!-- BUTTON: ADD TRAIT SET -->
-							<div class="spotlight-add-set-bar" v-if="submode === 'edit'">
+							<div class="sheet-add-set-bar" v-if="submode === 'edit'">
 								<div class="add-set-slot slot-center">
-									<button type="button" class="btn-spotlight-add" @click.stop="addTraitSet(pageIndex)">
+									<button type="button" class="btn-sheet-add" @click.stop="addTraitSet(pageIndex)">
 										<i class="fas fa-plus"></i> Add Set
 									</button>
 									<button
 										type="button"
-										class="btn-spotlight-add btn-presets-toggle"
+										class="btn-sheet-add btn-presets-toggle"
 										@click.stop="toggleInlineAdd(pageIndex)"
 									>
 										<i class="fas fa-layer-group"></i> Presets

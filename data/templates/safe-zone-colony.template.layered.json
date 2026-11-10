@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-safe-zone-colony",
+  "id": "safe-zone-colony",
   "version": 1,
   "title": "Safe Zone - Colony File",
   "subtitle": "Post-Apocalyptic Survival & Colony",
-  "spotlight": "Safe Zone",
+  "game": "Safe Zone",
   "variant": "Colony File",
   "pages": 2,
   "genre": "Post-Apocalyptic / Base Building",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/574559.jpg"
   },
   "character": {
-    "id": "template-spotlight-safe-zone-colony",
+    "id": "template-safe-zone-colony",
     "isTemplate": true,
     "name": "",
     "game": "Safe Zone",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 2,
-      "spotlight": "Safe Zone",
+      "template": "Safe Zone",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

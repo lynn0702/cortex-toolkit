@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-retired-crystalline",
+  "id": "retired-crystalline",
   "version": 1,
   "title": "Retired No More - Crystalline Age",
   "subtitle": "Aging Veteran Heroes",
-  "spotlight": "Retired No More",
+  "game": "Retired No More",
   "variant": "Crystalline Age",
   "pages": 1,
   "genre": "Superhero / Silver Age Nostalgia",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/567044.jpg"
   },
   "character": {
-    "id": "template-spotlight-retired-crystalline",
+    "id": "template-retired-crystalline",
     "isTemplate": true,
     "name": "",
     "game": "Retired No More",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Retired No More",
+      "template": "Retired No More",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

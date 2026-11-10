@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-cosa-nostra",
+  "id": "cosa-nostra",
   "version": 1,
   "title": "Cosa Nostra",
   "subtitle": "Historical Crime Syndicate Drama",
-  "spotlight": "Cosa Nostra",
+  "game": "Cosa Nostra",
   "variant": "Mobster File",
   "pages": 1,
   "genre": "Crime / Drama / Noir",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/572308.jpg"
   },
   "character": {
-    "id": "template-spotlight-cosa-nostra",
+    "id": "template-cosa-nostra",
     "isTemplate": true,
     "name": "",
     "game": "Cosa Nostra",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Cosa Nostra",
+      "template": "Cosa Nostra",
       "hasNickname": true,
       "watermark": {
         "enabled": true,

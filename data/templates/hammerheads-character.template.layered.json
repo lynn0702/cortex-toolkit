@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-hammerheads-character",
+  "id": "hammerheads-character",
   "version": 1,
   "title": "Hammerheads",
   "subtitle": "Disaster Response & Rescue Pilots",
-  "spotlight": "Hammerheads",
+  "game": "Hammerheads",
   "variant": "Character File",
   "pages": 2,
   "genre": "Action / Rescue / Drama",
@@ -11,7 +11,7 @@
     "url": "https://legacy.drivethrurpg.com/product/567041/Cortex-Prime-Game-Handbook-2nd-Edition?manufacturers_id=31866"
   },
   "character": {
-    "id": "template-spotlight-hammerheads-character",
+    "id": "template-hammerheads-character",
     "isTemplate": true,
     "name": "",
     "game": "Hammerheads",
@@ -23,13 +23,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 2,
-      "spotlight": "Hammerheads",
+      "template": "Hammerheads",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

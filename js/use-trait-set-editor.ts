@@ -13,7 +13,7 @@ import {
 	type InjectionKey,
 } from 'vue';
 import { cortexFunctions } from './functions.ts';
-import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './spotlight-grid.ts';
+import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './sheet-grid.ts';
 import {
 	getView,
 	ensureView,
@@ -1496,7 +1496,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const scrollable = computed(() => true);
 
-	// Styles sampled from the official Spotlight character sheet PDFs.
+	// Styles sampled from the official character sheet PDFs.
 	// Talents rows and dossier fields carry no dice.
 	const needsDiceUI = computed(() => styleBody.value !== 'name');
 

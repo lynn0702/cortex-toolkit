@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-necromancer",
+  "id": "necromancer",
   "version": 1,
   "title": "Necromancer",
   "subtitle": "Dark Fantasy Grimoire & Undead Arts",
-  "spotlight": "Necromancer",
+  "game": "Necromancer",
   "variant": "Caster File",
   "pages": 1,
   "genre": "Dark Fantasy / Occult",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/574557.jpg"
   },
   "character": {
-    "id": "template-spotlight-necromancer",
+    "id": "template-necromancer",
     "isTemplate": true,
     "name": "",
     "game": "Necromancer",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Necromancer",
+      "template": "Necromancer",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

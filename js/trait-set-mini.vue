@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { getView, ensureView, type Rating, type RatingType, type PartCell, DIE_LADDER } from './model.ts';
 import { cortexFunctions } from './functions.ts';
-import { formatPct, parsePct, type PartName } from './spotlight-grid.ts';
+import { formatPct, parsePct, type PartName } from './sheet-grid.ts';
 import VisibilityEye from './visibility-eye.vue';
 import TraitSetBlock from './trait-set-block.vue';
 import { resolveFrame, type FrameShape, type FrameConfig } from './frame-geometry.ts';

@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-misty-cove",
+  "id": "misty-cove",
   "version": 1,
   "title": "Misty Cove",
   "subtitle": "Emotional Gothic Mystery",
-  "spotlight": "Misty Cove",
+  "game": "Misty Cove",
   "variant": "Character File",
   "pages": 1,
   "genre": "Mystery / Drama / Supernatural",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/568414.jpg"
   },
   "character": {
-    "id": "template-spotlight-misty-cove",
+    "id": "template-misty-cove",
     "isTemplate": true,
     "name": "",
     "game": "Misty Cove",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Misty Cove",
+      "template": "Misty Cove",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

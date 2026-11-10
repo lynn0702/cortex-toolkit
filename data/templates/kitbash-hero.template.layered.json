@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-kitbash-hero",
+  "id": "kitbash-hero",
   "version": 1,
   "title": "Kit Bash!",
   "subtitle": "Modular Comic Book Superheroes",
-  "spotlight": "Kit Bash!",
+  "game": "Kit Bash!",
   "variant": "Hero File",
   "pages": 1,
   "genre": "Comic Book / Superhero",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/568416.jpg"
   },
   "character": {
-    "id": "template-spotlight-kitbash-hero",
+    "id": "template-kitbash-hero",
     "isTemplate": true,
     "name": "",
     "game": "KitBash",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "KitBash",
+      "template": "KitBash",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

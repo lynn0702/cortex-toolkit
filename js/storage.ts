@@ -87,7 +87,7 @@ export const cortexStorage: CortexStorage = {
 	_lastSavedAt: null as string | null,
 	_lastTemplates: null as unknown[] | null,
 
-	// Sheet-template registry (entry shape, same as the spotlight library:
+	// Sheet-template registry (entry shape, same as the built-in library:
 	// { id (static), version, title, ..., character: {...} }). Snapshots are
 	// keyed by (id, version): re-imports replace the same version instead
 	// of duplicating, and pinned older versions survive bundle updates.

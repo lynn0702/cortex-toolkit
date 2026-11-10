@@ -14,7 +14,7 @@ import AddCharacterModal from './add-character-modal.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 
-declare const cortexSpotlightTemplates: any;
+declare const cortexLibraryTemplates: any;
 
 // ---- state ----
 const localData = ref<any>({});
@@ -56,7 +56,7 @@ const { toastMessage, showToast } = useToast();
 
 const main = ref<HTMLElement | null>(null);
 
-let _spotlightLoading: any = null;
+let _libraryLoading: any = null;
 
 // ---- dark mode state ----
 const colorSchemePref = ref<'light' | 'dark' | 'system'>(
@@ -161,8 +161,8 @@ const pendingTemplateUpdate = computed(() => {
 	const id = t ? (typeof t === 'string' ? t : t.id) : null;
 	if (!id) return null;
 	const pinned = (t && typeof t === 'object' && t.version) || 1;
-	if (typeof cortexSpotlightTemplates === 'undefined') return null;
-	const builtin = cortexFunctions.findSpotlightTemplate(id);
+	if (typeof cortexLibraryTemplates === 'undefined') return null;
+	const builtin = cortexFunctions.findLibraryTemplate(id);
 	if (!builtin) return null;
 	const current = builtin.version || 1;
 	if (current <= pinned) return null;
@@ -482,12 +482,12 @@ function safeImageUrl(url: any) {
 }
 
 // ---------- Sheet template layer ----------
-// Templates resolve store-first, then the built-in spotlight
+// Templates resolve store-first, then the built-in library
 // library. Static ids dedupe: re-imports replace, never append.
-function ensureSpotlightTemplates(): Promise<boolean> {
-	if (typeof cortexSpotlightTemplates !== 'undefined') return Promise.resolve(true);
-	if (_spotlightLoading) return _spotlightLoading;
-	_spotlightLoading = new Promise<boolean>((resolve) => {
+function ensureLibraryTemplates(): Promise<boolean> {
+	if (typeof cortexLibraryTemplates !== 'undefined') return Promise.resolve(true);
+	if (_libraryLoading) return _libraryLoading;
+	_libraryLoading = new Promise<boolean>((resolve) => {
 		const script = document.createElement('script');
 		// `?v=` is rewritten to the content hash of js/templates.bundle.js by
 		// scripts/version-assets.js during `npm run build`.
@@ -496,7 +496,7 @@ function ensureSpotlightTemplates(): Promise<boolean> {
 		script.onerror = () => resolve(false);
 		document.head.appendChild(script);
 	});
-	return _spotlightLoading;
+	return _libraryLoading;
 }
 
 function resolveTemplateEntry(id: string | null, version?: number | null) {
@@ -505,16 +505,17 @@ function resolveTemplateEntry(id: string | null, version?: number | null) {
 	if (version) {
 		const snap = store.find((t: any) => t.id === id && (t.version || 1) === version);
 		if (snap) return snap;
-		const builtin = cortexFunctions.findSpotlightTemplate(id);
+		const builtin = cortexFunctions.findLibraryTemplate(id);
 		if (builtin && (builtin.version || 1) === version) return builtin;
 		if (builtin) return builtin; // degraded: snapshot lost, use current
 		const any = store.filter((t: any) => t.id === id).sort((a: any, b: any) => (b.version || 1) - (a.version || 1));
 		return any[0] || null;
 	}
-	const builtin = cortexFunctions.findSpotlightTemplate(id);
-	if (builtin) return builtin;
 	const any = store.filter((t: any) => t.id === id).sort((a: any, b: any) => (b.version || 1) - (a.version || 1));
-	return any[0] || null;
+	if (any.length) return any[0];
+	const builtin = cortexFunctions.findLibraryTemplate(id);
+	if (builtin) return builtin;
+	return null;
 }
 
 // Preference layer (brief D11): arrangement lives here, applied
@@ -615,7 +616,7 @@ function resolveStoredCharacter(c: any) {
 			// a later bundle update must never move existing
 			// characters until the user accepts the switch.
 			const inStore = (sheetTemplates.value || []).some((s: any) => s.id === entry.id && (s.version || 1) === ver);
-			if (!inStore && cortexFunctions.findSpotlightTemplate(entry.id) === entry) {
+			if (!inStore && cortexFunctions.findLibraryTemplate(entry.id) === entry) {
 				sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, entry);
 			}
 			ref = { id: ref.id, version: ver };
@@ -737,7 +738,7 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 						: template.sheet.template.id
 					: null;
 			const reuse =
-				currentRef && !cortexFunctions.findSpotlightTemplate(currentRef) ? currentRef : 'custom-' + template.id;
+				currentRef && !cortexFunctions.findLibraryTemplate(currentRef) ? currentRef : 'custom-' + template.id;
 			const entry = cortexFunctions.extractSheetTemplate(template, {
 				id: reuse,
 				version: 1,
@@ -816,8 +817,8 @@ function createFromTemplate(templateId: string) {
 	createCharacter(false, templateId);
 }
 
-function createFromSpotlight(spotlightItem: any, asTemplate = false, openPrint = false) {
-	if (!spotlightItem || !spotlightItem.character) return;
+function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = false) {
+	if (!libraryItem || !libraryItem.character) return;
 
 	// New character = an empty layered entity folded onto the
 	// template at the seam; nothing is cloned from the array form.
@@ -825,24 +826,20 @@ function createFromSpotlight(spotlightItem: any, asTemplate = false, openPrint =
 	const entity = {
 		id: cortexFunctions.generateUUID(),
 		isTemplate: asTemplate,
-		name: asTemplate
-			? spotlightItem.title
-				? spotlightItem.title.replace(/\s*\([^)]*\)/g, '').trim()
-				: 'Template'
-			: '',
-		game: spotlightItem.spotlight || spotlightItem.title || '',
+		name: asTemplate ? (libraryItem.title ? libraryItem.title.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '',
+		game: libraryItem.game || libraryItem.title || '',
 		dateCreated: now,
 		dateModified: now,
 		dateTouched: now,
 		sets: {},
-		template: { id: spotlightItem.id, version: spotlightItem.version || 1 },
+		template: { id: libraryItem.id, version: libraryItem.version || 1 },
 	};
-	const characterData: any = cortexFunctions.materializeCharacter(entity, spotlightItem.character);
+	const characterData: any = cortexFunctions.materializeCharacter(entity, libraryItem.character);
 	cortexFunctions.ensureTraitSetIds(characterData);
 	cortexFunctions.assignLids(characterData);
 	// D16: snapshot the exact pinned base now — a later bundle
 	// update must never move this character unasked.
-	sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, JSON.parse(JSON.stringify(spotlightItem)));
+	sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, JSON.parse(JSON.stringify(libraryItem)));
 	recordCharOrder(characterData);
 
 	characters.value.push(characterData);
@@ -860,9 +857,7 @@ function createFromSpotlight(spotlightItem: any, asTemplate = false, openPrint =
 	}
 
 	saveLocalData();
-	showToast(
-		asTemplate ? `Added "${spotlightItem.title}" to templates` : `Created character from "${spotlightItem.title}"`,
-	);
+	showToast(asTemplate ? `Added "${libraryItem.title}" to templates` : `Created character from "${libraryItem.title}"`);
 }
 
 function toggleTemplate(characterId: string) {
@@ -960,9 +955,9 @@ function importSheetTemplate(entry: any) {
 async function applyTemplateUpdate() {
 	const u = pendingTemplateUpdate.value;
 	if (!u || !character.value) return;
-	await ensureSpotlightTemplates();
+	await ensureLibraryTemplates();
 	const oldEntry = resolveTemplateEntry(u.id, u.pinned);
-	const newEntry = cortexFunctions.findSpotlightTemplate(u.id);
+	const newEntry = cortexFunctions.findLibraryTemplate(u.id);
 	if (!newEntry) return;
 	const stripped = oldEntry
 		? cortexFunctions.stripCharacterToDeltas(character.value, oldEntry)
@@ -1092,7 +1087,7 @@ async function exportCharacter(id: string) {
 	const characterData = characters.value.find((c: any) => c.id === id);
 	if (!characterData) return;
 
-	await ensureSpotlightTemplates();
+	await ensureLibraryTemplates();
 	const entry = sheetTemplateForExport(characterData);
 	const out = entry
 		? cortexFunctions.stripCharacterForExport(characterData, entry)
@@ -1123,7 +1118,7 @@ function saveSheetTemplate() {
 			: null;
 	// Re-saving a custom template updates it in place (version bump);
 	// forking off a built-in (or nothing) mints a fresh static id.
-	const reuse = currentRef && !cortexFunctions.findSpotlightTemplate(currentRef) ? currentRef : null;
+	const reuse = currentRef && !cortexFunctions.findLibraryTemplate(currentRef) ? currentRef : null;
 	const prev = reuse ? resolveTemplateEntry(reuse) : null;
 	const entry = cortexFunctions.extractSheetTemplate(characterData, {
 		id: reuse || undefined,
@@ -1155,7 +1150,7 @@ function exportSheetTemplate() {
 }
 
 async function exportAllCharacters() {
-	await ensureSpotlightTemplates();
+	await ensureLibraryTemplates();
 	const out = (characters.value || []).map((c: any) => {
 		const entry = sheetTemplateForExport(c);
 		const o = entry ? cortexFunctions.stripCharacterForExport(c, entry) : JSON.parse(JSON.stringify(c));
@@ -1367,7 +1362,7 @@ async function bootFromStorage() {
 		const stored = await cortexStorage.load();
 		sheetTemplates.value = cortexStorage.normalizeTemplates(stored.templates);
 		prefs.value = cortexStorage.normalizePreferences(stored.preferences);
-		await ensureSpotlightTemplates();
+		await ensureLibraryTemplates();
 		characters.value = (stored.characters || []).map((c: any) => resolveStoredCharacter(c));
 		initBaseline(characters.value);
 		lastSavedCharacters = {};
@@ -1422,7 +1417,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 	let snapshot: Record<string, string> | null = null;
 	let sessionJson: string | null = null;
 	try {
-		await ensureSpotlightTemplates();
+		await ensureLibraryTemplates();
 		const sparse = (characters.value || []).map((c: any) => {
 			const ct = c.sheet && c.sheet.template;
 			const ref = ct
@@ -1578,7 +1573,7 @@ defineExpose({
 	removeDieFromRoller,
 	clearDicePool,
 	showToast,
-	ensureSpotlightTemplates,
+	ensureLibraryTemplates,
 	resolveTemplateEntry,
 	charPrefs,
 	applyPrefs,
@@ -1596,7 +1591,7 @@ defineExpose({
 	createCharacter,
 	createTemplate,
 	createFromTemplate,
-	createFromSpotlight,
+	createFromLibrary,
 	toggleTemplate,
 	deleteCharacter,
 	deleteAllCharacters,
@@ -1751,7 +1746,7 @@ defineExpose({
 					@deleteAllCharacters="deleteAllCharacters"
 					@importCharacter="importCharacter"
 					@importSheetTemplate="importSheetTemplate"
-					@createFromSpotlight="createFromSpotlight"
+					@createFromLibrary="createFromLibrary"
 				></roster>
 
 				<!-- PLAY MODE: MULTI-CHARACTER SPLIT VIEW -->

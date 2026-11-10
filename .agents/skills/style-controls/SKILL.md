@@ -90,9 +90,9 @@ grep -rn 'z-index:' css/*.css | grep -v 'var(--z-'
 grep -rn '!important' css/*.css | grep -v 'app.min.css' | wc -l
 # px in screen CSS: every hit must be a boundary (breakpoint, border,
 # outline, frame stroke). A px gap, margin, padding, or positioning
-# offset is a Control 7 violation. Print CSS (spotlight-print.css)
+# offset is a Control 7 violation. Print CSS (print.css)
 # is excluded — px is expected there.
-grep -rn '[0-9]px' css/*.css | grep -v 'app.min.css' | grep -v 'spotlight-print.css'
+grep -rn '[0-9]px' css/*.css | grep -v 'app.min.css' | grep -v 'print.css'
 # empty rulesets: must return nothing
 node -e "const fs = require('fs'); const path = require('path'); const files = fs.readdirSync('css').filter(f => f.endsWith('.css') && !f.endsWith('.min.css')); let found = false; for (const f of files) { const content = fs.readFileSync(path.join('css', f), 'utf8'); const regex = /([^{}\r\n]+)\{\s*\}/g; let m; while ((m = regex.exec(content)) !== null) { console.error('Empty ruleset in ' + f + ': ' + m[1].trim()); found = true; } } if (found) process.exit(1);"
 # Prettier

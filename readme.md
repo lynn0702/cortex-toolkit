@@ -114,7 +114,7 @@ Every change committed to `main` must pass the repository definition of done:
 2. `npm run check`: `vue-tsc --noEmit` type verification.
 3. `npm test`: All 6 test suites passing:
    - `cortex-pal-tests`: Dice pool notation, rolling, and syntax export.
-   - `spotlight-grid-tests`: Grid engine column tracks, spans, and row breaks.
+   - `sheet-grid-tests`: Grid engine column tracks, spans, and row breaks.
    - `merge-tests`: 3-state layered entity inheritance and null-clearing.
 
    - `materialize-tests`: Template snapshot pinning and layered materialization.

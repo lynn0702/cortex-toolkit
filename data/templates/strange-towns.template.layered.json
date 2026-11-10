@@ -1,9 +1,9 @@
 {
-  "id": "spotlight-strange-towns",
+  "id": "strange-towns",
   "version": 1,
   "title": "Strange Towns",
   "subtitle": "Small Town Supernatural Weirdness",
-  "spotlight": "Strange Towns",
+  "game": "Strange Towns",
   "variant": "Townsperson File",
   "pages": 1,
   "genre": "Horror / Small Town / Weird Fiction",
@@ -17,7 +17,7 @@
     "image": "https://legacy.drivethrurpg.com/images/31866/567043.jpg"
   },
   "character": {
-    "id": "template-spotlight-strange-towns",
+    "id": "template-strange-towns",
     "isTemplate": true,
     "name": "",
     "game": "Strange Towns",
@@ -29,13 +29,12 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },
     "view": {
       "pageCount": 1,
-      "spotlight": "Strange Towns",
+      "template": "Strange Towns",
       "watermark": {
         "enabled": true,
         "url": "images/cortex_prime_logo_light_transparent.png",

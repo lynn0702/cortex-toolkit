@@ -1,8 +1,8 @@
 {
-  "id": "spotlight-kitchen-sink",
+  "id": "kitchen-sink",
   "title": "Kitchen Sink Style Showcase",
   "subtitle": "All 17 Trait Set Styles & Features",
-  "spotlight": "Toolkit Reference",
+  "game": "Toolkit Reference",
   "variant": "Showcase",
   "pages": 3,
   "genre": "Reference",
@@ -30,7 +30,6 @@
       "alt": "Character Portrait",
       "view": {
         "alignment": "center-center",
-        "size": "spotlight",
         "location": "header"
       }
     },

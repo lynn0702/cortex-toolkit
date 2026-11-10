@@ -1,14 +1,14 @@
 {
-  "id": "spotlight-landscape-showcase",
+  "id": "landscape-showcase",
   "version": 1,
   "title": "Landscape Style Showcase",
   "subtitle": "3-Column Landscape Layout & Spanning Showcase",
-  "spotlight": "Toolkit Reference",
+  "game": "Toolkit Reference",
   "variant": "Showcase",
   "pages": 2,
   "genre": "Reference",
   "character": {
-    "id": "template-spotlight-landscape-showcase",
+    "id": "template-landscape-showcase",
     "isTemplate": true,
     "name": "Landscape Showcase",
     "game": "Landscape Style Showcase",
@@ -19,7 +19,6 @@
     "portrait": {
       "url": "",
       "view": {
-        "size": "spotlight",
         "location": "header"
       }
     },

@@ -78,7 +78,7 @@ function clearImage() {
 	>
 		<div
 			class="image-set-container"
-			:class="{ 'spotlight-header-portrait-box': isName, 'has-image': Boolean(effectiveUrl) }"
+			:class="{ 'sheet-header-portrait-box': isName, 'has-image': Boolean(effectiveUrl) }"
 			:style="getImageSetContainerStyle(traitSet)"
 		>
 			<div
@@ -100,7 +100,7 @@ function clearImage() {
 			>
 				<i class="fas fa-trash-alt"></i>
 			</button>
-			<div class="image-set-caption" :class="{ 'spotlight-portrait-caption': isName }" v-if="isCaptionShown">
+			<div class="image-set-caption" :class="{ 'sheet-portrait-caption': isName }" v-if="isCaptionShown">
 				{{ effectiveCaption }}
 			</div>
 		</div>

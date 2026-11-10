@@ -1701,7 +1701,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			valEditor.unmount();
 		});
 
-		it('renders Vanguard Values statement with zero duplication, places pip and box in dynamic grid cells, and renders Spotlight card hero traits in 3 o clock arc distribution', async () => {
+		it('renders Vanguard Values statement with zero duplication, places pip and box in dynamic grid cells, and renders Library card hero traits in 3 o clock arc distribution', async () => {
 			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
 			const { default: PortraitRing } = await import('../js/portrait-ring.vue');
 			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
@@ -1744,8 +1744,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			valuesWrapper.unmount();
 
-			// 2. Spotlight Library card hero: arc distribution at 3 o'clock (1:30, 3:00, 4:30)
-			const mockSpotlightTmpl = {
+			// 2. Library card hero: arc distribution at 3 o'clock (1:30, 3:00, 4:30)
+			const mockLibraryTmpl = {
 				id: 'snowfall',
 				title: 'Snowfall Initiative',
 				subtitle: 'Cold War Espionage',
@@ -1757,8 +1757,8 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				},
 			};
 			const ringChar = {
-				name: mockSpotlightTmpl.title,
-				portrait: { url: mockSpotlightTmpl.listing.image },
+				name: mockLibraryTmpl.title,
+				portrait: { url: mockLibraryTmpl.listing.image },
 				traitSets: [
 					{
 						id: 'ratings',

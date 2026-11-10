@@ -260,7 +260,7 @@ export interface SheetTemplate {
    */
   title?: string;
   subtitle?: string;
-  spotlight?: string;
+  game?: string;
   variant?: string;
   pages?: number;
   genre?: string;
