@@ -18,7 +18,8 @@
 	},
 	"license": "Cortex Prime is the award-winning world-building tabletop RPG system for forging unique, compelling game experiences from a set of modular rules mechanics available at CortexRPG.com Cortex is © 2022 Dire Wolf Digital. Cortex, Cortex Prime, associated logos and trade dress are the trademarks of Dire Wolf Digital.",
 	"scripts": {
-		"prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
+		"prepare": "node -e \"try { require('child_process').execSync('git config core.hooksPath .githooks'); } catch (_) {}\"",
+		"stage": "npm run gate && git add -A",
 		"gate": "node scripts/gate.js",
 		"format": "prettier --write --cache .",
 		"build": "npm run format && npm run types && vite build && node scripts/combine-templates.js && node scripts/version-assets.js",

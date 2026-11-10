@@ -4,9 +4,9 @@ set -e
 echo ""
 echo "=== [PRE-PUSH] Full Definition of Done gates ==="
 npm run gate
-if ! git diff --quiet -- index.html js/app.min.js js/templates.bundle.js css/app.min.css; then
+if ! git diff --quiet -- index.html js/app.min.js js/templates.bundle.js css/app.min.css js/model.generated.ts; then
 	echo "[FAIL] Build artifacts changed during gate! Commit updated build outputs before pushing."
-	git status -s -- index.html js/app.min.js js/templates.bundle.js css/app.min.css
+	git status -s -- index.html js/app.min.js js/templates.bundle.js css/app.min.css js/model.generated.ts
 	exit 1
 fi
 echo "=== [PRE-PUSH] All gates passed! Proceeding with push. ==="

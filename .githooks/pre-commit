@@ -4,23 +4,16 @@ set -e
 echo ""
 echo "=== [PRE-COMMIT] Full Definition of Done gates ==="
 
-# Check if staged files include source changes before the gate
-HAS_SOURCE_CHANGES=0
-if git diff --cached --name-only | grep -qE '^(js|css|schema|data)/'; then
-	HAS_SOURCE_CHANGES=1
-fi
-
+# Run the full Definition of Done gate (format, types, build, tests, validate, audit)
 npm run gate
 
-# Re-stage formatted files safely (handling spaces, quotes, and non-ASCII characters)
-git diff --cached --name-only -z --diff-filter=d | xargs -0 -r git add --
+# Stage all modified and deleted tracked files (including prettier-formatted files and source changes)
+git add -u
 
-# If staged files include source changes, ensure build outputs stay in sync
-if [ "$HAS_SOURCE_CHANGES" -eq 1 ]; then
-	git add -- index.html js/app.min.js js/templates.bundle.js css/app.min.css 2>/dev/null || true
-fi
+# Ensure all build artifacts and generated types are tracked and staged
+git add -- index.html js/app.min.js js/templates.bundle.js css/app.min.css js/model.generated.ts 2>/dev/null || true
 
-echo "=== [PRE-COMMIT] Passed! ==="
+echo "=== [PRE-COMMIT] Passed! Staged all verified changes and build artifacts. ==="
 echo ""
 
 
