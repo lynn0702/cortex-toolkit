@@ -44,10 +44,7 @@ function compareRender(render, label) {
 		ok(!!rs, label + ': set present ' + os.name);
 		if (!rs) continue;
 		// presentation kept from template
-		ok(
-			!!(rs.view || (rs.custom && (rs.custom.characterCurio || rs.custom.cortexToolkit))),
-			label + ': presentation kept ' + os.name,
-		);
+		ok(!!(rs.view || (rs.custom && rs.custom.characterCurio)), label + ': presentation kept ' + os.name);
 		ok((rs.noun || rs.nounSingular) === (os.noun || os.nounSingular), label + ': noun kept ' + os.name);
 		// every original named trait survives with the same dice
 		for (const ot of os.traits) {

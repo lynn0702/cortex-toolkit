@@ -160,7 +160,7 @@ monster-specific rules live there, not here.
 ### Agent working style
 - 2026-10-11: Terse UI: short labels, no parentheticals, no "e.g." A label that needs explaining gets renamed.
 - 2026-10-11: Agents may build beyond the ask when genuinely helpful. Test: surface something real (stored elements get UI; no hidden state) versus inventing the speculative (presets for undefined taxonomies).
-- 2026-10-11: The model (`trait-layers.md`, `trait-usage.md`) is the UI spec.
+- 2026-10-11: The model is the UI spec.
 - 2026-10-10: Keep the `$noun` / default `"pronoun"` joke — load-bearing morale.
 - 2026-10-11: Shell discipline: content edits to generated files go through the edit tool with read-verified context; byte-level verification via git diff hunks.
 
