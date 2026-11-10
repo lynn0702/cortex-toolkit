@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 
 interface RollResult {
 	id: string;
@@ -42,14 +42,14 @@ const emit = defineEmits<{
 	(e: 'settlePP', delta: number): void;
 }>();
 
-const savedCombine = localStorage.getItem('cortexCombineSeparate') ?? localStorage.getItem('cortexCombineResources');
+const savedCombine = localStorage.getItem('characterCurioCombineSeparate');
 
 const keep = ref(2);
 const combineSeparate = ref(savedCombine !== null ? savedCombine === 'true' : false);
 const isRolled = ref(false);
 const lastRollResults = ref<RollResult[]>([]);
 const separateGroupsResults = ref<SeparateGroup[]>([]);
-const cortexPalOutput = ref('');
+const dicePoolOutput = ref('');
 const bestTotalInfo = ref<any>(null);
 const bestEffectInfo = ref<any>(null);
 const copiedNotice = ref(false);
@@ -147,7 +147,7 @@ const manualEffectDie = computed(() => {
 });
 
 watch(combineSeparate, (newVal) => {
-	localStorage.setItem('cortexCombineSeparate', newVal ? 'true' : 'false');
+	localStorage.setItem('characterCurioCombineSeparate', newVal ? 'true' : 'false');
 	keep.value = defaultKeep.value;
 	if (isRolled.value) {
 		evaluateRollDisplay();
@@ -165,7 +165,7 @@ watch(
 );
 
 function getDieDisplayValue(value: any) {
-	return cortexFunctions.renderDieconSVG(value, false, '', null);
+	return characterCurioFunctions.renderDieconSVG(value, false, '', null);
 }
 
 function cleanTraitLabel(source: any) {
@@ -219,7 +219,7 @@ function clearPool() {
 	isRolled.value = false;
 	lastRollResults.value = [];
 	separateGroupsResults.value = [];
-	cortexPalOutput.value = '';
+	dicePoolOutput.value = '';
 	bestTotalInfo.value = null;
 	bestEffectInfo.value = null;
 	keep.value = 2;
@@ -315,7 +315,7 @@ function evaluateRollDisplay() {
 		if (eligible.length === 0) {
 			bestTotalInfo.value = { isBotch: true };
 			bestEffectInfo.value = { isBotch: true };
-			cortexPalOutput.value = `Normal Pool Roll (Keep ${keep.value}):\nBotch! All dice were hitches.`;
+			dicePoolOutput.value = `Normal Pool Roll (Keep ${keep.value}):\nBotch! All dice were hitches.`;
 			return;
 		}
 
@@ -369,7 +369,7 @@ function evaluateRollDisplay() {
 		const resNote = hasSeparate
 			? ` (+${separateKeepBonus.value} keep for ${separateKeepBonus.value} separate source${separateKeepBonus.value > 1 ? 's' : ''}; separate dice cannot hitch)`
 			: '';
-		cortexPalOutput.value = `Normal Pool Roll (Keep ${keep.value})${resNote}:\nDice: ${lastRollResults.value.map((r) => 'd' + r.size + (r.hitches === 0 ? '[sep]' : '') + ': ' + r.value + (r.isHitch ? ' (Hitch)' : '')).join(', ')}\nBest Total: ${totalSum} (${totalFormula}) with Effect: ${effectDie}\nBest Effect: ${effectBest} with Total: ${totalSumForEffect} (${formulaForEffect})\nHitches: ${totalHitches.value}`;
+		dicePoolOutput.value = `Normal Pool Roll (Keep ${keep.value})${resNote}:\nDice: ${lastRollResults.value.map((r) => 'd' + r.size + (r.hitches === 0 ? '[sep]' : '') + ': ' + r.value + (r.isHitch ? ' (Hitch)' : '')).join(', ')}\nBest Total: ${totalSum} (${totalFormula}) with Effect: ${effectDie}\nBest Effect: ${effectBest} with Total: ${totalSumForEffect} (${formulaForEffect})\nHitches: ${totalHitches.value}`;
 	} else {
 		// SEPARATE MODE (Standard Cortex Prime)
 		const actionKeep = 2 + actionKeepsExtra.value;
@@ -503,7 +503,7 @@ function evaluateRollDisplay() {
 		log += `Effect Die: ${actionEffect}\n`;
 		log += `Total Hitches: ${totalHitches.value} (separate dice cannot hitch)`;
 
-		cortexPalOutput.value = log;
+		dicePoolOutput.value = log;
 	}
 }
 
@@ -604,8 +604,8 @@ function applyBestEffect() {
 }
 
 function copyOutput() {
-	if (!cortexPalOutput.value) return;
-	navigator.clipboard.writeText(cortexPalOutput.value).then(() => {
+	if (!dicePoolOutput.value) return;
+	navigator.clipboard.writeText(dicePoolOutput.value).then(() => {
 		copiedNotice.value = true;
 		setTimeout(() => {
 			copiedNotice.value = false;
@@ -802,7 +802,7 @@ defineExpose({
 					</template>
 					<template v-else-if="isRolled && isBotch"> Botch! All dice rolled hitches. </template>
 				</div>
-				<output class="sr-only" aria-live="polite" aria-atomic="true">{{ cortexPalOutput }}</output>
+				<output class="sr-only" aria-live="polite" aria-atomic="true">{{ dicePoolOutput }}</output>
 
 				<!-- BOTCH ALERT -->
 				<div class="roller-botch-banner" v-if="isBotch">
@@ -960,7 +960,7 @@ defineExpose({
 						</template>
 					</div>
 
-					<!-- CORTEXPAL PRESETS -->
+					<!-- DICE POOL PRESETS -->
 					<div class="roller-presets" v-if="!isBotch">
 						<div class="preset-card" v-if="bestTotalInfo" @click="applyBestTotal">
 							<div class="preset-title"><i class="fas fa-award"></i> Best Total</div>
@@ -982,9 +982,9 @@ defineExpose({
 					</div>
 				</div>
 
-				<!-- PLAIN TEXT CORTEXPAL LOG -->
+				<!-- PLAIN TEXT DICE POOL LOG -->
 				<div v-show="activeTab === 'log'" class="roller-log-view">
-					<pre class="roller-raw-log">{{ cortexPalOutput }}</pre>
+					<pre class="roller-raw-log">{{ dicePoolOutput }}</pre>
 					<button class="roller-copy-btn" @click="copyOutput">
 						<i class="fas fa-copy"></i> {{ copiedNotice ? 'Copied!' : 'Copy to Clipboard' }}
 					</button>

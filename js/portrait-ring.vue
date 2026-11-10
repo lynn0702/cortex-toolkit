@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toRaw } from 'vue';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { resolveFrame } from './frame-geometry.ts';
 import {
 	getView,
@@ -87,7 +87,7 @@ const ringConfig = computed(() => {
 });
 
 function isSelected(selector: any[]) {
-	return cortexFunctions.arraysMatch(props.editing, selector);
+	return characterCurioFunctions.arraysMatch(props.editing, selector);
 }
 
 function selectElement(selector: any[]) {
@@ -99,7 +99,7 @@ function updateCharacter(character: any) {
 }
 
 function renderDieValue(value: any) {
-	return cortexFunctions.renderDieconSVG(value, true, '', null);
+	return characterCurioFunctions.renderDieconSVG(value, true, '', null);
 }
 
 function getTraitAngle(t: number | string) {

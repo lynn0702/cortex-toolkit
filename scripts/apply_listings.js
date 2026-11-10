@@ -205,7 +205,7 @@ templates.forEach((entry) => {
 	listed++;
 });
 
-const output = `/**\n * Cortex Toolkit - Library Templates Repository (Blank Sheets)\n */\nconst cortexLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexLibraryTemplates;\n}\n`;
+const output = `/**\n * Character Curio - Library Templates Repository (Blank Sheets)\n */\nconst characterCurioLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = characterCurioLibraryTemplates;\n}\n`;
 fs.writeFileSync(templatesPath, output, 'utf8');
 console.log(
 	'entries: ' + templates.length + ', full listings: ' + listed + ', handbook: ' + handbook + ', bare: ' + bare,

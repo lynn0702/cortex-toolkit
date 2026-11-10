@@ -1,4 +1,4 @@
-// cortex-pal — dice pool model (CortexPal-compatible). TypeScript leaf.
+// dice-pool — dice pool model (CortexPal-compatible). TypeScript leaf.
 
 export const DIE_EXPRESSION = /(\d*(d|D))?(4|6|8|10|12)/;
 export const DIE_SIZES = [4, 6, 8, 10, 12];
@@ -6,7 +6,7 @@ export const DIE_SIZES = [4, 6, 8, 10, 12];
 const uuid = (): string =>
 	typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9);
 
-export class CortexDie {
+export class Die {
 	name: string | null;
 	size: number;
 	qty: number;
@@ -56,11 +56,11 @@ export class CortexDie {
 		return this.values.length > 0 && this.values.every((v) => v === 1);
 	}
 
-	eligibleDice(hitchOn = 1): CortexDie[] {
-		const eligible: CortexDie[] = [];
+	eligibleDice(hitchOn = 1): Die[] {
+		const eligible: Die[] = [];
 		for (const v of this.values) {
 			if (v > hitchOn) {
-				eligible.push(new CortexDie(null, 'D' + this.size, this.size, 1, [v], this.source));
+				eligible.push(new Die(null, 'D' + this.size, this.size, 1, [v], this.source));
 			}
 		}
 		return eligible;
@@ -78,7 +78,7 @@ export class CortexDie {
 	}
 }
 
-export const CORTEX_D4 = new CortexDie(null, 'D4', 4, 1, [], 'Default');
+export const DEFAULT_D4 = new Die(null, 'D4', 4, 1, [], 'Default');
 
 export interface DiceItem {
 	id: string;
@@ -91,8 +91,8 @@ export interface DiceItem {
 	ppCommitted?: boolean;
 }
 
-export class CortexDicePool {
-	dice: (CortexDie | null)[];
+export class DicePool {
+	dice: (Die | null)[];
 	items: DiceItem[];
 
 	constructor(incoming_dice: unknown = []) {
@@ -106,17 +106,17 @@ export class CortexDicePool {
 	add(dice: unknown): void {
 		const list = Array.isArray(dice) ? dice : [dice];
 		for (const d of list) {
-			let dieObj: CortexDie | undefined;
+			let dieObj: Die | undefined;
 			const props: Record<string, unknown> = d && typeof d === 'object' ? (d as Record<string, unknown>) : {};
-			if (d instanceof CortexDie) {
+			if (d instanceof Die) {
 				dieObj = d;
 			} else if (typeof d === 'number') {
-				dieObj = new CortexDie(null, 'D' + d, d, 1, [], '');
+				dieObj = new Die(null, 'D' + d, d, 1, [], '');
 			} else if (typeof d === 'object' && d !== null) {
 				const o = d as { size?: number; qty?: number; source?: string };
-				dieObj = new CortexDie(null, 'D' + (o.size || 4), o.size || 4, o.qty || 1, [], o.source || '');
+				dieObj = new Die(null, 'D' + (o.size || 4), o.size || 4, o.qty || 1, [], o.source || '');
 			} else if (typeof d === 'string') {
-				dieObj = new CortexDie(d);
+				dieObj = new Die(d);
 			}
 
 			if (dieObj && DIE_SIZES.includes(dieObj.size)) {
@@ -125,7 +125,7 @@ export class CortexDicePool {
 				if (slot) {
 					slot.qty += dieObj.qty;
 				} else {
-					this.dice[index] = new CortexDie(null, 'D' + dieObj.size, dieObj.size, dieObj.qty, [], dieObj.source);
+					this.dice[index] = new Die(null, 'D' + dieObj.size, dieObj.size, dieObj.qty, [], dieObj.source);
 				}
 
 				for (let i = 0; i < dieObj.qty; i++) {
@@ -183,7 +183,7 @@ export class CortexDicePool {
 				if (slot) {
 					slot.qty += 1;
 				} else {
-					this.dice[index] = new CortexDie(null, 'D' + item.size, item.size, 1, [], item.source);
+					this.dice[index] = new Die(null, 'D' + item.size, item.size, 1, [], item.source);
 				}
 			}
 		}
@@ -205,11 +205,11 @@ export class CortexDicePool {
 		return this.dice.reduce((sum, die) => sum + (die ? die.values.filter((v) => v <= hitchOn).length : 0), 0);
 	}
 
-	eligibleDice(hitchOn = 1): CortexDie[] {
+	eligibleDice(hitchOn = 1): Die[] {
 		if (!this.isRolled()) {
 			this.rollDice();
 		}
-		let eligible: CortexDie[] = [];
+		let eligible: Die[] = [];
 		for (const die of this.dice) {
 			if (die) {
 				eligible = eligible.concat(die.eligibleDice(hitchOn));
@@ -218,7 +218,7 @@ export class CortexDicePool {
 		return eligible;
 	}
 
-	rollDice(): (CortexDie | null)[] {
+	rollDice(): (Die | null)[] {
 		for (const die of this.dice) {
 			if (die) die.roll();
 		}
@@ -229,7 +229,7 @@ export class CortexDicePool {
 		return `\nHitches: ` + this.hitchCount(hitchOn);
 	}
 
-	getOnlyTotal(rolls: CortexDie[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
+	getOnlyTotal(rolls: Die[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
 		if (!rolls) {
 			rolls = this.eligibleDice(hitchOn);
 			displayHitches = true;
@@ -244,7 +244,7 @@ export class CortexDicePool {
 		return output;
 	}
 
-	getBestTotal(rolls: CortexDie[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
+	getBestTotal(rolls: Die[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
 		if (!rolls) {
 			rolls = this.eligibleDice(hitchOn);
 			displayHitches = true;
@@ -253,7 +253,7 @@ export class CortexDicePool {
 		const rollsSorted = [...rolls].sort((a, b) => b.values[0] - a.values[0]);
 		const best_total_dice = rollsSorted.slice(0, keep);
 		const best_effect_dice = rollsSorted.slice(keep).sort((a, b) => b.size - a.size);
-		best_effect_dice.push(CORTEX_D4);
+		best_effect_dice.push(DEFAULT_D4);
 		const best_effect_1 = `D${best_effect_dice[0].size}`;
 		const best_total_addition = best_total_dice.map((d) => d.values[0]).join(' + ');
 		const best_total_1 = best_total_dice.reduce((sum, d) => sum + d.values[0], 0);
@@ -264,7 +264,7 @@ export class CortexDicePool {
 		return output;
 	}
 
-	getBestEffect(rolls: CortexDie[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
+	getBestEffect(rolls: Die[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
 		if (!rolls) {
 			rolls = this.eligibleDice(hitchOn);
 			displayHitches = true;
@@ -290,7 +290,7 @@ export class CortexDicePool {
 		return output;
 	}
 
-	getBest(rolls: CortexDie[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
+	getBest(rolls: Die[] | null = null, keep = 2, hitchOn = 1, displayHitches = false): string {
 		if (!rolls) {
 			rolls = this.eligibleDice(hitchOn);
 			displayHitches = true;
@@ -311,7 +311,7 @@ export class CortexDicePool {
 		return output;
 	}
 
-	results(dice: (CortexDie | null)[] | null = null, hitchOn = 1): string {
+	results(dice: (Die | null)[] | null = null, hitchOn = 1): string {
 		if (!dice) {
 			dice = this.dice;
 		}
@@ -349,12 +349,13 @@ export class CortexDicePool {
 		if (this.is_empty()) {
 			return 'empty';
 		}
-		return (this.dice.filter(Boolean) as CortexDie[]).map((die) => die.output()).join(', ');
+		return (this.dice.filter(Boolean) as Die[]).map((die) => die.output()).join(', ');
 	}
 }
 
-export const cortexPal = {
-	Die: CortexDie,
-	DicePool: CortexDicePool,
+export const dicePool = {
+	Die: Die,
+	DicePool: DicePool,
 	DIE_SIZES: DIE_SIZES,
 };
+export { dicePool as cortexPal, Die as CortexDie, DicePool as CortexDicePool };

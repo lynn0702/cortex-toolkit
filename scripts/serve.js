@@ -92,7 +92,7 @@ process.on('exit', () => {
 });
 
 server.listen(PORT, () => {
-	console.log(`\n  Cortex Toolkit dev server running at:`);
+	console.log(`\n  Character Curio dev server running at:`);
 	console.log(`  > Local:   http://localhost:${PORT}/\n`);
 
 	const shouldWatch = !process.env.NO_WATCH && !process.argv.includes('--no-watch');

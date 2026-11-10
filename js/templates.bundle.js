@@ -7,9 +7,9 @@
 window.module = { exports: {} };
 
 /**
- * Cortex Toolkit - Library Templates Repository (Blank Sheets)
+ * Character Curio - Library Templates Repository (Blank Sheets)
  */
-const cortexLibraryTemplates = [
+const characterCurioLibraryTemplates = [
 	{
 		id: 'alien-us',
 		version: 1,
@@ -18981,11 +18981,11 @@ const cortexLibraryTemplates = [
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = cortexLibraryTemplates;
+	module.exports = characterCurioLibraryTemplates;
 }
 
 // Trailing file for the Library templates bundle.
 // Publish the templates array as the browser global the
 // roster and app loaders check for.
-window.cortexLibraryTemplates = window.module.exports;
+window.characterCurioLibraryTemplates = window.module.exports;
 

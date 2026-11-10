@@ -12,7 +12,7 @@ import {
 	toRaw,
 	type InjectionKey,
 } from 'vue';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { buildParts, formatPct, parsePct, KNOWN_PARTS } from './sheet-grid.ts';
 import {
 	getView,
@@ -31,7 +31,7 @@ import { resolveFrame, type FrameConfig } from './frame-geometry.ts';
 import type {
 	Character,
 	TraitSet,
-	CortexToolkitCustom,
+	CharacterCurioCustom,
 	RingConfig,
 	ImageConfig,
 	PipsConfig,
@@ -201,7 +201,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				? (view as any).ratingLadder
 				: [4, 6, 8, 10, 12];
 		const trackOn = partsHaveTrack();
-		const tScale = cortexFunctions.getTrackScale(traitSet.value);
+		const tScale = characterCurioFunctions.getTrackScale(traitSet.value);
 		const rating =
 			currentRatingPosition() === 'vertical'
 				? 'inline'
@@ -214,7 +214,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				: [];
 		const hasDesc = traits.some((t: any) => typeof t?.description === 'string' && t.description.trim().length > 0);
 		const hasSfx = traits.some(
-			(t: any) => Array.isArray(cortexFunctions.sfxChildren(t)) && cortexFunctions.sfxChildren(t).length > 0,
+			(t: any) =>
+				Array.isArray(characterCurioFunctions.sfxChildren(t)) && characterCurioFunctions.sfxChildren(t).length > 0,
 		);
 		const trackNameLower = String(trackLabel.value || 'Stress')
 			.trim()
@@ -226,7 +227,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 					? Object.values(t.traits)
 					: [];
 			return subs.some((s: any) => {
-				if (!s || typeof s !== 'object' || cortexFunctions.isSfxContainer(s)) return false;
+				if (!s || typeof s !== 'object' || characterCurioFunctions.isSfxContainer(s)) return false;
 				const sNoun = resolveSubtraitNoun(s).toLowerCase();
 				const sName = String(s.name || '')
 					.trim()
@@ -509,12 +510,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const templateEntry = computed(() => {
 		const root = inst?.proxy?.$root as any;
-		return cortexFunctions.resolveTemplateFor(props.character, root ? root.sheetTemplates : null);
+		return characterCurioFunctions.resolveTemplateFor(props.character, root ? root.sheetTemplates : null);
 	});
 
 	// Template traits by name not currently on this sheet (D19 restore menu).
 	const restorableTraitNames = computed(() =>
-		cortexFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID),
+		characterCurioFunctions.restorableTraits(props.character, templateEntry.value, props.traitSetID),
 	);
 
 	const ringSpread = computed({
@@ -651,7 +652,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			const cfgCap = getView(traitSet.value)?.imageConfig?.caption;
 			if (cfgCap !== undefined) return cfgCap;
 			if (isName.value) {
-				const t = cortexFunctions.getNameTrait(props.character, 'caption');
+				const t = characterCurioFunctions.getNameTrait(props.character, 'caption');
 				return typeof t?.label === 'string' ? t.label : '';
 			}
 			return '';
@@ -726,7 +727,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	const namePortraitVisibility = computed<Visibility>(() => {
-		const t = cortexFunctions.getNameTrait(props.character, 'portrait');
+		const t = characterCurioFunctions.getNameTrait(props.character, 'portrait');
 		const v = getView(t) as Record<string, unknown> | undefined;
 		const word = v?.visibility;
 		if (word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown') return word;
@@ -736,7 +737,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function toggleNamePortraitVisibility() {
 		const cur = namePortraitVisibility.value;
 		const next = nextVisibility(cur);
-		const t = cortexFunctions.ensureNameTrait(props.character, 'portrait');
+		const t = characterCurioFunctions.ensureNameTrait(props.character, 'portrait');
 		if (!t) return;
 		const v = ensureView(t) as Record<string, unknown>;
 		if (next === 'shown') {
@@ -781,7 +782,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const ratingLadder = computed({
-		get: () => cortexFunctions.getTraitSetRatings(traitSet.value),
+		get: () => characterCurioFunctions.getTraitSetRatings(traitSet.value),
 		set: (scale: number[]) => {
 			let s = props.traitSetID;
 			ctkFor(s).ratingLadder = scale;
@@ -917,7 +918,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const presetSaved = ref(false);
 	function saveSetAsPreset() {
 		if (!traitSet.value) return;
-		cortexFunctions.saveCustomSetPreset(toRaw(traitSet.value));
+		characterCurioFunctions.saveCustomSetPreset(toRaw(traitSet.value));
 		presetSaved.value = true;
 		setTimeout(() => {
 			presetSaved.value = false;
@@ -964,7 +965,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function partsHaveTrack() {
-		return cortexFunctions.hasTrackPart(traitSet.value);
+		return characterCurioFunctions.hasTrackPart(traitSet.value);
 	}
 
 	function currentRatingPosition(): 'inline' | 'above' | 'below' | 'none' | 'vertical' {
@@ -1036,7 +1037,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		}> = [];
 		subs.forEach((sub: any, idx: number) => {
 			if (!sub || typeof sub !== 'object') return;
-			if (cortexFunctions.isSfxContainer(sub)) {
+			if (characterCurioFunctions.isSfxContainer(sub)) {
 				const sfxList = Array.isArray(sub.traits) ? sub.traits : [];
 				sfxList.forEach((sfx: any, sIdx: number) => {
 					if (!sfx || typeof sfx !== 'object') return;
@@ -1076,9 +1077,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
 			const sfxIdx = targetItem.sfxIdx;
 			traitSet.value.traits.forEach((tr: any) => {
-				cortexFunctions.removeSfxAt(tr, sfxIdx);
+				characterCurioFunctions.removeSfxAt(tr, sfxIdx);
 			});
-			const hasRemainingSfx = traitSet.value.traits.some((tr: any) => cortexFunctions.sfxChildren(tr).length > 0);
+			const hasRemainingSfx = traitSet.value.traits.some(
+				(tr: any) => characterCurioFunctions.sfxChildren(tr).length > 0,
+			);
 			if (!hasRemainingSfx) {
 				const v = getView(traitSet.value);
 				if (v?.parts?.block) {
@@ -1133,7 +1136,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			traitSet.value.traits = [];
 		}
 		if (traitSet.value.traits.length === 0) {
-			const baseTrait: any = structuredClone(cortexFunctions.defaultTrait);
+			const baseTrait: any = structuredClone(characterCurioFunctions.defaultTrait);
 			baseTrait.name = 'New ' + (traitSet.value.noun || 'Trait');
 			traitSet.value.traits.push(baseTrait);
 		}
@@ -1577,7 +1580,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	// Ensure + return this set's view bag (typed).
-	function ctkFor(s: number): CortexToolkitCustom {
+	function ctkFor(s: number): CharacterCurioCustom {
 		return ensureView(props.character.traitSets[s]);
 	}
 
@@ -1606,7 +1609,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function restoreTrait(name: string) {
-		if (cortexFunctions.restoreTraitOnSheet(props.character, templateEntry.value, props.traitSetID, name)) {
+		if (characterCurioFunctions.restoreTraitOnSheet(props.character, templateEntry.value, props.traitSetID, name)) {
 			updateCharacter(props.character);
 		}
 	}
@@ -1665,7 +1668,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (labels && labels[key] !== undefined && labels[key] !== null && String(labels[key]).length) {
 			return labels[key];
 		}
-		return cortexFunctions.labelDefaultForStyle(styleBody.value, key);
+		return characterCurioFunctions.labelDefaultForStyle(styleBody.value, key);
 	}
 
 	function setStyleLabel(key: string, value: any) {
@@ -1704,7 +1707,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				props.character.portrait ??= {};
 				ensureView(props.character.portrait).zoom = value;
 			} else if (key === 'caption' && isName.value) {
-				const t = cortexFunctions.ensureNameTrait(props.character, 'caption');
+				const t = characterCurioFunctions.ensureNameTrait(props.character, 'caption');
 				if (t) {
 					if (typeof value === 'string' && value.trim().length) t.label = value.trim();
 					else delete t.label;
@@ -1727,7 +1730,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			imageURL.value = '';
 			return;
 		}
-		cortexFunctions.processImageFile(event.target.files[0], 1280, 0.85).then(
+		characterCurioFunctions.processImageFile(event.target.files[0], 1280, 0.85).then(
 			(dataURL: string) => {
 				imageURL.value = dataURL;
 				event.target.value = null;
@@ -1761,7 +1764,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	}
 
 	function getDieDisplayValue(value: any) {
-		return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
+		return characterCurioFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 	}
 
 	function updateCharacter(character?: any) {

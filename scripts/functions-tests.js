@@ -1,6 +1,6 @@
 // Shared data-driven helpers: slot ratings, fixed-name sets.
 // Usage: node scripts/functions-tests.js  (exit 1 on failure)
-const F = require('../js/functions.ts').cortexFunctions;
+const F = require('../js/functions.ts').characterCurioFunctions;
 
 let pass = 0,
 	fail = 0;
@@ -84,7 +84,7 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(char.traitSets[0].traits[0].rating.value[0] === 2, 'Counter trait value updated to 2');
 }
 
-// ---- play-only visibility, resolveSetPillar, getPillarLabel, cortexSetPresets
+// ---- play-only visibility, resolveSetPillar, getPillarLabel, characterCurioSetPresets
 {
 	const Model = require('../js/model.ts');
 	const playOnlyNode = { view: { visibility: 'play-only' } };
@@ -113,7 +113,7 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 	ok(F.getPillarLabel(charWithLabels, 'play') === 'Session', 'getPillarLabel reads flat pillar_ fallback');
 	ok(F.getPillarLabel(charWithLabels, 'plus') === 'Plus', 'getPillarLabel capitalizes uncustomized key');
 
-	const presets = F.cortexSetPresets;
+	const presets = F.characterCurioSetPresets;
 	ok(
 		presets && presets['scene-traits'] && presets['session-notes'] && presets['crisis-pool'] && presets['micro-gmc'],
 		'4 built-in set presets exist',

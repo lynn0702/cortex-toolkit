@@ -44,7 +44,10 @@ function compareRender(render, label) {
 		ok(!!rs, label + ': set present ' + os.name);
 		if (!rs) continue;
 		// presentation kept from template
-		ok(!!(rs.view || (rs.custom && rs.custom.cortexToolkit)), label + ': presentation kept ' + os.name);
+		ok(
+			!!(rs.view || (rs.custom && (rs.custom.characterCurio || rs.custom.cortexToolkit))),
+			label + ': presentation kept ' + os.name,
+		);
 		ok(rs.nounSingular === os.nounSingular, label + ': noun kept ' + os.name);
 		// every original named trait survives with the same dice
 		for (const ot of os.traits) {
@@ -132,7 +135,9 @@ function compareRender(render, label) {
 	ov.traitSets[0].noun = 'ZZZ NOUN';
 	const back = materializeCharacter(toLayeredEntity(ov), ov);
 	ok(
-		(back.traitSets[0].view?.style?.body || back.traitSets[0].custom?.cortexToolkit?.style?.body) === 'zzz-body',
+		(back.traitSets[0].view?.style?.body ||
+			back.traitSets[0].custom?.characterCurio?.style?.body ||
+			back.traitSets[0].custom?.cortexToolkit?.style?.body) === 'zzz-body',
 		'set style override survives',
 		back.traitSets[0].view?.style?.body,
 	);

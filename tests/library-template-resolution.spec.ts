@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { cortexFunctions } from '../js/functions.ts';
+import { mount } from '@vue/test-utils';
+import { characterCurioFunctions } from '../js/functions.ts';
+import { characterCurioStorage } from '../js/storage.ts';
+import AppFooter from '../js/app-footer.vue';
 import type { Character, SheetTemplate } from '../js/model.ts';
 
-describe('Library and Template Resolution Suite', () => {
+describe('Character Curio Branding & Resolution Suite', () => {
 	const mockLibrary: SheetTemplate[] = [
 		{
 			id: 'alien-us',
@@ -19,12 +22,12 @@ describe('Library and Template Resolution Suite', () => {
 	];
 
 	beforeEach(() => {
-		(window as any).cortexLibraryTemplates = mockLibrary;
-		(globalThis as any).cortexLibraryTemplates = mockLibrary;
+		(window as any).characterCurioLibraryTemplates = mockLibrary;
+		(globalThis as any).characterCurioLibraryTemplates = mockLibrary;
 	});
 
 	it('finds library templates via findLibraryTemplate', () => {
-		const found = cortexFunctions.findLibraryTemplate('alien-us');
+		const found = characterCurioFunctions.findLibraryTemplate('alien-us');
 		expect(found).not.toBeNull();
 		expect(found?.id).toBe('alien-us');
 		expect((found as any)?.game).toBe('Alien, Us');
@@ -52,7 +55,7 @@ describe('Library and Template Resolution Suite', () => {
 			},
 		} as unknown as Character;
 
-		const resolvedAlien = cortexFunctions.resolveTemplateFor(characterWithAlien, localTemplates);
+		const resolvedAlien = characterCurioFunctions.resolveTemplateFor(characterWithAlien, localTemplates);
 		expect(resolvedAlien).not.toBeNull();
 		expect(resolvedAlien?.name).toBe('Local Alien Us Override');
 
@@ -62,8 +65,48 @@ describe('Library and Template Resolution Suite', () => {
 			},
 		} as unknown as Character;
 
-		const resolvedHammerheads = cortexFunctions.resolveTemplateFor(characterWithHammerheads, localTemplates);
+		const resolvedHammerheads = characterCurioFunctions.resolveTemplateFor(characterWithHammerheads, localTemplates);
 		expect(resolvedHammerheads).not.toBeNull();
 		expect(resolvedHammerheads?.name).toBe('Hammerheads Character');
+	});
+
+	it('uses Character Curio database name and storage keys (clean break)', () => {
+		expect(characterCurioStorage.DB_NAME).toBe('character-curio');
+		expect(characterCurioStorage.FALLBACK_KEY).toBe('characterCurioFallback');
+		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioData');
+		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioOpenCharacterIDs');
+		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioPlayViewMode');
+		expect(characterCurioStorage.LEGACY_KEYS).toContain('characterCurioRollerPosition');
+	});
+
+	it('renders the tarot World mark (favicon.ico) in the footer colophon', () => {
+		const wrapper = mount(AppFooter, {
+			props: {
+				mode: 'roster',
+				year: 2026,
+			},
+		});
+
+		const colophonImg = wrapper.find('.footer-colophon img');
+		expect(colophonImg.exists()).toBe(true);
+		expect(colophonImg.attributes('src')).toBe('images/favicon.ico');
+		expect(colophonImg.attributes('alt')).toBe('Character Curio');
+	});
+
+	it('formats character export filenames with .curio.json', () => {
+		const characterName = 'Val Harper';
+		const timestamp = 1794260000000;
+		const sanitized = characterName.replaceAll(/\s+/g, '_');
+		const filename = `${sanitized}_${timestamp}.curio.json`;
+		expect(filename).toBe('Val_Harper_1794260000000.curio.json');
+		expect(filename).toMatch(/\.curio\.json$/);
+	});
+
+	it('mounts the app with root ID character-curio', () => {
+		const el = document.createElement('article');
+		el.id = 'character-curio';
+		document.body.appendChild(el);
+		expect(document.getElementById('character-curio')).not.toBeNull();
+		document.body.removeChild(el);
 	});
 });

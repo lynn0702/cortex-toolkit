@@ -1,4 +1,4 @@
-import * as traitHelpers from './cortex-toolkit-trait-helpers.ts';
+import * as traitHelpers from './character-curio-trait-helpers.ts';
 import { materializeCharacter, toLayeredEntity } from './layered-materialize.ts';
 import { cloneDeep } from './clone-deep.ts';
 import {
@@ -18,9 +18,9 @@ import {
 import { buildParts } from './sheet-grid.ts';
 import type { Character, TraitSet, Trait, DiceConfig, SheetTemplate, CharacterPrefs } from './model.ts';
 
-declare const cortexLibraryTemplates: any;
+declare const characterCurioLibraryTemplates: any;
 
-export const cortexFunctions = {
+export const characterCurioFunctions = {
 	cloneDeep: cloneDeep,
 	VIEW_KEY: VIEW_KEY,
 	getView: getView,
@@ -372,7 +372,7 @@ export const cortexFunctions = {
 	// Feature defaults seeded when a trait-set style is chosen.
 
 	// Central registry of default labels for trait-set style regions.
-	// Custom labels live in custom.cortexToolkit.labels under the same keys;
+	// Custom labels live in custom.characterCurio.labels under the same keys;
 	// anything absent here (or unset there) renders as ''.
 	defaultTraitSetLabels: {
 		'subtrait-columns': { left: 'SKILL', right: 'SPECIALTIES' },
@@ -545,7 +545,7 @@ export const cortexFunctions = {
 				return;
 			}
 			const isRating = typeof node.type === 'string' && /^(Counter|Die|Dice|Pip)$/.test(node.type);
-			if (node.custom && typeof node.custom === 'object' && node.custom.cortexToolkit) legacy = true;
+			if (node.custom && typeof node.custom === 'object' && node.custom.characterCurio) legacy = true;
 			if (!isRating) {
 				if (typeof node.value === 'number') legacy = true;
 				if (Array.isArray(node.value) && node.rating === undefined) legacy = true;
@@ -748,8 +748,8 @@ export const cortexFunctions = {
 	},
 
 	findLibraryTemplate: function (id: string) {
-		if (!id || typeof cortexLibraryTemplates === 'undefined') return null;
-		return cortexLibraryTemplates.find((t: any) => t.id === id) || null;
+		if (!id || typeof characterCurioLibraryTemplates === 'undefined') return null;
+		return characterCurioLibraryTemplates.find((t: any) => t.id === id) || null;
 	},
 
 	// Resolve the template entry for a character: live store array first
@@ -1226,8 +1226,8 @@ export const cortexFunctions = {
 		if (snapshot.view) {
 			delete snapshot.view.nickname; // Character data, not layout.
 		}
-		if (snapshot.custom && snapshot.custom.cortexToolkit) {
-			delete snapshot.custom.cortexToolkit.nickname;
+		if (snapshot.custom && snapshot.custom.characterCurio) {
+			delete snapshot.custom.characterCurio.nickname;
 		}
 		// Templates must never carry removals or internal ids: removals are
 		// character-local (they would otherwise infect every character) and
@@ -1789,7 +1789,7 @@ export const cortexFunctions = {
 	},
 
 	// Built-in Set Presets (showcase TraitSet templates for Play & Edit)
-	cortexSetPresets: {
+	characterCurioSetPresets: {
 		'scene-traits': {
 			id: 'scene-traits',
 			label: 'Scene Traits — Assets & Complications',
@@ -2036,10 +2036,10 @@ export const cortexFunctions = {
 	hasPresetCollision: function (labelOrId: string): boolean {
 		const id = this.derivePresetId(labelOrId);
 		if (!id) return false;
-		if (this.cortexSetPresets && Object.prototype.hasOwnProperty.call(this.cortexSetPresets, id)) {
+		if (this.characterCurioSetPresets && Object.prototype.hasOwnProperty.call(this.characterCurioSetPresets, id)) {
 			return true;
 		}
-		for (const b of Object.values(this.cortexSetPresets || {})) {
+		for (const b of Object.values(this.characterCurioSetPresets || {})) {
 			if (b.id === id || this.derivePresetId(b.label) === id) return true;
 		}
 		const customs = this.getCustomSetPresets();
@@ -2049,7 +2049,7 @@ export const cortexFunctions = {
 	getCustomSetPresets: function (): { id: string; label: string; blurb?: string; preset: any }[] {
 		if (typeof localStorage === 'undefined') return [];
 		try {
-			const raw = localStorage.getItem('cortexCustomSetPresets');
+			const raw = localStorage.getItem('characterCurioCustomSetPresets');
 			if (!raw) return [];
 			const parsed = JSON.parse(raw);
 			return Array.isArray(parsed) ? parsed.filter((p: any) => p && typeof p === 'object' && p.preset) : [];
@@ -2091,7 +2091,7 @@ export const cortexFunctions = {
 		list.push(entry);
 		if (typeof localStorage !== 'undefined') {
 			try {
-				localStorage.setItem('cortexCustomSetPresets', JSON.stringify(list));
+				localStorage.setItem('characterCurioCustomSetPresets', JSON.stringify(list));
 			} catch (_e) {
 				/* ignore storage quota in headless environments */
 			}
@@ -2103,7 +2103,7 @@ export const cortexFunctions = {
 		const list = this.getCustomSetPresets().filter((p) => p.id !== presetId);
 		if (typeof localStorage !== 'undefined') {
 			try {
-				localStorage.setItem('cortexCustomSetPresets', JSON.stringify(list));
+				localStorage.setItem('characterCurioCustomSetPresets', JSON.stringify(list));
 			} catch (_e) {
 				/* ignore */
 			}
@@ -2150,4 +2150,4 @@ export interface SetPresetEntry {
 	preset: any;
 }
 
-export const cortexSetPresets = cortexFunctions.cortexSetPresets;
+export const characterCurioSetPresets = characterCurioFunctions.characterCurioSetPresets;

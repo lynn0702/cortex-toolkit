@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { getView, ensureView, type Rating, type RatingType, type PartCell, DIE_LADDER } from './model.ts';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { formatPct, parsePct, type PartName } from './sheet-grid.ts';
 import VisibilityEye from './visibility-eye.vue';
 import TraitSetBlock from './trait-set-block.vue';
@@ -101,7 +101,7 @@ function normalizeRating(r: any, defaultType: RatingType = 'Die'): Rating {
 
 function createDefaultWorkingSet(source?: any): any {
 	if (source) {
-		const copy = cortexFunctions.cloneDeep(source);
+		const copy = characterCurioFunctions.cloneDeep(source);
 		const v = ensureView(copy);
 		if (!v.pillar) v.pillar = 'play';
 		if (!v.parts || typeof v.parts !== 'object' || Array.isArray(v.parts) || Object.keys(v.parts).length === 0) {
@@ -213,13 +213,13 @@ function createDefaultWorkingSet(source?: any): any {
 		return copy;
 	}
 	return {
-		id: cortexFunctions.generateUUID(),
+		id: characterCurioFunctions.generateUUID(),
 		name: 'New Card',
 		noun: 'Trait',
 		plural: 'Traits',
 		traits: [
 			{
-				id: cortexFunctions.generateUUID(),
+				id: characterCurioFunctions.generateUUID(),
 				name: 'Example Trait',
 				rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] },
 				traits: [],
@@ -278,11 +278,11 @@ const showNewChildSlotForm = ref<boolean>(false);
 const newChildNoun = ref<string>('');
 const newChildRatingType = ref<RatingType | 'None'>('Pip');
 
-const derivedId = computed(() => cortexFunctions.derivePresetId(presetLabel.value));
+const derivedId = computed(() => characterCurioFunctions.derivePresetId(presetLabel.value));
 const hasCollision = computed(() => {
 	void savedVersion.value;
 	if (!derivedId.value) return false;
-	return cortexFunctions.hasPresetCollision(derivedId.value);
+	return characterCurioFunctions.hasPresetCollision(derivedId.value);
 });
 
 function ensurePartsMap(): Record<string, PartBlueprint> {
@@ -559,12 +559,12 @@ const ratingDisplay = computed<'track' | 'rating'>({
 });
 
 // Die SVGs for palette icons
-const singleDieSVG = computed(() => cortexFunctions.renderDieGeometrySVG(8, false, 'mini-icon-die'));
+const singleDieSVG = computed(() => characterCurioFunctions.renderDieGeometrySVG(8, false, 'mini-icon-die'));
 const bundleDiceSVG = computed(
 	() =>
-		cortexFunctions.renderDieGeometrySVG(6, false, 'mini-icon-die mini-bundle-1') +
-		cortexFunctions.renderDieGeometrySVG(8, true, 'mini-icon-die mini-bundle-2') +
-		cortexFunctions.renderDieGeometrySVG(10, false, 'mini-icon-die mini-bundle-3'),
+		characterCurioFunctions.renderDieGeometrySVG(6, false, 'mini-icon-die mini-bundle-1') +
+		characterCurioFunctions.renderDieGeometrySVG(8, true, 'mini-icon-die mini-bundle-2') +
+		characterCurioFunctions.renderDieGeometrySVG(10, false, 'mini-icon-die mini-bundle-3'),
 );
 
 // Part blueprint helpers
@@ -724,7 +724,7 @@ const childSlots = computed<ChildSlotDef[]>(() => {
 			const sName = (sub?.name || '').trim();
 			if (sName && !seen.has(sName.toLowerCase()) && sub?.rating?.type && sub.rating.type !== 'SFX') {
 				explicit.push({
-					id: cortexFunctions.generateUUID(),
+					id: characterCurioFunctions.generateUUID(),
 					noun: sName,
 					ratingType: sub.rating.type,
 					range: sub.rating.range,
@@ -758,7 +758,7 @@ function addChildSlot() {
 	const slots = ensureChildSlots();
 	const rType = newChildRatingType.value;
 	const slotDef: ChildSlotDef = {
-		id: cortexFunctions.generateUUID(),
+		id: characterCurioFunctions.generateUUID(),
 		noun,
 		ratingType: rType,
 		range: rType === 'Pip' ? [5] : rType === 'Counter' ? [0, 10] : [4, 6, 8, 10, 12],
@@ -966,7 +966,7 @@ function ensureChildTraitOnAllInstances(noun: string, rType: RatingType = 'Die')
 		const existing = t.traits.find((sub: any) => (sub.name || '').toLowerCase() === noun.toLowerCase());
 		if (!existing) {
 			t.traits.push({
-				id: cortexFunctions.generateUUID(),
+				id: characterCurioFunctions.generateUUID(),
 				name: noun,
 				description: '',
 				rating: createDefaultRatingForType(rType),
@@ -1185,7 +1185,7 @@ function addTraitRow() {
 	const rRange = selectedPart.value?.range || [4, 6, 8, 10, 12];
 
 	const newTrait: any = {
-		id: cortexFunctions.generateUUID(),
+		id: characterCurioFunctions.generateUUID(),
 		name: `New ${workingSet.value.noun || 'Trait'}`,
 		rating: isPartActive('rating') ? createDefaultRatingForType(rType, rRange) : undefined,
 		traits: [],
@@ -1197,7 +1197,7 @@ function addTraitRow() {
 		const ratingKey = `child:${slot.noun}:rating`;
 		if (isPartActive(labelKey) || isPartActive(ratingKey) || isPartActive('track') || isPartActive('trackLabel')) {
 			newTrait.traits.push({
-				id: cortexFunctions.generateUUID(),
+				id: characterCurioFunctions.generateUUID(),
 				name: slot.noun,
 				description: '',
 				rating: createDefaultRatingForType(slot.ratingType !== 'None' ? slot.ratingType : 'Die', slot.range),
@@ -1218,7 +1218,7 @@ function getChildTraitInstance(trait: any, noun: string): any {
 	let sub = trait.traits.find((s: any) => (s.name || '').toLowerCase() === noun.toLowerCase());
 	if (!sub) {
 		sub = {
-			id: cortexFunctions.generateUUID(),
+			id: characterCurioFunctions.generateUUID(),
 			name: noun,
 			description: '',
 			rating: createDefaultRatingForType('Die'),
@@ -1271,7 +1271,7 @@ function setChildDieValue(sub: any, dieVal: number | string) {
 function addTraitSfx(trait: any) {
 	if (!Array.isArray(trait.traits)) trait.traits = [];
 	trait.traits.push({
-		id: cortexFunctions.generateUUID(),
+		id: characterCurioFunctions.generateUUID(),
 		name: 'SFX',
 		description: 'Spend 1 PP to activate.',
 		rating: { type: 'SFX' },
@@ -1301,7 +1301,7 @@ function saveAsPresetCard() {
 		return;
 	}
 
-	const cardPayload = cortexFunctions.cloneDeep(workingSet.value);
+	const cardPayload = characterCurioFunctions.cloneDeep(workingSet.value);
 	const v = ensureView(cardPayload);
 	v.presetId = id;
 	v.presetLabel = label;
@@ -1309,7 +1309,7 @@ function saveAsPresetCard() {
 		v.presetBlurb = presetBlurb.value.trim();
 	}
 
-	const saved = cortexFunctions.saveCustomSetPreset(cardPayload, {
+	const saved = characterCurioFunctions.saveCustomSetPreset(cardPayload, {
 		label,
 		blurb: presetBlurb.value.trim() || undefined,
 	});
@@ -1324,13 +1324,13 @@ function saveAsPresetCard() {
 }
 
 function applyToCurrentSheet() {
-	emit('applyToSet', cortexFunctions.cloneDeep(workingSet.value));
+	emit('applyToSet', characterCurioFunctions.cloneDeep(workingSet.value));
 	emit('close');
 }
 
 function exportCardJson() {
 	const data = {
-		format: 'cortex-card',
+		format: 'character-curio-card',
 		version: '0.1',
 		exportedAt: new Date().toISOString(),
 		traitSet: workingSet.value,
@@ -1339,7 +1339,8 @@ function exportCardJson() {
 	const blob = new Blob([jsonStr], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
-	const filename = (workingSet.value.name || 'cortex-card').toLowerCase().replace(/[^a-z0-9_-]/g, '-') + '.card.json';
+	const filename =
+		(workingSet.value.name || 'character-curio-card').toLowerCase().replace(/[^a-z0-9_-]/g, '-') + '.card.json';
 	a.href = url;
 	a.download = filename;
 	document.body.appendChild(a);
@@ -1864,7 +1865,7 @@ function onFileImportSelected(ev: Event) {
 											:class="{ active: (selectedPart.range || [4, 6, 8, 10, 12]).includes(side) }"
 											@click="toggleBlueprintRangeSide(selectedPartKey, side)"
 										>
-											<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
+											<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 										</button>
 									</div>
 
@@ -1992,7 +1993,7 @@ function onFileImportSelected(ev: Event) {
 												:class="{ active: trait.rating.value?.[0] === side }"
 												@click="setTraitDieValue(trait, side)"
 											>
-												<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
+												<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 											</button>
 										</div>
 
@@ -2006,7 +2007,7 @@ function onFileImportSelected(ev: Event) {
 												:class="{ active: (trait.rating.value || []).includes(side) }"
 												@click="toggleTraitPoolDie(trait, side)"
 											>
-												<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
+												<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 											</button>
 										</div>
 
@@ -2100,7 +2101,7 @@ function onFileImportSelected(ev: Event) {
 														:class="{ active: getChildTraitInstance(trait, slot.noun).rating.value?.[0] === side }"
 														@click="setChildDieValue(getChildTraitInstance(trait, slot.noun), side)"
 													>
-														<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
+														<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 													</button>
 												</div>
 											</template>
@@ -2118,7 +2119,7 @@ function onFileImportSelected(ev: Event) {
 														}"
 														@click="toggleTraitPoolDie(getChildTraitInstance(trait, slot.noun), side)"
 													>
-														<span v-html="cortexFunctions.renderDieconSVG(side, false, '', null)"></span>
+														<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 													</button>
 												</div>
 											</template>

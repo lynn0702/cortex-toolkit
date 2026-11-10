@@ -13,11 +13,9 @@ const emit = defineEmits<{
 	<footer class="footer">
 		<div class="footer-inner">
 			<div class="footer-colophon">
-				<a href="https://www.cortexrpg.com" target="_blank"
-					><picture
-						><source srcset="images/cortex_prime_logo_light_background.webp" type="image/webp" />
-						<img src="images/cortex_prime_logo_light_background.png" alt="Cortex Prime" /></picture
-				></a>
+				<a href="#" @click.prevent="emit('navigate', 'about', null)"
+					><img src="images/favicon.ico" alt="Character Curio"
+				/></a>
 			</div>
 
 			<nav class="footer-nav">

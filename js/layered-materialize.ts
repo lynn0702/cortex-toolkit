@@ -17,8 +17,8 @@
 // per-entity override that survives the round trip. Presentation the entity
 // does not carry is inherited from the template character.
 
-import { asTrait } from './cortex-toolkit-trait-helpers.ts';
-import type { TraitRaw, TraitObject, SetObject } from './cortex-toolkit-trait-helpers.ts';
+import { asTrait } from './character-curio-trait-helpers.ts';
+import type { TraitRaw, TraitObject, SetObject } from './character-curio-trait-helpers.ts';
 import { cloneDeep } from './clone-deep.ts';
 
 // ---------- legacy (render) shapes ----------
@@ -139,7 +139,7 @@ function mergeCustom(base: unknown, override: unknown): Record<string, unknown> 
 	return result;
 }
 
-// Presentation moved from legacy `custom.cortexToolkit` to top-level `view`.
+// Presentation moved from legacy `custom.characterCurio` to top-level `view`.
 // Pinned snapshots and legacy stored entities may still carry the old key, so
 // fold it UNDER the current bag on both sides of the merge. A partial view
 // override (e.g. span/track written by the layout editor) must never shadow
@@ -149,7 +149,7 @@ function legacyBag(node: unknown): Record<string, unknown> {
 	const record = node as Record<string, unknown>;
 	const bag = record.custom;
 	if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return {};
-	const inner = (bag as Record<string, unknown>).cortexToolkit;
+	const inner = (bag as Record<string, unknown>).characterCurio;
 	if (!inner || typeof inner !== 'object' || Array.isArray(inner)) return {};
 	return inner as Record<string, unknown>;
 }
@@ -160,14 +160,14 @@ function dropLegacyBag(node: Record<string, unknown>): void {
 	const bag = node.custom;
 	if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return;
 	const inner = bag as Record<string, unknown>;
-	if (inner.cortexToolkit !== undefined) {
-		delete inner.cortexToolkit;
+	if (inner.characterCurio !== undefined) {
+		delete inner.characterCurio;
 		if (Object.keys(inner).length === 0) delete node.custom;
 	}
 }
 
 // Split-brain heal: a node carrying BOTH the current `view` bag and the
-// legacy `custom.cortexToolkit` bag renders only the first (getView prefers
+// legacy `custom.characterCurio` bag renders only the first (getView prefers
 // `view`), so the legacy presentation is silently shadowed — e.g. a stale
 // span/track-only view hiding the set's style, which drops the whole style
 // dispatch. Fold legacy UNDER view and drop the old key. Single-bag nodes
@@ -400,10 +400,10 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 		if (k === 'custom' && v && typeof v === 'object' && !Array.isArray(v)) {
 			const bag = clone(v) as Record<string, unknown>;
 			delete bag.questioned;
-			const ctk = bag.cortexToolkit;
+			const ctk = bag.characterCurio;
 			if (ctk && typeof ctk === 'object' && !Array.isArray(ctk)) {
 				delete (ctk as Record<string, unknown>).questioned;
-				if (!Object.keys(ctk as Record<string, unknown>).length) delete bag.cortexToolkit;
+				if (!Object.keys(ctk as Record<string, unknown>).length) delete bag.characterCurio;
 			}
 			if (!Object.keys(bag).length) continue;
 			(node as Record<string, unknown>).custom = bag;

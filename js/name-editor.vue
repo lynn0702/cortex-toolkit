@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import {
 	getView,
 	ensureView,
@@ -218,13 +218,13 @@ const pronouns = computed({
 });
 
 function nameTraitLabel(key: string) {
-	const t = cortexFunctions.getNameTrait(props.character, key);
+	const t = characterCurioFunctions.getNameTrait(props.character, key);
 	const v = t?.label;
 	return typeof v === 'string' ? v : '';
 }
 
 function setNameTraitLabel(key: string, val: string) {
-	const t = cortexFunctions.ensureNameTrait(props.character, key);
+	const t = characterCurioFunctions.ensureNameTrait(props.character, key);
 	if (!t) return;
 	if (typeof val === 'string' && val.trim().length) t.label = val.trim();
 	else delete t.label;
@@ -232,7 +232,7 @@ function setNameTraitLabel(key: string, val: string) {
 }
 
 function nameTraitVisibility(key: string) {
-	const t = cortexFunctions.getNameTrait(props.character, key);
+	const t = characterCurioFunctions.getNameTrait(props.character, key);
 	const v = getView(t) as Record<string, unknown> | undefined;
 	const word = v?.visibility;
 	if (word === 'hidden' || word === 'editor-only' || word === 'play-only' || word === 'shown') return word;
@@ -240,7 +240,7 @@ function nameTraitVisibility(key: string) {
 }
 
 function setNameTraitVisibility(key: string, vis: string) {
-	const t = cortexFunctions.ensureNameTrait(props.character, key);
+	const t = characterCurioFunctions.ensureNameTrait(props.character, key);
 	if (!t) return;
 	const v = ensureView(t) as Record<string, unknown>;
 	// Sparse with the default: only a stored word that disagrees survives.
@@ -353,7 +353,7 @@ const notes = computed({
 // field stays the interchange value and mirrors the trait.
 const plotPoints = computed({
 	get() {
-		const t = cortexFunctions.getNameTrait(props.character, 'plotPoints');
+		const t = characterCurioFunctions.getNameTrait(props.character, 'plotPoints');
 		const rating = getRating(t);
 		if (rating && rating.type === 'Counter' && Array.isArray(rating.value) && typeof rating.value[0] === 'number') {
 			return rating.value[0];
@@ -363,7 +363,7 @@ const plotPoints = computed({
 	set(val: any) {
 		const n = Math.max(0, parseInt(val, 10) || 0);
 		setCharacterProperty('plotPoints', n);
-		const t = cortexFunctions.ensureNameTrait(props.character, 'plotPoints');
+		const t = characterCurioFunctions.ensureNameTrait(props.character, 'plotPoints');
 		if (t) {
 			(t as unknown as Record<string, any>).rating = { type: 'Counter', value: [n], range: [0, 20] };
 			if ((t as unknown as Record<string, unknown>).spendable === undefined) {
@@ -600,7 +600,7 @@ function uploadWatermarkProcess(event: Event) {
 
 	watermarkError.value = '';
 	if (!input.files || !input.files.length) return;
-	cortexFunctions.processImageFile(input.files[0], 1280, 0.8).then(
+	characterCurioFunctions.processImageFile(input.files[0], 1280, 0.8).then(
 		(dataURL: string) => {
 			watermarkURL.value = dataURL;
 			watermarkEnabled.value = true;
@@ -634,8 +634,8 @@ function setThemeFont(target: string, fontName: string) {
 	if (!view.theme) view.theme = {};
 	if (!view.theme.fonts) view.theme.fonts = {};
 	(view.theme.fonts as any)[target] = fontName;
-	if (typeof cortexFunctions !== 'undefined' && cortexFunctions.loadGoogleFont) {
-		cortexFunctions.loadGoogleFont(fontName);
+	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.loadGoogleFont) {
+		characterCurioFunctions.loadGoogleFont(fontName);
 	}
 	emit('updateCharacter', props.character);
 }
@@ -643,8 +643,8 @@ function setThemeFont(target: string, fontName: string) {
 function previewFont(target: 'heading' | 'primary' | 'secondary', fontName: string) {
 	fontPreview.value[target] = fontName;
 	const clean = (fontName || '').trim();
-	if (clean && typeof cortexFunctions !== 'undefined' && cortexFunctions.loadGoogleFont) {
-		cortexFunctions.loadGoogleFont(clean);
+	if (clean && typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.loadGoogleFont) {
+		characterCurioFunctions.loadGoogleFont(clean);
 	}
 }
 
@@ -669,8 +669,8 @@ function handleFontUpload(event: Event) {
 	const reader = new FileReader();
 	reader.onload = (e) => {
 		const base64Data = (e.target as FileReader).result as string;
-		if (typeof cortexFunctions !== 'undefined' && cortexFunctions.applyCustomFont) {
-			cortexFunctions.applyCustomFont(fontName, base64Data);
+		if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.applyCustomFont) {
+			characterCurioFunctions.applyCustomFont(fontName, base64Data);
 		}
 		const view = ensureView(props.character);
 		if (!view.customFonts) view.customFonts = [];
@@ -709,8 +709,8 @@ function resetDiceConfig() {
 }
 
 function renderDicePreview(size: any, isFilled: any) {
-	if (typeof cortexFunctions !== 'undefined' && cortexFunctions.renderDieconSVG) {
-		return cortexFunctions.renderDieconSVG(size, isFilled, '', diceConfig.value);
+	if (typeof characterCurioFunctions !== 'undefined' && characterCurioFunctions.renderDieconSVG) {
+		return characterCurioFunctions.renderDieconSVG(size, isFilled, '', diceConfig.value);
 	}
 	return size;
 }

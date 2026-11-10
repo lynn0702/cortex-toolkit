@@ -29,9 +29,9 @@ templates = templates.map((item) => {
 
 	// 4. View metadata
 	if (!char.view) char.view = {};
-	if (char.custom && char.custom.cortexToolkit) {
-		char.view = { ...char.custom.cortexToolkit, ...char.view };
-		delete char.custom.cortexToolkit;
+	if (char.custom && char.custom.characterCurio) {
+		char.view = { ...char.custom.characterCurio, ...char.view };
+		delete char.custom.characterCurio;
 		if (Object.keys(char.custom).length === 0) delete char.custom;
 	}
 
@@ -46,9 +46,9 @@ templates = templates.map((item) => {
 	if (Array.isArray(char.traitSets)) {
 		char.traitSets.forEach((ts, tsIndex) => {
 			if (!ts.view) ts.view = {};
-			if (ts.custom && ts.custom.cortexToolkit) {
-				ts.view = { ...ts.custom.cortexToolkit, ...ts.view };
-				delete ts.custom.cortexToolkit;
+			if (ts.custom && ts.custom.characterCurio) {
+				ts.view = { ...ts.custom.characterCurio, ...ts.view };
+				delete ts.custom.characterCurio;
 				if (Object.keys(ts.custom).length === 0) delete ts.custom;
 			}
 			const ctk = ts.view;
@@ -92,7 +92,7 @@ templates = templates.map((item) => {
 	return item;
 });
 
-const output = `/**\n * Cortex Toolkit - Library Templates Repository (Blank Sheets)\n */\nconst cortexLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexLibraryTemplates;\n}\n`;
+const output = `/**\n * Character Curio - Library Templates Repository (Blank Sheets)\n */\nconst characterCurioLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = characterCurioLibraryTemplates;\n}\n`;
 
 fs.writeFileSync(templatesPath, output, 'utf8');
 console.log('Successfully realigned', templates.length, 'templates in js/templates.js');

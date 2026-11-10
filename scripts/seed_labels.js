@@ -22,11 +22,11 @@ templates.forEach((item) => {
 	if (!char || !Array.isArray(char.traitSets)) return;
 	char.traitSets.forEach((ts) => {
 		if (!ts || typeof ts !== 'object') return;
-		const view = ts.view || (ts.custom && ts.custom.cortexToolkit);
+		const view = ts.view || (ts.custom && ts.custom.characterCurio);
 		const body = view && view.style && view.style.body;
 		const seed = SEEDS[body];
 		if (!seed) return;
-		const bag = ts.view || (ts.custom && ts.custom.cortexToolkit);
+		const bag = ts.view || (ts.custom && ts.custom.characterCurio);
 		if (!bag || typeof bag !== 'object') return;
 		if (!bag.labels || typeof bag.labels !== 'object') bag.labels = {};
 		Object.keys(seed).forEach((k) => {
@@ -39,6 +39,6 @@ templates.forEach((item) => {
 	});
 });
 
-const output = `/**\n * Cortex Toolkit - Library Templates Repository (Blank Sheets)\n */\nconst cortexLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = cortexLibraryTemplates;\n}\n`;
+const output = `/**\n * Character Curio - Library Templates Repository (Blank Sheets)\n */\nconst characterCurioLibraryTemplates = ${JSON.stringify(templates, null, 2)};\n\nif (typeof module !== "undefined" && module.exports) {\n\tmodule.exports = characterCurioLibraryTemplates;\n}\n`;
 fs.writeFileSync(templatesPath, output, 'utf8');
 console.log('seeded', seeded, 'style labels in', templates.length, 'templates');

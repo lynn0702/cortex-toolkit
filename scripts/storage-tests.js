@@ -134,7 +134,7 @@ function makeLS(limitBytes) {
 const storagePath = '../js/storage.ts';
 const storageMod = require(storagePath);
 function freshStore() {
-	const S = storageMod.cortexStorage;
+	const S = storageMod.characterCurioStorage;
 	// Module-level open state must reset between scenarios (require cache
 	// keeps one module instance): drop the cached DB promise, re-read backend
 	// availability, and clear the cross-tab baseline.
@@ -207,7 +207,7 @@ async function scenario(name, fn) {
 		const S = freshStore();
 		const r1 = await S.save(demoState());
 		ok(r1.backend === 'localstorage', 'failed IDB falls back', r1);
-		const fb = JSON.parse(globalThis.localStorage.getItem('cortexToolkitFallback'));
+		const fb = JSON.parse(globalThis.localStorage.getItem('characterCurioFallback'));
 		ok(
 			fb && fb.characters.length === 1 && fb.templates.length === 1 && fb.preferences.version === 1,
 			'fallback record is complete (templates + prefs kept)',
@@ -216,7 +216,7 @@ async function scenario(name, fn) {
 		failOpen = false;
 		const r2 = await S.save(demoState());
 		ok(r2.backend === 'indexeddb', 'recovers on next save (no poison-forever)', r2);
-		ok(globalThis.localStorage.getItem('cortexToolkitFallback') === null, 'fallback key cleared after IDB save');
+		ok(globalThis.localStorage.getItem('characterCurioFallback') === null, 'fallback key cleared after IDB save');
 	});
 
 	// 3. Blocked database retries instead of wedging.
@@ -266,12 +266,12 @@ async function scenario(name, fn) {
 		globalThis.navigator = {};
 		const S = freshStore();
 		await S.save(demoState());
-		ls.setItem('cortexToolkitData', '{}');
+		ls.setItem('characterCurioData', '{}');
 		await S.clear();
 		const loaded = await S.load();
 		ok(loaded.characters.length === 0, 'IDB record cleared');
-		ok(ls.getItem('cortexToolkitFallback') === null, 'fallback key cleared');
-		ok(ls.getItem('cortexToolkitData') === null, 'legacy keys cleared');
+		ok(ls.getItem('characterCurioFallback') === null, 'fallback key cleared');
+		ok(ls.getItem('characterCurioData') === null, 'legacy keys cleared');
 	});
 
 	// 6. Newest record wins between stale IDB and newer fallback.
@@ -282,7 +282,7 @@ async function scenario(name, fn) {
 		const S = freshStore();
 		const old = demoState();
 		await S.save(old);
-		const fb = JSON.parse(globalThis.localStorage.getItem('cortexToolkitFallback') || 'null');
+		const fb = JSON.parse(globalThis.localStorage.getItem('characterCurioFallback') || 'null');
 		const newer = demoState();
 		newer.characters[0].name = 'Newer';
 		const stamped = {
@@ -295,7 +295,7 @@ async function scenario(name, fn) {
 			templates: newer.templates,
 			preferences: {},
 		};
-		globalThis.localStorage.setItem('cortexToolkitFallback', JSON.stringify(stamped));
+		globalThis.localStorage.setItem('characterCurioFallback', JSON.stringify(stamped));
 		void fb;
 		const loaded = await S.load();
 		ok(loaded.characters[0] && loaded.characters[0].name === 'Newer', 'newer fallback beats stale IDB');

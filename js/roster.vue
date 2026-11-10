@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, ref } from 'vue';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
 import TraitSetMini from './trait-set-mini.vue';
 import { SHOWCASE_TEMPLATES } from './showcase-templates.ts';
 
-declare const cortexLibraryTemplates: any;
+declare const characterCurioLibraryTemplates: any;
 
 const props = withDefaults(
 	defineProps<{
@@ -95,8 +95,8 @@ const charactersFiltered = computed(() => {
 });
 
 const libraryTemplates = computed(() => {
-	const base = typeof cortexLibraryTemplates !== 'undefined' ? cortexLibraryTemplates : [];
-	if (typeof cortexLibraryTemplates === 'undefined') {
+	const base = typeof characterCurioLibraryTemplates !== 'undefined' ? characterCurioLibraryTemplates : [];
+	if (typeof characterCurioLibraryTemplates === 'undefined') {
 		loadLibraryTemplates();
 	}
 	return [...SHOWCASE_TEMPLATES, ...base];
@@ -119,7 +119,7 @@ const libraryTemplatesFiltered = computed(() => {
 });
 
 function safeImageUrl(url: any) {
-	return cortexFunctions.safeImageUrl(url);
+	return characterCurioFunctions.safeImageUrl(url);
 }
 
 // Mini character for a library card hero: the listing cover is the
@@ -169,7 +169,7 @@ function openLibrary() {
 }
 
 function loadLibraryTemplates() {
-	if (typeof cortexLibraryTemplates !== 'undefined' || libraryLoading.value) return;
+	if (typeof characterCurioLibraryTemplates !== 'undefined' || libraryLoading.value) return;
 	libraryLoading.value = true;
 	libraryError.value = '';
 	const script = document.createElement('script');
@@ -299,7 +299,7 @@ function importGetUploads(event: Event) {
 				let templatesAdded = 0;
 				let legacySkipped = 0;
 				candidates.forEach((char: any) => {
-					if (cortexFunctions.isLegacyFile(char)) {
+					if (characterCurioFunctions.isLegacyFile(char)) {
 						legacySkipped++;
 						return;
 					}
@@ -307,18 +307,18 @@ function importGetUploads(event: Event) {
 					// library entry shape; they upsert by static id
 					// (replace, never duplicate) instead of importing
 					// as characters.
-					if (cortexFunctions.isSheetTemplateFile(char)) {
+					if (characterCurioFunctions.isSheetTemplateFile(char)) {
 						emit('importSheetTemplate', char);
 						templatesAdded++;
 						return;
 					}
-					const clean = cortexFunctions.sanitizeImportedCharacter(char);
+					const clean = characterCurioFunctions.sanitizeImportedCharacter(char);
 					if (clean) {
 						importQueue.value.push(clean);
 						added++;
 					}
 				});
-				candidates = candidates.filter((c: any) => !cortexFunctions.isSheetTemplateFile(c));
+				candidates = candidates.filter((c: any) => !characterCurioFunctions.isSheetTemplateFile(c));
 				if (added < candidates.length) {
 					importError.value =
 						'Skipped ' +
@@ -329,7 +329,7 @@ function importGetUploads(event: Event) {
 						file.name +
 						'”.';
 				}
-				if (legacySkipped) importError.value = cortexFunctions.LEGACY_FILE_MESSAGE;
+				if (legacySkipped) importError.value = characterCurioFunctions.LEGACY_FILE_MESSAGE;
 				importNextQueueItem();
 			} catch (error) {
 				importError.value = 'Could not read “' + file.name + '” as a character file.';
@@ -399,7 +399,7 @@ async function importConfirm() {
 }
 
 function renderDate(timestamp: any) {
-	return cortexFunctions.renderDate(timestamp);
+	return characterCurioFunctions.renderDate(timestamp);
 }
 
 function getRelativeDateLabel(date1: any, date2: any) {

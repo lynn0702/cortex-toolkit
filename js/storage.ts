@@ -34,7 +34,7 @@ export interface SaveChanges {
 	};
 }
 
-export interface CortexStorage {
+export interface CharacterCurioStorage {
 	DB_NAME: string;
 	DB_VERSION: number;
 	STORE_NAME: string;
@@ -69,18 +69,23 @@ export interface CortexStorage {
 	requestPersistence(): Promise<boolean>;
 }
 
-export const cortexStorage: CortexStorage = {
-	DB_NAME: 'cortex-toolkit',
+export const characterCurioStorage: CharacterCurioStorage = {
+	DB_NAME: 'character-curio',
 	DB_VERSION: 1,
 	STORE_NAME: 'state',
 	RECORD_KEY: 'app',
 
-	LEGACY_KEYS: ['cortexToolkitData', 'cortexOpenCharacterIDs', 'cortexPlayViewMode', 'cortexRollerPosition'],
+	LEGACY_KEYS: [
+		'characterCurioData',
+		'characterCurioOpenCharacterIDs',
+		'characterCurioPlayViewMode',
+		'characterCurioRollerPosition',
+	],
 
 	// localStorage fallback holding the FULL record (same shape as the IDB
 	// record) when IndexedDB is unavailable. Unlike the legacy split keys
 	// it keeps snapshots and preferences, so a fallback save loses nothing.
-	FALLBACK_KEY: 'cortexToolkitFallback',
+	FALLBACK_KEY: 'characterCurioFallback',
 
 	_dbPromise: null as Promise<IDBDatabase> | null,
 	_useIDB: typeof indexedDB !== 'undefined',
@@ -243,7 +248,7 @@ export const cortexStorage: CortexStorage = {
 		let rollerPosition = 'left';
 		let found = false;
 		try {
-			const raw = localStorage.getItem('cortexToolkitData');
+			const raw = localStorage.getItem('characterCurioData');
 			if (raw && raw.length) {
 				const parsed = JSON.parse(raw);
 				if (parsed && parsed['0.1'] && Array.isArray(parsed['0.1'].characters)) {
@@ -251,7 +256,7 @@ export const cortexStorage: CortexStorage = {
 					found = true;
 				}
 			}
-			const idsRaw = localStorage.getItem('cortexOpenCharacterIDs');
+			const idsRaw = localStorage.getItem('characterCurioOpenCharacterIDs');
 			if (idsRaw) {
 				const ids = JSON.parse(idsRaw);
 				if (Array.isArray(ids)) {
@@ -259,12 +264,12 @@ export const cortexStorage: CortexStorage = {
 					found = true;
 				}
 			}
-			const pvm = localStorage.getItem('cortexPlayViewMode');
+			const pvm = localStorage.getItem('characterCurioPlayViewMode');
 			if (pvm === 'split' || pvm === 'tabs') {
 				playViewMode = pvm;
 				found = true;
 			}
-			const rp = localStorage.getItem('cortexRollerPosition');
+			const rp = localStorage.getItem('characterCurioRollerPosition');
 			if (rp === 'left' || rp === 'right') {
 				rollerPosition = rp;
 				found = true;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { getView, ensureView, isNameSet, resolveVisibility } from './model.ts';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 
 const {
@@ -36,7 +36,7 @@ const effectiveCaption = computed(() => {
 	const cfgCap = getView(traitSet.value)?.imageConfig?.caption;
 	if (cfgCap !== undefined) return cfgCap;
 	if (isName.value) {
-		const t = cortexFunctions.getNameTrait(character.value, 'caption');
+		const t = characterCurioFunctions.getNameTrait(character.value, 'caption');
 		return typeof t?.label === 'string' ? t.label : '';
 	}
 	return '';
@@ -45,7 +45,7 @@ const effectiveCaption = computed(() => {
 const isCaptionShown = computed(() => {
 	if (!effectiveCaption.value) return false;
 	if (!isName.value) return true;
-	const t = cortexFunctions.getNameTrait(character.value, 'caption');
+	const t = characterCurioFunctions.getNameTrait(character.value, 'caption');
 	if (!t) return true;
 	const vis = resolveVisibility(t);
 	if (vis === 'hidden') return false;

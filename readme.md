@@ -1,4 +1,4 @@
-# Cortex Prime Toolkit
+# Character Curio
 
 A web application and layout engine for creating, managing, playing, and printing character sheets for the [Cortex Prime](https://www.cortexrpg.com) tabletop roleplaying game system.
 
@@ -113,7 +113,7 @@ Every change committed to `main` must pass the repository definition of done:
 1. `npm run build`: Webpack Mix compilation with zero errors or warnings.
 2. `npm run check`: `vue-tsc --noEmit` type verification.
 3. `npm test`: All 6 test suites passing:
-   - `cortex-pal-tests`: Dice pool notation, rolling, and syntax export.
+   - `dice-pool-tests`: Dice pool notation, rolling, and syntax export.
    - `sheet-grid-tests`: Grid engine column tracks, spans, and row breaks.
    - `merge-tests`: 3-state layered entity inheritance and null-clearing.
 
@@ -137,4 +137,4 @@ Cortex Prime is the award-winning world-building tabletop RPG system for forging
 
 Cortex is © Dire Wolf Digital, LLC. Cortex, Cortex Prime, associated logos, and trade dress are trademarks of Dire Wolf Digital, LLC. Iconography used with permission.
 
-If you wish to publish or sell materials created using this toolkit, it is your responsibility to ensure you have the proper license or rights from Dire Wolf Digital, LLC. No commercial rights are granted through the use of this software.
+If you wish to publish or sell materials created using Character Curio, it is your responsibility to ensure you have the proper license or rights from Dire Wolf Digital, LLC. No commercial rights are granted through the use of this software.

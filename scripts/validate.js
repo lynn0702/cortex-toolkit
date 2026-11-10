@@ -173,7 +173,7 @@ templates.forEach((tpl, ti) => {
 		if (cs.sheet !== undefined) err(`${where}: retired view.style.sheet key`);
 	}
 	ch.traitSets.forEach((ts, si) => {
-		const bag = (ts && (ts.view || (ts.custom && ts.custom.cortexToolkit))) || {};
+		const bag = (ts && (ts.view || (ts.custom && ts.custom.characterCurio))) || {};
 		if (bag.headerRight !== undefined) err(`${where}.traitSets[${si}]: retired headerRight key (2026-10-22)`);
 		checkViewRetired(bag, `${where}.traitSets[${si}].view`);
 		checkNodeOptions(ts, `${where}.traitSets[${si}]`);
@@ -595,7 +595,7 @@ function checkTemplateFile(where, data) {
 		if (set._lid !== undefined) err(`${where}/${name}: _lid is app-local, never in files`);
 		// Retired view keys: headerRight read nowhere; setDie, challenge-pool
 		// flags, hidden booleans, and view.pool superseded by the node shape.
-		const setBag = set.view || (set.custom && set.custom.cortexToolkit) || {};
+		const setBag = set.view || (set.custom && set.custom.characterCurio) || {};
 		if (setBag.headerRight !== undefined) err(`${where}/${name}: retired headerRight key`);
 		checkViewRetired(setBag, `${where}/${name}.view`);
 		checkNodeOptions(set, `${where}/${name}`);

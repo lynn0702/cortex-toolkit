@@ -7,7 +7,7 @@
  * source of truth for those, so types never drift from validation.
  *
  * This module adds the **app-only** layer the schema intentionally leaves open:
- * the `view` compartment (and legacy `custom.cortexToolkit`: style, features, pips, ring, layout,
+ * the `view` compartment (and legacy `custom.characterCurio`: style, features, pips, ring, layout,
  * labels, …). The schema types `custom` as an open map on purpose (other apps
  * may compartmentalize their own keys); we refine our compartment here.
  *
@@ -400,7 +400,7 @@ export function getPillarLabel(character: unknown, pillarKey: string): string {
 	return key.charAt(0).toUpperCase() + key.slice(1);
 }
 
-// ---------- custom.cortexToolkit sub-shapes (set + character scope) ----------
+// ---------- custom.characterCurio sub-shapes (set + character scope) ----------
 
 export interface SetStyle {
 	header?: string;
@@ -497,7 +497,7 @@ export const VIEW_KEY = 'view' as const;
  * signature keeps it open (`unknown`, not `any`) so a new key is allowed but
  * still has to be narrowed before use.
  */
-export interface CortexToolkitCustom {
+export interface CharacterCurioCustom {
 	[k: string]: unknown;
 
 	// style / features
@@ -609,8 +609,8 @@ export interface CortexToolkitCustom {
 	plural?: string;
 }
 
-export type ViewBag = CortexToolkitCustom;
-export type ViewConfig = CortexToolkitCustom;
+export type ViewBag = CharacterCurioCustom;
+export type ViewConfig = CharacterCurioCustom;
 
 /**
  * The name block is the first trait set (view.style.body "name"): its
@@ -629,16 +629,16 @@ export function isNameSet(set: unknown): boolean {
 
 /**
  * Accessor for the presentation view bag on any character, set, trait, or portrait.
- * Routes through VIEW_KEY and falls back to legacy custom.cortexToolkit data.
+ * Routes through VIEW_KEY and falls back to legacy custom.characterCurio data.
  */
 export function getView<T = ViewBag>(obj: unknown): T | undefined {
 	if (!obj || typeof obj !== 'object') return undefined;
 	const record = obj as Record<string, any>;
-	return (record[VIEW_KEY] ?? record.custom?.cortexToolkit) as T | undefined;
+	return (record[VIEW_KEY] ?? record.custom?.characterCurio) as T | undefined;
 }
 
 /**
- * Ensures the presentation view bag exists on an object, migrating legacy custom.cortexToolkit
+ * Ensures the presentation view bag exists on an object, migrating legacy custom.characterCurio
  * if present, and returns the mutable view bag.
  */
 export function ensureView<T = ViewBag>(obj: unknown): T {
@@ -647,9 +647,9 @@ export function ensureView<T = ViewBag>(obj: unknown): T {
 	}
 	const record = obj as Record<string, any>;
 	if (!record[VIEW_KEY]) {
-		if (record.custom && typeof record.custom === 'object' && record.custom.cortexToolkit) {
-			record[VIEW_KEY] = record.custom.cortexToolkit;
-			delete record.custom.cortexToolkit;
+		if (record.custom && typeof record.custom === 'object' && record.custom.characterCurio) {
+			record[VIEW_KEY] = record.custom.characterCurio;
+			delete record.custom.characterCurio;
 			if (Object.keys(record.custom).length === 0) {
 				delete record.custom;
 			}
@@ -671,13 +671,13 @@ export interface TraitCustom {
 	isResource?: boolean;
 	xp?: number | string;
 	counter?: number | string;
-	cortexToolkit?: CortexToolkitCustom;
+	characterCurio?: CharacterCurioCustom;
 }
 
 /** The open `custom` map, with legacy `cortexToolkit` compartment for back-compat. */
 export interface Custom {
 	[k: string]: unknown;
-	cortexToolkit?: CortexToolkitCustom;
+	characterCurio?: CharacterCurioCustom;
 }
 
 /** Per-character arrangement preferences (file-traveling + live). */
@@ -735,4 +735,4 @@ export type SheetTemplate = Omit<GeneratedSheetTemplate, 'character'> & {
 };
 
 // Convenience aliases used across the app.
-export type CortexToolkit = CortexToolkitCustom;
+export type CharacterCurio = CharacterCurioCustom;

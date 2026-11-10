@@ -1,7 +1,7 @@
 /**
- * Cortex Toolkit - Library Templates Repository (Blank Sheets)
+ * Character Curio - Library Templates Repository (Blank Sheets)
  */
-const cortexLibraryTemplates = [
+const characterCurioLibraryTemplates = [
 	{
 		id: 'alien-us',
 		version: 1,
@@ -18973,5 +18973,5 @@ const cortexLibraryTemplates = [
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = cortexLibraryTemplates;
+	module.exports = characterCurioLibraryTemplates;
 }

@@ -63,7 +63,7 @@ SKILL.md file directly from `.agents/skills/<name>/`.
   (Google Fonts + Font Awesome remain remote).
 - `js/app.js` is the webpack entry; `import` statements ARE the load order and
   `js/app.min.js` is the bundle (see `webpack.mix.js`). It mounts `App` and sets
-  the `window.app` / `cortex*` debug handles. **A new file must be imported into
+  the `window.app` / `characterCurio*` debug handles. **A new file must be imported into
   the graph or it will silently not load** (webpack tree-shakes unreferenced
   exports — an unused module vanishes by design). `js/templates.js` still ships as
   the separate, on-demand `js/templates.bundle.js`.
@@ -90,7 +90,7 @@ SKILL.md file directly from `.agents/skills/<name>/`.
   chained into `npm run build`). `js/model.ts` re-exports the generated shapes
   and adds the app-only `view` types the schema leaves open.
 - Presentation settings live under `view` (`getView` / `ensureView` in `js/model.ts`); `custom.cortexToolkit` is legacy. Never add new unapproved top-level fields to a character, trait set, or trait.
-- localStorage: single key `cortexToolkitData`, namespaced as
+- localStorage: single key `characterCurioData`, namespaced as
   `{ "0.1": { characters } }`. Bump the namespace when the schema changes.
 - Deep clones: use `structuredClone()` everywhere (wrap Vue reactive proxies with `toRaw(v)` before cloning: `structuredClone(toRaw(v))`). Do not use the `JSON.parse(JSON.stringify(...))` idiom.
 

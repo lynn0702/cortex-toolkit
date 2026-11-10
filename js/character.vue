@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { cortexFunctions, cortexSetPresets, type SetPresetEntry } from './functions.ts';
+import { characterCurioFunctions, characterCurioSetPresets, type SetPresetEntry } from './functions.ts';
 import {
 	getView,
 	ensureView,
@@ -13,7 +13,7 @@ import {
 	type TraitSet,
 	type Trait,
 	type ViewBag,
-	type CortexToolkitCustom,
+	type CharacterCurioCustom,
 } from './model.ts';
 import {
 	getSheetSections as gridGetSheetSections,
@@ -52,17 +52,17 @@ const printBlank = ref(false);
 const printBW = ref(false);
 const showInlineAddSet = ref(false);
 const inlineAddPage = ref(1);
-const inlineBuiltInPresets = Object.values(cortexSetPresets);
+const inlineBuiltInPresets = Object.values(characterCurioSetPresets);
 const inlineCustomPresets = ref<SetPresetEntry[]>([]);
 
 function toggleInlineAdd(page = 1) {
 	inlineAddPage.value = page;
-	inlineCustomPresets.value = cortexFunctions.getCustomSetPresets();
+	inlineCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
 	showInlineAddSet.value = !showInlineAddSet.value;
 }
 
 function removeInlineCustomPreset(id: string) {
-	inlineCustomPresets.value = cortexFunctions.deleteCustomSetPreset(id);
+	inlineCustomPresets.value = characterCurioFunctions.deleteCustomSetPreset(id);
 }
 
 function openMiniFromInline() {
@@ -76,7 +76,7 @@ function openPlayMini() {
 }
 const showPlayPresetPicker = ref(false);
 const showPlayMini = ref(false);
-const playBuiltInPresets = Object.values(cortexSetPresets);
+const playBuiltInPresets = Object.values(characterCurioSetPresets);
 const playCustomPresets = ref<SetPresetEntry[]>([]);
 const isMobileViewport = ref(
 	typeof window !== 'undefined' && Boolean(window.matchMedia && window.matchMedia('(max-width: 768px)').matches),
@@ -230,7 +230,7 @@ const characterSheetStyle = computed(() => {
 
 // PRESENTATION
 function isSelected(selector: unknown[]) {
-	return cortexFunctions.arraysMatch(props.editing, selector);
+	return characterCurioFunctions.arraysMatch(props.editing, selector);
 }
 
 function openThemeEditor() {
@@ -248,19 +248,19 @@ function openDiceEditor() {
 
 function applyFonts() {
 	const ctk = getView(props.character);
-	if (!ctk || typeof cortexFunctions === 'undefined') return;
+	if (!ctk || typeof characterCurioFunctions === 'undefined') return;
 	if (ctk.theme?.fonts) {
-		if (ctk.theme.fonts.heading && cortexFunctions.loadGoogleFont)
-			cortexFunctions.loadGoogleFont(ctk.theme.fonts.heading);
-		if (ctk.theme.fonts.primary && cortexFunctions.loadGoogleFont)
-			cortexFunctions.loadGoogleFont(ctk.theme.fonts.primary);
-		if (ctk.theme.fonts.secondary && cortexFunctions.loadGoogleFont)
-			cortexFunctions.loadGoogleFont(ctk.theme.fonts.secondary);
+		if (ctk.theme.fonts.heading && characterCurioFunctions.loadGoogleFont)
+			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.heading);
+		if (ctk.theme.fonts.primary && characterCurioFunctions.loadGoogleFont)
+			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.primary);
+		if (ctk.theme.fonts.secondary && characterCurioFunctions.loadGoogleFont)
+			characterCurioFunctions.loadGoogleFont(ctk.theme.fonts.secondary);
 	}
-	if (Array.isArray(ctk.customFonts) && cortexFunctions.applyCustomFont) {
+	if (Array.isArray(ctk.customFonts) && characterCurioFunctions.applyCustomFont) {
 		ctk.customFonts.forEach((f) => {
 			if (f.name && f.data) {
-				cortexFunctions.applyCustomFont(f.name, f.data);
+				characterCurioFunctions.applyCustomFont(f.name, f.data);
 			}
 		});
 	}
@@ -270,10 +270,10 @@ function applyFonts() {
 }
 
 function renderText(text: unknown) {
-	return cortexFunctions.renderText(text);
+	return characterCurioFunctions.renderText(text);
 }
 function renderDieValue(value: number) {
-	return cortexFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
+	return characterCurioFunctions.renderDieconSVG(value, false, '', getView(props.character)?.diceConfig);
 }
 
 function getSheetSections(pageIndex: number) {
@@ -307,7 +307,7 @@ function addTraitSet(page = 1) {
 	if (!character) return;
 
 	const styleId = 'default';
-	const traitSet: any = structuredClone(cortexFunctions.defaultTraitSet);
+	const traitSet: any = structuredClone(characterCurioFunctions.defaultTraitSet);
 
 	traitSet.name = 'New trait set';
 	traitSet.noun = 'Trait';
@@ -316,8 +316,8 @@ function addTraitSet(page = 1) {
 	tsView.style = { header: styleId, body: styleId };
 
 	tsView.page = page ?? 1;
-	cortexFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
-	const blank: any = structuredClone(cortexFunctions.defaultTrait);
+	characterCurioFunctions.ensureTraitSetIds({ traitSets: [...(character.traitSets || []), traitSet] });
+	const blank: any = structuredClone(characterCurioFunctions.defaultTrait);
 	blank.name = '';
 	delete blank.rating;
 	blank.description = '';
@@ -341,8 +341,8 @@ function removeTraitSet(traitSetID: number) {
 
 	clearSelected();
 
-	const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
-	cortexFunctions.removeTraitSetFromSheet(character, entry, traitSetID);
+	const entry = characterCurioFunctions.resolveTemplateFor(character, rootTemplates());
+	characterCurioFunctions.removeTraitSetFromSheet(character, entry, traitSetID);
 
 	updateCharacter(character);
 }
@@ -350,7 +350,7 @@ function removeTraitSet(traitSetID: number) {
 function addPresetSet(preset: SetPresetEntry, page?: number) {
 	const character = props.character as Character;
 	if (!character || !preset) return;
-	const traitSet = cortexFunctions.instantiateSetPreset(preset, character, page ?? 1);
+	const traitSet = characterCurioFunctions.instantiateSetPreset(preset, character, page ?? 1);
 	character.traitSets.push(traitSet);
 	updateCharacter(character);
 	showInlineAddSet.value = false;
@@ -365,16 +365,16 @@ function addPresetSet(preset: SetPresetEntry, page?: number) {
 }
 
 function openPlayPresetPicker() {
-	playCustomPresets.value = cortexFunctions.getCustomSetPresets();
+	playCustomPresets.value = characterCurioFunctions.getCustomSetPresets();
 	showPlayPresetPicker.value = true;
 }
 
 function removePlayCustomPreset(id: string) {
-	playCustomPresets.value = cortexFunctions.deleteCustomSetPreset(id);
+	playCustomPresets.value = characterCurioFunctions.deleteCustomSetPreset(id);
 }
 
 function getTraitSetRatings(traitSet: TraitSet) {
-	return cortexFunctions.getTraitSetRatings(traitSet);
+	return characterCurioFunctions.getTraitSetRatings(traitSet);
 }
 
 function addTrait(traitSetID: number) {
@@ -382,9 +382,9 @@ function addTrait(traitSetID: number) {
 	const traitSet = character.traitSets[traitSetID];
 	const noun = traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait';
 
-	const trait: any = structuredClone(cortexFunctions.defaultTrait);
+	const trait: any = structuredClone(characterCurioFunctions.defaultTrait);
 	trait.name = 'New ' + noun;
-	const allowed = cortexFunctions.getTraitSetRatings(traitSet);
+	const allowed = characterCurioFunctions.getTraitSetRatings(traitSet);
 	const cur =
 		trait.rating && trait.rating.type === 'Die' && Array.isArray(trait.rating.value) ? trait.rating.value[0] : 0;
 	if (allowed.length > 0 && !allowed.includes(cur)) {
@@ -404,8 +404,8 @@ function removeTrait(traitSetID: number, traitID: number) {
 
 	setTimeout(() => {
 		const character = props.character as Character;
-		const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
-		cortexFunctions.removeTraitFromSheet(character, entry, traitSetID, traitID);
+		const entry = characterCurioFunctions.resolveTemplateFor(character, rootTemplates());
+		characterCurioFunctions.removeTraitFromSheet(character, entry, traitSetID, traitID);
 		updateCharacter(character);
 	}, 200);
 }
@@ -427,7 +427,7 @@ function exportCharacter() {
 
 function renderNotesText(text: unknown) {
 	if (!text) return '';
-	return cortexFunctions.renderMarkdown(text);
+	return characterCurioFunctions.renderMarkdown(text);
 }
 
 function hasWatermark(pageIndex: number) {
@@ -440,7 +440,7 @@ function hasWatermark(pageIndex: number) {
 function getWatermarkStyle(pageIndex: number) {
 	const wm = getView(props.character)?.watermark;
 	if (!wm) return '';
-	const url = cortexFunctions.safeImageUrl(wm.url);
+	const url = characterCurioFunctions.safeImageUrl(wm.url);
 	if (!url) return '';
 	const opacity = Number(wm.opacity);
 	const scale = Number(wm.scale);
@@ -448,7 +448,7 @@ function getWatermarkStyle(pageIndex: number) {
 }
 
 function safeImageUrl(url: unknown) {
-	return cortexFunctions.safeImageUrl(url);
+	return characterCurioFunctions.safeImageUrl(url);
 }
 
 function print() {
@@ -851,7 +851,7 @@ watch(
 										<img
 											class="portrait-placeholder"
 											v-if="!effectivePortraitUrl"
-											src="images/cortex_prime_logo_light_transparent.png"
+											src="images/favicon.ico"
 											alt="Portrait placeholder"
 										/>
 									</div>
@@ -1051,7 +1051,7 @@ watch(
 			<TraitSetMini
 				v-if="showPlayMini"
 				@close="showPlayMini = false"
-				@saved="playCustomPresets = cortexFunctions.getCustomSetPresets()"
+				@saved="playCustomPresets = characterCurioFunctions.getCustomSetPresets()"
 			/>
 		</teleport>
 	</section>

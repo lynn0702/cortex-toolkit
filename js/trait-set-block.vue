@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getView, isNameSet } from './model.ts';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { computed, ref, onMounted, watch } from 'vue';
 import { useTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
@@ -73,7 +73,7 @@ const canRemoveSetInPlay = computed(() => {
 
 const headerTop = computed(() => getView(traitSet.value)?.header === 'top');
 
-const setSfxEntries = computed(() => cortexFunctions.sfxChildren(traitSet.value));
+const setSfxEntries = computed(() => characterCurioFunctions.sfxChildren(traitSet.value));
 
 const BODY_COMPONENTS: Record<string, any> = {
 	name: TraitSetName,

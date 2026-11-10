@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import { VANGUARD_FRAME_SHOWCASE, SHOWCASE_TEMPLATES } from '../js/showcase-templates.ts';
-import { cortexSetPresets, cortexFunctions } from '../js/functions.ts';
+import { characterCurioSetPresets, characterCurioFunctions } from '../js/functions.ts';
 import { computeFrameAnchors, resolveFrame } from '../js/frame-geometry.ts';
 import { isHiddenIn } from '../js/model.ts';
 
@@ -16,17 +16,17 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		expect(tmpl.character.traitSets.length).toBe(8);
 	});
 
-	it('verifies cortexSetPresets contains the 3 new Phase 3c Framed Presets', () => {
-		const ringPreset = cortexSetPresets['framed-ring-attributes'];
+	it('verifies characterCurioSetPresets contains the 3 new Phase 3c Framed Presets', () => {
+		const ringPreset = characterCurioSetPresets['framed-ring-attributes'];
 		expect(ringPreset, 'framed-ring-attributes preset must exist').toBeDefined();
 		expect(ringPreset?.preset?.view?.frame?.shape).toBe('ring');
 
-		const blockPreset = cortexSetPresets['framed-chamfer-block'];
+		const blockPreset = characterCurioSetPresets['framed-chamfer-block'];
 		expect(blockPreset, 'framed-chamfer-block preset must exist').toBeDefined();
 		expect(blockPreset?.preset?.view?.frame?.shape).toBe('block');
 		expect(blockPreset?.preset?.view?.frame?.corner).toBe('cut');
 
-		const linePreset = cortexSetPresets['framed-section-line'];
+		const linePreset = characterCurioSetPresets['framed-section-line'];
 		expect(linePreset, 'framed-section-line preset must exist').toBeDefined();
 		expect(linePreset?.preset?.view?.frame?.shape).toBe('line');
 	});
@@ -278,7 +278,7 @@ describe('Phase 3c Showcase Framed Character Template & Preset Catalog Suite', (
 		expect(sceneTraitsSet.name).toBe('Scene Traits');
 		expect(sessionNotesSet.name).toBe('Session Notes');
 
-		// CortexModel visibility check
+		// Model visibility check
 		expect(isHiddenIn(sceneTraitsSet, 'print')).toBe(true);
 		expect(isHiddenIn(sessionNotesSet, 'print')).toBe(true);
 		expect(isHiddenIn(sceneTraitsSet, 'play')).toBe(false);

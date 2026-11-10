@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
-import { cortexFunctions } from './functions.ts';
-import { cortexStorage } from './storage.ts';
-import { cortexPal } from './cortex-pal.ts';
+import { characterCurioFunctions } from './functions.ts';
+import { characterCurioStorage } from './storage.ts';
+import { dicePool as dicePoolModel } from './dice-pool.ts';
 import Roster from './roster.vue';
 import Character from './character.vue';
 import DiceRoller from './dice-roller.vue';
@@ -14,7 +14,7 @@ import AddCharacterModal from './add-character-modal.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 
-declare const cortexLibraryTemplates: any;
+declare const characterCurioLibraryTemplates: any;
 
 // ---- state ----
 const localData = ref<any>({});
@@ -30,7 +30,7 @@ const mode = ref('roster');
 const submode = ref<string | null>(null);
 const editing = ref<any>(null);
 const viewY = ref<number | null>(null);
-const dicePool = ref(new cortexPal.DicePool());
+const dicePool = ref(new dicePoolModel.DicePool());
 const isRollerOpen = ref(false);
 const rollerPosition = ref('right');
 const isStudioPanelOpen = ref(true);
@@ -60,7 +60,7 @@ let _libraryLoading: any = null;
 
 // ---- dark mode state ----
 const colorSchemePref = ref<'light' | 'dark' | 'system'>(
-	(typeof localStorage !== 'undefined' && (localStorage.getItem('cortexColorScheme') as any)) || 'system',
+	(typeof localStorage !== 'undefined' && (localStorage.getItem('characterCurioColorScheme') as any)) || 'system',
 );
 const systemPrefersDark = ref(
 	Boolean(
@@ -80,18 +80,18 @@ function toggleDarkMode() {
 	const next = isDarkMode.value ? 'light' : 'dark';
 	colorSchemePref.value = next;
 	try {
-		localStorage.setItem('cortexColorScheme', next);
+		localStorage.setItem('characterCurioColorScheme', next);
 	} catch (_e) {}
 }
 
 const isDesktopPillars = ref<boolean>(
-	typeof localStorage !== 'undefined' ? localStorage.getItem('cortexPlayPillars') === 'true' : false,
+	typeof localStorage !== 'undefined' ? localStorage.getItem('characterCurioPlayPillars') === 'true' : false,
 );
 
 function toggleDesktopPillars() {
 	isDesktopPillars.value = !isDesktopPillars.value;
 	try {
-		localStorage.setItem('cortexPlayPillars', String(isDesktopPillars.value));
+		localStorage.setItem('characterCurioPlayPillars', String(isDesktopPillars.value));
 	} catch (_e) {}
 }
 
@@ -161,8 +161,8 @@ const pendingTemplateUpdate = computed(() => {
 	const id = t ? (typeof t === 'string' ? t : t.id) : null;
 	if (!id) return null;
 	const pinned = (t && typeof t === 'object' && t.version) || 1;
-	if (typeof cortexLibraryTemplates === 'undefined') return null;
-	const builtin = cortexFunctions.findLibraryTemplate(id);
+	if (typeof characterCurioLibraryTemplates === 'undefined') return null;
+	const builtin = characterCurioFunctions.findLibraryTemplate(id);
 	if (!builtin) return null;
 	const current = builtin.version || 1;
 	if (current <= pinned) return null;
@@ -411,7 +411,7 @@ function clearDicePool() {
 function handleSettlePP(delta: number) {
 	if (character.value && delta > 0) {
 		const currentPP = Number(character.value.plotPoints || 0);
-		cortexFunctions.setPlotPoints(character.value, currentPP + delta);
+		characterCurioFunctions.setPlotPoints(character.value, currentPP + delta);
 		updateCharacter(character.value);
 	}
 }
@@ -478,14 +478,14 @@ function cancelPlaySave() {
 }
 
 function safeImageUrl(url: any) {
-	return cortexFunctions.safeImageUrl(url);
+	return characterCurioFunctions.safeImageUrl(url);
 }
 
 // ---------- Sheet template layer ----------
 // Templates resolve store-first, then the built-in library
 // library. Static ids dedupe: re-imports replace, never append.
 function ensureLibraryTemplates(): Promise<boolean> {
-	if (typeof cortexLibraryTemplates !== 'undefined') return Promise.resolve(true);
+	if (typeof characterCurioLibraryTemplates !== 'undefined') return Promise.resolve(true);
 	if (_libraryLoading) return _libraryLoading;
 	_libraryLoading = new Promise<boolean>((resolve) => {
 		const script = document.createElement('script');
@@ -505,7 +505,7 @@ function resolveTemplateEntry(id: string | null, version?: number | null) {
 	if (version) {
 		const snap = store.find((t: any) => t.id === id && (t.version || 1) === version);
 		if (snap) return snap;
-		const builtin = cortexFunctions.findLibraryTemplate(id);
+		const builtin = characterCurioFunctions.findLibraryTemplate(id);
 		if (builtin && (builtin.version || 1) === version) return builtin;
 		if (builtin) return builtin; // degraded: snapshot lost, use current
 		const any = store.filter((t: any) => t.id === id).sort((a: any, b: any) => (b.version || 1) - (a.version || 1));
@@ -513,7 +513,7 @@ function resolveTemplateEntry(id: string | null, version?: number | null) {
 	}
 	const any = store.filter((t: any) => t.id === id).sort((a: any, b: any) => (b.version || 1) - (a.version || 1));
 	if (any.length) return any[0];
-	const builtin = cortexFunctions.findLibraryTemplate(id);
+	const builtin = characterCurioFunctions.findLibraryTemplate(id);
 	if (builtin) return builtin;
 	return null;
 }
@@ -592,7 +592,7 @@ function recordCharOrder(characterData: any) {
 // internal ids + preferences.
 function resolveStoredCharacter(c: any) {
 	if (!c || typeof c !== 'object') return c;
-	cortexFunctions.ensureTraitSetIds(c);
+	characterCurioFunctions.ensureTraitSetIds(c);
 	let ref: any = null;
 	const t = c.sheet && c.sheet.template;
 	if (typeof t === 'string' && t.length) {
@@ -600,7 +600,7 @@ function resolveStoredCharacter(c: any) {
 		c.sheet = { template: { id: t } };
 	} else if (t && typeof t === 'object') {
 		if (t.character && t.id) {
-			sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, t);
+			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, t);
 			ref = { id: t.id, version: t.version || 1 };
 			c.sheet = { template: { id: t.id, version: t.version || 1 } };
 		} else if (t.id) {
@@ -616,28 +616,28 @@ function resolveStoredCharacter(c: any) {
 			// a later bundle update must never move existing
 			// characters until the user accepts the switch.
 			const inStore = (sheetTemplates.value || []).some((s: any) => s.id === entry.id && (s.version || 1) === ver);
-			if (!inStore && cortexFunctions.findLibraryTemplate(entry.id) === entry) {
-				sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, entry);
+			if (!inStore && characterCurioFunctions.findLibraryTemplate(entry.id) === entry) {
+				sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, entry);
 			}
 			ref = { id: ref.id, version: ver };
 			c.sheet = { template: { id: ref.id, version: ver } };
 			entry = resolveTemplateEntry(ref.id, ref.version) || entry;
 		}
 		if (entry) {
-			const templateChar = cortexFunctions.findTemplateCharacter(entry);
+			const templateChar = characterCurioFunctions.findTemplateCharacter(entry);
 			if (templateChar && c.sets) {
 				// Layered storage form: fold content onto the template.
-				c = cortexFunctions.materializeCharacter(c, templateChar);
+				c = characterCurioFunctions.materializeCharacter(c, templateChar);
 				c.sheet = ref.version ? { template: { id: ref.id, version: ref.version } } : { template: { id: ref.id } };
 			} else {
-				c = cortexFunctions.mergeTemplateIntoCharacter(c, entry);
+				c = characterCurioFunctions.mergeTemplateIntoCharacter(c, entry);
 			}
 		} else if (c.sets) {
-			c = cortexFunctions.materializeCharacter(c, null);
+			c = characterCurioFunctions.materializeCharacter(c, null);
 		}
 	}
-	cortexFunctions.ensureTraitSetIds(c);
-	cortexFunctions.assignLids(c);
+	characterCurioFunctions.ensureTraitSetIds(c);
+	characterCurioFunctions.assignLids(c);
 	applyPrefs(c);
 	return c;
 }
@@ -647,7 +647,7 @@ function setViewY() {
 }
 
 function setPageTitle() {
-	let pageTitle = 'Cortex Toolkit';
+	let pageTitle = 'Character Curio';
 	if (mode.value === 'character' && character.value && character.value.name.length) {
 		pageTitle = `${character.value.name} - ${pageTitle}`;
 	}
@@ -738,17 +738,20 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 						: template.sheet.template.id
 					: null;
 			const reuse =
-				currentRef && !cortexFunctions.findLibraryTemplate(currentRef) ? currentRef : 'custom-' + template.id;
-			const entry = cortexFunctions.extractSheetTemplate(template, {
+				currentRef && !characterCurioFunctions.findLibraryTemplate(currentRef) ? currentRef : 'custom-' + template.id;
+			const entry = characterCurioFunctions.extractSheetTemplate(template, {
 				id: reuse,
 				version: 1,
 				title: template.game || template.name || 'Template',
 			});
-			sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, JSON.parse(JSON.stringify(entry)));
+			sheetTemplates.value = characterCurioStorage.upsertTemplate(
+				sheetTemplates.value,
+				JSON.parse(JSON.stringify(entry)),
+			);
 
 			const now = new Date().toISOString();
 			const entity = {
-				id: cortexFunctions.generateUUID(),
+				id: characterCurioFunctions.generateUUID(),
 				isTemplate: asTemplate,
 				name: asTemplate ? template.name || 'New Template' : '',
 				game: template.game || template.name || '',
@@ -758,10 +761,10 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 				sets: {},
 				template: { id: entry.id, version: entry.version || 1 },
 			};
-			const characterData: any = cortexFunctions.materializeCharacter(entity, entry.character);
+			const characterData: any = characterCurioFunctions.materializeCharacter(entity, entry.character);
 			characterData.sheet = { template: { id: entry.id, version: entry.version || 1 } };
-			cortexFunctions.ensureTraitSetIds(characterData);
-			cortexFunctions.assignLids(characterData);
+			characterCurioFunctions.ensureTraitSetIds(characterData);
+			characterCurioFunctions.assignLids(characterData);
 			recordCharOrder(characterData);
 
 			characters.value.push(characterData);
@@ -783,9 +786,9 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 		}
 	}
 
-	const characterData = structuredClone(cortexFunctions.defaultCharacter);
+	const characterData = structuredClone(characterCurioFunctions.defaultCharacter);
 
-	characterData.id = cortexFunctions.generateUUID();
+	characterData.id = characterCurioFunctions.generateUUID();
 	characterData.isTemplate = asTemplate;
 	if (asTemplate) {
 		characterData.name = 'New Template';
@@ -794,8 +797,8 @@ function createCharacter(isTemplate: boolean | string = false, templateId?: stri
 	characterData.dateCreated = new Date().toISOString();
 	characterData.dateModified = new Date().toISOString();
 	characterData.dateTouched = new Date().toISOString();
-	cortexFunctions.ensureTraitSetIds(characterData);
-	cortexFunctions.assignLids(characterData);
+	characterCurioFunctions.ensureTraitSetIds(characterData);
+	characterCurioFunctions.assignLids(characterData);
 
 	characters.value.push(characterData);
 	characterID.value = characterData.id;
@@ -824,7 +827,7 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 	// template at the seam; nothing is cloned from the array form.
 	const now = new Date().toISOString();
 	const entity = {
-		id: cortexFunctions.generateUUID(),
+		id: characterCurioFunctions.generateUUID(),
 		isTemplate: asTemplate,
 		name: asTemplate ? (libraryItem.title ? libraryItem.title.replace(/\s*\([^)]*\)/g, '').trim() : 'Template') : '',
 		game: libraryItem.game || libraryItem.title || '',
@@ -834,12 +837,15 @@ function createFromLibrary(libraryItem: any, asTemplate = false, openPrint = fal
 		sets: {},
 		template: { id: libraryItem.id, version: libraryItem.version || 1 },
 	};
-	const characterData: any = cortexFunctions.materializeCharacter(entity, libraryItem.character);
-	cortexFunctions.ensureTraitSetIds(characterData);
-	cortexFunctions.assignLids(characterData);
+	const characterData: any = characterCurioFunctions.materializeCharacter(entity, libraryItem.character);
+	characterCurioFunctions.ensureTraitSetIds(characterData);
+	characterCurioFunctions.assignLids(characterData);
 	// D16: snapshot the exact pinned base now — a later bundle
 	// update must never move this character unasked.
-	sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, JSON.parse(JSON.stringify(libraryItem)));
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(
+		sheetTemplates.value,
+		JSON.parse(JSON.stringify(libraryItem)),
+	);
 	recordCharOrder(characterData);
 
 	characters.value.push(characterData);
@@ -911,11 +917,11 @@ function duplicateCharacter(id: string) {
 	if (!original) return;
 
 	const characterData = JSON.parse(JSON.stringify(original));
-	characterData.id = cortexFunctions.generateUUID();
+	characterData.id = characterCurioFunctions.generateUUID();
 	characterData.name = characterData.name && characterData.name.length ? `${characterData.name} (Copy)` : 'Copy';
-	cortexFunctions.stripInternalIds(characterData);
-	cortexFunctions.ensureTraitSetIds(characterData);
-	cortexFunctions.assignLids(characterData);
+	characterCurioFunctions.stripInternalIds(characterData);
+	characterCurioFunctions.ensureTraitSetIds(characterData);
+	characterCurioFunctions.assignLids(characterData);
 	recordCharOrder(characterData);
 	characterData.dateCreated = new Date().toISOString();
 	characterData.dateModified = new Date().toISOString();
@@ -940,11 +946,11 @@ function loadCharacter(id: string) {
 
 function importSheetTemplate(entry: any) {
 	if (!entry || !entry.id) return;
-	if (cortexFunctions.isLegacyFile(entry)) {
-		showToast(cortexFunctions.LEGACY_FILE_MESSAGE);
+	if (characterCurioFunctions.isLegacyFile(entry)) {
+		showToast(characterCurioFunctions.LEGACY_FILE_MESSAGE);
 		return;
 	}
-	sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, entry);
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, entry);
 	saveLocalData();
 	showToast(`Saved layout template “${entry.title || entry.id}”`);
 }
@@ -957,14 +963,14 @@ async function applyTemplateUpdate() {
 	if (!u || !character.value) return;
 	await ensureLibraryTemplates();
 	const oldEntry = resolveTemplateEntry(u.id, u.pinned);
-	const newEntry = cortexFunctions.findLibraryTemplate(u.id);
+	const newEntry = characterCurioFunctions.findLibraryTemplate(u.id);
 	if (!newEntry) return;
 	const stripped = oldEntry
-		? cortexFunctions.stripCharacterToDeltas(character.value, oldEntry)
+		? characterCurioFunctions.stripCharacterToDeltas(character.value, oldEntry)
 		: JSON.parse(JSON.stringify(character.value));
-	const rebased = cortexFunctions.mergeTemplateIntoCharacter(stripped, newEntry);
+	const rebased = characterCurioFunctions.mergeTemplateIntoCharacter(stripped, newEntry);
 	rebased.sheet = { template: { id: u.id, version: newEntry.version || 1 } };
-	cortexFunctions.assignLids(rebased);
+	characterCurioFunctions.assignLids(rebased);
 	characters.value[characterIndex.value] = rebased;
 	applyPrefs(rebased);
 	recordCharOrder(rebased);
@@ -984,8 +990,8 @@ function stayOnTemplateSnapshot() {
 }
 
 function importCharacter(characterData: any) {
-	if (cortexFunctions.isLegacyFile(characterData)) {
-		showToast(cortexFunctions.LEGACY_FILE_MESSAGE);
+	if (characterCurioFunctions.isLegacyFile(characterData)) {
+		showToast(characterCurioFunctions.LEGACY_FILE_MESSAGE);
 		return;
 	}
 	// Embedded template travels with the file: upsert by static
@@ -997,12 +1003,12 @@ function importCharacter(characterData: any) {
 	if (tref && typeof tref === 'object') {
 		let tplEntry = null;
 		if (tref.character && tref.id) {
-			sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, tref);
+			sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, tref);
 			tplEntry = tref;
 		} else if (tref.id) {
 			tplEntry = resolveTemplateEntry(tref.id, tref.version || null);
 		}
-		const templateChar = tplEntry ? cortexFunctions.findTemplateCharacter(tplEntry) : null;
+		const templateChar = tplEntry ? characterCurioFunctions.findTemplateCharacter(tplEntry) : null;
 		if (templateChar) {
 			// Layered seam: the file's content + overrides fold onto
 			// the template (lossless — presentation is preserved). Input
@@ -1014,11 +1020,11 @@ function importCharacter(characterData: any) {
 				typeof incoming.sets === 'object' &&
 				!Array.isArray(incoming.sets)
 					? incoming
-					: cortexFunctions.toLayeredEntity(incoming);
-			incoming = cortexFunctions.materializeCharacter(layered, templateChar);
+					: characterCurioFunctions.toLayeredEntity(incoming);
+			incoming = characterCurioFunctions.materializeCharacter(layered, templateChar);
 			incoming.sheet = { template: { id: tplEntry.id, version: tplEntry.version || 1 } };
 		} else if (tplEntry) {
-			incoming = cortexFunctions.mergeTemplateIntoCharacter(incoming, tplEntry);
+			incoming = characterCurioFunctions.mergeTemplateIntoCharacter(incoming, tplEntry);
 		}
 	} else if (
 		incoming &&
@@ -1029,10 +1035,10 @@ function importCharacter(characterData: any) {
 	) {
 		// Layered input with no template link: fold standalone (no
 		// presentation base; entity sets render as custom sets).
-		incoming = cortexFunctions.materializeCharacter(incoming);
+		incoming = characterCurioFunctions.materializeCharacter(incoming);
 	}
-	cortexFunctions.ensureTraitSetIds(incoming);
-	cortexFunctions.assignLids(incoming);
+	characterCurioFunctions.ensureTraitSetIds(incoming);
+	characterCurioFunctions.assignLids(incoming);
 
 	// Save new character.
 	const c = characters.value.findIndex((existingCharacter: any) => existingCharacter.id === incoming.id);
@@ -1046,7 +1052,7 @@ function importCharacter(characterData: any) {
 	// Arrangement: file prefs (name-keyed) convert to live form;
 	// otherwise the file's own order is recorded fresh.
 	if (incoming.prefs && typeof incoming.prefs === 'object') {
-		const live = cortexFunctions.prefsFromImport(incoming.prefs, incoming);
+		const live = characterCurioFunctions.prefsFromImport(incoming.prefs, incoming);
 		if (live) {
 			if (!prefs.value) prefs.value = { version: 1, global: {}, characters: {} };
 			prefs.value.characters[incoming.id] = live;
@@ -1090,10 +1096,10 @@ async function exportCharacter(id: string) {
 	await ensureLibraryTemplates();
 	const entry = sheetTemplateForExport(characterData);
 	const out = entry
-		? cortexFunctions.stripCharacterForExport(characterData, entry)
+		? characterCurioFunctions.stripCharacterForExport(characterData, entry)
 		: JSON.parse(JSON.stringify(characterData));
 	// Arrangement travels name-keyed (D18 same-user-new-device).
-	const filePrefs = cortexFunctions.prefsForExport(
+	const filePrefs = characterCurioFunctions.prefsForExport(
 		prefs.value && prefs.value.characters ? prefs.value.characters[characterData.id] : null,
 		characterData,
 	);
@@ -1102,7 +1108,7 @@ async function exportCharacter(id: string) {
 	let name = out.name && out.name.length ? out.name : 'Name';
 	const timestamp = new Date(out.dateModified).getTime();
 	name = name.replaceAll(/\s+/g, '_');
-	const filename = `${name}_${timestamp}.cortex.json`;
+	const filename = `${name}_${timestamp}.curio.json`;
 
 	downloadJson(filename, out);
 }
@@ -1118,14 +1124,14 @@ function saveSheetTemplate() {
 			: null;
 	// Re-saving a custom template updates it in place (version bump);
 	// forking off a built-in (or nothing) mints a fresh static id.
-	const reuse = currentRef && !cortexFunctions.findLibraryTemplate(currentRef) ? currentRef : null;
+	const reuse = currentRef && !characterCurioFunctions.findLibraryTemplate(currentRef) ? currentRef : null;
 	const prev = reuse ? resolveTemplateEntry(reuse) : null;
-	const entry = cortexFunctions.extractSheetTemplate(characterData, {
+	const entry = characterCurioFunctions.extractSheetTemplate(characterData, {
 		id: reuse || undefined,
 		version: reuse ? ((prev && prev.version) || 1) + 1 : 1,
 		title: (characterData.game || characterData.name || 'Custom') + ' Layout',
 	});
-	sheetTemplates.value = cortexStorage.upsertTemplate(sheetTemplates.value, entry);
+	sheetTemplates.value = characterCurioStorage.upsertTemplate(sheetTemplates.value, entry);
 	characterData.sheet = { template: { id: entry.id, version: entry.version } };
 	saveLocalData();
 	showToast(`Saved layout as reusable template`);
@@ -1142,19 +1148,19 @@ function exportSheetTemplate() {
 			: null;
 	let entry = ref ? resolveTemplateEntry(ref) : null;
 	if (!entry)
-		entry = cortexFunctions.extractSheetTemplate(characterData, {
+		entry = characterCurioFunctions.extractSheetTemplate(characterData, {
 			title: (characterData.game || characterData.name || 'Custom') + ' Layout',
 		});
 	const slug = String(entry.title || entry.id || 'template').replace(/\s+/g, '_');
-	downloadJson(`${slug}.cortex-template.json`, entry);
+	downloadJson(`${slug}.curio-template.json`, entry);
 }
 
 async function exportAllCharacters() {
 	await ensureLibraryTemplates();
 	const out = (characters.value || []).map((c: any) => {
 		const entry = sheetTemplateForExport(c);
-		const o = entry ? cortexFunctions.stripCharacterForExport(c, entry) : JSON.parse(JSON.stringify(c));
-		const filePrefs = cortexFunctions.prefsForExport(
+		const o = entry ? characterCurioFunctions.stripCharacterForExport(c, entry) : JSON.parse(JSON.stringify(c));
+		const filePrefs = characterCurioFunctions.prefsForExport(
 			prefs.value && prefs.value.characters ? prefs.value.characters[c.id] : null,
 			c,
 		);
@@ -1171,7 +1177,7 @@ async function exportAllCharacters() {
 	};
 
 	const timestamp = new Date().getTime();
-	const filename = `Cortex_Characters_Bundle_${timestamp}.json`;
+	const filename = `Character_Curio_Bundle_${timestamp}.json`;
 
 	downloadJson(filename, bundle);
 	showToast(`Exported ${out.length} characters`);
@@ -1184,7 +1190,7 @@ function updateCharacter(characterData: any) {
 
 	characterData.dateModified = new Date().toISOString();
 	characterData.dateTouched = new Date().toISOString();
-	cortexFunctions.assignLids(characterData);
+	characterCurioFunctions.assignLids(characterData);
 
 	characters.value[c] = characterData;
 	setPageTitle();
@@ -1248,7 +1254,7 @@ function touchCharacter(id: string) {
 function selectElement(selector: any) {
 	// Re-clicking the open element keeps its editor open (it never toggles
 	// shut); deselect via Done, Escape, or clicking empty canvas instead.
-	if (Array.isArray(selector) && selector.length && cortexFunctions.arraysMatch(editing.value, selector)) {
+	if (Array.isArray(selector) && selector.length && characterCurioFunctions.arraysMatch(editing.value, selector)) {
 		isStudioPanelOpen.value = true;
 		studioPanelTab.value = 'properties';
 		return;
@@ -1320,8 +1326,8 @@ function removeTrait(traitSetID: number, traitID: number) {
 	clearSelected();
 	if (!character.value) return;
 	const char = character.value;
-	const entry = cortexFunctions.resolveTemplateFor(char, sheetTemplates.value);
-	cortexFunctions.removeTraitFromSheet(char, entry, traitSetID, traitID);
+	const entry = characterCurioFunctions.resolveTemplateFor(char, sheetTemplates.value);
+	characterCurioFunctions.removeTraitFromSheet(char, entry, traitSetID, traitID);
 	updateCharacter(char);
 }
 
@@ -1329,8 +1335,8 @@ function removeTraitSet(traitSetID: number) {
 	clearSelected();
 	if (!character.value) return;
 	const char = character.value;
-	const entry = cortexFunctions.resolveTemplateFor(char, sheetTemplates.value);
-	cortexFunctions.removeTraitSetFromSheet(char, entry, traitSetID);
+	const entry = characterCurioFunctions.resolveTemplateFor(char, sheetTemplates.value);
+	characterCurioFunctions.removeTraitSetFromSheet(char, entry, traitSetID);
 	updateCharacter(char);
 }
 
@@ -1359,9 +1365,9 @@ async function bootFromStorage() {
 	storeError.value = null;
 
 	try {
-		const stored = await cortexStorage.load();
-		sheetTemplates.value = cortexStorage.normalizeTemplates(stored.templates);
-		prefs.value = cortexStorage.normalizePreferences(stored.preferences);
+		const stored = await characterCurioStorage.load();
+		sheetTemplates.value = characterCurioStorage.normalizeTemplates(stored.templates);
+		prefs.value = characterCurioStorage.normalizePreferences(stored.preferences);
 		await ensureLibraryTemplates();
 		characters.value = (stored.characters || []).map((c: any) => resolveStoredCharacter(c));
 		initBaseline(characters.value);
@@ -1385,7 +1391,7 @@ async function bootFromStorage() {
 			openCharacterIDs: openCharacterIDs.value,
 			playViewMode: playViewMode.value,
 			rollerPosition: rollerPosition.value,
-			templates: cortexStorage.pruneTemplates(sheetTemplates.value, characters.value),
+			templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
 			preferences: prefs.value,
 		});
 		if (stored.loadError) {
@@ -1402,7 +1408,7 @@ async function bootFromStorage() {
 	}
 
 	storeReady.value = true;
-	cortexStorage.requestPersistence();
+	characterCurioStorage.requestPersistence();
 }
 
 // Last successful save: characters keyed by id (storage form as JSON) and
@@ -1428,13 +1434,13 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 			// Strip against the PINNED version (the base this
 			// character was merged from), never the newer bundle.
 			const entry = ref ? resolveTemplateEntry(ref.id, ref.version) : null;
-			const templateChar = entry ? cortexFunctions.findTemplateCharacter(entry) : null;
+			const templateChar = entry ? characterCurioFunctions.findTemplateCharacter(entry) : null;
 			let out;
 			if (entry && templateChar) {
 				// Layered storage: lossless content + per-entity
 				// override entity (presentation is preserved), pinned ref.
-				const delta = cortexFunctions.stripCharacterToDeltas(c, entry);
-				out = cortexFunctions.toLayeredEntity(delta);
+				const delta = characterCurioFunctions.stripCharacterToDeltas(c, entry);
+				out = characterCurioFunctions.toLayeredEntity(delta);
 			} else {
 				// Standalone / no template: keep the array form.
 				out = JSON.parse(JSON.stringify(c));
@@ -1452,7 +1458,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 				openCharacterIDs: openCharacterIDs.value,
 				playViewMode: playViewMode.value,
 				rollerPosition: rollerPosition.value,
-				templates: cortexStorage.pruneTemplates(sheetTemplates.value, characters.value),
+				templates: characterCurioStorage.pruneTemplates(sheetTemplates.value, characters.value),
 				preferences: prefs.value,
 			}),
 		);
@@ -1497,7 +1503,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 	}
 
 	try {
-		const result = await cortexStorage.saveChanges({ upsert, remove, session });
+		const result = await characterCurioStorage.saveChanges({ upsert, remove, session });
 		lastSavedCharacters = snapshot;
 		lastSavedSession = sessionJson;
 		if (submode.value !== 'play' || options?.allowSessionCharacterSave) {
@@ -1836,7 +1842,7 @@ defineExpose({
 				></Character>
 
 				<article class="about" v-else-if="mode === 'about'">
-					<h1>About Cortex Toolkit</h1>
+					<h1>About Character Curio</h1>
 
 					<p>
 						Cortex Prime is the award-winning world-building tabletop RPG system for forging unique, compelling game
@@ -1873,7 +1879,7 @@ defineExpose({
 					</template>
 					<template v-else-if="dicePool.items.length > 0">
 						<span v-for="(item, pIdx) in dicePool.items" :key="pIdx" class="pill-die">
-							<span v-html="cortexFunctions.renderDieconSVG(item.size, false, '', null)"></span>
+							<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
 							<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
 						</span>
 					</template>

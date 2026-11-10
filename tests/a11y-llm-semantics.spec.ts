@@ -10,8 +10,8 @@ import SessionNav from '../js/session-nav.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
 import PageLayoutMini from '../js/page-layout-mini.vue';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
-import { cortexFunctions } from '../js/functions.ts';
-import { cortexPal } from '../js/cortex-pal.ts';
+import { characterCurioFunctions } from '../js/functions.ts';
+import { dicePool } from '../js/dice-pool.ts';
 import { useTraitSet } from '../js/use-trait-set.ts';
 
 // 1. Axe-core runner configured for JSDOM / Component testing
@@ -268,7 +268,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		const roller = mount(DiceRoller, {
 			props: {
 				open: true,
-				pool: new cortexPal.DicePool(),
+				pool: new dicePool.DicePool(),
 			},
 		});
 		const scaleBtn = roller.find('.roller-btn-scale-quick');
@@ -360,7 +360,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	it('TraitSetMini (Phase 3a): standalone authoring, noun inventory consistency, companion stress track, keyboard nudge, and preset round-trip', async () => {
-		window.localStorage.removeItem('cortexCustomSetPresets');
+		window.localStorage.removeItem('characterCurioCustomSetPresets');
 
 		const wrapper = mount(TraitSetMini);
 		await runAxeAudit(wrapper.element as HTMLElement);
@@ -427,9 +427,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		// Instantiate saved preset onto a character and verify Play, Edit, and Print rendering
 		const char: any = { name: 'Tester', traitSets: [] };
-		const addedSet = cortexFunctions.instantiateSetPreset(savedPreset, char, 1);
+		const addedSet = characterCurioFunctions.instantiateSetPreset(savedPreset, char, 1);
 		char.traitSets.push(addedSet);
-		expect(cortexFunctions.getTrackScale(addedSet)).toEqual([6, 8, 10]);
+		expect(characterCurioFunctions.getTrackScale(addedSet)).toEqual([6, 8, 10]);
 
 		for (const mode of ['play', 'edit', 'print']) {
 			const block = mount(TraitSetBlock, {
@@ -442,7 +442,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		}
 
 		wrapper.unmount();
-		window.localStorage.removeItem('cortexCustomSetPresets');
+		window.localStorage.removeItem('characterCurioCustomSetPresets');
 	});
 
 	it('supports trait-specific custom companion track names (Injured, Worried) with track fallback and T/L marker toggles', async () => {
@@ -1471,7 +1471,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const selectedEvents = setEditor.emitted('selectElement');
 			expect(selectedEvents).toBeTruthy();
 			expect(selectedEvents![0][0]).toEqual(['subtrait', 0, 0, 0]);
-			expect(cortexFunctions.hasTrackPart(char.traitSets[0])).toBe(true);
+			expect(characterCurioFunctions.hasTrackPart(char.traitSets[0])).toBe(true);
 			setEditor.unmount();
 
 			// 2. StudioPanel drills down into TraitEditor with breadcrumb "Sheet › Attributes › Stress"

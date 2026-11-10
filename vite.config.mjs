@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => ({
 		chunkSizeWarningLimit: 2000,
 		lib: {
 			entry: path.resolve(__dirname, 'js/app.js'),
-			name: 'CortexApp',
+			name: 'CharacterCurioApp',
 			formats: ['iife'],
 			fileName: () => 'js/app.min.js',
 			cssFileName: 'css/app.min',

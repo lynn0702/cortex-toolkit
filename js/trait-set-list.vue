@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getView } from './model.ts';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetPips from './trait-set-pips.vue';
 import TraitSetFrame from './trait-set-frame.vue';
@@ -720,13 +720,13 @@ const {
 							</div>
 							<!-- BLOCK (SFX) -->
 							<div
-								v-if="partsGridFor(traitSet)?.cells.block && cortexFunctions.sfxChildren(item.trait).length"
+								v-if="partsGridFor(traitSet)?.cells.block && characterCurioFunctions.sfxChildren(item.trait).length"
 								class="trait-part trait-part-block"
 								:style="partCellStyle(partsGridFor(traitSet), 'block')"
 							>
 								<ul class="trait-sfx">
 									<li
-										v-for="(sfx, sfIdx) in cortexFunctions.sfxChildren(item.trait)"
+										v-for="(sfx, sfIdx) in characterCurioFunctions.sfxChildren(item.trait)"
 										:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 									>
 										<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"
@@ -1616,9 +1616,12 @@ const {
 									<span class="badge-label">{{ (getView(item.trait) as any)?.badge?.text }}</span>
 								</span>
 							</span>
-							<ul class="trait-sfx" v-if="!hasTrackPart(traitSet) && cortexFunctions.sfxChildren(item.trait).length">
+							<ul
+								class="trait-sfx"
+								v-if="!hasTrackPart(traitSet) && characterCurioFunctions.sfxChildren(item.trait).length"
+							>
 								<li
-									v-for="(sfx, sfIdx) in cortexFunctions.sfxChildren(item.trait)"
+									v-for="(sfx, sfIdx) in characterCurioFunctions.sfxChildren(item.trait)"
 									:key="(sfx && sfx._lid) || 'sfx' + sfIdx"
 								>
 									<span class="block-prefix" v-if="(getView(item.trait) as any)?.prefix?.text"

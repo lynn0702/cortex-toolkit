@@ -3,7 +3,7 @@ const { fork } = require('child_process');
 const path = require('path');
 
 const scripts = [
-	'cortex-pal-tests.js',
+	'dice-pool-tests.js',
 	'sheet-grid-tests.js',
 	'merge-tests.js',
 	'materialize-tests.js',

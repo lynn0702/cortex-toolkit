@@ -1,6 +1,6 @@
-// cortex-pal (dice model) regression tests.
-// Usage: node scripts/cortex-pal-tests.js  (exit 1 on failure)
-const { CortexDie, CortexDicePool, CORTEX_D4, DIE_SIZES } = require('../js/cortex-pal.ts');
+// dice-pool (dice model) regression tests.
+// Usage: node scripts/dice-pool-tests.js  (exit 1 on failure)
+const { Die, DicePool, DEFAULT_D4, DIE_SIZES } = require('../js/dice-pool.ts');
 
 let pass = 0,
 	fail = 0;
@@ -13,31 +13,31 @@ function ok(cond, name, extra) {
 	}
 }
 
-// ---- CortexDie parsing
+// ---- Die parsing
 {
-	const d = new CortexDie('2d8');
+	const d = new Die('2d8');
 	ok(d.qty === 2 && d.size === 8, 'parse 2d8', { qty: d.qty, size: d.size });
 	ok(d.toString() === '2D8', 'toString 2D8', d.toString());
-	const s = new CortexDie('d10');
+	const s = new Die('d10');
 	ok(s.qty === 1 && s.size === 10, 'parse d10', { qty: s.qty, size: s.size });
 	ok(s.toString() === 'D10', 'toString D10', s.toString());
-	const bare = new CortexDie('12');
+	const bare = new Die('12');
 	ok(bare.size === 12, 'parse bare 12', bare.size);
 }
 
 // ---- roll range
 {
-	const d = new CortexDie(null, 'D8', 8, 3, [], '');
+	const d = new Die(null, 'D8', 8, 3, [], '');
 	const vals = d.roll();
 	ok(vals.length === 3 && vals.every((v) => v >= 1 && v <= 8), 'roll 3d8 in range', vals);
 	ok(d.isRolled(), 'isRolled');
-	const ones = new CortexDie(null, 'D6', 6, 2, [1, 1], '');
+	const ones = new Die(null, 'D6', 6, 2, [1, 1], '');
 	ok(ones.isBotch(), 'all ones is botch');
 }
 
 // ---- pool add / output / remove
 {
-	const p = new CortexDicePool();
+	const p = new DicePool();
 	p.add([8, 8, 10]);
 	ok(p.output() === '2D8, D10', 'pool output 2D8, D10', p.output());
 	ok(p.items.length === 3, 'items length 3', p.items.length);
@@ -53,10 +53,10 @@ function ok(cond, name, extra) {
 
 // ---- hitches + eligible dice
 {
-	const p = new CortexDicePool();
+	const p = new DicePool();
 	p.add([6, 6]);
 	// force values deterministically
-	p.dice = [null, new CortexDie(null, 'D6', 6, 2, [1, 4], ''), null, null, null];
+	p.dice = [null, new Die(null, 'D6', 6, 2, [1, 4], ''), null, null, null];
 	ok(p.hitchCount(1) === 1, 'hitchCount counts <=1', p.hitchCount(1));
 	const elig = p.eligibleDice(1);
 	ok(
@@ -68,10 +68,10 @@ function ok(cond, name, extra) {
 
 // ---- scale/apart staging metadata (hitches travel with the die)
 {
-	const p = new CortexDicePool();
+	const p = new DicePool();
 	p.add([{ size: 8, qty: 1, source: 'Scale', isScale: true }]);
 	ok(p.items.length === 1 && p.items[0].isScale === true, 'isScale staged', p.items[0]);
-	const p2 = new CortexDicePool();
+	const p2 = new DicePool();
 	p2.add([{ size: 6, qty: 2, source: 'Gear', hitches: 0 }]);
 	ok(
 		p2.items.length === 2 && p2.items[0].hitches === 0 && p2.items[0].source === 'Gear',
@@ -82,7 +82,7 @@ function ok(cond, name, extra) {
 
 // ---- ppDelta and ppCommitted metadata
 {
-	const p = new CortexDicePool();
+	const p = new DicePool();
 	p.add([{ size: 4, qty: 1, source: 'Distinction', ppDelta: 1, ppCommitted: false }]);
 	ok(
 		p.items.length === 1 && p.items[0].ppDelta === 1 && p.items[0].ppCommitted === false,
@@ -92,7 +92,7 @@ function ok(cond, name, extra) {
 }
 
 // ---- constants
-ok(DIE_SIZES.length === 5 && CORTEX_D4.size === 4, 'constants intact');
+ok(DIE_SIZES.length === 5 && DEFAULT_D4.size === 4, 'constants intact');
 
-console.log(`cortex-pal-tests: ${pass} passed, ${fail} failed`);
+console.log(`dice-pool-tests: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

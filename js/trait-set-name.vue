@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { getView, resolveVisibility } from './model.ts';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import { injectTraitSet } from './use-trait-set.ts';
 import TraitSetImage from './trait-set-image.vue';
 
@@ -31,7 +31,7 @@ const portrait = computed(() => character.value?.portrait ?? null);
 const effectivePortraitUrl = computed(() => getView(traitSet.value)?.imageConfig?.url || portrait.value?.url || '');
 
 function nameTrait(key: string) {
-	return cortexFunctions.getNameTrait(character.value, key);
+	return characterCurioFunctions.getNameTrait(character.value, key);
 }
 
 function nameLabel(key: string, fallback: string) {

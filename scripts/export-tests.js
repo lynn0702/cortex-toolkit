@@ -1,7 +1,7 @@
 // Export emit tests: canonical scaffolding stays out of every emit path,
 // internal ids never leak, explicit nulls survive.
 // Usage: node scripts/export-tests.js  (exit 1 on failure)
-const F = require('../js/functions.ts').cortexFunctions;
+const F = require('../js/functions.ts').characterCurioFunctions;
 const { toLayeredEntity } = require('../js/layered-materialize.ts');
 
 let pass = 0,

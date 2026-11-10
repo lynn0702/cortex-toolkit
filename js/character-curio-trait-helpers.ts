@@ -1,4 +1,4 @@
-// cortex-toolkit trait helpers — TypeScript pilot.
+// character-curio trait helpers — TypeScript pilot.
 // Core functions for the layered trait model: maps + recursion, no dependencies.
 //
 // Model recap:

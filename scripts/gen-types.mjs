@@ -3,8 +3,7 @@
  *
  * The schemas in `schema/0.1/` are the source of truth for the character and
  * sheet-template shapes. `js/model.generated.ts` is the raw projection of those
- * schemas; `js/model.ts` re-exports it and adds the app-only `custom.cortexToolkit`
- * layer (which the schema deliberately leaves open).
+ * schemas; `js/model.ts` re-exports it and adds the app-only `view` layer (which the schema deliberately leaves open).
  *
  * Run via `npm run types` (also chained into `npm run build`).
  */

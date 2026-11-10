@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 
 defineProps<{
 	openCharacters: any[];
@@ -23,7 +23,7 @@ const emit = defineEmits<{
 }>();
 
 function safeImageUrl(url: any) {
-	return cortexFunctions.safeImageUrl(url);
+	return characterCurioFunctions.safeImageUrl(url);
 }
 </script>
 

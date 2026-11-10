@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, onUpdated, ref, toRaw, watch } from 'vue';
-import { cortexFunctions } from './functions.ts';
+import { characterCurioFunctions } from './functions.ts';
 import {
 	getView,
 	ensureView,
@@ -99,9 +99,9 @@ const trait = computed<any>(() =>
 );
 
 const isPlay = computed(() => props.submode === 'play');
-const canDeleteInPlay = computed(() => cortexFunctions.isPlayMutableSet(traitSet.value));
+const canDeleteInPlay = computed(() => characterCurioFunctions.isPlayMutableSet(traitSet.value));
 
-const templateEntry = computed(() => cortexFunctions.resolveTemplateFor(props.character, rootTemplates()));
+const templateEntry = computed(() => characterCurioFunctions.resolveTemplateFor(props.character, rootTemplates()));
 
 const templateTraitMatched = computed(
 	() => !isSubtraitMode.value && templateHasTrait(trait.value ? trait.value.name : ''),
@@ -177,7 +177,7 @@ const name = computed({
 		}
 		setProperty('name', val);
 		if (isThreeColumnTable.value) {
-			const entries = cortexFunctions.sfxChildren(trait.value);
+			const entries = characterCurioFunctions.sfxChildren(trait.value);
 			const sfx = entries.find((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
 			if (sfx && typeof sfx === 'object') {
 				sfx.name = val;
@@ -194,7 +194,9 @@ const isListStyle = computed(() => {
 });
 
 const hasSfxChildren = computed(
-	() => Array.isArray(cortexFunctions.sfxChildren(trait.value)) && cortexFunctions.sfxChildren(trait.value).length > 0,
+	() =>
+		Array.isArray(characterCurioFunctions.sfxChildren(trait.value)) &&
+		characterCurioFunctions.sfxChildren(trait.value).length > 0,
 );
 
 const counterLabel = computed(() => traitSet.value?.counterLabel || getView(traitSet.value)?.counterLabel || 'XP');
@@ -236,7 +238,7 @@ const pipRowChecked = computed({
 	},
 });
 
-const dice = computed(() => cortexFunctions.getTraitDice(trait.value));
+const dice = computed(() => characterCurioFunctions.getTraitDice(trait.value));
 
 function firstDieOf(node: any) {
 	return ratingDice(getRating(node))[0] || 0;
@@ -288,7 +290,7 @@ const ratingHasOut = computed({
 			delete r.out;
 			if (t.isOut) {
 				t.isOut = false;
-				cortexFunctions.setTraitDice(trait.value, []);
+				characterCurioFunctions.setTraitDice(trait.value, []);
 			}
 		}
 		if (isSetSubtraitMode.value) {
@@ -572,7 +574,7 @@ const hitchesDiffers = computed(() => {
 	return t && typeof t.hitches === 'number' && t.hitches !== resolveHitches(undefined, [traitSet.value]);
 });
 
-const isNameSet = computed(() => cortexFunctions.isNameSet(traitSet.value));
+const isNameSet = computed(() => characterCurioFunctions.isNameSet(traitSet.value));
 
 // A trait's own label field. Rendered by name sets; stored sparsely
 // (absent unless customized).
@@ -632,7 +634,7 @@ const childSubtraits = computed(() => {
 	}> = [];
 	subs.forEach((sub: any, idx: number) => {
 		if (!sub || typeof sub !== 'object') return;
-		if (cortexFunctions.isSfxContainer(sub)) {
+		if (characterCurioFunctions.isSfxContainer(sub)) {
 			const sfxList = Array.isArray(sub.traits) ? sub.traits : [];
 			sfxList.forEach((sfx: any, sIdx: number) => {
 				if (!sfx || typeof sfx !== 'object') return;
@@ -674,30 +676,30 @@ const isThreeColumnTable = computed(() => {
 const tableCol1Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
 	if (labels && labels.col1) return labels.col1;
-	return cortexFunctions.labelDefaultForStyle('three-column-table', 'col1') || 'TALENT';
+	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col1') || 'TALENT';
 });
 
 const tableCol2Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
 	if (labels && labels.col2) return labels.col2;
-	return cortexFunctions.labelDefaultForStyle('three-column-table', 'col2') || 'ACTIVATION';
+	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col2') || 'ACTIVATION';
 });
 
 const tableCol3Label = computed(() => {
 	const labels = getView(traitSet.value)?.labels;
 	if (labels && labels.col3) return labels.col3;
-	return cortexFunctions.labelDefaultForStyle('three-column-table', 'col3') || 'EFFECT';
+	return characterCurioFunctions.labelDefaultForStyle('three-column-table', 'col3') || 'EFFECT';
 });
 
 const tableCol3Text = computed({
 	get() {
-		const entries = cortexFunctions.sfxChildren(trait.value);
+		const entries = characterCurioFunctions.sfxChildren(trait.value);
 		const sfx = entries.find((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
 		if (!sfx) return '';
 		return sfx.description || sfx.name || '';
 	},
 	set(val: string) {
-		const container = cortexFunctions.ensureSfxContainer(trait.value);
+		const container = characterCurioFunctions.ensureSfxContainer(trait.value);
 		if (!container || !Array.isArray(container.traits)) return;
 		const idx = container.traits.findIndex((e: any) => String(e.name || '').toLowerCase() !== 'hinder');
 		if (idx === -1) {
@@ -763,7 +765,7 @@ const outLabel = computed(() => {
 	return 'OUT';
 });
 
-const availableValues = computed(() => cortexFunctions.getTraitSetRatings(traitSet.value));
+const availableValues = computed(() => characterCurioFunctions.getTraitSetRatings(traitSet.value));
 
 const cssClass = computed(() => {
 	const cls: Record<string, boolean> = {
@@ -982,7 +984,7 @@ function syncCompanionSubtraits(prevName?: string) {
 			}
 		}
 	});
-	const trackTarget = cortexFunctions.getTrackLabel(traitSet.value).toLowerCase();
+	const trackTarget = characterCurioFunctions.getTrackLabel(traitSet.value).toLowerCase();
 	if (targetNoun.toLowerCase() === trackTarget) {
 		const view = ensureView(traitSet.value);
 		const body = view.style?.body;
@@ -992,7 +994,7 @@ function syncCompanionSubtraits(prevName?: string) {
 				const frameShape = typeof view.frame === 'string' ? view.frame : view.frame?.shape;
 				view.parts = buildParts({
 					rating: frameShape === 'ring' ? 'below' : 'inline',
-					ratingDice: cortexFunctions.getTraitSetRatings(traitSet.value).length || 5,
+					ratingDice: characterCurioFunctions.getTraitSetRatings(traitSet.value).length || 5,
 					trackDice: Array.isArray(src.rating?.range) && src.rating.range.length ? src.rating.range.length : 5,
 					description: Boolean((view.features as any)?.description),
 					block: false,
@@ -1063,7 +1065,7 @@ function syncPoolCount(count: number) {
 
 function addDieToTrait(size: number) {
 	const current = [...dice.value, size].sort((a, b) => b - a);
-	cortexFunctions.setTraitDice(trait.value, current);
+	characterCurioFunctions.setTraitDice(trait.value, current);
 	syncPoolCount(current.length);
 	updateCharacter(props.character);
 }
@@ -1073,7 +1075,7 @@ function removeDieFromTrait(size: number) {
 	const idx = current.indexOf(size);
 	if (idx !== -1) {
 		current.splice(idx, 1);
-		cortexFunctions.setTraitDice(trait.value, current);
+		characterCurioFunctions.setTraitDice(trait.value, current);
 		syncPoolCount(current.length);
 		updateCharacter(props.character);
 	}
@@ -1083,7 +1085,7 @@ function removeDieAtIndex(index: number) {
 	const current = [...dice.value];
 	if (index >= 0 && index < current.length) {
 		current.splice(index, 1);
-		cortexFunctions.setTraitDice(trait.value, current);
+		characterCurioFunctions.setTraitDice(trait.value, current);
 		syncPoolCount(current.length);
 		updateCharacter(props.character);
 	}
@@ -1102,7 +1104,7 @@ function stepDownDieAtIndex(index: number) {
 			current.splice(index, 1);
 		}
 		current.sort((a, b) => b - a);
-		cortexFunctions.setTraitDice(trait.value, current);
+		characterCurioFunctions.setTraitDice(trait.value, current);
 		updateCharacter(props.character);
 	}
 }
@@ -1112,10 +1114,10 @@ function toggleTraitValue(val: any) {
 	const cur = ratingDice(getRating(t))[0] || 0;
 	if (val === cur && !isOut.value) {
 		t.isOut = false;
-		cortexFunctions.setTraitDice(trait.value, []);
+		characterCurioFunctions.setTraitDice(trait.value, []);
 	} else {
 		t.isOut = false;
-		cortexFunctions.setTraitDice(trait.value, [val]);
+		characterCurioFunctions.setTraitDice(trait.value, [val]);
 	}
 	updateCharacter(props.character);
 }
@@ -1124,7 +1126,7 @@ function toggleOutValue() {
 	const t = trait.value as unknown as Record<string, any>;
 	if (isOut.value) {
 		t.isOut = false;
-		cortexFunctions.setTraitDice(trait.value, []);
+		characterCurioFunctions.setTraitDice(trait.value, []);
 	} else {
 		t.isOut = true;
 		setRatingDie(t, rangeTop(t) + 2);
@@ -1235,7 +1237,7 @@ function duplicateTrait() {
 	const clone = structuredClone(toRaw(current));
 	delete clone._lid;
 	delete clone.id;
-	cortexFunctions.stripInternalIds({ traits: [clone] });
+	characterCurioFunctions.stripInternalIds({ traits: [clone] });
 	container.traits.splice(lastIdx + 1, 0, clone);
 
 	updateCharacter(character);
@@ -1264,13 +1266,13 @@ function templateHasTrait(name: string) {
 	if (!name) return false;
 	const setId = traitSet.value ? traitSet.value.id : null;
 	const entry = templateEntry.value;
-	const base = setId ? cortexFunctions.templateSetById(entry, setId) : null;
+	const base = setId ? characterCurioFunctions.templateSetById(entry, setId) : null;
 	return Boolean(base && Array.isArray(base.traits) && base.traits.some((b: any) => b && b.name === name));
 }
 
 function removeFromSheet() {
 	const entry = templateEntry.value;
-	cortexFunctions.removeTraitFromSheet(props.character, entry, props.traitSetID, props.traitID);
+	characterCurioFunctions.removeTraitFromSheet(props.character, entry, props.traitSetID, props.traitID);
 	confirmDelete.value = false;
 	selectElement([]);
 	updateCharacter(props.character);
@@ -1294,11 +1296,11 @@ function addSubtrait() {
 	if (!tr) return;
 	if (!Array.isArray(tr.traits)) tr.traits = [];
 
-	const subtrait: any = structuredClone(cortexFunctions.defaultTrait);
+	const subtrait: any = structuredClone(characterCurioFunctions.defaultTrait);
 	const nextNum = tr.traits.length + 1;
 	subtrait.name = nextNum === 1 ? 'New subtrait' : `New subtrait ${nextNum}`;
 	subtrait.noun = nextNum === 1 ? 'Subtrait' : `Subtrait ${nextNum}`;
-	const allowed = cortexFunctions.getSubtraitRatings(traitSet.value);
+	const allowed = characterCurioFunctions.getSubtraitRatings(traitSet.value);
 	const cur =
 		subtrait.rating && subtrait.rating.type === 'Die' && Array.isArray(subtrait.rating.value)
 			? subtrait.rating.value[0]
@@ -1365,8 +1367,8 @@ function removeSubtraitAtCurrentParent(targetIdx: number) {
 		return;
 	}
 	if (depth.value === 2) {
-		const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
-		cortexFunctions.removeSubtraitFromSheet(character, entry, s, path[0], targetIdx);
+		const entry = characterCurioFunctions.resolveTemplateFor(character, rootTemplates());
+		characterCurioFunctions.removeSubtraitFromSheet(character, entry, s, path[0], targetIdx);
 		updateCharacter(character);
 		return;
 	}
@@ -1383,15 +1385,15 @@ function removeSubtrait(item: any) {
 	const targetItem = typeof item === 'number' ? childSubtraits.value[item] || { idx: item } : item;
 	if (targetItem?.isSfx && targetItem.sfxIdx !== undefined) {
 		if (trait.value) {
-			cortexFunctions.removeSfxAt(trait.value, targetItem.sfxIdx);
+			characterCurioFunctions.removeSfxAt(trait.value, targetItem.sfxIdx);
 			updateCharacter(character);
 		}
 		return;
 	}
 	const subtraitID = targetItem?.idx ?? 0;
 	if (depth.value === 1) {
-		const entry = cortexFunctions.resolveTemplateFor(character, rootTemplates());
-		cortexFunctions.removeSubtraitFromSheet(character, entry, s, path[0], subtraitID);
+		const entry = characterCurioFunctions.resolveTemplateFor(character, rootTemplates());
+		characterCurioFunctions.removeSubtraitFromSheet(character, entry, s, path[0], subtraitID);
 		updateCharacter(character);
 		return;
 	}
@@ -1484,7 +1486,7 @@ function checkScrollPosition() {
 }
 
 function getDieDisplayValue(val: any) {
-	return cortexFunctions.renderDieconSVG(val, false, '', getView(props.character)?.diceConfig);
+	return characterCurioFunctions.renderDieconSVG(val, false, '', getView(props.character)?.diceConfig);
 }
 </script>
 

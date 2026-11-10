@@ -42,7 +42,7 @@ async function main() {
 			// Boot to a sheet: open the library and create from the
 			// first template (exercises all renderers), else click New Sheet.
 			const opened = await page.evaluate(async () => {
-				const app = document.querySelector('#cortex-toolkit');
+				const app = document.querySelector('#character-curio');
 				if (!app) return 'no-app-root';
 				const libBtn = [...document.querySelectorAll('.roster-button')].find((el) =>
 					/library/i.test(el.textContent || ''),
