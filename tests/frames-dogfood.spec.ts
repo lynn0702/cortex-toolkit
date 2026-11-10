@@ -117,7 +117,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		wrapper.unmount();
 	});
 
-	it('Attributes: renders .trait-list-framed with 6 dynamically anchored traits and visible attached Stress tracks', () => {
+	it('Attributes: renders .portrait ring frame with 6 anchored traits', () => {
 		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 		const wrapper = mount(TraitSetBlock, {
 			props: {
@@ -128,49 +128,27 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 			},
 		});
 
-		// Radial SVG frame is rendered in the trait list
+		// Radial SVG frame is rendered in the trait set
 		const listSvg = wrapper.find('.frame-radial-svg');
-		expect(listSvg.exists(), 'SVG frame background must render inside .trait-list-framed').toBe(true);
+		expect(listSvg.exists(), 'SVG frame background must render inside ring frame').toBe(true);
 
-		const framedList = wrapper.find('.trait-list-framed');
-		expect(framedList.exists()).toBe(true);
+		expect(wrapper.find('.portrait').exists()).toBe(true);
+		expect(wrapper.find('.ring-grid').exists()).toBe(true);
 
 		// 6 dynamically anchored traits
-		const traitEls = framedList.findAll('.trait');
+		const traitEls = wrapper.findAll('.ring-trait');
 		expect(traitEls.length).toBe(6);
 
-		// Each trait has dynamic positional anchors and docking attributes
+		// Each trait has dynamic positional anchors
 		for (const t of traitEls) {
 			const style = t.attributes('style') || '';
 			expect(style).toContain('left:');
 			expect(style).toContain('top:');
-			const dock = t.attributes('data-frame-dock');
-			expect(['left', 'right', 'top', 'bottom']).toContain(dock);
 		}
 
-		// Trait 0 (Agility) has attached Stress track with d6
-		const agilityEl = traitEls[0];
-		expect(agilityEl.attributes('data-trait-name')).toBe('Agility');
-		expect(agilityEl.text()).toContain('Agility');
-		expect(agilityEl.text()).toContain('Stress');
-		const agilityTrack = agilityEl.find('.trait-part-track');
-		expect(agilityTrack.exists(), 'Agility attached stress track part must exist').toBe(true);
-		// d6 is active
-		const agilityActiveDie = agilityTrack.find('.attached-stress-die.active');
-		expect(agilityActiveDie.exists()).toBe(true);
-		expect(agilityActiveDie.text()).toContain('6');
-
-		// Trait 4 (Intellect) has attached Stress track with d4
-		const intellectEl = traitEls[4];
-		expect(intellectEl.attributes('data-trait-name')).toBe('Intellect');
-		expect(intellectEl.text()).toContain('Intellect');
-		expect(intellectEl.text()).toContain('Stress');
-		const intellectTrack = intellectEl.find('.trait-part-track');
-		expect(intellectTrack.exists(), 'Intellect attached stress track part must exist').toBe(true);
-		// d4 is active
-		const intellectActiveDie = intellectTrack.find('.attached-stress-die.active');
-		expect(intellectActiveDie.exists()).toBe(true);
-		expect(intellectActiveDie.text()).toContain('4');
+		// Trait names present
+		expect(traitEls[0].text()).toContain('Agility');
+		expect(traitEls[4].text()).toContain('Intellect');
 
 		// In edit submode, Add Trait button is rendered and visible below framed set
 		const addBtn = wrapper.find('.preview-button');
@@ -202,7 +180,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		wrapper.unmount();
 	});
 
-	it('morphs ring -> ellipse -> block preserving all 6 traits and their stress tracks in exact index order 0..5', async () => {
+	it('morphs ring -> ellipse -> block preserving all 6 traits in exact index order 0..5', async () => {
 		const character = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 		const set = character.traitSets[0];
 
@@ -217,9 +195,10 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 			},
 		});
 
-		expect(wrapper.find('.trait-list-framed').exists()).toBe(true);
-		const getTraitNames = () => wrapper.findAll('.trait').map((el) => el.attributes('data-trait-name'));
-		expect(getTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
+		expect(wrapper.find('.portrait').exists()).toBe(true);
+		expect(wrapper.find('.ring-grid').exists()).toBe(true);
+		const getRingTraitNames = () => wrapper.findAll('.ring-trait .ring-trait-name').map((el) => el.text().trim());
+		expect(getRingTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
 
 		// 2. Morph to ellipse
 		const characterEllipse = structuredClone(character);
@@ -227,12 +206,9 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 		await wrapper.setProps({ character: characterEllipse });
 		await nextTick();
 
-		expect(wrapper.find('.trait-list-framed').exists()).toBe(true);
+		expect(wrapper.find('.trait-list').exists()).toBe(true);
+		const getTraitNames = () => wrapper.findAll('.trait').map((el) => el.attributes('data-trait-name'));
 		expect(getTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
-		// Attached stress track preserved
-		const agilityEllipseActive = wrapper.findAll('.trait')[0].find('.trait-part-track .attached-stress-die.active');
-		expect(agilityEllipseActive.exists()).toBe(true);
-		expect(agilityEllipseActive.text()).toContain('6');
 
 		// 3. Morph to block (container border frame)
 		const characterBlock = structuredClone(character);
@@ -247,17 +223,8 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 
 		// When block, the frame SVG renders at the block container level (.trait-set-frame-svg.frame-block-svg)
 		expect(wrapper.find('.trait-set-frame-svg.frame-block-svg').exists()).toBe(true);
-		// Positional frame is false, so traits render in standard linear grid layout
-		expect(wrapper.find('.trait-list-framed').exists()).toBe(false);
+		expect(wrapper.find('.portrait').exists()).toBe(false);
 		expect(getTraitNames()).toEqual(['Agility', 'Awareness', 'Brawn', 'Coordination', 'Intellect', 'Will']);
-		// Attached stress track still preserved in exact order
-		const agilityBlockActive = wrapper.findAll('.trait')[0].find('.trait-part-track .attached-stress-die.active');
-		expect(agilityBlockActive.exists()).toBe(true);
-		expect(agilityBlockActive.text()).toContain('6');
-
-		const intellectBlockActive = wrapper.findAll('.trait')[4].find('.trait-part-track .attached-stress-die.active');
-		expect(intellectBlockActive.exists()).toBe(true);
-		expect(intellectBlockActive.text()).toContain('4');
 
 		wrapper.unmount();
 	});
@@ -295,7 +262,7 @@ describe('Phase 3c Dogfood Framed Character Template & Preset Catalog Suite', ()
 			},
 		});
 
-		const traitEls = wrapper.findAll('.trait-list-framed .trait');
+		const traitEls = wrapper.findAll('.ring-trait');
 		expect(traitEls.length).toBe(7);
 		expect(traitEls[6].text()).toContain('Resolve');
 

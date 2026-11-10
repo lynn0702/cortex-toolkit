@@ -22,7 +22,6 @@ import {
 } from './spotlight-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
 import PrintToolbar from './print-toolbar.vue';
-import PortraitRing from './portrait-ring.vue';
 import TraitSetMini from './trait-set-mini.vue';
 
 const props = defineProps<{
@@ -47,7 +46,6 @@ const instance = getCurrentInstance();
 const rootTemplates = () => (instance?.proxy as any)?.$root?.sheetTemplates ?? null;
 
 const rootEl = ref<HTMLElement | null>(null);
-const ringRef = ref<any>(null);
 
 const printPageView = ref<any>('all');
 const printBlank = ref(false);
@@ -151,42 +149,6 @@ const hasRingSet = computed(() => ringSetIndex.value !== -1);
 const ringTraitID = computed(() => (hasRingSet.value ? ringSetIndex.value : -1));
 const ringSet = computed(() => (hasRingSet.value ? traitSets.value[ringTraitID.value] : null));
 const effectivePortraitUrl = computed(() => getView(ringSet.value)?.imageConfig?.url || portrait.value?.url || '');
-const isRingPool = computed(() => {
-	const ts = ringSet.value as unknown as Record<string, unknown> | null;
-	if (ts && typeof ts.pool === 'boolean') return ts.pool;
-	return Boolean(getView(ts)?.pool);
-});
-const ringNoun = computed(() => {
-	const ts = ringSet.value;
-	return ts?.noun && ts.noun.length ? ts.noun : 'Trait';
-});
-const scaleTrait = computed(() => {
-	const attrSet = ringSet.value;
-	if (!attrSet || !Array.isArray(attrSet.traits)) return null;
-	return attrSet.traits.find(
-		(t) => t.name?.trim().toLowerCase() === 'scale' || (typeof t.keepsExtra === 'number' && t.keepsExtra > 0),
-	);
-});
-const ringSetTraits = computed(() => {
-	if (!hasRingSet.value) return [];
-	const all = ringSet.value?.traits || [];
-	return all.filter((t) => !(t.name?.trim().toLowerCase() === 'scale'));
-});
-const scaleDieValue = computed(() => {
-	const st = scaleTrait.value;
-	if (st) return Number(st.value) || 8;
-	const attrSet = ringSet.value;
-	const attrView = getView(attrSet);
-	if (attrView?.scaleDie) {
-		return Number(attrView.scaleDie);
-	}
-	const charView = getView(props.character);
-	if (charView?.scale) {
-		return Number(charView.scale);
-	}
-	return 0;
-});
-// (ring: portrait ring + scale die + drag now live in portrait-ring.vue)
 
 const pageCount = computed(() => {
 	const charView = getView(props.character);
@@ -895,19 +857,6 @@ watch(
 										/>
 									</div>
 								</div>
-								<PortraitRing
-									v-if="hasRingSet && ringTraitID > -1"
-									ref="ringRef"
-									:character="character"
-									:editing="editing"
-									:submode="submode"
-									:viewY="viewY"
-									:ringTraitID="ringTraitID"
-									@selectElement="selectElement"
-									@updateCharacter="updateCharacter"
-									@addDieToRoller="emit('addDieToRoller', $event)"
-									@removeTrait="removeTrait"
-								/>
 							</div>
 
 							<TraitSetBlock
@@ -955,86 +904,7 @@ watch(
 									:style="section.type === 'grid' ? getSpotlightGridStyle(section) : undefined"
 								>
 									<template v-for="{ traitSet, index: s } in section.ordered" :key="s">
-										<div
-											v-if="s === ringTraitID"
-											class="portrait-ring-cell"
-											:style="section.cells[s] && section.cells[s].style"
-										>
-											<div :class="{ portrait: true }">
-												<div
-													:class="{ 'portrait-inner': true, selected: isSelected(['traitSet', ringTraitID]) }"
-													@click.stop="selectElement(['traitSet', ringTraitID])"
-												>
-													<div
-														:class="
-															'portrait-circle portrait-alignment-' +
-															(getView(ringSet)?.imageConfig?.alignment || getView(portrait)?.alignment || 'top-center')
-														"
-														width="100%"
-														height="100%"
-														:style="'background-image: url(' + safeImageUrl(effectivePortraitUrl) + ');'"
-													>
-														<img
-															class="portrait-placeholder"
-															v-if="!effectivePortraitUrl"
-															src="images/cortex_prime_logo_light_transparent.png"
-															alt="Portrait placeholder"
-														/>
-													</div>
-												</div>
-												<PortraitRing
-													v-if="hasRingSet && ringTraitID > -1"
-													ref="ringRef"
-													:character="character"
-													:editing="editing"
-													:submode="submode"
-													:viewY="viewY"
-													:ringTraitID="ringTraitID"
-													@selectElement="selectElement"
-													@updateCharacter="updateCharacter"
-													@addDieToRoller="emit('addDieToRoller', $event)"
-													@removeTrait="removeTrait"
-												/>
-											</div>
-											<div :class="{ 'ring-actions': true, vertical: ringSetTraits.length > 5 }">
-												<transition appear>
-													<div class="preview-button-container">
-														<div class="preview-button-container-inner" v-if="submode === 'edit'">
-															<div class="preview-button" @click.stop="addTrait(ringTraitID)">
-																<span><i class="fas fa-plus"></i> {{ ringNoun }}</span>
-															</div>
-															<div
-																class="preview-button"
-																v-if="!scaleDieValue"
-																@click.stop="
-																	ringRef?.setScaleDieValue(8);
-																	selectElement(['scaleDie']);
-																"
-															>
-																<span><i class="fas fa-plus"></i> Scale Die</span>
-															</div>
-															<div class="preview-button" @click.stop="selectElement(['traitSet', ringTraitID])">
-																<span><i class="fas fa-cog"></i> Settings</span>
-															</div>
-														</div>
-														<div
-															class="preview-button-container-inner"
-															v-if="submode === 'play' && isRingPool && ringSetTraits.length > 0"
-														>
-															<div
-																class="preview-button"
-																@click.stop="ringRef?.handleTraitClick(ringTraitID, 0, ringSetTraits[0])"
-																title="Add all pool dice to roller"
-															>
-																<span><i class="fas fa-dice-d20"></i> Roll Pool ({{ ringSetTraits.length }} dice)</span>
-															</div>
-														</div>
-													</div>
-												</transition>
-											</div>
-										</div>
 										<TraitSetBlock
-											v-else
 											:character="character"
 											:traitSetID="s"
 											:submode="submode"

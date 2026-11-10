@@ -169,6 +169,42 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return a.y < 48 ? 'top' : a.y > 52 ? 'bottom' : 'center';
 	}
 
+	const effectiveImageUrl = computed(() => {
+		const fImg = resolvedFrame.value?.image?.url;
+		const view = getView(traitSet.value);
+		const sImg = view?.imageConfig?.url;
+		const charPortrait = props.character?.portrait?.url;
+		return fImg || sImg || charPortrait || '';
+	});
+
+	const effectiveAlignment = computed(() => {
+		const fAlign = resolvedFrame.value?.image?.alignment;
+		const view = getView(traitSet.value);
+		const sAlign = view?.imageConfig?.alignment;
+		const charAlign =
+			(getView(props.character?.portrait)?.alignment as string | undefined) ||
+			(props.character?.portrait as any)?.alignment;
+		return fAlign || sAlign || charAlign || 'center';
+	});
+
+	const effectiveZoom = computed(() => {
+		const fZoom = resolvedFrame.value?.image?.zoom;
+		if (typeof fZoom === 'number') return fZoom;
+		const view = getView(traitSet.value);
+		const sZoom = view?.imageConfig?.zoom;
+		if (typeof sZoom === 'number') return sZoom;
+		const charZoom = getView(props.character?.portrait)?.zoom;
+		if (typeof charZoom === 'number') return charZoom;
+		return 1;
+	});
+
+	const effectivePortraitStyle = computed(() => {
+		if (!effectiveImageUrl.value) return undefined;
+		const zoom = effectiveZoom.value;
+		const bgSize = zoom !== 1 ? `${Math.round(zoom * 100)}%` : 'cover';
+		return `background-image: url(${cortexFunctions.safeImageUrl(effectiveImageUrl.value)}); background-size: ${bgSize};`;
+	});
+
 	function getTraitSetLabel(traitSetArg: TraitSet, key: string) {
 		const labels = getView(traitSetArg)?.labels;
 		if (labels && labels[key] !== undefined && labels[key] !== null && String(labels[key]).length) {
@@ -361,16 +397,16 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		if (props.submode === 'print') return;
 		const trait = traitArg ?? props.character?.traitSets?.[sArg]?.traits?.[t];
 		if (!trait) return;
-		let child = getPipChild(trait) || getChildTraitByNoun(trait, 'statement');
+		let child = getPipChild(trait);
 		if (!child) {
 			if (!Array.isArray(trait.traits)) trait.traits = [];
 			child = {
-				name: 'Statement',
+				name: '',
 				description: '',
 				tags: [],
 				rating: { type: 'Pip', value: [false] },
 				traits: [],
-				view: { noun: 'Statement' },
+				view: {},
 			};
 			trait.traits.push(child);
 		}
@@ -384,33 +420,28 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		updateCharacter(props.character);
 	}
 
-	function canEditStatement(trait: any, traitSetArg: any): boolean {
+	function canEditChildOnSheet(trait: any, traitSetArg: any): boolean {
 		if (props.submode === 'print') return false;
 		return Boolean(
 			getView(trait)?.editableOnSheet || getView(traitSetArg)?.editableOnSheet || getView(traitSetArg)?.playMutable,
 		);
 	}
 
-	function getStatementText(trait: any): string {
-		const sub = getChildTraitByNoun(trait, 'statement') || getPipChild(trait);
-		return sub?.name || trait?.description || '';
-	}
-
-	function setStatementText(trait: any, val: string) {
-		let sub = getChildTraitByNoun(trait, 'statement') || getPipChild(trait);
-		if (sub) {
-			sub.name = val;
+	function setPipChildName(trait: any, val: string) {
+		let child = getPipChild(trait);
+		if (child) {
+			child.name = val;
 		} else {
 			if (!Array.isArray(trait.traits)) trait.traits = [];
-			sub = {
+			child = {
 				name: val,
 				description: '',
 				tags: [],
 				rating: { type: 'Pip', value: [false] },
 				traits: [],
-				view: { noun: 'Statement' },
+				view: {},
 			};
-			trait.traits.push(sub);
+			trait.traits.push(child);
 		}
 		updateCharacter(props.character);
 	}
@@ -1128,12 +1159,6 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 						.toLowerCase() !== 'hinder',
 			) as Trait | undefined;
 		}
-		if (n === 'statement') {
-			const child = getPipChild(trait);
-			if (child) return child as Trait;
-			if (trait.description) return { name: trait.description, description: trait.description, traits: [] } as any;
-			return undefined;
-		}
 		if (!Array.isArray(trait.traits)) return undefined;
 		return trait.traits.find((t: Trait) => (t?.name || '').trim().toLowerCase() === n);
 	}
@@ -1472,9 +1497,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		getPipChild,
 		isChildPipFilled,
 		togglePip,
-		canEditStatement,
-		getStatementText,
-		setStatementText,
+		canEditChildOnSheet,
+		setPipChildName,
 		getParts,
 		partsGridFor,
 		partCellStyle,
@@ -1600,6 +1624,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		getTraitNameAnchorStyle,
 		containerWidth,
 		observeContainer,
+		effectiveImageUrl,
+		effectiveAlignment,
+		effectiveZoom,
+		effectivePortraitStyle,
 	};
 
 	provide(TRAIT_SET_KEY, api);

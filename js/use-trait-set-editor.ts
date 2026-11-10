@@ -518,14 +518,20 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	);
 
 	const ringSpread = computed({
-		get: () => getView(traitSet.value)?.ringConfig?.arcSpread ?? 100,
+		get: () => {
+			const view = getView(traitSet.value);
+			return (view?.frame as any)?.ring?.arcSpread ?? view?.ringConfig?.arcSpread ?? 100;
+		},
 		set: (val: number) => {
 			setRingConfig('arcSpread', Number(val));
 		},
 	});
 
 	const ringDistance = computed({
-		get: () => getView(traitSet.value)?.ringConfig?.arcDistance ?? 0,
+		get: () => {
+			const view = getView(traitSet.value);
+			return (view?.frame as any)?.ring?.arcDistance ?? view?.ringConfig?.arcDistance ?? 0;
+		},
 		set: (val: number) => {
 			setRingConfig('arcDistance', Number(val));
 		},
@@ -533,7 +539,8 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const ringAngle = computed({
 		get: () => {
-			const cfg = getView(traitSet.value)?.ringConfig;
+			const view = getView(traitSet.value);
+			const cfg = (view?.frame as any)?.ring ?? view?.ringConfig;
 			return cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
 		},
 		set: (val: number) => {
@@ -551,7 +558,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const scaleAngle = computed({
-		get: () => getView(traitSet.value)?.ringConfig?.scaleAngle ?? 0,
+		get: () => {
+			const view = getView(traitSet.value);
+			return (view?.frame as any)?.ring?.scaleAngle ?? view?.ringConfig?.scaleAngle ?? 0;
+		},
 		set: (val: number) => {
 			setRingConfig('scaleAngle', Number(val));
 		},
@@ -567,21 +577,30 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	const scaleDistance = computed({
-		get: () => getView(traitSet.value)?.ringConfig?.scaleDistance ?? 0,
+		get: () => {
+			const view = getView(traitSet.value);
+			return (view?.frame as any)?.ring?.scaleDistance ?? view?.ringConfig?.scaleDistance ?? 0;
+		},
 		set: (val: number) => {
 			setRingConfig('scaleDistance', Number(val));
 		},
 	});
 
 	const ringScaleY = computed({
-		get: () => getView(traitSet.value)?.ringConfig?.scaleDieY ?? 0,
+		get: () => {
+			const view = getView(traitSet.value);
+			return (view?.frame as any)?.ring?.scaleDieY ?? view?.ringConfig?.scaleDieY ?? 0;
+		},
 		set: (val: number) => {
 			setRingConfig('scaleDieY', Number(val));
 		},
 	});
 
 	const ringScaleX = computed({
-		get: () => getView(traitSet.value)?.ringConfig?.scaleDieX ?? 0,
+		get: () => {
+			const view = getView(traitSet.value);
+			return (view?.frame as any)?.ring?.scaleDieX ?? view?.ringConfig?.scaleDieX ?? 0;
+		},
 		set: (val: number) => {
 			setRingConfig('scaleDieX', Number(val));
 		},
@@ -641,6 +660,70 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			setImageConfig('caption', val);
 		},
 	});
+
+	const imageZoom = computed({
+		get: () => {
+			const cfgZoom = getView(traitSet.value)?.imageConfig?.zoom;
+			if (typeof cfgZoom === 'number') return cfgZoom;
+			if (isName.value || isRing.value) {
+				const pZoom = getView(props.character?.portrait)?.zoom;
+				if (typeof pZoom === 'number') return pZoom;
+			}
+			return 1;
+		},
+		set: (val: number) => {
+			setImageConfig('zoom', Number(val));
+		},
+	});
+
+	const frameImageUrl = computed({
+		get: () => {
+			const f = getView(traitSet.value)?.frame;
+			return typeof f === 'object' && f !== null ? ((f as any)?.image?.url ?? '') : '';
+		},
+		set: (val: string) => {
+			setFrameImage('url', val);
+		},
+	});
+
+	const frameImageAlignment = computed({
+		get: () => {
+			const f = getView(traitSet.value)?.frame;
+			return typeof f === 'object' && f !== null ? ((f as any)?.image?.alignment ?? 'center') : 'center';
+		},
+		set: (val: string) => {
+			setFrameImage('alignment', val);
+		},
+	});
+
+	const frameImageZoom = computed({
+		get: () => {
+			const f = getView(traitSet.value)?.frame;
+			const z = typeof f === 'object' && f !== null ? (f as any)?.image?.zoom : undefined;
+			return typeof z === 'number' ? z : 1;
+		},
+		set: (val: number) => {
+			setFrameImage('zoom', Number(val));
+		},
+	});
+
+	function setFrameImage(key: 'url' | 'alignment' | 'zoom', value: any) {
+		let s = props.traitSetID;
+		const ctk = ctkFor(s);
+		ctk.frame ??= { shape: 'block' };
+		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : { shape: ctk.frame };
+		ctk.frame = frameObj;
+		frameObj.image ??= {};
+		if (value === '' || value === undefined) {
+			delete frameObj.image[key];
+			if (Object.keys(frameObj.image).length === 0) {
+				delete frameObj.image;
+			}
+		} else {
+			frameObj.image[key] = value;
+		}
+		updateCharacter(props.character);
+	}
 
 	const namePortraitVisibility = computed<Visibility>(() => {
 		const t = cortexFunctions.getNameTrait(props.character, 'portrait');
@@ -1531,23 +1614,31 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function setRingConfig(key: keyof RingConfig, value: any) {
 		let s = props.traitSetID;
 		const ctk = ctkFor(s);
-		ctk.ringConfig ??= {
-			arcAngle: -90,
-			arcSpread: 100,
-			arcDistance: 0,
-			scaleAngle: 0,
-			scaleDistance: 0,
-			scaleDieX: 0,
-			scaleDieY: 0,
-			arcSlide: 0,
+		ctk.frame ??= { shape: 'ring' };
+		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : { shape: ctk.frame };
+		ctk.frame = frameObj;
+		const existingRing = frameObj.ring || ctk.ringConfig;
+		frameObj.ring ??= {
+			arcAngle: existingRing?.arcAngle ?? (existingRing?.arcSlide !== undefined ? existingRing.arcSlide * 3 : -90),
+			arcSpread: existingRing?.arcSpread ?? 100,
+			arcDistance: existingRing?.arcDistance ?? 0,
+			scaleAngle: existingRing?.scaleAngle ?? 0,
+			scaleDistance: existingRing?.scaleDistance ?? 0,
+			scaleDieX: existingRing?.scaleDieX ?? 0,
+			scaleDieY: existingRing?.scaleDieY ?? 0,
+			arcSlide: existingRing?.arcSlide ?? 0,
 		};
-		ctk.ringConfig[key] = value;
+		frameObj.ring[key] = value;
 		updateCharacter(structuredClone(toRaw(props.character)));
 	}
 
 	function resetRingPlacement() {
 		let s = props.traitSetID;
-		ctkFor(s).ringConfig = {
+		const ctk = ctkFor(s);
+		ctk.frame ??= { shape: 'ring' };
+		const frameObj = typeof ctk.frame === 'object' && ctk.frame !== null ? (ctk.frame as any) : { shape: ctk.frame };
+		ctk.frame = frameObj;
+		frameObj.ring = {
 			arcAngle: -90,
 			arcSpread: 100,
 			arcDistance: 0,
@@ -1609,6 +1700,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			} else if (key === 'alignment') {
 				props.character.portrait ??= {};
 				ensureView(props.character.portrait).alignment = value;
+			} else if (key === 'zoom') {
+				props.character.portrait ??= {};
+				ensureView(props.character.portrait).zoom = value;
 			} else if (key === 'caption' && isName.value) {
 				const t = cortexFunctions.ensureNameTrait(props.character, 'caption');
 				if (t) {
@@ -1868,6 +1962,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		setFrameDash,
 		frameBox,
 		setFrameBox,
+		frameImageUrl,
+		frameImageAlignment,
+		frameImageZoom,
+		setFrameImage,
+		imageZoom,
 		scrollable,
 		needsDiceUI,
 		allowsTraitColumns,

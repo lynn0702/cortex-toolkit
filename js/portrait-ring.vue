@@ -71,8 +71,9 @@ const isOtherEditorOpen = computed(() =>
 
 const ringConfig = computed(() => {
 	const setNode = ringSet.value;
-	const cfg = getView(setNode)?.ringConfig;
-	const baseArcAngle = cfg?.arcAngle ?? (cfg?.arcSlide !== undefined ? cfg.arcSlide * 3 : -90);
+	const frameCfg = resolveFrame(setNode);
+	const cfg = frameCfg?.ringConfig;
+	const baseArcAngle = cfg?.arcAngle ?? -90;
 	const baseScaleAngle = cfg?.scaleAngle ?? 0;
 	return {
 		arcAngle: dragArcAngle.value !== null ? dragArcAngle.value : baseArcAngle,
@@ -242,8 +243,9 @@ function handleScaleDieClick() {
 	}
 }
 
-function startRingDrag(event: any, targetType: string) {
+function startRingDrag(event: PointerEvent, targetType: string) {
 	if (props.submode !== 'edit') return;
+	if (event.button !== undefined && event.button !== 0) return;
 
 	const host = rootEl.value?.closest('.portrait') || rootEl.value;
 	if (!host || typeof host.querySelector !== 'function') return;
@@ -254,8 +256,8 @@ function startRingDrag(event: any, targetType: string) {
 	const centerX = pRect.left + pRect.width / 2;
 	const centerY = pRect.top + pRect.height / 2;
 
-	const startX = event.clientX ?? event.touches?.[0]?.clientX;
-	const startY = event.clientY ?? event.touches?.[0]?.clientY;
+	const startX = event.clientX;
+	const startY = event.clientY;
 
 	const initialRad = Math.atan2(startY - centerY, startX - centerX);
 	const initialDeg = (initialRad * 180) / Math.PI;
@@ -265,10 +267,16 @@ function startRingDrag(event: any, targetType: string) {
 
 	let hasMoved = false;
 
-	const onMove = (e: any) => {
-		const clientX = e.clientX ?? e.touches?.[0]?.clientX;
-		const clientY = e.clientY ?? e.touches?.[0]?.clientY;
-		if (clientX === undefined || clientY === undefined) return;
+	const cleanup = () => {
+		window.removeEventListener('pointermove', onMove);
+		window.removeEventListener('pointerup', onUp);
+		window.removeEventListener('pointercancel', onCancel);
+		window.removeEventListener('keydown', onKeyDown);
+	};
+
+	const onMove = (e: PointerEvent) => {
+		const clientX = e.clientX;
+		const clientY = e.clientY;
 
 		const dist = Math.hypot(clientX - startX, clientY - startY);
 		if (dist > 4) {
@@ -300,11 +308,21 @@ function startRingDrag(event: any, targetType: string) {
 		}
 	};
 
+	const onCancel = () => {
+		cleanup();
+		dragArcAngle.value = null;
+		dragScaleAngle.value = null;
+		isRingDragging.value = false;
+	};
+
+	const onKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Escape') {
+			onCancel();
+		}
+	};
+
 	const onUp = () => {
-		window.removeEventListener('mousemove', onMove);
-		window.removeEventListener('mouseup', onUp);
-		window.removeEventListener('touchmove', onMove);
-		window.removeEventListener('touchend', onUp);
+		cleanup();
 
 		if (hasMoved) {
 			if (targetType === 'traits' && dragArcAngle.value !== null) {
@@ -325,28 +343,31 @@ function startRingDrag(event: any, targetType: string) {
 		}
 	};
 
-	window.addEventListener('mousemove', onMove, { passive: false });
-	window.addEventListener('mouseup', onUp);
-	window.addEventListener('touchmove', onMove, { passive: false });
-	window.addEventListener('touchend', onUp);
+	window.addEventListener('pointermove', onMove, { passive: false });
+	window.addEventListener('pointerup', onUp);
+	window.addEventListener('pointercancel', onCancel);
+	window.addEventListener('keydown', onKeyDown);
 }
 
 function setRingConfigProp(key: string, value: any) {
 	const ringSetNode = ringSet.value;
 	if (ringSetNode) {
 		const view = ensureView(ringSetNode);
-		if (!view.ringConfig) {
-			view.ringConfig = {
-				arcAngle: -90,
-				arcSpread: 100,
-				arcDistance: 0,
-				scaleAngle: 0,
-				scaleDistance: 0,
-				scaleDieX: 0,
-				scaleDieY: 0,
-			};
-		}
-		(view.ringConfig as any)[key] = value;
+		view.frame ??= { shape: 'ring' };
+		const frameObj =
+			typeof view.frame === 'object' && view.frame !== null ? (view.frame as any) : { shape: view.frame };
+		view.frame = frameObj;
+		const existingRing = frameObj.ring || view.ringConfig;
+		frameObj.ring ??= {
+			arcAngle: existingRing?.arcAngle ?? (existingRing?.arcSlide !== undefined ? existingRing.arcSlide * 3 : -90),
+			arcSpread: existingRing?.arcSpread ?? 100,
+			arcDistance: existingRing?.arcDistance ?? 0,
+			scaleAngle: existingRing?.scaleAngle ?? 0,
+			scaleDistance: existingRing?.scaleDistance ?? 0,
+			scaleDieX: existingRing?.scaleDieX ?? 0,
+			scaleDieY: existingRing?.scaleDieY ?? 0,
+		};
+		(frameObj.ring as any)[key] = value;
 	}
 }
 
@@ -403,8 +424,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 					'is-draggable': submode === 'edit',
 				}"
 				:style="getTraitStyle(Number(t))"
-				@mousedown="startRingDrag($event, 'traits')"
-				@touchstart="startRingDrag($event, 'traits')"
+				@pointerdown="startRingDrag($event, 'traits')"
 			>
 				<div
 					class="ring-trait-inner"
@@ -441,8 +461,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 			:class="{ 'under-editor': isOtherEditorOpen, 'is-draggable': submode === 'edit' }"
 			v-if="scaleDieValue > 0"
 			:style="getScaleDieStyle()"
-			@mousedown="startRingDrag($event, 'scale')"
-			@touchstart="startRingDrag($event, 'scale')"
+			@pointerdown="startRingDrag($event, 'scale')"
 		>
 			<div
 				class="scale-die-inner"

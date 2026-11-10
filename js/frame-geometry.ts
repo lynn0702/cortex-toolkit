@@ -19,6 +19,12 @@ export interface RingConfig {
 	arcSlide?: number;
 }
 
+export interface FrameImageConfig {
+	url?: string;
+	alignment?: string;
+	zoom?: number;
+}
+
 export interface FrameConfig {
 	shape: FrameShape;
 	span: [number, number];
@@ -28,6 +34,8 @@ export interface FrameConfig {
 	dash?: string;
 	box?: boolean;
 	path?: string | null;
+	image?: FrameImageConfig | null;
+	ring?: RingConfig | null;
 	ringConfig?: RingConfig | null;
 }
 
@@ -55,7 +63,22 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 					? null
 					: traitSetOrFrame;
 
-	const rawRingCfg = view?.ringConfig || raw?.ringConfig || (traitSetOrFrame as any)?.ringConfig;
+	const rawObj = typeof raw === 'object' && raw ? (raw as any) : null;
+	const rawImage = rawObj?.image || (view?.frame as any)?.image;
+	const frameImage: FrameImageConfig | null =
+		rawImage && typeof rawImage === 'object' && (rawImage.url || rawImage.alignment || rawImage.zoom !== undefined)
+			? {
+					...(rawImage.url ? { url: String(rawImage.url).trim() } : {}),
+					...(rawImage.alignment ? { alignment: String(rawImage.alignment).trim() } : {}),
+					...(typeof rawImage.zoom === 'number' && Number.isFinite(rawImage.zoom) ? { zoom: rawImage.zoom } : {}),
+				}
+			: null;
+	const rawRingCfg =
+		rawObj?.ring ||
+		(view?.frame as any)?.ring ||
+		view?.ringConfig ||
+		rawObj?.ringConfig ||
+		(traitSetOrFrame as any)?.ringConfig;
 	const ringConfig: RingConfig | null = rawRingCfg
 		? {
 				arcAngle: rawRingCfg.arcAngle ?? (rawRingCfg.arcSlide !== undefined ? rawRingCfg.arcSlide * 3 : -90),
@@ -69,6 +92,20 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		: null;
 
 	if (!raw) {
+		if (view?.style?.body === 'portrait-ring') {
+			return {
+				shape: 'ring',
+				span: [0, 360],
+				corner: 8,
+				stroke: '2px',
+				color: 'primary',
+				box: false,
+				path: null,
+				...(frameImage ? { image: frameImage } : {}),
+				ring: ringConfig,
+				ringConfig,
+			};
+		}
 		return null;
 	}
 
@@ -83,7 +120,8 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			color: 'primary',
 			box: false,
 			path: null,
-			ringConfig: shape === 'ring' ? ringConfig : null,
+			...(frameImage ? { image: frameImage } : {}),
+			...(shape === 'ring' ? { ring: ringConfig, ringConfig } : { ringConfig: null }),
 		};
 	}
 
@@ -107,7 +145,10 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 				(rawSpan[0] === -110 && rawSpan[1] === 110) ||
 				(rawSpan[0] === -120 && rawSpan[1] === 120));
 		const span: [number, number] = isLegacyArcSpan ? defaultSpan : (rawSpan as [number, number]);
-		const effectiveRingConfig = shape === 'ring' ? raw.ringConfig || ringConfig || null : null;
+		const effectiveRingConfig =
+			shape === 'ring' || view?.style?.body === 'portrait-ring'
+				? rawObj?.ring || rawObj?.ringConfig || ringConfig || null
+				: null;
 
 		let color: FrameColor = 'primary';
 		let stroke = '2px';
@@ -143,7 +184,8 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			...(dash ? { dash } : {}),
 			box,
 			path: typeof raw.path === 'string' && raw.path.trim() ? raw.path.trim() : null,
-			ringConfig: effectiveRingConfig,
+			...(frameImage ? { image: frameImage } : {}),
+			...(effectiveRingConfig ? { ring: effectiveRingConfig, ringConfig: effectiveRingConfig } : { ringConfig: null }),
 		};
 	}
 	return null;

@@ -431,6 +431,7 @@ export interface ImageConfig {
 	alignment?: string;
 	height?: string;
 	caption?: string;
+	zoom?: number;
 }
 
 /** The character portrait, with the app-typed `view` and `custom` carriers. */

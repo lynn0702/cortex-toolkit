@@ -11,6 +11,7 @@ const {
 	imageFileInput,
 	uploadError,
 	imageAlignment,
+	imageZoom,
 	imageHeight,
 	imageCaption,
 	namePortraitVisibility,
@@ -90,6 +91,23 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 			<div @click.stop="imageAlignment = 'bottom-center'" :class="{ active: imageAlignment === 'bottom-center' }"></div>
 			<div @click.stop="imageAlignment = 'bottom-right'" :class="{ active: imageAlignment === 'bottom-right' }"></div>
 		</div>
+	</div>
+
+	<div class="editor-field" v-if="showImageEditor">
+		<div class="editor-row-between">
+			<label class="m-0">Zoom</label>
+			<span class="slider-val">{{ Math.round((imageZoom ?? 1) * 100) }}%</span>
+		</div>
+		<input
+			type="range"
+			:id="'trait-set-' + traitSetID + '-image-zoom'"
+			name="imageZoom"
+			aria-label="Image Zoom"
+			min="0.5"
+			max="2"
+			step="0.05"
+			v-model.number="imageZoom"
+		/>
 	</div>
 
 	<div class="editor-field" v-if="styleBody === 'image' || isName">

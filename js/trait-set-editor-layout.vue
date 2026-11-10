@@ -21,6 +21,9 @@ const {
 	setFrameDash,
 	frameBox,
 	setFrameBox,
+	frameImageUrl,
+	frameImageAlignment,
+	frameImageZoom,
 } = injectTraitSetEditor();
 </script>
 
@@ -123,5 +126,72 @@ const {
 				</button>
 			</div>
 		</div>
+
+		<!-- FRAME IMAGE CONTROLS -->
+		<template v-if="frameShape !== 'line'">
+			<div class="editor-field">
+				<div class="editor-label">Frame Image URL</div>
+				<input
+					type="text"
+					v-model.lazy="frameImageUrl"
+					placeholder="https://example.com/illustration.jpg"
+					aria-label="Frame Image URL"
+				/>
+			</div>
+
+			<div class="editor-field" v-if="frameImageUrl">
+				<div class="editor-label">Frame Image Focus</div>
+				<div class="editor-portrait-alignment">
+					<div
+						@click.stop="frameImageAlignment = 'top-left'"
+						:class="{ active: frameImageAlignment === 'top-left' }"
+					></div>
+					<div
+						@click.stop="frameImageAlignment = 'top-center'"
+						:class="{ active: frameImageAlignment === 'top-center' }"
+					></div>
+					<div
+						@click.stop="frameImageAlignment = 'top-right'"
+						:class="{ active: frameImageAlignment === 'top-right' }"
+					></div>
+					<div
+						@click.stop="frameImageAlignment = 'center-left'"
+						:class="{ active: frameImageAlignment === 'center-left' }"
+					></div>
+					<div @click.stop="frameImageAlignment = 'center'" :class="{ active: frameImageAlignment === 'center' }"></div>
+					<div
+						@click.stop="frameImageAlignment = 'center-right'"
+						:class="{ active: frameImageAlignment === 'center-right' }"
+					></div>
+					<div
+						@click.stop="frameImageAlignment = 'bottom-left'"
+						:class="{ active: frameImageAlignment === 'bottom-left' }"
+					></div>
+					<div
+						@click.stop="frameImageAlignment = 'bottom-center'"
+						:class="{ active: frameImageAlignment === 'bottom-center' }"
+					></div>
+					<div
+						@click.stop="frameImageAlignment = 'bottom-right'"
+						:class="{ active: frameImageAlignment === 'bottom-right' }"
+					></div>
+				</div>
+			</div>
+
+			<div class="editor-field" v-if="frameImageUrl">
+				<div class="editor-row-between">
+					<div class="editor-label m-0">Frame Image Zoom</div>
+					<span class="slider-val">{{ Math.round((frameImageZoom ?? 1) * 100) }}%</span>
+				</div>
+				<input
+					type="range"
+					min="0.5"
+					max="2"
+					step="0.05"
+					v-model.number="frameImageZoom"
+					aria-label="Frame Image Zoom"
+				/>
+			</div>
+		</template>
 	</template>
 </template>

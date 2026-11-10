@@ -30,9 +30,8 @@ const {
 	getPipChild,
 	isChildPipFilled,
 	togglePip,
-	canEditStatement,
-	getStatementText,
-	setStatementText,
+	canEditChildOnSheet,
+	setPipChildName,
 	handleSingleDieClick,
 	handleDieClick,
 	handleSteppedDieClick,
@@ -85,6 +84,9 @@ const {
 	getTraitAnchorDock,
 	getTraitAnchorHemisphere,
 	getTraitNameAnchorStyle,
+	effectiveImageUrl,
+	effectiveAlignment,
+	effectivePortraitStyle,
 } = injectTraitSet();
 </script>
 
@@ -100,14 +102,26 @@ const {
 		<!-- Decorative SVG for positional frames (ring, ellipse, arc, path) -->
 		<TraitSetFrame v-if="isPositionalFrameActive" :trait-set="traitSet" />
 
-		<!-- Center Hub / Portrait slot for ring frames -->
+		<!-- Center Hub / Portrait slot for radial frames -->
 		<div
-			v-if="isPositionalFrameActive && resolvedFrame?.shape === 'ring'"
+			v-if="
+				isPositionalFrameActive &&
+				(resolvedFrame?.shape === 'ring' || resolvedFrame?.shape === 'ellipse' || resolvedFrame?.shape === 'arc') &&
+				(resolvedFrame?.shape === 'ring' || resolvedFrame?.image?.url)
+			"
 			class="frame-ring-hub-slot"
+			:class="{ 'has-frame-image': Boolean(effectiveImageUrl) }"
 			aria-hidden="true"
 		>
 			<slot name="hub">
-				<div class="frame-hub-circle"></div>
+				<div
+					v-if="effectiveImageUrl"
+					:class="'portrait-circle portrait-alignment-' + effectiveAlignment"
+					width="100%"
+					height="100%"
+					:style="effectivePortraitStyle"
+				></div>
+				<div v-else class="frame-hub-circle"></div>
 			</slot>
 		</div>
 
@@ -218,11 +232,11 @@ const {
 											@click.stop="openTraitAt(s, item)"
 										>
 											<input
-												v-if="!printBlank && !item.isPlaceholder && canEditStatement(item.trait, traitSet)"
+												v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
 												type="text"
 												class="trait-statement-input"
-												:value="getStatementText(item.trait)"
-												@input="setStatementText(item.trait, ($event.target as HTMLInputElement).value)"
+												:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
+												@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 												@click.stop="openTraitAt(s, item)"
 												placeholder="Statement..."
 											/>
@@ -793,11 +807,11 @@ const {
 										<template v-if="parseChildPartKey(partKey).noun.toLowerCase() === 'statement'">
 											<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
 												<input
-													v-if="!printBlank && !item.isPlaceholder && canEditStatement(item.trait, traitSet)"
+													v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
 													type="text"
 													class="trait-statement-input"
-													:value="getStatementText(item.trait)"
-													@input="setStatementText(item.trait, ($event.target as HTMLInputElement).value)"
+													:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
+													@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 													@click.stop="openTraitAt(s, item)"
 													placeholder="Statement..."
 												/>
@@ -1127,11 +1141,11 @@ const {
 										></span>
 										<span class="trait-statement-box" @click.stop="openTraitAt(s, item)">
 											<input
-												v-if="!printBlank && !item.isPlaceholder && canEditStatement(item.trait, traitSet)"
+												v-if="!printBlank && !item.isPlaceholder && canEditChildOnSheet(item.trait, traitSet)"
 												type="text"
 												class="trait-statement-input"
-												:value="getStatementText(item.trait)"
-												@input="setStatementText(item.trait, ($event.target as HTMLInputElement).value)"
+												:value="getPipChild(item.trait)?.name || item.trait?.description || ''"
+												@input="setPipChildName(item.trait, ($event.target as HTMLInputElement).value)"
 												@click.stop="openTraitAt(s, item)"
 												placeholder="Statement..."
 											/>

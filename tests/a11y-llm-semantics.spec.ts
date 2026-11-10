@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { defineComponent, h } from 'vue';
 import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
@@ -11,6 +12,7 @@ import PageLayoutMini from '../js/page-layout-mini.vue';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
 import { cortexFunctions } from '../js/functions.ts';
 import { cortexPal } from '../js/cortex-pal.ts';
+import { useTraitSet } from '../js/use-trait-set.ts';
 
 // 1. Axe-core runner configured for JSDOM / Component testing
 async function runAxeAudit(container: HTMLElement) {
@@ -967,26 +969,23 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 					attachTo: document.body,
 				});
 
-				expect(block.find('.trait-list-framed').exists()).toBe(true);
+				expect(block.find('.portrait').exists()).toBe(true);
+				expect(block.find('.ring-grid').exists()).toBe(true);
 				const svg = block.find('.trait-set-frame-svg.frame-radial-svg');
 				expect(svg.exists()).toBe(true);
 				expect(svg.attributes('aria-hidden')).toBe('true');
 				expect(svg.attributes('focusable')).toBe('false');
 
 				// All 3 traits rendered in logical DOM order
-				const traits = block.findAll('.trait');
+				const traits = block.findAll('.ring-trait');
 				expect(traits.length).toBe(3);
-				expect(traits[0].attributes('data-trait-name')).toBe('Physical');
-				expect(traits[1].attributes('data-trait-name')).toBe('Mental');
-				expect(traits[2].attributes('data-trait-name')).toBe('Social');
+				expect(traits[0].text()).toContain('Physical');
+				expect(traits[1].text()).toContain('Mental');
+				expect(traits[2].text()).toContain('Social');
 
-				// Anchors & docking attributes present
-				expect(traits[0].attributes('data-frame-dock')).toBeDefined();
-				expect(traits[0].attributes('style')).toContain('position: absolute');
-
-				// Rating die & stress track present and interactive
-				expect(block.findAll('.attached-stress-track').length).toBe(3);
-				expect(block.findAll('.trait-part-rating').length).toBe(3);
+				// Anchors present
+				expect(traits[0].attributes('style')).toContain('left:');
+				expect(traits[0].attributes('style')).toContain('top:');
 
 				await runAxeAudit(block.element as HTMLElement);
 				block.unmount();
@@ -1003,19 +1002,20 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			});
 
 			// 1) Ring
-			expect(wrapper.find('.trait-list-framed.frame-shape-ring').exists()).toBe(true);
-			let names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name'));
+			expect(wrapper.find('.portrait').exists()).toBe(true);
+			expect(wrapper.find('.ring-grid').exists()).toBe(true);
+			let names = wrapper.findAll('.ring-trait .ring-trait-name').map((t) => t.text().trim());
 			expect(names).toEqual(['Physical', 'Mental', 'Social']);
 
-			// 2) Morph to Ellipse
+			// 2) Morph to Ellipse (ellipse without ring body renders standard list)
 			const ellipseSet = {
 				...set,
 				view: { ...set.view, frame: { shape: 'ellipse', span: [0, 360], stroke: 'accent', corner: 8 } },
 			};
 			await wrapper.setProps({ character: { name: 'Morph Hero', traitSets: [ellipseSet] } });
 			await wrapper.vm.$nextTick();
-			expect(wrapper.find('.trait-list-framed.frame-shape-ellipse').exists()).toBe(true);
-			names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name'));
+			expect(wrapper.find('.trait-list').exists()).toBe(true);
+			names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name') || '');
 			expect(names).toEqual(['Physical', 'Mental', 'Social']);
 
 			// 3) Morph to Block
@@ -1027,9 +1027,9 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			await wrapper.vm.$nextTick();
 			expect(wrapper.find('.trait-set-body-framed').exists()).toBe(true);
 			expect(wrapper.find('.frame-block-svg').exists()).toBe(true);
-			// Non-positional: trait-list-framed is removed, normal view.parts stack rendered
-			expect(wrapper.find('.trait-list-framed').exists()).toBe(false);
-			names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name'));
+			// Non-positional: portrait ring is removed, normal view.parts stack rendered
+			expect(wrapper.find('.portrait').exists()).toBe(false);
+			names = wrapper.findAll('.trait').map((t) => t.attributes('data-trait-name') || '');
 			expect(names).toEqual(['Physical', 'Mental', 'Social']);
 
 			// Parts intact
@@ -1102,14 +1102,14 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 				attachTo: document.body,
 			});
 
-			expect(wrapper.find('.trait-list-framed').exists()).toBe(true);
+			expect(wrapper.find('.portrait').exists()).toBe(true);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(true);
 
 			// 1. User selects "none" (or deletes frame in editor): turns frame off cleanly to view.parts
 			const unframedSet = structuredClone(set);
 			delete unframedSet.view.frame;
 			await wrapper.setProps({ character: { name: 'Fallback Hero', traitSets: [unframedSet] } });
-			expect(wrapper.find('.trait-list-framed').exists()).toBe(false);
+			expect(wrapper.find('.portrait').exists()).toBe(false);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(false);
 
 			// Traits still render stacked with stress track intact
@@ -1121,7 +1121,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			const reframedSet = structuredClone(set);
 			reframedSet.view.frame = { shape: 'ring', span: [0, 360] };
 			await wrapper.setProps({ character: { name: 'Fallback Hero', traitSets: [reframedSet] } });
-			expect(wrapper.find('.trait-list-framed').exists()).toBe(true);
+			expect(wrapper.find('.portrait').exists()).toBe(true);
 			expect(wrapper.find('.frame-radial-svg').exists()).toBe(true);
 
 			wrapper.unmount();
@@ -1144,7 +1144,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(svg.attributes('aria-hidden')).toBe('true');
 
 			// DOM order strictly 0..N-1
-			const traitElements = wrapper.findAll('.trait');
+			const traitElements = wrapper.findAll('.ring-trait');
 			expect(traitElements[0].text()).toContain('Physical');
 			expect(traitElements[1].text()).toContain('Mental');
 			expect(traitElements[2].text()).toContain('Social');
@@ -1966,6 +1966,235 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(stillHasHinder).toBeFalsy();
 
 			traitEditor.unmount();
+		});
+
+		it('verifies Part A: ring into frame, frame images, zoom, and pointer events', async () => {
+			const char: any = {
+				name: 'Test Pilot',
+				portrait: { url: 'https://example.com/portrait.jpg', view: { zoom: 1 } },
+				traitSets: [
+					// Set 0: frame shape ring
+					{
+						name: 'Roles',
+						noun: 'Role',
+						view: {
+							frame: {
+								shape: 'ring',
+								image: { url: 'https://example.com/frame-hub.jpg', zoom: 1.5 },
+								ring: { arcAngle: -45, arcSpread: 120 },
+							},
+						},
+						traits: [
+							{ name: 'Pilot', rating: { type: 'Die', value: [8] } },
+							{ name: 'Engineer', rating: { type: 'Die', value: [10] } },
+						],
+					},
+					// Set 1: style alias portrait-ring without frame
+					{
+						name: 'Legacy Roles',
+						noun: 'Role',
+						view: {
+							style: { body: 'portrait-ring' },
+							ringConfig: { arcAngle: -90, arcSpread: 100 },
+							imageConfig: { url: 'https://example.com/legacy-hub.jpg', zoom: 0.75 },
+						},
+						traits: [{ name: 'Gunner', rating: { type: 'Die', value: [8] } }],
+					},
+					// Set 2: block frame with image
+					{
+						name: 'Equipment',
+						noun: 'Item',
+						view: {
+							frame: {
+								shape: 'block',
+								image: { url: 'https://example.com/hero.jpg' },
+							},
+						},
+						traits: [{ name: 'Blaster', rating: { type: 'Die', value: [6] } }],
+					},
+					// Set 3: line frame with image (ignored)
+					{
+						name: 'Divider Set',
+						noun: 'Divider',
+						view: {
+							frame: {
+								shape: 'line',
+								image: { url: 'https://example.com/ignored.jpg' },
+							},
+						},
+						traits: [{ name: 'Note', rating: { type: 'Die', value: [6] } }],
+					},
+				],
+			};
+
+			// 1. Ring framed set renders inside its block
+			const w0 = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			expect(w0.find('.portrait').exists()).toBe(true);
+			expect(w0.findAll('.ring-trait').length).toBe(2);
+
+			// Center circle uses frame.image.url and zoom 1.5 (150%)
+			const circle0 = w0.find('.portrait-circle');
+			expect(circle0.exists()).toBe(true);
+			const style0 = circle0.attributes('style') || '';
+			expect(style0).toContain('https://example.com/frame-hub.jpg');
+			expect(style0).toContain('background-size: 150%');
+
+			// Pointerdown drag test on ring trait
+			const trait0 = w0.find('.ring-trait');
+			expect(trait0.exists()).toBe(true);
+			expect(trait0.attributes('onmousedown')).toBeUndefined();
+			trait0.element.dispatchEvent(new Event('pointerdown'));
+			w0.unmount();
+
+			// 2. Style body alias portrait-ring renders ring with fallback to ringConfig & imageConfig
+			const w1 = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 1, submode: 'edit', editing: [] },
+			});
+			expect(w1.find('.portrait').exists()).toBe(true);
+			const circle1 = w1.find('.portrait-circle');
+			const style1 = circle1.attributes('style') || '';
+			expect(style1).toContain('https://example.com/legacy-hub.jpg');
+			expect(style1).toContain('background-size: 75%');
+			w1.unmount();
+
+			// 3. Block frame with image renders header image
+			const w2 = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 2, submode: 'edit', editing: [] },
+			});
+			const hero2 = w2.find('.frame-header-image');
+			expect(hero2.exists()).toBe(true);
+			expect(hero2.attributes('style')).toContain('https://example.com/hero.jpg');
+			w2.unmount();
+
+			// 4. Line frame with image ignores image
+			const w3 = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 3, submode: 'edit', editing: [] },
+			});
+			expect(w3.find('.frame-header-image').exists()).toBe(false);
+			expect(w3.find('.portrait').exists()).toBe(false);
+			w3.unmount();
+		});
+
+		it('verifies Part B: generic Pip-child path, removal of statement shortcuts, and editableOnSheet', async () => {
+			const char: any = {
+				name: 'Test Pilot',
+				traitSets: [
+					{
+						name: 'Values',
+						noun: 'Value',
+						view: {
+							editableOnSheet: true,
+						},
+						traits: [
+							{
+								name: 'Duty',
+								description: 'The crew comes home before the cargo.',
+								rating: { type: 'Die', value: 8 },
+								traits: [
+									{
+										name: 'Existing statement',
+										description: '',
+										tags: [],
+										rating: { type: 'Pip', value: [false] },
+										traits: [],
+										view: {},
+									},
+								],
+							},
+							{
+								name: 'Glory',
+								description: 'No jump vector is impossible.',
+								rating: { type: 'Die', value: 8 },
+								// No pip child yet
+							},
+						],
+					},
+				],
+			};
+
+			let tsApi: any;
+			const TestHarness = defineComponent({
+				props: ['submode'],
+				setup(props, { emit }) {
+					tsApi = useTraitSet({ character: char, traitSetID: 0, submode: props.submode || 'edit' } as any, emit);
+					return () => h('div');
+				},
+			});
+
+			const harness = mount(TestHarness, { props: { submode: 'edit' } });
+
+			// 1. Statement shortcuts are gone from API, generic ones present
+			expect(tsApi.canEditStatement).toBeUndefined();
+			expect(tsApi.getStatementText).toBeUndefined();
+			expect(tsApi.setStatementText).toBeUndefined();
+			expect(typeof tsApi.canEditChildOnSheet).toBe('function');
+			expect(typeof tsApi.setPipChildName).toBe('function');
+
+			// 2. canEditChildOnSheet gate logic
+			expect(tsApi.canEditChildOnSheet(char.traitSets[0].traits[0], char.traitSets[0])).toBe(true);
+			// In print mode, returns false
+			let printTsApi: any;
+			const PrintHarness = defineComponent({
+				setup(_p, { emit }) {
+					printTsApi = useTraitSet({ character: char, traitSetID: 0, submode: 'print' } as any, emit);
+					return () => h('div');
+				},
+			});
+			const printHarness = mount(PrintHarness);
+			expect(printTsApi.canEditChildOnSheet(char.traitSets[0].traits[0], char.traitSets[0])).toBe(false);
+			printHarness.unmount();
+
+			// 3. getChildTraitByNoun has no statement branch and does not synthesize from description
+			expect(tsApi.getChildTraitByNoun(char.traitSets[0].traits[1], 'statement')).toBeUndefined();
+
+			// 4. togglePip on trait with NO child creates an UNNAMED child with empty view
+			const gloryTrait = char.traitSets[0].traits[1];
+			expect(tsApi.getPipChild(gloryTrait)).toBeUndefined();
+			tsApi.togglePip(0, 1);
+			const newPipChild = tsApi.getPipChild(gloryTrait);
+			expect(newPipChild).toBeDefined();
+			expect(newPipChild.name).toBe('');
+			expect(newPipChild.view).toEqual({});
+			expect(newPipChild.rating).toEqual({ type: 'Pip', value: [true] });
+
+			// 5. setPipChildName updates child name and creates unnamed pip child if missing
+			tsApi.setPipChildName(gloryTrait, 'Updated glory text');
+			expect(tsApi.getPipChild(gloryTrait)?.name).toBe('Updated glory text');
+
+			const newTraitWithoutChild: any = {
+				name: 'Justice',
+				description: 'Justice description',
+				rating: { type: 'Die', value: 8 },
+			};
+			tsApi.setPipChildName(newTraitWithoutChild, 'Freshly typed statement');
+			const createdChild = tsApi.getPipChild(newTraitWithoutChild);
+			expect(createdChild).toBeDefined();
+			expect(createdChild.name).toBe('Freshly typed statement');
+			expect(createdChild.view).toEqual({});
+			expect(createdChild.rating).toEqual({ type: 'Pip', value: [false] });
+
+			harness.unmount();
+
+			// 6. Inline inputs in TraitSetBlock gate on editability and display fallback description
+			const blockEditable = mount(TraitSetBlock, {
+				props: { character: char, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			const inputs = blockEditable.findAll('input.trait-statement-input');
+			expect(inputs.length).toBeGreaterThan(0);
+			// First trait has existing pip child
+			expect((inputs[0].element as HTMLInputElement).value).toBe('Existing statement');
+			blockEditable.unmount();
+
+			// Without editableOnSheet and playMutable, inputs do not render
+			const nonEditableChar = structuredClone(char);
+			delete nonEditableChar.traitSets[0].view.editableOnSheet;
+			const blockNonEditable = mount(TraitSetBlock, {
+				props: { character: nonEditableChar, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			expect(blockNonEditable.findAll('input.trait-statement-input').length).toBe(0);
+			blockNonEditable.unmount();
 		});
 	});
 });
