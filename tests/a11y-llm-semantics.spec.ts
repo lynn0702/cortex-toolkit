@@ -1646,7 +1646,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('mirrors Range with OUT chip, applies range across the set automatically, and wires Attributes (4 rows) and Values (4 parts) in Section Layout mini', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
-			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
 			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 
 			// 1. Subtrait editor mirrors Range with OUT chip, inline Pool/Spendable, no Apply-to-all button, and auto-syncs range across set
@@ -1704,7 +1704,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		it('renders Vanguard Values statement with zero duplication, places pip and box in dynamic grid cells, and renders Spotlight card hero traits in 3 o clock arc distribution', async () => {
 			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
 			const { default: PortraitRing } = await import('../js/portrait-ring.vue');
-			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
 			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 
 			// 1. Mount Values set: zero duplicate statements, pip in child:Statement:rating, box in child:Statement:label
@@ -1795,7 +1795,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('supports on-sheet editable toggle for statements, rating selector die chips with OUT option, and set-level subtrait noun editing', async () => {
 			const { default: TraitSetBlock } = await import('../js/trait-set-block.vue');
-			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
 			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 			const valuesSet = char.traitSets.find((ts: any) => ts.name === 'Values');
 			expect(valuesSet).toBeDefined();
@@ -1893,7 +1893,7 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 		it('surfaces Distinctions SFX (Hinder) as child subtrait in TraitSetEditor and TraitEditor with delete and ratingDisplay options', async () => {
 			const { default: TraitSetEditor } = await import('../js/trait-set-editor.vue');
-			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/dogfood-templates.ts');
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
 			const char: any = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
 			const distinctionsSetIdx = char.traitSets.findIndex((ts: any) => ts.name === 'Distinctions');
 			expect(distinctionsSetIdx).toBeGreaterThanOrEqual(0);

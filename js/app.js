@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { cortexFunctions } from './functions.ts';
 import { cloneDeep } from './clone-deep.ts';
-import { DOGFOOD_TEMPLATES } from './dogfood-templates.ts';
+import { SHOWCASE_TEMPLATES } from './showcase-templates.ts';
 import TraitSetFrame from './trait-set-frame.vue';
 import App from './app.vue';
 import '../css/app.css';
@@ -18,7 +18,7 @@ function mount() {
 	window.cortexFunctions = cortexFunctions;
 	window.cortexSetPresets = cortexFunctions.cortexSetPresets;
 	window.cortexCloneDeep = cloneDeep;
-	window.cortexDogfoodTemplates = DOGFOOD_TEMPLATES;
+	window.cortexShowcaseTemplates = SHOWCASE_TEMPLATES;
 	window.cortexTraitSetFrame = TraitSetFrame;
 }
 

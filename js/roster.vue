@@ -4,7 +4,7 @@ import { cortexFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
 import TraitSetMini from './trait-set-mini.vue';
-import { DOGFOOD_TEMPLATES } from './dogfood-templates.ts';
+import { SHOWCASE_TEMPLATES } from './showcase-templates.ts';
 
 declare const cortexSpotlightTemplates: any;
 
@@ -99,7 +99,7 @@ const spotlightTemplates = computed(() => {
 	if (typeof cortexSpotlightTemplates === 'undefined') {
 		loadSpotlightTemplates();
 	}
-	return [...DOGFOOD_TEMPLATES, ...base];
+	return [...SHOWCASE_TEMPLATES, ...base];
 });
 
 const spotlightTemplatesFiltered = computed(() => {

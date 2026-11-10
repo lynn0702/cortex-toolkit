@@ -121,7 +121,7 @@ https://github.com/kaelri/cortex-toolkit.
 - 2026-10-18: Flank branch layout: `traitColumns: 2` spreads skills to outer columns with specialties down the middle; explicit split wins.
 - 2026-10-12: Internal style ids name the layout (`sfx-rows`, `boxed-rows`, `pool-rows`, `die-track`, `subtrait-columns`, `paired-slots`, `die-rows`, `three-column-table`, `dice-ladder`, `labeled-fields`, `dice-count`, `portrait-ring`); component files, classes, and identifiers follow the same stems. Legacy Kaelri style ids (`distinctions`, `assets`, `resources`, `stress`, `attributes`) are not imported; use the converter project.
 - 2026-10-24: Paired slots address subtraits by index (`getSubtraitAt`, slot labels for names); the bonus-slot d6 floor is one slot-indexed rule (`getSubtraitSlotRatings`) shared by sheet and editor — the positional wrappers and the BONUS name-sniff are gone.
-- 2026-10-28 (2D Mobile Pillar Carousel & Set Preset Library, supersedes 2026-10-27 1D carousel): Mobile Play (`submode === 'play'` at `<= 768px`) is a data-driven 2D Pillar & Stack Deck powered by `view.pillar` (an open, permissive string with zero hardcoded whitelists; defaults to `'identity' | 'prime' | 'plus' | 'play'`) and customizable display labels under `view.labels.pillars[key]`. Top jump pills represent Pillar Columns (with staged dice count badges and a `+ Card` preset button); each `88vw` Pillar Column vertically stacks its assigned sets with a sticky `.mobile-substack-bar` when a column holds multiple cards. Session cards (`Scene Traits`, `Session Notes`, `Crisis Pool`, `Micro-GMC`) are dogfooded as standard `TraitSet` presets (`cortexSetPresets` + user-saved `cortexCustomSetPresets`), never bespoke widgets.
+- 2026-10-28 (2D Mobile Pillar Carousel & Set Preset Library, supersedes 2026-10-27 1D carousel): Mobile Play (`submode === 'play'` at `<= 768px`) is a data-driven 2D Pillar & Stack Deck powered by `view.pillar` (an open, permissive string with zero hardcoded whitelists; defaults to `'identity' | 'prime' | 'plus' | 'play'`) and customizable display labels under `view.labels.pillars[key]`. Top jump pills represent Pillar Columns (with staged dice count badges and a `+ Card` preset button); each `88vw` Pillar Column vertically stacks its assigned sets with a sticky `.mobile-substack-bar` when a column holds multiple cards. Session cards (`Scene Traits`, `Session Notes`, `Crisis Pool`, `Micro-GMC`) are built as standard `TraitSet` presets (`cortexSetPresets` + user-saved `cortexCustomSetPresets`), never bespoke widgets.
 
 ### Print
 - 2026-10-12: Print density is `@media print { html { font-size: 13px } }` only; the print tab zooms `.pages` at 0.8125 with inverse-scaled page vars (WYSIWYG). No global shrink, no separate preview button.
@@ -227,7 +227,7 @@ column sets (`.columns`), placed grid sets (`view.place` via
 (`.classic-full-band`) from the same template path without branching on sheet
 style.
 (2) Corpus rewrite: all 28 spotlight templates in `js/templates.js` and
-`data/templates/*.template.layered.json` (plus `js/dogfood-templates.ts` and
+`data/templates/*.template.layered.json` (plus `js/showcase-templates.ts` and
 `defaultCharacter`) drop `view.style.sheet` and state their presentation
 explicitly on each element: header portraits carry `portrait.view.location:
 'header'`, hidden name-set traits (`game`, `plotPoints`, `notes`) carry explicit

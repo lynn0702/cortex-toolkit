@@ -1788,7 +1788,7 @@ export const cortexFunctions = {
 		custom: {},
 	},
 
-	// Built-in Set Presets (dogfooded TraitSet templates for Play & Edit)
+	// Built-in Set Presets (showcase TraitSet templates for Play & Edit)
 	cortexSetPresets: {
 		'scene-traits': {
 			id: 'scene-traits',
