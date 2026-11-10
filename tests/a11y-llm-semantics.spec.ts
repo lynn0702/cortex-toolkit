@@ -2196,5 +2196,95 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(blockNonEditable.findAll('input.trait-statement-input').length).toBe(0);
 			blockNonEditable.unmount();
 		});
+
+		it('verifies trait editor has no dedicated statement field, Pip child is editable via Subtraits drill-in, and multidie badge has active without c', async () => {
+			const char: any = {
+				name: 'Test Character',
+				traitSets: [
+					{
+						name: 'Values',
+						noun: 'Value',
+						traits: [
+							{
+								name: 'Duty',
+								rating: { type: 'Die', value: 8 },
+								traits: [
+									{
+										name: 'Initial Statement',
+										rating: { type: 'Pip', value: [false] },
+									},
+								],
+							},
+						],
+					},
+					{
+						name: 'Assets',
+						noun: 'Asset',
+						traits: [
+							{
+								name: 'Vehicle',
+								rating: { type: 'Dice', value: [6, 8] },
+							},
+						],
+					},
+				],
+			};
+
+			// 1. TraitEditor on parent trait has NO dedicated statement field
+			const traitEditor = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			expect(traitEditor.find('input[name="traitStatement"]').exists()).toBe(false);
+			expect(traitEditor.find('#trait-statement-0').exists()).toBe(false);
+
+			// Subtrait row for the Pip child is listed in Subtraits drill-in list
+			const subRows = traitEditor.findAll('.editor-subtrait-row');
+			expect(subRows.length).toBe(1);
+			expect(subRows[0].text()).toContain('Initial Statement');
+			traitEditor.unmount();
+
+			// 2. Subtrait is editable via TraitEditor subtrait mode
+			const subtraitEditor = mount(TraitEditor, {
+				props: {
+					character: char,
+					traitSetID: 0,
+					traitID: 0,
+					subtraitID: 0,
+					open: true,
+					submode: 'edit',
+				},
+				attachTo: document.body,
+			});
+			const nameInput = subtraitEditor.find('input[name="traitName"]');
+			expect(nameInput.exists()).toBe(true);
+			expect((nameInput.element as HTMLInputElement).value).toBe('Initial Statement');
+			await nameInput.setValue('Edited via Drilldown');
+			expect(char.traitSets[0].traits[0].traits[0].name).toBe('Edited via Drilldown');
+			subtraitEditor.unmount();
+
+			// 3. TraitSetBlock multidie badge: has 'active' class, NO 'c' class
+			const block = mount(TraitSetBlock, {
+				props: {
+					character: char,
+					traitSetID: 1,
+					submode: 'edit',
+					editing: [],
+				},
+			});
+			const badges = block.findAll('.multidie-badge-wrap span');
+			expect(badges.length).toBeGreaterThanOrEqual(1);
+			for (const b of badges) {
+				expect(b.classes()).toContain('active');
+				expect(b.classes()).not.toContain('c');
+			}
+			block.unmount();
+		});
 	});
 });

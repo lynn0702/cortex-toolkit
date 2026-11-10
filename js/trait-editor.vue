@@ -163,30 +163,6 @@ const subtraitPlural = computed({
 	},
 });
 
-const statementChild = computed(() => {
-	if (!trait.value || isSubtraitMode.value) return null;
-	return (
-		(Array.isArray(trait.value.traits) &&
-			trait.value.traits.find((st: any) => {
-				const r = getRating(st);
-				return r?.type === 'Pip' || resolveSubtraitNoun(st).toLowerCase() === 'statement';
-			})) ||
-		null
-	);
-});
-const statementNoun = computed(() => (statementChild.value ? resolveSubtraitNoun(statementChild.value) : 'Statement'));
-const statementText = computed({
-	get() {
-		return statementChild.value?.name ?? '';
-	},
-	set(val: string) {
-		if (statementChild.value) {
-			statementChild.value.name = val;
-			updateCharacter(props.character);
-		}
-	},
-});
-
 const name = computed({
 	get() {
 		if (isSetSubtraitMode.value) {
@@ -1645,17 +1621,6 @@ function getDieDisplayValue(val: any) {
 							v-model="name"
 							ref="inputName"
 							@focus="nameBeforeEdit = name"
-						/>
-					</div>
-
-					<div class="editor-field" v-if="statementChild && !isSubtraitMode">
-						<label :for="'trait-statement-' + traitID">{{ statementNoun }}</label>
-						<input
-							type="text"
-							:id="'trait-statement-' + traitID"
-							name="traitStatement"
-							v-model="statementText"
-							placeholder="Statement text..."
 						/>
 					</div>
 
