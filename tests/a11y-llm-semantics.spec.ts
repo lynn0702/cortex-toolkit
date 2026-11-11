@@ -1699,6 +1699,128 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 			expect(valNames).toContain('Value · Rating');
 			expect(valNames).toContain('Statement · Label');
 			valEditor.unmount();
+
+			// 4. Mini editor supports bottom header, removing header, and removing any trait element
+			const distChar: any = {
+				name: 'Tester',
+				traitSets: [
+					{
+						name: 'Distinctions',
+						noun: 'Distinction',
+						view: { header: 'top', headerAlign: 'center' },
+						traits: [{ name: 'Clever', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
+					},
+				],
+			};
+			const distEditor = mount(TraitSetEditor, {
+				props: { character: distChar, traitSetID: 0 },
+				attachTo: document.body,
+			});
+			// Set Header Bottom Bar updates row-mini to render header below body
+			const bottomBtn = distEditor.find('button[title="Bottom bar header"]');
+			expect(bottomBtn.exists()).toBe(true);
+			await bottomBtn.trigger('click');
+			expect(distChar.traitSets[0].view.header).toBe('bottom');
+			expect(distEditor.find('.row-mini-headerbar-bottom').exists()).toBe(true);
+
+			// Remove header via row-mini remove button -> header = 'none', renders + Header restore button
+			const removeHeaderBtn = distEditor.find('.row-mini-header-remove');
+			expect(removeHeaderBtn.exists()).toBe(true);
+			await removeHeaderBtn.trigger('click');
+			expect(distChar.traitSets[0].view.header).toBe('none');
+			expect(distEditor.find('.row-mini-headerbox').exists()).toBe(false);
+			expect(distEditor.find('.row-mini-restore-header').exists()).toBe(true);
+
+			// TraitSetBlock hides .trait-set-header when header === 'none'
+			const hiddenHeaderBlock = mount(TraitSetBlock, {
+				props: { character: distChar, traitSetID: 0, submode: 'play' },
+			});
+			expect(hiddenHeaderBlock.find('.trait-set-header').exists()).toBe(false);
+			hiddenHeaderBlock.unmount();
+
+			// Remove every trait element from row-mini one by one down to 0
+			let miniRemovers = distEditor.findAll('.row-mini-box .row-mini-remove');
+			expect(miniRemovers.length).toBe(2);
+			await miniRemovers[1].trigger('click');
+			expect(distEditor.findAll('.row-mini-box').length).toBe(1);
+			miniRemovers = distEditor.findAll('.row-mini-box .row-mini-remove');
+			await miniRemovers[0].trigger('click');
+			expect(distEditor.findAll('.row-mini-box').length).toBe(0);
+			expect(distChar.traitSets[0].view.parts).toEqual({});
+			distEditor.unmount();
+
+			// 5. Trait Block Mini modal also supports bottom header, none header, and removing all parts
+			const modalMini = mount(TraitSetMini, {
+				props: { initialSet: { name: 'Distinctions', noun: 'Distinction', traits: [] } },
+			});
+			const modalBtns = modalMini.findAll('.mini-header-controls .mini-toggle-btn');
+			const bottomCenterBtn = modalBtns.find((b) => b.text().includes('Bottom Center'));
+			const noneHeaderBtn = modalBtns.find((b) => b.text().includes('None'));
+			expect(bottomCenterBtn?.exists()).toBe(true);
+			expect(noneHeaderBtn?.exists()).toBe(true);
+			await bottomCenterBtn!.trigger('click');
+			expect(modalMini.find('.trait-set.trait-set-header-bottom').exists()).toBe(true);
+			await noneHeaderBtn!.trigger('click');
+			expect(modalMini.find('.trait-set-header').exists()).toBe(false);
+
+			let modalRemovers = modalMini.findAll('.block-mini-part-remove');
+			expect(modalRemovers.length).toBe(2);
+			await modalRemovers[1].trigger('click');
+			expect(modalMini.findAll('.block-mini-part').length).toBe(1);
+			modalRemovers = modalMini.findAll('.block-mini-part-remove');
+			await modalRemovers[0].trigger('click');
+			expect(modalMini.findAll('.block-mini-part').length).toBe(0);
+			modalMini.unmount();
+
+			// 6. Image block shows a resizable Image box in the section mini and applies stored width/height
+			const imgChar: any = {
+				name: 'Tester',
+				traitSets: [
+					{
+						name: 'Art',
+						view: {
+							style: { body: 'image' },
+							imageConfig: { url: 'x.png', width: '50%', height: '180px' },
+						},
+						traits: [],
+					},
+				],
+			};
+			const imgEditor = mount(TraitSetEditor, {
+				props: { character: imgChar, traitSetID: 0 },
+				attachTo: document.body,
+			});
+			expect(imgEditor.find('.row-mini-imagebox').exists()).toBe(true);
+			expect(imgEditor.find('.row-mini-imagebox').attributes('style')).toContain('width: 50%');
+			expect(imgEditor.find('.row-mini-imagebox').attributes('style')).toContain('height: 180px');
+			imgEditor.unmount();
+			const imgBlock = mount(TraitSetBlock, {
+				props: { character: imgChar, traitSetID: 0, submode: 'play' },
+			});
+			expect(imgBlock.find('.image-set-container').attributes('style')).toContain('width: 50%');
+			imgBlock.unmount();
+
+			// 7. Ring set with no stored parts previews name and rating inline, as it renders
+			const ringChar: any = {
+				name: 'Tester',
+				traitSets: [
+					{
+						name: 'Ring Set',
+						noun: 'Distinction',
+						view: { frame: { shape: 'ring' } },
+						traits: [{ name: 'A', rating: { type: 'Die', value: [8], range: [4, 6, 8, 10, 12] } }],
+					},
+				],
+			};
+			const ringEditor = mount(TraitSetEditor, {
+				props: { character: ringChar, traitSetID: 0 },
+				attachTo: document.body,
+			});
+			const ringBoxes = ringEditor.findAll('.row-mini-box');
+			expect(ringBoxes.length).toBe(2);
+			const rowOf = (b: any) => (b.attributes('style') || '').match(/grid-row: (\d+)/)?.[1];
+			expect(rowOf(ringBoxes[0])).toBe(rowOf(ringBoxes[1]));
+			ringEditor.unmount();
 		});
 
 		it('renders Vanguard Values statement with zero duplication, places pip and box in dynamic grid cells, and renders Library card hero traits in 3 o clock arc distribution', async () => {

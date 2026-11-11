@@ -13,6 +13,7 @@ const {
 	imageAlignment,
 	imageZoom,
 	imageHeight,
+	imageWidth,
 	imageCaption,
 	namePortraitVisibility,
 	toggleNamePortraitVisibility,
@@ -108,6 +109,16 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 			step="0.05"
 			v-model.number="imageZoom"
 		/>
+	</div>
+
+	<div class="editor-field" v-if="styleBody === 'image'">
+		<label :for="'trait-set-' + traitSetID + '-image-width'">Display Width</label>
+		<select :id="'trait-set-' + traitSetID + '-image-width'" name="imageWidth" v-model="imageWidth">
+			<option value="25%">25%</option>
+			<option value="50%">50%</option>
+			<option value="75%">75%</option>
+			<option value="100%">100%</option>
+		</select>
 	</div>
 
 	<div class="editor-field" v-if="styleBody === 'image' || isName">

@@ -431,6 +431,7 @@ export interface ImageConfig {
 	url?: string;
 	alignment?: string;
 	height?: string;
+	width?: string;
 	caption?: string;
 	zoom?: number;
 }
@@ -526,8 +527,8 @@ export interface CharacterCurioCustom {
 	parts?: Record<string, PartCell>;
 	flex?: boolean;
 	cluster?: string;
-	/** Set header placement: vertical sidebar label, a horizontal top bar, or a bottom bar. */
-	header?: 'sidebar' | 'top' | 'bottom';
+	/** Set header placement: vertical sidebar label, a horizontal top bar, a bottom bar, or hidden. */
+	header?: 'sidebar' | 'top' | 'bottom' | 'none';
 	/** Header text alignment (respected in both orientations). */
 	headerAlign?: 'left' | 'center' | 'right';
 	page?: number;

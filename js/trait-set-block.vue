@@ -73,6 +73,21 @@ const canRemoveSetInPlay = computed(() => {
 });
 
 const headerTop = computed(() => getView(traitSet.value)?.header === 'top');
+const headerMode = computed(() => {
+	const h = getView(traitSet.value)?.header;
+	return h === 'top' || h === 'bottom' || h === 'none' ? h : 'sidebar';
+});
+const hasHeader = computed(
+	() => !isName.value && Boolean(traitSet.value?.name) && getView(traitSet.value)?.header !== 'none',
+);
+
+const showRingActions = computed(() => {
+	if (!isRing.value || submode.value !== 'edit') return false;
+	if (!shouldRenderBodyComponent.value) return true;
+	const v = getView(traitSet.value);
+	if (v?.ringNoun) return true;
+	return Boolean(traitSet.value?.traits?.some((t: any) => Boolean(getView(t)?.ring)));
+});
 
 const setSfxEntries = computed(() => characterCurioFunctions.sfxChildren(traitSet.value));
 
@@ -132,8 +147,8 @@ watch(rootEl, (el) => {
 		<TraitSetFrame
 			v-if="isFrameActive && resolvedFrame?.shape === 'block'"
 			:trait-set="traitSet"
-			:header-mode="headerTop ? 'top' : 'sidebar'"
-			:has-header="Boolean(traitSet.name)"
+			:header-mode="headerMode"
+			:has-header="hasHeader"
 		/>
 
 		<!-- Block frame hero header image -->
@@ -146,7 +161,7 @@ watch(rootEl, (el) => {
 			<img class="sr-only" :src="effectiveImageUrl" alt="" />
 		</div>
 
-		<div class="trait-set-header" v-if="!isName && traitSet.name">
+		<div class="trait-set-header" v-if="hasHeader">
 			<transition appear>
 				<div
 					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
@@ -247,7 +262,7 @@ watch(rootEl, (el) => {
 
 			<component :is="bodyComponent" v-if="shouldRenderBodyComponent" />
 
-			<div class="ring-actions" v-if="isRing && submode === 'edit'">
+			<div class="ring-actions" v-if="showRingActions">
 				<div class="preview-button-container">
 					<div class="preview-button-container-inner">
 						<div class="preview-button" @click.stop="addTrait(s)">

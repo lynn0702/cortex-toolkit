@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://cortex.engard.me/schema/0.1/sheet-template.schema.json",
+	"$id": "https://characters.lynnjones.rocks/schema/0.1/sheet-template.schema.json",
 	"title": "Cortex Prime sheet template",
 	"description": "A reusable sheet layout: same shape as a character entry ({ id (static), title, ..., character: {...} }). Trait sets carry stable ids joining character overrides to template layout. Imports dedupe by static id.",
 	"type" : "object",

@@ -537,6 +537,15 @@ function applyFromMini(updatedSet: any) {
 								>
 									<i class="fas fa-grip-lines"></i> Bottom Bar
 								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: headerMode === 'none' }"
+									@click.stop="headerMode = 'none'"
+									title="Remove header"
+								>
+									<i class="fas fa-eye-slash"></i> None
+								</button>
 							</div>
 							<div class="editor-button-group mt-sm">
 								<button

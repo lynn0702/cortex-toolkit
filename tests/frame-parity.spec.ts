@@ -486,10 +486,11 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(valItems[0].find('.pip').exists()).toBe(false);
 			valuesWrapper.unmount();
 
-			// 4. Dreamer (set 3)
+			// 4. Dreamer (set 3): distinctions on left, portrait on right
 			const dreamerWrapper = mount(TraitSetBlock, {
 				props: { character, traitSetID: 3, submode: 'play', editing: [] },
 			});
+			expect(dreamerWrapper.find('.trait-set').classes()).toContain('portrait-pos-right');
 			expect(dreamerWrapper.find('.portrait-circle').exists()).toBe(true);
 			expect(dreamerWrapper.find('.portrait-leader-line').exists()).toBe(false);
 			const dreamerList = dreamerWrapper.findComponent({ name: 'TraitSetList' });
@@ -502,6 +503,13 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(dreamerItems[1].find('.pip').exists()).toBe(false);
 			expect(dreamerItems[2].find('.pip').exists()).toBe(false);
 			dreamerWrapper.unmount();
+
+			// 5. Dreamer in edit mode does not duplicate "+ Distinction" in ring-actions
+			const dreamerEdit = mount(TraitSetBlock, {
+				props: { character, traitSetID: 3, submode: 'edit', editing: [] },
+			});
+			expect(dreamerEdit.find('.ring-actions').exists()).toBe(false);
+			dreamerEdit.unmount();
 		});
 	});
 });

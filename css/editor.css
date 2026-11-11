@@ -922,7 +922,32 @@
 
 	.row-mini-headerbar {
 		height: 26px;
-		margin-bottom: 4px;
+		margin-bottom: 0.25rem;
+	}
+
+	.row-mini-headerbar-bottom {
+		margin-top: 0.25rem;
+		margin-bottom: 0;
+	}
+
+	.row-mini-header-off {
+		margin-bottom: 0.25rem;
+	}
+
+	.row-mini-restore-header {
+		background: rgba(197, 8, 82, 0.14);
+		border: 1px dashed var(--color-primary);
+		border-radius: 3px;
+		color: #fbcfe8;
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		padding: 0.15rem 0.45rem;
+		cursor: pointer;
+
+		&:hover {
+			background: rgba(197, 8, 82, 0.28);
+		}
 	}
 
 	.row-mini-main-sideways {
@@ -963,6 +988,20 @@
 			align-items: center;
 			justify-content: center;
 		}
+	}
+
+	.row-mini-imagehost {
+		width: 100%;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 4px;
+		padding: 4px;
+		box-sizing: border-box;
+	}
+
+	.row-mini-imagebox {
+		position: relative;
+		margin-inline: auto;
 	}
 
 	.row-mini-norows {
@@ -1045,7 +1084,11 @@
 	}
 
 	.row-mini-headerbox {
+		position: relative;
 		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
 		background: rgba(197, 8, 82, 0.22);
 		border: 1px solid var(--color-primary);
 		border-radius: 2px;
@@ -1054,17 +1097,30 @@
 		font-size: 0.62rem;
 		font-weight: 700;
 		letter-spacing: 0.06em;
-		padding: 4px 6px;
+		padding: 0.25rem 0.35rem;
 		box-sizing: border-box;
 		overflow: hidden;
 		cursor: move;
 		touch-action: none;
 		user-select: none;
 
+		&.align-left {
+			text-align: left;
+		}
+
+		&.align-center {
+			text-align: center;
+		}
+
+		&.align-right {
+			text-align: right;
+		}
+
 		&.row-mini-vertical {
 			writing-mode: vertical-rl;
+			justify-content: space-between;
 			text-align: center;
-			padding: 6px 4px;
+			padding: 0.35rem 0.25rem;
 		}
 
 		&.is-dragging {
@@ -1073,11 +1129,35 @@
 	}
 
 	.row-mini-headername {
+		flex: 1 1 auto;
+		min-width: 0;
 		display: block;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		pointer-events: none;
+	}
+
+	.row-mini-remove {
+		position: absolute;
+		top: 1px;
+		right: 0.35rem;
+		background: transparent;
+		border: none;
+		color: #cbd5e1;
+		font-size: 0.85rem;
+		line-height: 1;
+		padding: 0 0.15rem;
+		cursor: pointer;
+
+		&:hover {
+			color: #f87171;
+		}
+	}
+
+	.row-mini-header-remove {
+		position: static;
+		flex: 0 0 auto;
 	}
 
 	/* The height cap lives only on the horizontal bar: in vertical mode */
@@ -1094,9 +1174,9 @@
 		z-index: 4; /* small local stacking literal */
 	}
 
-	.row-mini-slot-top {
+	.row-mini-slot-top,
+	.row-mini-slot-bottom {
 		position: absolute;
-		top: 0;
 		left: 0;
 		right: 0;
 		height: 30px;
@@ -1113,6 +1193,14 @@
 				border-style: solid;
 			}
 		}
+	}
+
+	.row-mini-slot-top {
+		top: 0;
+	}
+
+	.row-mini-slot-bottom {
+		bottom: 0;
 	}
 
 	.row-mini-slot-side {
@@ -1179,9 +1267,9 @@
 
 	.row-mini-name {
 		position: absolute;
-		left: 4px;
+		left: 0.25rem;
 		top: 2px;
-		right: 4px;
+		right: 1.25rem;
 		font-size: 0.62rem;
 		font-weight: 700;
 		color: #e0f2fe;

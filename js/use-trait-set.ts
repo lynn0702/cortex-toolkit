@@ -270,6 +270,8 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			classes['trait-set-header-top'] = true;
 		} else if (ctk?.header === 'bottom') {
 			classes['trait-set-header-bottom'] = true;
+		} else if (ctk?.header === 'none') {
+			classes['trait-set-header-none'] = true;
 		}
 		if (ctk?.borderless) {
 			classes['trait-set-borderless'] = true;
@@ -336,6 +338,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function getParts(traitSetArg: TraitSet) {
 		const raw = getView(traitSetArg)?.parts;
 		if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+		if (Object.keys(raw).length === 0) return {};
 		const known = Object.keys(raw).filter((k) => isKnownPart(k));
 		if (!known.length) return null;
 		const parts: Record<
@@ -1291,12 +1294,15 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	}
 
 	function getImageSetContainerStyle(traitSetArg: TraitSet) {
-		const h = getView(traitSetArg)?.imageConfig?.height;
+		const cfg = getView(traitSetArg)?.imageConfig;
+		const h = cfg?.height;
+		const w = cfg?.width;
+		const widthStyle = w && w !== '100%' ? { width: w, marginInline: 'auto' } : {};
 		if (h && h !== 'auto') {
-			return { height: h };
+			return { height: h, ...widthStyle };
 		}
-		if (isNameSet(traitSetArg)) return { minHeight: '96px', height: '100%' };
-		return { minHeight: '140px', height: 'auto' };
+		if (isNameSet(traitSetArg)) return { minHeight: '96px', height: '100%', ...widthStyle };
+		return { minHeight: '140px', height: 'auto', ...widthStyle };
 	}
 
 	function getImageSetGraphicStyle(traitSetArg: TraitSet) {

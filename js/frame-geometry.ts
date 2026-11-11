@@ -181,6 +181,9 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 		}
 		const box = Boolean(raw.box);
 
+		const position =
+			raw.position === 'left' || raw.position === 'right' || raw.position === 'center' ? raw.position : undefined;
+
 		return {
 			shape,
 			span,
@@ -192,6 +195,7 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 			box,
 			path: typeof raw.path === 'string' && raw.path.trim() ? raw.path.trim() : null,
 			...(frameImage ? { image: frameImage } : {}),
+			...(position ? { position } : {}),
 			...(effectiveRingConfig ? { ring: effectiveRingConfig, ringConfig: effectiveRingConfig } : { ringConfig: null }),
 		};
 	}

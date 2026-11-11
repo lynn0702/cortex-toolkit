@@ -320,3 +320,7 @@ remain fully legible in print and economy print modes.
 ## Open (decisions needed)
 
 - (none pending)
+
+## Corrections
+
+- (2026-11-11) Schema of reference: `cortex.engard.me` is deprecated and is NOT the schema of reference. Schema URLs (`$schema` markers, `TEMPLATE_SCHEMA_URL`, schema `$id`s) point at `characters.lynnjones.rocks/schema/0.1/` (or repo-relative paths for in-tree data). This supersedes the engard URL usage implied above; engard remains ONLY for the attribution page. `data/templates/Dreamer_Architect.curio.json` was completed to satisfy the current character schema (dates, plotPoints, notes, tags, set ids/plurals/descriptions, trait descriptions/tags, empty-object portrait).

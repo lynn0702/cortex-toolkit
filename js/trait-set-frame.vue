@@ -6,7 +6,7 @@ import { resolveFrame, buildBlockPath, buildRadialShapePath, type FrameConfig } 
 const props = withDefaults(
 	defineProps<{
 		traitSet: any;
-		headerMode?: 'sidebar' | 'top';
+		headerMode?: 'sidebar' | 'top' | 'bottom' | 'none';
 		hasHeader?: boolean;
 		width?: number;
 		height?: number;
@@ -99,12 +99,13 @@ const isRadial = computed(
 
 const headerModeComputed = computed(() => {
 	if (props.headerMode) return props.headerMode;
-	return getView(props.traitSet)?.header === 'top' ? 'top' : 'sidebar';
+	const h = getView(props.traitSet)?.header;
+	return h === 'top' || h === 'bottom' || h === 'none' ? h : 'sidebar';
 });
 
 const hasHeaderComputed = computed(() => {
 	if (props.hasHeader !== undefined) return props.hasHeader;
-	return Boolean(props.traitSet?.name);
+	return Boolean(props.traitSet?.name) && getView(props.traitSet)?.header !== 'none';
 });
 
 const VALID_COLORS = ['primary', 'accent', 'muted', 'strong', 'black'];

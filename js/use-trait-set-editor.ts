@@ -258,7 +258,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	): Record<string, { left: string; top: number; width: string; height: number }> {
 		const spec = partsSpec();
 		const base =
-			rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts) && Object.keys(rawParts).length > 0
+			rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts)
 				? (structuredClone(toRaw(rawParts)) as Record<string, any>)
 				: buildParts(spec);
 		if (!spec.subtraits && base.subtraits) {
@@ -379,8 +379,11 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// generated map (the seed setPartCell uses) plus the change, so the
 	// sheet switches from flex to the grid it previews.
 	const effectivePartCells = computed((): (PartCellEdit & { implicit: boolean })[] => {
-		const stored = partCells.value.map((c) => ({ ...c, implicit: false }));
-		if (stored.length || !isPartsDriven()) return stored;
+		const rawParts = getView(traitSet.value)?.parts;
+		if (rawParts && typeof rawParts === 'object' && !Array.isArray(rawParts)) {
+			return partCells.value.map((c) => ({ ...c, implicit: false }));
+		}
+		if (!isPartsDriven()) return [];
 		const gen = normalizeEffectiveParts(null);
 		const out: (PartCellEdit & { implicit: boolean })[] = [];
 		const orderedKeys = [
@@ -411,7 +414,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	// (No stored parts means nothing custom, however the preview reads.)
 	const hasCustomParts = computed(() => {
 		const parts = getView(traitSet.value)?.parts;
-		if (!parts || typeof parts !== 'object' || !Object.keys(parts).length) return false;
+		if (!parts || typeof parts !== 'object' || Array.isArray(parts)) return false;
 		const canon = (o: Record<string, unknown>) => {
 			const out: Record<string, unknown> = {};
 			Object.keys(o)
@@ -443,6 +446,15 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		} else {
 			cell.height = Number.isInteger(Number(val)) ? Math.max(1, Number(val)) : 1;
 		}
+		updateCharacter(props.character);
+	}
+
+	function removePartCell(key: string) {
+		const view = ensureView(traitSet.value);
+		view.parts = normalizeEffectiveParts(view.parts as Record<string, any> | undefined);
+		const cells = view.parts as Record<string, any>;
+		if (!cells[key]) return;
+		delete cells[key];
 		updateCharacter(props.character);
 	}
 
@@ -494,7 +506,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			}
 			return;
 		}
-		if (isRingFrame()) {
+		if (isRingFrame() && partsHaveTrack()) {
 			rebuildParts('below');
 			return;
 		}
@@ -644,6 +656,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		get: () => getView(traitSet.value)?.imageConfig?.height ?? 'auto',
 		set: (val: string) => {
 			setImageConfig('height', val);
+		},
+	});
+
+	const imageWidth = computed({
+		get: () => getView(traitSet.value)?.imageConfig?.width ?? '100%',
+		set: (val: string) => {
+			setImageConfig('width', val);
 		},
 	});
 
@@ -992,7 +1011,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			if (rTop === 0) return 'above';
 			return 'below';
 		}
-		if (isRingFrame()) return 'below';
+		if (isRingFrame() && partsHaveTrack()) return 'below';
 		const legacy = (traitSet.value as any)?.ratingPosition || getView(traitSet.value)?.ratingPosition;
 		if (legacy === 'above' || legacy === 'below' || legacy === 'none' || legacy === 'vertical') return legacy;
 		return 'inline';
@@ -1516,13 +1535,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	});
 
 	// Set header placement + alignment (generic; applies to every style).
-	const headerMode = computed<'sidebar' | 'top' | 'bottom'>({
+	const headerMode = computed<'sidebar' | 'top' | 'bottom' | 'none'>({
 		get: () => {
 			const h = getView(traitSet.value)?.header;
-			return h === 'top' || h === 'bottom' ? h : 'sidebar';
+			return h === 'top' || h === 'bottom' || h === 'none' ? h : 'sidebar';
 		},
-		set: (val: 'sidebar' | 'top' | 'bottom') => {
-			setCustomProperty('header', val === 'top' || val === 'bottom' ? val : 'sidebar');
+		set: (val: 'sidebar' | 'top' | 'bottom' | 'none') => {
+			setCustomProperty('header', val === 'top' || val === 'bottom' || val === 'none' ? val : 'sidebar');
 		},
 	});
 
@@ -1906,6 +1925,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		hasParts,
 		hasCustomParts,
 		setPartCell,
+		removePartCell,
 		resetParts,
 		branchShares,
 		setBranchShare,
@@ -1925,6 +1945,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		imageURL,
 		imageAlignment,
 		imageHeight,
+		imageWidth,
 		imageCaption,
 		namePortraitVisibility,
 		toggleNamePortraitVisibility,

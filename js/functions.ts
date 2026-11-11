@@ -635,7 +635,7 @@ export const characterCurioFunctions = {
 
 	TEMPLATE_FORMAT_VERSION: 1,
 
-	TEMPLATE_SCHEMA_URL: 'https://cortex.engard.me/schema/0.1/sheet-template.schema.json',
+	TEMPLATE_SCHEMA_URL: 'https://characters.lynnjones.rocks/schema/0.1/sheet-template.schema.json',
 
 	deepEqual: function (a: unknown, b: unknown) {
 		if (a === b) return true;

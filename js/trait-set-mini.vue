@@ -286,7 +286,7 @@ const hasCollision = computed(() => {
 
 function ensurePartsMap(): Record<string, PartBlueprint> {
 	const v = ensureView(workingSet.value);
-	if (!v.parts || typeof v.parts !== 'object' || Array.isArray(v.parts) || Object.keys(v.parts).length === 0) {
+	if (!v.parts || typeof v.parts !== 'object' || Array.isArray(v.parts)) {
 		(v as any).parts = {
 			name: { left: '0%', top: 0, width: '65%', height: 1, marker: 'L' },
 			rating: { left: '65%', top: 0, width: '35%', height: 1, ratingType: 'Die', range: [4, 6, 8, 10, 12] },
@@ -335,7 +335,7 @@ const activeParts = computed<
 		const owner = cell?.noun || baseNoun;
 		return { ownerNoun: owner, partLabel: `${owner} · ${PART_NAMES[kind] || kind}` };
 	};
-	if (raw && typeof raw === 'object' && !Array.isArray(raw) && Object.keys(raw).length > 0) {
+	if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
 		return Object.keys(raw).map((kind) => {
 			const cell = (raw as Record<string, PartBlueprint>)[kind]!;
 			const { ownerNoun, partLabel } = resolveOwnerAndLabel(kind, cell);
@@ -383,8 +383,9 @@ const activeParts = computed<
 });
 
 const selectedPart = computed(() => {
-	const map = ensurePartsMap();
-	return map[selectedPartKey.value] || null;
+	const raw = getView(workingSet.value)?.parts;
+	const map = raw && typeof raw === 'object' && !Array.isArray(raw) ? (raw as Record<string, PartBlueprint>) : null;
+	return (map && selectedPartKey.value && map[selectedPartKey.value]) || null;
 });
 
 const isNotesCard = computed(() => {
@@ -421,14 +422,20 @@ const outIndicator = computed({
 	},
 });
 
-const headerPlacement = computed(() => (getView(workingSet.value)?.header === 'top' ? 'top' : 'sidebar'));
+const headerPlacement = computed<'sidebar' | 'top' | 'bottom' | 'none'>(() => {
+	const h = getView(workingSet.value)?.header;
+	return h === 'top' || h === 'bottom' || h === 'none' ? h : 'sidebar';
+});
 const headerAlign = computed(() => getView(workingSet.value)?.headerAlign || 'center');
 
-function setHeaderPlacement(placement: 'sidebar' | 'top', align?: 'left' | 'center' | 'right') {
+function setHeaderPlacement(placement: 'sidebar' | 'top' | 'bottom' | 'none', align?: 'left' | 'center' | 'right') {
 	const v = ensureView(workingSet.value);
-	if (placement === 'top') {
-		v.header = 'top';
+	if (placement === 'top' || placement === 'bottom') {
+		v.header = placement;
 		v.headerAlign = align || 'center';
+	} else if (placement === 'none') {
+		v.header = 'none';
+		delete v.headerAlign;
 	} else {
 		delete v.header;
 		delete v.headerAlign;
@@ -954,13 +961,12 @@ function addOrFocusPart(kind: string, noun?: string, slotKind?: 'label' | 'ratin
 
 function removePartByKey(kind: string) {
 	const map = ensurePartsMap();
-	if (Object.keys(map).length <= 1 || !map[kind]) return;
+	if (!map[kind]) return;
 	delete map[kind];
 	const remaining = Object.keys(map);
-	if (selectedPartKey.value === kind && remaining.length > 0) {
-		selectedPartKey.value = remaining[0];
+	if (selectedPartKey.value === kind) {
+		selectedPartKey.value = remaining[0] || '';
 	}
-	const v = ensureView(workingSet.value);
 }
 
 function ensureChildTraitOnAllInstances(noun: string, rType: RatingType = 'Die') {
@@ -1559,6 +1565,38 @@ function onFileImportSelected(ev: Event) {
 							>
 								<i class="fas fa-align-right"></i> Top Right
 							</button>
+							<button
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: headerPlacement === 'bottom' && headerAlign === 'left' }"
+								@click="setHeaderPlacement('bottom', 'left')"
+							>
+								<i class="fas fa-align-left"></i> Bottom Left
+							</button>
+							<button
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: headerPlacement === 'bottom' && headerAlign === 'center' }"
+								@click="setHeaderPlacement('bottom', 'center')"
+							>
+								<i class="fas fa-align-center"></i> Bottom Center
+							</button>
+							<button
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: headerPlacement === 'bottom' && headerAlign === 'right' }"
+								@click="setHeaderPlacement('bottom', 'right')"
+							>
+								<i class="fas fa-align-right"></i> Bottom Right
+							</button>
+							<button
+								type="button"
+								class="mini-toggle-btn"
+								:class="{ active: headerPlacement === 'none' }"
+								@click="setHeaderPlacement('none')"
+							>
+								<i class="fas fa-eye-slash"></i> None
+							</button>
 						</div>
 					</section>
 
@@ -1771,9 +1809,10 @@ function onFileImportSelected(ev: Event) {
 										<span class="block-mini-part-coords">{{ part.left }} · {{ part.width }}</span>
 									</div>
 									<button
-										v-if="activeParts.length > 1"
 										type="button"
 										class="block-mini-part-remove"
+										:aria-label="'Remove ' + part.partLabel"
+										:title="'Remove ' + part.partLabel"
 										@pointerdown.stop
 										@click.stop="removePartByKey(part.kind)"
 									>
