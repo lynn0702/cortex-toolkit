@@ -272,6 +272,9 @@ function isDiceString(s) {
 }
 
 // Ratings have one shape (2026-10-23): { type, value: [], range: [] }.
+// Range is optional with inheritance (2026-11-11): an omitted Die/Dice
+// range inherits the set's ladder. When present it must be a non-empty
+// list of numbers; a lone Pip bubble still carries no ladder.
 function checkRatingObject(rating, where) {
 	if (rating === undefined || rating === null) return;
 	if (!rating || typeof rating !== 'object' || Array.isArray(rating)) {
@@ -284,11 +287,10 @@ function checkRatingObject(rating, where) {
 	if (!Array.isArray(rating.value) || rating.value.some((x) => typeof x !== 'number' && typeof x !== 'boolean')) {
 		err(`${where}: rating.value must be a list of numbers/booleans`);
 	}
-	if (rating.range === undefined) {
-		// A lone Pip bubble carries no ladder: [true, false] is derived.
-		if (rating.type !== 'Pip') err(`${where}: rating.range must be a list of numbers`);
-	} else if (!Array.isArray(rating.range) || rating.range.some((x) => typeof x !== 'number')) {
-		err(`${where}: rating.range must be a list of numbers`);
+	if (rating.range !== undefined) {
+		if (!Array.isArray(rating.range) || rating.range.length === 0 || rating.range.some((x) => typeof x !== 'number')) {
+			err(`${where}: rating.range must be a non-empty list of numbers`);
+		}
 	}
 	if (rating.out !== undefined && rating.out !== null && typeof rating.out !== 'boolean') {
 		err(`${where}: rating.out must be boolean (Out in range, default off)`);

@@ -10,6 +10,7 @@ import {
 	setRatingDice,
 	isRated,
 	resolveHitches,
+	resolveRange,
 	resolveVisibility,
 	nextVisibility,
 	DIE_LADDER,
@@ -295,8 +296,6 @@ const ratingHasOut = computed({
 		}
 		if (isSetSubtraitMode.value) {
 			syncCompanionSubtraits(t.noun || t.name);
-		} else if (traitSet.value) {
-			applyTypeScopedRange(traitSet.value, trait.value);
 		}
 		updateCharacter(props.character);
 	},
@@ -333,25 +332,25 @@ function setRatingType(type: 'Counter' | 'Die' | 'Dice' | 'Pip') {
 		});
 	}
 	const scale = availableValues.value;
-	const range = Array.isArray(scale) && scale.length ? [...scale] : undefined;
 	const size = Array.isArray(scale) && scale.length ? scale[0] : 8;
-	const prevRange = cur && Array.isArray(cur.range) && cur.range.length ? [...cur.range] : range;
+	// Own range only: an inherited ladder must not be stamped back onto
+	// the trait when its rating shape changes.
+	const ownPrevRange = cur && Array.isArray(cur.range) && cur.range.length ? [...cur.range] : undefined;
 	if ((cur?.type === 'Die' || cur?.type === 'Dice') && (type === 'Die' || type === 'Dice')) {
 		const dice = cur ? ratingDice(cur) : [];
 		const list = dice.length ? dice : [size];
-		const keepRange = prevRange && prevRange.length ? prevRange : [...DIE_LADDER];
-		if (type === 'Die') setRatingDie(t, list[0], keepRange);
+		if (type === 'Die') setRatingDie(t, list[0], ownPrevRange);
 		else
 			t.rating = {
 				type: 'Dice',
 				value: list,
-				range: keepRange,
+				...(ownPrevRange ? { range: ownPrevRange } : {}),
 				...(cur && (cur as any).out === true ? { out: true } : {}),
 			};
 	} else if (type === 'Die') {
-		setRatingDie(t, size, range);
+		setRatingDie(t, size);
 	} else if (type === 'Dice') {
-		t.rating = { type: 'Dice', value: [size], range: range && range.length ? range : [...DIE_LADDER] };
+		t.rating = { type: 'Dice', value: [size] };
 	} else if (type === 'Counter') {
 		t.rating = { type: 'Counter', value: [0], range: [0, 20] };
 	} else {
@@ -482,21 +481,19 @@ function setTraitRange(scale: number[]) {
 	if (isSetSubtraitMode.value) {
 		syncCompanionSubtraits(t.noun || t.name);
 	} else if (traitSet.value) {
+		// One set-level write: the edited ladder becomes the set's, and
+		// the trait stops restating it.
 		applyTypeScopedRange(traitSet.value, trait.value);
 	}
 	updateCharacter(props.character);
 }
 
 function isRangeIncluded(size: number) {
-	const rating = getRating(trait.value);
-	if (!rating || !Array.isArray(rating.range)) return availableValues.value.includes(size);
-	return rating.range.includes(size);
+	return dieRange.value.includes(size);
 }
 
 function toggleRangeOption(size: number) {
-	const rating = getRating(trait.value);
-	const base =
-		rating && Array.isArray(rating.range) && rating.range.length ? [...rating.range] : [...availableValues.value];
+	const base = [...dieRange.value];
 	const idx = base.indexOf(size);
 	if (idx !== -1) base.splice(idx, 1);
 	else base.push(size);
@@ -1133,16 +1130,13 @@ function toggleOutValue() {
 	updateCharacter(props.character);
 }
 
-const dieRange = computed(() => {
+// Effective ladder: own range → set rating range → set ratingLadder → base.
+const dieRange = computed(() => resolveRange(trait.value, [traitSet.value]));
+
+// True when the trait states no Die/Dice range of its own and inherits.
+const isRangeInherited = computed(() => {
 	const r = getRating(trait.value);
-	if (r && Array.isArray(r.range) && r.range.length) {
-		return [...r.range].sort((a, b) => a - b);
-	}
-	const av = availableValues.value;
-	if (Array.isArray(av) && av.length) {
-		return [...av].sort((a, b) => a - b);
-	}
-	return [...DIE_LADDER];
+	return !r || (r.type !== 'Die' && r.type !== 'Dice') || !Array.isArray(r.range) || r.range.length === 0;
 });
 
 function getDieStepPrev(currentSize: number, range: number[] = dieRange.value): number | null {
@@ -1167,7 +1161,7 @@ const singleDieStepNext = computed(() => getDieStepNext(firstDieOf(trait.value))
 function stepSingleDieDown() {
 	const prev = singleDieStepPrev.value;
 	if (prev !== null && trait.value) {
-		setRatingDie(trait.value as unknown as Record<string, any>, prev, dieRange.value);
+		setRatingDie(trait.value as unknown as Record<string, any>, prev);
 		updateCharacter(props.character);
 	}
 }
@@ -1175,7 +1169,7 @@ function stepSingleDieDown() {
 function stepSingleDieUp() {
 	const next = singleDieStepNext.value;
 	if (next !== null && trait.value) {
-		setRatingDie(trait.value as unknown as Record<string, any>, next, dieRange.value);
+		setRatingDie(trait.value as unknown as Record<string, any>, next);
 		updateCharacter(props.character);
 	}
 }
@@ -1187,7 +1181,7 @@ function stepDownDieAtIndexAlongRange(index: number) {
 		const prev = getDieStepPrev(curSize);
 		if (prev !== null) {
 			current[index] = prev;
-			setRatingDice(trait.value as unknown as Record<string, any>, current, dieRange.value);
+			setRatingDice(trait.value as unknown as Record<string, any>, current);
 			syncPoolCount(current.length);
 			updateCharacter(props.character);
 		}
@@ -1201,7 +1195,7 @@ function stepUpDieAtIndexAlongRange(index: number) {
 		const next = getDieStepNext(curSize);
 		if (next !== null) {
 			current[index] = next;
-			setRatingDice(trait.value as unknown as Record<string, any>, current, dieRange.value);
+			setRatingDice(trait.value as unknown as Record<string, any>, current);
 			syncPoolCount(current.length);
 			updateCharacter(props.character);
 		}
@@ -1303,7 +1297,8 @@ function addSubtrait() {
 			? subtrait.rating.value[0]
 			: 0;
 	if (allowed.length > 0 && !allowed.includes(cur)) {
-		subtrait.rating = { type: 'Die', value: [allowed[0]], range: allowed.slice() };
+		const isDefaultLadder = allowed.length === DIE_LADDER.length && allowed.every((x, i) => x === DIE_LADDER[i]);
+		subtrait.rating = { type: 'Die', value: [allowed[0]], ...(isDefaultLadder ? {} : { range: allowed.slice() }) };
 	}
 
 	const character = props.character;
@@ -2063,7 +2058,7 @@ function getDieDisplayValue(val: any) {
 							!hideUnratedSetDie
 						"
 					>
-						<div class="editor-label">Range</div>
+						<div class="editor-label">Range<template v-if="isRangeInherited"> · inherited</template></div>
 						<div class="rating-scale-container">
 							<div class="rating-scale-chips">
 								<button

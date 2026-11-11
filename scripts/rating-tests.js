@@ -214,12 +214,16 @@ function ok(cond, name, extra) {
 		],
 	});
 
-	// 1. Die source applies to Die traits only (including subtraits), preserving values verbatim
+	// 1. Die source lifts its ladder to the set level (ratingLadder on an
+	// unrated set) and stops restating it; values and other types untouched
 	const s1 = makeSet();
 	applyTypeScopedRange(s1, s1.traits[0]);
-	ok(JSON.stringify(s1.traits[1].rating.range) === '[6,8,10]', 'Die source updates Die 2 range');
+	ok(JSON.stringify(s1.view.ratingLadder) === '[6,8,10]', 'Die source lifts ladder to set level');
+	ok(s1.traits[0].rating.range === undefined, 'Die source drops its own range (inherits)');
+	ok(JSON.stringify(s1.traits[0].rating.value) === '[8]', 'Die 1 value preserved verbatim');
+	ok(JSON.stringify(s1.traits[1].rating.range) === '[4,6,8,10,12]', 'Die 2 untouched (inherits from set)');
 	ok(JSON.stringify(s1.traits[1].rating.value) === '[10]', 'Die 2 value preserved verbatim');
-	ok(JSON.stringify(s1.traits[0].traits[0].rating.range) === '[6,8,10]', 'Die subtrait updated');
+	ok(JSON.stringify(s1.traits[0].traits[0].rating.range) === '[4,6,8]', 'Die subtrait untouched');
 	ok(JSON.stringify(s1.traits[0].traits[0].rating.value) === '[6]', 'Die subtrait value preserved');
 	ok(JSON.stringify(s1.traits[0].traits[1].rating.range) === '[0,5]', 'Counter subtrait untouched by Die source');
 	ok(JSON.stringify(s1.traits[2].rating.range) === '[4,6,8,10,12]', 'Dice trait untouched by Die source');
@@ -227,12 +231,22 @@ function ok(cond, name, extra) {
 	ok(s1.traits[4].rating.range === undefined, 'Pip trait untouched by Die source');
 	ok(s1.traits[5].rating === undefined, 'Unrated trait untouched by Die source');
 
-	// 2. Dice source applies to Dice only
+	// 2. Dice source lifts to the set level; other traits untouched
 	const s2 = makeSet();
 	s2.traits[2].rating.range = [8, 10, 12];
 	applyTypeScopedRange(s2, s2.traits[2]);
+	ok(JSON.stringify(s2.view.ratingLadder) === '[8,10,12]', 'Dice source lifts ladder to set level');
+	ok(s2.traits[2].rating.range === undefined, 'Dice source drops its own range');
 	ok(JSON.stringify(s2.traits[0].rating.range) === '[6,8,10]', 'Die 1 untouched by Dice source');
-	ok(JSON.stringify(s2.traits[2].rating.range) === '[8,10,12]', 'Dice trait has its range');
+
+	// 2b. Same-type rated set receives the ladder on its own rating range
+	const s2b = makeSet();
+	s2b.rating = { type: 'Dice', value: [10, 8], range: [4, 6, 8, 10, 12] };
+	s2b.traits[2].rating.range = [8, 10, 12];
+	applyTypeScopedRange(s2b, s2b.traits[2]);
+	ok(JSON.stringify(s2b.rating.range) === '[8,10,12]', 'rated set takes the ladder on its own rating');
+	ok((s2b.view || {}).ratingLadder === undefined, 'rated set does not grow a ratingLadder');
+	ok(s2b.traits[2].rating.range === undefined, 'Dice source drops its own range (rated set)');
 
 	// 3. Counter source applies [lo, hi] to Counters only (including subtraits)
 	const s3 = makeSet();
@@ -255,6 +269,51 @@ function ok(cond, name, extra) {
 	const s5 = makeSet();
 	applyTypeScopedRange(s5, s5.traits[5]);
 	ok(JSON.stringify(s5) === JSON.stringify(makeSet()), 'Unrated source is a no-op');
+}
+
+// ---- 8. resolveRange: sparse inheritance (2026-11-11 brief item 1)
+const { resolveRange } = require('../js/model.ts');
+{
+	ok(JSON.stringify(resolveRange({})) === '[4,6,8,10,12]', 'resolveRange: base default');
+	ok(
+		JSON.stringify(resolveRange({ rating: { type: 'Die', value: [8], range: [6, 8, 10] } })) === '[6,8,10]',
+		'resolveRange: own range wins',
+	);
+	ok(
+		JSON.stringify(resolveRange({ rating: { type: 'Die', value: [8] } }, [{ view: { ratingLadder: [4, 6, 8] } }])) ===
+			'[4,6,8]',
+		'resolveRange: inherits set ratingLadder',
+	);
+	ok(
+		JSON.stringify(
+			resolveRange({}, [{ rating: { type: 'Dice', value: [8], range: [8, 10] } }, { view: { ratingLadder: [4, 6] } }]),
+		) === '[8,10]',
+		'resolveRange: nearest fallback rating range wins over farther ladder',
+	);
+	ok(JSON.stringify(resolveRange({}, [{ view: { ratingLadder: [12, 8, 4] } }])) === '[4,8,12]', 'resolveRange: sorted');
+	ok(
+		JSON.stringify(resolveRange({ rating: { type: 'Counter', value: [1], range: [0, 5] } })) === '[4,6,8,10,12]',
+		'resolveRange: Counter bounds are not ladders',
+	);
+	ok(
+		JSON.stringify(resolveRange({ rating: { type: 'Pip', value: [true] } })) === '[4,6,8,10,12]',
+		'resolveRange: Pip has no ladder',
+	);
+	ok(
+		JSON.stringify(resolveRange({ rating: { type: 'Die', value: [8] } })) === '[4,6,8,10,12]',
+		'resolveRange: absent own range falls through',
+	);
+
+	// Sparse writers: stepping stays sparse when no range was stated.
+	const t = {};
+	setRatingDie(t, 8);
+	ok(t.rating.range === undefined, 'setRatingDie on unrated stays sparse');
+	setRatingDice(t, [10, 8]);
+	ok(t.rating.range === undefined, 'setRatingDice on sparse stays sparse');
+	setRatingDie(t, 10, [6, 8, 10]);
+	ok(JSON.stringify(t.rating.range) === '[6,8,10]', 'explicit range is written');
+	setRatingDie(t, 8);
+	ok(JSON.stringify(t.rating.range) === '[6,8,10]', 'explicit range survives stepping');
 }
 
 console.log(`rating-tests: ${pass} passed, ${fail} failed`);

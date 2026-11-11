@@ -885,9 +885,10 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function handleOutClick(sArg: any, t: any) {
 		if (props.submode === 'play') {
 			const trait = props.character.traitSets[sArg].traits[t];
+			const traitSetArg = props.character.traitSets[sArg];
 			trait.isOut = !trait.isOut;
 			if (trait.isOut) {
-				setRatingDie(trait as unknown as Record<string, any>, rangeTop(trait) + 2);
+				setRatingDie(trait as unknown as Record<string, any>, rangeTop(trait, [traitSetArg]) + 2);
 				const r = (trait as any).rating;
 				if (r && typeof r === 'object' && (r.type === 'Die' || r.type === 'Dice')) r.out = true;
 			} else {

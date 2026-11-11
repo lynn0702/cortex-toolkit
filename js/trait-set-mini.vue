@@ -34,7 +34,12 @@ const emit = defineEmits<{
 	(e: 'applyToSet', updatedSet: any): void;
 }>();
 
-// Canonical rating factory conforming to schema/0.1/character.schema.json
+// Canonical rating factory conforming to schema/0.1/character.schema.json.
+// Die/Dice ratings omit the range when it equals the base ladder: the
+// blueprint cell carries the set-level definition and instances inherit.
+function isBaseLadder(r: number[]): boolean {
+	return r.length === DIE_LADDER.length && r.every((x, i) => x === DIE_LADDER[i]);
+}
 function createDefaultRatingForType(type: RatingType | 'None', customRange?: number[]): Rating | undefined {
 	if (type === 'None') return undefined;
 	if (type === 'Pip') {
@@ -44,16 +49,16 @@ function createDefaultRatingForType(type: RatingType | 'None', customRange?: num
 		return { type: 'Pip', value: bubbles };
 	}
 	if (type === 'Dice') {
-		const r = customRange && customRange.length ? [...customRange] : [4, 6, 8, 10, 12];
-		return { type: 'Dice', value: [6, 8], range: r };
+		const r = customRange && customRange.length ? [...customRange] : [...DIE_LADDER];
+		return { type: 'Dice', value: [6, 8], ...(isBaseLadder(r) ? {} : { range: r }) };
 	}
 	if (type === 'Counter') {
 		const r = customRange && customRange.length >= 2 ? [...customRange] : [0, 10];
 		return { type: 'Counter', value: [r[0]], range: r };
 	}
 	// 'Die'
-	const r = customRange && customRange.length ? [...customRange] : [4, 6, 8, 10, 12];
-	return { type: 'Die', value: [r.includes(8) ? 8 : r[0] || 8], range: r };
+	const r = customRange && customRange.length ? [...customRange] : [...DIE_LADDER];
+	return { type: 'Die', value: [r.includes(8) ? 8 : r[0] || 8], ...(isBaseLadder(r) ? {} : { range: r }) };
 }
 
 // Ensure every trait's rating uses canonical { type, value: [...], range: [...] }
@@ -92,11 +97,19 @@ function normalizeRating(r: any, defaultType: RatingType = 'Die'): Rating {
 	}
 	if (type === 'Dice') {
 		const dice = rawVal.filter((d: any) => typeof d === 'number' && d > 0);
-		return { type: 'Dice', value: dice.length ? dice : [6, 8], range: rawRange };
+		return {
+			type: 'Dice',
+			value: dice.length ? dice : [6, 8],
+			...(Array.isArray(r.range) && r.range.length ? { range: [...r.range] } : {}),
+		};
 	}
 	// Die
 	const die = typeof rawVal[0] === 'number' && rawVal[0] > 0 ? rawVal[0] : 8;
-	return { type: 'Die', value: [die], range: rawRange };
+	return {
+		type: 'Die',
+		value: [die],
+		...(Array.isArray(r.range) && r.range.length ? { range: [...r.range] } : {}),
+	};
 }
 
 function createDefaultWorkingSet(source?: any): any {
@@ -1189,6 +1202,41 @@ function getPartBoxStyle(part: { left: string; top: number; width: string; heigh
 // Instance data management
 const DIE_SIDES = [4, 6, 8, 10, 12];
 
+// Effective ladder for instances: own range → blueprint cell → base.
+// Sparse instances (no range of their own) render from the cell that
+// defines them instead of the base ladder.
+function mainCellRange(): number[] | undefined {
+	const cell = ensurePartsMap()['rating'];
+	return cell && Array.isArray(cell.range) && cell.range.length ? [...cell.range] : undefined;
+}
+
+function subCellRange(noun: string): number[] | undefined {
+	const lower = String(noun || '')
+		.trim()
+		.toLowerCase();
+	if (!lower) return undefined;
+	const map = ensurePartsMap();
+	for (const key of Object.keys(map)) {
+		const cell = map[key];
+		if (cell && cell.noun && String(cell.noun).trim().toLowerCase() === lower) {
+			if (Array.isArray(cell.range) && cell.range.length) return [...cell.range];
+		}
+	}
+	return undefined;
+}
+
+function traitRangeSides(trait: any): number[] {
+	const own = trait?.rating?.range;
+	if (Array.isArray(own) && own.length) return own;
+	return mainCellRange() || DIE_SIDES;
+}
+
+function subRangeSides(sub: any, noun: string): number[] {
+	const own = sub?.rating?.range;
+	if (Array.isArray(own) && own.length) return own;
+	return subCellRange(noun) || DIE_SIDES;
+}
+
 function addTraitRow() {
 	if (!Array.isArray(workingSet.value.traits)) workingSet.value.traits = [];
 	const rType = getPartRatingType('rating');
@@ -1241,13 +1289,13 @@ function getChildTraitInstance(trait: any, noun: string): any {
 // Value pickers on trait instances
 function setTraitDieValue(trait: any, dieVal: number | string) {
 	const val = Number(dieVal);
-	if (!trait.rating) trait.rating = { type: 'Die', value: [val], range: [4, 6, 8, 10, 12] };
+	if (!trait.rating) trait.rating = { type: 'Die', value: [val] };
 	trait.rating.value = [val];
 }
 
 function toggleTraitPoolDie(trait: any, dieVal: number | string) {
 	const val = Number(dieVal);
-	if (!trait.rating) trait.rating = { type: 'Dice', value: [val], range: [4, 6, 8, 10, 12] };
+	if (!trait.rating) trait.rating = { type: 'Dice', value: [val] };
 	if (!Array.isArray(trait.rating.value)) trait.rating.value = [];
 	const idx = trait.rating.value.indexOf(val);
 	if (idx >= 0 && trait.rating.value.length > 1) {
@@ -1274,7 +1322,7 @@ function toggleChildPipValue(sub: any, pIdx: number | string) {
 
 function setChildDieValue(sub: any, dieVal: number | string) {
 	const val = Number(dieVal);
-	if (!sub.rating) sub.rating = { type: 'Die', value: [val], range: [4, 6, 8, 10, 12] };
+	if (!sub.rating) sub.rating = { type: 'Die', value: [val] };
 	sub.rating.value = [val];
 }
 
@@ -2032,9 +2080,7 @@ function onFileImportSelected(ev: Event) {
 										<!-- Die Rating Picker -->
 										<div v-if="trait.rating.type === 'Die'" class="mini-die-picker">
 											<button
-												v-for="side in selectedPartKey === 'rating'
-													? selectedPart?.range || DIE_SIDES
-													: trait.rating.range || DIE_SIDES"
+												v-for="side in traitRangeSides(trait)"
 												:key="'inst-die-' + side"
 												type="button"
 												class="mini-die-chip"
@@ -2048,7 +2094,7 @@ function onFileImportSelected(ev: Event) {
 										<!-- Dice Pool Picker -->
 										<div v-else-if="trait.rating.type === 'Dice'" class="mini-die-picker">
 											<button
-												v-for="side in trait.rating.range || DIE_SIDES"
+												v-for="side in traitRangeSides(trait)"
 												:key="'inst-pool-' + side"
 												type="button"
 												class="mini-die-chip"
@@ -2141,7 +2187,7 @@ function onFileImportSelected(ev: Event) {
 												<span class="mini-subrow-caption">Die:</span>
 												<div class="mini-die-picker">
 													<button
-														v-for="side in getChildTraitInstance(trait, slot.noun).rating.range || DIE_SIDES"
+														v-for="side in subRangeSides(getChildTraitInstance(trait, slot.noun), slot.noun)"
 														:key="'child-die-' + side"
 														type="button"
 														class="mini-die-chip"
@@ -2158,7 +2204,7 @@ function onFileImportSelected(ev: Event) {
 												<span class="mini-subrow-caption">Pool:</span>
 												<div class="mini-die-picker">
 													<button
-														v-for="side in getChildTraitInstance(trait, slot.noun).rating.range || DIE_SIDES"
+														v-for="side in subRangeSides(getChildTraitInstance(trait, slot.noun), slot.noun)"
 														:key="'child-pool-' + side"
 														type="button"
 														class="mini-die-chip"

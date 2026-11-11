@@ -125,16 +125,17 @@ export function setRatingDice(node: Record<string, any>, dice: number[], range?:
 		return;
 	}
 	const prev = node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating) ? node.rating : {};
+	const nextRange =
+		Array.isArray(range) && range.length
+			? [...range]
+			: Array.isArray(prev.range) && prev.range.length
+				? [...prev.range]
+				: undefined;
 	node.rating = {
 		...prev,
 		type: clean.length > 1 ? 'Dice' : 'Die',
 		value: clean,
-		range:
-			Array.isArray(range) && range.length
-				? [...range]
-				: Array.isArray(prev.range) && prev.range.length
-					? [...prev.range]
-					: [...DIE_LADDER],
+		...(nextRange ? { range: nextRange } : {}),
 	};
 }
 
@@ -142,16 +143,17 @@ export function setRatingDice(node: Record<string, any>, dice: number[], range?:
 export function setRatingDie(node: Record<string, any>, size: number | null, range?: number[]): void {
 	if (typeof size === 'number' && size > 0) {
 		const prev = node.rating && typeof node.rating === 'object' && !Array.isArray(node.rating) ? node.rating : {};
+		const nextRange =
+			Array.isArray(range) && range.length
+				? [...range]
+				: Array.isArray(prev.range) && prev.range.length
+					? [...prev.range]
+					: undefined;
 		node.rating = {
 			...prev,
 			type: 'Die',
 			value: [size],
-			range:
-				Array.isArray(range) && range.length
-					? [...range]
-					: Array.isArray(prev.range) && prev.range.length
-						? [...prev.range]
-						: [...DIE_LADDER],
+			...(nextRange ? { range: nextRange } : {}),
 		};
 	} else {
 		delete node.rating;
@@ -205,6 +207,31 @@ export function keepsExtraDice(node: unknown): number {
 }
 
 /**
+ * Resolve a node's die ladder: sparse, inherits from the nearest ancestor
+ * that states one. `fallbacks` runs nearest-first (parent trait … set).
+ * A Die/Dice rating with a non-empty numeric range wins; then each
+ * fallback's view.ratingLadder; then the base ladder. Counter bounds and
+ * Pip counts are not ladders — they never inherit through this.
+ */
+export function resolveRange(node: unknown, fallbacks?: Array<unknown>): number[] {
+	const chain: Array<unknown> = [node, ...(Array.isArray(fallbacks) ? fallbacks : [])];
+	for (const link of chain) {
+		const r = getRating(link);
+		if ((r?.type === 'Die' || r?.type === 'Dice') && Array.isArray(r.range) && r.range.length > 0) {
+			return [...r.range].sort((a, b) => a - b);
+		}
+	}
+	for (const link of chain) {
+		const v = getView(link);
+		const ladder = v && typeof v === 'object' ? (v as Record<string, unknown>).ratingLadder : undefined;
+		if (Array.isArray(ladder) && ladder.length > 0 && ladder.every((x) => typeof x === 'number')) {
+			return [...(ladder as number[])].sort((a, b) => a - b);
+		}
+	}
+	return [...DIE_LADDER];
+}
+
+/**
  * Out is a range option for die ratings, defaulted off: most ratings
  * lack it. Explicit `out: true` on the rating opts in; otherwise the
  * set flag that enables Out badges (outIndicator) puts it in range
@@ -222,13 +249,9 @@ export function hasOutRange(node: unknown, fallbacks?: Array<unknown>): boolean 
 	return false;
 }
 
-/** Top of a die ladder: max range step, default d12. Out sits one step past it. */
-export function rangeTop(node: unknown): number {
-	const r = getRating(node);
-	const steps =
-		r && Array.isArray((r as RatedNode & { range?: unknown }).range)
-			? ((r as RatedNode & { range?: unknown }).range as unknown[]).filter((x): x is number => typeof x === 'number')
-			: [];
+/** Top of a die ladder: max effective range step, default d12. Out sits one step past it. */
+export function rangeTop(node: unknown, fallbacks?: Array<unknown>): number {
+	const steps = resolveRange(node, fallbacks);
 	return steps.length ? Math.max(...steps) : 12;
 }
 
@@ -236,50 +259,70 @@ export function rangeTop(node: unknown): number {
 export function isOutDie(node: unknown, fallbacks?: Array<unknown>): boolean {
 	if (!hasOutRange(node, fallbacks)) return false;
 	const first = ratingDice(getRating(node))[0] || 0;
-	if (first > rangeTop(node)) return true;
+	if (first > rangeTop(node, fallbacks)) return true;
 	const n = (node && typeof node === 'object' ? node : undefined) as { isOut?: unknown } | undefined;
 	return n?.isOut === true;
 }
 
 /**
- * Applies a source trait's range to every rated trait of the same type in the set
- * (and subtraits recursively). Preserves target values verbatim.
- * No-op for Pip or unrated source.
+ * Lifts a source trait's die ladder to the set level — one write. The
+ * ladder lands on the set's own rating range when the set is rated with
+ * the same Die/Dice type, otherwise on the set's view.ratingLadder. The
+ * source trait's own range is then cleared: it now equals the set level,
+ * so stating it again would only re-densify the file. Counter bounds have
+ * no set-level carrier, so they keep the legacy sibling stamp (values
+ * preserved verbatim, subtraits included). No-op for Pip, unrated
+ * sources, or Die/Dice sources that state no range of their own.
  */
 export function applyTypeScopedRange(traitSet: any, sourceTrait: any): void {
 	if (!traitSet || !sourceTrait) return;
 	const sourceRating = getRating(sourceTrait);
-	if (!sourceRating || !sourceRating.type || sourceRating.type === 'Pip') return;
+	if (!sourceRating || !sourceRating.type) return;
 	const sourceType = sourceRating.type;
-	const sourceRange = Array.isArray(sourceRating.range)
-		? [...sourceRating.range]
-		: sourceType === 'Counter'
-			? [0, 20]
-			: [4, 6, 8, 10, 12];
+	const sourceRange = Array.isArray(sourceRating.range) ? sourceRating.range.filter((x) => typeof x === 'number') : [];
 
-	function walk(targetTrait: any) {
-		if (!targetTrait || typeof targetTrait !== 'object') return;
-		const targetRating = getRating(targetTrait);
-		if (targetRating && targetRating.type === sourceType) {
-			targetTrait.rating = {
-				type: targetRating.type,
-				value: Array.isArray(targetRating.value) ? [...targetRating.value] : targetRating.value,
-				range: [...sourceRange],
-				...((sourceRating as any).out !== undefined ? { out: (sourceRating as any).out } : {}),
-			};
-		}
-		if (Array.isArray(targetTrait.traits)) {
-			for (const child of targetTrait.traits) {
-				walk(child);
+	if (sourceType === 'Counter') {
+		const bounds = sourceRange.length >= 2 ? [...sourceRange] : [0, 20];
+		function walk(targetTrait: any) {
+			if (!targetTrait || typeof targetTrait !== 'object') return;
+			const targetRating = getRating(targetTrait);
+			if (targetRating && targetRating.type === 'Counter') {
+				targetTrait.rating = {
+					type: 'Counter',
+					value: Array.isArray(targetRating.value) ? [...targetRating.value] : targetRating.value,
+					range: [...bounds],
+				};
+			}
+			if (Array.isArray(targetTrait.traits)) {
+				for (const child of targetTrait.traits) {
+					walk(child);
+				}
 			}
 		}
+		if (Array.isArray(traitSet.traits)) {
+			for (const rootTrait of traitSet.traits) {
+				walk(rootTrait);
+			}
+		}
+		return;
 	}
 
-	if (Array.isArray(traitSet.traits)) {
-		for (const rootTrait of traitSet.traits) {
-			walk(rootTrait);
-		}
+	if (sourceType !== 'Die' && sourceType !== 'Dice') return;
+	if (sourceRange.length === 0) return;
+
+	const setRating = getRating(traitSet);
+	if (
+		setRating &&
+		(setRating.type === 'Die' || setRating.type === 'Dice') &&
+		setRating.type === sourceType &&
+		traitSet.rating &&
+		typeof traitSet.rating === 'object'
+	) {
+		traitSet.rating.range = [...sourceRange];
+	} else {
+		ensureView(traitSet).ratingLadder = [...sourceRange];
 	}
+	delete sourceTrait.rating.range;
 }
 
 /** Resolves the display noun for a child trait / subtrait definition. */
