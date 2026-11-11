@@ -825,15 +825,39 @@
 
 	/* TRAIT SET BOXES */
 	.trait-set {
-		border: 2px solid #111;
-		border-radius: 4px;
-		background: #ffffff;
 		margin-bottom: 1rem;
 		display: flex;
 		flex-direction: row;
 		overflow: visible;
 		position: relative;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+		&:not(.trait-set-borderless) {
+			border: 2px solid #111;
+			border-radius: 4px;
+			background: #ffffff;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+		}
+
+		&.trait-set-borderless {
+			border: none;
+			background: transparent;
+			box-shadow: none;
+
+			& > .trait-set-header {
+				border: none;
+				border-bottom: none;
+				background: transparent;
+			}
+
+			& > .trait-set-body {
+				border: none;
+				background: transparent;
+			}
+
+			.trait {
+				border-bottom: none;
+			}
+		}
 
 		&.trait-set-style-name:not(.trait-set-framed) {
 			border: none;
@@ -847,7 +871,7 @@
 			flex: 1 1 100%;
 		}
 
-		&.trait-set-framed {
+		&.trait-set-framed:not(.trait-set-borderless) {
 			background: var(--bg-surface-card, #ffffff);
 
 			&.trait-set-frame-ring,
@@ -1200,8 +1224,9 @@
 		flex-shrink: 0;
 
 		.diecon {
-			width: var(--diecon-scale-size);
-			height: var(--diecon-scale-size);
+			width: 1.5rem;
+			height: 1.5rem;
+			font-size: 1.5rem;
 			vertical-align: middle;
 			display: inline-block;
 		}
@@ -1213,8 +1238,9 @@
 		gap: 0.25rem;
 
 		.diecon {
-			width: var(--diecon-scale-size);
-			height: var(--diecon-scale-size);
+			width: 1.5rem;
+			height: 1.5rem;
+			font-size: 1.5rem;
 			vertical-align: middle;
 			display: inline-block;
 		}
@@ -2616,6 +2642,8 @@
 }
 
 .character-sheet .trait-set.trait-set-borderless,
+.character-sheet .columns.sheet-columns .trait-set.trait-set-borderless,
+.columns.sheet-columns .trait-set.trait-set-borderless,
 .trait-set.trait-set-borderless {
 	border: none;
 	background: transparent;
@@ -2623,6 +2651,7 @@
 
 	& > .trait-set-header {
 		border: none;
+		border-bottom: none;
 		background: transparent;
 	}
 
@@ -2630,6 +2659,15 @@
 		border: none;
 		background: transparent;
 	}
+
+	.trait {
+		border-bottom: none;
+	}
+}
+
+.character-sheet .single-die-value,
+.character-sheet .trait-value {
+	font-size: 1rem;
 }
 
 .character-sheet .single-die-value .diecon,
@@ -2637,9 +2675,9 @@
 .character-sheet .ring-trait-inner .diecon,
 .character-sheet .trait-set-header-rating .diecon,
 .character-sheet .scale-die-inner .diecon {
-	font-size: 2em;
-	width: 2em;
-	height: 2em;
+	font-size: 1.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 /* ============================================================ */
@@ -2770,8 +2808,9 @@
 }
 .character-sheet.print-sheet .distinction-die .diecon,
 .character-sheet.print-sheet .single-die-value .diecon {
-	width: var(--diecon-size);
-	height: var(--diecon-size);
+	width: 1.5rem;
+	height: 1.5rem;
+	font-size: 1.5rem;
 }
 
 /* The print tab must keep the desktop sheet layout at any zoom (browser zoom */
@@ -4311,11 +4350,11 @@ body:has(.character-sheet.submode-print) .main {
 		}
 
 		/* Trait Sets & Inner Boxes */
-		.trait-set:not(.trait-set-style-name),
-		.trait-set.trait-set-framed:not(.trait-set-frame-line),
-		.trait-set.trait-set-framed.trait-set-frame-ring,
-		.trait-set.trait-set-framed.trait-set-frame-ellipse,
-		.trait-set.trait-set-framed.trait-set-frame-arc {
+		.trait-set:not(.trait-set-style-name):not(.trait-set-borderless),
+		.trait-set.trait-set-framed:not(.trait-set-frame-line):not(.trait-set-borderless),
+		.trait-set.trait-set-framed.trait-set-frame-ring:not(.trait-set-borderless),
+		.trait-set.trait-set-framed.trait-set-frame-ellipse:not(.trait-set-borderless),
+		.trait-set.trait-set-framed.trait-set-frame-arc:not(.trait-set-borderless) {
 			background: var(--bg-surface-card);
 			border-color: var(--border-strong);
 			color: var(--text-main);

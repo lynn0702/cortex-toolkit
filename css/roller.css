@@ -249,9 +249,9 @@
 		box-shadow 0.15s;
 
 	.diecon {
-		font-size: 2em;
-		width: 2em;
-		height: 2em;
+		font-size: 1.5rem;
+		width: 1.5rem;
+		height: 1.5rem;
 		line-height: 1;
 		color: var(--color-primary);
 	}
@@ -316,9 +316,9 @@
 	.diecon {
 		display: inline-block;
 		vertical-align: middle;
-		font-size: 2em;
-		width: 2em;
-		height: 2em;
+		font-size: 1.5rem;
+		width: 1.5rem;
+		height: 1.5rem;
 		line-height: 1;
 	}
 }
@@ -372,9 +372,9 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
 	.diecon {
-		font-size: 2em;
-		width: 2em;
-		height: 2em;
+		font-size: 1.5rem;
+		width: 1.5rem;
+		height: 1.5rem;
 	}
 
 	.chip-size {
@@ -746,11 +746,13 @@
 		display: flex;
 		align-items: center;
 		column-gap: 0.2rem;
+
 		.diecon {
-			font-size: 2em;
-			width: 2em;
-			height: 2em;
+			font-size: 1.5rem;
+			width: 1.5rem;
+			height: 1.5rem;
 		}
+
 		.card-size {
 			font-size: 0.65rem;
 			font-weight: 700;
@@ -1057,6 +1059,7 @@
 			overflow-x: auto;
 			cursor: pointer;
 			scrollbar-width: none;
+
 			&::-webkit-scrollbar {
 				display: none;
 			}
@@ -1182,5 +1185,65 @@
 @media screen and (max-width: 768px) {
 	.play-shell .sheet-column {
 		padding-bottom: 5rem;
+	}
+}
+
+/* Dark mode overrides (screen only) */
+@media screen {
+	[data-theme='dark'] .sidebar,
+	.theme-dark .sidebar {
+		background: rgba(15, 23, 42, 0.96);
+		color: var(--text-main);
+		border-color: var(--border-subtle);
+		box-shadow: 2px 0 12px rgba(0, 0, 0, 0.4);
+	}
+
+	[data-theme='dark'] .sidebar .card,
+	.theme-dark .sidebar .card,
+	[data-theme='dark'] .sidebar .die-card,
+	.theme-dark .sidebar .die-card {
+		background: var(--bg-surface-elevated);
+		color: var(--text-main);
+		border-color: var(--border-subtle);
+	}
+
+	[data-theme='dark'] .sidebar .card-top .c,
+	.theme-dark .sidebar .card-top .c {
+		color: var(--text-main);
+	}
+
+	[data-theme='dark'] .sidebar .card-value,
+	.theme-dark .sidebar .card-value {
+		color: var(--text-main);
+	}
+
+	[data-theme='dark'] .sidebar .card-size,
+	.theme-dark .sidebar .card-size,
+	[data-theme='dark'] .sidebar .card-badge,
+	.theme-dark .sidebar .card-badge {
+		color: var(--text-secondary);
+	}
+
+	[data-theme='dark'] .sidebar input,
+	.theme-dark .sidebar input,
+	[data-theme='dark'] .sidebar select,
+	.theme-dark .sidebar select,
+	[data-theme='dark'] .sidebar textarea,
+	.theme-dark .sidebar textarea {
+		background: var(--bg-surface-muted);
+		color: var(--text-main);
+		border-color: var(--border-subtle);
+	}
+
+	[data-theme='dark'] .sidebar button:not(.roller-btn-icon),
+	.theme-dark .sidebar button:not(.roller-btn-icon) {
+		background: var(--bg-surface-elevated);
+		color: var(--text-main);
+		border-color: var(--border-subtle);
+	}
+
+	[data-theme='dark'] .sidebar .roller-title,
+	.theme-dark .sidebar .roller-title {
+		color: var(--text-main);
 	}
 }

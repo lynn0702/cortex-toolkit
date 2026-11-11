@@ -103,10 +103,9 @@ function compareRender(render, label) {
 		dataTrait &&
 			dataTrait.rating &&
 			JSON.stringify(dataTrait.rating.value) === '[8]' &&
-			dataTrait.traits &&
-			named(dataTrait.traits).includes('belongs to the people, not the builders'),
-		'Data statement child folds back',
-		dataTrait && { v: dataTrait.rating, subs: named(dataTrait.traits) },
+			dataTrait.description === 'belongs to the people, not the builders',
+		'Data description preserved',
+		dataTrait && { v: dataTrait.rating, desc: dataTrait.description },
 	);
 }
 

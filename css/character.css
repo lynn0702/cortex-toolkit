@@ -856,6 +856,7 @@
 }
 
 .character-sheet .trait-set.trait-set-borderless,
+.character-sheet .columns.sheet-columns .trait-set.trait-set-borderless,
 .trait-set.trait-set-borderless {
 	border: none;
 	background: transparent;
@@ -863,6 +864,9 @@
 
 	& > .trait-set-header {
 		border: none;
+		border-bottom: none;
+		border-right: none;
+		border-left: none;
 		background: transparent;
 	}
 
@@ -870,6 +874,15 @@
 		border: none;
 		background: transparent;
 	}
+
+	.trait {
+		border-bottom: none;
+	}
+}
+
+.character-sheet .single-die-value,
+.character-sheet .trait-value {
+	font-size: 1rem;
 }
 
 .character-sheet .single-die-value .diecon,
@@ -877,9 +890,9 @@
 .character-sheet .ring-trait-inner .diecon,
 .character-sheet .trait-set-header-rating .diecon,
 .character-sheet .scale-die-inner .diecon {
-	font-size: 2em;
-	width: 2em;
-	height: 2em;
+	font-size: 1.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 .trait-set-header-rating {
@@ -1062,7 +1075,7 @@
 }
 
 .ring-trait-inner span {
-	font-size: 1.66rem;
+	font-size: 1rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;

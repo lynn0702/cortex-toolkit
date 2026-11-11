@@ -138,13 +138,13 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(architect.traits[5].name).toBe('All My Darlings are Dead');
 		expect(architect.traits[5].traits).toHaveLength(0);
 
-		// Only Values have statements
+		// Values have descriptions
 		expect(values.name).toBe('Values');
 		expect(values.traits).toHaveLength(3);
 		expect(values.view.borderless).toBe(true);
 		expect(values.traits[0].name).toBe('Data');
-		expect(values.traits[0].traits[0].name).toBe('belongs to the people, not the builders');
-		expect(values.traits[0].traits[0].rating.type).toBe('Pip');
+		expect(values.traits[0].description).toBe('belongs to the people, not the builders');
+		expect(values.traits[0].traits).toHaveLength(0);
 
 		// Dreamer distinctions are also simple label traits
 		expect(dreamer.name).toBe('The Dreamer');

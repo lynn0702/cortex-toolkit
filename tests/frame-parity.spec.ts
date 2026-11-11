@@ -451,9 +451,13 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(valuesList.exists()).toBe(true);
 			const valItems = valuesList.findAll('.trait');
 			expect(valItems).toHaveLength(3);
-			// Data (d8), Design (d6), Service (d10) each with Pip statement
+			// Data (d8), Design (d6), Service (d10) each with description and no pip checkbox
 			const valNames = valItems.map((v) => v.find('.trait-name').text().trim());
 			expect(valNames).toEqual(['Data', 'Design', 'Service']);
+			expect(valItems[0].find('.trait-description').text()).toContain('belongs to the people, not the builders');
+			expect(valItems[0].find('.pip').exists()).toBe(false);
+			expect(valItems[0].find('.trait-description').text()).toContain('belongs to the people, not the builders');
+			expect(valItems[0].find('.pip').exists()).toBe(false);
 			valuesWrapper.unmount();
 
 			// 3. Dreamer (set 2)

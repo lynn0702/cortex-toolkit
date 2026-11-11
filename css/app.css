@@ -55,9 +55,9 @@
 	--text-meta: 0.82rem;
 	/* Sublabels, pips, pip placeholder text, counters */
 
-	--diecon-size: 2.2rem;
+	--diecon-size: 1.5rem;
 	/* Standalone die icons */
-	--diecon-scale-size: 1.75rem;
+	--diecon-scale-size: 1.25rem;
 	/* Rating scale die buttons ([4] [6] [8] [10] [12]) */
 
 	--z-chip-drag: 5;

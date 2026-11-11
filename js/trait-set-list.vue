@@ -235,9 +235,6 @@ function hasTraitSetDescription(ts: any) {
 										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
 											getView(traitSet)?.pipSeparator
 										}}</span>
-										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
-											getView(traitSet)?.pipSeparator
-										}}</span>
 										<span
 											v-if="!hasChildPartCell(traitSet, 'pip', 'label')"
 											class="trait-pip-box"
@@ -698,11 +695,14 @@ function hasTraitSetDescription(ts: any) {
 								:style="partCellStyle(partsGridFor(traitSet), 'description')"
 							>
 								<div class="trait-description">
-									<div
+									<span v-if="getView(traitSet)?.pipSeparator && item.trait.description" class="trait-pip-separator">{{
+										getView(traitSet)?.pipSeparator
+									}}</span>
+									<span
 										v-if="!printBlank && !item.isPlaceholder && item.trait.description"
 										v-html="renderText(item.trait.description)"
-									></div>
-									<div class="desc-hint" v-else-if="submode === 'edit'">Description...</div>
+									></span>
+									<span class="desc-hint" v-else-if="submode === 'edit'">Description...</span>
 									<div class="desc-blank-area" v-else-if="printBlank || item.isPlaceholder">
 										<div class="desc-blank-line"></div>
 									</div>
@@ -1150,9 +1150,6 @@ function hasTraitSetDescription(ts: any) {
 													: ''
 											"
 										></span>
-										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
-											getView(traitSet)?.pipSeparator
-										}}</span>
 										<span v-if="getView(traitSet)?.pipSeparator" class="trait-pip-separator">{{
 											getView(traitSet)?.pipSeparator
 										}}</span>
