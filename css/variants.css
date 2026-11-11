@@ -192,8 +192,8 @@
 	}
 
 	.trait-value {
-		position: relative;
-		top: -0.5em;
+		display: inline-flex;
+		align-items: center;
 
 		& > span {
 			font-size: var(--diecon-scale-size);
@@ -246,8 +246,8 @@
 	}
 
 	.subtrait-value {
-		position: relative;
-		top: -0.25em;
+		display: inline-flex;
+		align-items: center;
 
 		& > span {
 			font-size: var(--diecon-scale-size);
@@ -303,8 +303,6 @@
 	}
 
 	.trait-value {
-		top: -0.1em;
-
 		& > span:not(.active) {
 			color: var(--color-separator);
 		}
@@ -330,10 +328,6 @@
 
 	.trait {
 		flex: 0 0 50%;
-	}
-
-	.trait-value {
-		top: -0.1em;
 	}
 
 	.trait-sfx {
@@ -471,8 +465,8 @@
 	}
 
 	.subtrait-value {
-		position: relative;
-		top: -0.1em;
+		display: inline-flex;
+		align-items: center;
 
 		& > span {
 			font-size: var(--diecon-scale-size);
@@ -612,8 +606,8 @@
 	}
 
 	.subtrait-value {
-		position: relative;
-		top: -0.1em;
+		display: inline-flex;
+		align-items: center;
 
 		& > span {
 			font-size: var(--diecon-scale-size);
@@ -695,7 +689,8 @@
 
 		& > span:not(.out-badge) {
 			position: relative;
-			top: -0.12em;
+			display: inline-flex;
+			align-items: center;
 			font-size: var(--diecon-size);
 
 			&:not(.active) {
@@ -1010,8 +1005,8 @@
 		}
 
 		.trait-value {
-			position: relative;
-			top: -0.1em;
+			display: inline-flex;
+			align-items: center;
 
 			& > span:not(.active) {
 				color: var(--color-separator);
@@ -1096,8 +1091,8 @@
 
 	.subtrait-value {
 		margin-left: auto;
-		position: relative;
-		top: -0.1em;
+		display: inline-flex;
+		align-items: center;
 		white-space: nowrap;
 
 		& > span {
@@ -1342,8 +1337,8 @@
 		min-width: 0;
 
 		.paired-slot-main-dice {
-			position: relative;
-			top: -0.1em;
+			display: inline-flex;
+			align-items: center;
 			white-space: nowrap;
 
 			& > span:not(.active) {
@@ -1389,8 +1384,6 @@
 			align-items: center;
 			gap: 0.15rem;
 			margin-left: auto;
-			position: relative;
-			top: -0.1em;
 			flex-shrink: 0;
 
 			& > span {
@@ -1422,8 +1415,8 @@
 
 		.trait-value {
 			margin-left: auto;
-			position: relative;
-			top: -0.1em;
+			display: inline-flex;
+			align-items: center;
 			white-space: nowrap;
 
 			& > span:not(.active) {
@@ -1455,8 +1448,8 @@
 	}
 
 	.subtrait-value {
-		position: relative;
-		top: -0.1em;
+		display: inline-flex;
+		align-items: center;
 		white-space: nowrap;
 
 		& > span {
@@ -1534,8 +1527,8 @@
 	}
 
 	.trait-value {
-		position: relative;
-		top: -0.1em;
+		display: inline-flex;
+		align-items: center;
 		white-space: nowrap;
 
 		& > span:not(.active) {
@@ -1613,8 +1606,8 @@
 		}
 
 		.trait-value {
-			position: relative;
-			top: -0.1em;
+			display: inline-flex;
+			align-items: center;
 			white-space: nowrap;
 
 			& > span {
@@ -1689,8 +1682,8 @@
 	}
 
 	.trait-value {
-		position: relative;
-		top: -0.1em;
+		display: inline-flex;
+		align-items: center;
 		white-space: nowrap;
 
 		& > span:not(.active) {
