@@ -81,18 +81,18 @@ function compareRender(render, label) {
 // ---- 2. specific spot checks (content survived the fold).
 {
 	const render = materializeCharacter(layered);
-	const line = byName(byName(render.traitSets, 'The Architect').traits, 'Line');
+	const architect = byName(render.traitSets, 'The Architect');
 	ok(
-		line &&
-			line.rating &&
-			line.rating.type === 'Die' &&
-			JSON.stringify(line.rating.value) === '[10]' &&
-			line.value === undefined &&
-			line.dice === undefined,
-		'Line folds to a Die rating',
-		line?.rating,
+		architect &&
+			architect.rating &&
+			architect.rating.type === 'Dice' &&
+			JSON.stringify(architect.rating.value) === '[10,10,10]' &&
+			architect.value === undefined &&
+			architect.dice === undefined,
+		'The Architect set folds to a Dice rating',
+		architect?.rating,
 	);
-	const fnTrait = byName(byName(render.traitSets, 'The Architect').traits, 'Function Before Form');
+	const fnTrait = byName(byName(render.traitSets, 'Architect Distinctions').traits, 'Function Before Form');
 	ok(
 		fnTrait && fnTrait.rating && JSON.stringify(fnTrait.rating.value) === '[8]',
 		'Function Before Form restored as label trait',
@@ -160,11 +160,11 @@ function compareRender(render, label) {
 // ---- 6. unrated (no rating) round-trips rating-free, not null.
 {
 	const ch = materializeCharacter(layered);
-	const dis = ch.traitSets.find((s) => s.name === 'The Architect');
+	const dis = ch.traitSets.find((s) => s.name === 'Architect Distinctions');
 	const tr = dis.traits[0];
 	delete tr.rating;
 	const back = materializeCharacter(toLayeredEntity(ch), ch);
-	const backDis = back.traitSets.find((s) => s.name === 'The Architect');
+	const backDis = back.traitSets.find((s) => s.name === 'Architect Distinctions');
 	ok(
 		backDis.traits[0].rating === undefined && backDis.traits[0].value === undefined,
 		'unrated round-trips rating-free',

@@ -60,6 +60,76 @@ const isRingPool = computed(() => {
 	if (node && typeof node.pool === 'boolean') return node.pool;
 	return Boolean(getView(ts)?.pool);
 });
+
+interface RingSlot {
+	key: string;
+	trait: Trait | null;
+	traitIdx: number;
+	dieIndex: number;
+	dieSize: number;
+	label: string;
+	source: string;
+	isSetLevel: boolean;
+}
+
+/** Expand multi-die ring traits (and set-level Dice rings) into individual die positions along the arc. */
+const ringSlots = computed<RingSlot[]>(() => {
+	const allTraits = (ringSet.value?.traits || []) as Trait[];
+	const slots: RingSlot[] = [];
+	for (const trait of traits.value) {
+		const traitIdx = allTraits.indexOf(trait);
+		const dice = ratingDice(getRating(trait));
+		const label = trait.name || '';
+		const source = (getView(trait)?.noun as string) || (getView(ringSet.value)?.ringNoun as string) || trait.name || '';
+		if (dice.length === 0) {
+			slots.push({
+				key: `t-${traitIdx}-0`,
+				trait,
+				traitIdx,
+				dieIndex: 0,
+				dieSize: 0,
+				label,
+				source,
+				isSetLevel: false,
+			});
+		} else {
+			dice.forEach((dieSize, dieIndex) => {
+				slots.push({
+					key: `t-${traitIdx}-${dieIndex}`,
+					trait,
+					traitIdx,
+					dieIndex,
+					dieSize,
+					label,
+					source,
+					isSetLevel: false,
+				});
+			});
+		}
+	}
+	if (slots.length === 0 && ringSet.value) {
+		const setRating = getRating(ringSet.value);
+		const frameCfg = resolveFrame(ringSet.value);
+		const hasRingConfig = Boolean(frameCfg?.ring || frameCfg?.ringConfig || frameCfg?.traitsSpan);
+		if (setRating && (setRating.type === 'Dice' || hasRingConfig)) {
+			const dice = ratingDice(setRating);
+			const label = (getView(ringSet.value)?.ringNoun as string) || ringSet.value.noun || ringSet.value.name || '';
+			dice.forEach((dieSize, dieIndex) => {
+				slots.push({
+					key: `s-${dieIndex}`,
+					trait: null,
+					traitIdx: -1,
+					dieIndex,
+					dieSize,
+					label,
+					source: label || 'Pool',
+					isSetLevel: true,
+				});
+			});
+		}
+	}
+	return slots;
+});
 const scaleDieValue = computed(() => {
 	const st = scaleTrait.value;
 	if (st) return ratingDice(getRating(st))[0] || 8;
@@ -116,7 +186,7 @@ function renderDieValue(value: any) {
 
 function getTraitAngle(t: number | string) {
 	const idx = Number(t);
-	const count = traits.value.length;
+	const count = ringSlots.value.length;
 	if (count <= 0) return 0;
 
 	const frameCfg = resolveFrame(ringSet.value);
@@ -190,45 +260,72 @@ function getTraitNameStyle(t: number | string) {
 	return `position: absolute; left: 50%; top: calc(50% + ${offY.toFixed(2)}mm); transform: translate(-50%, 0); text-align: center;`;
 }
 
-function ringDie(trait: any) {
-	return ratingDice(getRating(trait))[0] || 0;
+function isSlotSelected(slot: RingSlot) {
+	return slot.isSetLevel
+		? isSelected(['traitSet', props.ringTraitID])
+		: isSelected(['trait', props.ringTraitID, slot.traitIdx]);
 }
 
-function handleTraitClick(ringTraitIDVal: number | string, t: number | string, trait: any) {
+function handleSlotClick(slot: RingSlot) {
 	if (isRingDragging.value) return;
-	const traitIdx = Number(t);
-	const setIdx = Number(ringTraitIDVal);
+	const setIdx = Number(props.ringTraitID);
 	if (props.submode === 'play') {
 		const ts = props.character?.traitSets?.[setIdx];
 		if (isRingPool.value) {
 			const diceToAdd: any[] = [];
 			const poolName = (getView(ts)?.ringNoun as string) || ts?.name || props.character?.name || 'Pool';
-			for (const tr of traits.value) {
-				const first = ratingDice(getRating(tr))[0];
-				if (first && first > 0) {
+			for (const s of ringSlots.value) {
+				if (s.dieSize > 0) {
+					const node = s.trait || ts;
 					diceToAdd.push({
-						size: first,
+						size: s.dieSize,
 						qty: 1,
-						source: (getView(tr)?.noun as string) || tr.name || poolName,
-						hitches: resolveHitches(tr, [ts]),
-						keepsExtra: keepsExtraDice(tr),
+						source: s.source || poolName,
+						hitches: s.trait ? resolveHitches(s.trait, [ts]) : resolveHitches(ts, []),
+						keepsExtra: node ? keepsExtraDice(node) : 0,
 					});
 				}
 			}
 			if (diceToAdd.length > 0) {
 				emit('addDieToRoller', diceToAdd);
 			}
-		} else {
-			const first = ratingDice(getRating(trait))[0];
-			if (first) {
-				emit('addDieToRoller', {
-					size: first,
-					qty: 1,
-					source: (getView(trait)?.noun as string) || (getView(ts)?.ringNoun as string) || trait.name,
-					hitches: resolveHitches(trait, [ts]),
-					keepsExtra: keepsExtraDice(trait),
-				});
-			}
+		} else if (slot.dieSize > 0) {
+			const node = slot.trait || ts;
+			emit('addDieToRoller', {
+				size: slot.dieSize,
+				qty: 1,
+				source: slot.source,
+				hitches: slot.trait ? resolveHitches(slot.trait, [ts]) : resolveHitches(ts, []),
+				keepsExtra: node ? keepsExtraDice(node) : 0,
+			});
+		}
+	} else if (slot.isSetLevel) {
+		selectElement(['traitSet', setIdx]);
+	} else {
+		selectElement(['trait', setIdx, slot.traitIdx]);
+	}
+}
+
+function handleTraitClick(ringTraitIDVal: number | string, t: number | string, trait: any) {
+	if (isRingDragging.value) return;
+	const traitIdx = Number(t);
+	const setIdx = Number(ringTraitIDVal);
+	const matching = ringSlots.value.find((s) => s.trait === trait || (!s.isSetLevel && s.traitIdx === traitIdx));
+	if (matching) {
+		handleSlotClick(matching);
+		return;
+	}
+	if (props.submode === 'play') {
+		const ts = props.character?.traitSets?.[setIdx];
+		const first = ratingDice(getRating(trait))[0];
+		if (first) {
+			emit('addDieToRoller', {
+				size: first,
+				qty: 1,
+				source: (getView(trait)?.noun as string) || (getView(ts)?.ringNoun as string) || trait.name,
+				hitches: resolveHitches(trait, [ts]),
+				keepsExtra: keepsExtraDice(trait),
+			});
 		}
 	} else {
 		selectElement(['trait', setIdx, traitIdx]);
@@ -436,10 +533,11 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 	<div ref="rootEl" class="ring-grid">
 		<div class="ring-items" :class="{ 'has-open-editor': isTraitEditorOpen }">
 			<div
-				v-for="(trait, t) in traits"
+				v-for="(slot, t) in ringSlots"
+				:key="slot.key"
 				class="ring-trait"
 				:class="{
-					'has-open-editor': isSelected(['trait', ringTraitID, Number(t)]),
+					'has-open-editor': isSlotSelected(slot),
 					'is-draggable': submode === 'edit',
 				}"
 				:style="getTraitStyle(Number(t))"
@@ -447,33 +545,29 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 			>
 				<div
 					class="ring-trait-inner"
-					:class="{ selected: isSelected(['trait', ringTraitID, Number(t)]) }"
+					:class="{ selected: isSlotSelected(slot) }"
 					role="button"
 					tabindex="0"
-					:aria-label="
-						trait.name
-							? `Stage d${ringDie(trait) || 8} ${trait.name}`
-							: (getView(trait)?.noun as string) || (getView(ringSet)?.ringNoun as string) || ringSet?.noun || 'Trait'
-					"
-					@click.stop="handleTraitClick(ringTraitID, Number(t), trait)"
-					@keydown.enter.prevent="handleTraitClick(ringTraitID, Number(t), trait)"
-					@keydown.space.prevent="handleTraitClick(ringTraitID, Number(t), trait)"
+					:aria-label="slot.label ? `Stage d${slot.dieSize || 8} ${slot.label}` : slot.source || 'Trait'"
+					@click.stop="handleSlotClick(slot)"
+					@keydown.enter.prevent="handleSlotClick(slot)"
+					@keydown.space.prevent="handleSlotClick(slot)"
 					:title="
 						submode === 'play'
 							? isRingPool
 								? 'Pool: Click to add all dice to roller'
-								: 'Click to add d' + ringDie(trait) + ' to roller'
+								: 'Click to add d' + slot.dieSize + ' to roller'
 							: ''
 					"
 				>
 					<span
-						:class="['die-' + (ringDie(trait) || 8), { 'die-empty': !ringDie(trait) }]"
-						v-html="renderDieValue(ringDie(trait))"
-						:title="!ringDie(trait) && submode === 'edit' ? 'Unrated — click to set a die rating' : ''"
+						:class="['die-' + (slot.dieSize || 8), { 'die-empty': !slot.dieSize }]"
+						v-html="renderDieValue(slot.dieSize)"
+						:title="!slot.dieSize && submode === 'edit' ? 'Unrated — click to set a die rating' : ''"
 						aria-hidden="true"
 					></span>
 
-					<div class="ring-trait-name" :style="getTraitNameStyle(Number(t))">{{ trait.name }}</div>
+					<div class="ring-trait-name" :style="getTraitNameStyle(Number(t))">{{ slot.label }}</div>
 				</div>
 			</div>
 		</div>

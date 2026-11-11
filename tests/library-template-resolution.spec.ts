@@ -113,30 +113,30 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		document.body.removeChild(el);
 	});
 
-	it('imports The Dreamer & the Architect from .curio.json with 3 trait sets, Boss Die ring, and borderless layout', async () => {
+	it('imports The Dreamer & the Architect from .curio.json with 4 trait sets, Boss Dice ring, and tarot-card layout', async () => {
 		const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
 		const imported = characterCurioFunctions.sanitizeImportedCharacter(raw);
 		expect(imported).not.toBeNull();
 		expect(imported.name).toBe('The Dreamer & the Architect');
-		expect(imported.traitSets).toHaveLength(3);
+		expect(imported.traitSets).toHaveLength(4);
 
-		const [architect, values, dreamer] = imported.traitSets;
+		const [architect, archDistinctions, values, dreamer] = imported.traitSets;
 		expect(architect.name).toBe('The Architect');
-		expect(architect.traits).toHaveLength(6);
-		expect(architect.traits[0].name).toBe('Line');
-		expect(architect.traits[0].rating.value).toEqual([10]);
-		expect(architect.traits[0].view.ring).toBe(true);
-		expect(architect.traits[0].view.noun).toBe('Boss Die');
+		expect(architect.rating.type).toBe('Dice');
+		expect(architect.rating.value).toEqual([10, 10, 10]);
+		expect(architect.traits).toHaveLength(0);
 		expect(architect.view.ringNoun).toBe('Boss Die');
 		expect(architect.view.borderless).toBe(true);
 
-		// Distinctions are simple label traits without statements
-		expect(architect.traits[3].name).toBe('Function Before Form');
-		expect(architect.traits[3].traits).toHaveLength(0);
-		expect(architect.traits[4].name).toBe('Less is More');
-		expect(architect.traits[4].traits).toHaveLength(0);
-		expect(architect.traits[5].name).toBe('All My Darlings are Dead');
-		expect(architect.traits[5].traits).toHaveLength(0);
+		// Architect Distinctions are full phrases without Pip children
+		expect(archDistinctions.name).toBe('Architect Distinctions');
+		expect(archDistinctions.traits).toHaveLength(3);
+		expect(archDistinctions.traits[0].name).toBe('Function Before Form');
+		expect(archDistinctions.traits[0].traits).toHaveLength(0);
+		expect(archDistinctions.traits[1].name).toBe('Less is More');
+		expect(archDistinctions.traits[1].traits).toHaveLength(0);
+		expect(archDistinctions.traits[2].name).toBe('All My Darlings are Dead');
+		expect(archDistinctions.traits[2].traits).toHaveLength(0);
 
 		// Values have descriptions
 		expect(values.name).toBe('Values');
@@ -158,13 +158,30 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(dreamer.traits[1].traits).toHaveLength(0);
 		expect(dreamer.traits[2].name).toBe("Darling, let's have tea");
 		expect(dreamer.traits[2].traits).toHaveLength(0);
+
+		// place
+		expect(architect.view.place).toEqual({ height: 3, left: '0%', top: 0, width: '50%' });
+		expect(archDistinctions.view.place).toEqual({ height: 3, left: '50%', top: 0, width: '50%' });
+		expect(values.view.place).toEqual({ height: 2, left: '0%', top: 3, width: '100%' });
+		expect(dreamer.view.place).toEqual({ height: 3, left: '0%', top: 5, width: '100%' });
+
+		// frame
+		expect(architect.view.frame.stroke).toBe('3px');
+		expect(architect.view.frame.traitsSpan).toEqual([45, 135]);
+		expect(architect.view.frame.image.zoom).toBe(1);
+		expect(dreamer.view.frame.stroke).toBe('3px');
+		expect(dreamer.view.frame.image.zoom).toBe(1);
+
+		// header
+		expect(architect.view.header).toBe('top');
+		expect(values.view.header).toBe('top');
 	});
 
 	it('surfaces Dreamer & Architect as showcase template with tarot-card layout details', () => {
 		expect(DREAMER_ARCHITECT_SHOWCASE.id).toBe('dreamer-architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.title).toBe('The Dreamer & the Architect');
 		expect(DREAMER_ARCHITECT_SHOWCASE.character.name).toBe('The Dreamer & the Architect');
-		expect(DREAMER_ARCHITECT_SHOWCASE.character.traitSets).toHaveLength(3);
+		expect(DREAMER_ARCHITECT_SHOWCASE.character.traitSets).toHaveLength(4);
 		// Vanguard remains index 0 of SHOWCASE_TEMPLATES
 		expect(SHOWCASE_TEMPLATES[0].id).toBe('vanguard-frame-showcase');
 	});

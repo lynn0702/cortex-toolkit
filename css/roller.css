@@ -249,9 +249,9 @@
 		box-shadow 0.15s;
 
 	.diecon {
-		font-size: 1.5rem;
-		width: 1.5rem;
-		height: 1.5rem;
+		font-size: var(--diecon-size);
+		width: var(--diecon-size);
+		height: var(--diecon-size);
 		line-height: 1;
 		color: var(--color-primary);
 	}
@@ -316,9 +316,9 @@
 	.diecon {
 		display: inline-block;
 		vertical-align: middle;
-		font-size: 1.5rem;
-		width: 1.5rem;
-		height: 1.5rem;
+		font-size: 1.7rem;
+		width: 1.7rem;
+		height: 1.7rem;
 		line-height: 1;
 	}
 }
@@ -372,9 +372,9 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
 	.diecon {
-		font-size: 1.5rem;
-		width: 1.5rem;
-		height: 1.5rem;
+		font-size: var(--diecon-size);
+		width: var(--diecon-size);
+		height: var(--diecon-size);
 	}
 
 	.chip-size {
@@ -748,9 +748,9 @@
 		column-gap: 0.2rem;
 
 		.diecon {
-			font-size: 1.5rem;
-			width: 1.5rem;
-			height: 1.5rem;
+			font-size: var(--diecon-size);
+			width: var(--diecon-size);
+			height: var(--diecon-size);
 		}
 
 		.card-size {

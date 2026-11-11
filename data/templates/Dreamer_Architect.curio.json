@@ -1,416 +1,276 @@
 {
-    "$schema": "../../schema/0.1/character.schema.json",
-    "description": "Two minds, one sheet — a tarot-card display. The Architect builds the form; the Dreamer finds the beauty. An example of the Character Curio builder: a portrait ring, distinctions, and a single shared set of Values.",
-    "game": "Character Curio",
-    "id": "d6b1030e-c194-4556-958a-3e6f91c538a2",
-    "name": "The Dreamer & the Architect",
-    "portrait": {
-        "url": "",
-        "alt": "",
-        "tags": []
-    },
-    "pronouns": "they/them",
-    "traitSets": [
-        {
-            "name": "The Architect",
-            "noun": "Distinction",
-            "traits": [
-                {
-                    "name": "Line",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            10
-                        ]
-                    },
-                    "traits": [],
-                    "view": {
-                        "noun": "Boss Die",
-                        "ring": true
-                    },
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "Light",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            10
-                        ]
-                    },
-                    "traits": [],
-                    "view": {
-                        "noun": "Boss Die",
-                        "ring": true
-                    },
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "Space",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            10
-                        ]
-                    },
-                    "traits": [],
-                    "view": {
-                        "noun": "Boss Die",
-                        "ring": true
-                    },
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "Function Before Form",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "Less is More",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "All My Darlings are Dead",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "description": "",
-                    "tags": []
-                }
-            ],
-            "view": {
-                "borderless": true,
-                "frame": {
-                    "color": "primary",
-                    "image": {
-                        "alignment": "center",
-                        "url": "images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg",
-                        "zoom": 100
-                    },
-                    "position": "right",
-                    "shape": "ring",
-                    "span": [
-                        0,
-                        360
-                    ],
-                    "stroke": "3px",
-                    "traitsSpan": [
-                        45,
-                        135
-                    ]
-                },
-                "header": "top",
-                "headerAlign": "left",
-                "hideRingNames": true,
-                "page": 1,
-                "pillar": "prime",
-                "pips": false,
-                "place": {
-                    "height": 3,
-                    "left": "0%",
-                    "top": 0,
-                    "width": "100%"
-                },
-                "ratingDisplay": "rating",
-                "ringNoun": "Boss Die",
-                "pipSeparator": " "
-            },
-            "id": "the-architect",
-            "description": "",
-            "plural": "Distinctions",
-            "tags": []
-        },
-        {
-            "name": "Values",
-            "noun": "Value",
-            "traits": [
-                {
-                    "name": "Data",
-                    "description": "belongs to the people, not the builders",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "tags": []
-                },
-                {
-                    "name": "Design",
-                    "description": "what is built is but inspiration",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            6
-                        ]
-                    },
-                    "traits": [],
-                    "tags": []
-                },
-                {
-                    "name": "Service",
-                    "description": "your fee is yours to set, mine is free",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            10
-                        ]
-                    },
-                    "traits": [],
-                    "tags": []
-                }
-            ],
-            "view": {
-                "borderless": true,
-                "header": "top",
-                "headerAlign": "center",
-                "page": 1,
-                "parts": {
-                    "name": {
-                        "height": 1,
-                        "left": "0%",
-                        "top": 0,
-                        "width": "18%"
-                    },
-                    "description": {
-                        "height": 1,
-                        "left": "18%",
-                        "top": 0,
-                        "width": "70%"
-                    },
-                    "rating": {
-                        "height": 1,
-                        "left": "88%",
-                        "top": 0,
-                        "width": "12%"
-                    }
-                },
-                "pillar": "prime",
-                "place": {
-                    "height": 2,
-                    "left": "0%",
-                    "top": 3,
-                    "width": "100%"
-                },
-                "ratingDisplay": "rating",
-                "pipSeparator": " - "
-            },
-            "id": "values",
-            "description": "",
-            "plural": "Values",
-            "tags": []
-        },
-        {
-            "name": "The Dreamer",
-            "noun": "Distinction",
-            "rating": {
-                "type": "Die",
-                "value": [
-                    8
-                ]
-            },
-            "traits": [
-                {
-                    "name": "Beauty is all around us",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "I'll have another slice",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "description": "",
-                    "tags": []
-                },
-                {
-                    "name": "Darling, let's have tea",
-                    "rating": {
-                        "range": [
-                            4,
-                            6,
-                            8,
-                            10,
-                            12
-                        ],
-                        "type": "Die",
-                        "value": [
-                            8
-                        ]
-                    },
-                    "traits": [],
-                    "description": "",
-                    "tags": []
-                }
-            ],
-            "view": {
-                "borderless": true,
-                "frame": {
-                    "color": "primary",
-                    "image": {
-                        "alignment": "center",
-                        "url": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
-                        "zoom": 100
-                    },
-                    "position": "left",
-                    "shape": "ring",
-                    "span": [
-                        0,
-                        360
-                    ],
-                    "stroke": "3px"
-                },
-                "header": "bottom",
-                "headerAlign": "right",
-                "page": 1,
-                "pillar": "prime",
-                "pips": false,
-                "place": {
-                    "height": 3,
-                    "left": "0%",
-                    "top": 5,
-                    "width": "100%"
-                },
-                "ratingDisplay": "rating",
-                "pipSeparator": " "
-            },
-            "id": "the-dreamer",
-            "description": "",
-            "plural": "Distinctions",
-            "tags": []
-        }
-    ],
-    "version": "0.1",
-    "view": {
-        "accentColor": "#8B1E2B",
-        "diceConfig": {
-            "backgroundColor1": "#8B1E2B",
-            "borderColor": "#8B1E2B",
-            "borderWidth": 1.5,
-            "numeralColor": "#ffffff",
-            "style": "custom",
-            "backgroundType": "solid",
-            "unfilledBackground": "none",
-            "unfilledBorder": "#8B1E2B",
-            "unfilledNumeral": "#8B1E2B"
-        },
-        "primaryColor": "#38761d"
-    },
-    "dateCreated": "2026-11-10T12:00:00.000Z",
-    "dateModified": "2026-11-10T12:00:00.000Z",
-    "dateTouched": "2026-11-10T12:00:00.000Z",
-    "plotPoints": 1,
-    "notes": "",
-    "tags": []
+	"$schema": "../../schema/0.1/character.schema.json",
+	"version": "0.1",
+	"isTemplate": false,
+	"id": "4f7e78e6-d726-4dba-b65d-583c61543721",
+	"dateCreated": "2026-11-11T00:16:59.130Z",
+	"dateModified": "2026-11-11T15:21:33.078Z",
+	"dateTouched": "2026-11-11T15:21:33.078Z",
+	"name": "The Dreamer & the Architect",
+	"game": "",
+	"pronouns": "they/them",
+	"description": "Two minds, one sheet — a tarot-card display. The Architect builds the form; the Dreamer finds the beauty. An example of the Character Curio builder: a portrait ring, distinctions, and a single shared set of Values.",
+	"traitSets": [
+		{
+			"id": "the-architect",
+			"name": "The Architect",
+			"description": "",
+			"noun": "Boss Die",
+			"plural": "Boss Dice",
+			"rating": {
+				"range": [4, 6, 8, 10, 12],
+				"type": "Dice",
+				"value": [10, 10, 10]
+			},
+			"traits": [],
+			"tags": [],
+			"view": {
+				"borderless": true,
+				"frame": {
+					"color": "primary",
+					"image": {
+						"alignment": "center",
+						"url": "images/250px-De_bouwmeester__1919__Rijksmuseum_SK-A-4746.jpeg",
+						"zoom": 1
+					},
+					"position": "right",
+					"shape": "ring",
+					"span": [0, 360],
+					"stroke": "3px",
+					"traitsSpan": [45, 135]
+				},
+				"header": "top",
+				"headerAlign": "left",
+				"hideRingNames": true,
+				"page": 1,
+				"pillar": "prime",
+				"pipSeparator": " ",
+				"pips": false,
+				"place": {
+					"height": 3,
+					"left": "0%",
+					"top": 0,
+					"width": "50%"
+				},
+				"ratingDisplay": "rating",
+				"ringNoun": "Boss Die"
+			}
+		},
+		{
+			"id": "architect-distinctions",
+			"name": "Architect Distinctions",
+			"description": "",
+			"noun": "Distinction",
+			"plural": "Distinctions",
+			"traits": [
+				{
+					"name": "Function Before Form",
+					"description": "",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				},
+				{
+					"name": "Less is More",
+					"description": "",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				},
+				{
+					"name": "All My Darlings are Dead",
+					"description": "",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				}
+			],
+			"tags": [],
+			"view": {
+				"borderless": true,
+				"header": "top",
+				"headerAlign": "left",
+				"page": 1,
+				"pillar": "prime",
+				"pipSeparator": " ",
+				"pips": false,
+				"place": {
+					"height": 3,
+					"left": "50%",
+					"top": 0,
+					"width": "50%"
+				},
+				"ratingDisplay": "rating"
+			}
+		},
+		{
+			"id": "values",
+			"name": "Values",
+			"description": "",
+			"noun": "Value",
+			"plural": "Values",
+			"traits": [
+				{
+					"name": "Data",
+					"description": "belongs to the people, not the builders",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				},
+				{
+					"name": "Design",
+					"description": "what is built is but inspiration",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [6]
+					},
+					"traits": [],
+					"tags": []
+				},
+				{
+					"name": "Service",
+					"description": "your fee is yours to set, mine is free",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [10]
+					},
+					"traits": [],
+					"tags": []
+				}
+			],
+			"tags": [],
+			"view": {
+				"borderless": true,
+				"header": "top",
+				"headerAlign": "center",
+				"page": 1,
+				"pillar": "prime",
+				"pipSeparator": " - ",
+				"pips": false,
+				"place": {
+					"height": 2,
+					"left": "0%",
+					"top": 3,
+					"width": "100%"
+				},
+				"ratingDisplay": "rating"
+			}
+		},
+		{
+			"id": "the-dreamer",
+			"name": "The Dreamer",
+			"description": "",
+			"noun": "Distinction",
+			"plural": "Distinctions",
+			"rating": {
+				"type": "Die",
+				"value": [8]
+			},
+			"traits": [
+				{
+					"name": "Beauty is all around us",
+					"description": "",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				},
+				{
+					"name": "I'll have another slice",
+					"description": "",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				},
+				{
+					"name": "Darling, let's have tea",
+					"description": "",
+					"rating": {
+						"range": [4, 6, 8, 10, 12],
+						"type": "Die",
+						"value": [8]
+					},
+					"traits": [],
+					"tags": []
+				}
+			],
+			"tags": [],
+			"view": {
+				"borderless": true,
+				"frame": {
+					"color": "primary",
+					"image": {
+						"alignment": "center",
+						"url": "images/250px-Corot_-_The_Dreamer_at_the_Fountain__1855_63.jpg",
+						"zoom": 1
+					},
+					"position": "left",
+					"shape": "ring",
+					"span": [0, 360],
+					"stroke": "3px"
+				},
+				"header": "bottom",
+				"headerAlign": "right",
+				"page": 1,
+				"pillar": "prime",
+				"pipSeparator": " ",
+				"pips": false,
+				"place": {
+					"height": 3,
+					"left": "0%",
+					"top": 5,
+					"width": "100%"
+				},
+				"ratingDisplay": "rating"
+			}
+		}
+	],
+	"portrait": {
+		"url": "",
+		"alt": "",
+		"tags": []
+	},
+	"plotPoints": 1,
+	"notes": "",
+	"tags": [],
+	"view": {
+		"accentColor": "#8B1E2B",
+		"diceConfig": {
+			"backgroundColor1": "#8B1E2B",
+			"backgroundType": "solid",
+			"borderColor": "#8B1E2B",
+			"borderWidth": 1.5,
+			"numeralColor": "#ffffff",
+			"style": "custom",
+			"unfilledBackground": "none",
+			"unfilledBorder": "#8B1E2B",
+			"unfilledNumeral": "#8B1E2B"
+		},
+		"primaryColor": "#38761d"
+	}
 }

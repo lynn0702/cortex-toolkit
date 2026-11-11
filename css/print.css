@@ -993,7 +993,7 @@
 	.trait .trait-title,
 	.trait-title {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
 		gap: 0.4rem;
 		margin: 0;
@@ -1224,9 +1224,9 @@
 		flex-shrink: 0;
 
 		.diecon {
-			width: 1.5rem;
-			height: 1.5rem;
-			font-size: 1.5rem;
+			width: var(--diecon-size);
+			height: var(--diecon-size);
+			font-size: var(--diecon-size);
 			vertical-align: middle;
 			display: inline-block;
 		}
@@ -1238,9 +1238,9 @@
 		gap: 0.25rem;
 
 		.diecon {
-			width: 1.5rem;
-			height: 1.5rem;
-			font-size: 1.5rem;
+			width: var(--diecon-scale-size);
+			height: var(--diecon-scale-size);
+			font-size: var(--diecon-scale-size);
 			vertical-align: middle;
 			display: inline-block;
 		}
@@ -2670,14 +2670,27 @@
 	font-size: 1rem;
 }
 
+.character-sheet .single-die-value > span,
+.character-sheet .trait-value > span {
+	display: inline-flex;
+	align-items: center;
+	line-height: 1;
+}
+
 .character-sheet .single-die-value .diecon,
-.character-sheet .trait-value .diecon,
+.character-sheet .trait-value:not(.stress-value) .diecon,
 .character-sheet .ring-trait-inner .diecon,
 .character-sheet .trait-set-header-rating .diecon,
 .character-sheet .scale-die-inner .diecon {
-	font-size: 1.5rem;
-	width: 1.5rem;
-	height: 1.5rem;
+	font-size: var(--diecon-size);
+	width: var(--diecon-size);
+	height: var(--diecon-size);
+}
+
+.character-sheet .trait-value.stress-value .diecon {
+	font-size: var(--diecon-scale-size);
+	width: var(--diecon-scale-size);
+	height: var(--diecon-scale-size);
 }
 
 /* ============================================================ */
@@ -2808,9 +2821,9 @@
 }
 .character-sheet.print-sheet .distinction-die .diecon,
 .character-sheet.print-sheet .single-die-value .diecon {
-	width: 1.5rem;
-	height: 1.5rem;
-	font-size: 1.5rem;
+	width: var(--diecon-size);
+	height: var(--diecon-size);
+	font-size: var(--diecon-size);
 }
 
 /* The print tab must keep the desktop sheet layout at any zoom (browser zoom */

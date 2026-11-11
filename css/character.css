@@ -773,7 +773,7 @@
 
 .portrait-leader-line {
 	stroke: var(--color-primary, #38761d);
-	stroke-width: var(--frame-stroke-width, 2.5px);
+	stroke-width: var(--frame-stroke-width, 3px);
 	stroke-linecap: round;
 
 	&.frame-color-primary {
@@ -885,14 +885,27 @@
 	font-size: 1rem;
 }
 
+.character-sheet .single-die-value > span,
+.character-sheet .trait-value > span {
+	display: inline-flex;
+	align-items: center;
+	line-height: 1;
+}
+
 .character-sheet .single-die-value .diecon,
-.character-sheet .trait-value .diecon,
+.character-sheet .trait-value:not(.stress-value) .diecon,
 .character-sheet .ring-trait-inner .diecon,
 .character-sheet .trait-set-header-rating .diecon,
 .character-sheet .scale-die-inner .diecon {
-	font-size: 1.5rem;
-	width: 1.5rem;
-	height: 1.5rem;
+	font-size: var(--diecon-size);
+	width: var(--diecon-size);
+	height: var(--diecon-size);
+}
+
+.character-sheet .trait-value.stress-value .diecon {
+	font-size: var(--diecon-scale-size);
+	width: var(--diecon-scale-size);
+	height: var(--diecon-scale-size);
 }
 
 .trait-set-header-rating {
@@ -1068,8 +1081,8 @@
 	left: 0;
 	top: 0;
 	transform: translate(-50%, -50%);
-	width: 8mm;
-	height: 8mm;
+	width: 8.5mm;
+	height: 8.5mm;
 	margin: 0;
 	cursor: pointer;
 }

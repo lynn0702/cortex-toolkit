@@ -761,7 +761,7 @@
 
 	.trait-title {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		column-gap: 0.4rem;
 		font-family: var(--font-primary);
 		font-size: var(--text-trait-title);
