@@ -760,67 +760,6 @@
 	pointer-events: none;
 }
 
-.portrait-leader-svg {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-	overflow: visible;
-	z-index: var(--z-ring-items, 500);
-}
-
-.portrait-leader-line {
-	stroke: var(--color-primary, #38761d);
-	stroke-width: var(--frame-stroke-width, 3px);
-	stroke-linecap: round;
-
-	&.frame-color-primary {
-		stroke: var(--color-primary, #38761d);
-	}
-
-	&.frame-color-accent {
-		stroke: var(--color-interactive, #8b1e2b);
-	}
-
-	&.frame-color-muted {
-		stroke: var(--color-separator, rgba(148, 163, 184, 0.4));
-	}
-
-	&.frame-color-strong {
-		stroke: #111111;
-	}
-
-	&.frame-color-black {
-		stroke: #000000;
-	}
-}
-
-.portrait-leader-dot {
-	fill: var(--color-primary, #38761d);
-
-	&.frame-color-primary {
-		fill: var(--color-primary, #38761d);
-	}
-
-	&.frame-color-accent {
-		fill: var(--color-interactive, #8b1e2b);
-	}
-
-	&.frame-color-muted {
-		fill: var(--color-separator, rgba(148, 163, 184, 0.4));
-	}
-
-	&.frame-color-strong {
-		fill: #111111;
-	}
-
-	&.frame-color-black {
-		fill: #000000;
-	}
-}
-
 .character-sheet .trait-set.trait-set-header-bottom {
 	display: flex;
 	flex-direction: column;

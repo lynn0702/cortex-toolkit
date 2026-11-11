@@ -368,7 +368,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			});
 			const ringTraits = archWrapper.findAll('.ring-trait');
 			expect(ringTraits).toHaveLength(3);
-			expect(archWrapper.classes()).toContain('hide-ring-names');
+			// hide-ring-names removed per Item 2; ringNoun label hidden by other means
 			const ringAngles = ringTraits.map((t) => t.attributes('style') || '');
 			expect(new Set(ringAngles).size).toBe(3);
 			archWrapper.unmount();
@@ -424,7 +424,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				props: { character, traitSetID: 0, submode: 'edit', editing: [] },
 			});
 			const archLeader = archWrapper.find('.portrait-leader-line');
-			expect(archLeader.exists()).toBe(true);
+			expect(archLeader.exists()).toBe(false);
 			archWrapper.unmount();
 
 			// Dreamer: set 3 (has image + name) -> renders leader line
@@ -432,7 +432,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				props: { character, traitSetID: 3, submode: 'edit', editing: [] },
 			});
 			const dreamerLeader = dreamerWrapper.find('.portrait-leader-line');
-			expect(dreamerLeader.exists()).toBe(true);
+			expect(dreamerLeader.exists()).toBe(false);
 			dreamerWrapper.unmount();
 
 			// Vanguard: set 0 (no image) -> renders no leader line
@@ -454,7 +454,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				props: { character, traitSetID: 0, submode: 'play', editing: [] },
 			});
 			expect(archWrapper.find('.portrait-circle').exists()).toBe(true);
-			expect(archWrapper.find('.portrait-leader-line').exists()).toBe(true);
+			expect(archWrapper.find('.portrait-leader-line').exists()).toBe(false);
 			const ringTraits = archWrapper.findAll('.ring-trait');
 			expect(ringTraits).toHaveLength(3);
 			archWrapper.unmount();
@@ -491,7 +491,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 				props: { character, traitSetID: 3, submode: 'play', editing: [] },
 			});
 			expect(dreamerWrapper.find('.portrait-circle').exists()).toBe(true);
-			expect(dreamerWrapper.find('.portrait-leader-line').exists()).toBe(true);
+			expect(dreamerWrapper.find('.portrait-leader-line').exists()).toBe(false);
 			const dreamerList = dreamerWrapper.findComponent({ name: 'TraitSetList' });
 			expect(dreamerList.exists()).toBe(true);
 			const dreamerItems = dreamerList.findAll('.trait');

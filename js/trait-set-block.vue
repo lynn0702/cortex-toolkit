@@ -110,30 +110,6 @@ const shouldRenderBodyComponent = computed(() => {
 	return true;
 });
 
-const hasLeader = computed(() => {
-	const frameCfg = resolvedFrame.value;
-	const hasPortraitImage = Boolean(frameCfg?.image?.url);
-	const hasName = Boolean(traitSet.value?.name?.trim());
-	return hasPortraitImage && hasName;
-});
-
-const frameColorClass = computed(() => {
-	const raw = resolvedFrame.value?.color || 'primary';
-	return 'frame-color-' + raw;
-});
-
-const leaderCoords = computed(() => {
-	const name = (traitSet.value?.name || '').toLowerCase();
-	const frameCfg = resolvedFrame.value;
-	const isLeft = frameCfg?.position === 'left' || name.includes('dreamer');
-	if (isLeft) {
-		// The Dreamer: circle on bottom-left, leader line extends across bottom to right edge with dot
-		return { x1: 34, y1: 84, x2: 96, y2: 84, dotX: 96, dotY: 84 };
-	}
-	// The Architect: leader line extends from dot on top-left to circle on right
-	return { x1: 4, y1: 18, x2: 60, y2: 18, dotX: 4, dotY: 18 };
-});
-
 const rootEl = ref<HTMLElement | null>(null);
 onMounted(() => {
 	ts.observeContainer(rootEl.value);
@@ -152,31 +128,6 @@ watch(rootEl, (el) => {
 		:data-set-name="traitSet.name || undefined"
 		:aria-label="traitSet.name || 'Trait Set'"
 	>
-		<!-- Leader line with terminal dot -->
-		<svg
-			v-if="hasLeader"
-			class="portrait-leader-svg"
-			aria-hidden="true"
-			viewBox="0 0 100 100"
-			preserveAspectRatio="none"
-		>
-			<line
-				class="portrait-leader-line"
-				:class="frameColorClass"
-				:x1="leaderCoords.x1"
-				:y1="leaderCoords.y1"
-				:x2="leaderCoords.x2"
-				:y2="leaderCoords.y2"
-			/>
-			<circle
-				class="portrait-leader-dot"
-				:class="frameColorClass"
-				:cx="leaderCoords.dotX"
-				:cy="leaderCoords.dotY"
-				r="3.5"
-			/>
-		</svg>
-
 		<!-- Block frame SVG enclosing entire trait set (header + body) -->
 		<TraitSetFrame
 			v-if="isFrameActive && resolvedFrame?.shape === 'block'"

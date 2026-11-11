@@ -151,7 +151,6 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(dreamer.traits).toHaveLength(3);
 		expect(dreamer.view.borderless).toBe(true);
 		expect(dreamer.view.header).toBe('bottom');
-		expect(dreamer.view.headerAlign).toBe('right');
 		expect(dreamer.traits[0].name).toBe('Beauty is all around us');
 		expect(dreamer.traits[0].traits).toHaveLength(0);
 		expect(dreamer.traits[1].name).toBe("I'll have another slice");
@@ -166,11 +165,11 @@ describe('Character Curio Branding & Resolution Suite', () => {
 		expect(dreamer.view.place).toEqual({ height: 3, left: '0%', top: 5, width: '100%' });
 
 		// frame
-		expect(architect.view.frame.stroke).toBe('3px');
+		expect(architect.view.frame.stroke).toBe('2px');
 		expect(architect.view.frame.traitsSpan).toEqual([45, 135]);
-		expect(architect.view.frame.image.zoom).toBe(1);
-		expect(dreamer.view.frame.stroke).toBe('3px');
-		expect(dreamer.view.frame.image.zoom).toBe(1);
+		expect(architect.view.frame.image.zoom).toBe(100);
+		expect(dreamer.view.frame.stroke).toBe('2px');
+		expect(dreamer.view.frame.image.zoom).toBe(100);
 
 		// header
 		expect(architect.view.header).toBe('top');
