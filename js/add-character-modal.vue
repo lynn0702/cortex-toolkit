@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ModalDialog from './modal-dialog.vue';
 import { characterCurioFunctions } from './functions.ts';
 
 defineProps<{
@@ -24,58 +25,59 @@ function targetValue(e: Event) {
 </script>
 
 <template>
-	<transition>
-		<div class="modal-veil" v-show="open" @click.stop="emit('update:open', false)"></div>
-	</transition>
-
-	<transition>
-		<aside class="modal modal-session-add" v-if="open">
-			<div class="modal-close" @click.prevent="emit('update:open', false)"><i class="fas fa-times"></i></div>
-			<div class="modal-inner">
-				<div class="session-modal-header">
-					<h2><i class="fas fa-users"></i> Open Character in Session</h2>
-					<p>Select another character, titan mech, vehicle, or companion to open alongside your active sheet.</p>
-					<div class="session-modal-search">
-						<i class="fas fa-search"></i>
-						<input
-							type="text"
-							id="session-character-search"
-							name="sessionCharacterSearch"
-							:value="search"
-							@input="emit('update:search', targetValue($event))"
-							placeholder="Filter characters..."
-							aria-label="Filter characters"
-						/>
-					</div>
-				</div>
-
-				<div class="session-modal-list">
-					<div v-for="c in items" :key="c.id" class="session-modal-item">
-						<div class="session-item-info">
-							<div
-								class="session-item-avatar"
-								v-if="c.portrait && c.portrait.url"
-								:style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"
-							></div>
-							<div class="session-item-icon" v-else><i class="fas fa-shield-alt"></i></div>
-							<div class="session-item-text">
-								<div class="session-item-name">{{ c.name || 'Unnamed' }}</div>
-								<div class="session-item-sub">{{ c.game || c.description || 'Character' }}</div>
-							</div>
-						</div>
-						<button type="button" class="btn-session-open" @click.stop="emit('openAlongside', c.id)">
-							<i class="fas fa-columns"></i> Open Alongside
-						</button>
-					</div>
-
-					<div class="session-modal-empty" v-if="items.length === 0">
-						<p>No additional characters available in your roster.</p>
-						<button type="button" class="btn-session-library" @click.stop="emit('gotoRoster')">
-							<i class="fas fa-layer-group"></i> Go to Roster / Library
-						</button>
-					</div>
+	<ModalDialog
+		:open="open"
+		label="Open character in session"
+		dialog-class="modal-session-add"
+		@close="emit('update:open', false)"
+	>
+		<button type="button" class="modal-close" aria-label="Close" @click.prevent="emit('update:open', false)">
+			<i class="fas fa-times"></i>
+		</button>
+		<div class="modal-inner">
+			<div class="session-modal-header">
+				<h2><i class="fas fa-users"></i> Open Character in Session</h2>
+				<p>Select another character, titan mech, vehicle, or companion to open alongside your active sheet.</p>
+				<div class="session-modal-search">
+					<i class="fas fa-search"></i>
+					<input
+						type="text"
+						id="session-character-search"
+						name="sessionCharacterSearch"
+						:value="search"
+						@input="emit('update:search', targetValue($event))"
+						placeholder="Filter characters..."
+						aria-label="Filter characters"
+					/>
 				</div>
 			</div>
-		</aside>
-	</transition>
+
+			<div class="session-modal-list">
+				<div v-for="c in items" :key="c.id" class="session-modal-item">
+					<div class="session-item-info">
+						<div
+							class="session-item-avatar"
+							v-if="c.portrait && c.portrait.url"
+							:style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"
+						></div>
+						<div class="session-item-icon" v-else><i class="fas fa-shield-alt"></i></div>
+						<div class="session-item-text">
+							<div class="session-item-name">{{ c.name || 'Unnamed' }}</div>
+							<div class="session-item-sub">{{ c.game || c.description || 'Character' }}</div>
+						</div>
+					</div>
+					<button type="button" class="btn-session-open" @click.stop="emit('openAlongside', c.id)">
+						<i class="fas fa-columns"></i> Open Alongside
+					</button>
+				</div>
+
+				<div class="session-modal-empty" v-if="items.length === 0">
+					<p>No additional characters available in your roster.</p>
+					<button type="button" class="btn-session-library" @click.stop="emit('gotoRoster')">
+						<i class="fas fa-layer-group"></i> Go to Roster / Library
+					</button>
+				</div>
+			</div>
+		</div>
+	</ModalDialog>
 </template>

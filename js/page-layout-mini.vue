@@ -10,7 +10,7 @@ import TraitSetMini from './trait-set-mini.vue';
 // minis it changes page too, reordering the sets so the drop slot reads
 // true on the sheet (vertical position is document order; tops group).
 // Click selects; the readout beneath edits the selection. Right and
-// bottom edges resize in place. The model commits once, on release.
+// left, right, and bottom edges resize in place. The model commits once, on release.
 const props = defineProps<{
 	character: any;
 }>();
@@ -118,7 +118,7 @@ const pages = computed(() => {
 interface DragState {
 	index: number;
 	setObj: any;
-	mode: 'move' | 'w' | 'h';
+	mode: 'move' | 'wl' | 'w' | 'h';
 	base: { left: number; width: number; top: number; height: number };
 	page: number;
 	left: number;
@@ -293,7 +293,7 @@ function mapDrop(sets: any[], page: number, row: number): { to: number; top: num
 	return { to, top };
 }
 
-function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'move' | 'w' | 'h') {
+function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'move' | 'wl' | 'w' | 'h') {
 	event.preventDefault();
 	event.stopPropagation();
 	selected.value = b.index;
@@ -346,7 +346,35 @@ function onBlockPointerDown(event: PointerEvent, b: Block, pg: number, mode: 'mo
 		const w = originRect && originRect.width > 0 ? originRect.width : 1;
 		const dxPct = ((cx - startX) / w) * 100;
 		if (mode !== 'move') {
-			if (mode === 'w') {
+			if (mode === 'wl') {
+				const baseRight = base.left + base.width;
+				let targetLeft = snapPct(Math.max(0, Math.min(baseRight - 5, base.left + dxPct)));
+				const others = getOtherPlacedBlocks(pageOfSet(b.index), b.index);
+				for (const o of others) {
+					if (base.top < o.top + o.height && o.top < base.top + base.height) {
+						if (o.left + o.width <= base.left + 1e-6) {
+							targetLeft = Math.max(targetLeft, o.left + o.width);
+						}
+					}
+				}
+				targetLeft = Math.min(baseRight - 5, targetLeft);
+				const targetW = Math.max(5, baseRight - targetLeft);
+				drag.value = {
+					index: b.index,
+					setObj,
+					mode,
+					base,
+					page: pageOfSet(b.index),
+					left: targetLeft,
+					width: targetW,
+					top: base.top,
+					height: base.height,
+					overPage: pg,
+					overRow: base.top,
+					cx,
+					cy,
+				};
+			} else if (mode === 'w') {
 				let targetW = snapPct(Math.max(5, Math.min(100 - base.left, base.width + dxPct)));
 				// Live clamp against other placed blocks on the same page
 				const others = getOtherPlacedBlocks(pageOfSet(b.index), b.index);
@@ -519,7 +547,17 @@ function onBoxKeydown(e: KeyboardEvent, b: Block) {
 	let newHeight = curHeight;
 
 	if (e.key === 'ArrowLeft') {
-		if (e.shiftKey) {
+		if (e.shiftKey && e.altKey) {
+			const curRight = curLeft + curWidth;
+			newLeft = Math.max(0, curLeft - 5);
+			const obs = others.filter(
+				(o) => curTop < o.top + o.height && o.top < curTop + curHeight && o.left + o.width <= curLeft + 1e-6,
+			);
+			for (const o of obs) {
+				newLeft = Math.max(newLeft, o.left + o.width);
+			}
+			newWidth = curRight - newLeft;
+		} else if (e.shiftKey) {
 			newWidth = Math.max(5, curWidth - 5);
 		} else {
 			newLeft = Math.max(0, curLeft - 5);
@@ -531,7 +569,11 @@ function onBoxKeydown(e: KeyboardEvent, b: Block) {
 			}
 		}
 	} else if (e.key === 'ArrowRight') {
-		if (e.shiftKey) {
+		if (e.shiftKey && e.altKey) {
+			const curRight = curLeft + curWidth;
+			newLeft = Math.min(curRight - 5, curLeft + 5);
+			newWidth = curRight - newLeft;
+		} else if (e.shiftKey) {
 			newWidth = Math.min(100 - curLeft, curWidth + 5);
 			const obs = others.filter(
 				(o) => curTop < o.top + o.height && o.top < curTop + curHeight && o.left >= curLeft + 1e-6,
@@ -653,7 +695,9 @@ function pressBox(index: number, event: PointerEvent) {
 				:style="'height: ' + (pg.rows * ROW_H + 8) + 'px;'"
 				role="application"
 				:aria-label="
-					'Page ' + pg.page + ' layout: drag a set to move it between pages, its right and bottom edges to resize'
+					'Page ' +
+					pg.page +
+					' layout: drag a set to move it between pages, its left, right, and bottom edges to resize'
 				"
 			>
 				<div
@@ -703,7 +747,7 @@ function pressBox(index: number, event: PointerEvent) {
 						"
 						:title="
 							selected === b.index
-								? 'Drag to move within and between pages · right and bottom edges resize · double-click or Enter to edit parts'
+								? 'Drag to move within and between pages · left, right, and bottom edges resize · double-click or Enter to edit parts'
 								: b.name +
 									(b.kind === 'band' ? ' (stacked)' : '') +
 									' — click to select, double-click or Enter to edit parts'
@@ -712,6 +756,12 @@ function pressBox(index: number, event: PointerEvent) {
 						@keydown="onBoxKeydown($event, b)"
 					>
 						<span :class="selected === b.index ? 'place-mini-name' : 'place-mini-ghostname'">{{ b.name }}</span>
+						<span
+							v-if="selected === b.index"
+							class="place-mini-edge place-mini-edge-w"
+							title="Resize width from left"
+							@pointerdown.stop="onBlockPointerDown($event, b, pg.page, 'wl')"
+						></span>
 						<span
 							v-if="selected === b.index"
 							class="place-mini-edge place-mini-edge-e"

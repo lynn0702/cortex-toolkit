@@ -14534,7 +14534,6 @@ const characterCurioLibraryTemplates = [
 				{
 					id: 'initiative',
 					name: 'Initiative',
-					ratingPosition: 'vertical',
 					view: {
 						ladder: true,
 						features: {
@@ -14565,7 +14564,6 @@ const characterCurioLibraryTemplates = [
 				{
 					id: 'hero-dice',
 					name: 'Hero Dice',
-					ratingPosition: 'vertical',
 					view: {
 						ladder: true,
 						features: {

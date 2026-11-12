@@ -51,6 +51,17 @@ export interface FrameAnchor {
 }
 
 /**
+ * Normalizes a stored image zoom to a multiplier. Legacy files stored zoom as
+ * a percentage (100 = 1x), which rendered as 10000%. Values above 10 are
+ * treated as percentages.
+ */
+export function normalizeZoom(value: unknown): number | undefined {
+	if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+	const zoom = value > 10 ? value / 100 : value;
+	return Math.round(zoom * 1000) / 1000;
+}
+
+/**
  * Normalizes traitSet.view.frame (or direct frame config / shorthand) to full FrameConfig.
  */
 export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
@@ -67,12 +78,13 @@ export function resolveFrame(traitSetOrFrame: any): FrameConfig | null {
 
 	const rawObj = typeof raw === 'object' && raw ? (raw as any) : null;
 	const rawImage = rawObj?.image || (view?.frame as any)?.image;
+	const imageZoom = normalizeZoom(rawImage?.zoom);
 	const frameImage: FrameImageConfig | null =
 		rawImage && typeof rawImage === 'object' && (rawImage.url || rawImage.alignment || rawImage.zoom !== undefined)
 			? {
 					...(rawImage.url ? { url: String(rawImage.url).trim() } : {}),
 					...(rawImage.alignment ? { alignment: String(rawImage.alignment).trim() } : {}),
-					...(typeof rawImage.zoom === 'number' && Number.isFinite(rawImage.zoom) ? { zoom: rawImage.zoom } : {}),
+					...(imageZoom !== undefined ? { zoom: imageZoom } : {}),
 				}
 			: null;
 	const rawRingCfg =

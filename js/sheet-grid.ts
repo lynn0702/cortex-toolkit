@@ -201,7 +201,8 @@ export function getSheetSections(traitSets: TraitSet[], pageIndex: number, submo
 		const start = lineFor(lines, entry.place.top);
 		const end = lineFor(lines, entry.place.top + entry.place.height);
 		let st = `grid-column: ${col} / span ${span}; grid-row: ${start} / ${end}; min-width: 0;`;
-		if (entry.place.height > 1) {
+		const vAlign = getView(entry.item.traitSet)?.verticalAlign;
+		if (entry.place.height > 1 && vAlign !== 'center' && vAlign !== 'bottom') {
 			st += ` min-height: calc(( ${entry.place.height} - 1 ) * var(--place-row-unit, 3rem));`;
 		}
 		return { s: entry.item.index, col, span, rowSpan: entry.place.height, style: st };

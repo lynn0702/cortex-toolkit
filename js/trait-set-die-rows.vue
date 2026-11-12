@@ -18,7 +18,7 @@ const {
 	getRenderedTraits,
 	getTraitClasses,
 	getTraitSetRatings,
-	getRatingPosition,
+	getParts,
 	renderDieValueForPrint,
 	handleSingleDieClick,
 	getRating,
@@ -34,7 +34,9 @@ const {
 		class="trait-die-rows"
 		:class="{
 			ladder: getView(traitSet)?.ladder === true,
-			'rating-vertical': getRatingPosition(traitSet) === 'vertical',
+			'rating-vertical':
+				(getParts(traitSet)?.rating && Number(getParts(traitSet)!.rating.height) > 1) ||
+				getView(traitSet)?.labelPosition === 'vertical',
 			'label-vertical': getView(traitSet)?.labelPosition === 'vertical',
 		}"
 		v-if="getView(traitSet)?.style?.body === 'die-rows'"

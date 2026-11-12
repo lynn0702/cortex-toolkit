@@ -299,7 +299,7 @@ export const characterCurioFunctions = {
 			if (Array.isArray(rawSubs)) {
 				for (const st of rawSubs) {
 					if (!st || typeof st !== 'object') continue;
-					if (this.isSfxContainer(st) || (st as any).name === 'Statement') continue;
+					if (this.isSfxContainer(st) || getRating(st)?.type === 'Pip') continue;
 					const r = st.rating;
 					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
 						if (!firstAnyRange) firstAnyRange = r.range.slice();
@@ -312,7 +312,7 @@ export const characterCurioFunctions = {
 				for (const [key, st] of Object.entries(rawSubs)) {
 					if (!st || typeof st !== 'object') continue;
 					const name = (st as any).name || key;
-					if (name === 'SFX' || name === 'Statement') continue;
+					if (name === 'SFX' || getRating(st as any)?.type === 'Pip') continue;
 					const r = (st as any).rating;
 					if (r && typeof r === 'object' && Array.isArray(r.range) && r.range.length) {
 						if (!firstAnyRange) firstAnyRange = r.range.slice();

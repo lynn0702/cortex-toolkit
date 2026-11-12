@@ -412,7 +412,6 @@
       },
       "Initiative": {
         "id": "initiative",
-        "ratingPosition": "vertical",
         "view": {
           "ladder": true,
           "features": {
@@ -448,7 +447,6 @@
       },
       "Hero Dice": {
         "id": "hero-dice",
-        "ratingPosition": "vertical",
         "view": {
           "ladder": true,
           "features": {

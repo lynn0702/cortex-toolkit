@@ -1,6 +1,6 @@
 import { computed, provide, inject, ref, onBeforeUnmount, type InjectionKey } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
-import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from './frame-geometry.ts';
+import { resolveFrame, computeFrameAnchors, buildFrameSvgPath, normalizeZoom } from './frame-geometry.ts';
 import {
 	getView,
 	ensureView,
@@ -189,12 +189,12 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	});
 
 	const effectiveZoom = computed(() => {
-		const fZoom = resolvedFrame.value?.image?.zoom;
+		const fZoom = normalizeZoom(resolvedFrame.value?.image?.zoom);
 		if (typeof fZoom === 'number') return fZoom;
 		const view = getView(traitSet.value);
-		const sZoom = view?.imageConfig?.zoom;
+		const sZoom = normalizeZoom(view?.imageConfig?.zoom);
 		if (typeof sZoom === 'number') return sZoom;
-		const charZoom = getView(props.character?.portrait)?.zoom;
+		const charZoom = normalizeZoom(getView(props.character?.portrait)?.zoom);
 		if (typeof charZoom === 'number') return charZoom;
 		return 1;
 	});
@@ -238,7 +238,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			classes['hide-branch-arrows'] = true;
 		}
 
-		const ratingPos = getRatingPosition(traitSetArg);
+		const ratingPos = getRatingPlacement(traitSetArg);
 		if (ratingPos && ratingPos !== 'inline') {
 			classes['rating-pos-' + ratingPos] = true;
 		}
@@ -287,17 +287,16 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const pos = frameCfg?.position || (ctk?.portraitPosition as string);
 		if (pos) {
 			classes['portrait-pos-' + pos] = true;
-		} else {
-			const name = (traitSetArg.name || '').toLowerCase();
-			if (name.includes('dreamer')) {
-				classes['portrait-pos-left'] = true;
-			} else if (name.includes('architect')) {
-				classes['portrait-pos-right'] = true;
-			}
 		}
 
 		const align = ctk?.headerAlign;
 		classes['trait-set-header-align-' + (align === 'center' || align === 'right' ? align : 'left')] = true;
+
+		if (ctk?.verticalAlign === 'center') {
+			classes['trait-set-valign-center'] = true;
+		} else if (ctk?.verticalAlign === 'bottom') {
+			classes['trait-set-valign-bottom'] = true;
+		}
 
 		const vis = resolveVisibility(traitSetArg);
 		if (vis === 'play-only') classes['trait-set-play-only'] = true;
@@ -319,7 +318,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		return classes;
 	}
 
-	function getRatingPosition(traitSetArg: TraitSet) {
+	function getRatingPlacement(traitSetArg: TraitSet) {
 		const parts = getParts(traitSetArg);
 		if (parts && parts.rating) {
 			const rTop = Number(parts.rating.top) || 0;
@@ -329,7 +328,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 			return 'below';
 		}
 		if (parts) return 'none';
-		return traitSetArg?.ratingPosition || getView(traitSetArg)?.ratingPosition || 'inline';
+		return 'inline';
 	}
 
 	function getRatingDisplay(traitSetArg: TraitSet | null | undefined): 'track' | 'rating' {
@@ -608,7 +607,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				: t?.traits && typeof t.traits === 'object'
 					? Object.values(t.traits)
 					: [];
-			return subs.some((s: any) => !characterCurioFunctions.isSfxContainer(s) && s?.name !== 'Statement');
+			return subs.some((s: any) => !characterCurioFunctions.isSfxContainer(s) && getRating(s)?.type !== 'Pip');
 		});
 		return {
 			name: '',
@@ -698,7 +697,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 	function nonSfxSubtraits(trait: Trait) {
 		const subs = (trait as any)?.traits;
 		return (Array.isArray(subs) ? subs : []).filter(
-			(st: any) => !characterCurioFunctions.isSfxContainer(st) && st?.name !== 'Statement',
+			(st: any) => !characterCurioFunctions.isSfxContainer(st) && getRating(st)?.type !== 'Pip',
 		);
 	}
 
@@ -1333,7 +1332,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		const groups: any[] = parents.map((traitItem: any) => {
 			const tIdx = traitItem.originalIndex;
 			const nested = (traitItem.trait?.traits || [])
-				.filter((sub: any) => sub?.name !== 'Statement')
+				.filter((sub: any) => getRating(sub)?.type !== 'Pip')
 				.map((sub: any, u: number) => ({ kind: 'sub', sub, u }));
 			const linked = flats
 				.filter((f: any) => getView(f.trait)?.linkTo === tIdx)
@@ -1581,7 +1580,7 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 		renderText,
 		renderNotesText,
 		getTraitSetClasses,
-		getRatingPosition,
+		getRatingPlacement,
 		getRatingDisplay,
 		getPipChild,
 		isChildPipFilled,

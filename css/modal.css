@@ -1,36 +1,26 @@
 /* MODALS */
 
-.modal-veil {
-	position: fixed;
-	z-index: var(--z-modal-veil);
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	background: black;
-	opacity: 0.75;
-	transition: opacity 0.2s;
-	cursor: pointer;
-	&.v-enter-active,
-	&.v-leave-active {
-		transition: opacity 0.25s ease;
-	}
-	&.v-enter-from,
-	&.v-leave-to {
-		opacity: 0;
-	}
+dialog.modal {
+	margin: 0;
+	padding: 0;
+	height: fit-content;
+}
+
+dialog.modal:not([open]) {
+	display: none;
 }
 
 .modal {
 	position: fixed;
 	top: calc(var(--header-size) + 2rem);
+	bottom: auto;
 	left: 50%;
-	transform: translateX(-50%) scale(1);
 	width: 100%;
 	max-width: clamp(0px, 100% - 2rem, 36rem);
 	max-height: calc(100dvh - var(--header-size) - 4rem);
 	overflow-y: auto;
-	z-index: var(--z-modal);
+	transform: translateX(-50%) scale(1);
+	opacity: 0;
 	background: hsla(0, 0%, 0%, 0.95);
 	backdrop-filter: blur(0.75rem);
 	border: 1px solid rgba(255, 255, 255, 0.15);
@@ -38,28 +28,42 @@
 	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 	font-size: 1rem;
 	color: white;
-	&.v-enter-active,
-	&.v-leave-active {
-		transition:
-			opacity 0.2s ease,
-			transform 0.2s ease;
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease;
+
+	&[open] {
+		opacity: 1;
+		transform: translateX(-50%) scale(1);
 	}
-	&.v-enter-from,
-	&.v-leave-to {
+}
+
+dialog.modal::backdrop {
+	background: black;
+	opacity: 0.75;
+}
+
+@starting-style {
+	dialog.modal[open] {
 		opacity: 0;
 		transform: translateX(-50%) scale(0.95);
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.modal.v-enter-active,
-	.modal.v-leave-active {
+	dialog.modal {
 		transition: opacity 0.2s ease;
 	}
 
-	.modal.v-enter-from,
-	.modal.v-leave-to {
+	dialog.modal,
+	dialog.modal[open] {
 		transform: translateX(-50%);
+	}
+
+	@starting-style {
+		dialog.modal[open] {
+			transform: translateX(-50%);
+		}
 	}
 }
 
@@ -83,6 +87,9 @@
 	font-size: 1.5rem;
 	line-height: 1;
 	z-index: var(--z-modal-close);
+	background: none;
+	border: none;
+	color: inherit;
 }
 
 .modal-button-container {
@@ -90,6 +97,8 @@
 }
 
 .modal-button {
+	font-size: inherit;
+
 	&.modal-button-no {
 		--button-color: var(--color-primary);
 	}
@@ -225,8 +234,7 @@
 /* Dark theme overrides for modals (Item D) */
 [data-theme='dark'],
 .theme-dark {
-	.modal-backdrop,
-	.modal-veil {
+	.modal::backdrop {
 		background: rgba(0, 0, 0, 0.75);
 	}
 

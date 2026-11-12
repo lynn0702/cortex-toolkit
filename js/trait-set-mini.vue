@@ -273,7 +273,7 @@ const previewCharacter = computed(
 );
 const selectedPartKey = ref<string>('name');
 const draggingKey = ref<string | null>(null);
-const dragMode = ref<'move' | 'resize-e' | 'resize-s' | null>(null);
+const dragMode = ref<'move' | 'resize-w' | 'resize-e' | 'resize-s' | null>(null);
 const dragStart = ref<{ x: number; y: number; left: number; width: number; top: number; height: number } | null>(null);
 const gridEl = ref<HTMLElement | null>(null);
 
@@ -1037,7 +1037,7 @@ function onGridDrop(ev: DragEvent) {
 }
 
 // Pointer drag & edge-grab resize
-function onPartPointerDown(ev: PointerEvent, kind: string, mode: 'move' | 'resize-e' | 'resize-s') {
+function onPartPointerDown(ev: PointerEvent, kind: string, mode: 'move' | 'resize-w' | 'resize-e' | 'resize-s') {
 	ev.stopPropagation();
 	selectedPartKey.value = kind;
 	const map = ensurePartsMap();
@@ -1075,6 +1075,12 @@ function onWindowPointerMove(ev: PointerEvent) {
 		const clampedTop = Math.max(0, Math.min(7, dragStart.value.top + dyRows));
 		cell.left = formatPct(clampedLeft);
 		cell.top = clampedTop;
+	} else if (dragMode.value === 'resize-w') {
+		const right = dragStart.value.left + dragStart.value.width;
+		const rawLeft = Math.round((dragStart.value.left + dxPct) / 5) * 5;
+		const clampedLeft = Math.max(0, Math.min(right - 10, rawLeft));
+		cell.left = formatPct(clampedLeft);
+		cell.width = formatPct(right - clampedLeft);
 	} else if (dragMode.value === 'resize-e') {
 		const rawWidth = Math.round((dragStart.value.width + dxPct) / 5) * 5;
 		const clampedWidth = Math.max(10, Math.min(100 - dragStart.value.left, rawWidth));
@@ -1106,6 +1112,22 @@ function onPartKeyDown(ev: KeyboardEvent, kind: string) {
 	if (ev.key === 'Delete' || ev.key === 'Backspace') {
 		ev.preventDefault();
 		removePartByKey(kind);
+		return;
+	}
+
+	if (ev.shiftKey && ev.altKey) {
+		const curRight = curLeft + curWidth;
+		if (ev.key === 'ArrowLeft') {
+			ev.preventDefault();
+			const nextLeft = Math.max(0, curLeft - 5);
+			cell.left = formatPct(nextLeft);
+			cell.width = formatPct(curRight - nextLeft);
+		} else if (ev.key === 'ArrowRight') {
+			ev.preventDefault();
+			const nextLeft = Math.min(curRight - 10, curLeft + 5);
+			cell.left = formatPct(nextLeft);
+			cell.width = formatPct(curRight - nextLeft);
+		}
 		return;
 	}
 
@@ -1866,6 +1888,10 @@ function onFileImportSelected(ev: Event) {
 									>
 										&times;
 									</button>
+									<span
+										class="block-mini-edge block-mini-edge-w"
+										@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-w')"
+									></span>
 									<span
 										class="block-mini-edge block-mini-edge-e"
 										@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-e')"

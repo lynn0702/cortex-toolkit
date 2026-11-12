@@ -21,6 +21,7 @@ import {
 	type SheetSection,
 } from './sheet-grid.ts';
 import TraitSetBlock from './trait-set-block.vue';
+import ModalDialog from './modal-dialog.vue';
 import PrintToolbar from './print-toolbar.vue';
 import TraitSetMini from './trait-set-mini.vue';
 
@@ -1005,49 +1006,51 @@ watch(
 		<!-- .pages -->
 
 		<teleport to="body">
-			<transition>
-				<div class="modal-veil" v-if="showPlayPresetPicker" @click.stop="showPlayPresetPicker = false"></div>
-			</transition>
-			<transition>
-				<aside class="modal modal-style-gallery" v-if="showPlayPresetPicker">
-					<div class="modal-close" @click.prevent="showPlayPresetPicker = false"><i class="fas fa-times"></i></div>
-					<div class="modal-inner">
-						<div class="modal-header-actions">
-							<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
-							<button type="button" class="btn-gallery-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
-								<i class="fas fa-th-large"></i> New Card in Mini
+			<ModalDialog
+				:open="showPlayPresetPicker"
+				label="Add play card"
+				dialog-class="modal-style-gallery"
+				@close="showPlayPresetPicker = false"
+			>
+				<button type="button" class="modal-close" aria-label="Close" @click.prevent="showPlayPresetPicker = false">
+					<i class="fas fa-times"></i>
+				</button>
+				<div class="modal-inner">
+					<div class="modal-header-actions">
+						<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
+						<button type="button" class="btn-gallery-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
+							<i class="fas fa-th-large"></i> New Card in Mini
+						</button>
+					</div>
+					<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
+					<div class="style-gallery-grid">
+						<div class="style-gallery-card" v-for="preset in playBuiltInPresets" :key="'play-builtin-' + preset.id">
+							<div class="style-gallery-name">{{ preset.label }}</div>
+							<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+							<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
+								<i class="fas fa-plus"></i> Add to Session
 							</button>
 						</div>
-						<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
-						<div class="style-gallery-grid">
-							<div class="style-gallery-card" v-for="preset in playBuiltInPresets" :key="'play-builtin-' + preset.id">
+						<div class="style-gallery-card" v-for="preset in playCustomPresets" :key="'play-custom-' + preset.id">
+							<div class="style-gallery-card-header">
 								<div class="style-gallery-name">{{ preset.label }}</div>
-								<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-								<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
-									<i class="fas fa-plus"></i> Add to Session
+								<button
+									type="button"
+									class="editor-header-btn"
+									title="Delete saved preset"
+									@click.stop="removePlayCustomPreset(preset.id)"
+								>
+									<i class="fas fa-trash-alt"></i>
 								</button>
 							</div>
-							<div class="style-gallery-card" v-for="preset in playCustomPresets" :key="'play-custom-' + preset.id">
-								<div class="style-gallery-card-header">
-									<div class="style-gallery-name">{{ preset.label }}</div>
-									<button
-										type="button"
-										class="editor-header-btn"
-										title="Delete saved preset"
-										@click.stop="removePlayCustomPreset(preset.id)"
-									>
-										<i class="fas fa-trash-alt"></i>
-									</button>
-								</div>
-								<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
-								<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
-									<i class="fas fa-plus"></i> Add to Session
-								</button>
-							</div>
+							<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
+							<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
+								<i class="fas fa-plus"></i> Add to Session
+							</button>
 						</div>
 					</div>
-				</aside>
-			</transition>
+				</div>
+			</ModalDialog>
 			<TraitSetMini
 				v-if="showPlayMini"
 				@close="showPlayMini = false"

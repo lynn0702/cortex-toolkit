@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetFrame from '../js/trait-set-frame.vue';
-import { resolveFrame, computeFrameAnchors, type FrameConfig } from '../js/frame-geometry.ts';
+import { resolveFrame, computeFrameAnchors, normalizeZoom, type FrameConfig } from '../js/frame-geometry.ts';
 
 describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 	describe('Baseline 1: Classic Block Frame Chrome Parity', () => {
@@ -205,6 +205,21 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(resolved?.ringConfig).toBeDefined();
 			expect(resolved?.ringConfig?.arcAngle).toBe(-90);
 			expect(resolved?.ringConfig?.arcSpread).toBe(100);
+		});
+
+		it('normalizes legacy percentage image zoom to a multiplier', () => {
+			expect(normalizeZoom(100)).toBe(1);
+			expect(normalizeZoom(150)).toBe(1.5);
+			expect(normalizeZoom(50)).toBe(0.5);
+			expect(normalizeZoom(1.25)).toBe(1.25);
+			expect(normalizeZoom(undefined)).toBeUndefined();
+			expect(normalizeZoom('100' as unknown as number)).toBeUndefined();
+
+			const legacySet = {
+				name: 'Portrait',
+				view: { frame: { shape: 'ring', image: { url: 'x.png', zoom: 100 } } },
+			};
+			expect(resolveFrame(legacySet)?.image?.zoom).toBe(1);
 		});
 
 		it('resolves frame carrying traitsSpan separate from border span', () => {

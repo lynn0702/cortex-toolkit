@@ -38,20 +38,6 @@
 						"$ref": "#/$defs/trait"
 					}
 				},
-				"ratingPosition": {
-					"type": [
-						"string",
-						"null"
-					],
-					"enum": [
-						"inline",
-						"above",
-						"below",
-						"none",
-						"vertical"
-					],
-					"description": "Placement of trait rating dice relative to trait labels."
-				},
 				"counterLabel": {
 					"type": [
 						"string",
@@ -185,20 +171,6 @@
 						"null"
 					],
 					"description": "Alternative counter value for this trait."
-				},
-				"ratingPosition": {
-					"type": [
-						"string",
-						"null"
-					],
-					"enum": [
-						"inline",
-						"above",
-						"below",
-						"none",
-						"vertical"
-					],
-					"description": "Override for rating dice placement on this trait."
 				},
 				"traits": {
 					"type": "array",

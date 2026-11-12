@@ -23,7 +23,7 @@ const {
 	getTraitSetRatings,
 	getSubtraitRatings,
 	renderDieValueForPrint,
-	getRatingPosition,
+	getRatingPlacement,
 	getRatingDisplay,
 	renderText,
 	isFixedSystemTrait,
@@ -163,21 +163,21 @@ function hasTraitSetDescription(ts: any) {
 							<div
 								v-if="partsGridFor(traitSet)?.cells.name"
 								class="trait-part trait-part-name"
-								:class="{ 'trait-asset-card': getRatingPosition(traitSet) === 'above' }"
+								:class="{ 'trait-asset-card': getRatingPlacement(traitSet) === 'above' }"
 								:style="partCellStyle(partsGridFor(traitSet), 'name')"
 							>
 								<div
 									:class="{
-										'trait-title': getRatingPosition(traitSet) !== 'above',
+										'trait-title': getRatingPlacement(traitSet) !== 'above',
 										'trait-title-pip':
 											Boolean(getPipChild(item.trait)) &&
-											getRatingPosition(traitSet) !== 'above' &&
+											getRatingPlacement(traitSet) !== 'above' &&
 											!hasChildPartCell(traitSet, 'pip', 'label'),
-										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
-										'trait-asset-box': getRatingPosition(traitSet) === 'above',
+										'trait-title-stacked': getRatingPlacement(traitSet) === 'below',
+										'trait-asset-box': getRatingPlacement(traitSet) === 'above',
 									}"
 								>
-									<template v-if="Boolean(getPipChild(item.trait)) && getRatingPosition(traitSet) !== 'above'">
+									<template v-if="Boolean(getPipChild(item.trait)) && getRatingPlacement(traitSet) !== 'above'">
 										<button
 											type="button"
 											class="trait-title-btn"
@@ -259,7 +259,7 @@ function hasTraitSetDescription(ts: any) {
 											<span class="trait-pip-blank" v-else></span>
 										</span>
 									</template>
-									<template v-else-if="getRatingPosition(traitSet) === 'above'">
+									<template v-else-if="getRatingPlacement(traitSet) === 'above'">
 										<button
 											type="button"
 											class="trait-title-btn trait-asset-box"
@@ -334,8 +334,8 @@ function hasTraitSetDescription(ts: any) {
 								v-if="partsGridFor(traitSet)?.cells.rating"
 								class="trait-part trait-part-rating"
 								:class="{
-									'trait-asset-card': getRatingPosition(traitSet) === 'above',
-									'trait-title trait-title-stacked': getRatingPosition(traitSet) === 'below',
+									'trait-asset-card': getRatingPlacement(traitSet) === 'above',
+									'trait-title trait-title-stacked': getRatingPlacement(traitSet) === 'below',
 								}"
 								:style="partCellStyle(partsGridFor(traitSet), 'rating')"
 							>
@@ -969,7 +969,7 @@ function hasTraitSetDescription(ts: any) {
 							}"
 						>
 							<!-- RATING POSITION ABOVE (e.g. Signature Assets) -->
-							<template v-if="getRatingPosition(traitSet) === 'above'">
+							<template v-if="getRatingPlacement(traitSet) === 'above'">
 								<div class="trait-asset-card">
 									<div class="trait-value single-die-value">
 										<template v-if="getRatingDisplay(traitSet) === 'rating'">
@@ -1088,7 +1088,7 @@ function hasTraitSetDescription(ts: any) {
 									class="trait-title"
 									:class="{
 										'trait-title-pip': Boolean(getPipChild(item.trait)),
-										'trait-title-stacked': getRatingPosition(traitSet) === 'below',
+										'trait-title-stacked': getRatingPlacement(traitSet) === 'below',
 									}"
 									:style="isPositionalFrameActive ? getTraitNameAnchorStyle(t) : undefined"
 								>
@@ -1285,7 +1285,7 @@ function hasTraitSetDescription(ts: any) {
 									<div class="trait-value" v-else-if="getView(traitSet)?.style?.body === 'list'"></div>
 
 									<!-- NONE RATING POSITION: NO VALUE -->
-									<div class="trait-value" v-else-if="!printBlank && getRatingPosition(traitSet) === 'none'"></div>
+									<div class="trait-value" v-else-if="!printBlank && getRatingPlacement(traitSet) === 'none'"></div>
 
 									<!-- DICE-RATED TRAIT -->
 									<div class="trait-value multidie-value" v-else-if="getRating(item.trait)?.type === 'Dice'">

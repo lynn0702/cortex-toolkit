@@ -11,6 +11,7 @@ import AppHeader from './app-header.vue';
 import AppFooter from './app-footer.vue';
 import SessionNav from './session-nav.vue';
 import AddCharacterModal from './add-character-modal.vue';
+import ModalDialog from './modal-dialog.vue';
 import { useToast } from './use-toast.ts';
 import { useHistory } from './use-history.ts';
 import { DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
@@ -1821,7 +1822,6 @@ defineExpose({
 			<main class="main" ref="main" @scroll="setViewY" @click.stop="handleMainClick">
 				<!-- TEMPLATE PREVIEW BANNER -->
 				<div class="template-update-banner template-preview-banner" v-if="isPreview">
-					<span><i class="fas fa-eye"></i> Template preview — not saved to your characters.</span>
 					<button type="button" class="btn-update-primary" @click.stop="usePreviewTemplate">Use this template</button>
 					<button type="button" class="btn-update-secondary" @click.stop="closePreview">Close preview</button>
 				</div>
@@ -2032,39 +2032,39 @@ defineExpose({
 	/>
 
 	<!-- PLAY-SAVE CONFIRMATION MODAL -->
-	<teleport to="body">
-		<transition>
-			<div class="modal-veil" v-if="showPlaySaveConfirm" @click.stop="cancelPlaySave"></div>
-		</transition>
-		<transition>
-			<aside class="modal modal-confirm" v-if="showPlaySaveConfirm">
-				<div class="modal-close" @click.prevent="cancelPlaySave"><i class="fas fa-times"></i></div>
-				<div class="modal-inner">
-					<p>
-						Save session state to character <strong>{{ character?.name || 'this character' }}</strong
-						>?
-					</p>
-					<p class="modal-warning-text">
-						<i class="fas fa-exclamation-triangle"></i> This will overwrite the baseline character with current session
-						changes.
-					</p>
-					<div class="modal-button-container">
-						<div class="modal-button-container-inner">
-							<div class="modal-button modal-button-primary" @click.stop="confirmPlaySave">
-								<span><i class="fas fa-save"></i> Save session into character</span>
-							</div>
-							<div class="modal-button modal-button-danger" @click.stop="discardPlaySession">
-								<span><i class="fas fa-undo"></i> Discard session changes</span>
-							</div>
-							<div class="modal-button modal-button-no" @click.stop="cancelPlaySave">
-								<span><i class="fas fa-times"></i> Cancel</span>
-							</div>
-						</div>
-					</div>
+	<ModalDialog
+		:open="showPlaySaveConfirm"
+		label="Save session state"
+		dialog-class="modal-confirm"
+		@close="cancelPlaySave"
+	>
+		<button type="button" class="modal-close" aria-label="Close" @click.prevent="cancelPlaySave">
+			<i class="fas fa-times"></i>
+		</button>
+		<div class="modal-inner">
+			<p>
+				Save session state to character <strong>{{ character?.name || 'this character' }}</strong
+				>?
+			</p>
+			<p class="modal-warning-text">
+				<i class="fas fa-exclamation-triangle"></i> This will overwrite the baseline character with current session
+				changes.
+			</p>
+			<div class="modal-button-container">
+				<div class="modal-button-container-inner">
+					<button type="button" class="modal-button modal-button-primary" @click.stop="confirmPlaySave">
+						<span><i class="fas fa-save"></i> Save session into character</span>
+					</button>
+					<button type="button" class="modal-button modal-button-danger" @click.stop="discardPlaySession">
+						<span><i class="fas fa-undo"></i> Discard session changes</span>
+					</button>
+					<button type="button" class="modal-button modal-button-no" @click.stop="cancelPlaySave">
+						<span><i class="fas fa-times"></i> Cancel</span>
+					</button>
 				</div>
-			</aside>
-		</transition>
-	</teleport>
+			</div>
+		</div>
+	</ModalDialog>
 
 	<!-- TOAST NOTIFICATION -->
 	<div class="sr-only" role="status" aria-live="polite">{{ toastMessage }}</div>

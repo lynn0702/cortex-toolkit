@@ -27,7 +27,7 @@ import {
 	resolveSubtraitNoun,
 	resolveSubtraitPlural,
 } from './model.ts';
-import { resolveFrame, type FrameConfig } from './frame-geometry.ts';
+import { resolveFrame, normalizeZoom, type FrameConfig } from './frame-geometry.ts';
 import type {
 	Character,
 	TraitSet,
@@ -202,10 +202,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				: [4, 6, 8, 10, 12];
 		const trackOn = partsHaveTrack();
 		const tScale = characterCurioFunctions.getTrackScale(traitSet.value);
-		const rating =
-			currentRatingPosition() === 'vertical'
-				? 'inline'
-				: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none');
+		const rating = currentPartRatingPlacement();
 		const statement = Boolean((traitSet.value as any)?.statement);
 		const traits = Array.isArray(traitSet.value?.traits)
 			? traitSet.value.traits
@@ -365,12 +362,12 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	function isPartsDriven() {
 		const body = getView(traitSet.value)?.style?.body;
 		if (typeof body === 'string' && (FLEX_BODIES as readonly string[]).includes(body)) return false;
-		return currentRatingPosition() !== 'vertical';
+		return true;
 	}
 	function isRowBody() {
 		const body = getView(traitSet.value)?.style?.body;
 		if (typeof body === 'string' && (NON_ROW_BODIES as readonly string[]).includes(body)) return false;
-		return currentRatingPosition() !== 'vertical';
+		return true;
 	}
 
 	// Effective part cells: stored cells, or — for grid-driven sets with
@@ -510,11 +507,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			rebuildParts('below');
 			return;
 		}
-		rebuildParts(
-			currentRatingPosition() === 'vertical'
-				? 'inline'
-				: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
-		);
+		rebuildParts(currentPartRatingPlacement());
 		const refreshed = ensureView(traitSet.value);
 		refreshed.parts = normalizeEffectiveParts(refreshed.parts as Record<string, any> | undefined);
 		updateCharacter(props.character);
@@ -683,10 +676,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 
 	const imageZoom = computed({
 		get: () => {
-			const cfgZoom = getView(traitSet.value)?.imageConfig?.zoom;
+			const cfgZoom = normalizeZoom(getView(traitSet.value)?.imageConfig?.zoom);
 			if (typeof cfgZoom === 'number') return cfgZoom;
 			if (isName.value || isRing.value) {
-				const pZoom = getView(props.character?.portrait)?.zoom;
+				const pZoom = normalizeZoom(getView(props.character?.portrait)?.zoom);
 				if (typeof pZoom === 'number') return pZoom;
 			}
 			return 1;
@@ -719,7 +712,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 	const frameImageZoom = computed({
 		get: () => {
 			const f = getView(traitSet.value)?.frame;
-			const z = typeof f === 'object' && f !== null ? (f as any)?.image?.zoom : undefined;
+			const z = typeof f === 'object' && f !== null ? normalizeZoom((f as any)?.image?.zoom) : undefined;
 			return typeof z === 'number' ? z : 1;
 		},
 		set: (val: number) => {
@@ -978,8 +971,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		if (track === true && !spec.trackDice) spec.trackDice = 5;
 		if (track === false) spec.trackDice = 0;
 		view.parts = buildParts({ ...spec, rating });
-		if (traitSet.value && typeof traitSet.value === 'object') delete (traitSet.value as any).ratingPosition;
-		delete view.ratingPosition;
 		updateCharacter(props.character);
 	}
 
@@ -987,7 +978,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		return characterCurioFunctions.hasTrackPart(traitSet.value);
 	}
 
-	function currentRatingPosition(): 'inline' | 'above' | 'below' | 'none' | 'vertical' {
+	function currentPartRatingPlacement(): 'inline' | 'above' | 'below' | 'none' {
 		const rawParts = getView(traitSet.value)?.parts;
 		if (rawParts && typeof rawParts === 'object') {
 			if (isRingFrame()) {
@@ -1012,8 +1003,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			return 'below';
 		}
 		if (isRingFrame() && partsHaveTrack()) return 'below';
-		const legacy = (traitSet.value as any)?.ratingPosition || getView(traitSet.value)?.ratingPosition;
-		if (legacy === 'above' || legacy === 'below' || legacy === 'none' || legacy === 'vertical') return legacy;
 		return 'inline';
 	}
 
@@ -1029,12 +1018,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				updateCharacter(props.character);
 				return;
 			}
-			rebuildParts(
-				currentRatingPosition() === 'vertical'
-					? 'inline'
-					: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
-				true,
-			);
+			rebuildParts(currentPartRatingPlacement(), true);
 		},
 	});
 
@@ -1216,12 +1200,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 			styleBody.value !== 'pips' &&
 			styleBody.value !== 'die-track'
 		) {
-			rebuildParts(
-				currentRatingPosition() === 'vertical'
-					? 'inline'
-					: (currentRatingPosition() as 'inline' | 'above' | 'below' | 'none'),
-				true,
-			);
+			rebuildParts(currentPartRatingPlacement(), true);
 		} else {
 			updateCharacter(props.character);
 		}
@@ -1254,21 +1233,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 				});
 			}
 			updateCharacter(props.character);
-		},
-	});
-
-	const ratingPosition = computed({
-		get: () => currentRatingPosition(),
-		set: (val: 'inline' | 'above' | 'below' | 'none' | 'vertical') => {
-			if (val === 'vertical') {
-				const view = ensureView(traitSet.value);
-				delete view.parts;
-				(traitSet.value as any).ratingPosition = val;
-				view.ratingPosition = val;
-				updateCharacter(props.character);
-				return;
-			}
-			rebuildParts(val);
 		},
 	});
 
@@ -1552,6 +1516,13 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 	});
 
+	const hideRingNames = computed<boolean>({
+		get: () => Boolean(getView(traitSet.value)?.hideRingNames),
+		set: (val: boolean) => {
+			setCustomProperty('hideRingNames', Boolean(val));
+		},
+	});
+
 	const headerAlign = computed<'left' | 'center' | 'right'>({
 		get: () => {
 			const a = getView(traitSet.value)?.headerAlign;
@@ -1559,6 +1530,16 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		},
 		set: (val: 'left' | 'center' | 'right') => {
 			setCustomProperty('headerAlign', val === 'center' || val === 'right' ? val : 'left');
+		},
+	});
+
+	const verticalAlign = computed<'top' | 'center' | 'bottom'>({
+		get: () => {
+			const v = getView(traitSet.value)?.verticalAlign;
+			return v === 'center' || v === 'bottom' ? v : 'top';
+		},
+		set: (val: 'top' | 'center' | 'bottom') => {
+			setCustomProperty('verticalAlign', val === 'center' || val === 'bottom' ? val : 'top');
 		},
 	});
 
@@ -1800,6 +1781,10 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		emit('updateCharacter', character);
 	}
 
+	function commitCharacter() {
+		updateCharacter(structuredClone(toRaw(props.character)));
+	}
+
 	function ensurePipStruct() {
 		const ctk = ctkFor(props.traitSetID);
 		ctk.pips ??= {
@@ -1980,7 +1965,6 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		removeSetSubtrait,
 		createSubtrait,
 		trackLabel,
-		ratingPosition,
 		ratingDisplay,
 		labelPosition,
 		counterLabel,
@@ -2012,7 +1996,9 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		branchArrows,
 		headerMode,
 		headerAlign,
+		verticalAlign,
 		borderless,
+		hideRingNames,
 		cssClass,
 		selectElement,
 		focusFirstInput,
@@ -2036,6 +2022,7 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		toggleRatingOption,
 		getDieDisplayValue,
 		updateCharacter,
+		commitCharacter,
 		ensurePipStruct,
 		setPipProperty,
 		checkAnchorPosition,

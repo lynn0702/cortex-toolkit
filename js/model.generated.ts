@@ -136,10 +136,6 @@ export interface TraitSet {
    */
   traits: Trait[];
   /**
-   * Placement of trait rating dice relative to trait labels.
-   */
-  ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
-  /**
    * Label for the secondary counter column header, e.g. 'XP'.
    */
   counterLabel?: string | null;
@@ -206,10 +202,6 @@ export interface Trait {
    * Alternative counter value for this trait.
    */
   counter?: number | string | null;
-  /**
-   * Override for rating dice placement on this trait.
-   */
-  ratingPosition?: ("inline" | "above" | "below" | "none" | "vertical") | null;
   /**
    * Any child traits attached this parent trait.
    */

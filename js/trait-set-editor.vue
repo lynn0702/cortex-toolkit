@@ -38,6 +38,7 @@ const {
 	branchArrows,
 	headerMode,
 	headerAlign,
+	verticalAlign,
 	borderless,
 	styleLabel,
 	setStyleLabel,
@@ -59,7 +60,6 @@ const {
 	noun,
 	plural,
 	reservedSlots,
-	ratingPosition,
 	ratingDisplay,
 	labelPosition,
 	counterLabel,
@@ -578,6 +578,37 @@ function applyFromMini(updatedSet: any) {
 							</div>
 						</div>
 
+						<!-- VERTICAL ALIGN -->
+						<div class="editor-field">
+							<div class="editor-label">Vertical Align</div>
+							<div class="editor-button-group">
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: verticalAlign === 'top' }"
+									@click.stop="verticalAlign = 'top'"
+								>
+									Top
+								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: verticalAlign === 'center' }"
+									@click.stop="verticalAlign = 'center'"
+								>
+									Center
+								</button>
+								<button
+									type="button"
+									class="editor-group-btn"
+									:class="{ active: verticalAlign === 'bottom' }"
+									@click.stop="verticalAlign = 'bottom'"
+								>
+									Bottom
+								</button>
+							</div>
+						</div>
+
 						<!-- BORDER / BORDERLESS -->
 						<div class="editor-field">
 							<div class="editor-label">Border</div>
@@ -642,22 +673,6 @@ function applyFromMini(updatedSet: any) {
 								<option :value="1">1 Column</option>
 								<option :value="2">2 Columns</option>
 								<option :value="3">3 Columns</option>
-							</select>
-						</div>
-
-						<!-- RATING POSITION -->
-						<div class="editor-field" v-if="needsDiceUI && styleBody !== 'image' && styleBody !== 'pips'">
-							<label :for="'trait-set-' + traitSetID + '-rating-position'">Rating Position</label>
-							<select
-								:id="'trait-set-' + traitSetID + '-rating-position'"
-								name="ratingPosition"
-								v-model="ratingPosition"
-							>
-								<option value="inline">Inline</option>
-								<option value="above">Above</option>
-								<option value="below">Below</option>
-								<option value="none">None</option>
-								<option value="vertical">Vertical</option>
 							</select>
 						</div>
 

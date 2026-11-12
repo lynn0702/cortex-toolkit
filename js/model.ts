@@ -334,7 +334,6 @@ export function resolveSubtraitNoun(sub: any): string {
 	const r = getRating(sub);
 	if (r?.type === 'Pip' && (!Array.isArray(r.value) || r.value.length <= 1)) return 'Statement';
 	const name = String(sub.name || '').trim();
-	if (name.includes(' ') && name.length > 20) return 'Statement';
 	return name || 'Subtrait';
 }
 
@@ -574,6 +573,8 @@ export interface CharacterCurioCustom {
 	header?: 'sidebar' | 'top' | 'bottom' | 'none';
 	/** Header text alignment (respected in both orientations). */
 	headerAlign?: 'left' | 'center' | 'right';
+	/** Vertical alignment of the set within its grid band row. */
+	verticalAlign?: 'top' | 'center' | 'bottom';
 	page?: number;
 	editorDock?: 'left' | 'right';
 	traitColumns?: number;
@@ -589,8 +590,6 @@ export interface CharacterCurioCustom {
 	/** Singular noun override for traits on a ring (e.g. "Boss Die"). */
 	ringNoun?: string;
 	// behavior / labels
-	/** @deprecated superseded by parts; read for legacy data only (kept for vertical ladders). */
-	ratingPosition?: 'inline' | 'above' | 'below' | 'none' | 'vertical';
 	/** Rung label direction on ladder layouts: horizontal text or rotated vertical. */
 	labelPosition?: 'horizontal' | 'vertical';
 	counterLabel?: string;

@@ -229,6 +229,14 @@
 	margin-top: 0;
 }
 
+.character-sheet .trait-set.trait-set-valign-center {
+	align-self: center;
+}
+
+.character-sheet .trait-set.trait-set-valign-bottom {
+	align-self: end;
+}
+
 .columns > .column-left,
 .column-left,
 .sheet-column-left {

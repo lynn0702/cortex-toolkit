@@ -3,6 +3,7 @@ import { computed, getCurrentInstance, nextTick, ref } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { getView } from './model.ts';
 import PortraitRing from './portrait-ring.vue';
+import ModalDialog from './modal-dialog.vue';
 import TraitSetMini from './trait-set-mini.vue';
 import { SHOWCASE_TEMPLATES, DREAMER_ARCHITECT_SHOWCASE } from './showcase-templates.ts';
 
@@ -609,227 +610,230 @@ function getRelativeDateLabel(date1: any, date2: any) {
 			/>
 		</div>
 
-		<transition>
-			<div class="modal-veil" v-show="showImportConfirm" @click.stop="importCancel()"></div>
-		</transition>
+		<ModalDialog
+			v-if="showImportConfirm"
+			:open="showImportConfirm"
+			label="Replace existing character"
+			@close="importCancel()"
+		>
+			<button type="button" class="modal-close" aria-label="Close" @click.prevent="importCancel()">
+				<i class="fas fa-times"></i>
+			</button>
+			<div class="modal-inner">
+				<p>A character with this ID already exists. Do you want to replace it?</p>
 
-		<transition>
-			<aside class="modal" v-if="showImportConfirm">
-				<div class="modal-close" @click.prevent="importCancel()"><i class="fas fa-times"></i></div>
-				<div class="modal-inner">
-					<p>A character with this ID already exists. Do you want to replace it?</p>
-
-					<div class="modal-import-details">
-						<div>
-							<p>
-								<span class="modal-import-prefix">Replace this…</span><br />
-								{{ importBuffer.oldCharacter.name }}<br />
-								<span class="modal-import-date">{{ renderDate(importBuffer.oldCharacter.dateModified) }}</span>
-							</p>
-						</div>
-						<div>
-							<p>
-								<span class="modal-import-prefix">…with this?</span><br />
-								{{ importBuffer.newCharacter.name }}<br />
-								<span class="modal-import-date"
-									>{{ renderDate(importBuffer.newCharacter.dateModified) }}
-									<span class="modal-import-date-suffix"
-										>({{
-											getRelativeDateLabel(
-												importBuffer.oldCharacter.dateModified,
-												importBuffer.newCharacter.dateModified,
-											)
-										}})</span
-									></span
-								>
-							</p>
-						</div>
+				<div class="modal-import-details">
+					<div>
+						<p>
+							<span class="modal-import-prefix">Replace this…</span><br />
+							{{ importBuffer.oldCharacter.name }}<br />
+							<span class="modal-import-date">{{ renderDate(importBuffer.oldCharacter.dateModified) }}</span>
+						</p>
 					</div>
-
-					<div class="modal-button-container">
-						<div class="modal-button-container-inner">
-							<div class="modal-button modal-button-yes" @click.stop="importConfirm()">
-								<span><i class="fas fa-check"></i> Import</span>
-							</div>
-							<div class="modal-button modal-button-no" @click.stop="importCancel()">
-								<span><i class="fas fa-times"></i> Cancel</span>
-							</div>
-						</div>
+					<div>
+						<p>
+							<span class="modal-import-prefix">…with this?</span><br />
+							{{ importBuffer.newCharacter.name }}<br />
+							<span class="modal-import-date"
+								>{{ renderDate(importBuffer.newCharacter.dateModified) }}
+								<span class="modal-import-date-suffix"
+									>({{
+										getRelativeDateLabel(
+											importBuffer.oldCharacter.dateModified,
+											importBuffer.newCharacter.dateModified,
+										)
+									}})</span
+								></span
+							>
+						</p>
 					</div>
 				</div>
-			</aside>
-		</transition>
+
+				<div class="modal-button-container">
+					<div class="modal-button-container-inner">
+						<button type="button" class="modal-button modal-button-yes" @click.stop="importConfirm()">
+							<span><i class="fas fa-check"></i> Import</span>
+						</button>
+						<button type="button" class="modal-button modal-button-no" @click.stop="importCancel()">
+							<span><i class="fas fa-times"></i> Cancel</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</ModalDialog>
 
 		<!-- DELETE CHARACTER CONFIRMATION MODAL -->
-		<transition>
-			<div class="modal-veil" v-show="showDeleteConfirm" @click.stop="cancelDeleteCharacter()"></div>
-		</transition>
-
-		<transition>
-			<aside class="modal modal-confirm" v-if="showDeleteConfirm && characterToDelete">
-				<div class="modal-close" @click.prevent="cancelDeleteCharacter()"><i class="fas fa-times"></i></div>
-				<div class="modal-inner">
-					<p>
-						Are you sure you want to delete
-						<strong>{{
-							characterToDelete.name && characterToDelete.name.length ? characterToDelete.name : 'this character'
-						}}</strong
-						>?
-					</p>
-					<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
-					<div class="modal-button-container">
-						<div class="modal-button-container-inner">
-							<div class="modal-button modal-button-delete" @click.stop="confirmDeleteCharacter()">
-								<span><i class="fas fa-trash"></i> Delete</span>
-							</div>
-							<div class="modal-button modal-button-no" @click.stop="cancelDeleteCharacter()">
-								<span><i class="fas fa-times"></i> Cancel</span>
-							</div>
-						</div>
+		<ModalDialog
+			v-if="showDeleteConfirm && characterToDelete"
+			:open="showDeleteConfirm"
+			label="Delete character"
+			dialog-class="modal-confirm"
+			@close="cancelDeleteCharacter()"
+		>
+			<button type="button" class="modal-close" aria-label="Close" @click.prevent="cancelDeleteCharacter()">
+				<i class="fas fa-times"></i>
+			</button>
+			<div class="modal-inner">
+				<p>
+					Are you sure you want to delete
+					<strong>{{
+						characterToDelete.name && characterToDelete.name.length ? characterToDelete.name : 'this character'
+					}}</strong
+					>?
+				</p>
+				<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
+				<div class="modal-button-container">
+					<div class="modal-button-container-inner">
+						<button type="button" class="modal-button modal-button-delete" @click.stop="confirmDeleteCharacter()">
+							<span><i class="fas fa-trash"></i> Delete</span>
+						</button>
+						<button type="button" class="modal-button modal-button-no" @click.stop="cancelDeleteCharacter()">
+							<span><i class="fas fa-times"></i> Cancel</span>
+						</button>
 					</div>
 				</div>
-			</aside>
-		</transition>
+			</div>
+		</ModalDialog>
 
 		<!-- DELETE ALL CHARACTERS CONFIRMATION MODAL -->
-		<transition>
-			<div class="modal-veil" v-show="showDeleteAllConfirm" @click.stop="showDeleteAllConfirm = false"></div>
-		</transition>
-
-		<transition>
-			<aside class="modal modal-confirm" v-if="showDeleteAllConfirm">
-				<div class="modal-close" @click.prevent="showDeleteAllConfirm = false"><i class="fas fa-times"></i></div>
-				<div class="modal-inner">
-					<p>
-						Are you sure you want to delete <strong>all {{ characters.length }} characters and templates</strong>?
-					</p>
-					<p class="modal-warning-text">
-						<i class="fas fa-exclamation-triangle"></i> This action cannot be undone. Consider exporting a backup first.
-					</p>
-					<div class="modal-button-container">
-						<div class="modal-button-container-inner">
-							<div class="modal-button modal-button-delete" @click.stop="confirmDeleteAll()">
-								<span><i class="fas fa-trash-alt"></i> Delete All</span>
-							</div>
-							<div class="modal-button modal-button-no" @click.stop="showDeleteAllConfirm = false">
-								<span><i class="fas fa-times"></i> Cancel</span>
-							</div>
-						</div>
+		<ModalDialog
+			v-if="showDeleteAllConfirm"
+			:open="showDeleteAllConfirm"
+			label="Delete all characters"
+			dialog-class="modal-confirm"
+			@close="showDeleteAllConfirm = false"
+		>
+			<button type="button" class="modal-close" aria-label="Close" @click.prevent="showDeleteAllConfirm = false">
+				<i class="fas fa-times"></i>
+			</button>
+			<div class="modal-inner">
+				<p>
+					Are you sure you want to delete <strong>all {{ characters.length }} characters and templates</strong>?
+				</p>
+				<p class="modal-warning-text">
+					<i class="fas fa-exclamation-triangle"></i> This action cannot be undone. Consider exporting a backup first.
+				</p>
+				<div class="modal-button-container">
+					<div class="modal-button-container-inner">
+						<button type="button" class="modal-button modal-button-delete" @click.stop="confirmDeleteAll()">
+							<span><i class="fas fa-trash-alt"></i> Delete All</span>
+						</button>
+						<button type="button" class="modal-button modal-button-no" @click.stop="showDeleteAllConfirm = false">
+							<span><i class="fas fa-times"></i> Cancel</span>
+						</button>
 					</div>
 				</div>
-			</aside>
-		</transition>
+			</div>
+		</ModalDialog>
 
 		<!-- LIBRARY MODAL -->
-		<transition>
-			<div class="modal-veil" v-show="showLibrary" @click.stop="showLibrary = false"></div>
-		</transition>
+		<ModalDialog
+			v-if="showLibrary"
+			:open="showLibrary"
+			label="Template library"
+			dialog-class="modal-library"
+			@close="showLibrary = false"
+		>
+			<button type="button" class="modal-close" aria-label="Close" @click.prevent="showLibrary = false">
+				<i class="fas fa-times"></i>
+			</button>
+			<div class="modal-inner">
+				<div class="library-header">
+					<h2><i class="fas fa-book-open"></i> Library</h2>
+					<p>
+						Select a character sheet template from the official collections. Create a new character, save to your
+						templates, or print directly.
+					</p>
 
-		<transition>
-			<aside class="modal modal-library" v-if="showLibrary">
-				<div class="modal-close" @click.prevent="showLibrary = false"><i class="fas fa-times"></i></div>
-				<div class="modal-inner">
-					<div class="library-header">
-						<h2><i class="fas fa-book-open"></i> Library</h2>
-						<p>
-							Select a character sheet template from the official collections. Create a new character, save to your
-							templates, or print directly.
-						</p>
-
-						<div class="library-search-row">
-							<div class="library-search-input">
-								<i class="fas fa-search"></i>
-								<input
-									type="text"
-									id="library-search"
-									name="librarySearch"
-									v-model="librarySearch"
-									placeholder="Search templates by name, genre, or mechanics..."
-									aria-label="Search templates"
-								/>
-							</div>
-						</div>
-					</div>
-
-					<div class="library-grid">
-						<div class="library-loading" v-if="libraryLoading">
-							<i class="fas fa-circle-notch fa-spin"></i> Loading Library…
-						</div>
-						<div class="roster-import-error" v-if="libraryError">{{ libraryError }}</div>
-						<div class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
-							<div class="library-card-header">
-								<div class="library-card-title-group">
-									<h3 class="library-card-title">
-										<a
-											v-if="tmpl.listing && tmpl.listing.url"
-											:href="tmpl.listing.url"
-											target="_blank"
-											rel="noopener"
-											>{{ tmpl.title }}</a
-										>
-										<template v-else>{{ tmpl.title }}</template>
-									</h3>
-									<div class="library-card-subtitle">{{ tmpl.subtitle }}</div>
-								</div>
-								<div class="library-card-badges">
-									<span class="badge-genre">{{ (tmpl.listing && tmpl.listing.genre) || tmpl.genre }}</span>
-								</div>
-							</div>
-							<div class="library-card-hero" v-if="tmpl.listing && tmpl.listing.image">
-								<div class="portrait">
-									<div class="portrait-inner">
-										<div
-											class="portrait-circle portrait-alignment-top-center"
-											:style="'background-image: url(' + safeImageUrl(tmpl.listing.image) + ');'"
-										></div>
-									</div>
-									<PortraitRing :character="cardRingCharacter(tmpl)" :editing="[]" :ringTraitID="0" />
-								</div>
-							</div>
-							<p class="library-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
-							<div class="library-card-traits">
-								<span class="trait-tag" v-for="ts in tmpl.character.traitSets || []" :key="ts.name">{{ ts.name }}</span>
-							</div>
-							<div class="library-card-actions">
-								<button
-									type="button"
-									class="btn-library secondary"
-									v-if="tmpl.character"
-									@click="emit('previewTemplate', tmpl)"
-									title="Preview template"
-								>
-									<i class="fas fa-eye"></i> Preview
-								</button>
-								<button
-									type="button"
-									class="btn-library primary"
-									@click="useLibrary(tmpl, false, false)"
-									title="Create an editable character"
-								>
-									<i class="fas fa-plus"></i> Character
-								</button>
-								<button
-									type="button"
-									class="btn-library secondary"
-									@click="useLibrary(tmpl, true, false)"
-									title="Save template to Roster"
-								>
-									<i class="fas fa-bookmark"></i> Template
-								</button>
-								<button
-									type="button"
-									class="btn-library print"
-									@click="useLibrary(tmpl, false, true)"
-									title="Open in Print Tab"
-								>
-									<i class="fas fa-print"></i> Print
-								</button>
-							</div>
+					<div class="library-search-row">
+						<div class="library-search-input">
+							<i class="fas fa-search"></i>
+							<input
+								type="text"
+								id="library-search"
+								name="librarySearch"
+								v-model="librarySearch"
+								placeholder="Search templates by name, genre, or mechanics..."
+								aria-label="Search templates"
+							/>
 						</div>
 					</div>
 				</div>
-			</aside>
-		</transition>
+
+				<div class="library-grid">
+					<div class="library-loading" v-if="libraryLoading">
+						<i class="fas fa-circle-notch fa-spin"></i> Loading Library…
+					</div>
+					<div class="roster-import-error" v-if="libraryError">{{ libraryError }}</div>
+					<div class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
+						<div class="library-card-header">
+							<div class="library-card-title-group">
+								<h3 class="library-card-title">
+									<a v-if="tmpl.listing && tmpl.listing.url" :href="tmpl.listing.url" target="_blank" rel="noopener">{{
+										tmpl.title
+									}}</a>
+									<template v-else>{{ tmpl.title }}</template>
+								</h3>
+								<div class="library-card-subtitle">{{ tmpl.subtitle }}</div>
+							</div>
+							<div class="library-card-badges">
+								<span class="badge-genre">{{ (tmpl.listing && tmpl.listing.genre) || tmpl.genre }}</span>
+							</div>
+						</div>
+						<div class="library-card-hero" v-if="tmpl.listing && tmpl.listing.image">
+							<div class="portrait">
+								<div class="portrait-inner">
+									<div
+										class="portrait-circle portrait-alignment-top-center"
+										:style="'background-image: url(' + safeImageUrl(tmpl.listing.image) + ');'"
+									></div>
+								</div>
+								<PortraitRing :character="cardRingCharacter(tmpl)" :editing="[]" :ringTraitID="0" />
+							</div>
+						</div>
+						<p class="library-card-desc" v-if="tmpl.listing && tmpl.listing.quote">{{ tmpl.listing.quote }}</p>
+						<div class="library-card-traits">
+							<span class="trait-tag" v-for="ts in tmpl.character.traitSets || []" :key="ts.name">{{ ts.name }}</span>
+						</div>
+						<div class="library-card-actions">
+							<button
+								type="button"
+								class="btn-library secondary"
+								v-if="tmpl.character"
+								@click="emit('previewTemplate', tmpl)"
+								title="Preview template"
+							>
+								<i class="fas fa-eye"></i> Preview
+							</button>
+							<button
+								type="button"
+								class="btn-library primary"
+								@click="useLibrary(tmpl, false, false)"
+								title="Create an editable character"
+							>
+								<i class="fas fa-plus"></i> Character
+							</button>
+							<button
+								type="button"
+								class="btn-library secondary"
+								@click="useLibrary(tmpl, true, false)"
+								title="Save template to Roster"
+							>
+								<i class="fas fa-bookmark"></i> Template
+							</button>
+							<button
+								type="button"
+								class="btn-library print"
+								@click="useLibrary(tmpl, false, true)"
+								title="Open in Print Tab"
+							>
+								<i class="fas fa-print"></i> Print
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ModalDialog>
 
 		<TraitSetMini v-if="showTraitSetMini" @close="showTraitSetMini = false" />
 	</section>

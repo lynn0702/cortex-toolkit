@@ -885,6 +885,25 @@
 		position: absolute;
 		touch-action: none;
 
+		&.place-mini-edge-w {
+			top: -2px;
+			left: -5px;
+			bottom: -2px;
+			width: 10px;
+			cursor: ew-resize;
+
+			&::after {
+				content: '';
+				position: absolute;
+				top: 2px;
+				bottom: 2px;
+				left: 3px;
+				width: 4px;
+				border-radius: 2px;
+				background: #0284c7;
+			}
+		}
+
 		&.place-mini-edge-e {
 			top: -2px;
 			right: -5px;
@@ -2846,6 +2865,15 @@
 			&:hover {
 				color: #f87171;
 			}
+		}
+
+		.block-mini-edge-w {
+			position: absolute;
+			top: 0;
+			left: -3px;
+			width: 8px;
+			height: 100%;
+			cursor: ew-resize;
 		}
 
 		.block-mini-edge-e {

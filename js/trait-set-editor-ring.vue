@@ -17,6 +17,7 @@ const {
 	traitSetID,
 	frameColor,
 	setFrameColor,
+	hideRingNames,
 } = injectTraitSetEditor();
 </script>
 
@@ -38,6 +39,15 @@ const {
 				>
 					{{ c.charAt(0).toUpperCase() + c.slice(1) }}
 				</button>
+			</div>
+			<div class="editor-checkbox-row mt-sm">
+				<input
+					type="checkbox"
+					:id="'trait-set-' + traitSetID + '-hide-ring-names'"
+					name="hideRingNames"
+					v-model="hideRingNames"
+				/>
+				<label :for="'trait-set-' + traitSetID + '-hide-ring-names'">Hide Ring Labels</label>
 			</div>
 		</div>
 
