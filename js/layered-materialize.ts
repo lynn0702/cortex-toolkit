@@ -21,14 +21,14 @@ import { asTrait } from './character-curio-trait-helpers.ts';
 import type { TraitRaw, TraitObject, SetObject } from './character-curio-trait-helpers.ts';
 import { cloneDeep } from './clone-deep.ts';
 
-// ---------- legacy (render) shapes ----------
+// ---------- render shapes ----------
 
-export interface LegacyTrait {
+export interface RenderTrait {
 	name?: string;
 	value?: number | null;
 	dice?: number[] | null;
 	description?: string;
-	traits?: LegacyTrait[];
+	traits?: RenderTrait[];
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
 	xp?: unknown;
@@ -38,25 +38,25 @@ export interface LegacyTrait {
 	[key: string]: unknown;
 }
 
-export interface LegacySet {
+export interface RenderSet {
 	id?: string | null;
 	name?: string;
 	description?: string;
-	traits?: LegacyTrait[];
+	traits?: RenderTrait[];
 	tags?: unknown[];
 	custom?: Record<string, unknown>;
 	[key: string]: unknown;
 }
 
-export interface LegacyCharacter {
-	traitSets?: LegacySet[];
+export interface RenderCharacter {
+	traitSets?: RenderSet[];
 	[key: string]: unknown;
 }
 
 const clone = cloneDeep;
 
 // render trait -> dice ints (rating-first; day-1 numeric keys read through)
-const traitDice = (t: LegacyTrait): number[] => {
+const traitDice = (t: RenderTrait): number[] => {
 	const r = (t as Record<string, unknown>).rating;
 	if (r && typeof r === 'object' && !Array.isArray(r)) {
 		const v = (r as Record<string, unknown>).value;
@@ -81,9 +81,9 @@ const ratingForDice = (dice: number[]): Record<string, unknown> => ({
 
 // ---------- render <- layered (materialize) ----------
 
-// entity traits map -> legacy traits array. `pres` supplies order; entity keys win.
-function buildTraits(pres: LegacyTrait[] | undefined, map: Record<string, TraitRaw> | undefined): LegacyTrait[] {
-	const out: LegacyTrait[] = [];
+// entity traits map -> render traits array. `pres` supplies order; entity keys win.
+function buildTraits(pres: RenderTrait[] | undefined, map: Record<string, TraitRaw> | undefined): RenderTrait[] {
+	const out: RenderTrait[] = [];
 	const used = new Set<string>();
 	const entityTraits = map && typeof map === 'object' && !Array.isArray(map) ? map : {};
 
@@ -139,51 +139,9 @@ function mergeCustom(base: unknown, override: unknown): Record<string, unknown> 
 	return result;
 }
 
-// Presentation moved from legacy `custom.characterCurio` to top-level `view`.
-// Pinned snapshots and legacy stored entities may still carry the old key, so
-// fold it UNDER the current bag on both sides of the merge. A partial view
-// override (e.g. span/track written by the layout editor) must never shadow
-// the full presentation (e.g. the set's style) sitting in the legacy bag.
-function legacyBag(node: unknown): Record<string, unknown> {
-	if (!node || typeof node !== 'object') return {};
-	const record = node as Record<string, unknown>;
-	const bag = record.custom;
-	if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return {};
-	const inner = (bag as Record<string, unknown>).characterCurio;
-	if (!inner || typeof inner !== 'object' || Array.isArray(inner)) return {};
-	return inner as Record<string, unknown>;
-}
-
-// After folding the legacy presentation bag into `view`, drop the old key so
-// the render object carries a single presentation bag (getView prefers `view`).
-function dropLegacyBag(node: Record<string, unknown>): void {
-	const bag = node.custom;
-	if (!bag || typeof bag !== 'object' || Array.isArray(bag)) return;
-	const inner = bag as Record<string, unknown>;
-	if (inner.characterCurio !== undefined) {
-		delete inner.characterCurio;
-		if (Object.keys(inner).length === 0) delete node.custom;
-	}
-}
-
-// Split-brain heal: a node carrying BOTH the current `view` bag and the
-// legacy `custom.characterCurio` bag renders only the first (getView prefers
-// `view`), so the legacy presentation is silently shadowed — e.g. a stale
-// span/track-only view hiding the set's style, which drops the whole style
-// dispatch. Fold legacy UNDER view and drop the old key. Single-bag nodes
-// pass through untouched (the exact-codec tests depend on verbatim
-// passthrough), so this only fires on genuinely dual-bagged nodes.
-function healSplitView(node: { view?: unknown; custom?: unknown }): void {
-	const rec = node as Record<string, unknown>;
-	if (rec.view === undefined) return; // legacy-only: keep verbatim
-	if (!Object.keys(legacyBag(rec)).length) return; // view-only: keep verbatim
-	rec.view = mergeCustom(legacyBag(rec), rec.view);
-	dropLegacyBag(rec);
-}
-
-function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): LegacyTrait {
+function buildTrait(pres: RenderTrait | null, raw: TraitRaw, name: string): RenderTrait {
 	const et = asTrait(raw);
-	const t: LegacyTrait = pres ? clone(pres) : { name };
+	const t: RenderTrait = pres ? clone(pres) : { name };
 	if (!pres) t.name = name;
 	for (const [k, v] of Object.entries(et)) {
 		if (k === 'traits') continue;
@@ -205,14 +163,13 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 		if (k === 'dice') continue; // retired encoding; rating carries it.
 		(t as Record<string, unknown>)[k] = clone(v);
 	}
-	// Canonical wins: a rating drops any legacy value/dice the
+	// Canonical wins: a rating drops any top-level value/dice the
 	// presentation base carried.
 	const tr = t as Record<string, unknown>;
 	if (tr.rating && typeof tr.rating === 'object') {
 		delete tr.value;
 		delete tr.dice;
 	}
-	healSplitView(t);
 	const subs = et.traits as Record<string, TraitRaw> | undefined;
 	if (subs) {
 		t.traits = buildTraits(pres?.traits, subs);
@@ -220,8 +177,8 @@ function buildTrait(pres: LegacyTrait | null, raw: TraitRaw, name: string): Lega
 	return t;
 }
 
-function buildSet(pres: LegacySet | null, eset: SetObject, name: string): LegacySet {
-	const set: LegacySet = pres ? clone(pres) : { name };
+function buildSet(pres: RenderSet | null, eset: SetObject, name: string): RenderSet {
+	const set: RenderSet = pres ? clone(pres) : { name };
 	if (!pres) set.name = name;
 	for (const [k, v] of Object.entries(eset)) {
 		if (k === 'traits') continue;
@@ -235,7 +192,6 @@ function buildSet(pres: LegacySet | null, eset: SetObject, name: string): Legacy
 		}
 		(set as Record<string, unknown>)[k] = clone(v);
 	}
-	healSplitView(set);
 	const traitsMap = eset.traits as Record<string, TraitRaw> | undefined;
 	set.traits = buildTraits(pres?.traits, traitsMap);
 	return set;
@@ -243,23 +199,23 @@ function buildSet(pres: LegacySet | null, eset: SetObject, name: string): Legacy
 
 /**
  * Fold a layered file (envelope + entity) onto its presentation template and
- * return the legacy array-shaped character the renderer reads. `presentation`
- * is the template character (legacy array shape): its character-level fields
+ * return the array-shaped character the renderer reads. `presentation`
+ * is the template character (render array shape): its character-level fields
  * (view, custom, portrait, nouns, $schema…) fill whatever the entity does not set,
  * and its `traitSets` supply set/trait order + presentation. Omit it for
  * entity-only output.
  */
 export function materializeCharacter(
 	file: Record<string, unknown>,
-	presentation?: LegacyCharacter | null,
-): LegacyCharacter {
+	presentation?: RenderCharacter | null,
+): RenderCharacter {
 	const sets =
 		file.sets && typeof file.sets === 'object' && !Array.isArray(file.sets)
 			? (file.sets as Record<string, SetObject | null>)
 			: {};
 
-	const base: LegacyCharacter = presentation && typeof presentation === 'object' ? clone(presentation) : {};
-	const out: LegacyCharacter = base;
+	const base: RenderCharacter = presentation && typeof presentation === 'object' ? clone(presentation) : {};
+	const out: RenderCharacter = base;
 	// entity character-level keys win over the presentation base
 	for (const [k, v] of Object.entries(file)) {
 		if (k === 'sets' || k === 'template') continue;
@@ -273,7 +229,6 @@ export function materializeCharacter(
 		}
 		out[k] = clone(v);
 	}
-	healSplitView(out as { view?: unknown; custom?: unknown });
 	if (file.portrait && typeof file.portrait === 'object') {
 		const fp = file.portrait as Record<string, unknown>;
 		const bp = base.portrait && typeof base.portrait === 'object' ? (base.portrait as Record<string, unknown>) : {};
@@ -283,7 +238,6 @@ export function materializeCharacter(
 			else if (pk === 'custom') p.custom = mergeCustom(bp.custom, pv);
 			else p[pk] = clone(pv);
 		}
-		healSplitView(p as { view?: unknown; custom?: unknown });
 		out.portrait = p;
 	}
 	// isTemplate belongs to the entity, not the presentation template it folds onto.
@@ -291,27 +245,27 @@ export function materializeCharacter(
 	// the template ref rides under `template` in layered form, `sheet.template` in render form.
 	if (file.template !== undefined) out.sheet = { template: clone(file.template) };
 
-	const presentationSets: LegacySet[] = Array.isArray(presentation?.traitSets)
-		? (presentation!.traitSets as LegacySet[])
+	const presentationSets: RenderSet[] = Array.isArray(presentation?.traitSets)
+		? (presentation!.traitSets as RenderSet[])
 		: Array.isArray(file.traitSets)
-			? (file.traitSets as LegacySet[])
+			? (file.traitSets as RenderSet[])
 			: [];
 	const used = new Set<string>();
-	const traitSets: LegacySet[] = [];
+	const traitSets: RenderSet[] = [];
 	// Stable identity: when both sides carry a set id, the ids must agree
 	// for a name match to hold. A renamed set (new key, kept id) heals onto
 	// its template presentation; a same-named stranger stays a custom set.
-	// Missing ids on either side stay name-matched (legacy-tolerant).
+	// Missing ids on either side stay name-matched.
 	const idOf = (s: unknown) => {
 		const id = (s as Record<string, unknown> | null)?.id;
 		return typeof id === 'string' && id.length ? id : '';
 	};
-	const presById = new Map<string, LegacySet>();
+	const presById = new Map<string, RenderSet>();
 	for (const pset of presentationSets) {
 		const pid = idOf(pset);
 		if (pid && !presById.has(pid)) presById.set(pid, pset);
 	}
-	const orphans: LegacySet[] = [];
+	const orphans: RenderSet[] = [];
 	for (const pset of presentationSets) {
 		const name = typeof pset.name === 'string' ? pset.name : '';
 		if (!name.length) {
@@ -366,7 +320,7 @@ export function materializeCharacter(
 
 // ---------- render -> layered (serialize) ----------
 
-function layeredTraitFrom(t: LegacyTrait): TraitObject {
+function layeredTraitFrom(t: RenderTrait): TraitObject {
 	const node: TraitObject = {};
 	const raw = (t as Record<string, unknown>).rating;
 	if (raw === null) {
@@ -428,7 +382,7 @@ function layeredTraitFrom(t: LegacyTrait): TraitObject {
 	return node;
 }
 
-function layeredSetFrom(set: LegacySet): SetObject {
+function layeredSetFrom(set: RenderSet): SetObject {
 	const s: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(set)) {
 		// Set id is the stable join key (kept); trait-level ids stay out.
@@ -454,7 +408,7 @@ function layeredSetFrom(set: LegacySet): SetObject {
 }
 
 /**
- * Serialize a legacy render character to the layered entity (content + any
+ * Serialize a render character to the layered entity (content + any
  * per-entity overrides, all preserved). Set ids are kept (stable join key);
  * trait-level ids and app-local `_lid` are dropped; `sheet` (the template
  * ref) is left to the caller. This is the lossless inverse of
@@ -468,7 +422,7 @@ export function toLayeredEntity(ch: Record<string, unknown>): Record<string, unk
 	}
 	const sets: Record<string, SetObject> = {};
 	const seen: Record<string, number> = {};
-	for (const set of Array.isArray(ch.traitSets) ? (ch.traitSets as LegacySet[]) : []) {
+	for (const set of Array.isArray(ch.traitSets) ? (ch.traitSets as RenderSet[]) : []) {
 		if (!set || typeof set.name !== 'string' || !set.name.length) continue;
 		// Duplicate display names (GMC x6) take suffixed keys in document
 		// order, mirroring the template convention — otherwise all but one
