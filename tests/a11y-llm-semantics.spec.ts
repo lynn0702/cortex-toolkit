@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, reactive } from 'vue';
 import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import TraitSetBlock from '../js/trait-set-block.vue';
@@ -241,6 +241,146 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 		wrapper.unmount();
 	});
 
+	it('DiceRoller Word Bank + Scale increments Keep and + Trait pre-search supports Dreamer traits, hinder, and shorthand', async () => {
+		const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
+		const dreamer = reactive(structuredClone(raw));
+		const pool = new dicePool.DicePool();
+		const wrapper = mount(DiceRoller, {
+			props: {
+				open: true,
+				pool,
+				character: dreamer,
+				onSettlePP: (delta: number) => {
+					dreamer.plotPoints = Math.max(0, (dreamer.plotPoints || 0) + delta);
+				},
+			} as any,
+		});
+
+		// + Scale adds word pill and increments Keep without staging a die
+		expect(wrapper.find('#keepValue').text()).toBe('2');
+		await wrapper.find('.wb-scale-btn').trigger('click');
+		expect(wrapper.find('#keepValue').text()).toBe('3');
+		expect(wrapper.findAll('.word-bank-list .trait-chip').map((w) => w.text())).toContain('Scale ×');
+		expect(wrapper.findAll('.roller-chip').length).toBe(0);
+
+		// + Trait opens pre-search popover listing Dreamer traits including The Architect (1d10 & 3d10) + Distinction hinder
+		await wrapper.find('.wb-trait-btn').trigger('click');
+		expect(wrapper.find('#traitInputContainer').exists()).toBe(true);
+		const rowsText = wrapper.findAll('.presearch-row').map((r) => r.text());
+		expect(rowsText.some((t) => t.includes('The Architect') && t.includes('1d10'))).toBe(true);
+		expect(rowsText.some((t) => t.includes('The Architect') && t.includes('3d10'))).toBe(true);
+
+		const hinderBtn = wrapper.find('.presearch-hinder-btn');
+		expect(hinderBtn.exists()).toBe(true);
+		await hinderBtn.trigger('click');
+		expect(wrapper.findAll('.roller-chip').some((c) => c.attributes('data-die-size') === '4')).toBe(true);
+		expect(wrapper.find('.pp-pending-tag').text()).toBe('+1');
+		expect(wrapper.find('.word-bank-list').text()).toContain('(Hinder)');
+
+		// Shorthand input "Strength d6" stages Word Bank pill + d6 die
+		const input = wrapper.find('.trait-shorthand-input');
+		await input.setValue('Strength d6');
+		await wrapper.find('.trait-submit-btn').trigger('click');
+		expect(wrapper.find('.word-bank-list').text()).toContain('Strength');
+		expect(wrapper.findAll('.roller-chip').some((c) => c.attributes('data-die-size') === '6')).toBe(true);
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+		for (const el of wrapper.element.querySelectorAll('button, .roller-chip, .trait-chip')) {
+			expect(el.getAttribute('style')).toBeNull();
+		}
+
+		wrapper.unmount();
+	});
+
+	it('DiceRoller 4-button selected die bar mutates dice independently from Word Bank', async () => {
+		const pool = new dicePool.DicePool();
+		pool.add([{ size: 8, qty: 1, source: 'Data' }]);
+		const wrapper = mount(DiceRoller, {
+			props: {
+				open: true,
+				pool,
+			},
+		});
+
+		expect(wrapper.findAll('.word-bank-list .trait-chip').length).toBe(1);
+		await wrapper.find('.roller-chip').trigger('click');
+		expect(wrapper.find('.pool-action-bar').exists()).toBe(true);
+
+		// Step Up d8 -> d10, Duplicate, and Remove one die without touching Word Bank
+		await wrapper.find('.pool-act-step-up').trigger('click');
+		expect(wrapper.find('.roller-chip').attributes('data-die-size')).toBe('10');
+		expect(wrapper.findAll('.word-bank-list .trait-chip').length).toBe(1);
+
+		await wrapper.find('.pool-act-dup').trigger('click');
+		expect(wrapper.findAll('.roller-chip').length).toBe(2);
+		expect(wrapper.findAll('.word-bank-list .trait-chip').length).toBe(1);
+
+		await wrapper.find('.pool-act-remove').trigger('click');
+		expect(wrapper.findAll('.roller-chip').length).toBe(1);
+		expect(wrapper.findAll('.word-bank-list .trait-chip').length).toBe(1);
+
+		// Removing the Word Bank pill leaves staged dice intact
+		await wrapper.find('.trait-chip-remove').trigger('click');
+		expect(wrapper.findAll('.word-bank-list .trait-chip').length).toBe(0);
+		expect(wrapper.findAll('.roller-chip').length).toBe(1);
+
+		wrapper.unmount();
+	});
+
+	it('DiceRoller Dual-Pool Auto-Contest, PP spend, and Hitch activation audit cleanly', async () => {
+		const character = reactive({ plotPoints: 2, traitSets: [] as any[] });
+		const playerPool = new dicePool.DicePool();
+		const oppPool = new dicePool.DicePool();
+		playerPool.add([{ size: 8, qty: 2, source: 'Data' }]);
+		oppPool.add([{ size: 8, qty: 2, source: 'Guard' }]);
+
+		const wrapper = mount(DiceRoller, {
+			props: {
+				open: true,
+				pool: playerPool,
+				oppositionPool: oppPool,
+				character,
+				onSettlePP: (delta: number) => {
+					character.plotPoints = Math.max(0, character.plotPoints + delta);
+				},
+			} as any,
+		});
+
+		// PP Spend bar: 1 PP: +1 Keep & 1 PP: +d6 Stunt
+		const spendBtns = wrapper.findAll('.pp-spend-btn');
+		expect(spendBtns.length).toBe(2);
+		await spendBtns[0].trigger('click');
+		expect(character.plotPoints).toBe(1);
+		expect(wrapper.find('#keepValue').text()).toBe('3');
+		expect(wrapper.find('.word-bank-list').text()).toContain('PP: +1 Keep');
+
+		await spendBtns[1].trigger('click');
+		expect(character.plotPoints).toBe(0);
+		expect(wrapper.find('.word-bank-list').text()).toContain('PP Stunt');
+		expect(playerPool.items.length).toBe(3);
+
+		// Auto-Contest label and deterministic hitch roll
+		const rollBtn = wrapper.find('.roller-roll-btn');
+		expect(rollBtn.text()).toContain('ROLL CONTEST');
+
+		const randomSpy = vi.spyOn(Math, 'random').mockReturnValueOnce(0.0).mockReturnValue(0.85);
+		try {
+			await rollBtn.trigger('click');
+		} finally {
+			randomSpy.mockRestore();
+		}
+
+		expect(wrapper.find('.roller-inline-outcome .contest-banner').exists()).toBe(true);
+		const playerHitchBtn = wrapper.find('.hitch-act-player');
+		expect(playerHitchBtn.exists()).toBe(true);
+		await playerHitchBtn.trigger('click');
+		expect(character.plotPoints).toBe(1);
+		expect(wrapper.find('.word-bank-list').text()).toContain('Complication');
+
+		await runAxeAudit(wrapper.element as HTMLElement);
+		wrapper.unmount();
+	});
+
 	it('audits Play-scoped TraitEditor for label immutability and zero structural leaks', async () => {
 		const character = createTestCharacter();
 		const wrapper = mount(TraitEditor, {
@@ -264,20 +404,26 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 	});
 
 	it('audits Dark Mode toggle buttons and verifies zero hardcoded inline styles in DiceRoller', async () => {
-		// 1. Verify DiceRoller has no inline background: white on quick scale/separate die buttons
+		// 1. Verify DiceRoller has no inline styles on Word Bank / Quick Add / Die buttons
 		const roller = mount(DiceRoller, {
 			props: {
 				open: true,
 				pool: new dicePool.DicePool(),
 			},
 		});
-		const scaleBtn = roller.find('.roller-btn-scale-quick');
+		const scaleBtn = roller.find('.wb-scale-btn');
 		expect(scaleBtn.exists()).toBe(true);
 		expect(scaleBtn.attributes('style')).toBeUndefined();
 
-		const sepBtn = roller.find('.roller-btn-res-quick');
+		const sepBtn = roller.find('.sep-mode-toggle');
 		expect(sepBtn.exists()).toBe(true);
 		expect(sepBtn.attributes('style')).toBeUndefined();
+
+		const dieBtns = roller.findAll('.die-btn');
+		expect(dieBtns.length).toBe(5);
+		for (const btn of dieBtns) {
+			expect(btn.attributes('style')).toBeUndefined();
+		}
 
 		roller.unmount();
 

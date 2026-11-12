@@ -36,6 +36,8 @@ const submode = ref<string | null>(null);
 const editing = ref<any>(null);
 const viewY = ref<number | null>(null);
 const dicePool = ref(new dicePoolModel.DicePool());
+const oppositionPool = ref(new dicePoolModel.DicePool());
+const activeRollerSide = ref<'player' | 'opposition'>('player');
 const isRollerOpen = ref(false);
 const rollerPosition = ref('right');
 const isStudioPanelOpen = ref(true);
@@ -478,7 +480,9 @@ function isNarrowViewport() {
 }
 
 function addDieToRoller(dieData: any) {
-	dicePool.value.add(dieData);
+	const isOpp = activeRollerSide.value === 'opposition';
+	const targetPool = isOpp ? oppositionPool.value : dicePool.value;
+	targetPool.add(dieData);
 	if (submode.value === 'play' && !isNarrowViewport()) {
 		isStudioPanelOpen.value = true;
 		studioPanelTab.value = 'roller';
@@ -491,7 +495,7 @@ function addDieToRoller(dieData: any) {
 	} else {
 		label = dieData.source ? dieData.source : `d${dieData.size}`;
 	}
-	showToast(`Added ${label} to dice pool`);
+	showToast(`Added ${label} to ${isOpp ? 'opposition' : 'dice'} pool`);
 }
 
 const studioPanelRef = ref<any>(null);
@@ -523,15 +527,23 @@ function hasUncommittedSessionChanges(): boolean {
 }
 
 function removeDieFromRoller(index: number) {
-	dicePool.value.removeAt(index);
+	if (activeRollerSide.value === 'opposition') {
+		oppositionPool.value.removeAt(index);
+	} else {
+		dicePool.value.removeAt(index);
+	}
 }
 
 function clearDicePool() {
 	dicePool.value.clear();
 }
 
+function clearOppositionPool() {
+	oppositionPool.value.clear();
+}
+
 function handleSettlePP(delta: number) {
-	if (character.value && delta > 0) {
+	if (character.value && delta !== 0) {
 		const currentPP = Number(character.value.plotPoints || 0);
 		characterCurioFunctions.setPlotPoints(character.value, currentPP + delta);
 		updateCharacter(character.value);
@@ -539,13 +551,21 @@ function handleSettlePP(delta: number) {
 }
 
 function triggerRollFromPill() {
-	if (studioPanelRef.value && typeof studioPanelRef.value.roll === 'function') {
-		studioPanelRef.value.roll();
-	}
+	studioPanelTab.value = 'roller';
+	nextTick(() => {
+		if (studioPanelRef.value && typeof studioPanelRef.value.roll === 'function') {
+			studioPanelRef.value.roll({ forceDialog: true });
+		}
+	});
 }
 
 function triggerClearFromPill() {
-	clearDicePool();
+	if (studioPanelRef.value && typeof studioPanelRef.value.clearPool === 'function') {
+		studioPanelRef.value.clearPool();
+	} else {
+		clearDicePool();
+		clearOppositionPool();
+	}
 }
 
 function toggleMobileRollerDrawer() {
@@ -585,6 +605,7 @@ function discardPlaySession() {
 		}
 	}
 	dicePool.value.clear();
+	oppositionPool.value.clear();
 	showToast('Discarded session changes.');
 	if (pendingNavigation) {
 		const nav = pendingNavigation;
@@ -1703,6 +1724,8 @@ defineExpose({
 	editing,
 	viewY,
 	dicePool,
+	oppositionPool,
+	activeRollerSide,
 	isRollerOpen,
 	rollerPosition,
 	isStudioPanelOpen,
@@ -1836,8 +1859,11 @@ defineExpose({
 			:position="panelPosition"
 			:panelTab="studioPanelTab"
 			:dicePool="dicePool"
+			:oppositionPool="oppositionPool"
+			:activePoolSide="activeRollerSide"
 			:viewY="viewY"
 			@update:panelTab="studioPanelTab = $event"
+			@update:activePoolSide="activeRollerSide = $event"
 			@update:isOpen="setPanelOpen($event)"
 			@togglePosition="togglePanelPosition"
 			@selectElement="selectElement"
@@ -1850,6 +1876,7 @@ defineExpose({
 			@addDie="addDieToRoller"
 			@removeDie="removeDieFromRoller"
 			@clearPool="clearDicePool"
+			@clearOppositionPool="clearOppositionPool"
 			@settlePP="handleSettlePP"
 		/>
 
@@ -1862,7 +1889,7 @@ defineExpose({
 				:playViewMode="playViewMode"
 				:isStudioPanelOpen="isStudioPanelOpen"
 				:studioPanelTab="studioPanelTab"
-				:rollerCount="dicePool.items.length"
+				:rollerCount="dicePool.items.length + oppositionPool.items.length"
 				:isDesktopPillars="isDesktopPillars"
 				@focus="focusCharacter"
 				@close="closeOpenCharacter"
@@ -2022,10 +2049,33 @@ defineExpose({
 			<div
 				class="mobile-roller-pill-bar"
 				v-if="mode === 'character' && submode === 'play'"
-				:class="{ 'has-dice': dicePool.items.length > 0, 'is-open': isStudioPanelOpen && studioPanelTab === 'roller' }"
+				:class="{
+					'has-dice': dicePool.items.length + oppositionPool.items.length > 0,
+					'is-open': isStudioPanelOpen && studioPanelTab === 'roller',
+				}"
 			>
-				<div class="mobile-roller-pill-left" @click="toggleMobileRollerDrawer">
-					<template v-if="studioPanelRef?.diceRoller?.isRolled && studioPanelRef?.diceRoller?.bestTotalInfo">
+				<div
+					class="mobile-roller-pill-left"
+					@click="
+						studioPanelRef?.diceRoller?.isRolled ? studioPanelRef.openOutcomeDialog() : toggleMobileRollerDrawer()
+					"
+				>
+					<template
+						v-if="
+							studioPanelRef?.diceRoller?.isRolled &&
+							studioPanelRef?.diceRoller?.isContestRoll &&
+							studioPanelRef?.diceRoller?.contestSummary
+						"
+					>
+						<span class="pill-result-total"
+							>Player <strong>{{ studioPanelRef.diceRoller.contestSummary.playerTotal }}</strong></span
+						>
+						<span class="pill-bullet">vs</span>
+						<span class="pill-result-effect"
+							>Opp <strong>{{ studioPanelRef.diceRoller.contestSummary.oppTotal }}</strong></span
+						>
+					</template>
+					<template v-else-if="studioPanelRef?.diceRoller?.isRolled && studioPanelRef?.diceRoller?.bestTotalInfo">
 						<span class="pill-result-total"
 							>Total: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.total }}</strong></span
 						>
@@ -2034,37 +2084,41 @@ defineExpose({
 							>Effect: <strong>{{ studioPanelRef.diceRoller.bestTotalInfo.effect }}</strong></span
 						>
 					</template>
-					<template v-else-if="dicePool.items.length > 0">
-						<span v-for="(item, pIdx) in dicePool.items" :key="pIdx" class="pill-die">
+					<template v-else-if="dicePool.items.length + oppositionPool.items.length > 0">
+						<span v-for="(item, pIdx) in dicePool.items" :key="'p-' + pIdx" class="pill-die">
 							<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
 							<span v-if="item.ppDelta" class="pill-pp-tag">+PP</span>
+						</span>
+						<span v-if="dicePool.items.length > 0 && oppositionPool.items.length > 0" class="pill-vs-tag">vs</span>
+						<span v-for="(item, oIdx) in oppositionPool.items" :key="'o-' + oIdx" class="pill-die pill-die-opp">
+							<span v-html="characterCurioFunctions.renderDieconSVG(item.size, false, '', null)"></span>
 						</span>
 					</template>
 					<template v-else>
 						<span class="pill-empty-label"
-							><i class="fas fa-dice" aria-hidden="true"></i> 0 Dice Staged — Tap traits to build pool</span
+							><i class="fas fa-dice" aria-hidden="true"></i> 0 Dice Staged — Tap traits</span
 						>
 					</template>
 				</div>
 				<div class="mobile-roller-pill-right">
-					<template v-if="dicePool.items.length > 0">
+					<template v-if="dicePool.items.length + oppositionPool.items.length > 0">
 						<button type="button" class="btn-pill-roll" @click.stop="triggerRollFromPill" title="Roll dice">
-							<i class="fas fa-dice"></i> Roll
+							<i class="fas fa-dice" aria-hidden="true"></i> Roll
 						</button>
-						<button type="button" class="btn-pill-clear" @click.stop="triggerClearFromPill" title="Clear pool">
-							<i class="fas fa-times"></i>
-						</button>
-					</template>
-					<template v-else>
 						<button
 							type="button"
-							class="btn-pill-expand"
-							@click.stop="toggleMobileRollerDrawer"
-							title="Open dice roller"
+							class="btn-pill-clear"
+							@click.stop="triggerClearFromPill"
+							title="Clear pool"
+							aria-label="Clear pool"
 						>
-							<i class="fas fa-dice" aria-hidden="true"></i> Roller
+							<i class="fas fa-times" aria-hidden="true"></i>
 						</button>
 					</template>
+					<button type="button" class="btn-pill-expand" @click.stop="toggleMobileRollerDrawer" title="Open dice roller">
+						<i class="fas fa-sliders" aria-hidden="true"></i>
+						{{ dicePool.items.length + oppositionPool.items.length > 0 ? 'Pool' : 'Roller' }}
+					</button>
 				</div>
 			</div>
 		</div>

@@ -130,6 +130,8 @@
 
 		max-width: 100%;
 
+		z-index: var(--z-editor);
+
 		box-sizing: border-box;
 
 		overflow-x: hidden;
@@ -143,7 +145,7 @@
 		box-sizing: border-box;
 	}
 
-	.submode-play .studio-panel {
+	.studio-panel.is-play {
 		top: auto;
 
 		bottom: 0;
@@ -154,9 +156,11 @@
 
 		width: 100%;
 
+		z-index: var(--z-editor);
+
 		max-height: 75dvh;
 
-		border-radius: 16px 16px 0 0;
+		border-radius: 1rem 1rem 0 0;
 
 		border-top: 1px solid rgba(255, 255, 255, 0.15);
 
@@ -576,7 +580,8 @@
 		}
 
 		.roller-body {
-			background: #ffffff;
+			background: var(--roller-surface, var(--bg-surface-card));
+			color: var(--roller-text, var(--text-main));
 
 			height: 100%;
 

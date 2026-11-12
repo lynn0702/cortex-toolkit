@@ -91,20 +91,280 @@ export interface DiceItem {
 	ppCommitted?: boolean;
 }
 
+export type WordBankKind = 'trait' | 'scale' | 'pp' | 'hinder' | 'asset' | 'custom';
+
+export interface WordBankItem {
+	id: string;
+	label: string;
+	kind: WordBankKind;
+}
+
+export interface RollResult {
+	id: string;
+	size: number;
+	value: number;
+	source: string;
+	isScale: boolean;
+	hitches: number;
+	isHitch: boolean;
+	hitchActivated?: boolean;
+	manualRole: 'total' | 'effect' | 'none';
+}
+
+export interface SeparateGroup {
+	name: string;
+	dice: RollResult[];
+	keptDie: RollResult;
+	bonus: number;
+}
+
+export interface PoolEvaluation {
+	side: 'player' | 'opposition';
+	label: string;
+	keep: number;
+	combineSeparate: boolean;
+	results: RollResult[];
+	actionResults: RollResult[];
+	separateGroups: SeparateGroup[];
+	bestTotalInfo: any;
+	bestEffectInfo: any;
+	manualTotal: number;
+	manualActionTotal: number;
+	manualSeparateBonus: number;
+	manualEffectDie: string;
+	totalHitches: number;
+	isBotch: boolean;
+	log: string;
+}
+
+export interface AddPoolOptions {
+	skipWordBank?: boolean;
+	wordKind?: WordBankKind;
+}
+
+export interface ShorthandParseResult {
+	label: string;
+	dice: { count: number; size: number } | null;
+}
+
+export interface FlattenedTraitSuggestion {
+	key: string;
+	name: string;
+	noun: string;
+	description: string;
+	dice: number[];
+	notation: string;
+	canHinder: boolean;
+	hitches: number;
+	keepsExtra: number;
+}
+
+const IGNORED_WORD_BANK_LABELS = new Set(['ad-hoc', 'default', 'separate', 'pool']);
+
+function cleanWordBankLabel(raw: string): string {
+	return String(raw || '')
+		.replace(/\s*\([dD]\d+\)\s*$/, '')
+		.replace(/\s+[dD]\d+\s*$/, '')
+		.replace(/\(\s*\)/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
+}
+
+function formatDiceNotation(dice: number[]): string {
+	if (!dice || dice.length === 0) return '';
+	if (dice.length === 1) return `d${dice[0]}`;
+	const first = dice[0];
+	if (dice.every((d) => d === first)) {
+		return `${dice.length}d${first}`;
+	}
+	return dice.map((d) => `d${d}`).join(' + ');
+}
+
+export function parseTraitShorthand(input: string): ShorthandParseResult {
+	const trimmed = String(input || '').trim();
+	if (!trimmed) return { label: '', dice: null };
+	const match = /^(.*?)\s*\b(?:(\d+)?d(4|6|8|10|12))\b\s*(.*)$/i.exec(trimmed);
+	if (!match) {
+		return { label: trimmed, dice: null };
+	}
+	const countRaw = match[2] ? parseInt(match[2], 10) : 1;
+	const count = Math.min(20, Math.max(1, Number.isFinite(countRaw) ? countRaw : 1));
+	const size = parseInt(match[3], 10);
+	const label = `${match[1] || ''} ${match[4] || ''}`
+		.replace(/\(\s*\)/g, '')
+		.replace(/\s+/g, ' ')
+		.trim();
+	return { label, dice: { count, size } };
+}
+
+function extractValidDice(rating: any): number[] {
+	if (!rating || rating.type === 'Counter' || rating.type === 'Empty') return [];
+	if (!Array.isArray(rating.value)) return [];
+	return rating.value.map((v: any) => Number(v)).filter((n: number) => DIE_SIZES.includes(n));
+}
+
+function resolveNumericHitches(node: any, fallback = 1): number {
+	if (node && typeof node.hitches === 'number' && Number.isFinite(node.hitches) && node.hitches >= 0) {
+		return Math.floor(node.hitches);
+	}
+	return fallback;
+}
+
+function resolveNumericKeepsExtra(node: any, fallback = 0): number {
+	if (node && typeof node.keepsExtra === 'number' && Number.isFinite(node.keepsExtra) && node.keepsExtra > 0) {
+		return Math.floor(node.keepsExtra);
+	}
+	return fallback;
+}
+
+export function flattenCharacterTraits(character: any): FlattenedTraitSuggestion[] {
+	if (!character || !Array.isArray(character.traitSets)) return [];
+	const results: FlattenedTraitSuggestion[] = [];
+
+	for (let sIdx = 0; sIdx < character.traitSets.length; sIdx++) {
+		const ts = character.traitSets[sIdx];
+		if (!ts) continue;
+		const styleLayout = ts.view?.style?.layout;
+		if (ts.id === 'name' || styleLayout === 'identity' || styleLayout === 'name') continue;
+
+		const setKey = ts.id || `set-${sIdx}`;
+		const setNoun = String(ts.noun || '').trim();
+		const isDistinctionSet = setNoun.toLowerCase() === 'distinction';
+		const setHitches = resolveNumericHitches(ts, 1);
+		const setKeepsExtra = resolveNumericKeepsExtra(ts, 0);
+
+		const setDice = extractValidDice(ts.rating);
+		if (setDice.length > 0) {
+			const setName = String(ts.name || setNoun || `Set ${sIdx + 1}`).trim();
+			const setDesc = String(ts.description || '').trim();
+			if (setDice.length > 1) {
+				results.push({
+					key: `${setKey}-single`,
+					name: setName,
+					noun: setNoun,
+					description: setDesc,
+					dice: [setDice[0]],
+					notation: `1d${setDice[0]}`,
+					canHinder: false,
+					hitches: setHitches,
+					keepsExtra: setKeepsExtra,
+				});
+				results.push({
+					key: `${setKey}-pool`,
+					name: setName,
+					noun: setNoun,
+					description: setDesc,
+					dice: [...setDice],
+					notation: formatDiceNotation(setDice),
+					canHinder: false,
+					hitches: setHitches,
+					keepsExtra: setKeepsExtra,
+				});
+			} else {
+				results.push({
+					key: `${setKey}-set`,
+					name: setName,
+					noun: setNoun,
+					description: setDesc,
+					dice: [...setDice],
+					notation: formatDiceNotation(setDice),
+					canHinder: false,
+					hitches: setHitches,
+					keepsExtra: setKeepsExtra,
+				});
+			}
+		}
+
+		const traits = Array.isArray(ts.traits) ? ts.traits : [];
+		for (let tIdx = 0; tIdx < traits.length; tIdx++) {
+			const tr = traits[tIdx];
+			if (!tr || tr.spent === true || tr.id === 'plotPoints') continue;
+
+			const trDice = extractValidDice(tr.rating);
+			const children = Array.isArray(tr.traits) ? tr.traits : [];
+			const hasHinderChild = children.some(
+				(c: any) =>
+					String(c?.name || '')
+						.trim()
+						.toLowerCase() === 'hinder',
+			);
+			const canHinder = isDistinctionSet || hasHinderChild;
+			const trHitches = resolveNumericHitches(tr, setHitches);
+			const trKeepsExtra = resolveNumericKeepsExtra(tr, setKeepsExtra);
+
+			if (trDice.length > 0 && tr.name) {
+				results.push({
+					key: `${setKey}-t-${tr.id || tIdx}`,
+					name: String(tr.name).trim(),
+					noun: setNoun,
+					description: String(tr.description || '').trim(),
+					dice: trDice,
+					notation: formatDiceNotation(trDice),
+					canHinder,
+					hitches: trHitches,
+					keepsExtra: trKeepsExtra,
+				});
+			}
+
+			for (let subIdx = 0; subIdx < children.length; subIdx++) {
+				const sub = children[subIdx];
+				if (!sub || sub.spent === true) continue;
+				const subName = String(sub.name || '').trim();
+				if (!subName || subName.toLowerCase() === 'hinder' || sub.type === 'sfx') continue;
+				const subDice = extractValidDice(sub.rating);
+				if (subDice.length === 0) continue;
+				results.push({
+					key: `${setKey}-t-${tr.id || tIdx}-sub-${sub.id || subIdx}`,
+					name: subName,
+					noun: setNoun,
+					description: String(sub.description || '').trim(),
+					dice: subDice,
+					notation: formatDiceNotation(subDice),
+					canHinder: false,
+					hitches: resolveNumericHitches(sub, trHitches),
+					keepsExtra: resolveNumericKeepsExtra(sub, trKeepsExtra),
+				});
+			}
+		}
+	}
+
+	return results;
+}
+
 export class DicePool {
 	dice: (Die | null)[];
 	items: DiceItem[];
+	wordBank: WordBankItem[];
 
 	constructor(incoming_dice: unknown = []) {
 		this.dice = [null, null, null, null, null];
 		this.items = []; // List of individual staged dice with id and source
+		this.wordBank = [];
 		if (Array.isArray(incoming_dice) && incoming_dice.length > 0) {
 			this.add(incoming_dice);
 		}
 	}
 
-	add(dice: unknown): void {
+	addWord(label: string, kind: WordBankKind = 'trait'): WordBankItem | null {
+		const cleaned = cleanWordBankLabel(label);
+		if (!cleaned || IGNORED_WORD_BANK_LABELS.has(cleaned.toLowerCase())) return null;
+		const entry: WordBankItem = { id: uuid(), label: cleaned, kind };
+		this.wordBank.push(entry);
+		return entry;
+	}
+
+	removeWord(idOrIndex: string | number): WordBankItem | null {
+		const idx = typeof idOrIndex === 'number' ? idOrIndex : this.wordBank.findIndex((w) => w.id === idOrIndex);
+		if (idx >= 0 && idx < this.wordBank.length) {
+			return this.wordBank.splice(idx, 1)[0];
+		}
+		return null;
+	}
+
+	add(dice: unknown, options: AddPoolOptions = {}): void {
 		const list = Array.isArray(dice) ? dice : [dice];
+		const seenWords = new Map<string, WordBankKind>();
+
 		for (const d of list) {
 			let dieObj: Die | undefined;
 			const props: Record<string, unknown> = d && typeof d === 'object' ? (d as Record<string, unknown>) : {};
@@ -128,12 +388,29 @@ export class DicePool {
 					this.dice[index] = new Die(null, 'D' + dieObj.size, dieObj.size, dieObj.qty, [], dieObj.source);
 				}
 
+				const isScale = Boolean(props.isScale || (dieObj.source && dieObj.source.toLowerCase() === 'scale'));
+				const ppDelta = typeof props.ppDelta === 'number' ? props.ppDelta : 0;
+
+				if (!options.skipWordBank && dieObj.source) {
+					const rawSource = String(dieObj.source).trim();
+					const isHinder = ppDelta > 0 || /\(hinder\)/i.test(rawSource);
+					const clean = cleanWordBankLabel(rawSource.replace(/\s*\(hinder\)\s*/i, isHinder ? ' (Hinder)' : ''));
+					if (clean && !IGNORED_WORD_BANK_LABELS.has(clean.toLowerCase()) && !seenWords.has(clean)) {
+						const inferredKind: WordBankKind = isHinder
+							? 'hinder'
+							: isScale || clean.toLowerCase() === 'scale'
+								? 'scale'
+								: options.wordKind || 'trait';
+						seenWords.set(clean, inferredKind);
+					}
+				}
+
 				for (let i = 0; i < dieObj.qty; i++) {
 					this.items.push({
 						id: uuid(),
 						size: dieObj.size,
 						source: dieObj.source || '',
-						isScale: Boolean(props.isScale || (dieObj.source && dieObj.source.toLowerCase() === 'scale')),
+						isScale,
 						hitches:
 							typeof props.hitches === 'number' && Number.isFinite(props.hitches) && (props.hitches as number) >= 0
 								? Math.floor(props.hitches as number)
@@ -144,12 +421,54 @@ export class DicePool {
 							(props.keepsExtra as number) > 0
 								? Math.floor(props.keepsExtra as number)
 								: 0,
-						ppDelta: typeof props.ppDelta === 'number' ? props.ppDelta : 0,
+						ppDelta,
 						ppCommitted: Boolean(props.ppCommitted),
 					});
 				}
 			}
 		}
+
+		for (const [label, kind] of seenWords.entries()) {
+			this.addWord(label, kind);
+		}
+	}
+
+	stepDownAt(index: number): boolean {
+		const item = this.items[index];
+		if (!item) return false;
+		const currentIdx = DIE_SIZES.indexOf(item.size);
+		if (currentIdx > 0) {
+			item.size = DIE_SIZES[currentIdx - 1];
+			this._syncDiceFromItems();
+			return true;
+		}
+		return false;
+	}
+
+	stepUpAt(index: number): boolean {
+		const item = this.items[index];
+		if (!item) return false;
+		const currentIdx = DIE_SIZES.indexOf(item.size);
+		if (currentIdx !== -1 && currentIdx < DIE_SIZES.length - 1) {
+			item.size = DIE_SIZES[currentIdx + 1];
+			this._syncDiceFromItems();
+			return true;
+		}
+		return false;
+	}
+
+	duplicateAt(index: number): DiceItem | null {
+		const item = this.items[index];
+		if (!item) return null;
+		const clone: DiceItem = {
+			...item,
+			id: uuid(),
+			ppDelta: 0,
+			ppCommitted: true,
+		};
+		this.items.splice(index + 1, 0, clone);
+		this._syncDiceFromItems();
+		return clone;
 	}
 
 	removeAt(index: number): DiceItem | null {
@@ -172,6 +491,7 @@ export class DicePool {
 	clear(): void {
 		this.dice = [null, null, null, null, null];
 		this.items = [];
+		this.wordBank = [];
 	}
 
 	_syncDiceFromItems(): void {
@@ -357,4 +677,6 @@ export const dicePool = {
 	Die: Die,
 	DicePool: DicePool,
 	DIE_SIZES: DIE_SIZES,
+	parseTraitShorthand: parseTraitShorthand,
+	flattenCharacterTraits: flattenCharacterTraits,
 };

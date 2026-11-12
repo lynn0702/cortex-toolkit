@@ -1,6 +1,15 @@
 // dice-pool (dice model) regression tests.
 // Usage: node scripts/dice-pool-tests.js  (exit 1 on failure)
-const { Die, DicePool, DEFAULT_D4, DIE_SIZES } = require('../js/dice-pool.ts');
+const fs = require('fs');
+const path = require('path');
+const {
+	Die,
+	DicePool,
+	DEFAULT_D4,
+	DIE_SIZES,
+	parseTraitShorthand,
+	flattenCharacterTraits,
+} = require('../js/dice-pool.ts');
 
 let pass = 0,
 	fail = 0;
@@ -89,6 +98,91 @@ function ok(cond, name, extra) {
 		'ppDelta and ppCommitted staged',
 		p.items[0],
 	);
+}
+
+// ---- shorthand parser
+{
+	const s1 = parseTraitShorthand('Strength d6');
+	ok(s1.label === 'Strength' && s1.dice?.count === 1 && s1.dice?.size === 6, 'shorthand Strength d6', s1);
+
+	const s2 = parseTraitShorthand('Reinforcements 2d8');
+	ok(s2.label === 'Reinforcements' && s2.dice?.count === 2 && s2.dice?.size === 8, 'shorthand Reinforcements 2d8', s2);
+
+	const s3 = parseTraitShorthand('High Ground');
+	ok(s3.label === 'High Ground' && s3.dice === null, 'shorthand High Ground word-only', s3);
+
+	const s4 = parseTraitShorthand('2d8');
+	ok(s4.label === '' && s4.dice?.count === 2 && s4.dice?.size === 8, 'shorthand bare 2d8', s4);
+
+	const s5 = parseTraitShorthand('The Architect (3d10)');
+	ok(
+		s5.label === 'The Architect' && s5.dice?.count === 3 && s5.dice?.size === 10,
+		'shorthand The Architect (3d10)',
+		s5,
+	);
+}
+
+// ---- Dreamer flattening
+{
+	const dreamerPath = path.resolve(__dirname, '../data/templates/Dreamer_Architect.curio.json');
+	const dreamer = JSON.parse(fs.readFileSync(dreamerPath, 'utf8'));
+	const flat = flattenCharacterTraits(dreamer);
+	const bossSingle = flat.find((t) => t.name === 'The Architect' && t.dice.length === 1);
+	const bossPool = flat.find((t) => t.name === 'The Architect' && t.dice.length === 3);
+	ok(bossSingle && bossSingle.dice[0] === 10 && bossSingle.notation === '1d10', 'Dreamer boss 1d10', bossSingle);
+	ok(
+		bossPool && bossPool.dice.every((d) => d === 10) && bossPool.notation === '3d10',
+		'Dreamer boss 3d10 pool',
+		bossPool,
+	);
+
+	const distinctions = flat.filter((t) => t.noun.toLowerCase() === 'distinction');
+	ok(
+		distinctions.length >= 2 && distinctions.every((t) => t.canHinder === true),
+		'Dreamer Distinctions canHinder',
+		distinctions.map((d) => ({ name: d.name, canHinder: d.canHinder })),
+	);
+
+	const dataVal = flat.find((t) => t.name === 'Data');
+	const designVal = flat.find((t) => t.name === 'Design');
+	const serviceVal = flat.find((t) => t.name === 'Service');
+	ok(
+		Boolean(dataVal?.description) && Boolean(designVal?.description) && Boolean(serviceVal?.description),
+		'Dreamer Values carry descriptions',
+		{ data: dataVal?.description, design: designVal?.description, service: serviceVal?.description },
+	);
+}
+
+// ---- decoupled wordBank + die index operations
+{
+	const p = new DicePool();
+	p.add([{ size: 8, qty: 1, source: 'Data' }]);
+	ok(p.wordBank.length === 1 && p.wordBank[0].label === 'Data', 'add pushes to wordBank', p.wordBank);
+
+	ok(p.stepUpAt(0) && p.items[0].size === 10, 'stepUpAt steps 8 -> 10', p.items[0]);
+	ok(p.stepDownAt(0) && p.items[0].size === 8, 'stepDownAt steps 10 -> 8', p.items[0]);
+	const dup = p.duplicateAt(0);
+	ok(dup && p.items.length === 2 && p.wordBank.length === 1, 'duplicateAt leaves wordBank intact', {
+		items: p.items.length,
+		words: p.wordBank.length,
+	});
+	p.removeAt(1);
+	p.removeAt(0);
+	ok(p.items.length === 0 && p.wordBank.length === 1, 'removeAt leaves wordBank intact', {
+		items: p.items.length,
+		words: p.wordBank.length,
+	});
+
+	p.add([{ size: 6, qty: 1, source: 'Design' }]);
+	const removedWord = p.removeWord(0);
+	ok(
+		removedWord?.label === 'Data' && p.wordBank.length === 1 && p.items.length === 1,
+		'removeWord leaves dice items intact',
+		{ wordBank: p.wordBank, items: p.items },
+	);
+
+	p.clear();
+	ok(p.items.length === 0 && p.wordBank.length === 0, 'clear empties both items and wordBank');
 }
 
 // ---- constants

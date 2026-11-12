@@ -17,6 +17,8 @@ const props = withDefaults(
 		position?: 'left' | 'right';
 		panelTab?: 'properties' | 'roller' | 'json';
 		dicePool?: any;
+		oppositionPool?: any;
+		activePoolSide?: 'player' | 'opposition';
 		viewY?: number | null;
 	}>(),
 	{
@@ -43,7 +45,9 @@ const emit = defineEmits<{
 	(e: 'addDie', die: any): void;
 	(e: 'removeDie', index: number): void;
 	(e: 'clearPool'): void;
+	(e: 'clearOppositionPool'): void;
 	(e: 'settlePP', delta: number): void;
+	(e: 'update:activePoolSide', side: 'player' | 'opposition'): void;
 }>();
 
 const editingType = computed(() => {
@@ -243,19 +247,24 @@ const crumbs = computed<Crumb[]>(() => {
 	return list;
 });
 
-const diceCount = computed(() => props.dicePool?.items?.length || 0);
+const diceCount = computed(() => (props.dicePool?.items?.length || 0) + (props.oppositionPool?.items?.length || 0));
 
 const diceRollerRef = ref<any>(null);
 defineExpose({
 	diceRoller: diceRollerRef,
-	roll: () => diceRollerRef.value?.roll(),
+	roll: (opts?: { forceDialog?: boolean }) => diceRollerRef.value?.roll(opts),
 	clearPool: () => diceRollerRef.value?.clearPool(),
+	openOutcomeDialog: () => diceRollerRef.value?.openOutcomeDialog(),
 });
 </script>
 
 <template>
 	<!-- DOCKED STUDIO SIDE PANEL -->
-	<aside ref="panelEl" class="studio-panel" :class="['position-' + position, { 'panel-collapsed': !isOpen }]">
+	<aside
+		ref="panelEl"
+		class="studio-panel"
+		:class="['position-' + position, { 'panel-collapsed': !isOpen, 'is-play': submode === 'play' }]"
+	>
 		<!-- TOOLBAR: SHEET TABS OR CRUMBS ON THE LEFT, ACTIONS ON THE RIGHT -->
 		<div class="studio-panel-header">
 			<div class="studio-toolbar-left">
@@ -427,13 +436,18 @@ defineExpose({
 					ref="diceRollerRef"
 					:open="true"
 					:pool="dicePool"
+					:oppositionPool="oppositionPool"
+					:activePoolSide="activePoolSide"
+					:character="character"
 					:position="position"
 					@togglePosition="emit('togglePosition')"
 					@close="emit('update:isOpen', false)"
 					@addDie="emit('addDie', $event)"
 					@removeDie="emit('removeDie', $event)"
 					@clearPool="emit('clearPool')"
+					@clearOppositionPool="emit('clearOppositionPool')"
 					@settlePP="emit('settlePP', $event)"
+					@update:activePoolSide="emit('update:activePoolSide', $event)"
 				/>
 			</div>
 

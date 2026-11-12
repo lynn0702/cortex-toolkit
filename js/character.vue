@@ -486,7 +486,7 @@ interface MobilePillarColumn {
 }
 
 const activeMobilePillarKey = ref<string>('identity');
-const jumpStripRef = ref<HTMLElement | null>(null);
+const jumpStripRef = ref<HTMLElement | HTMLElement[] | null>(null);
 let carouselObserver: IntersectionObserver | null = null;
 let mediaQuery: MediaQueryList | null = null;
 let handleMediaChange: (() => void) | null = null;
@@ -609,8 +609,9 @@ function columnStackItems(col: MobilePillarColumn): { index: number; label: stri
 }
 
 function centerActiveJumpPill(pillarKey: string) {
-	if (!jumpStripRef.value) return;
-	const pill = jumpStripRef.value.querySelector(`[data-pillar-pill="${pillarKey}"]`) as HTMLElement | null;
+	const stripEl = Array.isArray(jumpStripRef.value) ? jumpStripRef.value[0] : jumpStripRef.value;
+	if (!stripEl || typeof stripEl.querySelector !== 'function') return;
+	const pill = stripEl.querySelector(`[data-pillar-pill="${pillarKey}"]`) as HTMLElement | null;
 	if (pill && typeof pill.scrollIntoView === 'function') {
 		pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 	}
