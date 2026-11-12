@@ -153,7 +153,7 @@
 
 		width: 100%;
 
-		max-height: 75vh;
+		max-height: 75dvh;
 
 		border-radius: 16px 16px 0 0;
 
@@ -597,4 +597,10 @@
 
 .trait-set.is-selected {
 	box-shadow: 0 0 0 2px var(--color-interactive, #0284c7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.studio-panel {
+		transition: none;
+	}
 }

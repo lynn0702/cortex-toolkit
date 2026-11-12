@@ -153,9 +153,15 @@ body {
 
 * {
 	box-sizing: border-box;
-	break-inside: avoid-column;
-	break-before: avoid-column;
-	break-after: avoid-column;
+}
+
+@media print {
+	.page,
+	.page * {
+		break-inside: avoid-column;
+		break-before: avoid-column;
+		break-after: avoid-column;
+	}
 }
 
 button:focus-visible,

@@ -1846,28 +1846,32 @@ export function useTraitSetEditor(props: TraitSetEditorProps, emit: any) {
 		nextTick(() => {
 			if (!rootEl.value) return;
 
-			rootEl.value.style.setProperty('--editor-shift-y', '0px');
-			rootEl.value.style.setProperty('--arrow-shift-y', '0px');
+			checkScrollPosition();
 
-			let rect = rootEl.value.getBoundingClientRect();
-			let pad = 16;
+			const applied = parseFloat(getComputedStyle(rootEl.value).getPropertyValue('--editor-shift-y') || '0');
+			const currentShift = Number.isFinite(applied) ? applied : 0;
+			const rect = rootEl.value.getBoundingClientRect();
+			const naturalTop = rect.top - currentShift;
+			const naturalBottom = rect.bottom - currentShift;
+			const pad = 16;
 			let shiftY = 0;
 
-			if (rect.top < pad) {
-				shiftY = pad - rect.top;
-			} else if (rect.bottom > windowHeight - pad) {
-				shiftY = windowHeight - pad - rect.bottom;
+			if (naturalTop < pad) {
+				shiftY = pad - naturalTop;
+			} else if (naturalBottom > windowHeight - pad) {
+				shiftY = windowHeight - pad - naturalBottom;
 			}
 
 			if (Math.abs(shiftY) > 0.5) {
 				rootEl.value.style.setProperty('--editor-shift-y', `${shiftY}px`);
-				let arrowNaturalY = anchorPosition.value === 'bottom' ? rect.height - 16 : 16;
-				let targetArrowY = arrowNaturalY - shiftY;
-				let clampedArrowY = Math.max(16, Math.min(rect.height - 16, targetArrowY));
-				let arrowShift = clampedArrowY - arrowNaturalY;
-				rootEl.value.style.setProperty('--arrow-shift-y', `${arrowShift}px`);
+				const arrowNaturalY = anchorPosition.value === 'bottom' ? rect.height - 16 : 16;
+				const targetArrowY = arrowNaturalY - shiftY;
+				const clampedArrowY = Math.max(16, Math.min(rect.height - 16, targetArrowY));
+				rootEl.value.style.setProperty('--arrow-shift-y', `${clampedArrowY - arrowNaturalY}px`);
+			} else {
+				rootEl.value.style.setProperty('--editor-shift-y', '0px');
+				rootEl.value.style.setProperty('--arrow-shift-y', '0px');
 			}
-			checkScrollPosition();
 		});
 	}
 

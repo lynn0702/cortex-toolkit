@@ -286,3 +286,12 @@
 	row-gap: 1rem;
 	padding: 1rem;
 } */
+
+@media (prefers-reduced-motion: reduce) {
+	.footer-colophon a {
+		transition: none;
+		&:hover {
+			transform: none;
+		}
+	}
+}

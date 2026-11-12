@@ -456,7 +456,7 @@
 	}
 
 	.session-modal-list {
-		max-height: 50vh;
+		max-height: 50dvh;
 		overflow-y: auto;
 		display: flex;
 		flex-direction: column;

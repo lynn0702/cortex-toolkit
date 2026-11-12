@@ -51,6 +51,18 @@
 	}
 }
 
+@media (prefers-reduced-motion: reduce) {
+	.modal.v-enter-active,
+	.modal.v-leave-active {
+		transition: opacity 0.2s ease;
+	}
+
+	.modal.v-enter-from,
+	.modal.v-leave-to {
+		transform: translateX(-50%);
+	}
+}
+
 .modal-inner {
 	padding: 3rem 1rem 2rem;
 	text-align: center;

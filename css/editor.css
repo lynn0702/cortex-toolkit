@@ -24,6 +24,18 @@
 		pointer-events: none;
 	}
 
+	@media (prefers-reduced-motion: reduce) {
+		&.editor-enter-active,
+		&.editor-leave-active {
+			transition: opacity 0.2s ease;
+		}
+
+		&.editor-enter-from,
+		&.editor-leave-to {
+			transform: none;
+		}
+	}
+
 	&.editor-character {
 		top: calc(100% + 1rem);
 		transform-origin: top left;
@@ -2313,7 +2325,7 @@
 	border-radius: 10px;
 	width: 100%;
 	max-width: 1120px;
-	max-height: 92vh;
+	max-height: 92dvh;
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
