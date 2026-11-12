@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, reactive, ref, toRaw, watch } from 'vue';
 import { characterCurioFunctions } from './functions.ts';
 import { characterCurioStorage } from './storage.ts';
 import { dicePool as dicePoolModel } from './dice-pool.ts';
@@ -129,7 +129,7 @@ const character = computed(() => {
 });
 const canPlay = computed(() => Boolean(character.value || openCharacterIDs.value.length));
 
-const { canUndo, canRedo, initHistory, commitHistorySnapshot, validateEditing, undo, redo } = useHistory({
+const { canUndo, canRedo, initHistory, commitHistorySnapshot, markDirty, validateEditing, undo, redo } = useHistory({
 	mode,
 	character,
 	characters,
@@ -193,6 +193,31 @@ watch(characterID, () => {
 	setPageTitle();
 });
 
+let deferredSaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function cancelDeferredSave() {
+	if (deferredSaveTimer !== null) {
+		clearTimeout(deferredSaveTimer);
+		deferredSaveTimer = null;
+	}
+}
+
+function flushDeferredSave() {
+	if (deferredSaveTimer === null) return Promise.resolve();
+	cancelDeferredSave();
+	return saveLocalData();
+}
+
+function handleVisibilityChange() {
+	if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+		flushDeferredSave();
+	}
+}
+
+function handleBeforeUnload() {
+	flushDeferredSave();
+}
+
 onMounted(async () => {
 	setViewY();
 	await bootFromStorage();
@@ -225,6 +250,22 @@ onMounted(async () => {
 		} else if ((mql as any).addListener) {
 			(mql as any).addListener(handler);
 		}
+	}
+	if (typeof document !== 'undefined') {
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+	}
+	if (typeof window !== 'undefined') {
+		window.addEventListener('beforeunload', handleBeforeUnload);
+	}
+});
+
+onUnmounted(() => {
+	cancelDeferredSave();
+	if (typeof document !== 'undefined') {
+		document.removeEventListener('visibilitychange', handleVisibilityChange);
+	}
+	if (typeof window !== 'undefined') {
+		window.removeEventListener('beforeunload', handleBeforeUnload);
 	}
 });
 
@@ -1290,10 +1331,17 @@ function updateCharacter(characterData: any) {
 	if (submode.value === 'play') {
 		return Promise.resolve();
 	}
-	const saved = saveLocalData();
-	if (!editing.value || !editing.value.length) {
-		commitHistorySnapshot();
+	markDirty();
+	if (editing.value && editing.value.length > 0) {
+		cancelDeferredSave();
+		deferredSaveTimer = setTimeout(() => {
+			deferredSaveTimer = null;
+			saveLocalData();
+		}, 120);
+		return Promise.resolve();
 	}
+	const saved = saveLocalData();
+	commitHistorySnapshot();
 	return saved;
 }
 
@@ -1409,6 +1457,7 @@ function handleMainClick(event: Event) {
 }
 
 function clearSelected() {
+	flushDeferredSave();
 	selectElement([]);
 }
 
@@ -1598,9 +1647,13 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 		lastSavedCharacters = snapshot;
 		lastSavedSession = sessionJson;
 		if (submode.value !== 'play' || options?.allowSessionCharacterSave) {
+			const changedIds = new Set(upsert.filter((u: any) => u && u.id != null).map((u: any) => String(u.id)));
 			for (const c of characters.value) {
 				if (c && c.id != null) {
-					baselineCharacters.set(String(c.id), JSON.stringify(toRaw(c)));
+					const id = String(c.id);
+					if (changedIds.has(id) || !baselineCharacters.has(id)) {
+						baselineCharacters.set(id, JSON.stringify(toRaw(c)));
+					}
 				}
 			}
 		}
@@ -1620,6 +1673,7 @@ async function persist(options?: { allowSessionCharacterSave?: boolean }) {
 }
 
 function saveLocalData() {
+	cancelDeferredSave();
 	if (submode.value === 'play') {
 		showPlaySaveConfirm.value = true;
 		return Promise.resolve();
@@ -1988,7 +2042,7 @@ defineExpose({
 					</template>
 					<template v-else>
 						<span class="pill-empty-label"
-							><i class="fas fa-dice-d20"></i> 0 Dice Staged — Tap traits to build pool</span
+							><i class="fas fa-dice" aria-hidden="true"></i> 0 Dice Staged — Tap traits to build pool</span
 						>
 					</template>
 				</div>
@@ -2008,7 +2062,7 @@ defineExpose({
 							@click.stop="toggleMobileRollerDrawer"
 							title="Open dice roller"
 						>
-							<i class="fas fa-dice-d20"></i> Roller
+							<i class="fas fa-dice" aria-hidden="true"></i> Roller
 						</button>
 					</template>
 				</div>

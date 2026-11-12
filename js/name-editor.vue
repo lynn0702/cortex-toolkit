@@ -725,7 +725,9 @@ function updateCharacter(character: any) {
 		<div class="editor-arrow"></div>
 
 		<div class="editor-controls">
-			<button @click.stop="selectElement([])" title="Close"><i class="fas fa-times"></i></button>
+			<button type="button" aria-label="Close" @click.stop="selectElement([])" title="Close">
+				<i class="fas fa-times" aria-hidden="true"></i>
+			</button>
 		</div>
 
 		<div class="editor-inner">
@@ -740,9 +742,9 @@ function updateCharacter(character: any) {
 							</div>
 							<div class="editor-button-container">
 								<div class="editor-button-container-inner">
-									<div class="editor-button" @click.stop="openNameSetEditor()">
-										<span><i class="fas fa-sliders"></i> Configure Name Set / Image</span>
-									</div>
+									<button type="button" class="editor-button" @click.stop="openNameSetEditor()">
+										<span><i class="fas fa-sliders" aria-hidden="true"></i> Configure Name Set / Image</span>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -987,12 +989,12 @@ function updateCharacter(character: any) {
 							</div>
 							<div class="editor-button-container">
 								<div class="editor-button-container-inner">
-									<div class="editor-button" @click.stop="emit('saveSheetTemplate')">
-										<span><i class="fas fa-bookmark"></i> Save Layout as Template</span>
-									</div>
-									<div class="editor-button" @click.stop="emit('exportSheetTemplate')">
-										<span><i class="fas fa-download"></i> Export Layout File</span>
-									</div>
+									<button type="button" class="editor-button" @click.stop="emit('saveSheetTemplate')">
+										<span><i class="fas fa-bookmark" aria-hidden="true"></i> Save Layout as Template</span>
+									</button>
+									<button type="button" class="editor-button" @click.stop="emit('exportSheetTemplate')">
+										<span><i class="fas fa-download" aria-hidden="true"></i> Export Layout File</span>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -1017,16 +1019,20 @@ function updateCharacter(character: any) {
 
 								<div class="editor-button-container">
 									<div class="editor-button-container-inner">
-										<div class="editor-button" @click.prevent="uploadWatermarkStart">
-											<span><i class="fas fa-upload"></i> {{ watermarkURL ? 'Change' : 'Upload' }} Watermark</span>
-										</div>
-										<div
+										<button type="button" class="editor-button" @click.prevent="uploadWatermarkStart">
+											<span>
+												<i class="fas fa-upload" aria-hidden="true"></i>
+												{{ watermarkURL ? 'Change' : 'Upload' }} Watermark
+											</span>
+										</button>
+										<button
+											type="button"
 											class="editor-button editor-btn-danger-mini"
 											v-if="watermarkURL"
 											@click.prevent="removeWatermark"
 										>
-											<span><i class="fas fa-trash-alt"></i> Remove</span>
-										</div>
+											<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Remove</span>
+										</button>
 									</div>
 								</div>
 

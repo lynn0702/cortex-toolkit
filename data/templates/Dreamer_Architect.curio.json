@@ -83,8 +83,7 @@
 				},
 				"ratingDisplay": "rating",
 				"ringNoun": "Boss Die",
-				"borderless": true,
-				"hideRingNames": true
+				"borderless": true
 			},
 			"id": "the-architect",
 			"description": "",

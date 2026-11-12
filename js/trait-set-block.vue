@@ -161,7 +161,7 @@ watch(rootEl, (el) => {
 			<img class="sr-only" :src="effectiveImageUrl" alt="" />
 		</div>
 
-		<div class="trait-set-header" v-if="hasHeader">
+		<div class="trait-set-header" v-if="hasHeader && headerMode !== 'bottom'">
 			<transition appear>
 				<div
 					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
@@ -204,7 +204,7 @@ watch(rootEl, (el) => {
 						aria-label="Remove card from session"
 						@click.stop="removeTraitSet(s)"
 					>
-						<i class="fas fa-times"></i>
+						<i class="fas fa-times" aria-hidden="true"></i>
 					</button>
 				</div>
 			</transition>
@@ -265,12 +265,12 @@ watch(rootEl, (el) => {
 			<div class="ring-actions" v-if="showRingActions">
 				<div class="preview-button-container">
 					<div class="preview-button-container-inner">
-						<div class="preview-button" @click.stop="addTrait(s)">
+						<button type="button" class="preview-button" @click.stop="addTrait(s)">
 							<span
-								><i class="fas fa-plus"></i>
+								><i class="fas fa-plus" aria-hidden="true"></i>
 								{{ (getView(traitSet)?.ringNoun as string) || traitSet?.noun || 'Trait' }}</span
 							>
-						</div>
+						</button>
 					</div>
 				</div>
 			</div>
@@ -282,6 +282,55 @@ watch(rootEl, (el) => {
 					<span class="sfx-description" v-html="renderText(sfx.description)"></span>
 				</li>
 			</ul>
+		</div>
+
+		<div class="trait-set-header" v-if="hasHeader && headerMode === 'bottom'">
+			<transition appear>
+				<div
+					:class="{ 'trait-set-header-inner': true, selected: isSelected(['traitSet', s]) }"
+					:role="submode === 'edit' ? 'button' : undefined"
+					:tabindex="submode === 'edit' ? 0 : undefined"
+					:aria-label="submode === 'edit' ? 'Edit ' + (traitSet.name || 'trait set') : undefined"
+					@keydown.enter.prevent="submode === 'edit' ? selectElement(['traitSet', s]) : null"
+					@keydown.space.prevent="submode === 'edit' ? selectElement(['traitSet', s]) : null"
+					@click.stop="submode === 'edit' ? selectElement(['traitSet', s]) : null"
+				>
+					<div class="trait-set-header-name">{{ traitSet.name }}</div>
+					<span
+						v-if="traitSet.rating && getRating(traitSet)?.type === 'Die'"
+						class="trait-set-header-rating diecon-wrapper"
+						v-html="renderDieValue((getRating(traitSet)?.value?.[0] as number) || 8, true)"
+						role="button"
+						tabindex="0"
+						:aria-label="`Stage d${(getRating(traitSet)?.value?.[0] as number) || 8} ${traitSet.name}`"
+						@click.stop="
+							submode === 'play'
+								? emit('addDieToRoller', {
+										size: (getRating(traitSet)?.value?.[0] as number) || 8,
+										qty: 1,
+										source: traitSet.name,
+									})
+								: null
+						"
+					></span>
+					<div
+						class="trait-set-header-counter"
+						v-if="headerTop && traitSet.traits?.some((t: any) => getRating(t)?.type === 'Counter')"
+					>
+						{{ getCounterLabel(traitSet) }}
+					</div>
+					<button
+						v-if="submode === 'play' && canRemoveSetInPlay"
+						type="button"
+						class="trait-set-play-remove-btn"
+						title="Remove card from session"
+						aria-label="Remove card from session"
+						@click.stop="removeTraitSet(s)"
+					>
+						<i class="fas fa-times" aria-hidden="true"></i>
+					</button>
+				</div>
+			</transition>
 		</div>
 	</section>
 </template>

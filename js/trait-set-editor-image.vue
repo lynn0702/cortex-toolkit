@@ -40,17 +40,21 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 
 		<div class="editor-button-container mb-md">
 			<div class="editor-button-container-inner">
-				<div class="editor-button" @click.prevent="uploadImageStart">
-					<span><i class="fas fa-upload"></i> {{ imageURL ? 'Replace' : 'Upload' }} Image</span>
-				</div>
-				<div
+				<button type="button" class="editor-button" @click.prevent="uploadImageStart">
+					<span>
+						<i class="fas fa-upload" aria-hidden="true"></i>
+						{{ imageURL ? 'Replace' : 'Upload' }} Image
+					</span>
+				</button>
+				<button
+					type="button"
 					class="editor-button editor-btn-danger-mini"
 					v-if="imageURL"
 					@click.prevent="removeImage"
 					title="Remove image"
 				>
-					<span><i class="fas fa-trash-alt"></i> Remove</span>
-				</div>
+					<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Remove</span>
+				</button>
 			</div>
 		</div>
 
@@ -82,15 +86,25 @@ const showImageEditor = computed(() => styleBody.value === 'image' || isName.val
 	<div class="editor-field" v-if="showImageEditor">
 		<label>Alignment / Focus</label>
 		<div class="editor-portrait-alignment">
-			<div @click.stop="imageAlignment = 'top-left'" :class="{ active: imageAlignment === 'top-left' }"></div>
-			<div @click.stop="imageAlignment = 'top-center'" :class="{ active: imageAlignment === 'top-center' }"></div>
-			<div @click.stop="imageAlignment = 'top-right'" :class="{ active: imageAlignment === 'top-right' }"></div>
-			<div @click.stop="imageAlignment = 'center-left'" :class="{ active: imageAlignment === 'center-left' }"></div>
-			<div @click.stop="imageAlignment = 'center'" :class="{ active: imageAlignment === 'center' }"></div>
-			<div @click.stop="imageAlignment = 'center-right'" :class="{ active: imageAlignment === 'center-right' }"></div>
-			<div @click.stop="imageAlignment = 'bottom-left'" :class="{ active: imageAlignment === 'bottom-left' }"></div>
-			<div @click.stop="imageAlignment = 'bottom-center'" :class="{ active: imageAlignment === 'bottom-center' }"></div>
-			<div @click.stop="imageAlignment = 'bottom-right'" :class="{ active: imageAlignment === 'bottom-right' }"></div>
+			<button
+				v-for="pos in [
+					'top-left',
+					'top-center',
+					'top-right',
+					'center-left',
+					'center',
+					'center-right',
+					'bottom-left',
+					'bottom-center',
+					'bottom-right',
+				]"
+				:key="pos"
+				type="button"
+				:aria-label="'Align ' + pos.replace('-', ' ')"
+				:aria-pressed="imageAlignment === pos"
+				:class="{ active: imageAlignment === pos }"
+				@click.stop="imageAlignment = pos"
+			></button>
 		</div>
 	</div>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 	<meta charset="UTF-8">
@@ -14,14 +15,15 @@
 			root.setAttribute('data-theme', dark ? 'dark' : 'light');
 			root.classList.toggle('theme-dark', dark);
 			document.querySelector('meta[name="color-scheme"]').content = pref === 'dark' || pref === 'light' ? pref : 'light dark';
-		} catch (e) {}
+		} catch (e) { }
 	</script>
 	<title>Character Curio</title>
 
 	<!-- GOOGLE FONTS -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Open+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500;1,700&family=Alegreya+Sans+SC:wght@400;500;800;900&family=Roboto:wght@400;500;700;900&display=swap">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Open+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500;1,700&family=Alegreya+Sans+SC:wght@400;500;800;900&family=Roboto:wght@400;500;700;900&display=swap">
 
 	<!-- FONT AWESOME -->
 	<style>
@@ -32,6 +34,7 @@
 			font-display: block;
 			src: url('fonts/fa-solid-subset.woff2') format('woff2');
 		}
+
 		@font-face {
 			font-family: 'Font Awesome 6 Free';
 			font-style: normal;
@@ -39,6 +42,7 @@
 			font-display: block;
 			src: url('fonts/fa-regular-subset.woff2') format('woff2');
 		}
+
 		@font-face {
 			font-family: 'Font Awesome 6 Brands';
 			font-style: normal;
@@ -49,7 +53,7 @@
 	</style>
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="css/app.min.css?v=f0df4da56e">
+	<link rel="stylesheet" href="css/app.min.css?v=715f0600fa">
 
 	<!-- FAVICON -->
 	<link rel="icon" type="image/png" href="images/favicon.ico">
@@ -58,11 +62,13 @@
 	<meta name="msapplication-TileImage" content="images/favicon.ico">
 
 </head>
+
 <body>
 
-<article id="character-curio"></article>
+	<div id="character-curio"></div>
 
-<script src="js/app.min.js?v=11c8a9f351"></script>
+	<script src="js/app.min.js?v=a552d63f26"></script>
 
 </body>
+
 </html>

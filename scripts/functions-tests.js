@@ -222,6 +222,27 @@ const customScale = { view: { style: { body: 'paired-slots' }, subtraitRatingLad
 		geomSvg.includes('<svg') && geomSvg.includes('aria-hidden="true"') && !geomSvg.includes('<text'),
 		'renderDieGeometrySVG outputs pure geometry SVG without inner text',
 	);
+
+	for (const size of [4, 6, 8, 10, 12, 20]) {
+		const svg = F.renderDieconSVG(size, true);
+		ok(
+			svg.includes('<text ') && svg.includes('stroke="none"'),
+			`renderDieconSVG(${size}) sets stroke="none" on numeral`,
+		);
+	}
+
+	const fs = require('node:fs');
+	const path = require('node:path');
+	const charCss = fs.readFileSync(path.join(__dirname, '..', 'css', 'character.css'), 'utf8');
+	ok(
+		/\.trait-set-frame-svg\s*\{[^}]*stroke:\s*var\(--frame-color\)/.test(charCss),
+		'.trait-set-frame-svg applies --frame-color stroke to frame SVG only',
+	);
+	const frameColorBlocks = charCss.match(/\.frame-color-(?:primary|accent|muted|strong|black)\s*\{[^}]*\}/g) || [];
+	ok(
+		frameColorBlocks.length >= 5 && frameColorBlocks.every((block) => !/\bstroke\s*:/.test(block)),
+		'.frame-color-* classes do not declare stroke on container section',
+	);
 }
 
 console.log(`functions-tests: ${pass} passed, ${fail} failed`);

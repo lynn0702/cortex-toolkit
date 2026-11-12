@@ -171,11 +171,12 @@ const {
 				v-if="submode === 'edit' || (submode === 'play' && isPlayMutableSet(traitSet))"
 			>
 				<div class="preview-button-container-inner">
-					<div class="preview-button" @click.stop="addTrait(s)">
+					<button type="button" class="preview-button" @click.stop="addTrait(s)">
 						<span
-							><i class="fas fa-plus"></i> {{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait' }}</span
+							><i class="fas fa-plus" aria-hidden="true"></i>
+							{{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Trait' }}</span
 						>
-					</div>
+					</button>
 				</div>
 			</div>
 		</transition>

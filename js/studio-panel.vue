@@ -137,6 +137,28 @@ function pickSheetTab(tab: SheetTab) {
 	if (props.panelTab !== 'properties') emit('update:panelTab', 'properties');
 }
 
+function onSheetTabKeydown(e: KeyboardEvent, idx: number) {
+	const len = SHEET_TABS.length;
+	let nextIdx = -1;
+	if (e.key === 'ArrowRight') {
+		nextIdx = (idx + 1) % len;
+	} else if (e.key === 'ArrowLeft') {
+		nextIdx = (idx - 1 + len) % len;
+	} else if (e.key === 'Home') {
+		nextIdx = 0;
+	} else if (e.key === 'End') {
+		nextIdx = len - 1;
+	} else {
+		return;
+	}
+	e.preventDefault();
+	const nextTab = SHEET_TABS[nextIdx];
+	pickSheetTab(nextTab.key);
+	nextTick(() => {
+		panelEl.value?.querySelector<HTMLButtonElement>('#studio-tab-' + nextTab.key)?.focus();
+	});
+}
+
 function toggleJson() {
 	emit('update:panelTab', props.panelTab === 'json' ? 'properties' : 'json');
 }
@@ -238,19 +260,28 @@ defineExpose({
 		<div class="studio-panel-header">
 			<div class="studio-toolbar-left">
 				<!-- EDIT, SHEET ROOT: SHEET TABS -->
-				<div v-if="submode !== 'play' && editingType === 'sheet'" class="studio-sheet-tabs" role="tablist">
+				<div
+					v-if="submode !== 'play' && editingType === 'sheet'"
+					class="studio-sheet-tabs"
+					role="tablist"
+					aria-label="Sheet sections"
+				>
 					<button
-						v-for="t in SHEET_TABS"
+						v-for="(t, idx) in SHEET_TABS"
 						:key="t.key"
+						:id="'studio-tab-' + t.key"
 						type="button"
 						role="tab"
 						class="studio-tab-btn"
 						:class="{ active: panelTab === 'properties' && sheetTab === t.key }"
 						:aria-selected="panelTab === 'properties' && sheetTab === t.key"
+						:tabindex="panelTab === 'properties' && sheetTab === t.key ? 0 : -1"
+						aria-controls="studio-panel-body"
 						@click="pickSheetTab(t.key)"
+						@keydown="onSheetTabKeydown($event, idx)"
 						:title="t.label"
 					>
-						<i class="fas" :class="t.icon"></i><span class="studio-tab-text">{{ t.label }}</span>
+						<i class="fas" :class="t.icon" aria-hidden="true"></i><span class="studio-tab-text">{{ t.label }}</span>
 					</button>
 				</div>
 				<!-- INSPECTION: CRUMBS (LINKS IN EDIT, PLAIN TEXT IN PLAY) -->
@@ -275,7 +306,7 @@ defineExpose({
 						@click="emit('update:panelTab', 'properties')"
 						title="Properties"
 					>
-						<i class="fas fa-sliders"></i><span class="studio-tab-label">Properties</span>
+						<i class="fas fa-sliders" aria-hidden="true"></i><span class="studio-tab-label">Properties</span>
 					</button>
 					<button
 						type="button"
@@ -284,7 +315,7 @@ defineExpose({
 						@click="emit('update:panelTab', 'roller')"
 						title="Roller"
 					>
-						<i class="fas fa-dice-d20"></i><span class="studio-tab-label">Roller</span>
+						<i class="fas fa-dice" aria-hidden="true"></i><span class="studio-tab-label">Roller</span>
 						<span class="studio-tab-badge" v-if="diceCount > 0">{{ diceCount }}</span>
 					</button>
 				</template>
@@ -299,24 +330,40 @@ defineExpose({
 					title="Raw JSON Editor"
 					aria-label="Raw JSON Editor"
 				>
-					<i class="fas fa-code"></i>
+					<i class="fas fa-code" aria-hidden="true"></i>
 				</button>
 				<button
 					type="button"
 					class="studio-action-btn studio-action-dock"
 					@click="emit('togglePosition')"
 					:title="position === 'right' ? 'Dock left' : 'Dock right'"
+					:aria-label="position === 'right' ? 'Dock left' : 'Dock right'"
 				>
-					<i class="fas fa-arrows-left-right"></i>
+					<i class="fas fa-arrows-left-right" aria-hidden="true"></i>
 				</button>
-				<button type="button" class="studio-action-btn" @click="emit('update:isOpen', false)" title="Collapse panel">
-					<i :class="position === 'right' ? 'fas fa-angles-right' : 'fas fa-angles-left'"></i>
+				<button
+					type="button"
+					class="studio-action-btn"
+					@click="emit('update:isOpen', false)"
+					title="Collapse panel"
+					aria-label="Collapse panel"
+				>
+					<i :class="position === 'right' ? 'fas fa-angles-right' : 'fas fa-angles-left'" aria-hidden="true"></i>
 				</button>
 			</div>
 		</div>
 
 		<!-- PANEL BODY -->
-		<div class="studio-panel-body">
+		<div
+			id="studio-panel-body"
+			class="studio-panel-body"
+			:role="submode !== 'play' && editingType === 'sheet' && panelTab === 'properties' ? 'tabpanel' : undefined"
+			:aria-labelledby="
+				submode !== 'play' && editingType === 'sheet' && panelTab === 'properties'
+					? 'studio-tab-' + sheetTab
+					: undefined
+			"
+		>
 			<!-- PROPERTIES PANE -->
 			<div v-show="panelTab === 'properties'" class="studio-tab-pane">
 				<template v-if="character">

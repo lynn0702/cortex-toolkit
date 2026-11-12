@@ -20,59 +20,88 @@ const emit = defineEmits<{
 <template>
 	<header class="header">
 		<div class="header-inner">
-			<nav class="nav-mode">
+			<nav class="nav-mode" aria-label="Sheet view">
 				<ul>
-					<li @click.stop="emit('navigate', 'roster', null)" :class="{ active: mode === 'roster' }">
-						<div>
-							<span class="nav-icon"><i class="fas fa-users"></i></span>
-						</div>
+					<li :class="{ active: mode === 'roster' }">
+						<button
+							type="button"
+							class="nav-item-btn"
+							:aria-current="mode === 'roster' ? 'page' : undefined"
+							aria-label="Roster"
+							@click.stop="emit('navigate', 'roster', null)"
+						>
+							<span class="nav-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
+						</button>
+					</li>
+					<li :class="{ active: mode === 'character' && submode === 'edit', disabled: !hasCharacter }">
+						<button
+							type="button"
+							class="nav-item-btn"
+							:disabled="!hasCharacter"
+							:aria-current="mode === 'character' && submode === 'edit' ? 'page' : undefined"
+							aria-label="Create"
+							@click.stop="emit('navigate', 'character', 'edit')"
+						>
+							<span class="nav-icon"><i class="fas fa-pencil" aria-hidden="true"></i></span>
+							<span class="nav-label">Create</span>
+						</button>
 					</li>
 					<li
-						@click.stop="emit('navigate', 'character', 'edit')"
-						:class="{ active: mode === 'character' && submode === 'edit', disabled: !hasCharacter }"
-					>
-						<div>
-							<span class="nav-icon"><i class="fas fa-pencil"></i></span> <span class="nav-label">Create</span>
-						</div>
-					</li>
-					<li
-						@click.stop="emit('navigate', 'character', 'play')"
 						:class="{
 							active: mode === 'character' && submode === 'play',
 							disabled: canPlay !== undefined ? !canPlay : !hasCharacter,
 						}"
 					>
-						<div>
-							<span class="nav-icon"><i class="fas fa-dice"></i></span> <span class="nav-label">Play</span>
-						</div>
+						<button
+							type="button"
+							class="nav-item-btn"
+							:disabled="canPlay !== undefined ? !canPlay : !hasCharacter"
+							:aria-current="mode === 'character' && submode === 'play' ? 'page' : undefined"
+							aria-label="Play"
+							@click.stop="emit('navigate', 'character', 'play')"
+						>
+							<span class="nav-icon"><i class="fas fa-dice" aria-hidden="true"></i></span>
+							<span class="nav-label">Play</span>
+						</button>
 					</li>
-					<li
-						@click.stop="emit('navigate', 'character', 'print')"
-						:class="{ active: mode === 'character' && submode === 'print', disabled: !hasCharacter }"
-					>
-						<div>
-							<span class="nav-icon"><i class="fas fa-print"></i></span> <span class="nav-label">Print</span>
-						</div>
+					<li :class="{ active: mode === 'character' && submode === 'print', disabled: !hasCharacter }">
+						<button
+							type="button"
+							class="nav-item-btn"
+							:disabled="!hasCharacter"
+							:aria-current="mode === 'character' && submode === 'print' ? 'page' : undefined"
+							aria-label="Print"
+							@click.stop="emit('navigate', 'character', 'print')"
+						>
+							<span class="nav-icon"><i class="fas fa-print" aria-hidden="true"></i></span>
+							<span class="nav-label">Print</span>
+						</button>
 					</li>
-					<li
-						v-if="mode === 'character' && submode === 'edit'"
-						@click.stop="emit('undo')"
-						:class="{ disabled: !canUndo }"
-						title="Undo (Ctrl+Z)"
-					>
-						<div>
-							<span class="nav-icon"><i class="fas fa-undo"></i></span> <span class="nav-label">Undo</span>
-						</div>
+					<li v-if="mode === 'character' && submode === 'edit'" :class="{ disabled: !canUndo }">
+						<button
+							type="button"
+							class="nav-item-btn"
+							:disabled="!canUndo"
+							aria-label="Undo"
+							title="Undo (Ctrl+Z)"
+							@click.stop="emit('undo')"
+						>
+							<span class="nav-icon"><i class="fas fa-undo" aria-hidden="true"></i></span>
+							<span class="nav-label">Undo</span>
+						</button>
 					</li>
-					<li
-						v-if="mode === 'character' && submode === 'edit'"
-						@click.stop="emit('redo')"
-						:class="{ disabled: !canRedo }"
-						title="Redo (Ctrl+Y)"
-					>
-						<div>
-							<span class="nav-icon"><i class="fas fa-redo"></i></span> <span class="nav-label">Redo</span>
-						</div>
+					<li v-if="mode === 'character' && submode === 'edit'" :class="{ disabled: !canRedo }">
+						<button
+							type="button"
+							class="nav-item-btn"
+							:disabled="!canRedo"
+							aria-label="Redo"
+							title="Redo (Ctrl+Y)"
+							@click.stop="emit('redo')"
+						>
+							<span class="nav-icon"><i class="fas fa-redo" aria-hidden="true"></i></span>
+							<span class="nav-label">Redo</span>
+						</button>
 					</li>
 				</ul>
 			</nav>
@@ -81,10 +110,11 @@ const emit = defineEmits<{
 					type="button"
 					class="header-btn-theme"
 					@click.stop="emit('toggleTheme')"
+					:aria-pressed="Boolean(isDarkMode)"
 					:aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
 					:title="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
 				>
-					<i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+					<i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" aria-hidden="true"></i>
 				</button>
 			</div>
 		</div>

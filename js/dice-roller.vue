@@ -626,20 +626,35 @@ defineExpose({
 <template>
 	<aside class="dice-roller-sidebar" :class="{ open: open }">
 		<div class="roller-header">
-			<div class="roller-title"><i class="fas fa-dice"></i> <span>Dice Roller</span></div>
+			<div class="roller-title"><i class="fas fa-dice" aria-hidden="true"></i> <span>Dice Roller</span></div>
 			<div class="roller-header-actions">
 				<button
+					type="button"
 					class="roller-btn-icon"
 					@click="emit('togglePosition')"
 					:title="position === 'left' ? 'Move sidebar to right' : 'Move sidebar to left'"
+					:aria-label="position === 'left' ? 'Move sidebar to right' : 'Move sidebar to left'"
 				>
-					<i class="fas fa-arrows-left-right"></i>
+					<i class="fas fa-arrows-left-right" aria-hidden="true"></i>
 				</button>
-				<button class="roller-btn-icon" @click="clearPool" title="Clear Pool" v-if="stagedDice.length > 0">
-					<i class="fas fa-trash-can"></i>
+				<button
+					type="button"
+					class="roller-btn-icon"
+					@click="clearPool"
+					title="Clear Pool"
+					aria-label="Clear Pool"
+					v-if="stagedDice.length > 0"
+				>
+					<i class="fas fa-trash-can" aria-hidden="true"></i>
 				</button>
-				<button class="roller-btn-icon" @click="emit('close')" title="Close Roller">
-					<i class="fas fa-times"></i>
+				<button
+					type="button"
+					class="roller-btn-icon"
+					@click="emit('close')"
+					title="Close Roller"
+					aria-label="Close Roller"
+				>
+					<i class="fas fa-times" aria-hidden="true"></i>
 				</button>
 			</div>
 		</div>
@@ -649,8 +664,14 @@ defineExpose({
 			<div class="roller-section">
 				<div class="roller-label">Quick Add Dice</div>
 				<div class="roller-adhoc-grid">
-					<button v-for="size in diceSizes" :key="'adhoc-d' + size" class="roller-adhoc-btn" @click="addAdHoc(size)">
-						<span v-html="getDieDisplayValue(size)"></span>
+					<button
+						v-for="size in diceSizes"
+						:key="'adhoc-d' + size"
+						type="button"
+						class="roller-adhoc-btn"
+						@click="addAdHoc(size)"
+					>
+						<span aria-hidden="true" v-html="getDieDisplayValue(size)"></span>
 						<span class="die-label">d{{ size }}</span>
 					</button>
 				</div>
@@ -664,8 +685,9 @@ defineExpose({
 							class="roller-btn-scale-quick"
 							@click="addScaleAdHoc(size)"
 							:title="'Add d' + size + ' Scale Die (Keep 3)'"
+							:aria-label="'Add d' + size + ' Scale Die'"
 						>
-							<span v-html="getDieDisplayValue(size)"></span>
+							<span aria-hidden="true" v-html="getDieDisplayValue(size)"></span>
 						</button>
 					</div>
 				</div>
@@ -679,8 +701,9 @@ defineExpose({
 							class="roller-btn-res-quick"
 							@click="addSeparateAdHoc(size)"
 							:title="'Add d' + size + ' Separate Die'"
+							:aria-label="'Add d' + size + ' Separate Die'"
 						>
-							<span v-html="getDieDisplayValue(size)"></span>
+							<span aria-hidden="true" v-html="getDieDisplayValue(size)"></span>
 						</button>
 					</div>
 				</div>
@@ -718,6 +741,7 @@ defineExpose({
 								:disabled="item.size <= 4"
 								@click.stop="stepDownDie(item)"
 								title="Step down"
+								aria-label="Step down die"
 							>
 								▼
 							</button>
@@ -727,13 +751,26 @@ defineExpose({
 								:disabled="item.size >= 12"
 								@click.stop="stepUpDie(item)"
 								title="Step up"
+								aria-label="Step up die"
 							>
 								▲
 							</button>
-							<button type="button" class="chip-btn chip-dup" @click.stop="duplicateDie(item)" title="Duplicate die">
+							<button
+								type="button"
+								class="chip-btn chip-dup"
+								@click.stop="duplicateDie(item)"
+								title="Duplicate die"
+								aria-label="Duplicate die"
+							>
 								×2
 							</button>
-							<button type="button" class="chip-remove" @click.stop="removeDie(Number(idx))" title="Remove die">
+							<button
+								type="button"
+								class="chip-remove"
+								@click.stop="removeDie(Number(idx))"
+								title="Remove die"
+								aria-label="Remove die"
+							>
 								×
 							</button>
 						</div>
@@ -742,8 +779,8 @@ defineExpose({
 
 				<div class="roller-empty-pool" v-else>
 					<p>
-						<i class="fas fa-hand-pointer"></i> Click any trait on your sheet or use quick-add above to build a roll
-						pool.
+						<i class="fas fa-hand-pointer" aria-hidden="true"></i> Click any trait on your sheet or use quick-add above
+						to build a roll pool.
 					</p>
 				</div>
 			</div>
@@ -782,7 +819,9 @@ defineExpose({
 					</div>
 				</div>
 
-				<button class="roller-roll-btn" @click="roll"><i class="fas fa-dice"></i> ROLL POOL</button>
+				<button type="button" class="roller-roll-btn" @click="roll">
+					<i class="fas fa-dice" aria-hidden="true"></i> ROLL POOL
+				</button>
 			</div>
 
 			<!-- ROLL RESULTS -->
@@ -790,8 +829,10 @@ defineExpose({
 				<div class="roller-results-header">
 					<label class="roller-label">Results</label>
 					<div class="roller-view-tabs">
-						<button :class="{ active: activeTab === 'roller' }" @click="activeTab = 'roller'">Interactive</button>
-						<button :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">Text Log</button>
+						<button type="button" :class="{ active: activeTab === 'roller' }" @click="activeTab = 'roller'">
+							Interactive
+						</button>
+						<button type="button" :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">Text Log</button>
 					</div>
 				</div>
 
@@ -806,7 +847,8 @@ defineExpose({
 
 				<!-- BOTCH ALERT -->
 				<div class="roller-botch-banner" v-if="isBotch">
-					<i class="fas fa-triangle-exclamation"></i> <strong>BOTCH!</strong> All dice rolled hitches!
+					<i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <strong>BOTCH!</strong> All dice rolled
+					hitches!
 				</div>
 
 				<!-- INTERACTIVE RESULTS VIEW -->
@@ -839,7 +881,9 @@ defineExpose({
 									<div class="card-value" :class="{ 'hitch-value': die.isHitch }">
 										{{ die.value }}
 									</div>
-									<div class="card-badge" v-if="die.isHitch"><i class="fas fa-exclamation"></i> Hitch</div>
+									<div class="card-badge" v-if="die.isHitch">
+										<i class="fas fa-exclamation" aria-hidden="true"></i> Hitch
+									</div>
 									<div class="card-badge badge-total" v-else-if="die.manualRole === 'total'">Total</div>
 									<div class="card-badge badge-effect" v-else-if="die.manualRole === 'effect'">Effect</div>
 									<div class="card-badge badge-unused" v-else>Unused</div>
@@ -851,7 +895,7 @@ defineExpose({
 						<!-- Separate Section (hitches 0: own pool, no hitches) -->
 						<div class="roller-resources-section" v-if="separateGroupsResults.length > 0">
 							<div class="roller-group-header">
-								<span><i class="fas fa-shield-halved"></i> Separate</span>
+								<span><i class="fas fa-shield-halved" aria-hidden="true"></i> Separate</span>
 								<span class="group-sub">No Hitches • Keep Highest</span>
 							</div>
 							<div v-for="group in separateGroupsResults" :key="group.name" class="roller-resource-group-card">
@@ -912,7 +956,9 @@ defineExpose({
 								{{ die.value }}
 							</div>
 
-							<div class="card-badge" v-if="die.isHitch"><i class="fas fa-exclamation"></i> Hitch</div>
+							<div class="card-badge" v-if="die.isHitch">
+								<i class="fas fa-exclamation" aria-hidden="true"></i> Hitch
+							</div>
 							<div class="card-badge badge-total" v-else-if="die.manualRole === 'total'">Total</div>
 							<div class="card-badge badge-effect" v-else-if="die.manualRole === 'effect'">Effect</div>
 							<div class="card-badge badge-unused" v-else>Unused</div>
@@ -925,7 +971,9 @@ defineExpose({
 
 					<!-- HITCH INDICATOR -->
 					<div class="roller-hitch-indicator" v-if="totalHitches > 0">
-						<i class="fas fa-bullhorn"></i> <strong>{{ totalHitches }}</strong> Hitch{{ totalHitches > 1 ? 'es' : '' }}
+						<i class="fas fa-bullhorn" aria-hidden="true"></i> <strong>{{ totalHitches }}</strong> Hitch{{
+							totalHitches > 1 ? 'es' : ''
+						}}
 					</div>
 
 					<!-- CURRENT SELECTION TOTAL / EFFECT -->
@@ -962,31 +1010,31 @@ defineExpose({
 
 					<!-- DICE POOL PRESETS -->
 					<div class="roller-presets" v-if="!isBotch">
-						<div class="preset-card" v-if="bestTotalInfo" @click="applyBestTotal">
-							<div class="preset-title"><i class="fas fa-award"></i> Best Total</div>
-							<div class="preset-content">
+						<button type="button" class="preset-card" v-if="bestTotalInfo" @click="applyBestTotal">
+							<span class="preset-title"><i class="fas fa-award" aria-hidden="true"></i> Best Total</span>
+							<span class="preset-content">
 								<strong>{{ bestTotalInfo.total }}</strong> ({{ bestTotalInfo.formula }}) with Effect:
 								<strong>{{ bestTotalInfo.effect }}</strong>
-							</div>
+							</span>
 							<span class="preset-apply">Apply to selection</span>
-						</div>
+						</button>
 
-						<div class="preset-card" v-if="bestEffectInfo" @click="applyBestEffect">
-							<div class="preset-title"><i class="fas fa-bolt"></i> Best Effect</div>
-							<div class="preset-content">
+						<button type="button" class="preset-card" v-if="bestEffectInfo" @click="applyBestEffect">
+							<span class="preset-title"><i class="fas fa-bolt" aria-hidden="true"></i> Best Effect</span>
+							<span class="preset-content">
 								Effect: <strong>{{ bestEffectInfo.effect }}</strong> with Total:
 								<strong>{{ bestEffectInfo.total }}</strong>
-							</div>
+							</span>
 							<span class="preset-apply">Apply to selection</span>
-						</div>
+						</button>
 					</div>
 				</div>
 
 				<!-- PLAIN TEXT DICE POOL LOG -->
 				<div v-show="activeTab === 'log'" class="roller-log-view">
 					<pre class="roller-raw-log">{{ dicePoolOutput }}</pre>
-					<button class="roller-copy-btn" @click="copyOutput">
-						<i class="fas fa-copy"></i> {{ copiedNotice ? 'Copied!' : 'Copy to Clipboard' }}
+					<button type="button" class="roller-copy-btn" @click="copyOutput">
+						<i class="fas fa-copy" aria-hidden="true"></i> {{ copiedNotice ? 'Copied!' : 'Copy to Clipboard' }}
 					</button>
 				</div>
 			</div>

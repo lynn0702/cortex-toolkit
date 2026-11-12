@@ -417,12 +417,13 @@ function getRelativeDateLabel(date1: any, date2: any) {
 <template>
 	<section class="roster">
 		<div class="roster-inner">
+			<h1 class="sr-only">Character Roster</h1>
 			<!-- BUTTON: ADD/IMPORT CHARACTER -->
 			<div class="roster-button-container">
 				<div class="roster-button-container-inner">
-					<div class="roster-button" @click.stop="createCharacter">
-						<span><i class="fas fa-plus"></i> New Sheet</span>
-					</div>
+					<button type="button" class="roster-button" @click.stop="createCharacter">
+						<span><i class="fas fa-plus" aria-hidden="true"></i> New Sheet</span>
+					</button>
 
 					<label class="roster-template-picker">
 						<span class="picker-label">Template</span>
@@ -447,45 +448,44 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						</select>
 					</label>
 
-					<div class="roster-button roster-button-library" @click.stop="openLibrary">
-						<span><i class="fas fa-layer-group"></i> Library</span>
-					</div>
+					<button type="button" class="roster-button roster-button-library" @click.stop="openLibrary">
+						<span><i class="fas fa-layer-group" aria-hidden="true"></i> Library</span>
+					</button>
 
-					<div
-						class="roster-button roster-button-card-builder"
-						role="button"
-						tabindex="0"
-						@click.stop="showTraitSetMini = true"
-						@keydown.enter.prevent="showTraitSetMini = true"
-						@keydown.space.prevent="showTraitSetMini = true"
-					>
-						<span><i class="fas fa-th-large"></i> Card Builder</span>
-					</div>
+					<button type="button" class="roster-button roster-button-card-builder" @click.stop="showTraitSetMini = true">
+						<span><i class="fas fa-th-large" aria-hidden="true"></i> Card Builder</span>
+					</button>
 
-					<div class="roster-button roster-button-import" @click.stop="importStart">
-						<span><i class="fas fa-upload"></i> Import</span>
-					</div>
+					<button type="button" class="roster-button roster-button-import" @click.stop="importStart">
+						<span><i class="fas fa-upload" aria-hidden="true"></i> Import</span>
+					</button>
 
 					<div class="roster-import-error" v-if="importError">{{ importError }}</div>
 
-					<div class="roster-button roster-button-export" @click.stop="exportAll" v-if="characters.length > 0">
-						<span><i class="fas fa-file-export"></i> Export All</span>
-					</div>
+					<button
+						type="button"
+						class="roster-button roster-button-export"
+						@click.stop="exportAll"
+						v-if="characters.length > 0"
+					>
+						<span><i class="fas fa-file-export" aria-hidden="true"></i> Export All</span>
+					</button>
 
-					<div
+					<button
+						type="button"
 						class="roster-button roster-button-delete-all"
 						@click.stop="showDeleteAllConfirm = true"
 						v-if="characters.length > 0"
 					>
-						<span><i class="fas fa-trash-alt"></i> Delete All</span>
-					</div>
+						<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Delete All</span>
+					</button>
 				</div>
 			</div>
 
 			<!-- SEARCH -->
-			<div class="roster-search" v-if="characters.length > 0">
+			<search class="roster-search" v-if="characters.length > 0">
 				<div class="roster-search-input">
-					<i class="fas fa-search"></i>
+					<i class="fas fa-search" aria-hidden="true"></i>
 					<input
 						type="text"
 						id="roster-search"
@@ -495,17 +495,32 @@ function getRelativeDateLabel(date1: any, date2: any) {
 						aria-label="Search characters"
 					/>
 				</div>
-			</div>
+			</search>
 
 			<!-- FILTER TABS -->
 			<div class="roster-filter-tabs" v-if="characters.length > 0">
-				<button :class="{ active: filterMode === 'all' }" @click="filterMode = 'all'">
+				<button
+					type="button"
+					:class="{ active: filterMode === 'all' }"
+					:aria-pressed="filterMode === 'all'"
+					@click="filterMode = 'all'"
+				>
 					All <span class="tab-count">({{ allCount }})</span>
 				</button>
-				<button :class="{ active: filterMode === 'characters' }" @click="filterMode = 'characters'">
+				<button
+					type="button"
+					:class="{ active: filterMode === 'characters' }"
+					:aria-pressed="filterMode === 'characters'"
+					@click="filterMode = 'characters'"
+				>
 					Characters <span class="tab-count">({{ characterCount }})</span>
 				</button>
-				<button :class="{ active: filterMode === 'templates' }" @click="filterMode = 'templates'">
+				<button
+					type="button"
+					:class="{ active: filterMode === 'templates' }"
+					:aria-pressed="filterMode === 'templates'"
+					@click="filterMode = 'templates'"
+				>
 					Templates <span class="tab-count">({{ templateCount }})</span>
 				</button>
 			</div>
@@ -517,22 +532,39 @@ function getRelativeDateLabel(date1: any, date2: any) {
 				<transition-group appear>
 					<li class="roster-item" v-for="character in charactersFiltered" :key="character.id">
 						<div>
-							<div
+							<button
+								type="button"
 								:class="'roster-item-portrait alignment-' + (getView(character.portrait)?.alignment || 'center')"
-								:style="'background-image: url(' + safeImageUrl(character.portrait?.url || '') + ');'"
+								:aria-label="'Open ' + (character.name || 'Unnamed')"
 								@click.stop="loadCharacter(character.id)"
 							>
-								<div class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length">
-									<i class="fas fa-user"></i>
-								</div>
-							</div>
+								<img
+									v-if="character.portrait?.url?.length"
+									:src="safeImageUrl(character.portrait.url)"
+									alt=""
+									width="160"
+									height="160"
+									loading="lazy"
+									decoding="async"
+								/>
+								<span class="roster-item-portrait-placeholder" v-if="!character.portrait?.url?.length">
+									<i class="fas fa-user" aria-hidden="true"></i>
+								</span>
+							</button>
 						</div>
 
 						<div>
 							<div class="roster-item-title-row">
-								<h3 class="roster-item-name" v-text="character.name" @click.stop="loadCharacter(character.id)"></h3>
+								<h2 class="roster-item-name">
+									<button
+										type="button"
+										class="roster-item-name-btn"
+										@click.stop="loadCharacter(character.id)"
+										v-text="character.name"
+									></button>
+								</h2>
 								<span class="roster-badge-template" v-if="character.isTemplate"
-									><i class="fas fa-bookmark"></i> Template</span
+									><i class="fas fa-bookmark" aria-hidden="true"></i> Template</span
 								>
 							</div>
 
@@ -546,49 +578,60 @@ function getRelativeDateLabel(date1: any, date2: any) {
 							<div class="roster-item-button-container">
 								<div class="roster-item-button-container-inner">
 									<!-- USE TEMPLATE (IF TEMPLATE) -->
-									<div
+									<button
+										type="button"
 										class="roster-item-button roster-button-use-template"
 										v-if="character.isTemplate"
 										@click.stop="createFromTemplate(character.id)"
 										title="Create a new character from this template"
 									>
-										<span><i class="fas fa-wand-magic-sparkles"></i> Use</span>
-									</div>
+										<span><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Use</span>
+									</button>
 
 									<!-- LOAD -->
-									<div class="roster-item-button" @click.stop="loadCharacter(character.id)">
-										<span><i class="fas fa-eye"></i> Open</span>
-									</div>
+									<button type="button" class="roster-item-button" @click.stop="loadCharacter(character.id)">
+										<span><i class="fas fa-eye" aria-hidden="true"></i> Open</span>
+									</button>
 
 									<!-- DUPLICATE -->
-									<div
+									<button
+										type="button"
 										class="roster-item-button roster-button-duplicate"
 										@click.stop="duplicateCharacter(character.id)"
 									>
-										<span><i class="fas fa-copy"></i> Duplicate</span>
-									</div>
+										<span><i class="fas fa-copy" aria-hidden="true"></i> Duplicate</span>
+									</button>
 
 									<!-- TOGGLE TEMPLATE -->
-									<div
+									<button
+										type="button"
 										class="roster-item-button roster-button-toggle-template"
 										@click.stop="toggleTemplate(character.id)"
 										:title="character.isTemplate ? 'Convert to regular character' : 'Save as template'"
 									>
 										<span
-											><i :class="character.isTemplate ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+											><i :class="character.isTemplate ? 'fas fa-bookmark' : 'far fa-bookmark'" aria-hidden="true"></i>
 											{{ character.isTemplate ? 'Template' : 'Set Template' }}</span
 										>
-									</div>
+									</button>
 
 									<!-- EXPORT -->
-									<div class="roster-item-button roster-button-export" @click.stop="exportCharacter(character.id)">
-										<span><i class="fas fa-download"></i> Export</span>
-									</div>
+									<button
+										type="button"
+										class="roster-item-button roster-button-export"
+										@click.stop="exportCharacter(character.id)"
+									>
+										<span><i class="fas fa-download" aria-hidden="true"></i> Export</span>
+									</button>
 
 									<!-- DELETE -->
-									<div class="roster-item-button roster-button-delete" @click.stop="promptDeleteCharacter(character)">
-										<span><i class="fas fa-trash"></i> Delete</span>
-									</div>
+									<button
+										type="button"
+										class="roster-item-button roster-button-delete"
+										@click.stop="promptDeleteCharacter(character)"
+									>
+										<span><i class="fas fa-trash" aria-hidden="true"></i> Delete</span>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -617,7 +660,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 			@close="importCancel()"
 		>
 			<button type="button" class="modal-close" aria-label="Close" @click.prevent="importCancel()">
-				<i class="fas fa-times"></i>
+				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<div class="modal-inner">
 				<p>A character with this ID already exists. Do you want to replace it?</p>
@@ -652,10 +695,10 @@ function getRelativeDateLabel(date1: any, date2: any) {
 				<div class="modal-button-container">
 					<div class="modal-button-container-inner">
 						<button type="button" class="modal-button modal-button-yes" @click.stop="importConfirm()">
-							<span><i class="fas fa-check"></i> Import</span>
+							<span><i class="fas fa-check" aria-hidden="true"></i> Import</span>
 						</button>
 						<button type="button" class="modal-button modal-button-no" @click.stop="importCancel()">
-							<span><i class="fas fa-times"></i> Cancel</span>
+							<span><i class="fas fa-times" aria-hidden="true"></i> Cancel</span>
 						</button>
 					</div>
 				</div>
@@ -671,7 +714,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 			@close="cancelDeleteCharacter()"
 		>
 			<button type="button" class="modal-close" aria-label="Close" @click.prevent="cancelDeleteCharacter()">
-				<i class="fas fa-times"></i>
+				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<div class="modal-inner">
 				<p>
@@ -681,14 +724,16 @@ function getRelativeDateLabel(date1: any, date2: any) {
 					}}</strong
 					>?
 				</p>
-				<p class="modal-warning-text"><i class="fas fa-exclamation-triangle"></i> This action cannot be undone.</p>
+				<p class="modal-warning-text">
+					<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> This action cannot be undone.
+				</p>
 				<div class="modal-button-container">
 					<div class="modal-button-container-inner">
 						<button type="button" class="modal-button modal-button-delete" @click.stop="confirmDeleteCharacter()">
-							<span><i class="fas fa-trash"></i> Delete</span>
+							<span><i class="fas fa-trash" aria-hidden="true"></i> Delete</span>
 						</button>
 						<button type="button" class="modal-button modal-button-no" @click.stop="cancelDeleteCharacter()">
-							<span><i class="fas fa-times"></i> Cancel</span>
+							<span><i class="fas fa-times" aria-hidden="true"></i> Cancel</span>
 						</button>
 					</div>
 				</div>
@@ -704,22 +749,23 @@ function getRelativeDateLabel(date1: any, date2: any) {
 			@close="showDeleteAllConfirm = false"
 		>
 			<button type="button" class="modal-close" aria-label="Close" @click.prevent="showDeleteAllConfirm = false">
-				<i class="fas fa-times"></i>
+				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<div class="modal-inner">
 				<p>
 					Are you sure you want to delete <strong>all {{ characters.length }} characters and templates</strong>?
 				</p>
 				<p class="modal-warning-text">
-					<i class="fas fa-exclamation-triangle"></i> This action cannot be undone. Consider exporting a backup first.
+					<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> This action cannot be undone. Consider
+					exporting a backup first.
 				</p>
 				<div class="modal-button-container">
 					<div class="modal-button-container-inner">
 						<button type="button" class="modal-button modal-button-delete" @click.stop="confirmDeleteAll()">
-							<span><i class="fas fa-trash-alt"></i> Delete All</span>
+							<span><i class="fas fa-trash-alt" aria-hidden="true"></i> Delete All</span>
 						</button>
 						<button type="button" class="modal-button modal-button-no" @click.stop="showDeleteAllConfirm = false">
-							<span><i class="fas fa-times"></i> Cancel</span>
+							<span><i class="fas fa-times" aria-hidden="true"></i> Cancel</span>
 						</button>
 					</div>
 				</div>
@@ -735,19 +781,19 @@ function getRelativeDateLabel(date1: any, date2: any) {
 			@close="showLibrary = false"
 		>
 			<button type="button" class="modal-close" aria-label="Close" @click.prevent="showLibrary = false">
-				<i class="fas fa-times"></i>
+				<i class="fas fa-times" aria-hidden="true"></i>
 			</button>
 			<div class="modal-inner">
 				<div class="library-header">
-					<h2><i class="fas fa-book-open"></i> Library</h2>
+					<h2><i class="fas fa-book-open" aria-hidden="true"></i> Library</h2>
 					<p>
 						Select a character sheet template from the official collections. Create a new character, save to your
 						templates, or print directly.
 					</p>
 
-					<div class="library-search-row">
+					<search class="library-search-row">
 						<div class="library-search-input">
-							<i class="fas fa-search"></i>
+							<i class="fas fa-search" aria-hidden="true"></i>
 							<input
 								type="text"
 								id="library-search"
@@ -757,12 +803,12 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								aria-label="Search templates"
 							/>
 						</div>
-					</div>
+					</search>
 				</div>
 
 				<div class="library-grid">
 					<div class="library-loading" v-if="libraryLoading">
-						<i class="fas fa-circle-notch fa-spin"></i> Loading Library…
+						<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Loading Library…
 					</div>
 					<div class="roster-import-error" v-if="libraryError">{{ libraryError }}</div>
 					<div class="library-card" v-for="tmpl in libraryTemplatesFiltered" :key="tmpl.id">
@@ -803,7 +849,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								@click="emit('previewTemplate', tmpl)"
 								title="Preview template"
 							>
-								<i class="fas fa-eye"></i> Preview
+								<i class="fas fa-eye" aria-hidden="true"></i> Preview
 							</button>
 							<button
 								type="button"
@@ -811,7 +857,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								@click="useLibrary(tmpl, false, false)"
 								title="Create an editable character"
 							>
-								<i class="fas fa-plus"></i> Character
+								<i class="fas fa-plus" aria-hidden="true"></i> Character
 							</button>
 							<button
 								type="button"
@@ -819,7 +865,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								@click="useLibrary(tmpl, true, false)"
 								title="Save template to Roster"
 							>
-								<i class="fas fa-bookmark"></i> Template
+								<i class="fas fa-bookmark" aria-hidden="true"></i> Template
 							</button>
 							<button
 								type="button"
@@ -827,7 +873,7 @@ function getRelativeDateLabel(date1: any, date2: any) {
 								@click="useLibrary(tmpl, false, true)"
 								title="Open in Print Tab"
 							>
-								<i class="fas fa-print"></i> Print
+								<i class="fas fa-print" aria-hidden="true"></i> Print
 							</button>
 						</div>
 					</div>

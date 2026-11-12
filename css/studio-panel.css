@@ -8,6 +8,7 @@
 
 .studio-panel {
 	position: fixed;
+	contain: layout style paint;
 
 	top: var(--header-size);
 

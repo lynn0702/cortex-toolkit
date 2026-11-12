@@ -158,26 +158,26 @@ export const characterCurioFunctions = {
 		if (s === 4) {
 			// Inverted triangle pointing down
 			shape = `<polygon points="2.5,4 21.5,4 12,20" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">4</text>`;
+			text = `<text aria-hidden="true" x="12" y="9.8" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">4</text>`;
 		} else if (s === 6) {
 			// Square
 			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">6</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">6</text>`;
 		} else if (s === 8) {
 			// Diamond
 			shape = `<polygon points="12,2.5 21.5,12 12,21.5 2.5,12" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">8</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">8</text>`;
 		} else if (s === 10) {
 			// Kite / Hexagon
 			shape = `<polygon points="12,2.5 21.5,7.5 21.5,16.5 12,21.5 2.5,16.5 2.5,7.5" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}">10</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">10</text>`;
 		} else if (s === 12) {
 			// Regular pentagon pointing up
 			shape = `<polygon points="12,2.7 21.7,9.8 18,21.3 6,21.3 2.3,9.8" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" stroke-linejoin="round"/>`;
-			text = `<text aria-hidden="true" x="12" y="12.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}">12</text>`;
+			text = `<text aria-hidden="true" x="12" y="12.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="900" letter-spacing="-0.02em" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">12</text>`;
 		} else {
 			shape = `<rect x="3.5" y="3.5" width="17" height="17" rx="1" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}"/>`;
-			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}">${s}</text>`;
+			text = `<text aria-hidden="true" x="12" y="12" text-anchor="middle" dominant-baseline="central" font-size="10.5" font-weight="900" font-family="Roboto, sans-serif" fill="${textFill}" stroke="none">${s}</text>`;
 		}
 
 		return `<svg role="img" aria-label="d${s}" class="${cls}" viewBox="0 0 24 24" width="1em" height="1em">${defs}${shape}${text}</svg>`;

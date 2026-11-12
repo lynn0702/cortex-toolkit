@@ -32,14 +32,14 @@ function targetValue(e: Event) {
 		@close="emit('update:open', false)"
 	>
 		<button type="button" class="modal-close" aria-label="Close" @click.prevent="emit('update:open', false)">
-			<i class="fas fa-times"></i>
+			<i class="fas fa-times" aria-hidden="true"></i>
 		</button>
 		<div class="modal-inner">
 			<div class="session-modal-header">
-				<h2><i class="fas fa-users"></i> Open Character in Session</h2>
+				<h2><i class="fas fa-users" aria-hidden="true"></i> Open Character in Session</h2>
 				<p>Select another character, titan mech, vehicle, or companion to open alongside your active sheet.</p>
-				<div class="session-modal-search">
-					<i class="fas fa-search"></i>
+				<search class="session-modal-search">
+					<i class="fas fa-search" aria-hidden="true"></i>
 					<input
 						type="text"
 						id="session-character-search"
@@ -49,32 +49,37 @@ function targetValue(e: Event) {
 						placeholder="Filter characters..."
 						aria-label="Filter characters"
 					/>
-				</div>
+				</search>
 			</div>
 
 			<div class="session-modal-list">
 				<div v-for="c in items" :key="c.id" class="session-modal-item">
 					<div class="session-item-info">
-						<div
-							class="session-item-avatar"
+						<img
 							v-if="c.portrait && c.portrait.url"
-							:style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"
-						></div>
-						<div class="session-item-icon" v-else><i class="fas fa-shield-alt"></i></div>
+							class="session-item-avatar"
+							:src="safeImageUrl(c.portrait.url)"
+							alt=""
+							width="36"
+							height="36"
+							loading="lazy"
+							decoding="async"
+						/>
+						<div class="session-item-icon" v-else aria-hidden="true"><i class="fas fa-shield-alt"></i></div>
 						<div class="session-item-text">
 							<div class="session-item-name">{{ c.name || 'Unnamed' }}</div>
 							<div class="session-item-sub">{{ c.game || c.description || 'Character' }}</div>
 						</div>
 					</div>
 					<button type="button" class="btn-session-open" @click.stop="emit('openAlongside', c.id)">
-						<i class="fas fa-columns"></i> Open Alongside
+						<i class="fas fa-columns" aria-hidden="true"></i> Open Alongside
 					</button>
 				</div>
 
 				<div class="session-modal-empty" v-if="items.length === 0">
 					<p>No additional characters available in your roster.</p>
 					<button type="button" class="btn-session-library" @click.stop="emit('gotoRoster')">
-						<i class="fas fa-layer-group"></i> Go to Roster / Library
+						<i class="fas fa-layer-group" aria-hidden="true"></i> Go to Roster / Library
 					</button>
 				</div>
 			</div>

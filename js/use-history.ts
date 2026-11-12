@@ -1,4 +1,4 @@
-import { computed, nextTick } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
 
 export interface HistoryDeps {
@@ -28,18 +28,22 @@ export function useHistory(deps: HistoryDeps) {
 		saveLocalData,
 	} = deps;
 
+	const hasUncommittedChanges = ref(false);
+
+	function markDirty() {
+		hasUncommittedChanges.value = true;
+	}
+
 	const canUndo = computed(() => {
 		if (mode.value !== 'character') return false;
 		if (historyIndex.value > 0) return true;
-		if (character.value && historyIndex.value >= 0) {
-			return history.value[historyIndex.value] !== JSON.stringify(character.value);
-		}
-		return false;
+		return Boolean(character.value && historyIndex.value >= 0 && hasUncommittedChanges.value);
 	});
 
 	const canRedo = computed(() => mode.value === 'character' && historyIndex.value < history.value.length - 1);
 
 	function initHistory() {
+		hasUncommittedChanges.value = false;
 		if (character.value) {
 			history.value = [JSON.stringify(character.value)];
 			historyIndex.value = 0;
@@ -51,6 +55,7 @@ export function useHistory(deps: HistoryDeps) {
 
 	function commitHistorySnapshot() {
 		if (isNavigatingHistory.value || !character.value) return;
+		hasUncommittedChanges.value = false;
 		const snap = JSON.stringify(character.value);
 		if (historyIndex.value >= 0 && history.value[historyIndex.value] === snap) return;
 		if (historyIndex.value < history.value.length - 1) {
@@ -90,6 +95,7 @@ export function useHistory(deps: HistoryDeps) {
 	function undo() {
 		commitHistorySnapshot();
 		if (!canUndo.value) return;
+		hasUncommittedChanges.value = false;
 		isNavigatingHistory.value = true;
 		historyIndex.value--;
 		const restored = JSON.parse(history.value[historyIndex.value]);
@@ -104,6 +110,7 @@ export function useHistory(deps: HistoryDeps) {
 
 	function redo() {
 		if (!canRedo.value) return;
+		hasUncommittedChanges.value = false;
 		isNavigatingHistory.value = true;
 		historyIndex.value++;
 		const restored = JSON.parse(history.value[historyIndex.value]);
@@ -116,5 +123,5 @@ export function useHistory(deps: HistoryDeps) {
 		});
 	}
 
-	return { canUndo, canRedo, initHistory, commitHistorySnapshot, validateEditing, undo, redo };
+	return { canUndo, canRedo, initHistory, commitHistorySnapshot, markDirty, validateEditing, undo, redo };
 }

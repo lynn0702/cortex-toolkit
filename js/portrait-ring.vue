@@ -76,10 +76,13 @@ interface RingSlot {
 const ringSlots = computed<RingSlot[]>(() => {
 	const allTraits = (ringSet.value?.traits || []) as Trait[];
 	const slots: RingSlot[] = [];
+	const isSingleMultiDieTraitSpread =
+		traits.value.length === 1 &&
+		(getRating(traits.value[0])?.type === 'Dice' || ratingDice(getRating(traits.value[0])).length > 1);
 	for (const trait of traits.value) {
 		const traitIdx = allTraits.indexOf(trait);
 		const dice = ratingDice(getRating(trait));
-		const label = trait.name || '';
+		const label = isSingleMultiDieTraitSpread ? '' : trait.name || '';
 		const source = (getView(trait)?.noun as string) || (getView(ringSet.value)?.ringNoun as string) || trait.name || '';
 		if (dice.length === 0) {
 			slots.push({
@@ -113,7 +116,8 @@ const ringSlots = computed<RingSlot[]>(() => {
 		const hasRingConfig = Boolean(frameCfg?.ring || frameCfg?.ringConfig || frameCfg?.traitsSpan);
 		if (setRating && (setRating.type === 'Dice' || hasRingConfig)) {
 			const dice = ratingDice(setRating);
-			const label = (getView(ringSet.value)?.ringNoun as string) || ringSet.value.noun || ringSet.value.name || '';
+			const sourceLabel =
+				(getView(ringSet.value)?.ringNoun as string) || ringSet.value.noun || ringSet.value.name || '';
 			dice.forEach((dieSize, dieIndex) => {
 				slots.push({
 					key: `s-${dieIndex}`,
@@ -121,8 +125,8 @@ const ringSlots = computed<RingSlot[]>(() => {
 					traitIdx: -1,
 					dieIndex,
 					dieSize,
-					label,
-					source: label || 'Pool',
+					label: '',
+					source: sourceLabel || 'Pool',
 					isSetLevel: true,
 				});
 			});
@@ -548,7 +552,13 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 					:class="{ selected: isSlotSelected(slot) }"
 					role="button"
 					tabindex="0"
-					:aria-label="slot.label ? `Stage d${slot.dieSize || 8} ${slot.label}` : slot.source || 'Trait'"
+					:aria-label="
+						slot.label
+							? `Stage d${slot.dieSize || 8} ${slot.label}`
+							: slot.dieSize
+								? `Stage d${slot.dieSize} ${slot.source || 'Trait'}`
+								: slot.source || 'Trait'
+					"
 					@click.stop="handleSlotClick(slot)"
 					@keydown.enter.prevent="handleSlotClick(slot)"
 					@keydown.space.prevent="handleSlotClick(slot)"
@@ -567,7 +577,7 @@ defineExpose({ setScaleDieValue, handleTraitClick, handleScaleDieClick, scaleDie
 						aria-hidden="true"
 					></span>
 
-					<div class="ring-trait-name" :style="getTraitNameStyle(Number(t))">{{ slot.label }}</div>
+					<div v-if="slot.label" class="ring-trait-name" :style="getTraitNameStyle(Number(t))">{{ slot.label }}</div>
 				</div>
 			</div>
 		</div>

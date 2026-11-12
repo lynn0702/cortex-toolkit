@@ -74,9 +74,12 @@ function commitPipRowName(traitSetIndex: number, itemIndex: number, event: Event
 			</div>
 			<div class="preview-button-container" v-if="submode === 'edit'">
 				<div class="preview-button-container-inner">
-					<div class="preview-button" @click.stop="addPipRow(s)">
-						<span><i class="fas fa-plus"></i> {{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Row' }}</span>
-					</div>
+					<button type="button" class="preview-button" @click.stop="addPipRow(s)">
+						<span
+							><i class="fas fa-plus" aria-hidden="true"></i>
+							{{ traitSet.noun && traitSet.noun.length ? traitSet.noun : 'Row' }}</span
+						>
+					</button>
 				</div>
 			</div>
 		</div>

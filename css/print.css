@@ -2820,7 +2820,8 @@
 	height: var(--diecon-scale-size);
 }
 .character-sheet.print-sheet .distinction-die .diecon,
-.character-sheet.print-sheet .single-die-value .diecon {
+.character-sheet.print-sheet .single-die-value .diecon,
+.character-sheet.print-sheet .ring-trait-inner .diecon {
 	width: var(--diecon-size);
 	height: var(--diecon-size);
 	font-size: var(--diecon-size);
@@ -4419,7 +4420,9 @@ body:has(.character-sheet.submode-print) .main {
 		.ladder-name,
 		.subtrait-name,
 		.die-row-name,
-		.branch-slot-name {
+		.branch-slot-name,
+		.ring-trait-name,
+		.scale-name {
 			color: var(--text-main);
 
 			.trait-name-hint {

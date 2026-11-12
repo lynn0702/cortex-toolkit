@@ -412,6 +412,117 @@ const headerTitle = computed(() => {
 onUnmounted(() => {
 	partPreview.value = null;
 });
+
+function onHeaderKeydown(event: KeyboardEvent) {
+	if (event.key === 'Enter' || event.key === ' ') {
+		event.preventDefault();
+		cycleAlign();
+	} else if (event.key === 'ArrowUp') {
+		event.preventDefault();
+		headerMode.value = 'top';
+	} else if (event.key === 'ArrowDown') {
+		event.preventDefault();
+		headerMode.value = 'bottom';
+	} else if (event.key === 'ArrowLeft') {
+		event.preventDefault();
+		if (headerMode.value === 'sidebar') return;
+		if (headerAlign.value === 'left') {
+			headerMode.value = 'sidebar';
+		} else {
+			headerAlign.value = 'left';
+		}
+	} else if (event.key === 'ArrowRight') {
+		event.preventDefault();
+		if (headerMode.value === 'sidebar') {
+			headerMode.value = 'top';
+			headerAlign.value = 'left';
+		} else {
+			headerAlign.value = 'right';
+		}
+	}
+}
+
+function onBoxKeydown(event: KeyboardEvent, key: string) {
+	const cells = effectivePartCells.value as Array<{
+		key: string;
+		left: number;
+		width: number;
+		top: number;
+		height: number;
+	}>;
+	const cell = cells.find((c) => c.key === key);
+	if (!cell) return;
+
+	if (event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+		event.preventDefault();
+		const delta = event.key === 'ArrowLeft' ? -5 : 5;
+		const nextWidth = snapPct(Math.max(5, Math.min(100 - cell.left, cell.width + delta)));
+		if (nextWidth !== cell.width) {
+			setPartCell(key, 'width', nextWidth);
+		}
+		return;
+	}
+
+	if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+		event.preventDefault();
+		const sameRow = cells.filter((c) => c.top === cell.top).sort((a, b) => a.left - b.left);
+		const idx = sameRow.findIndex((c) => c.key === key);
+		const neighbor = event.key === 'ArrowLeft' ? sameRow[idx - 1] : sameRow[idx + 1];
+		if (!neighbor) return;
+		const first = event.key === 'ArrowLeft' ? neighbor : cell;
+		const second = event.key === 'ArrowLeft' ? cell : neighbor;
+		const gap = Math.max(0, second.left - (first.left + first.width));
+		const nextSecondLeft = first.left;
+		const nextFirstLeft = Math.min(100 - first.width, first.left + second.width + gap);
+		setPartCell(second.key, 'left', nextSecondLeft);
+		setPartCell(first.key, 'left', nextFirstLeft);
+		return;
+	}
+
+	if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+		event.preventDefault();
+		if (event.key === 'ArrowUp') {
+			if (cell.top > 0) {
+				setPartCell(key, 'top', cell.top - 1);
+			}
+			return;
+		}
+		const sameRowCount = cells.filter((c) => c.top === cell.top).length;
+		const maxTop = cells.reduce((m, c) => Math.max(m, c.top), 0);
+		if (sameRowCount > 1 || cell.top < maxTop) {
+			setPartCell(key, 'top', cell.top + 1);
+		}
+	}
+}
+
+function onImageKeydown(event: KeyboardEvent) {
+	if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+		event.preventDefault();
+		const delta = event.key === 'ArrowLeft' ? -5 : 5;
+		const w = Math.max(10, Math.min(100, Math.round((imageWidthPct.value + delta) / 5) * 5));
+		imageWidth.value = formatPct(w);
+	} else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+		event.preventDefault();
+		const delta = event.key === 'ArrowUp' ? -10 : 10;
+		const h = Math.max(40, Math.min(480, Math.round((imageHeightPx.value + delta) / 10) * 10));
+		imageHeight.value = h + 'px';
+	}
+}
+
+function onBranchDividerKeydown(event: KeyboardEvent, leftKey: 'left' | 'center', rightKey: 'center' | 'right') {
+	if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+	event.preventDefault();
+	const deltaPct = event.key === 'ArrowLeft' ? -5 : 5;
+	const b = branch.value;
+	const baseL = leftKey === 'left' ? b.left : b.center;
+	const baseR = rightKey === 'center' ? b.center : b.right;
+	const pair = baseL + baseR;
+	const nl = Math.round(Math.max(2, Math.min(pair - 2, baseL + deltaPct)) * 10) / 10;
+	const nr = Math.round((pair - nl) * 10) / 10;
+	const toFr = (pct: number) => Math.round((pct / 100) * b.sum * 10) / 10;
+	setBranchShare(leftKey, toFr(nl));
+	setBranchShare(rightKey, toFr(nr));
+}
 </script>
 
 <template>
@@ -426,6 +537,10 @@ onUnmounted(() => {
 				class="row-mini-headerbox"
 				:class="['align-' + align, { 'is-dragging': !!headerDrag }]"
 				:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
+				tabindex="0"
+				role="button"
+				aria-label="Header position — use Arrow keys to move"
+				@keydown.self="onHeaderKeydown"
 				@mousedown="startHeaderDrag($event)"
 				@touchstart="startHeaderDrag($event)"
 				:title="headerTitle"
@@ -445,7 +560,13 @@ onUnmounted(() => {
 			</div>
 		</div>
 		<div v-else-if="isNone" class="row-mini-header-off">
-			<button type="button" class="row-mini-restore-header" title="Restore header" @click.stop="headerMode = 'top'">
+			<button
+				type="button"
+				class="row-mini-restore-header"
+				aria-label="Restore header"
+				title="Restore header"
+				@click.stop="headerMode = 'top'"
+			>
 				+ Header
 			</button>
 		</div>
@@ -455,6 +576,10 @@ onUnmounted(() => {
 					class="row-mini-headerbox row-mini-vertical"
 					:class="{ 'is-dragging': !!headerDrag }"
 					:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
+					tabindex="0"
+					role="button"
+					aria-label="Header position — use Arrow keys to move"
+					@keydown.self="onHeaderKeydown"
 					@mousedown="startHeaderDrag($event)"
 					@touchstart="startHeaderDrag($event)"
 					:title="headerTitle"
@@ -490,6 +615,14 @@ onUnmounted(() => {
 					</div>
 					<div
 						class="branch-divider"
+						tabindex="0"
+						role="separator"
+						aria-orientation="vertical"
+						aria-label="Subtrait column split"
+						:aria-valuenow="Math.round(branch.left)"
+						aria-valuemin="20"
+						aria-valuemax="80"
+						@keydown="onBranchDividerKeydown($event, 'left', 'center')"
 						@mousedown="startBranchDivider($event, 'left', 'center')"
 						@touchstart="startBranchDivider($event, 'left', 'center')"
 					></div>
@@ -498,6 +631,14 @@ onUnmounted(() => {
 					</div>
 					<div
 						class="branch-divider"
+						tabindex="0"
+						role="separator"
+						aria-orientation="vertical"
+						aria-label="Subtrait column split"
+						:aria-valuenow="Math.round(branch.left + branch.center)"
+						aria-valuemin="20"
+						aria-valuemax="80"
+						@keydown="onBranchDividerKeydown($event, 'center', 'right')"
 						@mousedown="startBranchDivider($event, 'center', 'right')"
 						@touchstart="startBranchDivider($event, 'center', 'right')"
 					></div>
@@ -518,6 +659,9 @@ onUnmounted(() => {
 						class="row-mini-box"
 						:class="{ 'row-mini-implicit': b.implicit }"
 						:style="cellPlace(b.key)"
+						tabindex="0"
+						:aria-label="partBoxLabel(b.key) + ' — Arrow keys to reorder, Shift+Left/Right to resize'"
+						@keydown.self="onBoxKeydown($event, b.key)"
 						@mousedown="startBoxDrag($event, b.key, 'move')"
 						@touchstart="startBoxDrag($event, b.key, 'move')"
 						:title="partBoxLabel(b.key) + ' ' + b.left + '% · top ' + b.top + ' · ' + b.width + '% × ' + b.height"
@@ -550,6 +694,9 @@ onUnmounted(() => {
 				<div v-else-if="isImageBody" ref="imageHostEl" class="row-mini-imagehost">
 					<div
 						class="row-mini-box row-mini-imagebox"
+						tabindex="0"
+						role="group"
+						aria-label="Image size — Left/Right for width, Up/Down for height"
 						:style="
 							'width: ' +
 							(imageDrag ? imageDrag.width : imageWidthPct) +
@@ -564,6 +711,7 @@ onUnmounted(() => {
 							(imageDrag ? imageDrag.height : imageHeightPx) +
 							'px'
 						"
+						@keydown.self="onImageKeydown"
 					>
 						<span class="row-mini-name">Image</span>
 						<span class="row-mini-dims">
@@ -597,6 +745,10 @@ onUnmounted(() => {
 				class="row-mini-headerbox"
 				:class="['align-' + align, { 'is-dragging': !!headerDrag }]"
 				:style="headerDrag ? 'transform: translate(' + headerDrag.dx + 'px,' + headerDrag.dy + 'px);' : ''"
+				tabindex="0"
+				role="button"
+				aria-label="Header position — use Arrow keys to move"
+				@keydown.self="onHeaderKeydown"
 				@mousedown="startHeaderDrag($event)"
 				@touchstart="startHeaderDrag($event)"
 				:title="headerTitle"

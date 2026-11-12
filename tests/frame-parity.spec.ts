@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils';
 import TraitSetBlock from '../js/trait-set-block.vue';
 import TraitSetFrame from '../js/trait-set-frame.vue';
 import { resolveFrame, computeFrameAnchors, normalizeZoom, type FrameConfig } from '../js/frame-geometry.ts';
+import { characterCurioFunctions } from '../js/functions.ts';
 
 describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 	describe('Baseline 1: Classic Block Frame Chrome Parity', () => {
@@ -377,13 +378,18 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
 			const character = structuredClone(raw);
 
-			// Set 0 (The Architect): set-level Dice [10, 10, 10] spreads into 3 ring die nodes
+			// Set 0 (The Architect): set-level Dice [10, 10, 10] spreads into 3 ring die nodes without repeated Boss Die labels
 			const archWrapper = mount(TraitSetBlock, {
 				props: { character, traitSetID: 0, submode: 'edit', editing: [] },
 			});
 			const ringTraits = archWrapper.findAll('.ring-trait');
 			expect(ringTraits).toHaveLength(3);
-			// hide-ring-names removed per Item 2; ringNoun label hidden by other means
+			expect(archWrapper.findAll('.ring-trait-name')).toHaveLength(0);
+			expect(archWrapper.findAll('.ring-trait-inner').map((el) => el.attributes('aria-label'))).toEqual([
+				'Stage d10 Boss Die',
+				'Stage d10 Boss Die',
+				'Stage d10 Boss Die',
+			]);
 			const ringAngles = ringTraits.map((t) => t.attributes('style') || '');
 			expect(new Set(ringAngles).size).toBe(3);
 			archWrapper.unmount();
@@ -401,7 +407,7 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(listNames).toContain('All My Darlings are Dead');
 			distWrapper.unmount();
 
-			// Multi-die TRAIT on a ring also spreads all of its dice across the arc
+			// Multi-die TRAIT on a ring also spreads all of its dice across the arc without repeating labels
 			const multiDieTraitChar: any = structuredClone(raw);
 			delete multiDieTraitChar.traitSets[0].rating;
 			multiDieTraitChar.traitSets[0].traits = [
@@ -419,7 +425,12 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			});
 			const spreadTraits = traitRingWrapper.findAll('.ring-trait');
 			expect(spreadTraits).toHaveLength(3);
-			expect(spreadTraits.map((t) => t.find('.ring-trait-name').text())).toEqual(['Boss Die', 'Boss Die', 'Boss Die']);
+			expect(traitRingWrapper.findAll('.ring-trait-name')).toHaveLength(0);
+			expect(traitRingWrapper.findAll('.ring-trait-inner').map((el) => el.attributes('aria-label'))).toEqual([
+				'Stage d10 Boss Die',
+				'Stage d10 Boss Die',
+				'Stage d10 Boss Die',
+			]);
 			const spreadStyles = spreadTraits.map((t) => t.attributes('style') || '');
 			expect(new Set(spreadStyles).size).toBe(3);
 			// Clicking any spread die selects the underlying Boss Die trait (index 0)
@@ -428,6 +439,22 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			expect(emitted).toBeTruthy();
 			expect(emitted![0][0]).toEqual(['trait', 0, 0]);
 			traitRingWrapper.unmount();
+
+			// Multi-trait ring still renders all individual trait names
+			const { VANGUARD_FRAME_SHOWCASE } = await import('../js/showcase-templates.ts');
+			const vanguardChar = structuredClone(VANGUARD_FRAME_SHOWCASE.character);
+			const vanguardWrapper = mount(TraitSetBlock, {
+				props: { character: vanguardChar, traitSetID: 0, submode: 'edit', editing: [] },
+			});
+			expect(vanguardWrapper.findAll('.ring-trait-name').map((n) => n.text())).toEqual([
+				'Agility',
+				'Awareness',
+				'Brawn',
+				'Coordination',
+				'Intellect',
+				'Will',
+			]);
+			vanguardWrapper.unmount();
 		});
 
 		it('Item 4: renders leader lines for Architect and Dreamer, but none for Vanguard', async () => {
@@ -525,6 +552,28 @@ describe('Step 1: Frame Chrome & Ring Parity Suite', () => {
 			});
 			expect(dreamerEdit.find('.ring-actions').exists()).toBe(false);
 			dreamerEdit.unmount();
+		});
+
+		it('Item 7: prevents inherited frame stroke from corrupting diecon numerals', async () => {
+			for (const size of [4, 6, 8, 10, 12, 20]) {
+				const svg = characterCurioFunctions.renderDieconSVG(size, true);
+				expect(svg).toContain('<text ');
+				expect(svg).toContain('stroke="none"');
+			}
+
+			const raw = (await import('../data/templates/Dreamer_Architect.curio.json')).default;
+			const character = structuredClone(raw);
+			for (const traitSetID of [0, 3]) {
+				const wrapper = mount(TraitSetBlock, {
+					props: { character, traitSetID, submode: 'play', editing: [] },
+				});
+				const numerals = wrapper.findAll('svg.diecon text');
+				expect(numerals.length).toBeGreaterThan(0);
+				for (const textEl of numerals) {
+					expect(textEl.attributes('stroke')).toBe('none');
+				}
+				wrapper.unmount();
+			}
 		});
 	});
 });

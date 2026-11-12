@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { getView, ensureView, type Rating, type RatingType, type PartCell, DIE_LADDER } from './model.ts';
 import { characterCurioFunctions } from './functions.ts';
 import { formatPct, parsePct, type PartName } from './sheet-grid.ts';
@@ -1456,950 +1456,964 @@ function onFileImportSelected(ev: Event) {
 	};
 	reader.readAsText(file);
 }
+
+const dialogEl = ref<HTMLDialogElement | null>(null);
+
+onMounted(() => {
+	if (dialogEl.value && !dialogEl.value.open) {
+		dialogEl.value.showModal();
+	}
+});
+
+onBeforeUnmount(() => {
+	if (dialogEl.value?.open) {
+		dialogEl.value.close();
+	}
+});
+
+function onDialogBackdropClick(event: MouseEvent) {
+	const dialog = dialogEl.value;
+	if (!dialog || event.target !== dialog) return;
+	const rect = dialog.getBoundingClientRect();
+	if (rect.width === 0 && rect.height === 0) return;
+	const inDialog =
+		event.clientX >= rect.left &&
+		event.clientX <= rect.right &&
+		event.clientY >= rect.top &&
+		event.clientY <= rect.bottom;
+	if (!inDialog) {
+		emit('close');
+	}
+}
 </script>
 
 <template>
-	<div class="trait-set-mini-backdrop" @click.self="emit('close')">
-		<div
-			class="trait-set-mini-dialog trait-set-mini"
-			role="dialog"
-			aria-modal="true"
-			aria-label="Trait Set Mini Editor"
-		>
-			<input
-				ref="fileImportInput"
-				type="file"
-				accept=".json,application/json"
-				class="sr-only"
-				aria-label="Import trait set file"
-				@change="onFileImportSelected"
-			/>
+	<dialog
+		ref="dialogEl"
+		class="trait-set-mini-dialog trait-set-mini"
+		aria-labelledby="trait-set-mini-title"
+		@cancel.prevent="emit('close')"
+		@click="onDialogBackdropClick"
+	>
+		<input
+			ref="fileImportInput"
+			type="file"
+			accept=".json,application/json"
+			class="sr-only"
+			aria-label="Import trait set file"
+			@change="onFileImportSelected"
+		/>
 
-			<!-- Top Header -->
-			<header class="mini-header">
-				<div class="mini-header-left">
-					<span class="mini-header-icon" aria-hidden="true">
-						<i class="fas fa-th-large"></i>
-					</span>
-					<div class="mini-header-titles">
-						<h2 class="mini-title">Trait Block Mini</h2>
-						<p class="mini-subtitle">Build one trait set from parts &amp; ship as a preset card</p>
+		<!-- Top Header -->
+		<header class="mini-header">
+			<div class="mini-header-left">
+				<span class="mini-header-icon" aria-hidden="true">
+					<i class="fas fa-th-large"></i>
+				</span>
+				<div class="mini-header-titles">
+					<h2 id="trait-set-mini-title" class="mini-title">Trait Block Mini</h2>
+					<p class="mini-subtitle">Build one trait set from parts &amp; ship as a preset card</p>
+				</div>
+			</div>
+			<div class="mini-header-actions">
+				<span class="legend-chip"><span class="mini-marker-badge marker-label">L</span> Label (Edit-only)</span>
+				<span class="legend-chip"><span class="mini-marker-badge marker-text">T</span> Text (Play-mutable)</span>
+				<button type="button" class="mini-close-btn" aria-label="Close dialog" @click="emit('close')">&times;</button>
+			</div>
+		</header>
+
+		<!-- Main 2-Column Split: Authoring Left, Live Rendered Card Right -->
+		<div class="mini-body">
+			<div class="mini-authoring-column">
+				<!-- Parts Inventory Palette -->
+				<section class="mini-inventory-palette" aria-label="Parts Inventory">
+					<div class="inventory-palette-header">
+						<span class="inventory-palette-title">PARTS INVENTORY (BLUEPRINT)</span>
+						<button
+							type="button"
+							class="btn-new-child-slot"
+							title="Add Companion / Stress Track"
+							@click="onAddCompanionTrackClick"
+						>
+							<i class="fas fa-heartbeat"></i> +Track
+						</button>
+						<button type="button" class="btn-new-child-slot" title="Add Block / SFX Entry" @click="onAddBlockSfxClick">
+							<i class="fas fa-bolt"></i> +Block
+						</button>
+						<button type="button" class="btn-new-child-slot" @click="showNewChildSlotForm = !showNewChildSlotForm">
+							<i class="fas fa-plus"></i> Add Child Trait Slot
+						</button>
 					</div>
-				</div>
-				<div class="mini-header-actions">
-					<span class="legend-chip"><span class="mini-marker-badge marker-label">L</span> Label (Edit-only)</span>
-					<span class="legend-chip"><span class="mini-marker-badge marker-text">T</span> Text (Play-mutable)</span>
-					<button type="button" class="mini-close-btn" aria-label="Close dialog" @click="emit('close')">&times;</button>
-				</div>
-			</header>
 
-			<!-- Main 2-Column Split: Authoring Left, Live Rendered Card Right -->
-			<main class="mini-body">
-				<div class="mini-authoring-column">
-					<!-- Parts Inventory Palette -->
-					<section class="mini-inventory-palette" aria-label="Parts Inventory">
-						<div class="inventory-palette-header">
-							<span class="inventory-palette-title">PARTS INVENTORY (BLUEPRINT)</span>
-							<button
-								type="button"
-								class="btn-new-child-slot"
-								title="Add Companion / Stress Track"
-								@click="onAddCompanionTrackClick"
-							>
-								<i class="fas fa-heartbeat"></i> +Track
-							</button>
-							<button
-								type="button"
-								class="btn-new-child-slot"
-								title="Add Block / SFX Entry"
-								@click="onAddBlockSfxClick"
-							>
-								<i class="fas fa-bolt"></i> +Block
-							</button>
-							<button type="button" class="btn-new-child-slot" @click="showNewChildSlotForm = !showNewChildSlotForm">
-								<i class="fas fa-plus"></i> Add Child Trait Slot
-							</button>
-						</div>
+					<!-- Inline Add Child Slot Form -->
+					<div v-if="showNewChildSlotForm" class="new-child-slot-panel">
+						<input
+							v-model="newChildNoun"
+							type="text"
+							class="mini-input mini-input-sm"
+							placeholder="Noun (e.g. Statement, Ammo, Stress, Specialty)"
+							@keydown.enter.prevent="addChildSlot"
+						/>
+						<select v-model="newChildRatingType" class="mini-select-sm">
+							<option value="Pip">Pip Track</option>
+							<option value="Die">Die Track</option>
+							<option value="Dice">Dice Pool</option>
+							<option value="Counter">Counter</option>
+							<option value="None">None (Text Only)</option>
+						</select>
+						<button type="button" class="mini-btn-add" @click="addChildSlot">Add Slot</button>
+						<button type="button" class="mini-btn-cancel" @click="showNewChildSlotForm = false">Cancel</button>
+					</div>
 
-						<!-- Inline Add Child Slot Form -->
-						<div v-if="showNewChildSlotForm" class="new-child-slot-panel">
-							<input
-								v-model="newChildNoun"
-								type="text"
-								class="mini-input mini-input-sm"
-								placeholder="Noun (e.g. Statement, Ammo, Stress, Specialty)"
-								@keydown.enter.prevent="addChildSlot"
-							/>
-							<select v-model="newChildRatingType" class="mini-select-sm">
-								<option value="Pip">Pip Track</option>
-								<option value="Die">Die Track</option>
-								<option value="Dice">Dice Pool</option>
-								<option value="Counter">Counter</option>
-								<option value="None">None (Text Only)</option>
-							</select>
-							<button type="button" class="mini-btn-add" @click="addChildSlot">Add Slot</button>
-							<button type="button" class="mini-btn-cancel" @click="showNewChildSlotForm = false">Cancel</button>
-						</div>
-
-						<div class="inventory-groups-list">
-							<div
-								v-for="group in inventoryGroups"
-								:key="group.noun"
-								class="inventory-noun-group"
-								:class="'inventory-group-' + group.category"
-								:data-noun-group="group.noun"
-							>
-								<div class="inventory-group-header">
-									<span class="inventory-group-noun">{{ group.noun }}</span>
-									<span class="inventory-group-tag">{{
-										group.category === 'primary' ? 'Primary Trait' : 'Child Trait'
-									}}</span>
+					<div class="inventory-groups-list">
+						<div
+							v-for="group in inventoryGroups"
+							:key="group.noun"
+							class="inventory-noun-group"
+							:class="'inventory-group-' + group.category"
+							:data-noun-group="group.noun"
+						>
+							<div class="inventory-group-header">
+								<span class="inventory-group-noun">{{ group.noun }}</span>
+								<span class="inventory-group-tag">{{
+									group.category === 'primary' ? 'Primary Trait' : 'Child Trait'
+								}}</span>
+								<button
+									v-if="group.category === 'child'"
+									type="button"
+									class="mini-icon-btn mini-btn-danger"
+									title="Remove child slot"
+									@click="removeChildSlot(group.noun)"
+								>
+									&times;
+								</button>
+							</div>
+							<div class="inventory-tiles-row">
+								<div
+									v-for="tile in group.tiles"
+									:key="tile.kind"
+									class="inventory-tile"
+									:class="{ active: isPartActive(tile.kind) }"
+									draggable="true"
+									@dragstart="onInventoryDragStart($event, tile)"
+									@click="addOrFocusPart(tile.kind, tile.noun, tile.slotKind, tile.ratingType)"
+								>
 									<button
-										v-if="group.category === 'child'"
+										v-if="tile.marker === 'L' || tile.marker === 'T'"
 										type="button"
-										class="mini-icon-btn mini-btn-danger"
-										title="Remove child slot"
-										@click="removeChildSlot(group.noun)"
+										class="mini-marker-badge mini-marker-toggle"
+										:class="getPartMarker(tile.kind) === 'L' ? 'marker-label' : 'marker-text'"
+										:title="`Click to toggle Label (L) vs Text (T)`"
+										@click.stop="toggleBlueprintMarker(tile.kind)"
 									>
-										&times;
+										{{ getPartMarker(tile.kind) }}
 									</button>
-								</div>
-								<div class="inventory-tiles-row">
-									<div
-										v-for="tile in group.tiles"
-										:key="tile.kind"
-										class="inventory-tile"
-										:class="{ active: isPartActive(tile.kind) }"
-										draggable="true"
-										@dragstart="onInventoryDragStart($event, tile)"
-										@click="addOrFocusPart(tile.kind, tile.noun, tile.slotKind, tile.ratingType)"
-									>
-										<button
-											v-if="tile.marker === 'L' || tile.marker === 'T'"
-											type="button"
-											class="mini-marker-badge mini-marker-toggle"
-											:class="getPartMarker(tile.kind) === 'L' ? 'marker-label' : 'marker-text'"
-											:title="`Click to toggle Label (L) vs Text (T)`"
-											@click.stop="toggleBlueprintMarker(tile.kind)"
-										>
-											{{ getPartMarker(tile.kind) }}
-										</button>
-										<span v-else-if="tile.marker === 'die'" class="mini-tile-svg" v-html="singleDieSVG"></span>
-										<span
-											v-else-if="tile.marker === 'pool'"
-											class="mini-tile-svg mini-bundle"
-											v-html="bundleDiceSVG"
-										></span>
-										<span v-else-if="tile.marker === 'pip'" class="pip-bubble" aria-hidden="true"></span>
-										<span v-else-if="tile.marker === 'counter'" class="mini-counter-badge">#</span>
-										<span class="inventory-tile-label">{{ tile.label }}</span>
-									</div>
+									<span v-else-if="tile.marker === 'die'" class="mini-tile-svg" v-html="singleDieSVG"></span>
+									<span
+										v-else-if="tile.marker === 'pool'"
+										class="mini-tile-svg mini-bundle"
+										v-html="bundleDiceSVG"
+									></span>
+									<span v-else-if="tile.marker === 'pip'" class="pip-bubble" aria-hidden="true"></span>
+									<span v-else-if="tile.marker === 'counter'" class="mini-counter-badge">#</span>
+									<span class="inventory-tile-label">{{ tile.label }}</span>
 								</div>
 							</div>
 						</div>
-					</section>
+					</div>
+				</section>
 
-					<!-- Header Placement Options -->
-					<section class="mini-header-controls" aria-label="Header Placement">
-						<span class="mini-subheading">Header Placement</span>
-						<div class="mini-btn-group">
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'sidebar' }"
-								@click="setHeaderPlacement('sidebar')"
-							>
-								<i class="fas fa-columns"></i> Left Sidebar
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'top' && headerAlign === 'left' }"
-								@click="setHeaderPlacement('top', 'left')"
-							>
-								<i class="fas fa-align-left"></i> Top Left
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'top' && headerAlign === 'center' }"
-								@click="setHeaderPlacement('top', 'center')"
-							>
-								<i class="fas fa-align-center"></i> Top Center
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'top' && headerAlign === 'right' }"
-								@click="setHeaderPlacement('top', 'right')"
-							>
-								<i class="fas fa-align-right"></i> Top Right
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'bottom' && headerAlign === 'left' }"
-								@click="setHeaderPlacement('bottom', 'left')"
-							>
-								<i class="fas fa-align-left"></i> Bottom Left
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'bottom' && headerAlign === 'center' }"
-								@click="setHeaderPlacement('bottom', 'center')"
-							>
-								<i class="fas fa-align-center"></i> Bottom Center
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'bottom' && headerAlign === 'right' }"
-								@click="setHeaderPlacement('bottom', 'right')"
-							>
-								<i class="fas fa-align-right"></i> Bottom Right
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: headerPlacement === 'none' }"
-								@click="setHeaderPlacement('none')"
-							>
-								<i class="fas fa-eye-slash"></i> None
-							</button>
-						</div>
-					</section>
+				<!-- Header Placement Options -->
+				<section class="mini-header-controls" aria-label="Header Placement">
+					<span class="mini-subheading">Header Placement</span>
+					<div class="mini-btn-group">
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'sidebar' }"
+							@click="setHeaderPlacement('sidebar')"
+						>
+							<i class="fas fa-columns"></i> Left Sidebar
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'top' && headerAlign === 'left' }"
+							@click="setHeaderPlacement('top', 'left')"
+						>
+							<i class="fas fa-align-left"></i> Top Left
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'top' && headerAlign === 'center' }"
+							@click="setHeaderPlacement('top', 'center')"
+						>
+							<i class="fas fa-align-center"></i> Top Center
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'top' && headerAlign === 'right' }"
+							@click="setHeaderPlacement('top', 'right')"
+						>
+							<i class="fas fa-align-right"></i> Top Right
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'bottom' && headerAlign === 'left' }"
+							@click="setHeaderPlacement('bottom', 'left')"
+						>
+							<i class="fas fa-align-left"></i> Bottom Left
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'bottom' && headerAlign === 'center' }"
+							@click="setHeaderPlacement('bottom', 'center')"
+						>
+							<i class="fas fa-align-center"></i> Bottom Center
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'bottom' && headerAlign === 'right' }"
+							@click="setHeaderPlacement('bottom', 'right')"
+						>
+							<i class="fas fa-align-right"></i> Bottom Right
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: headerPlacement === 'none' }"
+							@click="setHeaderPlacement('none')"
+						>
+							<i class="fas fa-eye-slash"></i> None
+						</button>
+					</div>
+				</section>
 
-					<!-- SVG Frame & Border Selector -->
-					<section class="mini-frame-section" aria-label="Set Frame & Border">
-						<div class="mini-section-label">FRAME &amp; BORDER</div>
-						<div class="mini-frame-bar" role="group" aria-label="Set Frame Shape">
-							<button
-								v-for="sh in ['none', 'block', 'ring', 'ellipse', 'arc', 'line']"
-								:key="'frame-sh-' + sh"
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: currentFrameShape === sh }"
-								@click="setFrameShape(sh as FrameShape)"
-							>
-								{{ sh.charAt(0).toUpperCase() + sh.slice(1) }}
-							</button>
-						</div>
+				<!-- SVG Frame & Border Selector -->
+				<section class="mini-frame-section" aria-label="Set Frame & Border">
+					<div class="mini-section-label">FRAME &amp; BORDER</div>
+					<div class="mini-frame-bar" role="group" aria-label="Set Frame Shape">
+						<button
+							v-for="sh in ['none', 'block', 'ring', 'ellipse', 'arc', 'line']"
+							:key="'frame-sh-' + sh"
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: currentFrameShape === sh }"
+							@click="setFrameShape(sh as FrameShape)"
+						>
+							{{ sh.charAt(0).toUpperCase() + sh.slice(1) }}
+						</button>
+					</div>
 
-						<!-- Frame Parameters when active -->
-						<div v-if="activeFrame && currentFrameShape !== 'none'" class="mini-frame-params">
-							<!-- Angles for ring, ellipse, arc -->
-							<template
-								v-if="currentFrameShape === 'ring' || currentFrameShape === 'ellipse' || currentFrameShape === 'arc'"
-							>
-								<div class="mini-param-row">
-									<label class="mini-param-label">
-										Start °
-										<input
-											type="number"
-											class="mini-param-num"
-											step="15"
-											:value="activeFrame.span[0]"
-											@change="setFrameSpan(0, Number(($event.target as HTMLInputElement).value) || 0)"
-										/>
-									</label>
-									<label class="mini-param-label">
-										End °
-										<input
-											type="number"
-											class="mini-param-num"
-											step="15"
-											:value="activeFrame.span[1]"
-											@change="setFrameSpan(1, Number(($event.target as HTMLInputElement).value) || 360)"
-										/>
-									</label>
-									<div class="mini-param-presets" role="group" aria-label="Span Presets">
-										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(0, 360)">360° Loop</button>
-										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(45, 135)">Right Arc</button>
-										<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(180, 360)">Left Arc</button>
-									</div>
-								</div>
-							</template>
-
-							<!-- Corner for block -->
-							<template v-if="currentFrameShape === 'block'">
-								<div class="mini-param-row">
-									<label class="mini-param-label" v-if="activeFrame.corner !== 'cut'">
-										Radius
-										<input
-											type="number"
-											class="mini-param-num"
-											min="0"
-											max="48"
-											:value="activeFrame.corner"
-											@change="
-												setFrameCorner(
-													Math.max(0, Math.min(48, Number(($event.target as HTMLInputElement).value) || 0)),
-												)
-											"
-										/>
-									</label>
-									<button
-										type="button"
-										class="mini-chip-btn"
-										:class="{ active: activeFrame.corner === 'cut' }"
-										@click="setFrameCorner(activeFrame.corner === 'cut' ? 8 : 'cut')"
-									>
-										Cut Chamfer
-									</button>
-								</div>
-							</template>
-
-							<!-- Width for all active frames -->
-							<div class="mini-param-row">
-								<span class="mini-param-label">Width:</span>
-								<div class="mini-param-presets" role="group" aria-label="Frame Widths">
-									<button
-										v-for="w in ['1px', '1.5px', '2px', '3px', '4px']"
-										:key="'w-' + w"
-										type="button"
-										class="mini-chip-btn"
-										:class="{ active: (activeFrame.stroke || '2px') === w }"
-										@click="setFrameStroke(w)"
-									>
-										{{ w }}
-									</button>
-								</div>
-							</div>
-
-							<!-- Color for all active frames -->
-							<div class="mini-param-row">
-								<span class="mini-param-label">Color:</span>
-								<div class="mini-param-presets" role="group" aria-label="Frame Colors">
-									<button
-										v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
-										:key="'c-' + c"
-										type="button"
-										class="mini-chip-btn"
-										:class="{ active: (activeFrame.color || 'primary') === c }"
-										@click="setFrameColor(c)"
-									>
-										{{ c.charAt(0).toUpperCase() + c.slice(1) }}
-									</button>
-								</div>
-							</div>
-
-							<!-- Dash pattern for all active frames -->
+					<!-- Frame Parameters when active -->
+					<div v-if="activeFrame && currentFrameShape !== 'none'" class="mini-frame-params">
+						<!-- Angles for ring, ellipse, arc -->
+						<template
+							v-if="currentFrameShape === 'ring' || currentFrameShape === 'ellipse' || currentFrameShape === 'arc'"
+						>
 							<div class="mini-param-row">
 								<label class="mini-param-label">
-									Dash:
+									Start °
 									<input
-										type="text"
-										class="mini-param-text"
-										:value="activeFrame.dash || ''"
-										placeholder="Solid"
-										@change="setFrameDash(($event.target as HTMLInputElement).value)"
+										type="number"
+										class="mini-param-num"
+										step="15"
+										:value="activeFrame.span[0]"
+										@change="setFrameSpan(0, Number(($event.target as HTMLInputElement).value) || 0)"
 									/>
 								</label>
-							</div>
-
-							<!-- Box toggle for radial frames -->
-							<div v-if="['ring', 'ellipse', 'arc'].includes(currentFrameShape)" class="mini-param-row">
-								<span class="mini-param-label">Box:</span>
-								<div class="mini-param-presets" role="group" aria-label="Frame Box">
-									<button
-										type="button"
-										class="mini-chip-btn"
-										:class="{ active: activeFrame.box }"
-										@click="toggleFrameBox"
-									>
-										{{ activeFrame.box ? 'Box On' : 'Box Off' }}
-									</button>
+								<label class="mini-param-label">
+									End °
+									<input
+										type="number"
+										class="mini-param-num"
+										step="15"
+										:value="activeFrame.span[1]"
+										@change="setFrameSpan(1, Number(($event.target as HTMLInputElement).value) || 360)"
+									/>
+								</label>
+								<div class="mini-param-presets" role="group" aria-label="Span Presets">
+									<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(0, 360)">360° Loop</button>
+									<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(45, 135)">Right Arc</button>
+									<button type="button" class="mini-chip-btn" @click="setFrameSpanPreset(180, 360)">Left Arc</button>
 								</div>
 							</div>
-						</div>
-					</section>
+						</template>
 
-					<!-- Rating Display (Full Track vs Single Die) -->
-					<section class="mini-frame-section" aria-label="Rating Display">
-						<div class="mini-section-label">RATING DISPLAY</div>
-						<div class="mini-btn-group" role="group" aria-label="Rating Display Mode">
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: (ratingDisplay || 'track') === 'track' }"
-								@click="ratingDisplay = 'track'"
-							>
-								Full Track
-							</button>
-							<button
-								type="button"
-								class="mini-toggle-btn"
-								:class="{ active: ratingDisplay === 'rating' }"
-								@click="ratingDisplay = 'rating'"
-							>
-								Single Die
-							</button>
-						</div>
-					</section>
-
-					<!-- 2D Drag-and-Place Grid Canvas -->
-					<section class="mini-grid-section" aria-label="2D Trait Layout Canvas">
-						<div class="mini-grid-container">
-							<div ref="gridEl" class="mini-layout-canvas" @dragover="onGridDragOver" @drop="onGridDrop">
-								<div
-									v-for="part in activeParts"
-									:key="part.kind"
-									class="block-mini-part"
-									:class="{ selected: selectedPartKey === part.kind, dragging: draggingKey === part.kind }"
-									:data-grid-part="part.kind"
-									:data-part-owner="part.ownerNoun"
-									:style="getPartBoxStyle(part)"
-									tabindex="0"
-									@pointerdown="onPartPointerDown($event, part.kind, 'move')"
-									@click.stop="selectedPartKey = part.kind"
-									@keydown="onPartKeyDown($event, part.kind)"
+						<!-- Corner for block -->
+						<template v-if="currentFrameShape === 'block'">
+							<div class="mini-param-row">
+								<label class="mini-param-label" v-if="activeFrame.corner !== 'cut'">
+									Radius
+									<input
+										type="number"
+										class="mini-param-num"
+										min="0"
+										max="48"
+										:value="activeFrame.corner"
+										@change="
+											setFrameCorner(Math.max(0, Math.min(48, Number(($event.target as HTMLInputElement).value) || 0)))
+										"
+									/>
+								</label>
+								<button
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: activeFrame.corner === 'cut' }"
+									@click="setFrameCorner(activeFrame.corner === 'cut' ? 8 : 'cut')"
 								>
-									<div class="block-mini-part-inner">
-										<button
-											v-if="part.blueprint.marker === 'L' || part.blueprint.marker === 'T'"
-											type="button"
-											class="mini-marker-badge mini-marker-toggle"
-											:class="getPartMarker(part.kind) === 'L' ? 'marker-label' : 'marker-text'"
-											:title="`Toggle Label / Text`"
-											@pointerdown.stop
-											@click.stop="toggleBlueprintMarker(part.kind)"
-										>
-											{{ getPartMarker(part.kind) }}
-										</button>
-										<span v-else-if="part.blueprint.ratingType === 'Pip'" class="pip-bubble" aria-hidden="true"></span>
-										<span
-											v-else-if="part.blueprint.ratingType === 'Dice'"
-											class="mini-tile-svg mini-bundle"
-											v-html="bundleDiceSVG"
-										></span>
-										<span v-else-if="part.blueprint.ratingType === 'Counter'" class="mini-counter-badge">#</span>
-										<span v-else class="mini-tile-svg" v-html="singleDieSVG"></span>
-										<span class="block-mini-part-name">{{ part.partLabel }}</span>
-										<span class="block-mini-part-coords">{{ part.left }} · {{ part.width }}</span>
-									</div>
+									Cut Chamfer
+								</button>
+							</div>
+						</template>
+
+						<!-- Width for all active frames -->
+						<div class="mini-param-row">
+							<span class="mini-param-label">Width:</span>
+							<div class="mini-param-presets" role="group" aria-label="Frame Widths">
+								<button
+									v-for="w in ['1px', '1.5px', '2px', '3px', '4px']"
+									:key="'w-' + w"
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: (activeFrame.stroke || '2px') === w }"
+									@click="setFrameStroke(w)"
+								>
+									{{ w }}
+								</button>
+							</div>
+						</div>
+
+						<!-- Color for all active frames -->
+						<div class="mini-param-row">
+							<span class="mini-param-label">Color:</span>
+							<div class="mini-param-presets" role="group" aria-label="Frame Colors">
+								<button
+									v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
+									:key="'c-' + c"
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: (activeFrame.color || 'primary') === c }"
+									@click="setFrameColor(c)"
+								>
+									{{ c.charAt(0).toUpperCase() + c.slice(1) }}
+								</button>
+							</div>
+						</div>
+
+						<!-- Dash pattern for all active frames -->
+						<div class="mini-param-row">
+							<label class="mini-param-label">
+								Dash:
+								<input
+									type="text"
+									class="mini-param-text"
+									:value="activeFrame.dash || ''"
+									placeholder="Solid"
+									@change="setFrameDash(($event.target as HTMLInputElement).value)"
+								/>
+							</label>
+						</div>
+
+						<!-- Box toggle for radial frames -->
+						<div v-if="['ring', 'ellipse', 'arc'].includes(currentFrameShape)" class="mini-param-row">
+							<span class="mini-param-label">Box:</span>
+							<div class="mini-param-presets" role="group" aria-label="Frame Box">
+								<button
+									type="button"
+									class="mini-chip-btn"
+									:class="{ active: activeFrame.box }"
+									@click="toggleFrameBox"
+								>
+									{{ activeFrame.box ? 'Box On' : 'Box Off' }}
+								</button>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Rating Display (Full Track vs Single Die) -->
+				<section class="mini-frame-section" aria-label="Rating Display">
+					<div class="mini-section-label">RATING DISPLAY</div>
+					<div class="mini-btn-group" role="group" aria-label="Rating Display Mode">
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: (ratingDisplay || 'track') === 'track' }"
+							@click="ratingDisplay = 'track'"
+						>
+							Full Track
+						</button>
+						<button
+							type="button"
+							class="mini-toggle-btn"
+							:class="{ active: ratingDisplay === 'rating' }"
+							@click="ratingDisplay = 'rating'"
+						>
+							Single Die
+						</button>
+					</div>
+				</section>
+
+				<!-- 2D Drag-and-Place Grid Canvas -->
+				<section class="mini-grid-section" aria-label="2D Trait Layout Canvas">
+					<div class="mini-grid-container">
+						<div ref="gridEl" class="mini-layout-canvas" @dragover="onGridDragOver" @drop="onGridDrop">
+							<div
+								v-for="part in activeParts"
+								:key="part.kind"
+								class="block-mini-part"
+								:class="{ selected: selectedPartKey === part.kind, dragging: draggingKey === part.kind }"
+								:data-grid-part="part.kind"
+								:data-part-owner="part.ownerNoun"
+								:style="getPartBoxStyle(part)"
+								tabindex="0"
+								@pointerdown="onPartPointerDown($event, part.kind, 'move')"
+								@click.stop="selectedPartKey = part.kind"
+								@keydown="onPartKeyDown($event, part.kind)"
+							>
+								<div class="block-mini-part-inner">
 									<button
+										v-if="part.blueprint.marker === 'L' || part.blueprint.marker === 'T'"
 										type="button"
-										class="block-mini-part-remove"
-										:aria-label="'Remove ' + part.partLabel"
-										:title="'Remove ' + part.partLabel"
+										class="mini-marker-badge mini-marker-toggle"
+										:class="getPartMarker(part.kind) === 'L' ? 'marker-label' : 'marker-text'"
+										:title="`Toggle Label / Text`"
 										@pointerdown.stop
-										@click.stop="removePartByKey(part.kind)"
+										@click.stop="toggleBlueprintMarker(part.kind)"
 									>
-										&times;
+										{{ getPartMarker(part.kind) }}
 									</button>
+									<span v-else-if="part.blueprint.ratingType === 'Pip'" class="pip-bubble" aria-hidden="true"></span>
 									<span
-										class="block-mini-edge block-mini-edge-w"
-										@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-w')"
+										v-else-if="part.blueprint.ratingType === 'Dice'"
+										class="mini-tile-svg mini-bundle"
+										v-html="bundleDiceSVG"
 									></span>
-									<span
-										class="block-mini-edge block-mini-edge-e"
-										@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-e')"
-									></span>
-									<span
-										class="block-mini-edge block-mini-edge-s"
-										@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-s')"
-									></span>
+									<span v-else-if="part.blueprint.ratingType === 'Counter'" class="mini-counter-badge">#</span>
+									<span v-else class="mini-tile-svg" v-html="singleDieSVG"></span>
+									<span class="block-mini-part-name">{{ part.partLabel }}</span>
+									<span class="block-mini-part-coords">{{ part.left }} · {{ part.width }}</span>
+								</div>
+								<button
+									type="button"
+									class="block-mini-part-remove"
+									:aria-label="'Remove ' + part.partLabel"
+									:title="'Remove ' + part.partLabel"
+									@pointerdown.stop
+									@click.stop="removePartByKey(part.kind)"
+								>
+									&times;
+								</button>
+								<span
+									class="block-mini-edge block-mini-edge-w"
+									@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-w')"
+								></span>
+								<span
+									class="block-mini-edge block-mini-edge-e"
+									@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-e')"
+								></span>
+								<span
+									class="block-mini-edge block-mini-edge-s"
+									@pointerdown.stop="onPartPointerDown($event, part.kind, 'resize-s')"
+								></span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Selected Part Readout & Rating Blueprint Controls -->
+					<div v-if="selectedPart" class="block-mini-readout" aria-label="Selected Part Blueprint">
+						<div class="readout-part-title-row">
+							<span class="readout-part-title"
+								>Selected Part: <strong>{{ selectedPartKey }}</strong></span
+							>
+
+							<!-- Text Marker Toggle on Readout -->
+							<div v-if="selectedPart.marker" class="readout-marker-toggle">
+								<span class="readout-label">Behavior:</span>
+								<button
+									type="button"
+									class="mini-toggle-btn mini-toggle-sm"
+									:class="{ active: selectedPart.marker === 'L' }"
+									@click="selectedPart.marker = 'L'"
+								>
+									L (Label)
+								</button>
+								<button
+									type="button"
+									class="mini-toggle-btn mini-toggle-sm"
+									:class="{ active: selectedPart.marker === 'T' }"
+									@click="selectedPart.marker = 'T'"
+								>
+									T (Text)
+								</button>
+							</div>
+
+							<!-- Rating Type Selector on Readout -->
+							<div
+								v-if="selectedPart.ratingType || selectedPartKey === 'rating' || selectedPartKey === 'track'"
+								class="readout-rating-controls"
+							>
+								<span class="readout-label">Rating:</span>
+								<div class="mini-btn-group mini-btn-group-sm">
+									<button
+										type="button"
+										class="mini-toggle-btn mini-toggle-sm"
+										:class="{ active: getPartRatingType(selectedPartKey) === 'Die' }"
+										@click="setBlueprintRatingType(selectedPartKey, 'Die')"
+									>
+										Die
+									</button>
+									<button
+										type="button"
+										class="mini-toggle-btn mini-toggle-sm"
+										:class="{ active: getPartRatingType(selectedPartKey) === 'Dice' }"
+										@click="setBlueprintRatingType(selectedPartKey, 'Dice')"
+									>
+										Pool
+									</button>
+									<button
+										type="button"
+										class="mini-toggle-btn mini-toggle-sm"
+										:class="{ active: getPartRatingType(selectedPartKey) === 'Pip' }"
+										@click="setBlueprintRatingType(selectedPartKey, 'Pip')"
+									>
+										Pip
+									</button>
+									<button
+										type="button"
+										class="mini-toggle-btn mini-toggle-sm"
+										:class="{ active: getPartRatingType(selectedPartKey) === 'Counter' }"
+										@click="setBlueprintRatingType(selectedPartKey, 'Counter')"
+									>
+										Counter
+									</button>
+								</div>
+
+								<!-- Die/Dice Range Chips -->
+								<div
+									v-if="getPartRatingType(selectedPartKey) === 'Die' || getPartRatingType(selectedPartKey) === 'Dice'"
+									class="mini-die-picker"
+								>
+									<button
+										v-for="side in DIE_SIDES"
+										:key="'blueprint-die-' + side"
+										type="button"
+										class="mini-die-chip"
+										:aria-label="`Toggle d${side} in track range`"
+										:class="{ active: (selectedPart.range || [4, 6, 8, 10, 12]).includes(side) }"
+										@click="toggleBlueprintRangeSide(selectedPartKey, side)"
+									>
+										<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
+									</button>
+								</div>
+
+								<!-- Pip Count Stepper -->
+								<div v-else-if="getPartRatingType(selectedPartKey) === 'Pip'" class="readout-pip-stepper">
+									<span>Bubbles:</span>
+									<button
+										type="button"
+										class="mini-icon-btn"
+										@click="setBlueprintPipCount(selectedPartKey, (Number(selectedPart?.range?.[0]) || 5) - 1)"
+									>
+										-
+									</button>
+									<span class="pip-count-val">{{ Number(selectedPart?.range?.[0]) || 5 }}</span>
+									<button
+										type="button"
+										class="mini-icon-btn"
+										@click="setBlueprintPipCount(selectedPartKey, (Number(selectedPart?.range?.[0]) || 5) + 1)"
+									>
+										+
+									</button>
 								</div>
 							</div>
 						</div>
 
-						<!-- Selected Part Readout & Rating Blueprint Controls -->
-						<div v-if="selectedPart" class="block-mini-readout" aria-label="Selected Part Blueprint">
-							<div class="readout-part-title-row">
-								<span class="readout-part-title"
-									>Selected Part: <strong>{{ selectedPartKey }}</strong></span
+						<div class="readout-coords-row">
+							<label class="readout-field">
+								<span>Left %</span>
+								<input
+									v-model.number="selectedLeftNum"
+									type="number"
+									min="0"
+									max="90"
+									step="5"
+									aria-label="Part Left Percent"
+								/>
+							</label>
+							<label class="readout-field">
+								<span>Width %</span>
+								<input
+									v-model.number="selectedWidthNum"
+									type="number"
+									min="10"
+									max="100"
+									step="5"
+									aria-label="Part Width Percent"
+								/>
+							</label>
+							<label class="readout-field">
+								<span>Row</span>
+								<input v-model.number="selectedTopNum" type="number" min="0" max="7" step="1" aria-label="Part Row" />
+							</label>
+							<label class="readout-field">
+								<span>Span</span>
+								<input
+									v-model.number="selectedHeightNum"
+									type="number"
+									min="1"
+									max="6"
+									step="1"
+									aria-label="Part Row Span"
+								/>
+							</label>
+						</div>
+					</div>
+				</section>
+
+				<!-- Traits (Data Instances Driven by Blueprint) -->
+				<section v-if="!isNotesCard" class="mini-traits-section" aria-label="Traits in Set">
+					<div class="mini-traits-header">
+						<span class="mini-section-title">Traits in Set</span>
+						<label class="mini-inline-label">
+							<span>Track Label:</span>
+							<input v-model="trackLabelText" type="text" class="mini-input mini-input-sm" placeholder="Stress" />
+						</label>
+						<label class="mini-inline-label">
+							<input v-model="outIndicator" type="checkbox" />
+							<span>Out Marker</span>
+						</label>
+						<button type="button" class="mini-btn-add" @click="addTraitRow">+ {{ workingSet.noun || 'Trait' }}</button>
+					</div>
+
+					<div class="mini-traits-list">
+						<article v-for="(trait, tIdx) in workingSet.traits || []" :key="trait.id || tIdx" class="mini-trait-card">
+							<div class="mini-trait-row-main">
+								<!-- Static L/T indicator matching blueprint -->
+								<span
+									v-if="isPartActive('name')"
+									class="mini-marker-badge mini-marker-static"
+									:class="getPartMarker('name') === 'L' ? 'marker-label' : 'marker-text'"
+									>{{ getPartMarker('name') }}</span
 								>
 
-								<!-- Text Marker Toggle on Readout -->
-								<div v-if="selectedPart.marker" class="readout-marker-toggle">
-									<span class="readout-label">Behavior:</span>
-									<button
-										type="button"
-										class="mini-toggle-btn mini-toggle-sm"
-										:class="{ active: selectedPart.marker === 'L' }"
-										@click="selectedPart.marker = 'L'"
-									>
-										L (Label)
-									</button>
-									<button
-										type="button"
-										class="mini-toggle-btn mini-toggle-sm"
-										:class="{ active: selectedPart.marker === 'T' }"
-										@click="selectedPart.marker = 'T'"
-									>
-										T (Text)
-									</button>
-								</div>
+								<!-- Trait Name -->
+								<input
+									v-if="isPartActive('name')"
+									v-model="trait.name"
+									type="text"
+									class="mini-input mini-trait-name-input"
+									placeholder="Trait Name"
+								/>
 
-								<!-- Rating Type Selector on Readout -->
-								<div
-									v-if="selectedPart.ratingType || selectedPartKey === 'rating' || selectedPartKey === 'track'"
-									class="readout-rating-controls"
-								>
-									<span class="readout-label">Rating:</span>
-									<div class="mini-btn-group mini-btn-group-sm">
-										<button
-											type="button"
-											class="mini-toggle-btn mini-toggle-sm"
-											:class="{ active: getPartRatingType(selectedPartKey) === 'Die' }"
-											@click="setBlueprintRatingType(selectedPartKey, 'Die')"
-										>
-											Die
-										</button>
-										<button
-											type="button"
-											class="mini-toggle-btn mini-toggle-sm"
-											:class="{ active: getPartRatingType(selectedPartKey) === 'Dice' }"
-											@click="setBlueprintRatingType(selectedPartKey, 'Dice')"
-										>
-											Pool
-										</button>
-										<button
-											type="button"
-											class="mini-toggle-btn mini-toggle-sm"
-											:class="{ active: getPartRatingType(selectedPartKey) === 'Pip' }"
-											@click="setBlueprintRatingType(selectedPartKey, 'Pip')"
-										>
-											Pip
-										</button>
-										<button
-											type="button"
-											class="mini-toggle-btn mini-toggle-sm"
-											:class="{ active: getPartRatingType(selectedPartKey) === 'Counter' }"
-											@click="setBlueprintRatingType(selectedPartKey, 'Counter')"
-										>
-											Counter
-										</button>
-									</div>
+								<!-- Trait Noun -->
+								<input
+									v-model="trait.noun"
+									type="text"
+									class="mini-input mini-trait-noun-input"
+									:placeholder="workingSet.noun || 'Trait'"
+									:aria-label="`Trait ${Number(tIdx) + 1} Noun`"
+								/>
 
-									<!-- Die/Dice Range Chips -->
-									<div
-										v-if="getPartRatingType(selectedPartKey) === 'Die' || getPartRatingType(selectedPartKey) === 'Dice'"
-										class="mini-die-picker"
-									>
+								<!-- Rating Value Selector driven by blueprint -->
+								<template v-if="isPartActive('rating') && trait.rating">
+									<!-- Die Rating Picker -->
+									<div v-if="trait.rating.type === 'Die'" class="mini-die-picker">
 										<button
-											v-for="side in DIE_SIDES"
-											:key="'blueprint-die-' + side"
+											v-for="side in traitRangeSides(trait)"
+											:key="'inst-die-' + side"
 											type="button"
 											class="mini-die-chip"
-											:aria-label="`Toggle d${side} in track range`"
-											:class="{ active: (selectedPart.range || [4, 6, 8, 10, 12]).includes(side) }"
-											@click="toggleBlueprintRangeSide(selectedPartKey, side)"
+											:class="{ active: trait.rating.value?.[0] === side }"
+											@click="setTraitDieValue(trait, side)"
 										>
 											<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 										</button>
 									</div>
 
-									<!-- Pip Count Stepper -->
-									<div v-else-if="getPartRatingType(selectedPartKey) === 'Pip'" class="readout-pip-stepper">
-										<span>Bubbles:</span>
+									<!-- Dice Pool Picker -->
+									<div v-else-if="trait.rating.type === 'Dice'" class="mini-die-picker">
 										<button
+											v-for="side in traitRangeSides(trait)"
+											:key="'inst-pool-' + side"
 											type="button"
-											class="mini-icon-btn"
-											@click="setBlueprintPipCount(selectedPartKey, (Number(selectedPart?.range?.[0]) || 5) - 1)"
+											class="mini-die-chip"
+											:class="{ active: (trait.rating.value || []).includes(side) }"
+											@click="toggleTraitPoolDie(trait, side)"
 										>
-											-
-										</button>
-										<span class="pip-count-val">{{ Number(selectedPart?.range?.[0]) || 5 }}</span>
-										<button
-											type="button"
-											class="mini-icon-btn"
-											@click="setBlueprintPipCount(selectedPartKey, (Number(selectedPart?.range?.[0]) || 5) + 1)"
-										>
-											+
+											<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
 										</button>
 									</div>
-								</div>
-							</div>
 
-							<div class="readout-coords-row">
-								<label class="readout-field">
-									<span>Left %</span>
-									<input
-										v-model.number="selectedLeftNum"
-										type="number"
-										min="0"
-										max="90"
-										step="5"
-										aria-label="Part Left Percent"
-									/>
-								</label>
-								<label class="readout-field">
-									<span>Width %</span>
-									<input
-										v-model.number="selectedWidthNum"
-										type="number"
-										min="10"
-										max="100"
-										step="5"
-										aria-label="Part Width Percent"
-									/>
-								</label>
-								<label class="readout-field">
-									<span>Row</span>
-									<input v-model.number="selectedTopNum" type="number" min="0" max="7" step="1" aria-label="Part Row" />
-								</label>
-								<label class="readout-field">
-									<span>Span</span>
-									<input
-										v-model.number="selectedHeightNum"
-										type="number"
-										min="1"
-										max="6"
-										step="1"
-										aria-label="Part Row Span"
-									/>
-								</label>
-							</div>
-						</div>
-					</section>
+									<!-- Pip Bubbles Picker -->
+									<div v-else-if="trait.rating.type === 'Pip'" class="mini-pip-picker">
+										<button
+											v-for="(filled, pIdx) in trait.rating.value || []"
+											:key="'inst-pip-' + pIdx"
+											type="button"
+											class="pip-bubble"
+											:class="{ filled }"
+											@click="toggleTraitPipValue(trait, Number(pIdx))"
+										></button>
+									</div>
 
-					<!-- Traits (Data Instances Driven by Blueprint) -->
-					<section v-if="!isNotesCard" class="mini-traits-section" aria-label="Traits in Set">
-						<div class="mini-traits-header">
-							<span class="mini-section-title">Traits in Set</span>
-							<label class="mini-inline-label">
-								<span>Track Label:</span>
-								<input v-model="trackLabelText" type="text" class="mini-input mini-input-sm" placeholder="Stress" />
-							</label>
-							<label class="mini-inline-label">
-								<input v-model="outIndicator" type="checkbox" />
-								<span>Out Marker</span>
-							</label>
-							<button type="button" class="mini-btn-add" @click="addTraitRow">
-								+ {{ workingSet.noun || 'Trait' }}
-							</button>
-						</div>
-
-						<div class="mini-traits-list">
-							<article v-for="(trait, tIdx) in workingSet.traits || []" :key="trait.id || tIdx" class="mini-trait-card">
-								<div class="mini-trait-row-main">
-									<!-- Static L/T indicator matching blueprint -->
-									<span
-										v-if="isPartActive('name')"
-										class="mini-marker-badge mini-marker-static"
-										:class="getPartMarker('name') === 'L' ? 'marker-label' : 'marker-text'"
-										>{{ getPartMarker('name') }}</span
-									>
-
-									<!-- Trait Name -->
-									<input
-										v-if="isPartActive('name')"
-										v-model="trait.name"
-										type="text"
-										class="mini-input mini-trait-name-input"
-										placeholder="Trait Name"
-									/>
-
-									<!-- Trait Noun -->
-									<input
-										v-model="trait.noun"
-										type="text"
-										class="mini-input mini-trait-noun-input"
-										:placeholder="workingSet.noun || 'Trait'"
-										:aria-label="`Trait ${Number(tIdx) + 1} Noun`"
-									/>
-
-									<!-- Rating Value Selector driven by blueprint -->
-									<template v-if="isPartActive('rating') && trait.rating">
-										<!-- Die Rating Picker -->
-										<div v-if="trait.rating.type === 'Die'" class="mini-die-picker">
-											<button
-												v-for="side in traitRangeSides(trait)"
-												:key="'inst-die-' + side"
-												type="button"
-												class="mini-die-chip"
-												:class="{ active: trait.rating.value?.[0] === side }"
-												@click="setTraitDieValue(trait, side)"
-											>
-												<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
-											</button>
-										</div>
-
-										<!-- Dice Pool Picker -->
-										<div v-else-if="trait.rating.type === 'Dice'" class="mini-die-picker">
-											<button
-												v-for="side in traitRangeSides(trait)"
-												:key="'inst-pool-' + side"
-												type="button"
-												class="mini-die-chip"
-												:class="{ active: (trait.rating.value || []).includes(side) }"
-												@click="toggleTraitPoolDie(trait, side)"
-											>
-												<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
-											</button>
-										</div>
-
-										<!-- Pip Bubbles Picker -->
-										<div v-else-if="trait.rating.type === 'Pip'" class="mini-pip-picker">
-											<button
-												v-for="(filled, pIdx) in trait.rating.value || []"
-												:key="'inst-pip-' + pIdx"
-												type="button"
-												class="pip-bubble"
-												:class="{ filled }"
-												@click="toggleTraitPipValue(trait, Number(pIdx))"
-											></button>
-										</div>
-
-										<!-- Counter Numeric Input -->
-										<div v-else-if="trait.rating.type === 'Counter'" class="mini-counter-input-wrap">
-											<input
-												v-model.number="trait.rating.value[0]"
-												type="number"
-												class="mini-input mini-input-sm mini-counter-input"
-												:min="trait.rating.range?.[0] ?? 0"
-												:max="trait.rating.range?.[1] ?? 10"
-											/>
-										</div>
-									</template>
-
-									<button v-if="isPartActive('block')" type="button" class="mini-btn-sub" @click="addTraitSfx(trait)">
-										+SFX
-									</button>
-
-									<button type="button" class="mini-icon-btn mini-btn-danger" @click="removeTraitRow(Number(tIdx))">
-										&times;
-									</button>
-								</div>
-
-								<!-- Optional Description -->
-								<div v-if="isPartActive('description')" class="mini-trait-subrow">
-									<span
-										class="mini-marker-badge mini-marker-static"
-										:class="getPartMarker('description') === 'L' ? 'marker-label' : 'marker-text'"
-									>
-										{{ getPartMarker('description') }}
-									</span>
-									<input
-										v-model="trait.description"
-										type="text"
-										class="mini-input"
-										placeholder="Trait description..."
-									/>
-								</div>
-
-								<!-- Dynamic Child Trait Slots on Instance -->
-								<template v-for="slot in childSlots" :key="slot.noun">
-									<div
-										v-if="
-											isPartActive(`child:${slot.noun}:label`) ||
-											isPartActive(`child:${slot.noun}:rating`) ||
-											isPartActive('trackLabel') ||
-											isPartActive('track')
-										"
-										class="mini-trait-subrow mini-child-slot-row"
-									>
-										<!-- Static L/T badge -->
-										<span
-											class="mini-marker-badge mini-marker-static"
-											:class="getPartMarker(`child:${slot.noun}:label`) === 'L' ? 'marker-label' : 'marker-text'"
-											>{{ getPartMarker(`child:${slot.noun}:label`) }}</span
-										>
-
-										<!-- Child Text/Name input -->
+									<!-- Counter Numeric Input -->
+									<div v-else-if="trait.rating.type === 'Counter'" class="mini-counter-input-wrap">
 										<input
-											v-model="getChildTraitInstance(trait, slot.noun).name"
-											type="text"
-											class="mini-input mini-input-sm mini-subrow-noun"
-											:placeholder="slot.noun"
-											:aria-label="`Companion Track Noun ${Number(tIdx) + 1}`"
+											v-model.number="trait.rating.value[0]"
+											type="number"
+											class="mini-input mini-input-sm mini-counter-input"
+											:min="trait.rating.range?.[0] ?? 0"
+											:max="trait.rating.range?.[1] ?? 10"
 										/>
-
-										<!-- Child Rating Picker -->
-										<template v-if="getChildTraitInstance(trait, slot.noun).rating">
-											<template v-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Die'">
-												<span class="mini-subrow-caption">Die:</span>
-												<div class="mini-die-picker">
-													<button
-														v-for="side in subRangeSides(getChildTraitInstance(trait, slot.noun), slot.noun)"
-														:key="'child-die-' + side"
-														type="button"
-														class="mini-die-chip"
-														:aria-label="`Select d${side}`"
-														:class="{ active: getChildTraitInstance(trait, slot.noun).rating.value?.[0] === side }"
-														@click="setChildDieValue(getChildTraitInstance(trait, slot.noun), side)"
-													>
-														<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
-													</button>
-												</div>
-											</template>
-
-											<template v-else-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Dice'">
-												<span class="mini-subrow-caption">Pool:</span>
-												<div class="mini-die-picker">
-													<button
-														v-for="side in subRangeSides(getChildTraitInstance(trait, slot.noun), slot.noun)"
-														:key="'child-pool-' + side"
-														type="button"
-														class="mini-die-chip"
-														:class="{
-															active: (getChildTraitInstance(trait, slot.noun).rating.value || []).includes(side),
-														}"
-														@click="toggleTraitPoolDie(getChildTraitInstance(trait, slot.noun), side)"
-													>
-														<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
-													</button>
-												</div>
-											</template>
-
-											<template v-else-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Pip'">
-												<span class="mini-subrow-caption">Pips:</span>
-												<div class="mini-pip-picker">
-													<button
-														v-for="(filled, pIdx) in getChildTraitInstance(trait, slot.noun).rating.value || []"
-														:key="'child-pip-' + pIdx"
-														type="button"
-														class="pip-bubble"
-														:class="{ filled }"
-														@click="toggleChildPipValue(getChildTraitInstance(trait, slot.noun), Number(pIdx))"
-													></button>
-												</div>
-											</template>
-
-											<template v-else-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Counter'">
-												<span class="mini-subrow-caption">Val:</span>
-												<input
-													v-model.number="getChildTraitInstance(trait, slot.noun).rating.value[0]"
-													type="number"
-													class="mini-input mini-input-sm mini-counter-input"
-												/>
-											</template>
-										</template>
 									</div>
 								</template>
 
-								<!-- SFX block items -->
-								<div
-									v-for="(sub, sIdx) in characterCurioFunctions.sfxChildren(trait)"
-									:key="sub.id || sIdx"
-									class="mini-trait-subrow"
+								<button v-if="isPartActive('block')" type="button" class="mini-btn-sub" @click="addTraitSfx(trait)">
+									+SFX
+								</button>
+
+								<button type="button" class="mini-icon-btn mini-btn-danger" @click="removeTraitRow(Number(tIdx))">
+									&times;
+								</button>
+							</div>
+
+							<!-- Optional Description -->
+							<div v-if="isPartActive('description')" class="mini-trait-subrow">
+								<span
+									class="mini-marker-badge mini-marker-static"
+									:class="getPartMarker('description') === 'L' ? 'marker-label' : 'marker-text'"
 								>
-									<span class="mini-marker-badge marker-text">T</span>
+									{{ getPartMarker('description') }}
+								</span>
+								<input v-model="trait.description" type="text" class="mini-input" placeholder="Trait description..." />
+							</div>
+
+							<!-- Dynamic Child Trait Slots on Instance -->
+							<template v-for="slot in childSlots" :key="slot.noun">
+								<div
+									v-if="
+										isPartActive(`child:${slot.noun}:label`) ||
+										isPartActive(`child:${slot.noun}:rating`) ||
+										isPartActive('trackLabel') ||
+										isPartActive('track')
+									"
+									class="mini-trait-subrow mini-child-slot-row"
+								>
+									<!-- Static L/T badge -->
+									<span
+										class="mini-marker-badge mini-marker-static"
+										:class="getPartMarker(`child:${slot.noun}:label`) === 'L' ? 'marker-label' : 'marker-text'"
+										>{{ getPartMarker(`child:${slot.noun}:label`) }}</span
+									>
+
+									<!-- Child Text/Name input -->
 									<input
-										v-model="sub.name"
+										v-model="getChildTraitInstance(trait, slot.noun).name"
 										type="text"
 										class="mini-input mini-input-sm mini-subrow-noun"
-										placeholder="SFX Label"
+										:placeholder="slot.noun"
+										:aria-label="`Companion Track Noun ${Number(tIdx) + 1}`"
 									/>
-									<input v-model="sub.description" type="text" class="mini-input" placeholder="SFX Effect..." />
-									<button
-										type="button"
-										class="mini-icon-btn mini-btn-danger"
-										@click="removeSfxChild(trait, Number(sIdx))"
-									>
-										&times;
-									</button>
-								</div>
-							</article>
-						</div>
-					</section>
-				</div>
 
-				<!-- Right Column: Live Rendered Card Preview & Card Actions -->
-				<div class="mini-preview-column">
-					<section class="mini-card-preview-section" aria-label="Live Card Preview">
-						<div class="preview-mode-bar">
-							<span class="preview-mode-title">LIVE PREVIEW</span>
-							<div class="preview-mode-toggles">
+									<!-- Child Rating Picker -->
+									<template v-if="getChildTraitInstance(trait, slot.noun).rating">
+										<template v-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Die'">
+											<span class="mini-subrow-caption">Die:</span>
+											<div class="mini-die-picker">
+												<button
+													v-for="side in subRangeSides(getChildTraitInstance(trait, slot.noun), slot.noun)"
+													:key="'child-die-' + side"
+													type="button"
+													class="mini-die-chip"
+													:aria-label="`Select d${side}`"
+													:class="{ active: getChildTraitInstance(trait, slot.noun).rating.value?.[0] === side }"
+													@click="setChildDieValue(getChildTraitInstance(trait, slot.noun), side)"
+												>
+													<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
+												</button>
+											</div>
+										</template>
+
+										<template v-else-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Dice'">
+											<span class="mini-subrow-caption">Pool:</span>
+											<div class="mini-die-picker">
+												<button
+													v-for="side in subRangeSides(getChildTraitInstance(trait, slot.noun), slot.noun)"
+													:key="'child-pool-' + side"
+													type="button"
+													class="mini-die-chip"
+													:class="{
+														active: (getChildTraitInstance(trait, slot.noun).rating.value || []).includes(side),
+													}"
+													@click="toggleTraitPoolDie(getChildTraitInstance(trait, slot.noun), side)"
+												>
+													<span v-html="characterCurioFunctions.renderDieconSVG(side, false, '', null)"></span>
+												</button>
+											</div>
+										</template>
+
+										<template v-else-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Pip'">
+											<span class="mini-subrow-caption">Pips:</span>
+											<div class="mini-pip-picker">
+												<button
+													v-for="(filled, pIdx) in getChildTraitInstance(trait, slot.noun).rating.value || []"
+													:key="'child-pip-' + pIdx"
+													type="button"
+													class="pip-bubble"
+													:class="{ filled }"
+													@click="toggleChildPipValue(getChildTraitInstance(trait, slot.noun), Number(pIdx))"
+												></button>
+											</div>
+										</template>
+
+										<template v-else-if="getChildTraitInstance(trait, slot.noun).rating.type === 'Counter'">
+											<span class="mini-subrow-caption">Val:</span>
+											<input
+												v-model.number="getChildTraitInstance(trait, slot.noun).rating.value[0]"
+												type="number"
+												class="mini-input mini-input-sm mini-counter-input"
+											/>
+										</template>
+									</template>
+								</div>
+							</template>
+
+							<!-- SFX block items -->
+							<div
+								v-for="(sub, sIdx) in characterCurioFunctions.sfxChildren(trait)"
+								:key="sub.id || sIdx"
+								class="mini-trait-subrow"
+							>
+								<span class="mini-marker-badge marker-text">T</span>
+								<input
+									v-model="sub.name"
+									type="text"
+									class="mini-input mini-input-sm mini-subrow-noun"
+									placeholder="SFX Label"
+								/>
+								<input v-model="sub.description" type="text" class="mini-input" placeholder="SFX Effect..." />
 								<button
 									type="button"
-									class="mini-toggle-btn mini-toggle-sm"
-									:class="{ active: previewSubmode === 'play' }"
-									@click="previewSubmode = 'play'"
+									class="mini-icon-btn mini-btn-danger"
+									@click="removeSfxChild(trait, Number(sIdx))"
 								>
-									Play
-								</button>
-								<button
-									type="button"
-									class="mini-toggle-btn mini-toggle-sm"
-									:class="{ active: previewSubmode === 'edit' }"
-									@click="previewSubmode = 'edit'"
-								>
-									Edit
+									&times;
 								</button>
 							</div>
+						</article>
+					</div>
+				</section>
+			</div>
+
+			<!-- Right Column: Live Rendered Card Preview & Card Actions -->
+			<div class="mini-preview-column">
+				<section class="mini-card-preview-section" aria-label="Live Card Preview">
+					<div class="preview-mode-bar">
+						<span class="preview-mode-title">LIVE PREVIEW</span>
+						<div class="preview-mode-toggles">
+							<button
+								type="button"
+								class="mini-toggle-btn mini-toggle-sm"
+								:class="{ active: previewSubmode === 'play' }"
+								@click="previewSubmode = 'play'"
+							>
+								Play
+							</button>
+							<button
+								type="button"
+								class="mini-toggle-btn mini-toggle-sm"
+								:class="{ active: previewSubmode === 'edit' }"
+								@click="previewSubmode = 'edit'"
+							>
+								Edit
+							</button>
 						</div>
+					</div>
 
-						<div class="mini-preview-sheet-frame">
-							<TraitSetBlock :character="previewCharacter" :traitSetID="0" :submode="previewSubmode" />
-						</div>
-					</section>
+					<div class="mini-preview-sheet-frame">
+						<TraitSetBlock :character="previewCharacter" :traitSetID="0" :submode="previewSubmode" />
+					</div>
+				</section>
 
-					<!-- Save as Preset Card & Single Card JSON Export/Import -->
-					<section class="mini-save-section" aria-label="Save as Preset Card">
-						<h3 class="mini-save-title">Ship as Preset Card</h3>
+				<!-- Save as Preset Card & Single Card JSON Export/Import -->
+				<section class="mini-save-section" aria-label="Save as Preset Card">
+					<h3 class="mini-save-title">Ship as Preset Card</h3>
 
-						<div class="mini-save-fields">
-							<label class="mini-field">
-								<span class="mini-field-label">Preset Label (Required)</span>
-								<input
-									v-model="presetLabel"
-									type="text"
-									class="mini-input"
-									placeholder="e.g. Questioned Statements, Ammo Track"
-									aria-label="Preset Label"
-								/>
-								<div v-if="hasCollision" class="mini-collision-alert">
-									A preset with ID "{{ derivedId }}" already exists.
-								</div>
-							</label>
-
-							<label class="mini-field">
-								<span class="mini-field-label">Blurb (Optional)</span>
-								<input
-									v-model="presetBlurb"
-									type="text"
-									class="mini-input"
-									placeholder="Single sentence description..."
-								/>
-							</label>
-
-							<div v-if="saveStatusMessage" class="mini-save-status success">
-								<i class="fas fa-check-circle"></i> {{ saveStatusMessage }}
+					<div class="mini-save-fields">
+						<label class="mini-field">
+							<span class="mini-field-label">Preset Label (Required)</span>
+							<input
+								v-model="presetLabel"
+								type="text"
+								class="mini-input"
+								placeholder="e.g. Questioned Statements, Ammo Track"
+								aria-label="Preset Label"
+							/>
+							<div v-if="hasCollision" class="mini-collision-alert">
+								A preset with ID "{{ derivedId }}" already exists.
 							</div>
-							<div v-if="saveErrorMessage" class="mini-save-status error">
-								<i class="fas fa-exclamation-circle"></i> {{ saveErrorMessage }}
-							</div>
-						</div>
+						</label>
 
-						<div class="mini-save-actions">
-							<button type="button" class="btn-apply-sheet" @click="applyToCurrentSheet">Apply to Current Sheet</button>
+						<label class="mini-field">
+							<span class="mini-field-label">Blurb (Optional)</span>
+							<input
+								v-model="presetBlurb"
+								type="text"
+								class="mini-input"
+								placeholder="Single sentence description..."
+							/>
+						</label>
+
+						<div v-if="saveStatusMessage" class="mini-save-status success">
+							<i class="fas fa-check-circle"></i> {{ saveStatusMessage }}
+						</div>
+						<div v-if="saveErrorMessage" class="mini-save-status error">
+							<i class="fas fa-exclamation-circle"></i> {{ saveErrorMessage }}
+						</div>
+					</div>
+
+					<div class="mini-save-actions">
+						<button type="button" class="btn-apply-sheet" @click="applyToCurrentSheet">Apply to Current Sheet</button>
+
+						<button
+							type="button"
+							class="btn-save-preset mini-save-preset-btn"
+							:disabled="!presetLabel.trim() || hasCollision"
+							@click="saveAsPresetCard"
+						>
+							<i class="fas fa-bookmark"></i> Save as Preset Card
+						</button>
+
+						<!-- Card JSON Export & Import -->
+						<div class="mini-json-card-actions">
+							<button
+								type="button"
+								class="btn-json-action"
+								title="Export standalone .json card"
+								@click="exportCardJson"
+							>
+								<i class="fas fa-file-download"></i> Export Card JSON
+							</button>
 
 							<button
 								type="button"
-								class="btn-save-preset mini-save-preset-btn"
-								:disabled="!presetLabel.trim() || hasCollision"
-								@click="saveAsPresetCard"
+								class="btn-json-action"
+								title="Import standalone .json card"
+								@click="triggerImportCardJson"
 							>
-								<i class="fas fa-bookmark"></i> Save as Preset Card
+								<i class="fas fa-file-upload"></i> Import Card JSON
 							</button>
-
-							<!-- Card JSON Export & Import -->
-							<div class="mini-json-card-actions">
-								<button
-									type="button"
-									class="btn-json-action"
-									title="Export standalone .json card"
-									@click="exportCardJson"
-								>
-									<i class="fas fa-file-download"></i> Export Card JSON
-								</button>
-
-								<button
-									type="button"
-									class="btn-json-action"
-									title="Import standalone .json card"
-									@click="triggerImportCardJson"
-								>
-									<i class="fas fa-file-upload"></i> Import Card JSON
-								</button>
-							</div>
 						</div>
-					</section>
-				</div>
-			</main>
+					</div>
+				</section>
+			</div>
 		</div>
-	</div>
+	</dialog>
 </template>

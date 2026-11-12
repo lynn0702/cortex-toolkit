@@ -878,6 +878,9 @@ watch(
 		checkAnchorPosition();
 	},
 );
+let currentShiftY = 0;
+let currentArrowShiftY = 0;
+
 watch(
 	() => props.open,
 	(isOpen, wasOpen) => {
@@ -892,8 +895,14 @@ watch(
 			});
 		} else if (!isOpen) {
 			if (rootEl.value) {
-				rootEl.value.style.setProperty('--editor-shift-y', '0px');
-				rootEl.value.style.setProperty('--arrow-shift-y', '0px');
+				if (currentShiftY !== 0) {
+					rootEl.value.style.setProperty('--editor-shift-y', '0px');
+					currentShiftY = 0;
+				}
+				if (currentArrowShiftY !== 0) {
+					rootEl.value.style.setProperty('--arrow-shift-y', '0px');
+					currentArrowShiftY = 0;
+				}
 			}
 		}
 	},
@@ -1425,26 +1434,34 @@ function checkAnchorPosition() {
 	nextTick(() => {
 		if (!rootEl.value) return;
 
-		rootEl.value.style.setProperty('--editor-shift-y', '0px');
-		rootEl.value.style.setProperty('--arrow-shift-y', '0px');
-
 		const rect = rootEl.value.getBoundingClientRect();
+		const naturalTop = rect.top - currentShiftY;
+		const naturalBottom = rect.bottom - currentShiftY;
 		const pad = 16;
 		let shiftY = 0;
 
-		if (rect.top < pad) {
-			shiftY = pad - rect.top;
-		} else if (rect.bottom > windowHeight - pad) {
-			shiftY = windowHeight - pad - rect.bottom;
+		if (naturalTop < pad) {
+			shiftY = pad - naturalTop;
+		} else if (naturalBottom > windowHeight - pad) {
+			shiftY = windowHeight - pad - naturalBottom;
 		}
 
-		if (Math.abs(shiftY) > 0.5) {
-			rootEl.value.style.setProperty('--editor-shift-y', `${shiftY}px`);
+		const nextShift = Math.abs(shiftY) > 0.5 ? shiftY : 0;
+		let nextArrowShift = 0;
+		if (nextShift !== 0) {
 			const arrowNaturalY = anchorPosition.value === 'bottom' ? rect.height - 16 : 16;
-			const targetArrowY = arrowNaturalY - shiftY;
+			const targetArrowY = arrowNaturalY - nextShift;
 			const clampedArrowY = Math.max(16, Math.min(rect.height - 16, targetArrowY));
-			const arrowShift = clampedArrowY - arrowNaturalY;
-			rootEl.value.style.setProperty('--arrow-shift-y', `${arrowShift}px`);
+			nextArrowShift = clampedArrowY - arrowNaturalY;
+		}
+
+		if (nextShift !== currentShiftY) {
+			rootEl.value.style.setProperty('--editor-shift-y', `${nextShift}px`);
+			currentShiftY = nextShift;
+		}
+		if (nextArrowShift !== currentArrowShiftY) {
+			rootEl.value.style.setProperty('--arrow-shift-y', `${nextArrowShift}px`);
+			currentArrowShiftY = nextArrowShift;
 		}
 		checkScrollPosition();
 	});

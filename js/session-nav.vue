@@ -39,33 +39,41 @@ function safeImageUrl(url: any) {
 				title="Properties"
 				v-if="!isStudioPanelOpen"
 			>
-				<i class="fas fa-sliders"></i>
+				<i class="fas fa-sliders" aria-hidden="true"></i>
 				<span class="sheet-bar-btn-label">Properties</span>
 			</button>
 
 			<div class="session-tabs">
-				<div
-					v-for="c in openCharacters"
-					:key="c.id"
-					:class="['session-tab', { active: c.id === characterID }]"
-					@click.stop="emit('focus', c.id)"
-					:title="'Switch to ' + (c.name || 'Character')"
-				>
-					<div
-						class="session-tab-avatar"
-						v-if="c.portrait && c.portrait.url"
-						:style="'background-image:url(' + safeImageUrl(c.portrait.url) + ')'"
-					></div>
-					<div class="session-tab-icon" v-else><i class="fas fa-shield-alt"></i></div>
-					<span class="session-tab-name">{{ c.name || 'Unnamed' }}</span>
+				<div v-for="c in openCharacters" :key="c.id" :class="['session-tab', { active: c.id === characterID }]">
 					<button
 						type="button"
-						class="session-tab-close"
-						@click.stop="emit('close', c.id)"
-						v-if="openCharacters.length > 1"
-						title="Close from session"
+						class="session-tab-trigger"
+						:aria-current="c.id === characterID ? 'true' : undefined"
+						:title="'Switch to ' + (c.name || 'Character')"
+						@click.stop="emit('focus', c.id)"
 					>
-						<i class="fas fa-times"></i>
+						<img
+							v-if="c.portrait && c.portrait.url"
+							class="session-tab-avatar"
+							:src="safeImageUrl(c.portrait.url)"
+							alt=""
+							width="22"
+							height="22"
+							loading="lazy"
+							decoding="async"
+						/>
+						<span v-else class="session-tab-icon" aria-hidden="true"><i class="fas fa-shield-alt"></i></span>
+						<span class="session-tab-name">{{ c.name || 'Unnamed' }}</span>
+					</button>
+					<button
+						v-if="openCharacters.length > 1"
+						type="button"
+						class="session-tab-close"
+						:aria-label="'Close ' + (c.name || 'Unnamed') + ' from session'"
+						title="Close from session"
+						@click.stop="emit('close', c.id)"
+					>
+						<i class="fas fa-times" aria-hidden="true"></i>
 					</button>
 				</div>
 
@@ -75,7 +83,7 @@ function safeImageUrl(url: any) {
 					@click.stop="emit('add')"
 					title="Open another character alongside"
 				>
-					<i class="fas fa-plus"></i> <span>Open Sheet</span>
+					<i class="fas fa-plus" aria-hidden="true"></i> <span>Open Sheet</span>
 				</button>
 			</div>
 
@@ -89,7 +97,7 @@ function safeImageUrl(url: any) {
 							@click.stop="emit('setPlayView', 'split')"
 							title="Side-by-side view (all open characters)"
 						>
-							<i class="fas fa-columns"></i> Side-by-Side ({{ openCharacters.length }})
+							<i class="fas fa-columns" aria-hidden="true"></i> Side-by-Side ({{ openCharacters.length }})
 						</button>
 						<button
 							type="button"
@@ -97,7 +105,7 @@ function safeImageUrl(url: any) {
 							@click.stop="emit('setPlayView', 'tabs')"
 							title="Single sheet tabbed view"
 						>
-							<i class="fas fa-window-maximize"></i> Tabbed
+							<i class="fas fa-window-maximize" aria-hidden="true"></i> Tabbed
 						</button>
 					</div>
 				</div>
@@ -110,7 +118,7 @@ function safeImageUrl(url: any) {
 					title="Dice Roller"
 					v-if="!isStudioPanelOpen"
 				>
-					<i class="fas fa-dice-d20"></i>
+					<i class="fas fa-dice" aria-hidden="true"></i>
 					<span class="sheet-bar-btn-label">Roller</span>
 					<span class="sheet-bar-dice-count" v-if="rollerCount && rollerCount > 0">{{ rollerCount }}</span>
 				</button>
@@ -123,7 +131,7 @@ function safeImageUrl(url: any) {
 					title="Toggle Pillars deck view"
 					v-if="submode === 'play'"
 				>
-					<i class="fas fa-building-columns"></i>
+					<i class="fas fa-building-columns" aria-hidden="true"></i>
 					<span class="sheet-bar-btn-label">Pillars</span>
 				</button>
 
@@ -134,7 +142,7 @@ function safeImageUrl(url: any) {
 					title="Save session"
 					v-if="submode === 'play'"
 				>
-					<i class="fas fa-floppy-disk"></i>
+					<i class="fas fa-floppy-disk" aria-hidden="true"></i>
 					<span class="sheet-bar-btn-label">Save</span>
 				</button>
 			</div>

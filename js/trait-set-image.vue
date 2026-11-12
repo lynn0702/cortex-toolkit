@@ -73,7 +73,12 @@ function clearImage() {
 	<div
 		class="trait-image-body"
 		v-if="getView(traitSet)?.style?.body === 'image' || isName"
+		:role="submode === 'edit' && !(isName && effectiveUrl) ? 'button' : undefined"
+		:tabindex="submode === 'edit' && !(isName && effectiveUrl) ? 0 : undefined"
+		:aria-label="submode === 'edit' && !(isName && effectiveUrl) ? 'Edit image settings' : undefined"
 		@click.stop="selectElement(['traitSet', s])"
+		@keydown.enter.self.prevent="submode === 'edit' && selectElement(['traitSet', s])"
+		@keydown.space.self.prevent="submode === 'edit' && selectElement(['traitSet', s])"
 		title="Click to edit image settings"
 	>
 		<div
@@ -86,9 +91,14 @@ function clearImage() {
 				class="image-set-graphic"
 				:class="'portrait-alignment-' + effectiveAlignment"
 				:style="getImageSetGraphicStyle(traitSet)"
+				:role="submode === 'edit' && isName ? 'button' : undefined"
+				:tabindex="submode === 'edit' && isName ? 0 : undefined"
+				:aria-label="submode === 'edit' && isName ? 'Edit image settings' : undefined"
+				@keydown.enter.stop.prevent="submode === 'edit' && isName && selectElement(['traitSet', s])"
+				@keydown.space.stop.prevent="submode === 'edit' && isName && selectElement(['traitSet', s])"
 			></div>
 			<div v-else-if="!isName" class="image-set-placeholder">
-				<i class="fas fa-image"></i>
+				<i class="fas fa-image" aria-hidden="true"></i>
 				<span>Click to add illustration or image</span>
 			</div>
 			<button
@@ -97,8 +107,9 @@ function clearImage() {
 				class="btn-remove-header-portrait"
 				@click.stop="clearImage"
 				title="Remove image"
+				aria-label="Remove image"
 			>
-				<i class="fas fa-trash-alt"></i>
+				<i class="fas fa-trash-alt" aria-hidden="true"></i>
 			</button>
 			<div class="image-set-caption" :class="{ 'sheet-portrait-caption': isName }" v-if="isCaptionShown">
 				{{ effectiveCaption }}

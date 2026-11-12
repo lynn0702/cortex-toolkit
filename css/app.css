@@ -179,6 +179,10 @@ textarea:focus-visible {
 	line-height: 1;
 	overflow: visible;
 	color: var(--color-primary);
+
+	text {
+		stroke: none;
+	}
 }
 
 /* PLOT POINTS */
@@ -308,6 +312,14 @@ textarea:focus-visible {
 	.preview-button {
 		min-height: 2.75rem;
 	}
+
+	.header-btn-theme,
+	.studio-action-btn,
+	.modal-close,
+	.btn-remove-header-portrait {
+		min-width: 2.75rem;
+		min-height: 2.75rem;
+	}
 }
 
 /* ============================================================
@@ -377,4 +389,29 @@ textarea:focus-visible {
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border: 0;
+}
+
+@media (forced-colors: active) {
+	.nav-mode li.active,
+	.footer-nav li.active {
+		border-color: Highlight;
+		color: Highlight;
+	}
+
+	.session-tab.active,
+	.studio-tab-btn.active,
+	.studio-action-btn.active {
+		border-color: Highlight;
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+
+	.button,
+	.preview-button,
+	.editor-button,
+	.modal-button,
+	.roster-button {
+		border: 1px solid ButtonText;
+		color: ButtonText;
+	}
 }

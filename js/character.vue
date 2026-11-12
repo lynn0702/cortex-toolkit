@@ -799,7 +799,7 @@ watch(
 							title="Add Play Card / Set Preset"
 							@click.stop="openPlayPresetPicker"
 						>
-							<i class="fas fa-plus"></i> <span class="jump-pill-label">Card</span>
+							<i class="fas fa-plus" aria-hidden="true"></i> <span class="jump-pill-label">Card</span>
 						</button>
 						<button
 							v-if="!isMobileViewport && submode === 'play'"
@@ -808,7 +808,10 @@ watch(
 							@click.stop="toggleDesktopPillars"
 							:title="effectiveDesktopPillars ? 'Switch to Sheet View' : 'Switch to Pillars Deck'"
 						>
-							<i :class="effectiveDesktopPillars ? 'fas fa-file-alt' : 'fas fa-building-columns'"></i>
+							<i
+								:class="effectiveDesktopPillars ? 'fas fa-file-alt' : 'fas fa-building-columns'"
+								aria-hidden="true"
+							></i>
 							<span class="jump-pill-label">{{ effectiveDesktopPillars ? 'Sheet' : 'Pillars' }}</span>
 						</button>
 					</nav>
@@ -882,7 +885,7 @@ watch(
 								class="btn-mobile-add-play-card"
 								@click.stop="openPlayPresetPicker"
 							>
-								<i class="fas fa-plus"></i> Add Play Card
+								<i class="fas fa-plus" aria-hidden="true"></i> Add Play Card
 							</button>
 						</div>
 					</div>
@@ -927,35 +930,38 @@ watch(
 							<div class="sheet-add-set-bar" v-if="submode === 'edit'">
 								<div class="add-set-slot slot-center">
 									<button type="button" class="btn-sheet-add" @click.stop="addTraitSet(pageIndex)">
-										<i class="fas fa-plus"></i> Add Set
+										<i class="fas fa-plus" aria-hidden="true"></i> Add Set
 									</button>
 									<button
 										type="button"
 										class="btn-sheet-add btn-presets-toggle"
 										@click.stop="toggleInlineAdd(pageIndex)"
 									>
-										<i class="fas fa-layer-group"></i> Presets
+										<i class="fas fa-layer-group" aria-hidden="true"></i> Presets
 									</button>
 								</div>
 
 								<!-- INLINE NON-MODAL ADD AREA -->
 								<div class="inline-add-set-area" v-if="showInlineAddSet && inlineAddPage === pageIndex">
 									<div class="inline-add-header">
-										<span class="inline-add-title"><i class="fas fa-layer-group"></i> Add Trait Set</span>
+										<span class="inline-add-title"
+											><i class="fas fa-layer-group" aria-hidden="true"></i> Add Trait Set</span
+										>
 										<div class="inline-add-quick-actions">
 											<button type="button" class="btn-inline-quick" @click.stop="addTraitSet(pageIndex)">
-												<i class="fas fa-plus"></i> Blank Set
+												<i class="fas fa-plus" aria-hidden="true"></i> Blank Set
 											</button>
 											<button type="button" class="btn-inline-quick btn-inline-mini" @click.stop="openMiniFromInline">
-												<i class="fas fa-th-large"></i> New Card in Mini
+												<i class="fas fa-th-large" aria-hidden="true"></i> New Card in Mini
 											</button>
 											<button
 												type="button"
 												class="btn-inline-close"
 												title="Close"
+												aria-label="Close"
 												@click.stop="showInlineAddSet = false"
 											>
-												<i class="fas fa-times"></i>
+												<i class="fas fa-times" aria-hidden="true"></i>
 											</button>
 										</div>
 									</div>
@@ -970,7 +976,7 @@ watch(
 												<div class="inline-preset-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 											</div>
 											<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageIndex)">
-												<i class="fas fa-plus"></i> Add Preset
+												<i class="fas fa-plus" aria-hidden="true"></i> Add Preset
 											</button>
 										</div>
 										<div class="inline-preset-card" v-for="preset in inlineCustomPresets" :key="'custom-' + preset.id">
@@ -983,12 +989,13 @@ watch(
 													type="button"
 													class="btn-inline-delete"
 													title="Delete custom preset"
+													aria-label="Delete custom preset"
 													@click.stop="removeInlineCustomPreset(preset.id)"
 												>
-													<i class="fas fa-trash-alt"></i>
+													<i class="fas fa-trash-alt" aria-hidden="true"></i>
 												</button>
 												<button type="button" class="btn-inline-add" @click.stop="addPresetSet(preset, pageIndex)">
-													<i class="fas fa-plus"></i> Add Preset
+													<i class="fas fa-plus" aria-hidden="true"></i> Add Preset
 												</button>
 											</div>
 										</div>
@@ -1013,13 +1020,13 @@ watch(
 				@close="showPlayPresetPicker = false"
 			>
 				<button type="button" class="modal-close" aria-label="Close" @click.prevent="showPlayPresetPicker = false">
-					<i class="fas fa-times"></i>
+					<i class="fas fa-times" aria-hidden="true"></i>
 				</button>
 				<div class="modal-inner">
 					<div class="modal-header-actions">
-						<h2><i class="fas fa-gamepad"></i> Add Play Card</h2>
+						<h2><i class="fas fa-gamepad" aria-hidden="true"></i> Add Play Card</h2>
 						<button type="button" class="btn-gallery-add btn-open-mini btn-gallery-mini" @click.stop="openPlayMini">
-							<i class="fas fa-th-large"></i> New Card in Mini
+							<i class="fas fa-th-large" aria-hidden="true"></i> New Card in Mini
 						</button>
 					</div>
 					<p class="gallery-sub">Drop a temporary or reusable set card into the active session.</p>
@@ -1028,7 +1035,7 @@ watch(
 							<div class="style-gallery-name">{{ preset.label }}</div>
 							<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 							<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
-								<i class="fas fa-plus"></i> Add to Session
+								<i class="fas fa-plus" aria-hidden="true"></i> Add to Session
 							</button>
 						</div>
 						<div class="style-gallery-card" v-for="preset in playCustomPresets" :key="'play-custom-' + preset.id">
@@ -1038,14 +1045,15 @@ watch(
 									type="button"
 									class="editor-header-btn"
 									title="Delete saved preset"
+									aria-label="Delete saved preset"
 									@click.stop="removePlayCustomPreset(preset.id)"
 								>
-									<i class="fas fa-trash-alt"></i>
+									<i class="fas fa-trash-alt" aria-hidden="true"></i>
 								</button>
 							</div>
 							<div class="style-gallery-blurb" v-if="preset.blurb">{{ preset.blurb }}</div>
 							<button type="button" class="btn-gallery-add" @click.stop="addPresetSet(preset)">
-								<i class="fas fa-plus"></i> Add to Session
+								<i class="fas fa-plus" aria-hidden="true"></i> Add to Session
 							</button>
 						</div>
 					</div>
