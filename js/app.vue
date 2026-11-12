@@ -105,6 +105,9 @@ watch(
 		if (typeof document !== 'undefined') {
 			document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
 			document.documentElement.classList.toggle('theme-dark', dark);
+			// Native UI (controls, scrollbars, canvas) follows the resolved theme.
+			const schemeMeta = document.querySelector('meta[name="color-scheme"]');
+			if (schemeMeta) schemeMeta.setAttribute('content', dark ? 'dark' : 'light');
 			if (document.body) {
 				document.body.classList.toggle('theme-dark', dark);
 			}
@@ -2064,8 +2067,9 @@ defineExpose({
 	</teleport>
 
 	<!-- TOAST NOTIFICATION -->
+	<div class="sr-only" role="status" aria-live="polite">{{ toastMessage }}</div>
 	<transition name="toast">
-		<div class="toast-notification" v-if="toastMessage">
+		<div class="toast-notification" v-if="toastMessage" aria-hidden="true">
 			<i class="fas fa-check-circle"></i> <span>{{ toastMessage }}</span>
 		</div>
 	</transition>

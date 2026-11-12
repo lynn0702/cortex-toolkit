@@ -15,6 +15,8 @@ const {
 	resetRingPlacement,
 	scaleDieValue,
 	traitSetID,
+	frameColor,
+	setFrameColor,
 } = injectTraitSetEditor();
 </script>
 
@@ -22,6 +24,22 @@ const {
 	<!-- RING & SCALE DIE POSITIONING CONTROLS -->
 	<div class="editor-field" v-if="isRing">
 		<label>Ring & Scale Die Placement</label>
+
+		<div class="editor-field">
+			<div class="editor-label">Frame Color</div>
+			<div class="editor-button-group">
+				<button
+					v-for="c in ['primary', 'accent', 'muted', 'strong', 'black']"
+					:key="c"
+					type="button"
+					class="editor-group-btn"
+					:class="{ active: frameColor === c }"
+					@click.stop="setFrameColor(c)"
+				>
+					{{ c.charAt(0).toUpperCase() + c.slice(1) }}
+				</button>
+			</div>
+		</div>
 
 		<div class="ring-sliders">
 			<div class="slider-row">

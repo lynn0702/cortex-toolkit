@@ -27,8 +27,8 @@
 	left: 50%;
 	transform: translateX(-50%) scale(1);
 	width: 100%;
-	max-width: clamp(0px, 100vw - 2rem, 36rem);
-	max-height: calc(100vh - var(--header-size) - 4rem);
+	max-width: clamp(0px, 100% - 2rem, 36rem);
+	max-height: calc(100dvh - var(--header-size) - 4rem);
 	overflow-y: auto;
 	z-index: var(--z-modal);
 	background: hsla(0, 0%, 0%, 0.95);
@@ -115,7 +115,7 @@
 /* STYLE GALLERY (ADD TRAIT SET SIDE PANEL) */
 
 .modal-style-gallery {
-	max-width: clamp(0px, 100vw - 2rem, 64rem);
+	max-width: clamp(0px, 100% - 2rem, 64rem);
 	background: #f1f5f9;
 	color: #0f172a;
 

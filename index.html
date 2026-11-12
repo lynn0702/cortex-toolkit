@@ -4,6 +4,18 @@
 
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+	<meta name="color-scheme" content="light dark">
+	<script>
+		// Pre-paint theme: mirrors the app's stored override so native UI and the first paint match.
+		try {
+			var pref = localStorage.getItem('characterCurioColorScheme');
+			var dark = pref === 'dark' || (pref !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+			var root = document.documentElement;
+			root.setAttribute('data-theme', dark ? 'dark' : 'light');
+			root.classList.toggle('theme-dark', dark);
+			document.querySelector('meta[name="color-scheme"]').content = pref === 'dark' || pref === 'light' ? pref : 'light dark';
+		} catch (e) {}
+	</script>
 	<title>Character Curio</title>
 
 	<!-- GOOGLE FONTS -->
@@ -37,7 +49,7 @@
 	</style>
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="css/app.min.css?v=aedf6822ee">
+	<link rel="stylesheet" href="css/app.min.css?v=5b5ddf7d82">
 
 	<!-- FAVICON -->
 	<link rel="icon" type="image/png" href="images/favicon.ico">
@@ -50,7 +62,7 @@
 
 <article id="character-curio"></article>
 
-<script src="js/app.min.js?v=a249a7a896"></script>
+<script src="js/app.min.js?v=de7b48a41e"></script>
 
 </body>
 </html>

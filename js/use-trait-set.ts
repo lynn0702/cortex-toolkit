@@ -309,6 +309,9 @@ export function useTraitSet(props: TraitSetProps, emit: any) {
 				classes['trait-set-frame-' + resolvedFrame.value.shape] = true;
 			}
 		}
+		if (resolvedFrame.value) {
+			classes[frameColorClass.value] = true;
+		}
 		if (resolvedFrame.value?.shape === 'line') {
 			classes['trait-set-frame-line'] = true;
 		}

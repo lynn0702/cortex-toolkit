@@ -672,7 +672,7 @@
 	margin: 0;
 	padding: 0;
 	display: block;
-	border: 6px solid var(--color-primary);
+	border: 6px solid var(--frame-color, var(--color-primary));
 	overflow: hidden;
 	width: 100%;
 	aspect-ratio: 1 / 1;
@@ -913,7 +913,7 @@
 
 .character-sheet .trait-set.trait-set-framed .portrait-circle,
 .character-sheet .trait-set.trait-set-frame-ring .portrait-circle {
-	border-color: var(--color-primary);
+	border-color: var(--frame-color, var(--color-primary));
 	border-width: var(--frame-stroke-width, 3px);
 }
 
@@ -1890,35 +1890,42 @@ button.trait-title-btn {
 }
 
 .frame-color-primary {
-	stroke: var(--color-primary, #e11d48);
+	--frame-color: var(--color-primary, #e11d48);
+	stroke: var(--frame-color);
 }
 
 .frame-color-accent {
-	stroke: var(--color-interactive, #38bdf8);
+	--frame-color: var(--color-interactive, #38bdf8);
+	stroke: var(--frame-color);
 }
 
 .frame-color-muted {
-	stroke: var(--color-separator, rgba(148, 163, 184, 0.4));
+	--frame-color: var(--color-separator, rgba(148, 163, 184, 0.4));
+	stroke: var(--frame-color);
 }
 
 .frame-color-strong {
-	stroke: #111111;
+	--frame-color: #111111;
+	stroke: var(--frame-color);
 
 	@media screen {
 		[data-theme='dark'] &,
 		.theme-dark & {
-			stroke: var(--border-strong, #64748b);
+			--frame-color: var(--border-strong, #64748b);
+			stroke: var(--frame-color);
 		}
 	}
 }
 
 .frame-color-black {
-	stroke: #000000;
+	--frame-color: #000000;
+	stroke: var(--frame-color);
 
 	@media screen {
 		[data-theme='dark'] &,
 		.theme-dark & {
-			stroke: var(--border-strong, #64748b);
+			--frame-color: var(--border-strong, #64748b);
+			stroke: var(--frame-color);
 		}
 	}
 }
@@ -2219,7 +2226,7 @@ button.trait-title-btn {
 
 			.portrait-circle {
 				background-color: var(--bg-surface-elevated);
-				border-color: var(--border-strong);
+				border-color: var(--frame-color, var(--border-strong));
 			}
 
 			.portrait-placeholder {
