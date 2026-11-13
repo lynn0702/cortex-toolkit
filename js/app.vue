@@ -46,6 +46,7 @@ const isRollerOpen = ref(false);
 const rollerPosition = ref('right');
 const isStudioPanelOpen = ref(true);
 const studioPanelTab = ref<'properties' | 'roller' | 'json'>('properties');
+const mobileDrawerState = ref<'staged' | 'split' | 'full'>('staged');
 
 // The roller is a Play tool: leaving Play while on it lands on properties.
 watch(submode, (sub) => {
@@ -77,6 +78,9 @@ const systemPrefersDark = ref(
 	Boolean(
 		typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
 	),
+);
+const isMobileViewport = ref(
+	Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 48rem)').matches),
 );
 
 const isDarkMode = computed(() => {
@@ -240,6 +244,9 @@ function handleBeforeUnload() {
 	flushDeferredSave();
 }
 
+let mobileViewportMql: MediaQueryList | null = null;
+let mobileViewportHandler: ((e: MediaQueryListEvent) => void) | null = null;
+
 onMounted(async () => {
 	setViewY();
 	await bootFromStorage();
@@ -272,6 +279,17 @@ onMounted(async () => {
 		} else if ((mql as any).addListener) {
 			(mql as any).addListener(handler);
 		}
+
+		mobileViewportMql = window.matchMedia('(max-width: 48rem)');
+		isMobileViewport.value = mobileViewportMql.matches;
+		mobileViewportHandler = (e: MediaQueryListEvent) => {
+			isMobileViewport.value = e.matches;
+		};
+		if (mobileViewportMql.addEventListener) {
+			mobileViewportMql.addEventListener('change', mobileViewportHandler);
+		} else if ((mobileViewportMql as any).addListener) {
+			(mobileViewportMql as any).addListener(mobileViewportHandler);
+		}
 	}
 	if (typeof document !== 'undefined') {
 		document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -283,6 +301,13 @@ onMounted(async () => {
 
 onUnmounted(() => {
 	cancelDeferredSave();
+	if (mobileViewportMql && mobileViewportHandler) {
+		if (mobileViewportMql.removeEventListener) {
+			mobileViewportMql.removeEventListener('change', mobileViewportHandler);
+		} else if ((mobileViewportMql as any).removeListener) {
+			(mobileViewportMql as any).removeListener(mobileViewportHandler);
+		}
+	}
 	if (typeof document !== 'undefined') {
 		document.removeEventListener('visibilitychange', handleVisibilityChange);
 	}
@@ -375,17 +400,20 @@ function setMode(m: string, sub: string | null, updateHash = true) {
 		// closed — it would otherwise cover the sheet on arrival. The
 		// Roller handle opens it explicitly.
 		const narrow = isNarrowViewport();
+		mobileDrawerState.value = 'staged';
 		isStudioPanelOpen.value = !narrow;
 		studioPanelTab.value = 'roller';
 		isRollerOpen.value = !narrow;
 	} else if (m === 'character' && sub === 'edit') {
 		// Same overlay rule as Play: land on the sheet with the drawer
 		// closed. Tapping any trait opens it explicitly.
+		mobileDrawerState.value = 'staged';
 		const narrowEdit = isNarrowViewport();
 		isStudioPanelOpen.value = !narrowEdit;
 		studioPanelTab.value = 'properties';
 		isRollerOpen.value = !narrowEdit;
 	} else {
+		mobileDrawerState.value = 'staged';
 		isRollerOpen.value = false;
 	}
 	if (updateHash) {
@@ -474,9 +502,28 @@ function toggleRoller() {
 	}
 }
 
+function isMobilePlayViewport() {
+	return Boolean(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+}
+
+function setMobileDrawerState(next: 'staged' | 'split' | 'full') {
+	mobileDrawerState.value = next;
+	if (mode.value === 'character' && submode.value === 'play') {
+		isStudioPanelOpen.value = next !== 'staged';
+		isRollerOpen.value = next !== 'staged';
+	}
+}
+
 function setPanelOpen(open: boolean) {
 	isStudioPanelOpen.value = open;
 	isRollerOpen.value = open;
+	if (submode.value === 'play' && isMobilePlayViewport()) {
+		mobileDrawerState.value = open
+			? mobileDrawerState.value === 'staged'
+				? 'split'
+				: mobileDrawerState.value
+			: 'staged';
+	}
 }
 
 function handleToggleStudio(tab: 'properties' | 'roller' | 'json') {
@@ -499,6 +546,12 @@ function togglePanelPosition() {
 
 function toggleRollerPosition() {
 	togglePanelPosition();
+}
+
+function openSheetPropertiesFromHeader() {
+	selectElement([]);
+	isStudioPanelOpen.value = true;
+	studioPanelTab.value = 'properties';
 }
 
 // Below the wide push-aside layout the panel is an overlay drawer.
@@ -596,11 +649,32 @@ function triggerClearFromPill() {
 }
 
 function toggleMobileRollerDrawer() {
-	if (isStudioPanelOpen.value && studioPanelTab.value === 'roller') {
-		isStudioPanelOpen.value = false;
-	} else {
-		isStudioPanelOpen.value = true;
+	if (mobileDrawerState.value === 'staged') {
 		studioPanelTab.value = 'roller';
+		setMobileDrawerState('split');
+	} else {
+		setMobileDrawerState('staged');
+	}
+}
+
+let pillTouchStartX = 0;
+let pillTouchStartY = 0;
+
+function onPillTouchStart(event: TouchEvent) {
+	const t = event.touches?.[0];
+	if (!t) return;
+	pillTouchStartX = t.clientX;
+	pillTouchStartY = t.clientY;
+}
+
+function onPillTouchEnd(event: TouchEvent) {
+	const t = event.changedTouches?.[0];
+	if (!t) return;
+	const dx = t.clientX - pillTouchStartX;
+	const dy = t.clientY - pillTouchStartY;
+	if (dy < -32 && Math.abs(dy) > Math.abs(dx)) {
+		studioPanelTab.value = 'roller';
+		setMobileDrawerState('split');
 	}
 }
 
@@ -1430,6 +1504,22 @@ function handleGlobalKeydown(event: KeyboardEvent) {
 		return;
 	}
 
+	if (
+		mode.value === 'character' &&
+		submode.value === 'play' &&
+		event.key === 'Escape' &&
+		!isPaletteOpen.value &&
+		isMobilePlayViewport() &&
+		mobileDrawerState.value !== 'staged'
+	) {
+		const rollDlg = document.querySelector('#rollDialog');
+		if (!rollDlg || !rollDlg.hasAttribute('open')) {
+			event.preventDefault();
+			setMobileDrawerState('staged');
+			return;
+		}
+	}
+
 	if (mode.value !== 'character' || submode.value !== 'edit') return;
 
 	if (event.key === 'Escape') {
@@ -1476,6 +1566,9 @@ function selectElement(selector: any) {
 	if (Array.isArray(selector) && selector.length && characterCurioFunctions.arraysMatch(editing.value, selector)) {
 		isStudioPanelOpen.value = true;
 		studioPanelTab.value = 'properties';
+		if (submode.value === 'play' && isMobilePlayViewport() && mobileDrawerState.value === 'staged') {
+			setMobileDrawerState('split');
+		}
 		return;
 	}
 
@@ -1485,6 +1578,12 @@ function selectElement(selector: any) {
 	if (selector.length > 0) {
 		isStudioPanelOpen.value = true;
 		studioPanelTab.value = 'properties';
+		if (submode.value === 'play' && isMobilePlayViewport() && mobileDrawerState.value === 'staged') {
+			setMobileDrawerState('split');
+		}
+	} else if (submode.value === 'play' && isMobilePlayViewport() && studioPanelTab.value === 'properties') {
+		studioPanelTab.value = 'roller';
+		setMobileDrawerState('staged');
 	}
 
 	// Mobile: bring active panel into view
@@ -1514,7 +1613,9 @@ function handleGlobalPointerDown(event: Event) {
 		event &&
 		event.target &&
 		(event.target as any).closest &&
-		(event.target as any).closest('.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn'),
+		(event.target as any).closest(
+			'.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
+		),
 	);
 }
 
@@ -1526,7 +1627,9 @@ function handleMainClick(event: Event) {
 		event &&
 		event.target &&
 		(event.target as any).closest &&
-		(event.target as any).closest('.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn')
+		(event.target as any).closest(
+			'.editor, .modal, .sidebar, .studio-panel, .sheet-bar-btn, .mobile-sheet-popover, .mobile-roller-pill-bar',
+		)
 	) {
 		return;
 	}
@@ -1873,6 +1976,8 @@ defineExpose({
 	triggerRollFromPill,
 	triggerClearFromPill,
 	toggleMobileRollerDrawer,
+	mobileDrawerState,
+	setMobileDrawerState,
 	colorSchemePref,
 	isDarkMode,
 	toggleDarkMode,
@@ -1888,16 +1993,29 @@ defineExpose({
 		:canUndo="canUndo"
 		:canRedo="canRedo"
 		:isDarkMode="isDarkMode"
+		:openCharacters="openCharacters"
+		:characterID="characterID"
+		:activeCharacterName="character?.name || 'Unnamed'"
+		:sessionDirty="submode === 'play' && hasUncommittedSessionChanges()"
+		:drawerState="mobileDrawerState"
 		@navigate="setMode"
 		@undo="undo"
 		@redo="redo"
 		@toggleTheme="toggleDarkMode"
 		@openPalette="isPaletteOpen = true"
+		@focusCharacter="focusCharacter"
+		@closeCharacter="closeOpenCharacter"
+		@addCharacter="isAddCharacterModalOpen = true"
+		@saveSession="saveLocalData"
+		@openSheetProperties="openSheetPropertiesFromHeader"
 	/>
 
 	<!-- PLAY SHELL: STUDIO PANEL (INSPECTOR + ROLLER) + SHEET VIEWPORT -->
 	<div
 		class="play-shell"
+		:data-mode="mode"
+		:data-submode="submode || ''"
+		:data-drawer-state="mobileDrawerState"
 		:class="{
 			'theme-dark': isDarkMode,
 			'panel-open': isStudioPanelOpen && mode === 'character' && submode !== 'print',
@@ -1916,6 +2034,7 @@ defineExpose({
 			:submode="submode"
 			:mode="mode"
 			:isOpen="isStudioPanelOpen"
+			:drawerState="mobileDrawerState"
 			:position="panelPosition"
 			:panelTab="studioPanelTab"
 			:dicePool="dicePool"
@@ -1925,6 +2044,7 @@ defineExpose({
 			@update:panelTab="studioPanelTab = $event"
 			@update:activePoolSide="activeRollerSide = $event"
 			@update:isOpen="setPanelOpen($event)"
+			@update:drawerState="setMobileDrawerState($event)"
 			@togglePosition="togglePanelPosition"
 			@selectElement="selectElement"
 			@updateCharacter="updateCharacter"
@@ -2005,7 +2125,11 @@ defineExpose({
 				<div
 					class="multi-character-workspace"
 					v-else-if="
-						mode === 'character' && submode === 'play' && playViewMode === 'split' && openCharacters.length > 1
+						mode === 'character' &&
+						submode === 'play' &&
+						!isMobileViewport &&
+						playViewMode === 'split' &&
+						openCharacters.length > 1
 					"
 					key="multi-character-split"
 				>
@@ -2115,6 +2239,8 @@ defineExpose({
 					'has-dice': dicePool.items.length + oppositionPool.items.length > 0,
 					'is-open': isStudioPanelOpen && studioPanelTab === 'roller',
 				}"
+				@touchstart.passive="onPillTouchStart"
+				@touchend.passive="onPillTouchEnd"
 			>
 				<div
 					class="mobile-roller-pill-left"
@@ -2178,7 +2304,7 @@ defineExpose({
 						</button>
 					</template>
 					<button type="button" class="btn-pill-expand" @click.stop="toggleMobileRollerDrawer" title="Open dice roller">
-						<i class="fas fa-sliders" aria-hidden="true"></i>
+						<i class="fas fa-dice" aria-hidden="true"></i>
 						{{ dicePool.items.length + oppositionPool.items.length > 0 ? 'Pool' : 'Roller' }}
 					</button>
 				</div>

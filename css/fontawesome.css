@@ -98,8 +98,14 @@
 .fa-check-circle:before {
 	content: '\f058';
 }
+.fa-chevron-down:before {
+	content: '\f078';
+}
 .fa-chevron-right:before {
 	content: '\f054';
+}
+.fa-chevron-up:before {
+	content: '\f077';
 }
 .fa-circle-half-stroke:before {
 	content: '\f042';

@@ -1673,10 +1673,6 @@ defineExpose({
 						<span class="roller-hitch-readout">{{ hitchLabel }}</span>
 					</div>
 				</div>
-
-				<button type="button" class="roller-roll-btn" :disabled="!hasAnyDiceToRoll" @click="roll()">
-					<i class="fas fa-dice" aria-hidden="true"></i> {{ rollButtonLabel }}
-				</button>
 			</section>
 
 			<!-- LIVE ACCESSIBILITY REGION (ALWAYS PRESENT) -->
@@ -1782,6 +1778,12 @@ defineExpose({
 					</li>
 				</ul>
 			</details>
+		</div>
+
+		<div class="roller-action-bar">
+			<button type="button" class="roller-roll-btn" :disabled="!hasAnyDiceToRoll" @click="roll()">
+				<i class="fas fa-dice" aria-hidden="true"></i> {{ rollButtonLabel }}
+			</button>
 		</div>
 
 		<!-- TOP-LAYER MODAL OUTCOME DIALOG (MOBILE + DESKTOP EXPAND) -->

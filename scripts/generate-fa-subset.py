@@ -8,7 +8,7 @@ appendix = """
 fa-align-center fa-align-left fa-align-right fa-angles-left fa-angles-right
 fa-arrow-left fa-arrow-right fa-arrows-left-right fa-award fa-bolt fa-book-open
 fa-bookmark fa-building-columns fa-bullhorn fa-check fa-check-circle
-fa-chevron-right fa-circle-half-stroke fa-circle-notch fa-clock-rotate-left
+fa-chevron-down fa-chevron-right fa-chevron-up fa-circle-half-stroke fa-circle-notch fa-clock-rotate-left
 fa-code fa-cog fa-columns fa-copy fa-dice
 fa-dice-d20 fa-download fa-eraser fa-exclamation fa-exclamation-circle
 fa-exclamation-triangle fa-eye fa-eye-slash fa-file-alt fa-file-arrow-up

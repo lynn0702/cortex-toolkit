@@ -116,42 +116,74 @@ async function runViewportSmoke(browser, width, height, tag, errors, fontRequest
 		}
 
 		const expandPill = page.locator('.btn-pill-expand');
-		if ((await expandPill.count()) > 0 && (await expandPill.first().isVisible())) {
+		if (width <= 768) {
+			if (await page.locator('.session-nav').isVisible()) {
+				throw new Error(`[${tag}] .session-nav should be hidden on mobile (${width}px)`);
+			}
 			await expandPill.first().click();
-			await page.waitForTimeout(250);
-		}
+			await page.locator('.studio-panel.is-play[data-state="split"]').waitFor({ state: 'visible', timeout: 5000 });
 
-		const d8Btn = page.locator('.die-btn[aria-label="Add d8"]').first();
-		await d8Btn.waitFor({ state: 'visible', timeout: 5000 });
-		await d8Btn.click();
-		await page.locator('.roller-roll-btn').first().click();
-		await page.locator('.roller-log-section').waitFor({ state: 'attached', timeout: 5000 });
-		const hasRollLog = true;
+			const d8Btn = page.locator('.die-btn[aria-label="Add d8"]').first();
+			await d8Btn.waitFor({ state: 'visible', timeout: 5000 });
+			await d8Btn.click();
 
-		// Close outcome modal dialog / mobile roller drawer if open before navigating to Print
-		await page.keyboard.press('Escape').catch(() => {});
-		await page.waitForTimeout(250);
-		await page.evaluate(() => {
-			const dlg = document.querySelector('#rollDialog');
-			if (dlg && typeof dlg.close === 'function' && dlg.hasAttribute('open')) dlg.close();
-		});
-		const closeDrawer = page.locator(
-			'.dice-roller-sidebar .roller-close-btn, .dice-roller-sidebar button[aria-label*="Close" i]',
-		);
-		if ((await closeDrawer.count()) > 0 && (await closeDrawer.first().isVisible())) {
-			await closeDrawer.first().click();
+			await page.locator('button[aria-label="Expand roller"]').first().click();
+			await page.locator('.studio-panel.is-play[data-state="full"]').waitFor({ state: 'visible', timeout: 5000 });
+
+			await page.locator('.roller-roll-btn').first().click();
+			await page.locator('.roller-log-section').waitFor({ state: 'attached', timeout: 5000 });
+			var hasRollLog = true;
+
+			await page.keyboard.press('Escape').catch(() => {});
 			await page.waitForTimeout(200);
-		}
+			await page.evaluate(() => {
+				const dlg = document.querySelector('#rollDialog');
+				if (dlg && typeof dlg.close === 'function' && dlg.hasAttribute('open')) dlg.close();
+			});
 
-		// 3. Switch to Print view
-		await page.locator('button[aria-label="Print"]').first().click();
-		await page.waitForSelector('.character-sheet.submode-print', { timeout: 5000 });
+			await page.locator('button[aria-label="Close roller"]').first().click();
+			await page.locator('.mobile-roller-pill-bar').waitFor({ state: 'visible', timeout: 5000 });
+
+			await page.locator('.mobile-sheet-trigger').first().click();
+			await page.locator('#mobile-sheet-menu button[aria-label="Print"]').first().click();
+			await page.waitForSelector('.character-sheet.submode-print', { timeout: 5000 });
+		} else {
+			if ((await expandPill.count()) > 0 && (await expandPill.first().isVisible())) {
+				await expandPill.first().click();
+				await page.waitForTimeout(250);
+			}
+
+			const d8Btn = page.locator('.die-btn[aria-label="Add d8"]').first();
+			await d8Btn.waitFor({ state: 'visible', timeout: 5000 });
+			await d8Btn.click();
+			await page.locator('.roller-roll-btn').first().click();
+			await page.locator('.roller-log-section').waitFor({ state: 'attached', timeout: 5000 });
+			var hasRollLog = true;
+
+			await page.keyboard.press('Escape').catch(() => {});
+			await page.waitForTimeout(250);
+			await page.evaluate(() => {
+				const dlg = document.querySelector('#rollDialog');
+				if (dlg && typeof dlg.close === 'function' && dlg.hasAttribute('open')) dlg.close();
+			});
+			const closeDrawer = page.locator(
+				'.dice-roller-sidebar .roller-close-btn, .dice-roller-sidebar button[aria-label*="Close" i]',
+			);
+			if ((await closeDrawer.count()) > 0 && (await closeDrawer.first().isVisible())) {
+				await closeDrawer.first().click();
+				await page.waitForTimeout(200);
+			}
+
+			// 3. Switch to Print view
+			await page.locator('button[aria-label="Print"]').first().click();
+			await page.waitForSelector('.character-sheet.submode-print', { timeout: 5000 });
+		}
 		if (SHOTS) {
 			await page.screenshot({ path: path.join(SHOT_DIR, `print-${tag}.png`), fullPage: true });
 		}
 
 		// 4. Navigate to Roster
-		await page.locator('button[aria-label="Roster"]').first().click();
+		await page.locator('.header button[aria-label="Roster"]').first().click();
 		await page.waitForSelector('.roster-item', { timeout: 5000 });
 		const rosterItems = await page.locator('.roster-item').count();
 		if (rosterItems < 1) {

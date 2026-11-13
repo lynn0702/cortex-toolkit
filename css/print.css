@@ -3737,7 +3737,7 @@ body:has(.character-sheet.submode-print) .main {
 }
 
 /* 6. MOBILE VIEW REFLOW FOR CREATE & PLAY MODES (<= 768px) */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
 	/* Edit Mode: vertical flex stack */
 	.character-sheet:not(.submode-print):not(.submode-play) {
 		.page,
@@ -3765,16 +3765,17 @@ body:has(.character-sheet.submode-print) .main {
 		flex-direction: row;
 		flex-wrap: nowrap;
 		align-items: center;
-		gap: 0.4rem;
+		gap: var(--space-xs);
+		min-block-size: var(--jump-strip-h);
 		overflow-x: auto;
 		overflow-y: hidden;
 		-webkit-overflow-scrolling: touch;
 		scroll-behavior: smooth;
-		padding: 0.45rem 0.75rem;
-		margin: 0 -0.25rem 0.5rem -0.25rem;
+		padding: var(--space-2xs) var(--space-xs);
+		margin: 0 -0.25rem var(--space-xs) -0.25rem;
 		position: sticky;
-		top: calc(var(--header-size, 48px) + 42px);
-		z-index: calc(var(--z-frame, 10) + 20);
+		top: var(--header-size);
+		z-index: var(--z-workspace-nav);
 		background: var(--bg-sticky-glass, rgba(248, 250, 252, 0.92));
 		backdrop-filter: blur(8px);
 		border-bottom: 1px solid var(--border-subtle, rgba(15, 23, 42, 0.08));
@@ -3782,6 +3783,24 @@ body:has(.character-sheet.submode-print) .main {
 
 		&::-webkit-scrollbar {
 			display: none;
+		}
+
+		.jump-pillar-tag {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+			flex: 0 0 auto;
+			white-space: nowrap;
+			font-family: var(--font-heading, sans-serif);
+			font-size: 0.72rem;
+			font-weight: 800;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			padding: 0.25rem 0.55rem;
+			border-radius: 0.35rem;
+			background: var(--bg-surface-muted);
+			color: var(--color-primary);
+			border: 1px solid var(--border-subtle);
 		}
 
 		.jump-pill {
@@ -3838,6 +3857,29 @@ body:has(.character-sheet.submode-print) .main {
 		}
 	}
 
+	.play-shell[data-submode='play'] {
+		--active-roller-h: var(--roller-footer-h);
+
+		&[data-drawer-state='split'] {
+			--active-roller-h: var(--split-roller-h);
+		}
+
+		&[data-drawer-state='full'] {
+			--active-roller-h: 100dvh;
+		}
+
+		.main {
+			padding-top: var(--header-size);
+			padding-bottom: 0;
+			padding-inline: 0;
+		}
+	}
+
+	.character-sheet.submode-play .page {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
 	/* 2. 2D Horizontal Pillar Track + Vertical Stack Columns (Play Mode Only) */
 	.character-sheet.submode-play,
 	.play-shell .character-sheet:not(.submode-print):not(.submode-edit) {
@@ -3853,7 +3895,7 @@ body:has(.character-sheet.submode-print) .main {
 			-webkit-overflow-scrolling: touch;
 			gap: 0.75rem;
 			width: 100%;
-			padding: 0.25rem 6vw 5.5rem 6vw;
+			padding: var(--space-2xs) 6vw 0 6vw;
 			box-sizing: border-box;
 			scrollbar-width: none;
 
@@ -3872,11 +3914,14 @@ body:has(.character-sheet.submode-print) .main {
 			display: flex;
 			flex-direction: column;
 			gap: 0.75rem;
-			max-height: calc(100dvh - 190px);
+			max-height: calc(
+				100dvh - var(--header-size) - var(--jump-strip-h) - var(--active-roller-h, var(--roller-footer-h)) -
+					var(--space-xs)
+			);
 			overflow-y: auto;
 			scroll-snap-type: y proximity;
 			overscroll-behavior-y: contain;
-			padding-bottom: 4rem;
+			padding-bottom: var(--space-md);
 			box-sizing: border-box;
 
 			.page-header,

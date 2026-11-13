@@ -14,6 +14,7 @@
 		position: absolute;
 		top: -9999px;
 	}
+
 	position: sticky;
 	top: var(--header-size);
 	z-index: var(--z-workspace-nav);
@@ -41,6 +42,7 @@
 		min-width: 0;
 		overflow-x: auto;
 		scrollbar-width: none;
+
 		&::-webkit-scrollbar {
 			display: none;
 		}
@@ -250,41 +252,8 @@
 		}
 	}
 
-	@media screen and (max-width: 768px) {
-		padding: 0.25rem 0.5rem;
-
-		.session-nav-inner {
-			gap: 0.4rem;
-		}
-
-		.sheet-bar-roller,
-		.session-view-controls {
-			display: none;
-		}
-
-		.session-tab {
-			padding: 0;
-			font-size: 0.75rem;
-
-			.session-tab-trigger {
-				padding: 0.25rem 0.5rem;
-			}
-
-			.session-tab-name {
-				max-width: 110px;
-			}
-
-			.session-tab-close {
-				min-height: 0;
-				min-width: 0;
-				padding: 0.25rem 0.45rem 0.25rem 0.2rem;
-			}
-		}
-
-		.btn-session-add {
-			padding: 0.25rem 0.5rem;
-			font-size: 0.75rem;
-		}
+	@media screen and (max-width: 48rem) {
+		display: none;
 	}
 }
 

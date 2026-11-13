@@ -20,6 +20,7 @@ const props = withDefaults(
 		oppositionPool?: any;
 		activePoolSide?: 'player' | 'opposition';
 		viewY?: number | null;
+		drawerState?: 'staged' | 'split' | 'full';
 	}>(),
 	{
 		editing: () => [],
@@ -48,7 +49,29 @@ const emit = defineEmits<{
 	(e: 'clearOppositionPool'): void;
 	(e: 'settlePP', delta: number): void;
 	(e: 'update:activePoolSide', side: 'player' | 'opposition'): void;
+	(e: 'update:drawerState', state: 'staged' | 'split' | 'full'): void;
 }>();
+
+let headerTouchStartY = 0;
+
+function onHeaderTouchStart(event: TouchEvent): void {
+	if (props.submode !== 'play') return;
+	if ((event.target as HTMLElement | null)?.closest('button')) return;
+	headerTouchStartY = event.touches[0]?.clientY ?? 0;
+}
+
+function onHeaderTouchEnd(event: TouchEvent): void {
+	if (props.submode !== 'play' || !headerTouchStartY) return;
+	const endY = event.changedTouches[0]?.clientY ?? headerTouchStartY;
+	const deltaY = endY - headerTouchStartY;
+	headerTouchStartY = 0;
+	const current = props.drawerState ?? 'staged';
+	if (deltaY < -32 && current === 'split') {
+		emit('update:drawerState', 'full');
+	} else if (deltaY > 32) {
+		emit('update:drawerState', current === 'full' ? 'split' : 'staged');
+	}
+}
 
 const editingType = computed(() => {
 	const sel = props.editing;
@@ -264,9 +287,10 @@ defineExpose({
 		ref="panelEl"
 		class="studio-panel"
 		:class="['position-' + position, { 'panel-collapsed': !isOpen, 'is-play': submode === 'play' }]"
+		:data-state="submode === 'play' ? (drawerState ?? 'staged') : undefined"
 	>
 		<!-- TOOLBAR: SHEET TABS OR CRUMBS ON THE LEFT, ACTIONS ON THE RIGHT -->
-		<div class="studio-panel-header">
+		<div class="studio-panel-header" @touchstart.passive="onHeaderTouchStart" @touchend.passive="onHeaderTouchEnd">
 			<div class="studio-toolbar-left">
 				<!-- EDIT, SHEET ROOT: SHEET TABS -->
 				<div
@@ -303,6 +327,7 @@ defineExpose({
 						<span v-else class="crumb-current">{{ c.label }}</span>
 					</template>
 				</div>
+				<span v-else-if="submode === 'play' && panelTab === 'roller'" class="studio-roller-heading">Dice Pool</span>
 			</div>
 
 			<div class="studio-panel-actions">
@@ -311,7 +336,7 @@ defineExpose({
 					<button
 						type="button"
 						class="studio-tab-btn"
-						:class="{ active: panelTab === 'properties' }"
+						:class="{ active: panelTab === 'properties', 'is-empty-play-inspector': editingType === 'sheet' }"
 						@click="emit('update:panelTab', 'properties')"
 						title="Properties"
 					>
@@ -350,9 +375,44 @@ defineExpose({
 				>
 					<i class="fas fa-arrows-left-right" aria-hidden="true"></i>
 				</button>
+				<span v-if="submode === 'play'" class="studio-mobile-drawer-controls">
+					<button
+						v-if="(drawerState ?? 'staged') === 'split'"
+						type="button"
+						class="studio-action-btn"
+						@click="emit('update:drawerState', 'full')"
+						title="Expand roller"
+						aria-label="Expand roller"
+					>
+						<i class="fas fa-chevron-up" aria-hidden="true"></i>
+					</button>
+					<button
+						v-else
+						type="button"
+						class="studio-action-btn"
+						@click="emit('update:drawerState', 'split')"
+						title="Split roller"
+						aria-label="Split roller"
+					>
+						<i class="fas fa-chevron-down" aria-hidden="true"></i>
+					</button>
+					<button
+						type="button"
+						class="studio-action-btn"
+						@click="emit('update:drawerState', 'staged')"
+						title="Close roller"
+						aria-label="Close roller"
+					>
+						<i
+							class="fas"
+							:class="(drawerState ?? 'staged') === 'full' ? 'fa-xmark' : 'fa-chevron-down'"
+							aria-hidden="true"
+						></i>
+					</button>
+				</span>
 				<button
 					type="button"
-					class="studio-action-btn"
+					class="studio-action-btn studio-action-collapse-desktop"
 					@click="emit('update:isOpen', false)"
 					title="Collapse panel"
 					aria-label="Collapse panel"
@@ -366,6 +426,7 @@ defineExpose({
 		<div
 			id="studio-panel-body"
 			class="studio-panel-body"
+			:class="{ 'is-roller-tab': panelTab === 'roller' }"
 			:role="submode !== 'play' && editingType === 'sheet' && panelTab === 'properties' ? 'tabpanel' : undefined"
 			:aria-labelledby="
 				submode !== 'play' && editingType === 'sheet' && panelTab === 'properties'

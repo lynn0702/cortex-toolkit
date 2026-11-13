@@ -144,7 +144,7 @@
 		margin-right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
 	.play-shell,
 	.sheet-column {
 		display: block;
@@ -154,6 +154,10 @@
 		margin-left: 0;
 		margin-right: 0;
 		padding-bottom: 5rem;
+	}
+
+	.play-shell[data-submode='play'] .sheet-column {
+		padding-bottom: 0;
 	}
 }
 
@@ -766,8 +770,8 @@
 
 .roller-adhoc-grid {
 	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	gap: 0.4rem;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: var(--space-xs);
 }
 
 .roller-adhoc-btn {
@@ -1038,7 +1042,16 @@
 	font-variant-numeric: tabular-nums;
 }
 
+.roller-action-bar {
+	flex: 0 0 auto;
+	padding: var(--space-xs) clamp(0.75rem, 3.5vw, 1.25rem);
+	padding-bottom: calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
+	background: var(--roller-surface);
+	border-top: 1px solid var(--roller-border);
+}
+
 .roller-roll-btn {
+	width: 100%;
 	background: var(--active-accent);
 	color: var(--roller-on-accent);
 	border: none;
@@ -1777,14 +1790,15 @@
 	display: none;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 48rem) {
 	.mobile-roller-pill-bar {
 		display: flex;
 		position: fixed;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		height: 3.5rem;
+		min-block-size: var(--roller-footer-h);
+		height: auto;
 		background: var(--roller-pill-bg);
 		color: var(--roller-on-accent);
 		border-top: 1px solid var(--roller-pill-border);
@@ -1792,8 +1806,25 @@
 		z-index: var(--z-toolbar);
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 0.85rem;
+		padding: var(--space-2xs) var(--space-sm) calc(var(--space-2xs) + env(safe-area-inset-bottom, 0px));
 		user-select: none;
+	}
+
+	.play-shell[data-drawer-state='split'] .mobile-roller-pill-bar,
+	.play-shell[data-drawer-state='full'] .mobile-roller-pill-bar {
+		display: none;
+	}
+
+	.studio-panel.is-play[data-state='split'] .roller-top-bar,
+	.studio-panel.is-play[data-state='split'] .roller-controls,
+	.studio-panel.is-play[data-state='split'] .quick-add-section .roller-section-header,
+	.studio-panel.is-play[data-state='split'] .word-bank-empty {
+		display: none;
+	}
+
+	.studio-panel.is-play[data-state='split'] .roller-body {
+		padding: var(--space-xs) clamp(0.75rem, 3.5vw, 1.25rem);
+		row-gap: var(--space-xs);
 	}
 
 	.mobile-roller-pill-left {

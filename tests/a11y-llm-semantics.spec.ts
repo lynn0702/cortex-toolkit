@@ -8,6 +8,8 @@ import TraitEditor from '../js/trait-editor.vue';
 import TraitSetEditor from '../js/trait-set-editor.vue';
 import AppHeader from '../js/app-header.vue';
 import SessionNav from '../js/session-nav.vue';
+import StudioPanel from '../js/studio-panel.vue';
+import Character from '../js/character.vue';
 import TraitSetMini from '../js/trait-set-mini.vue';
 import PageLayoutMini from '../js/page-layout-mini.vue';
 import { resolveFrame, computeFrameAnchors, buildFrameSvgPath } from '../js/frame-geometry.ts';
@@ -2695,6 +2697,250 @@ describe('WCAG 2.2 AA, WAI-ARIA 1.2, & LLM Semantics Suite', () => {
 
 			await runAxeAudit(wrapper.element as HTMLElement);
 			wrapper.unmount();
+		});
+	});
+
+	describe('Mobile Chrome Consolidation & Three-State Roller Drawer', () => {
+		it('renders #mobile-sheet-menu in AppHeader with open-sheet switcher, session actions, and Play/Edit mode parity', async () => {
+			const playHeader = mount(AppHeader, {
+				props: {
+					mode: 'character',
+					submode: 'play',
+					hasCharacter: true,
+					canUndo: false,
+					canRedo: false,
+					openCharacters: [
+						{ id: 'c1', name: 'Ariadne' },
+						{ id: 'c2', name: 'Mal' },
+					],
+					characterID: 'c1',
+					activeCharacterName: 'Ariadne',
+					sessionDirty: true,
+					isDarkMode: false,
+					drawerState: 'staged',
+				},
+				attachTo: document.body,
+			});
+
+			expect(playHeader.find('header.header').attributes('data-mode')).toBe('character');
+			expect(playHeader.find('header.header').attributes('data-submode')).toBe('play');
+			expect(playHeader.find('header.header').attributes('data-drawer-state')).toBe('staged');
+
+			const trigger = playHeader.find('.mobile-sheet-trigger');
+			expect(trigger.exists()).toBe(true);
+			await trigger.trigger('click');
+
+			const menu = playHeader.find('#mobile-sheet-menu');
+			expect(menu.exists()).toBe(true);
+
+			const sheetItems = menu.findAll('.mobile-sheet-item');
+			expect(sheetItems).toHaveLength(2);
+			await sheetItems[1].trigger('click');
+			expect(playHeader.emitted('focusCharacter')?.[0]).toEqual(['c2']);
+
+			const openSheetBtn = menu.findAll('.mobile-sheet-action-btn').find((b) => b.text().includes('Open Sheet'));
+			expect(openSheetBtn).toBeDefined();
+			await openSheetBtn!.trigger('click');
+			expect(playHeader.emitted('addCharacter')).toHaveLength(1);
+
+			const saveBtn = menu.findAll('.mobile-sheet-action-btn').find((b) => b.text().includes('Save'));
+			expect(saveBtn).toBeDefined();
+			await saveBtn!.trigger('click');
+			expect(playHeader.emitted('saveSession')).toHaveLength(1);
+
+			const printBtn = menu.find('button[aria-label="Print"]');
+			expect(printBtn.exists()).toBe(true);
+			await printBtn.trigger('click');
+			expect(playHeader.emitted('navigate')?.[0]).toEqual(['character', 'print']);
+
+			const themeBtn = menu.find('button[aria-label="Switch to dark mode"]');
+			expect(themeBtn.exists()).toBe(true);
+			await themeBtn.trigger('click');
+			expect(playHeader.emitted('toggleTheme')).toHaveLength(1);
+
+			await runAxeAudit(playHeader.element as HTMLElement);
+			playHeader.unmount();
+
+			const editHeader = mount(AppHeader, {
+				props: {
+					mode: 'character',
+					submode: 'edit',
+					hasCharacter: true,
+					openCharacters: [{ id: 'c1', name: 'Ariadne' }],
+					characterID: 'c1',
+					activeCharacterName: 'Ariadne',
+					canUndo: true,
+					canRedo: false,
+					isDarkMode: false,
+				},
+				attachTo: document.body,
+			});
+
+			const editMenu = editHeader.find('#mobile-sheet-menu');
+			const settingsBtn = editMenu.findAll('.mobile-sheet-action-btn').find((b) => b.text().includes('Sheet Settings'));
+			expect(settingsBtn).toBeDefined();
+			await settingsBtn!.trigger('click');
+			expect(editHeader.emitted('openSheetProperties')).toHaveLength(1);
+
+			const undoBtn = editMenu.findAll('.mobile-sheet-action-btn').find((b) => b.text().includes('Undo'));
+			expect(undoBtn).toBeDefined();
+			await undoBtn!.trigger('click');
+			expect(editHeader.emitted('undo')).toHaveLength(1);
+
+			await runAxeAudit(editHeader.element as HTMLElement);
+			editHeader.unmount();
+		});
+
+		it('drives three-state drawer transitions and sticky .roller-action-bar inside StudioPanel Play mode', async () => {
+			const pool = reactive({ items: [{ size: 8, source: 'Distinctive' }], add() {}, removeAt() {}, clear() {} });
+			const oppPool = reactive({ items: [], add() {}, removeAt() {}, clear() {} });
+			const char: any = reactive({
+				id: 'drawer-char',
+				name: 'Drawer Hero',
+				plotPoints: 2,
+				traitSets: [],
+			});
+
+			const splitPanel = mount(StudioPanel, {
+				props: {
+					character: char,
+					mode: 'character',
+					submode: 'play',
+					isOpen: true,
+					panelTab: 'roller',
+					drawerState: 'split',
+					dicePool: pool,
+					oppositionPool: oppPool,
+					activePoolSide: 'player',
+				},
+				attachTo: document.body,
+			});
+
+			expect(splitPanel.find('.studio-panel.is-play').attributes('data-state')).toBe('split');
+			expect(splitPanel.find('.studio-roller-heading').text()).toBe('Dice Pool');
+			// Sticky action bar is outside .roller-body so it stays pinned at drawer bottom
+			const actionBar = splitPanel.find('.roller-action-bar');
+			expect(actionBar.exists()).toBe(true);
+			expect(actionBar.find('.roller-roll-btn').exists()).toBe(true);
+			expect(splitPanel.find('.roller-body .roller-roll-btn').exists()).toBe(false);
+
+			const expandBtn = splitPanel.find('.studio-mobile-drawer-controls button[aria-label="Expand roller"]');
+			expect(expandBtn.exists()).toBe(true);
+			await expandBtn.trigger('click');
+			expect(splitPanel.emitted('update:drawerState')?.[0]).toEqual(['full']);
+
+			await splitPanel.setProps({ drawerState: 'full' });
+			expect(splitPanel.find('.studio-panel.is-play').attributes('data-state')).toBe('full');
+
+			const toSplitBtn = splitPanel.find('.studio-mobile-drawer-controls button[aria-label="Split roller"]');
+			expect(toSplitBtn.exists()).toBe(true);
+			await toSplitBtn.trigger('click');
+			expect(splitPanel.emitted('update:drawerState')?.[1]).toEqual(['split']);
+
+			const closeBtn = splitPanel.find('.studio-mobile-drawer-controls button[aria-label="Close roller"]');
+			expect(closeBtn.exists()).toBe(true);
+			await closeBtn.trigger('click');
+			expect(splitPanel.emitted('update:drawerState')?.[2]).toEqual(['staged']);
+
+			await runAxeAudit(splitPanel.element as HTMLElement);
+			splitPanel.unmount();
+		});
+
+		it('consolidates single-pillar Jump Strip in Character Play mode while preserving multi-pillar substack navigation', async () => {
+			const singlePillarChar: any = reactive({
+				id: 'single-pillar-char',
+				name: 'Solo Runner',
+				game: 'Cortex Prime',
+				plotPoints: 1,
+				portrait: {},
+				view: { pageCount: 1, sheetTheme: 'classic' },
+				traitSets: [
+					{
+						id: 'prime-dist',
+						name: 'Distinctions',
+						noun: 'Distinction',
+						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+						traits: [{ id: 'd1', name: 'Scrappy', rating: { type: 'Die', value: [8] }, traits: [] }],
+					},
+					{
+						id: 'prime-roles',
+						name: 'Roles',
+						noun: 'Role',
+						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+						traits: [{ id: 'r1', name: 'Hacker', rating: { type: 'Die', value: [6] }, traits: [] }],
+					},
+				],
+			});
+
+			const singleWrapper = mount(Character, {
+				props: {
+					character: singlePillarChar,
+					submode: 'play',
+					editing: [],
+					isDesktopPillars: true,
+				},
+				attachTo: document.body,
+			});
+
+			const singleStrip = singleWrapper.find('.mobile-set-jump-strip');
+			expect(singleStrip.exists()).toBe(true);
+			expect(singleStrip.find('.jump-pillar-tag').exists()).toBe(true);
+			expect(singleStrip.findAll('.jump-pill-sub').map((el) => el.text())).toEqual(['Distinctions', 'Roles']);
+			expect(singleStrip.find('.jump-pill-add-card').exists()).toBe(true);
+			expect(singleWrapper.find('.mobile-substack-bar').exists()).toBe(false);
+
+			await runAxeAudit(singleWrapper.element as HTMLElement);
+			singleWrapper.unmount();
+
+			const multiPillarChar: any = reactive({
+				id: 'multi-pillar-char',
+				name: 'Dual Hero',
+				game: 'Cortex Prime',
+				plotPoints: 2,
+				portrait: {},
+				view: { pageCount: 1, sheetTheme: 'classic' },
+				traitSets: [
+					{
+						id: 'p-dist',
+						name: 'Distinctions',
+						noun: 'Distinction',
+						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+						traits: [{ id: 'd1', name: 'Bold', rating: { type: 'Die', value: [8] }, traits: [] }],
+					},
+					{
+						id: 'p-attrs',
+						name: 'Attributes',
+						noun: 'Attribute',
+						view: { page: 1, column: 1, pillar: 'prime', style: { body: 'list' } },
+						traits: [{ id: 'a1', name: 'Agility', rating: { type: 'Die', value: [8] }, traits: [] }],
+					},
+					{
+						id: 's-skills',
+						name: 'Skills',
+						noun: 'Skill',
+						view: { page: 1, column: 2, pillar: 'abilities', style: { body: 'list' } },
+						traits: [{ id: 'k1', name: 'Fight', rating: { type: 'Die', value: [6] }, traits: [] }],
+					},
+				],
+			});
+
+			const multiWrapper = mount(Character, {
+				props: {
+					character: multiPillarChar,
+					submode: 'play',
+					editing: [],
+					isDesktopPillars: true,
+				},
+				attachTo: document.body,
+			});
+
+			const multiStrip = multiWrapper.find('.mobile-set-jump-strip');
+			expect(multiStrip.find('.jump-pillar-tag').exists()).toBe(false);
+			expect(multiStrip.findAll('.jump-pill[data-pillar-pill]').length).toBe(2);
+			expect(multiWrapper.find('.mobile-substack-bar').exists()).toBe(true);
+
+			await runAxeAudit(multiWrapper.element as HTMLElement);
+			multiWrapper.unmount();
 		});
 	});
 });

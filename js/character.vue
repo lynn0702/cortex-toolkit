@@ -615,6 +615,11 @@ function columnStackItems(col: MobilePillarColumn): { index: number; label: stri
 	return items;
 }
 
+const isSingleMobilePillar = computed(() => mobilePillarColumns.value.length === 1);
+const singlePillarSubItems = computed(() =>
+	isSingleMobilePillar.value ? columnStackItems(mobilePillarColumns.value[0]) : [],
+);
+
 function centerActiveJumpPill(pillarKey: string) {
 	const stripEl = Array.isArray(jumpStripRef.value) ? jumpStripRef.value[0] : jumpStripRef.value;
 	if (!stripEl || typeof stripEl.querySelector !== 'function') return;
@@ -655,7 +660,7 @@ function setupCarouselObserver() {
 		carouselObserver.disconnect();
 		carouselObserver = null;
 	}
-	if (!isPillarPlay.value) {
+	if (!isPillarPlay.value || typeof IntersectionObserver === 'undefined') {
 		return;
 	}
 	nextTick(() => {
@@ -788,19 +793,38 @@ watch(
 						class="mobile-set-jump-strip"
 						aria-label="Character pillars"
 					>
-						<button
-							v-for="col in mobilePillarColumns"
-							:key="'jump-pillar-' + col.key"
-							type="button"
-							class="jump-pill"
-							:class="{ active: activeMobilePillarKey === col.key }"
-							:data-pillar-pill="col.key"
-							:aria-current="activeMobilePillarKey === col.key ? 'true' : undefined"
-							@click.stop="scrollToPillar(col.key)"
-						>
-							<span class="jump-pill-label">{{ col.label }}</span>
-							<span v-if="col.stagedCount > 0" class="jump-pill-badge">{{ col.stagedCount }}</span>
-						</button>
+						<template v-if="isSingleMobilePillar">
+							<span class="jump-pillar-tag" :data-pillar-pill="mobilePillarColumns[0].key">
+								<span class="jump-pill-label">{{ mobilePillarColumns[0].label }}</span>
+								<span v-if="mobilePillarColumns[0].stagedCount > 0" class="jump-pill-badge">{{
+									mobilePillarColumns[0].stagedCount
+								}}</span>
+							</span>
+							<button
+								v-for="sub in singlePillarSubItems"
+								:key="'jump-sub-' + sub.index"
+								type="button"
+								class="jump-pill jump-pill-sub"
+								@click.stop="scrollToSetInColumn(mobilePillarColumns[0].key, sub.index)"
+							>
+								<span class="jump-pill-label">{{ sub.label }}</span>
+							</button>
+						</template>
+						<template v-else>
+							<button
+								v-for="col in mobilePillarColumns"
+								:key="'jump-pillar-' + col.key"
+								type="button"
+								class="jump-pill"
+								:class="{ active: activeMobilePillarKey === col.key }"
+								:data-pillar-pill="col.key"
+								:aria-current="activeMobilePillarKey === col.key ? 'true' : undefined"
+								@click.stop="scrollToPillar(col.key)"
+							>
+								<span class="jump-pill-label">{{ col.label }}</span>
+								<span v-if="col.stagedCount > 0" class="jump-pill-badge">{{ col.stagedCount }}</span>
+							</button>
+						</template>
 						<button
 							type="button"
 							class="jump-pill jump-pill-add-card"
@@ -832,7 +856,7 @@ watch(
 							class="mobile-pillar-column"
 							:data-pillar-key="col.key"
 						>
-							<div class="mobile-substack-bar" v-if="columnStackItems(col).length > 1">
+							<div class="mobile-substack-bar" v-if="!isSingleMobilePillar && columnStackItems(col).length > 1">
 								<button
 									v-for="sub in columnStackItems(col)"
 									:key="'substack-' + col.key + '-' + sub.index"

@@ -381,13 +381,13 @@
 	display: inline-flex;
 	align-items: center;
 	column-gap: 0.35rem;
-	background: #fff;
+	background: var(--bg-surface-elevated);
 	border: 1.5px solid var(--color-primary);
 	border-radius: 4px;
 	padding: 0.15rem 0.45rem;
 	font-family: var(--font-heading);
 	margin-left: auto;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 1px 3px color-mix(in oklch, var(--text-main) 8%, transparent);
 
 	.pp-badge-label {
 		font-weight: 800;
@@ -401,15 +401,15 @@
 		font-size: 0.95rem;
 		min-width: 1.2rem;
 		text-align: center;
-		color: #1e293b;
+		color: var(--text-main);
 		line-height: 1;
 	}
 
 	.btn-pp-step {
-		background: #f1f5f9;
-		border: 1px solid var(--color-separator);
+		background: var(--bg-surface-muted);
+		border: 1px solid var(--border-subtle, var(--color-separator));
 		border-radius: 3px;
-		color: #334155;
+		color: var(--text-secondary);
 		cursor: pointer;
 		font-weight: 800;
 		font-size: 0.8rem;
@@ -426,7 +426,7 @@
 
 		&:hover:not(:disabled) {
 			background: var(--color-primary);
-			color: white;
+			color: var(--die-active-text);
 			border-color: var(--color-primary);
 		}
 
@@ -436,25 +436,16 @@
 		}
 	}
 
-	@media screen and (max-width: 768px) {
-		.submode-play & {
-			position: sticky;
-			top: calc(var(--header-size, 48px) + 6px);
-			z-index: calc(var(--z-frame) + 30);
-			padding: 0.25rem 0.6rem;
-			background: #ffffff;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	@media screen and (max-width: 48rem) {
+		.btn-pp-step {
+			min-inline-size: 2.25rem;
+			min-block-size: 2.25rem;
+			font-size: 1rem;
+		}
 
-			.btn-pp-step {
-				width: 36px;
-				height: 36px;
-				font-size: 1.1rem;
-			}
-
-			.pp-count {
-				font-size: 1.1rem;
-				min-width: 1.5rem;
-			}
+		.pp-count {
+			font-size: 1rem;
+			min-width: 1.5rem;
 		}
 	}
 }

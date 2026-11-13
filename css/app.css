@@ -23,6 +23,19 @@
 	/* --sidebar-size:  6rem; */
 	--sidebar-size: 0px;
 
+	--space-2xs: 0.25rem;
+	--space-xs: 0.5rem;
+	--space-sm: 1rem;
+	--space-md: 1.5rem;
+	--space-lg: 2rem;
+	--space-xl: 3rem;
+
+	--jump-strip-h: 2.5rem;
+	--roller-footer-h: 3.5rem;
+	--split-roller-h: 38.2dvh;
+	--drawer-radius: 1rem;
+	--transition-sheet: 240ms cubic-bezier(0.22, 1, 0.36, 1);
+
 	--font-primary: 'Open Sans', sans-serif;
 	--font-secondary: 'Alegreya Sans SC', sans-serif;
 	--font-heading: 'Josefin Sans', sans-serif;
